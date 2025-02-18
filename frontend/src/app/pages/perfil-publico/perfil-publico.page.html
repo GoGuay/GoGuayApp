@@ -45,7 +45,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="p-2">
           <mat-divider ></mat-divider>
         </div>
@@ -64,8 +64,8 @@
               <div *ngIf="misViajes.length === 0">
                 <p>Aún no te has apuntado a ningún viaje.</p>
               </div>
-              <div *ngFor="let viaje of misViajes">
-                <p><strong>Destino: </strong>{{viaje.destino}}</p>
+              <div class="mi_viaje_box mb-1" *ngFor="let viaje of misViajes">
+                <p><strong>Destino: </strong>{{viaje.destino}} <button type="button"><mat-icon>loupe</mat-icon></button> <button type="button"><mat-icon>close</mat-icon></button> </p>
               </div>
             </div>            
           </div>

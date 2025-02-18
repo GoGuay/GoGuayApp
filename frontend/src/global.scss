@@ -237,8 +237,8 @@ ion-content {
 /* Para navegadores basados en WebKit */
 ion-content::-webkit-scrollbar,
 ::part(scroll)::-webkit-scrollbar {
-  width: 12px; /* Ancho de la barra */
-  height: 12px; /* Altura de la barra */
+  width: 12px; 
+  height: 12px;
 }
 
 ion-content::-webkit-scrollbar-track,
@@ -257,7 +257,7 @@ ion-content::-webkit-scrollbar-thumb,
     #99ccff,
     #c299ff,
     #ff99cc
-  ); /* Colores pastel del colectivo */
+  );
   border-radius: 10px;
   border: 2px solid #f0f0f0;
 }
@@ -272,5 +272,5 @@ ion-content::-webkit-scrollbar-thumb:hover,
     #66b3ff,
     #b366ff,
     #ff66b3
-  ); /* Efecto al pasar el cursor */
+  ); 
 }

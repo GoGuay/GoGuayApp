@@ -9,6 +9,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDivider } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { MatDivider } from '@angular/material/divider';
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider]
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, MatIcon]
 })
 export class PerfilPublicoPage implements OnInit {
 

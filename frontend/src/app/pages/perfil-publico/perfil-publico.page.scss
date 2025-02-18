@@ -97,3 +97,24 @@ button {
   z-index: 10;
   display: block;
 }
+
+.mi_viaje_box {
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  background-color: #f0d7b4;
+  border-radius: 15px;
+  padding: 1%;
+  
+  display: flex;
+  align-items: center;
+}
+
+.mi_viaje_box p {
+  margin: 0; 
+  display: flex;
+  width: 100%;
+}
+
+.mi_viaje_box button {
+  margin-left: 8px;
+}
