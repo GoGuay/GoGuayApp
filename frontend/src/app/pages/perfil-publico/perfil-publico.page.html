@@ -45,12 +45,31 @@
             </div>
           </div>
         </div>
+        
+        <div class="p-2">
+          <mat-divider ></mat-divider>
+        </div>
+        
         <div class="row">
-          <div class="container p-5">
-            <label><strong>Biografía: </strong></label>
-            <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
-            <p *ngIf="!usuario?.biografia">Este usuario aún no tiene biografía.</p>
+          <div class="col">
+            <div class="container ">
+              <label class="mb-3"><strong>Biografía: </strong></label>
+              <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
+              <p *ngIf="!usuario?.biografia">Este usuario aún no tiene biografía.</p>
+            </div>
           </div>
+          <div class="col">
+            <div class="container mis-viajes-container" *ngIf="editar_perfil">
+              <label class="mb-3"><strong>Mis viajes: </strong></label>
+              <div *ngIf="misViajes.length === 0">
+                <p>Aún no te has apuntado a ningún viaje.</p>
+              </div>
+              <div *ngFor="let viaje of misViajes">
+                <p><strong>Destino: </strong>{{viaje.destino}}</p>
+              </div>
+            </div>            
+          </div>
+         
         </div>
       </div>
       <hr>

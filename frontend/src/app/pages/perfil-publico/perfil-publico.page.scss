@@ -2,7 +2,7 @@
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   position: relative;
-//   background-color: #F0D7B4;
+  height: 700px;
 }
 
 .espacio_cabecera {
@@ -21,7 +21,7 @@
 
 .imagen-perfil {
   position: absolute;
-  bottom: 300px;
+  bottom: 490px;
   left: 50%;
   transform: translateX(-50%);
   border: 2px solid #f0d7b4;
@@ -50,34 +50,50 @@
 
 .botonEditarImgPerfil,
 .botonEditarImgCabecera {
-    position: absolute;
-    border-radius: 50%;
-    width: 40px; 
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-    cursor: pointer;
-    background-color: #F0D7B4;
+  position: absolute;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  background-color: #f0d7b4;
 }
 
 .botonEditarImgPerfil {
-    bottom: 250px;
-    left: 52%;
+  bottom: 565px;
+  left: 52%;
 }
 
 .botonEditarImgCabecera {
-    bottom: 279px;
-    left: 98%; 
-    transform: translateX(-100%);
+  bottom: 510px;
+  left: 98%;
+  transform: translateX(-100%);
 }
 
 .botonEditarImgPerfil mat-icon,
 .botonEditarImgCabecera mat-icon {
-    font-size: 20px; 
+  font-size: 20px;
 }
-button{
-    background-color: #F0D7B4;
+
+button {
+  background-color: #f0d7b4;
+}
+
+.mis-viajes-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 10px;
+}
+
+.mis-viajes-container label {
+  position: sticky;
+  top: 0;
+  background-color: #E9EDD5;
+  padding: 5px 0;
+  z-index: 10;
+  display: block;
 }

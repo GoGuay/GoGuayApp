@@ -23,6 +23,16 @@
     cursor: pointer;
   }
   
+  .info_viaje {
+    text-align: center;
+    padding-left: 2%;
+    padding-top: 3%;
+    border: 1px solid grey;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    background-color: #f0d7b4;
+  }
+
   @media (max-width: 576px) {
     .modal-infovisible{
       width: auto;

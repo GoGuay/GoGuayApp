@@ -7,6 +7,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { ActivatedRoute } from '@angular/router';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { MatDivider } from '@angular/material/divider';
 
 
 @Component({
@@ -14,7 +16,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent]
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider]
 })
 export class PerfilPublicoPage implements OnInit {
 
@@ -24,10 +26,12 @@ export class PerfilPublicoPage implements OnInit {
   editar_perfil: boolean = false;
   userData: Usuario = {} as Usuario;
   preferenciasViaje: string = '';
+  misViajes: any[] = [];
 
   constructor(private route: ActivatedRoute,
     private funcionesComunes: FuncionesComunes,
-    private userService: UserServicesService) {
+    private userService: UserServicesService,
+    private travelService: TravelService) {
 
   }
 
@@ -35,10 +39,11 @@ export class PerfilPublicoPage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.route.queryParams.subscribe((params) => {
       this.usuarioParams = params;
-      
+
       const userId = parseInt(this.usuarioParams.id, 10);
       this.obtenerUsuarioPorID(userId);
       this.validacionPerilLogeado(userId);
+      this.obtenerViajes();
     });
   }
 
@@ -63,5 +68,17 @@ export class PerfilPublicoPage implements OnInit {
       this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario);
       console.log('Parámetros recibidos:', this.usuario);
     });
+  }
+
+  /**
+   * Función para obtener los viajes a los que el usuario
+   * se ha apuntado como pasajero.
+   */
+  obtenerViajes() {
+    this.travelService.getViajesDeUsuario(this.userData.usuario.id)
+      .subscribe((result) => {
+        console.log('Viajes del usuario como pasajero: ', result);
+        this.misViajes = result; 
+      });
   }
 }

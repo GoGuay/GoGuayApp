@@ -67,12 +67,18 @@ html,
 body {
   height: 100%;
   background-color: #e9edd5;
+  overflow: hidden !important;
+  scroll-behavior: smooth;
 }
+
 body {
   margin: 0;
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #e9edd5;
+  overflow: hidden !important;
+  scroll-behavior: smooth;
 }
+
 
 h1,
 h2,
@@ -173,4 +179,98 @@ button:hover {
 /* CONFIGURACIÓN PARA EVITAR SCROLL INNECESARIO CUANDO SE LEVANTA UNA VENTANA MODAL */
 html.cdk-global-scrollblock {
   overflow: hidden !important;
+}
+
+/* BARRA DE SCROLL */
+::-webkit-scrollbar {
+  width: 12px; 
+  height: 12px;
+}
+
+/* Fondo de la barra de desplazamiento */
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+/* Parte que puedes arrastrar */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #ffb3b3,
+    #ffcc99,
+    #b3e6b3, 
+    #99ccff,
+    #d1b3ff, 
+    #ffb3d1 
+  );
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;
+}
+
+/* Cuando la barra de desplazamiento se encuentra en hover */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #ff9999, 
+    #ffb366, 
+    #99d699, 
+    #66b2ff, 
+    #c299ff, 
+    #ff99c2 
+  );
+}
+
+
+
+
+
+
+/* 
+ *    BARRA DE SCROLL GENERAL PERSONALIZADA 
+*/
+ion-content {
+  --overflow: auto !important; /* Asegura que se muestre el scroll */
+  contain: unset !important; /* Evita que Ionic limite los estilos */
+}
+
+/* Para navegadores basados en WebKit */
+ion-content::-webkit-scrollbar,
+::part(scroll)::-webkit-scrollbar {
+  width: 12px; /* Ancho de la barra */
+  height: 12px; /* Altura de la barra */
+}
+
+ion-content::-webkit-scrollbar-track,
+::part(scroll)::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+ion-content::-webkit-scrollbar-thumb,
+::part(scroll)::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #ffb3b3,
+    #ffcc99,
+    #99e699,
+    #99ccff,
+    #c299ff,
+    #ff99cc
+  ); /* Colores pastel del colectivo */
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
+
+ion-content::-webkit-scrollbar-thumb:hover,
+::part(scroll)::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #ff9999,
+    #ffb366,
+    #85d685,
+    #66b3ff,
+    #b366ff,
+    #ff66b3
+  ); /* Efecto al pasar el cursor */
 }
