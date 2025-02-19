@@ -6,8 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -51,10 +50,9 @@ export class NuevoViajePage implements OnInit {
 
   constructor(
     private router: Router,
-    private dialog: MatDialog,
     private viajesService: TravelService,
     private googleService: GoogleServices,
-    private funcionesComunes: FuncionesComunes,
+    public funcionesComunes: FuncionesComunes,
     private translate: TranslateService
   ) {
     this.translate
@@ -79,19 +77,6 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   * Función para abrir una ventana modal con mensajes de ayuda.
-   *
-   * @param title Recibe el título que se va a mostrar en la ventana.
-   * @param message Recibe el contenido que se va a mostrar en la ventana.
-   */
-  openHelp(title: string, message: string) {
-    this.dialog.open(HelpModalComponent, {
-      data: { title, message },
-      disableClose: true,
-    });
-  }
-
-  /**
    * Función para navegar hasta la página "data-viaje"
    *
    */
@@ -104,7 +89,7 @@ export class NuevoViajePage implements OnInit {
     };
 
     if (!this.userLoggedIn) {
-      this.openHelp(this.title_help_carnet, this.message_help_auth);
+      this.funcionesComunes.openConfirmModal(this.title_help_carnet, this.message_help_auth);
     } else {
       /**
        * Se almacena temporalmente los datos del viaje.

@@ -85,3 +85,23 @@
     height: 180px;
   }
 }
+
+
+.ver_perfil_publico {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 35px; /* Ajusta el tamaño del botón */
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: unset; /* Para evitar que el botón se expanda */
+}
+
+/* Contenedor del nombre y botón para alineación */
+.nombre-container {
+  display: flex;
+  align-items: center; /* Centra verticalmente */
+  gap: 10px; /* Espaciado entre el texto y el botón */
+}
