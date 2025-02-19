@@ -103,18 +103,60 @@ button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f0d7b4;
   border-radius: 15px;
-  padding: 1%;
-  
+  padding: 12px;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
 }
 
 .mi_viaje_box p {
-  margin: 0; 
+  margin: 0;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
+  justify-content: space-between;
+}
+
+.info-viaje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.botones {
+  display: flex;
+  gap: 12px;
 }
 
 .mi_viaje_box button {
-  margin-left: 8px;
+  margin-left: 12px;
+}
+
+.mas_detalle {
+  color: #B3B5E6;
+}
+
+.eliminar_viaje {
+  color: red;
+}
+
+
+@media (max-width: 576px) {
+  .mi_viaje_box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-viaje {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .botones {
+    margin-top: 8px;
+  }
 }
