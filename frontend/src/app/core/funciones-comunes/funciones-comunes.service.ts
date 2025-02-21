@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Injectable({
@@ -8,7 +11,7 @@ export class FuncionesComunes {
 
     userData: Usuario = {} as Usuario;
 
-    constructor() {
+    constructor(private dialog: MatDialog) {
         this.loadUserData();
     }
 
@@ -49,12 +52,12 @@ export class FuncionesComunes {
     validacionPreferencias(preferencias: any): string {
         let preferencia: any;
 
-        if(!preferencias.viaje){
+        if (!preferencias.viaje) {
             preferencia = preferencias.preferencias;
         } else {
             preferencia = preferencias.viaje.usuario.preferencias;
         }
-        
+
         switch (preferencia) {
             case 'Silencio':
                 return 'Prefiere viajar en silencio';
@@ -67,6 +70,34 @@ export class FuncionesComunes {
             default:
                 return '';
         }
+    }
+
+
+    /**
+     * Función para abrir la ventana modal con mensajes de error.
+     * 
+     * @param title Recibe el título a mostrar.
+     * @param message Recibe el mensaje a mostrar.
+     */
+    openErrorModal(title: string, message: string) {
+        this.dialog.open(ModalErrorComponent, {
+            data: { title, message },
+            panelClass: 'dialog-animate'
+        });
+    }
+
+
+    /**
+     * Función para abrir la ventana modal con los mensajes de confirmación.
+     * 
+     * @param title Recibe el título a mostrar.
+     * @param message Recibe el mensaje a mostrar.
+     */
+    openConfirmModal(title: string, message: string) {
+        this.dialog.open(HelpModalComponent, {
+            data: { title, message },
+            disableClose: true,
+        });
     }
 
 }

@@ -85,7 +85,7 @@
                   type="button"
                   class="help_btn d-flex justify-content-center"
                   title="Ayuda para iniciar sesión / registrarse"
-                  (click)="openHelp(title_help_carnet, message_help_auth)"
+                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
                 >
                   <mat-icon>help</mat-icon>
                 </button>
@@ -98,7 +98,7 @@
                   type="button"
                   class="help_btn d-flex justify-content-center"
                   title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
-                  (click)="openHelp(title_help_carnet, message_help_carnet)"
+                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)"
                 >
                   <mat-icon>help</mat-icon>
                 </button>

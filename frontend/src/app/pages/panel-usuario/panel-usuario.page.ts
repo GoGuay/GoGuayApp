@@ -1,5 +1,5 @@
 import { Usuario } from './../../models/user/usuario.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -13,6 +13,8 @@ import { IonicModule } from '@ionic/angular';
 import { MiPerfilComponent } from 'src/app/components/botones-panel-usuario/mi-perfil/mi-perfil.component';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { Router } from '@angular/router';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-panel-usuario',
@@ -26,7 +28,20 @@ import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.com
     TranslateModule,
     IonicModule,
     MatIcon,
+    MatTooltipModule
   ],
+  providers: [
+    {
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: {
+        showDelay: 500,
+        hideDelay: 200,
+        touchGestures: 'auto',
+        position: 'below'
+      }
+    }
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class PanelUsuarioPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -34,7 +49,8 @@ export class PanelUsuarioPage implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private travelService: TravelService
+    private travelService: TravelService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -103,6 +119,15 @@ export class PanelUsuarioPage implements OnInit {
     this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje },
       disableClose: true,
+    });
+  }
+
+  openPerfilPublico(id_usuario: number) {
+    const usuario = {
+      id: id_usuario
+    }
+    this.router.navigate(['/perfil-publico'], {
+      queryParams: usuario,
     });
   }
 }
