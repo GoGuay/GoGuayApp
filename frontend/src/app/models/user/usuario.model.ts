@@ -13,16 +13,18 @@ export interface Usuario {
     biografia?: string;
     fecha_nacimiento?: string;
     fotoPerfil?: string;
+    fotoCabecera?: string;
     rolPerfil: 'usuario' | 'admin' | 'moderador';
     carnet_conducir_verificado?: boolean;
+    dni_verificado?: boolean;
     numero_carnet_conducir?: string;
+    preferencias?: 'Hablar' | 'Escuchar música' | 'Dormir' | 'Silencio';
     fecha_vencimiento_carnet?: string;
+    comunic_comerciales?: boolean;
+    comunic_terceros?: boolean;
     vehiculos?: string;
     created_at?: string;
     updated_at?: string;
     token?: string;
   };
 }
-
-// Faltaría definir el dato:
-// preferencias

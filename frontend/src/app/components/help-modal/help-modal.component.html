@@ -4,7 +4,12 @@
       <mat-icon class="icon-red">question_mark</mat-icon>
       <h2 class="ms-2">{{ data.title }}</h2>
     </div>
-    <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
+    <button
+      mat-icon-button
+      class="close-button"
+      (click)="close()"
+      aria-label="Cerrar"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -18,8 +23,24 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button mat-button (click)="close()" *ngIf="!data.showMoreInfoButton">Cerrar</button>
-    <button mat-button (click)="cerrarParaMasInfo('home')" *ngIf="data.showMoreInfoButton">Cerrar</button>
-    <button mat-button class="btn_bg" (click)="aceptarCondiciones('registro')" *ngIf="data.showAcceptButton">Aceptar</button>
+    <button mat-button (click)="close()" *ngIf="!data.showMoreInfoButton">
+      Cerrar
+    </button>
+    <button
+      mat-button
+      class="btn_bg"
+      (click)="aceptarCondiciones('registro')"
+      *ngIf="data.showAcceptButton"
+    >
+      Aceptar
+    </button>
+
+    <button
+      mat-button
+      (click)="cerrarParaMasInfo('home')"
+      *ngIf="data.showMoreInfoButton"
+    >
+      No aceptar
+    </button>
   </div>
 </div>

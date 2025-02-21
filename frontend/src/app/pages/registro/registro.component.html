@@ -49,7 +49,7 @@
             type="date"
             class="form-control"
             id="fnacimiento"
-            formControlName="fnacimiento"
+            formControlName="fecha_nacimiento"
             [(ngModel)]="fechaNacimiento"
           />
         </div>
@@ -162,17 +162,25 @@
             <option value="" disabled selected>
               {{ "ORIENTACION.SELECCIONA" | translate }}
             </option>
-            <option value="1">{{ "ORIENTACION.GAY" | translate }}</option>
-            <option value="2">{{ "ORIENTACION.LESBIANA" | translate }}</option>
-            <option value="3">{{ "ORIENTACION.BISEXUAL" | translate }}</option>
-            <option value="4">{{ "ORIENTACION.PANSEXUAL" | translate }}</option>
-            <option value="5">{{ "ORIENTACION.ASEXUAL" | translate }}</option>
-            <option value="6">
+            <option value="GAY">{{ "ORIENTACION.GAY" | translate }}</option>
+            <option value="LESBIANA">
+              {{ "ORIENTACION.LESBIANA" | translate }}
+            </option>
+            <option value="BISEXUAL">
+              {{ "ORIENTACION.BISEXUAL" | translate }}
+            </option>
+            <option value="PANSEXUAL">
+              {{ "ORIENTACION.PANSEXUAL" | translate }}
+            </option>
+            <option value="ASEXUAL">
+              {{ "ORIENTACION.ASEXUAL" | translate }}
+            </option>
+            <option value="DEMISEXUAL">
               {{ "ORIENTACION.DEMISEXUAL" | translate }}
             </option>
-            <option value="7">{{ "ORIENTACION.QUEER" | translate }}</option>
-            <option value="7">{{ "ORIENTACION.OTRO" | translate }}</option>
-            <option value="8">
+            <option value="QUEER">{{ "ORIENTACION.QUEER" | translate }}</option>
+            <option value="OTRO">{{ "ORIENTACION.OTRO" | translate }}</option>
+            <option value="NO_RESPONDE">
               {{ "ORIENTACION.NO_RESPONDE" | translate }}
             </option>
           </select>

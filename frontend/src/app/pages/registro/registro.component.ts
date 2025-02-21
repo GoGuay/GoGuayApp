@@ -48,7 +48,7 @@ export class RegistroComponent implements OnInit {
   ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      fnacimiento: ['', Validators.required],
+      fecha_nacimiento: ['', Validators.required],
     });
 
     this.formulario2 = this.fb.group({
