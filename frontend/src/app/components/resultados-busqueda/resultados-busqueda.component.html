@@ -41,7 +41,10 @@
           <p>{{ "BUSQUEDA.RESULTADOS" | translate }}</p>
         </ion-row>
         <ion-row class="d-flex justify-content-center p-4">
-          <div *ngIf="!listado_viajes.length">Cargando viajes...</div>
+          <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
+            <app-spinner></app-spinner>
+            Cargando viajes...
+          </div>
           <div *ngFor="let resultado_del_viaje of listado_viajes">
             <div class="card resultado-viaje mb-3">
               <ion-row>
