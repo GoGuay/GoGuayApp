@@ -30,6 +30,17 @@ export class MiPerfilPage implements OnInit {
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+    console.log('Datos usuario: ', this.userData);
+
+    // Si el usuario no tiene un género guardado, asignar vacío ("")
+    if (!this.userData.usuario.genero) {
+      this.userData.usuario.genero = '';
+    }
+
+    // Si el usuario no tiene un pronombre guardado, asignar vacío ("")
+    if (!this.userData.usuario.pronombre) {
+      this.userData.usuario.pronombre = '';
+    }
   }
 
   onFileSelected(event: Event): void {

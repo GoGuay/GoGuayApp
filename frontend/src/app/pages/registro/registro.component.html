@@ -1,6 +1,11 @@
 <div style="overflow: auto">
   <div class="d-flex justify-content-center mt-4">
-    <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo" (click)="volverAlHome()" />
+    <img
+      src="../../../assets/logo/PRIDECAR.png"
+      alt="Logo"
+      class="logo"
+      (click)="volverAlHome()"
+    />
   </div>
 
   <!-- Formulario pantalla 1 -->
@@ -11,13 +16,42 @@
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario1" class="formulario">
         <div class="mb-3">
-          <label for="email" class="form-label">Correo electrónico</label>
-          <input type="email" class="form-control form-input" id="email" formControlName="email"
-            aria-describedby="emailHelp" />
+          <label for="email" class="form-label"
+            >Correo electrónico <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            type="email"
+            class="form-control form-input"
+            id="email"
+            formControlName="email"
+            aria-describedby="emailHelp"
+          />
+          <div
+            *ngIf="
+              formulario1.get('email')?.invalid &&
+              formulario1.get('email')?.touched
+            "
+            class="text-danger"
+          >
+            <span *ngIf="formulario1.get('email')?.errors?.['required']">
+              El correo es obligatorio.
+            </span>
+            <span *ngIf="formulario1.get('email')?.errors?.['email']">
+              Introduce un correo válido.
+            </span>
+          </div>
         </div>
         <div class="mb-3">
-          <label for="fnacimiento" class="form-label">Fecha de nacimiento</label>
-          <input type="date" class="form-control" id="fnacimiento" formControlName="fnacimiento" />
+          <label for="fnacimiento" class="form-label"
+            >Fecha de nacimiento <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            type="date"
+            class="form-control"
+            id="fnacimiento"
+            formControlName="fnacimiento"
+            [(ngModel)]="fechaNacimiento"
+          />
         </div>
       </form>
     </div>
@@ -31,48 +65,116 @@
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario2" class="formulario">
         <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre</label>
-          <input type="text" class="form-control form-input" id="nombre" formControlName="nombre" />
+          <label for="nombre" class="form-label"
+            >Nombre <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            type="text"
+            class="form-control form-input"
+            id="nombre"
+            formControlName="nombre"
+          />
         </div>
 
         <div class="mb-3">
-          <label for="apellidos" class="form-label">Apellidos</label>
-          <input type="text" class="form-control form-input" id="apellidos" formControlName="apellidos" />
+          <label for="apellidos" class="form-label"
+            >Apellidos <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            type="text"
+            class="form-control form-input"
+            id="apellidos"
+            formControlName="apellidos"
+          />
         </div>
 
         <div class="mb-3">
-          <label for="telefono" class="form-label">Teléfono</label>
-          <input type="text" class="form-control form-input" id="telefono" formControlName="telefono" />
+          <label for="telefono" class="form-label"
+            >Teléfono <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            type="text"
+            class="form-control form-input"
+            id="telefono"
+            formControlName="telefono"
+          />
         </div>
 
         <div class="mb-3">
-          <label for="genero" class="form-label">Género</label>
+          <label for="genero" class="form-label"
+            >Género<span class="dato-obligatorio"> *</span></label
+          >
+          <span
+            class="ms-2 text-primary"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Más detalles"
+          >
+            <i class="bi-question-circle"></i>
+          </span>
           <select class="form-select" id="genero" formControlName="genero">
-            <option value="" disabled selected>Selecciona una opción</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Femenino">Femenino</option>
-            <option value="No binario">No binario</option>
-            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+            <option selected disabled>
+              {{ "SELEC_GENERO.SELECCIONA" | translate }}
+            </option>
+            <option value="HOMBRE_CIS">
+              {{ "SELEC_GENERO.HOMBRE_CIS" | translate }}
+            </option>
+            <option value="MUJER_CIS">
+              {{ "SELEC_GENERO.MUJER_CIS" | translate }}
+            </option>
+            <option value="TRANSEXUAL">
+              {{ "SELEC_GENERO.TRANSEXUAL" | translate }}
+            </option>
+            <option value="NO_BINARIO">
+              {{ "SELEC_GENERO.NO_BINARIO" | translate }}
+            </option>
+            <option value="INTERGENERO">
+              {{ "SELEC_GENERO.INTERGENERO" | translate }}
+            </option>
+            <option value="NO_FLUIDO">
+              {{ "SELEC_GENERO.NO_FLUIDO" | translate }}
+            </option>
+            <option value="OTRO">{{ "SELEC_GENERO.OTRO" | translate }}</option>
+            <option value="NO_RESPONDE">
+              {{ "SELEC_GENERO.NO_RESPONDE" | translate }}
+            </option>
           </select>
         </div>
 
         <div class="mb-3">
-          <label for="orientacion" class="form-label">¿Cuál es tu orientación sexual?
-            <span class="ms-2 text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Más detalles">
+          <label for="orientacion" class="form-label"
+            >¿Cuál es tu orientación sexual?
+            <span class="dato-obligatorio"> *</span>
+            <span
+              class="ms-2 text-primary"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Más detalles"
+            >
               <i class="bi-question-circle"></i>
             </span>
           </label>
-          <select class="form-select" aria-label="Selección de orientación" formControlName="orientacion">
-            >
-            <option value="" disabled selected>Selecciona una opción</option>
-            <option value="Gay">Gay</option>
-            <option value="Lesbiana">Lesbiana</option>
-            <option value="Bisexual">Bisexual</option>
-            <option value="Pansexual">Pansexual</option>
-            <option value="Asexual">Asexual</option>
-            <option value="Demisexual">Demisexual</option>
-            <option value="Queer">Queer</option>
-            <option value="Otro">Otro</option>
+          <select
+            class="form-select"
+            aria-label="Selección de orientación"
+            formControlName="orientacion"
+          >
+            <option value="" disabled selected>
+              {{ "ORIENTACION.SELECCIONA" | translate }}
+            </option>
+            <option value="1">{{ "ORIENTACION.GAY" | translate }}</option>
+            <option value="2">{{ "ORIENTACION.LESBIANA" | translate }}</option>
+            <option value="3">{{ "ORIENTACION.BISEXUAL" | translate }}</option>
+            <option value="4">{{ "ORIENTACION.PANSEXUAL" | translate }}</option>
+            <option value="5">{{ "ORIENTACION.ASEXUAL" | translate }}</option>
+            <option value="6">
+              {{ "ORIENTACION.DEMISEXUAL" | translate }}
+            </option>
+            <option value="7">{{ "ORIENTACION.QUEER" | translate }}</option>
+            <option value="7">{{ "ORIENTACION.OTRO" | translate }}</option>
+            <option value="8">
+              {{ "ORIENTACION.NO_RESPONDE" | translate }}
+            </option>
           </select>
         </div>
       </form>
@@ -87,8 +189,15 @@
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario3" class="formulario">
         <div class="mb-3">
-          <label for="password" class="form-label">Contraseña</label>
-          <input formControlName="password" type="password" class="form-control form-input" id="password" />
+          <label for="password" class="form-label"
+            >Contraseña <span class="dato-obligatorio"> *</span></label
+          >
+          <input
+            formControlName="password"
+            type="password"
+            class="form-control form-input"
+            id="password"
+          />
         </div>
       </form>
     </div>
@@ -96,15 +205,26 @@
 
   <!-- Mensaje de advertencia -->
   <div
-    *ngIf="(pasoActual === 1 && !formulario1.valid) || (pasoActual === 2 && !formulario2.valid) || (pasoActual === 3 && !formulario3.valid)"
-    class="alert alert-warning mt-3 text-center container" role="alert">
-    Por favor, completa todos los campos obligatorios para continuar.
+    *ngIf="
+      (pasoActual === 1 && !formulario1.valid) ||
+      (pasoActual === 2 && !formulario2.valid) ||
+      (pasoActual === 3 && !formulario3.valid)
+    "
+    class="alert alert-warning mt-3 text-center container"
+    role="alert"
+  >
+    Los campos marcados con asteriscos son obligatorios
   </div>
 
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
       <li class="page-item">
-        <button *ngIf="!paso1" type="button" class="page-link" (click)="pasoAnterior()">
+        <button
+          *ngIf="!paso1"
+          type="button"
+          class="page-link"
+          (click)="pasoAnterior()"
+        >
           Atrás
         </button>
         <button *ngIf="paso1" type="button" class="page-link disabled">
@@ -112,21 +232,41 @@
         </button>
       </li>
       <li class="page-item">
-        <button type="button" class="page-link disabled"  *ngIf="pasoActual === 3">
+        <button
+          type="button"
+          class="page-link disabled"
+          *ngIf="pasoActual === 3"
+        >
           Siguiente
         </button>
-        <button type="button" class="page-link" (click)="siguientePaso()" *ngIf="pasoActual != 3">
+        <button
+          type="button"
+          class="page-link"
+          (click)="siguientePaso()"
+          *ngIf="pasoActual != 3"
+        >
           Siguiente
         </button>
       </li>
     </ul>
   </nav>
 
-  <div *ngIf="pasoActual === 3 && formulario1.valid && formulario2.valid && formulario3.valid"
-    class="d-flex justify-content-center">
-    <button type="button" mat-raised-button class="btn_bg mt-3 mb-3" (click)="mostrarContrato()">
+  <div
+    *ngIf="
+      pasoActual === 3 &&
+      formulario1.valid &&
+      formulario2.valid &&
+      formulario3.valid
+    "
+    class="d-flex justify-content-center"
+  >
+    <button
+      type="button"
+      mat-raised-button
+      class="btn_bg mt-3 mb-3"
+      (click)="mostrarContrato()"
+    >
       Registrar
     </button>
   </div>
-
 </div>
