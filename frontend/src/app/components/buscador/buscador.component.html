@@ -3,7 +3,7 @@
     <ion-accordion value="first" class="contenido">
       <ion-item slot="header" class="white-header">
         <mat-icon class="me-1">search</mat-icon>
-        <ion-label>{{ "FINDER_TRAVELS.TITLE" | translate }}</ion-label>
+        <ion-label>{{ "HOME.BUSCADOR.BUSCARVIAJE" | translate }}</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content">
         <ion-grid>
@@ -12,19 +12,26 @@
             <ion-col class="columna">
               <div class="input-container">
                 <mat-icon>share_location</mat-icon>
-                <ion-input 
-                  class="inputs" 
-                  label="{{ 'FINDER_TRAVELS.FROM' | translate }}" 
-                  labelPlacement="floating" 
-                  maxlength="20" 
-                  [(ngModel)]="origen" 
-                  (ionInput)="obtenerSugerenciasOrigen($event)">
+                <ion-input
+                  class="inputs"
+                  label="{{ 'HOME.BUSCADOR.DESDE' | translate }}"
+                  labelPlacement="floating"
+                  maxlength="20"
+                  [(ngModel)]="origen"
+                  (ionInput)="obtenerSugerenciasOrigen($event)"
+                >
                 </ion-input>
-                <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
-                  <li *ngFor="let localidad of sugerenciasOrigen" 
-                      class="list-group-item" 
-                      (click)="seleccionarLocalidadOrigen(localidad)">
-                    {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
+                <ul
+                  *ngIf="sugerenciasOrigen.length > 0"
+                  class="list-group lista_sugerencias"
+                >
+                  <li
+                    *ngFor="let localidad of sugerenciasOrigen"
+                    class="list-group-item"
+                    (click)="seleccionarLocalidadOrigen(localidad)"
+                  >
+                    {{ localidad.descripcion.split(",")[0].trim() }} -
+                    {{ localidad.provincia }}
                   </li>
                 </ul>
               </div>
@@ -34,19 +41,26 @@
             <ion-col class="columna">
               <div class="input-container">
                 <mat-icon>share_location</mat-icon>
-                <ion-input 
-                  class="inputs" 
-                  label="{{ 'FINDER_TRAVELS.TO' | translate }}" 
-                  labelPlacement="floating" 
-                  maxlength="20" 
-                  [(ngModel)]="destino" 
-                  (ionInput)="obtenerSugerenciasDestino($event)">
+                <ion-input
+                  class="inputs"
+                  label="{{ 'HOME.BUSCADOR.A' | translate }}"
+                  labelPlacement="floating"
+                  maxlength="20"
+                  [(ngModel)]="destino"
+                  (ionInput)="obtenerSugerenciasDestino($event)"
+                >
                 </ion-input>
-                <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-                  <li *ngFor="let localidad of sugerenciasDestino" 
-                      class="list-group-item" 
-                      (click)="seleccionarLocalidadDestino(localidad)">
-                    {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
+                <ul
+                  *ngIf="sugerenciasDestino.length > 0"
+                  class="list-group lista_sugerencias"
+                >
+                  <li
+                    *ngFor="let localidad of sugerenciasDestino"
+                    class="list-group-item"
+                    (click)="seleccionarLocalidadDestino(localidad)"
+                  >
+                    {{ localidad.descripcion.split(",")[0].trim() }} -
+                    {{ localidad.provincia }}
                   </li>
                 </ul>
               </div>
@@ -56,12 +70,13 @@
             <ion-col class="columna">
               <div class="input-container">
                 <mat-icon>schedule</mat-icon>
-                <ion-input 
-                  class="inputs" 
-                  label="{{ 'FINDER_TRAVELS.WHEN' | translate }}" 
-                  labelPlacement="floating" 
-                  type="date" 
-                  [(ngModel)]="fecha_salida">
+                <ion-input
+                  class="inputs"
+                  label="{{ 'HOME.BUSCADOR.CUANDO' | translate }}"
+                  labelPlacement="floating"
+                  type="date"
+                  [(ngModel)]="fecha_salida"
+                >
                 </ion-input>
               </div>
             </ion-col>
@@ -70,11 +85,12 @@
             <ion-col class="selector_personas columna">
               <div class="input-container cajon_selector_personas">
                 <mat-icon>group</mat-icon>
-                <ion-select 
-                  aria-label="n_plazas" 
-                  interface="popover" 
-                  placeholder="{{ 'FINDER_TRAVELS.TRAVELERS' | translate }}" 
-                  [(ngModel)]="plazas">
+                <ion-select
+                  aria-label="n_plazas"
+                  interface="popover"
+                  placeholder="{{ 'HOME.BUSCADOR.NUMPASAJEROS' | translate }}"
+                  [(ngModel)]="plazas"
+                >
                   <ion-select-option value="1">1</ion-select-option>
                   <ion-select-option value="2">2</ion-select-option>
                   <ion-select-option value="3">3</ion-select-option>
@@ -87,12 +103,13 @@
         <!-- Botón para buscar -->
         <div class="caja_boton">
           <p-toast position="bottom-center"></p-toast>
-          <button 
-            mat-raised-button 
-            class="btn_config btn btn_bg" 
-            (click)="openSearchTravels()">
+          <button
+            mat-raised-button
+            class="btn_config btn btn_bg"
+            (click)="openSearchTravels()"
+          >
             <mat-icon>search</mat-icon>
-            {{ "FINDER_TRAVELS.SEARCH" | translate }}
+            {{ "BOTON.BUSCAR" | translate }}
           </button>
         </div>
       </div>

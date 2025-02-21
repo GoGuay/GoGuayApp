@@ -12,12 +12,13 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SpinnerComponent } from "../spinner/spinner/spinner.component";
 
 
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, MatIcon, TranslateModule, CommonModule],
+  imports: [IonicModule, MatIcon, TranslateModule, CommonModule, SpinnerComponent],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })

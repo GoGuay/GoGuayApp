@@ -49,10 +49,10 @@
           <label for="genero" class="form-label">Género</label>
           <select class="form-select" id="genero" formControlName="genero">
             <option value="" disabled selected>Selecciona una opción</option>
-            <option value="1">Masculino</option>
-            <option value="2">Femenino</option>
-            <option value="3">No binario</option>
-            <option value="4">Prefiero no decirlo</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="No binario">No binario</option>
+            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
           </select>
         </div>
 
@@ -65,14 +65,14 @@
           <select class="form-select" aria-label="Selección de orientación" formControlName="orientacion">
             >
             <option value="" disabled selected>Selecciona una opción</option>
-            <option value="1">Gay</option>
-            <option value="2">Lesbiana</option>
-            <option value="3">Bisexual</option>
-            <option value="4">Pansexual</option>
-            <option value="5">Asexual</option>
-            <option value="6">Demisexual</option>
-            <option value="7">Queer</option>
-            <option value="8">Otro</option>
+            <option value="Gay">Gay</option>
+            <option value="Lesbiana">Lesbiana</option>
+            <option value="Bisexual">Bisexual</option>
+            <option value="Pansexual">Pansexual</option>
+            <option value="Asexual">Asexual</option>
+            <option value="Demisexual">Demisexual</option>
+            <option value="Queer">Queer</option>
+            <option value="Otro">Otro</option>
           </select>
         </div>
       </form>
@@ -87,7 +87,7 @@
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario3" class="formulario">
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label">Contraseña</label>
           <input formControlName="password" type="password" class="form-control form-input" id="password" />
         </div>
       </form>

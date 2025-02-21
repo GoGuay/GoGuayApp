@@ -33,10 +33,19 @@
           />
         </div>
         <ion-row class="d-flex justify-content-center">
-          <div>
+          <div class="nombre-container">
             <h5>
               {{ userData.usuario.nombre }} {{ userData.usuario.apellidos }}
             </h5>
+            <button 
+            type="button" 
+            class="btn btn_bg ver_perfil_publico" 
+            (click)="openPerfilPublico(userData.usuario.id)" 
+            matTooltip="Acceso al perfil público"
+            matTooltipClass="custom-tooltip"
+          >
+            <mat-icon>manage_accounts</mat-icon>
+          </button>
           </div>
         </ion-row>
       </ion-col>

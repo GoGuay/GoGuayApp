@@ -4,7 +4,7 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje
+from models import Viaje, PasajeroViaje
 from extensions import db
 from sqlalchemy.orm import joinedload 
 
@@ -101,3 +101,52 @@ def obtener_viajes():
         joinedload(Viaje.usuario)
     ).all()
     return jsonify([viaje.serialize() for viaje in lista_viajes]), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#           SERVICIO PARA UNIRSE A UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/unirse_viaje', methods=['POST'])
+def unirse_viaje():
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
+
+    usuario_id = data.get('usuario_id')
+    viaje_id = data.get('viaje_id')
+
+    if not usuario_id or not viaje_id:
+        return jsonify({"error": "Faltan datos obligatorios (usuario_id y/o viaje_id)"}), 400
+
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "El viaje no existe"}), 404
+
+    if viaje.plazas <= 0:
+        return jsonify({"error": "No hay plazas disponibles en este viaje"}), 400
+
+    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=usuario_id, viaje_id=viaje_id).first()
+    if pasajero_existente:
+        return jsonify({"error": "El usuario ya está registrado en este viaje"}), 400
+
+    nuevo_pasajero = PasajeroViaje(usuario_id=usuario_id, viaje_id=viaje_id)
+    db.session.add(nuevo_pasajero)
+
+    viaje.plazas -= 1
+    db.session.commit()
+
+    return jsonify({
+        "mensaje": "Usuario agregado al viaje correctamente",
+        "viaje": viaje.serialize(),
+        "plazas_restantes": viaje.plazas
+    }), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER LOS VIAJES A LOS QUE EL USUARIO SE HA UNIDO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/viajes_del_usuario/<int:usuario_id>', methods=['GET'])
+def obtener_viajes_pasajero(usuario_id):
+    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).all()
+    return jsonify([viaje.serialize() for viaje in viajes])

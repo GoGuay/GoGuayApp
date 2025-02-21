@@ -37,6 +37,8 @@ def crear_usuario():
         email=data['email'],
         password=codificar_password,
         telefono=data.get('telefono'),
+        orientacion=data.get('orientacion'),
+        genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
         carnet_conducir_verificado=data.get('carnet_conducir_verificado', False),
@@ -131,3 +133,20 @@ def actualizar_usuario(user_id):
     
     db.session.commit()
     return jsonify(usuario.serialize()), 200
+
+
+#
+# ELIMINAR USUARIO POR ID
+#
+@user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
+def eliminar_usuario(id):
+    usuario = Usuario.query.get(id)
+    
+    if usuario is None:
+        return jsonify({"error": "No se ha encontrado al usuario"}), 404
+    
+    # Eliminar el usuario
+    db.session.delete(usuario)
+    db.session.commit()
+    
+    return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200

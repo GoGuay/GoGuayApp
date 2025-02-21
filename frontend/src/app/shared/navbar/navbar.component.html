@@ -144,7 +144,7 @@
               </mat-icon>
             </a>
             <ul
-              class="dropdown-menu"
+              class="dropdown-menu menuusuario"
               aria-labelledby="navbarDropdown"
               data-bs-auto-close="false"
             >
@@ -203,7 +203,7 @@
     *ngIf="!validacionHomePage"
   >
     <div class="container">
-      <ul>
+      <ul class="menuusuario">
         <li class="nav-item d-flex flex-column align-items-center">
           <ion-button fill="clear" (click)="navigateBack()">
             <mat-icon class="back-icon">arrow_back</mat-icon>
@@ -234,15 +234,15 @@
             >
               <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu menuusuario">
               <li>
                 <a class="dropdown-item" href="/login">{{
-                  "HEADER.LOGIN" | translate
+                  "NAVBAR.LOGIN" | translate
                 }}</a>
               </li>
               <li>
                 <a class="dropdown-item" href="/registro">{{
-                  "HEADER.REGISTER" | translate
+                  "NAVBAR.REGISTRO" | translate
                 }}</a>
               </li>
             </ul>
@@ -261,7 +261,7 @@
               >
             </a>
             <ul
-              class="dropdown-menu"
+              class="dropdown-menu menuusuario"
               aria-labelledby="navbarDropdown"
               data-bs-auto-close="false"
             >

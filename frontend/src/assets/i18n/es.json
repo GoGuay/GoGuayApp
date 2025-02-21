@@ -1,4 +1,5 @@
 {
+  "TITLE": "PrideRide",
   "Panel de usuario": "Pagina de Panel de usuario",
   "PANELUSUARIO": {
     "PANELUSUARIO": "Panel de usuario",
@@ -175,7 +176,12 @@
     "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
     "ELEGIR_ARCHIVOS": "Elegir archivos",
     "CAMBIAR": "Cambiar!",
-    "ELIMINAR_CTA": "Eliminar mi cuenta"
+    "ELIMINAR_CTA": "Eliminar mi cuenta",
+    "BUSCAR": "Buscar",
+    "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
+    "CONSULTA_AQUI": "Consulta aquí",
+    "PUBLICAR_VIAJE": "Publica tu viaje",
+    "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
 
   "NavBar Home": "Opciones del navbar que aparece en el Home",
@@ -187,8 +193,8 @@
     "PANEL": "PANEL DE USUARIO",
     "MIPERFIL": "Mi perfil",
     "DATOSCONTACTO": "Datos de contacto",
-    "VERIFICACION": "Verificación / Password",
-    "SALDO": "Saldo y transferencias",
+    "VERIFICACION": "Verificación/Password",
+    "SALDO": "Saldo/Transferencias",
     "LOGIN": "Login",
     "REGISTRO": "Registrarse",
     "SALIR": "Salir"
@@ -200,35 +206,59 @@
     "COOKIES": "Cookies"
   },
 
+  "_Home": "Por secciones",
+  "HOME": {
+    "JUMBO": {
+      "SLOGAN": "Seas como seas, viajamos contigo"
+    },
+    "BUSCADOR": {
+      "BUSCARVIAJE": "Buscar viaje",
+      "DESDE": "Desde",
+      "A": "a",
+      "CUANDO": "Cuando",
+      "NUMPASAJEROS": "Número de pasajeros"
+    },
+    "INFO": {
+      "TEXTO_1": "Explora nuevas aventuras y destinos increíbles. Encuentra compañeros de viaje que compartan tu pasión por descubrir el mundo.",
+      "TEXTO_2": "Planea tu próximo viaje con facilidad. Conéctate con personas que van en la misma dirección.",
+      "TEXTO_3": "Comparte tus experiencias y crea recuerdos inolvidables con viajeros como tú."
+    },
+    "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje",
+    "TRAYECTOS_POPULARES": "Trayectos más populares",
+    "DUDAS": "¿TIENES DUDAS?"
+  },
+
+  "_Búsqueda de viaje": "/busqueda-viajes",
+  "BUSQUEDA": {
+    "FILTRAR_POR": "Filtrar por...",
+    "HORA_SALIDA": "Hora de salida",
+    "PRECIO": "Precio",
+    "RESULTADOS": "Resultados encontrados"
+  },
+
+  "_NuevoViaje": "/nuevo-viaje",
+  "NUEVOVIAJE": {
+    "PLACE_DONDE_COMIENZA": "¿Dónde comienza el viaje?",
+    "PLACE_HASTA_DONDE": "¿Hasta donde es el viaje?",
+    "PLACE_NUM_PLAZAS": "Número de plazas",
+    "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
+    "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
+    "AYUDA_TOOLTIP": "Ayuda para publicar un viaje",
+    "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores.",
+    "TITULO_MODAL_AYUDA": "Ayuda",
+    "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
+    "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
+  },
+
+  "_CentroDeAyuda": " Centro de ayuda",
+  "CENTRODEAYUDA": {
+    "TITULO": "Centro de ayuda",
+    "SUBTITULO": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte"
+  },
+
   "ANTIGUO DEBAJO": "",
 
-  "HOME": {
-    "NEW_TRAVEL_TITLE": "¿Quieres compartir tu próximo viaje?",
-    "NEW_TRAVEL_BUTTON": "Publica tu próximo viaje aquí",
-    "MOST_POPULAR_TRAVELS_TITLE": "TRAYECTOS MÁS POPULARES",
-    "QUESTIONS_TITLE": "¿TIENES DUDAS?",
-    "CHECK_HERE": "Consulta aquí"
-  },
-
-  "JUMBOTRON": {
-    "TITLE": "Seas como seas, viajamos contigo",
-    "HELP": "Imagen de la cabecera"
-  },
-  "INFO": {
-    "TEXT_ONE": "Explora nuevas aventuras y destinos increíbles. Encuentra compañeros de viaje que compartan tu pasión por descubrir el mundo.",
-    "TEXT_TWO": "Planea tu próximo viaje con facilidad. Conéctate con personas que van en la misma dirección.",
-    "TEXT_THREE": "Comparte tus experiencias y crea recuerdos inolvidables con viajeros como tú."
-  },
-  "FINDER_TRAVELS": {
-    "TITLE": "Buscador de viajes",
-    "FROM": "De",
-    "TO": "A",
-    "WHEN": "Cuando",
-    "TRAVELERS": "Nº pasajeros",
-    "SEARCH": "Buscar"
-  },
-
-  "NUEVO_VIAJE": {
+  "NUEVO_VIAJE2": {
     "TITLE_BTN_BACK": "PrideRide",
     "ALT_LOGO": "Logotipo de PrideRide",
     "SEARCH_TRAVEL": "Buscar viaje",
@@ -240,13 +270,6 @@
     "PUBLISH_TRIP": "Publicar viaje",
     "PUBLISH_TRIP_TITLE": "Botón para publicar viaje",
     "HELP_CENTER_TITLE": "Centro de ayuda",
-    "HELP_CENTER_SUBTITLE": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
-  },
-  "RESULTADOS_BUSQUEDA": {
-    "FILTRO_TITULO": "Filtrar por...",
-    "HORA_SALIDA": "Hora de salida",
-    "PRECIO": "Precio",
-    "RESULTADOS": "Resultados encontrados"
   }
 }

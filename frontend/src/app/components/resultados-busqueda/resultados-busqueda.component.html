@@ -3,22 +3,33 @@
     <ion-row class="">
       <ion-col size-sm="12" size-xl="2.5">
         <ion-row class="d-flex justify-content-center">
-          <p>{{ "RESULTADOS_BUSQUEDA.FILTRO_TITULO" | translate }}</p>
+          <p>{{ "BUSQUEDA.FILTRAR_POR" | translate }}</p>
         </ion-row>
 
         <ion-row class="text-center col-separator d-flex align-content-center">
           <div class="caja-ordenar">
             <div class="form-check inputs-filtro">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="horaSalida" checked />
+              <input
+                class="form-check-input"
+                type="radio"
+                name="flexRadioDefault"
+                id="horaSalida"
+                checked
+              />
               <label class="form-check-label" for="horaSalida">
-                {{ "RESULTADOS_BUSQUEDA.HORA_SALIDA" | translate }}
+                {{ "BUSQUEDA.HORA_SALIDA" | translate }}
               </label>
             </div>
 
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="precio" />
+              <input
+                class="form-check-input"
+                type="radio"
+                name="flexRadioDefault"
+                id="precio"
+              />
               <label class="form-check-label" for="precio">
-                {{ "RESULTADOS_BUSQUEDA.PRECIO" | translate }}
+                {{ "BUSQUEDA.PRECIO" | translate }}
               </label>
             </div>
           </div>
@@ -27,18 +38,27 @@
 
       <ion-col>
         <ion-row class="d-flex justify-content-center">
-          <p>{{ "RESULTADOS_BUSQUEDA.RESULTADOS" | translate }}</p>
+          <p>{{ "BUSQUEDA.RESULTADOS" | translate }}</p>
         </ion-row>
         <ion-row class="d-flex justify-content-center p-4">
-          <div *ngIf="!listado_viajes.length">Cargando viajes...</div>
+          <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
+            <app-spinner></app-spinner>
+            Cargando viajes...
+          </div>
           <div *ngFor="let resultado_del_viaje of listado_viajes">
             <div class="card resultado-viaje mb-3">
               <ion-row>
-                <ion-col class="col-separator ion-activatable" size="9" size-md="10" (click)="openDetalleViaje(resultado_del_viaje)" type="button">
+                <ion-col
+                  class="col-separator ion-activatable"
+                  size="9"
+                  size-md="10"
+                  (click)="openDetalleViaje(resultado_del_viaje)"
+                  type="button"
+                >
                   <ion-ripple-effect></ion-ripple-effect>
                   <ion-row class="fila-hora">
                     <ion-col class="text-start d-flex align-items-center">
-                      <p>{{resultado_del_viaje.hora_salida}}</p>
+                      <p>{{ resultado_del_viaje.hora_salida }}</p>
                     </ion-col>
 
                     <ion-col class="text-end">
@@ -46,44 +66,73 @@
                     </ion-col>
                   </ion-row>
                   <ion-row>
-                    <div class="d-flex align-items-center justify-content-center">
+                    <div
+                      class="d-flex align-items-center justify-content-center"
+                    >
                       <mat-icon class="me-1">diversity_1</mat-icon>
-                      <div class="me-2 linea1" style="border: 3px solid black"></div>
+                      <div
+                        class="me-2 linea1"
+                        style="border: 3px solid black"
+                      ></div>
                       <div>duracion</div>
-                      <div class="ms-2 linea2" style="border: 3px solid black"></div>
+                      <div
+                        class="ms-2 linea2"
+                        style="border: 3px solid black"
+                      ></div>
                       <mat-icon class="ms-1">sports_score</mat-icon>
                     </div>
                   </ion-row>
                   <ion-row class="fila-hora">
                     <ion-col class="text-start">
-                      <p>{{resultado_del_viaje.origen}}</p>
+                      <p>{{ resultado_del_viaje.origen }}</p>
                     </ion-col>
                     <ion-col>
-                      <p *ngIf="resultado_del_viaje.precio_viaje" class="text-center" style="font-size: 30px; font-weight: bold">
-                        {{resultado_del_viaje.precio_viaje}} €
+                      <p
+                        *ngIf="resultado_del_viaje.precio_viaje"
+                        class="text-center"
+                        style="font-size: 30px; font-weight: bold"
+                      >
+                        {{ resultado_del_viaje.precio_viaje }} €
                       </p>
-                      <p *ngIf="!resultado_del_viaje.precio_viaje" class="text-center" style="font-weight: bold">
+                      <p
+                        *ngIf="!resultado_del_viaje.precio_viaje"
+                        class="text-center"
+                        style="font-weight: bold"
+                      >
                         Sin precio asignado
                       </p>
                     </ion-col>
 
                     <ion-col class="text-end">
-                      <p>{{resultado_del_viaje.destino}}</p>
+                      <p>{{ resultado_del_viaje.destino }}</p>
                     </ion-col>
                   </ion-row>
                 </ion-col>
-                <ion-col (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)" type="button">
+                <ion-col
+                  (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)"
+                  type="button"
+                >
                   <ion-row class="d-flex justify-content-center">
                     <p>{{ resultado_del_viaje.usuario?.nombre }}</p>
                   </ion-row>
                   <ion-row class="d-flex justify-content-center">
-                    <div class="d-flex justify-content-center" >
-                      <img class="user" *ngIf="resultado_del_viaje.usuario?.foto" [src]="resultado_del_viaje.usuario?.foto" />
-                      <img class="user" *ngIf="!resultado_del_viaje.usuario?.foto" src="../../../assets/User-Profile-PNG-Image.png" />
+                    <div class="d-flex justify-content-center">
+                      <img
+                        class="user"
+                        *ngIf="resultado_del_viaje.usuario?.foto"
+                        [src]="resultado_del_viaje.usuario?.foto"
+                      />
+                      <img
+                        class="user"
+                        *ngIf="!resultado_del_viaje.usuario?.foto"
+                        src="../../../assets/User-Profile-PNG-Image.png"
+                      />
                     </div>
                   </ion-row>
-                  <ion-row class="d-flex justify-content-center">Puntuación</ion-row>
-                </ion-col>                
+                  <ion-row class="d-flex justify-content-center"
+                    >Puntuación</ion-row
+                  >
+                </ion-col>
               </ion-row>
             </div>
           </div>

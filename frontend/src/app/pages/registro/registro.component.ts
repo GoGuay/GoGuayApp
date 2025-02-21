@@ -119,7 +119,13 @@ export class RegistroComponent implements OnInit {
           console.log('Respuesta registro: ', response);
           
           const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
-          const message: string = 'Tu usuario ha sido creado correctamente.';
+          const message: string = `
+          <p>Tu usuario ha sido creado correctamente.</p>
+          <p>Accede a la ventana de acceso de la aplicación para 
+            <br>
+            <a class="text-center" href="/login">iniciar sesión</a>
+          </p>
+        `;
           this.openHelp(title, message);
 
           this.router.navigate(['/home']);

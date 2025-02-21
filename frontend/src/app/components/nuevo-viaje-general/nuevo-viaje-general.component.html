@@ -3,16 +3,27 @@
     <ion-row>
       <ion-col>
         <div class="container">
-          <img title="imagen publicación de viaje" src="../../../assets/imgs/bridge1.jpg" class="img_travel" />
+          <img
+            title="imagen publicación de viaje"
+            src="../../../assets/imgs/bridge1.jpg"
+            class="img_travel"
+          />
         </div>
       </ion-col>
       <ion-col>
         <div class="container">
-          <h2>{{ 'HOME.NEW_TRAVEL_TITLE' | translate }}</h2>
+          <h2>{{ "HOME.QUIERES_PUBLICAR_VIAJE" | translate }}</h2>
           <div class="d-flex justify-content-center">
-            <button type="button" mat-raised-button class="me-2 btns btn_bg travel-btn" (click)="openNewTravel()">
+            <button
+              type="button"
+              mat-raised-button
+              class="me-2 btns btn_bg travel-btn"
+              (click)="openNewTravel()"
+            >
               <mat-icon class="travel-icon">map</mat-icon>
-              <span class="travel-text">{{ 'HOME.NEW_TRAVEL_BUTTON' | translate }}</span>
+              <span class="travel-text">{{
+                "BOTON.PUBLICA_TU_VIAJE_AQUI" | translate
+              }}</span>
             </button>
           </div>
         </div>

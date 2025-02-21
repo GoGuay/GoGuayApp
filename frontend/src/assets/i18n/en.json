@@ -1,4 +1,5 @@
 {
+  "TITLE": "PrideRide",
   "User Panel": "User Panel Page",
   "USERPANEL": {
     "USERPANEL": "User Panel",
@@ -187,8 +188,8 @@
     "PANEL": "USER PANEL",
     "MIPERFIL": "My Profile",
     "DATOSCONTACTO": "Contact Information",
-    "VERIFICACION": "Verification / Password",
-    "SALDO": "Balance and Transfers",
+    "VERIFICACION": "Verification/Password",
+    "SALDO": "Balance/Transfers",
     "LOGIN": "Login",
     "REGISTRO": "Register",
     "SALIR": "Logout"

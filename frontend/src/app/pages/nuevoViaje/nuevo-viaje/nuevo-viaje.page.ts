@@ -5,16 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -32,11 +30,10 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
     NavbarComponent,
     MatDialogModule,
     MatTooltipModule,
-    ToastModule
+    ToastModule,
   ],
 })
 export class NuevoViajePage implements OnInit {
-
   userLoggedIn: boolean = false;
 
   origen: string = '';
@@ -44,38 +41,39 @@ export class NuevoViajePage implements OnInit {
   plazas: string = '';
   hora_seleccionada: string = '';
 
-  title_help_carnet: string = 'Ayuda';
-  message_help_carnet: string =
-    'Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.';
-  message_help_auth: string =
-    '<p>Necesitas <a href="/login">iniciar sesión</a> o <a href="/registro">registrarte</a> previamente antes de poder publicar un viaje.</p>';
+  title_help_carnet: string = '';
+  message_help_carnet: string = '';
+  message_help_auth: string = '';
 
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
   constructor(
     private router: Router,
-    private dialog: MatDialog,
     private viajesService: TravelService,
     private googleService: GoogleServices,
-    private funcionesComunes: FuncionesComunes
-  ) { }
+    public funcionesComunes: FuncionesComunes,
+    private translate: TranslateService
+  ) {
+    this.translate
+      .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
+      .subscribe((traduccion: string) => {
+        this.message_help_carnet = traduccion;
+      });
+    this.translate
+      .get('NUEVOVIAJE.TITULO_MODAL_AYUDA')
+      .subscribe((traduccion: string) => {
+        this.title_help_carnet = traduccion;
+      });
+    this.translate
+      .get('NUEVOVIAJE.MENSAJE_AYUDA_LOGIN_REG')
+      .subscribe((traduccion: string) => {
+        this.message_help_auth = traduccion;
+      });
+  }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-  }
-
-  /**
-   * Función para abrir una ventana modal con mensajes de ayuda.
-   *
-   * @param title Recibe el título que se va a mostrar en la ventana.
-   * @param message Recibe el contenido que se va a mostrar en la ventana.
-   */
-  openHelp(title: string, message: string) {
-    this.dialog.open(HelpModalComponent, {
-      data: { title, message },
-      disableClose: true,
-    });
   }
 
   /**
@@ -87,11 +85,11 @@ export class NuevoViajePage implements OnInit {
       origen: this.origen,
       destino: this.destino,
       plazas: this.plazas,
-      hora_salida: this.hora_seleccionada
+      hora_salida: this.hora_seleccionada,
     };
 
     if (!this.userLoggedIn) {
-      this.openHelp(this.title_help_carnet, this.message_help_auth);
+      this.funcionesComunes.openConfirmModal(this.title_help_carnet, this.message_help_auth);
     } else {
       /**
        * Se almacena temporalmente los datos del viaje.
@@ -104,7 +102,7 @@ export class NuevoViajePage implements OnInit {
   /**
    * Función para obtener la lista de sugerencias para el origen
    * en función de lo que escriba el usuario en el input correspondiente.
-   * 
+   *
    * @param evento Recibe el evento del input.
    */
   obtenerSugerenciasOrigen(evento: Event) {
@@ -116,10 +114,10 @@ export class NuevoViajePage implements OnInit {
       });
   }
 
-   /**
+  /**
    * Función para obtener la lista de sugerencias para el destino
    * en función de lo que escriba el usuario en el input correspondiente.
-   * 
+   *
    * @param evento Recibe el evento del input.
    */
   obtenerSugerenciasDestino(evento: Event) {
@@ -133,7 +131,7 @@ export class NuevoViajePage implements OnInit {
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadOrigen(localidad: any) {
@@ -141,10 +139,9 @@ export class NuevoViajePage implements OnInit {
     this.sugerenciasOrigen = [];
   }
 
-
   /**
    * Función para guardar la información de la localidad de destino seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadDestino(localidad: any) {

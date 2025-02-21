@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Injectable({
@@ -62,5 +62,20 @@ export class UserServicesService {
     return this.http.post(`${this.apiUrl}/user/registro`, datos);
   }
 
+
+  /**
+   * Función para eliminar un usuario.
+   * 
+   * @param id Recibe el id del usuario que se quiere eliminar
+   * @returns 
+   */
+  eliminarUsuario(id: string){
+    return this.http.delete<Usuario>(`${this.apiUrl}/user/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al eliminar el usuario: ', error);
+        return throwError(error);
+      })
+    )
+  }
 
 }

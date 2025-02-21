@@ -1,0 +1,28 @@
+.spinner-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .spinner {
+    width: 60px;
+    height: 60px;
+    animation: colorCycle 2s infinite;
+  }
+  
+  @keyframes colorCycle {
+    0% { fill: #ffb3ba; }  
+    16% { fill: #ffdfba; }  
+    33% { fill: #ffffba; }  
+    50% { fill: #baffc9; }  
+    66% { fill: #bae1ff; }  
+    83% { fill: #e0baff; }  
+    100% { fill: #ffb3ba; } 
+  }
+  
