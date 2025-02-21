@@ -8,13 +8,14 @@ import { RouterModule } from '@angular/router';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { SpinnerComponent } from "../../components/spinner/spinner/spinner.component";
 
 @Component({
   selector: 'app-centro-ayuda',
   templateUrl: './centro-ayuda.page.html',
   styleUrls: ['./centro-ayuda.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent]
+  imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, SpinnerComponent]
 })
 export class CentroAyudaPage implements OnInit {
   
