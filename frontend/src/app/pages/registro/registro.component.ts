@@ -9,14 +9,24 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { navigate } from 'ionicons/icons';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatButtonModule,
+    TranslateModule,
+  ],
   providers: [UserServicesService],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
@@ -27,11 +37,18 @@ export class RegistroComponent implements OnInit {
   formulario2: FormGroup;
   formulario3: FormGroup;
   paso1: boolean = false;
+  fechaNacimiento: string = '';
 
-  constructor(private fb: FormBuilder, private userService: UserServicesService, private router: Router, private dialog: MatDialog) {
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserServicesService,
+    private router: Router,
+    private dialog: MatDialog,
+    private funcionesComunes: FuncionesComunes
+  ) {
     this.formulario1 = this.fb.group({
-      email: ['', Validators.required],
-      fnacimiento: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      fecha_nacimiento: ['', Validators.required],
     });
 
     this.formulario2 = this.fb.group({
@@ -56,8 +73,13 @@ export class RegistroComponent implements OnInit {
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid) {
-      this.pasoActual++;
-      this.paso1 = false;
+      const validacion = this.validacionEdad();
+      console.log('validacion: ', validacion);
+
+      if (validacion) {
+        this.pasoActual++;
+        this.paso1 = false;
+      }
     } else if (this.pasoActual === 2 && this.formulario2.valid) {
       this.pasoActual++;
       this.paso1 = false;
@@ -76,25 +98,25 @@ export class RegistroComponent implements OnInit {
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
     const contratoDialog = this.dialog.open(HelpModalComponent, {
-      data: { 
+      data: {
         title: 'Contrato de Respeto',
         message: `
           <p>Al registrarte en nuestra aplicación, te comprometes a respetar a todos los usuarios, independientemente de su identidad de género, orientación sexual o cualquier otra característica personal.</p>
-          
+
           <ul>
             <li>Tratar a todos los usuarios con amabilidad y empatía.</li>
             <li>No se tolerará ningún tipo de discriminación, acoso o conducta inapropiada.</li>
             <li>El incumplimiento de estas normas puede conllevar la suspensión de tu cuenta.</li>
           </ul>
-  
+
           <p>Para conocer más detalles sobre nuestro código de conducta, haz clic en el siguiente botón:</p>
         `,
         showAcceptButton: true,
-        showMoreInfoButton: true
+        showMoreInfoButton: true,
       },
-      panelClass: 'dialog-animate'
+      panelClass: 'dialog-animate',
     });
-  
+
     contratoDialog.afterClosed().subscribe((accepted: string) => {
       if (accepted === 'registro') {
         this.registrar();
@@ -103,11 +125,14 @@ export class RegistroComponent implements OnInit {
       }
     });
   }
-  
 
   // Función para registrar al usuario
   registrar() {
-    if (this.formulario1.valid && this.formulario2.valid && this.formulario3.valid) {
+    if (
+      this.formulario1.valid &&
+      this.formulario2.valid &&
+      this.formulario3.valid
+    ) {
       const datosRegistro = {
         ...this.formulario1.value,
         ...this.formulario2.value,
@@ -117,11 +142,11 @@ export class RegistroComponent implements OnInit {
       this.userService.registrarUsuario(datosRegistro).subscribe({
         next: (response) => {
           console.log('Respuesta registro: ', response);
-          
+
           const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
           const message: string = `
           <p>Tu usuario ha sido creado correctamente.</p>
-          <p>Accede a la ventana de acceso de la aplicación para 
+          <p>Accede a la ventana de acceso de la aplicación para
             <br>
             <a class="text-center" href="/login">iniciar sesión</a>
           </p>
@@ -143,7 +168,7 @@ export class RegistroComponent implements OnInit {
   openError(title: string, message: string) {
     this.dialog.open(ModalErrorComponent, {
       data: { title, message },
-      panelClass: 'dialog-animate'
+      panelClass: 'dialog-animate',
     });
   }
 
@@ -151,12 +176,52 @@ export class RegistroComponent implements OnInit {
   openHelp(title: string, message: string) {
     this.dialog.open(HelpModalComponent, {
       data: { title, message },
-      panelClass: 'dialog-animate'
+      panelClass: 'dialog-animate',
     });
   }
 
   // Función para volver al home
   volverAlHome() {
     this.router.navigate(['/home']);
+  }
+
+  validacionEdad(): boolean {
+    console.log(this.fechaNacimiento);
+    let esMayorEdad: boolean = false;
+    if (!this.fechaNacimiento) return false;
+
+    const fechaNac = new Date(this.fechaNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+
+    const mesActual = hoy.getMonth();
+    const diaActual = hoy.getDate();
+    const mesNacimiento = fechaNac.getMonth();
+    const diaNacimiento = fechaNac.getDate();
+    const tituloModal: string = '¡Aviso!';
+    const mensajeModal: string =
+      'Debes tener más de 18 años para usar este servicio';
+    if (
+      mesNacimiento > mesActual ||
+      (mesNacimiento === mesActual && diaNacimiento > diaActual)
+    ) {
+      edad--;
+    }
+    if (edad < 18) {
+      const dialogRef = this.funcionesComunes.openErrorModal(
+        tituloModal,
+        mensajeModal
+      );
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.router.navigate(['/home']);
+      });
+      this.fechaNacimiento = '';
+      return false; // Si es menor de edad, devuelve false
+    } else {
+      console.log(`Edad: ${edad} años`);
+      esMayorEdad = true; // Ahora sí cambiamos a true si es mayor de edad
+    }
+    return esMayorEdad;
   }
 }

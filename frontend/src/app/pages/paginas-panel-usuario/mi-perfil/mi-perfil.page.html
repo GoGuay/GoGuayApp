@@ -28,7 +28,8 @@
                   type="text"
                   class="form-control"
                   id="nombre"
-                  aria-describedby="emailHelp"
+                  aria-describedby="nombre"
+                  value="{{userData.usuario.nombre}}"
                 />
               </div>
             </ion-col>
@@ -42,7 +43,8 @@
                   type="text"
                   class="form-control"
                   id="apellidos"
-                  aria-describedby="emailHelp"
+                  aria-describedby="apellidos"
+                  value="{{userData.usuario.apellidos}}"
                 />
               </div>
             </ion-col>
@@ -53,7 +55,7 @@
                   >{{'MI_PERFIL.PRONOMBRE' | translate}}</label
                 >
                 <select class="form-select" aria-label="Selección de pronombre">
-                  <option selected>Selecciona una opcion</option>
+                  <option selected disabled>Selecciona una opcion</option>
                   <option value="1">Él / He / Him</option>
                   <option value="2">Ella / She / Her</option>
                   <option value="3">Elle / They / Them</option>
@@ -80,31 +82,36 @@
                   </span>
                 </label>
 
-                <select class="form-select" aria-label="Selección de género">
-                  >
-                  <option selected>
+                <select
+                  class="form-select"
+                  [(ngModel)]="userData.usuario.genero"
+                  aria-label="Selección de género"
+                >
+                  <option value="" selected disabled>
                     {{'SELEC_GENERO.SELECCIONA' | translate}}
                   </option>
-                  <option value="1">
+                  <option value="HOMBRE_CIS">
                     {{'SELEC_GENERO.HOMBRE_CIS' | translate}}
                   </option>
-                  <option value="2">
+                  <option value="MUJER_CIS">
                     {{'SELEC_GENERO.MUJER_CIS' | translate}}
                   </option>
-                  <option value="3">
+                  <option value="TRANSEXUAL">
                     {{'SELEC_GENERO.TRANSEXUAL' | translate}}
                   </option>
-                  <option value="4">
+                  <option value="NO_BINARIO">
                     {{'SELEC_GENERO.NO_BINARIO' | translate}}
                   </option>
-                  <option value="5">
+                  <option value="INTERGENERO">
                     {{'SELEC_GENERO.INTERGENERO' | translate}}
                   </option>
-                  <option value="6">
+                  <option value="NO_FLUIDO">
                     {{'SELEC_GENERO.NO_FLUIDO' | translate}}
                   </option>
-                  <option value="7">{{'SELEC_GENERO.OTRO' | translate}}</option>
-                  <option value="8">
+                  <option value="OTRO">
+                    {{'SELEC_GENERO.OTRO' | translate}}
+                  </option>
+                  <option value="NO_RESPONDE">
                     {{'SELEC_GENERO.NO_RESPONDE' | translate}}
                   </option>
                 </select>
@@ -126,30 +133,35 @@
                 <select
                   class="form-select"
                   aria-label="Selección de orientación sexual"
+                  [(ngModel)]="userData.usuario.orientacion"
                 >
                   >
                   <option selected>
                     {{'ORIENTACION.SELECCIONA' | translate}}
                   </option>
-                  <option value="1">{{'ORIENTACION.GAY' | translate}}</option>
-                  <option value="2">
+                  <option value="GAY">{{'ORIENTACION.GAY' | translate}}</option>
+                  <option value="LESBIANA">
                     {{'ORIENTACION.LESBIANA' | translate}}
                   </option>
-                  <option value="3">
+                  <option value="BISEXUAL">
                     {{'ORIENTACION.BISEXUAL' | translate}}
                   </option>
-                  <option value="4">
+                  <option value="PANSEXUAL">
                     {{'ORIENTACION.PANSEXUAL' | translate}}
                   </option>
-                  <option value="5">
+                  <option value="ASEXUAL">
                     {{'ORIENTACION.ASEXUAL' | translate}}
                   </option>
-                  <option value="6">
+                  <option value="DEMISEXUAL">
                     {{'ORIENTACION.DEMISEXUAL' | translate}}
                   </option>
-                  <option value="7">{{'ORIENTACION.QUEER' | translate}}</option>
-                  <option value="8">{{'ORIENTACION.OTRO' | translate}}</option>
-                  <option value="9">
+                  <option value="QUEER">
+                    {{'ORIENTACION.QUEER' | translate}}
+                  </option>
+                  <option value="OTRO">
+                    {{'ORIENTACION.OTRO' | translate}}
+                  </option>
+                  <option value="NO_RESPONDE">
                     {{'ORIENTACION.NO_RESPONDE' | translate}}
                   </option>
                 </select>
@@ -162,7 +174,12 @@
                 <label for="fnacimiento" class="form-label"
                   >{{'MI_PERFIL.FECHA_NACIMIENTO' | translate}}</label
                 >
-                <input type="date" class="form-control" id="fnacimiento" />
+                <input
+                  type="date"
+                  class="form-control"
+                  id="fnacimiento"
+                  value="{{userData.usuario.fecha_nacimiento}}"
+                />
               </div>
             </ion-col>
             <ion-col>{{'MI_PERFIL.EDAD' | translate}}</ion-col>
@@ -178,6 +195,7 @@
                   id="bio"
                   rows="5"
                   placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
+                  [(ngModel)]="userData.usuario.biografia"
                 ></textarea>
               </div>
             </ion-col>
