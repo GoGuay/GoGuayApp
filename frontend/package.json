@@ -1,5 +1,5 @@
 {
-  "name": "PrideRide_Ionic",
+  "name": "prideride",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -61,6 +61,7 @@
     "@capacitor/cli": "6.2.0",
     "@ionic/angular-toolkit": "^12.0.0",
     "@types/jasmine": "~5.1.0",
+    "@types/leaflet": "^1.4.5",
     "@types/leaflet-routing-machine": "^3.2.8",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",

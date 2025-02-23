@@ -3,6 +3,7 @@
 @use "@angular/material" as mat;
 @use "./animations.scss" as *;
 @import "./animations.scss";
+@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
 
 html {
   @include mat.theme(
