@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LeafletService } from 'src/app/core/leaflet/leaflet.service';
 
 @Component({
   selector: 'app-tercer-paso',
@@ -44,21 +45,28 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class TercerPasoComponent implements OnInit {
   map!: L.Map;
   routeControl: any;
-  selectedRouteIndex: number | null = null; // Índice de la ruta seleccionada
+  selectedRouteIndex: number | null = null;
   origen: string = '';
   destino: string = '';
   routes: any[] = [];
   sugerenciasParadas: any[] = [];
-  paradasSeleccionadas = new Set<string>();
+  paradasSeleccionadas = new Set<{ nombre: string, coords: L.LatLng }>();
   isLoadingRoutes: boolean = false;
   cargandoSugerencias: boolean = false;
   isUpdatingRoute: boolean = false;
   rutaConParadasSeleccionada: boolean = false;
   marcaPeajes: boolean = false;
 
+  origenCoords!: L.LatLng;
+  destinoCoords!: L.LatLng;
+  iconRetinaUrl = 'assets/marker-icon-2x.png';
+  iconUrl = 'assets/marker-icon.png';
+  shadowUrl = 'assets/marker-shadow.png';
+  private lat = 40.4168;
+  private lon = -3.7038;
+  private titulo = 'Ubicación';
 
-
-  constructor(private travelService: TravelService, private http: HttpClient) {
+  constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) {
 
     /**
      * Definición para los marcadores del mapa
@@ -72,7 +80,10 @@ export class TercerPasoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initializeMap();
+
+    setTimeout(() => {
+      this.initMap();
+    }, 300);
     this.travelService.viajeData$.subscribe((viajeData) => {
       this.origen = viajeData?.origen || '';
       this.destino = viajeData?.destino || '';
@@ -82,43 +93,58 @@ export class TercerPasoComponent implements OnInit {
     });
   }
 
-  initializeMap() {
+  private initMap(): void {
+    if (this.map) {
+       this.map.remove();
+    }
+ 
     this.map = L.map('map', {
-      center: [40.4168, -3.7038],
-      zoom: 12,
+       center: [this.lat, this.lon],
+       zoom: 14,
+       attributionControl: false
     });
-
+ 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap'
+       maxZoom: 19,
+       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
-  }
+ }
+ 
 
-  buscarCoordenadas() {
-    this.isLoadingRoutes = true;
-    const urlOrigen = `https://nominatim.openstreetmap.org/search?format=json&q=${this.origen}`;
-    const urlDestino = `https://nominatim.openstreetmap.org/search?format=json&q=${this.destino}`;
+ buscarCoordenadas() {
+  this.isLoadingRoutes = true;
+  const urlOrigen = `https://nominatim.openstreetmap.org/search?format=json&q=${this.origen}`;
+  const urlDestino = `https://nominatim.openstreetmap.org/search?format=json&q=${this.destino}`;
 
-    forkJoin({
-      origen: this.http.get<any[]>(urlOrigen),
-      destino: this.http.get<any[]>(urlDestino)
-    }).subscribe(({ origen, destino }) => {
-      if (origen.length === 0 || destino.length === 0) {
-        console.error('No se encontraron coordenadas válidas.');
-        alert('Direcciones no encontradas.');
-        this.isLoadingRoutes = false;
-        return;
-      }
+  forkJoin({
+    origen: this.http.get<any[]>(urlOrigen),
+    destino: this.http.get<any[]>(urlDestino)
+  }).subscribe(({ origen, destino }) => {
+    if (origen.length === 0 || destino.length === 0) {
+      console.error('No se encontraron coordenadas válidas.');
+      alert('Direcciones no encontradas.');
+      this.isLoadingRoutes = false;
+      return;
+    }
 
-      const origenCoords = L.latLng(origen[0].lat, origen[0].lon);
-      const destinoCoords = L.latLng(destino[0].lat, destino[0].lon);
+    this.origenCoords = L.latLng(origen[0].lat, origen[0].lon);
+    this.destinoCoords = L.latLng(destino[0].lat, destino[0].lon);
 
-      console.log('Coordenadas obtenidas:', origenCoords, destinoCoords);
-      this.buscarRutas(origenCoords, destinoCoords);
-    });
+    if (this.origenCoords && this.destinoCoords) {
+      this.buscarRutas(this.origenCoords, this.destinoCoords);
+    } else {
+      console.error("Las coordenadas de origen o destino son inválidas.");
+    }
+  });
+}
 
-  }
 
   buscarRutas(origenCoords: L.LatLng, destinoCoords: L.LatLng) {
+    if (!origenCoords || !destinoCoords) {
+      console.error("Las coordenadas de origen o destino son inválidas:", origenCoords, destinoCoords);
+      return;
+    }
+  
     console.log('Coordenadas origen:', origenCoords);
     console.log('Coordenadas destino:', destinoCoords);
 
@@ -127,23 +153,38 @@ export class TercerPasoComponent implements OnInit {
       this.map.removeControl(this.routeControl);
     }
 
-    // Eliminar los marcadores anteriores si existen
-    this.map.eachLayer((layer) => {
-      if (layer instanceof L.Marker) {
-        this.map.removeLayer(layer);
-      }
+    const iconDefault = L.icon({
+      iconUrl: '../../../../../../assets/mapaIcons/marker.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
     });
+    
+    L.Marker.prototype.options.icon = iconDefault;
+
+    if (!this.map) {
+      this.map = L.map('map', {
+        center: [this.lat, this.lon],
+        zoom: 14,
+        attributionControl: false
+      });
+    }
 
     // Agregar marcadores de origen y destino
     L.marker(origenCoords).addTo(this.map).bindPopup("Origen").openPopup();
     L.marker(destinoCoords).addTo(this.map).bindPopup("Destino").openPopup();
+
+    this.mapService.L.marker([origenCoords.lat + 0.005, origenCoords.lng + 0.005]).bindPopup(this.titulo);
+    this.mapService.L.circleMarker([origenCoords.lat, origenCoords.lng]).addTo(this.map);
+   
 
     // Configurar enrutador OSRM con o sin peajes
     const osrmOptions: any = {
       serviceUrl: 'https://router.project-osrm.org/route/v1',
       profile: 'car',
       steps: true,
-      annotations: true,
     };
 
     if (!this.marcaPeajes) {
@@ -151,40 +192,35 @@ export class TercerPasoComponent implements OnInit {
     }
 
     // Definir el control de rutas con el plan personalizado
-    this.routeControl = L.Routing.control({
-      plan: new L.Routing.Plan([origenCoords, destinoCoords], {
-        createMarker: () => false, // 🔥 No mostrar marcadores intermedios
-      }),
-      routeWhileDragging: false, // Desactiva la actualización en tiempo real
+    L.Routing.control({
       router: L.Routing.osrmv1({
-        serviceUrl: 'https://router.project-osrm.org/route/v1',
-        profile: 'car',
+        serviceUrl: `https://router.project-osrm.org/route/v1/`
       }),
-      lineOptions: {
-        styles: [{ color: 'blue', weight: 5, opacity: 0.7 }], // Estilos de la ruta
-        extendToWaypoints: false, // 🔥 No extender la línea a puntos intermedios
-        missingRouteTolerance: 0.001, // Evita errores si faltan partes de la ruta
-      },
-      show: false, // 🔥 Evita que aparezcan los pasos en el mapa
-      showAlternatives: false, // 🔥 No mostrar rutas alternativas
-      fitSelectedRoutes: true, // Ajusta el mapa a la ruta
+      showAlternatives: true,
+      fitSelectedRoutes: false,
+      show: false,
+      routeWhileDragging: true,
+      waypoints: [
+        this.mapService.L.latLng(origenCoords.lat, origenCoords.lng),
+        this.mapService.L.latLng(destinoCoords.lat, destinoCoords.lng)
+      ]
     })
-    .on('routesfound', (event: any) => {
-      console.log("Rutas encontradas:", event.routes);
-      this.routes = event.routes.map((route: any) => ({
-        distance: (route.summary.totalDistance / 1000).toFixed(2) + ' km',
-        duration: Math.round(route.summary.totalTime / 60) + ' min',
-        coordinates: route.coordinates,
-      }));
-    
-      // Seleccionar la primera ruta por defecto
-      if (this.routes.length > 0) {
-        this.selectedRouteIndex = 0; 
-        this.mostrarRutaEnMapa(this.routes[0].coordinates);
-      }
-    
-      this.isLoadingRoutes = false;
-    })
+      .on('routesfound', (event: any) => {
+        console.log("Rutas encontradas:", event.routes);
+        this.routes = event.routes.map((route: any) => ({
+          distance: (route.summary.totalDistance / 1000).toFixed(2) + ' km',
+          duration: Math.round(route.summary.totalTime / 60) + ' min',
+          coordinates: route.coordinates,
+        }));
+
+        // Seleccionar la primera ruta por defecto
+        if (this.routes.length > 0) {
+          this.selectedRouteIndex = 0;
+          this.mostrarRutaEnMapa(this.routes[0].coordinates);
+        }
+
+        this.isLoadingRoutes = false;
+      })
       .on('routingerror', (error: any) => {
         console.error("Error al obtener rutas:", error);
         alert("No se pudieron obtener rutas. Intenta con otra dirección.");
@@ -193,32 +229,29 @@ export class TercerPasoComponent implements OnInit {
       .addTo(this.map);
   }
 
+
+
   mostrarRutaEnMapa(coordinates: any[]) {
     if (this.routeControl) {
       this.map.removeControl(this.routeControl);
     }
-  
+
     this.routeControl = L.Routing.control({
-      waypoints: coordinates.map(coord => L.latLng(coord.lat, coord.lng)),
-      routeWhileDragging: false,
-      router: L.Routing.osrmv1({
-        serviceUrl: 'https://router.project-osrm.org/route/v1',
-        profile: 'car',
-      }),
       lineOptions: {
-        styles: [{ color: 'blue', weight: 5, opacity: 0.7 }],
-        extendToWaypoints: true, // Asegura que la ruta conecte los waypoints
-        missingRouteTolerance: 0.001, // Maneja rutas incompletas sin errores
+        styles: [{ color: 'blue', weight: 10, opacity: 1 }],
+        extendToWaypoints: true,
+        missingRouteTolerance: 0.001, 
       },
       fitSelectedRoutes: true,
       show: false,
     }).addTo(this.map);
   }
 
-  
+
+
+
   onPeajeOptionChange(event: any) {
     this.marcaPeajes = event.target.id === 'peajes';
-    // Aquí puedes actualizar la lógica de rutas según la opción seleccionada
     if (this.routes.length > 0) {
       this.routes = [];
       this.buscarCoordenadas();
@@ -226,21 +259,30 @@ export class TercerPasoComponent implements OnInit {
   }
 
   seleccionarParada(parada: any) {
-    if (this.paradasSeleccionadas.has(parada.nombre)) {
-      this.paradasSeleccionadas.delete(parada.nombre);
+    if (this.paradasSeleccionadas.has(parada)) {
+      this.paradasSeleccionadas.delete(parada);
     } else {
-      this.paradasSeleccionadas.add(parada.nombre);
+      this.paradasSeleccionadas.add(parada);
     }
   }
 
+
   actualizarRuta() {
-    // Función para actualizar las rutas cuando se selecciona una parada
     if (this.rutaConParadasSeleccionada) {
       this.isUpdatingRoute = true;
-      // Actualizar la lógica de las rutas aquí con las paradas seleccionadas
+
+      const waypoints = [this.origenCoords,
+      ...Array.from(this.paradasSeleccionadas).map(parada => parada.coords),
+      this.destinoCoords];
+
+      this.mostrarRutaEnMapa(waypoints);
+
       this.isUpdatingRoute = false;
     }
   }
+
+
+
 
   eliminarRutaSeleccionada() {
     this.paradasSeleccionadas.clear();
@@ -256,7 +298,7 @@ export class TercerPasoComponent implements OnInit {
       this.mostrarRutaEnMapa(route.coordinates);
     }
   }
-  
+
 
   // Método para verificar si la ruta está seleccionada
   isRouteSelected(index: number): boolean {
