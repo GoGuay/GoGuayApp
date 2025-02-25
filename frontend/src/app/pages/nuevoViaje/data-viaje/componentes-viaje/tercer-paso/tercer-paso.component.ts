@@ -19,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LeafletService } from 'src/app/core/leaflet/leaflet.service';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner/spinner.component';
 
 @Component({
   selector: 'app-tercer-paso',
@@ -37,7 +38,8 @@ import { LeafletService } from 'src/app/core/leaflet/leaflet.service';
     MatIconModule,
     NgxSpinnerModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    SpinnerComponent
   ],
   templateUrl: './tercer-paso.component.html',
   styleUrls: ['./tercer-paso.component.scss']
@@ -222,16 +224,23 @@ export class TercerPasoComponent implements OnInit {
     })
       .on('routesfound', (event: any) => {
         console.log("Rutas encontradas:", event.routes);
-        this.routes = event.routes.map((route: any) => ({
-          distance: (route.summary.totalDistance / 1000).toFixed(2) + ' km',
-          duration: Math.round(route.summary.totalTime / 60) + ' min',
-          coordinates: route.coordinates,
-        }));
+        this.routes = event.routes.map((route: any) => {
+          const totalMinutes = Math.round(route.summary.totalTime / 60);
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+        
+          return {
+            distance: (route.summary.totalDistance / 1000).toFixed(2) + ' km',
+            duration: `${hours}h ${minutes}min`,
+            coordinates: route.coordinates,
+          };
+        });
 
         // Seleccionar la primera ruta por defecto
         if (this.routes.length > 0) {
           this.selectedRouteIndex = 0;
           this.mostrarRutaEnMapa(this.routes[0].coordinates);
+          this.selectRoute(this.routes[0])
         }
 
         this.isLoadingRoutes = false;
