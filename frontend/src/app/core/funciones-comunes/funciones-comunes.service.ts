@@ -8,7 +8,11 @@ import { Usuario } from 'src/app/models/user/usuario.model';
   providedIn: 'root',
 })
 export class FuncionesComunes {
+
   userData: Usuario = {} as Usuario;
+
+  sugerenciasOrigen: any[] = [];
+  sugerenciasDestino: any[] = [];
 
   constructor(private dialog: MatDialog) {
     this.loadUserData();
@@ -95,4 +99,67 @@ export class FuncionesComunes {
       disableClose: true,
     });
   }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * 
+ *
+ *     FUNCIONES PARA LAS SUGERENCIAS DE VIAJES 
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+
+
+  /**
+  * Función para obtener la lista de sugerencias para el origen
+  * en función de lo que escriba el usuario en el input correspondiente.
+  * 
+  * @param evento Recibe el evento del input.
+  */
+   obtenerSugerenciasOrigen(evento: Event) {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
+  
+    if (contenidoInput.length > 2) {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          this.sugerenciasOrigen = data.filter((item: any) =>
+            item.address && (item.address.city || item.address.town || item.address.village) &&
+            item.address.country_code === 'es' 
+          );
+        })
+        .catch(error => {
+          console.error('Error al obtener sugerencias de origen:', error);
+        });
+    } else {
+      this.sugerenciasOrigen = [];
+    }
+  }
+
+  /**
+  * Función para obtener la lista de sugerencias para el destino
+  * en función de lo que escriba el usuario en el input correspondiente.
+  * 
+  * @param evento Recibe el evento del input.
+  */
+  obtenerSugerenciasDestino(evento: Event) {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
+    if (contenidoInput.length > 2) {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          this.sugerenciasDestino = data.filter((item: any) =>
+            item.address && (item.address.city || item.address.town || item.address.village) &&
+            item.address.country_code === 'es'
+          );
+        })
+        .catch(error => {
+          console.error('Error al obtener sugerencias de destino:', error);
+        });
+    } else {
+      this.sugerenciasDestino = [];
+    }
+  }
+
 }
