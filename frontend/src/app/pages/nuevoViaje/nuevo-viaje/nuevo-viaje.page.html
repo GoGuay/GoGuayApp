@@ -8,28 +8,26 @@
           <div class="contenido_formulario">
             <div class="input-container">
               <mat-icon class="input-icon">location_on</mat-icon>
-              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_DONDE_COMIENZA' | translate }}"
-                class="input-viaje form-control" [(ngModel)]="origen" name="origen"
-                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasOrigen($event)" />
-              <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadOrigen(localidad)">
-                  {{ localidad.display_name }} - {{ localidad.city }}
+              <input [(ngModel)]="origen" (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
+                placeholder="{{ 'NUEVO_VIAJE.FROM' | translate }}" class="input-viaje form-control">
+              <ul *ngIf="funcionesComunes.sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+                <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen"
+                  (click)="seleccionarLocalidadOrigen(sugerencia)" [ngClass]="{'list-group-item': true}">
+                  {{ sugerencia.display_name }}
                 </li>
               </ul>
             </div>
 
             <div class="input-container">
               <mat-icon class="input-icon">location_on</mat-icon>
-              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_HASTA_DONDE' | translate }}"
-                class="input-viaje form-control" [(ngModel)]="destino" name="destino"
-                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasDestino($event)" />
-                <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadDestino(localidad)">
-                  {{ localidad.display_name }} - {{ localidad.city }}
-                </li>
-              </ul>
+              <input [(ngModel)]="destino" (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
+    placeholder="{{ 'NUEVO_VIAJE.TO' | translate }}" class="input-viaje form-control">
+  <ul *ngIf="funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+    <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
+      [ngClass]="{'list-group-item': true}">
+      {{ sugerencia.display_name }}
+    </li>
+  </ul>
             </div>
 
             <ion-select aria-label="n_personas" placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"

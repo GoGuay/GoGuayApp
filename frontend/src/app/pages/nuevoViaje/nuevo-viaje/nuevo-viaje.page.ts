@@ -8,7 +8,6 @@ import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -51,7 +50,6 @@ export class NuevoViajePage implements OnInit {
   constructor(
     private router: Router,
     private viajesService: TravelService,
-    private googleService: GoogleServices,
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService
   ) {
@@ -101,67 +99,13 @@ export class NuevoViajePage implements OnInit {
 
 
   /**
-  * Función para obtener la lista de sugerencias para el origen
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
-  obtenerSugerenciasOrigen(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-  
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasOrigen = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es' 
-          );
-        })
-        .catch(error => {
-          console.error('Error al obtener sugerencias de origen:', error);
-        });
-    } else {
-      this.sugerenciasOrigen = [];
-    }
-  }
-
-  /**
-  * Función para obtener la lista de sugerencias para el destino
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
-  obtenerSugerenciasDestino(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasDestino = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es'
-          );
-        })
-        .catch(error => {
-          console.error('Error al obtener sugerencias de destino:', error);
-        });
-    } else {
-      this.sugerenciasDestino = [];
-    }
-  }
-
-  /**
    * Función para guardar la información de la localidad de origen seleccionada.
    *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadOrigen(localidad: any) {
     this.origen = localidad.descripcion.split(',')[0].trim();
-    this.sugerenciasOrigen = [];
+    this.funcionesComunes.sugerenciasOrigen = [];
   }
 
   /**
@@ -171,6 +115,6 @@ export class NuevoViajePage implements OnInit {
    */
   seleccionarLocalidadDestino(localidad: any) {
     this.destino = localidad.descripcion.split(',')[0].trim();
-    this.sugerenciasDestino = [];
+    this.funcionesComunes.sugerenciasDestino = [];
   }
 }
