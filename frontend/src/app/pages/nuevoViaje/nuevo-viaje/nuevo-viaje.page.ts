@@ -99,44 +99,34 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
+
   /**
- * Función para obtener la lista de sugerencias para el origen
- * en función de lo que escriba el usuario en el input correspondiente.
- * 
- * @param evento Recibe el evento del input.
- */
+  * Función para obtener la lista de sugerencias para el origen
+  * en función de lo que escriba el usuario en el input correspondiente.
+  * 
+  * @param evento Recibe el evento del input.
+  */
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-
+  
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
+      
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          console.log("Datos recibidos de la API:", data); // Verifica la estructura de la respuesta
-
-          this.sugerenciasOrigen = data.map((item: any) => {
-            const city = item.address.city || item.address.town || item.address.village || "Ubicación desconocida";
-            return {
-              display_name: item.display_name,
-              city: city,
-              lat: item.lat,
-              lon: item.lon
-            };
-          });
-
-          console.log("Sugerencias procesadas:", this.sugerenciasOrigen);
+          this.sugerenciasOrigen = data.filter((item: any) =>
+            item.address && (item.address.city || item.address.town || item.address.village) &&
+            item.address.country_code === 'es' 
+          );
         })
         .catch(error => {
-          console.error('Error al obtener sugerencias:', error);
+          console.error('Error al obtener sugerencias de origen:', error);
         });
-
     } else {
       this.sugerenciasOrigen = [];
     }
   }
-
 
   /**
   * Función para obtener la lista de sugerencias para el destino
@@ -146,24 +136,15 @@ export class NuevoViajePage implements OnInit {
   */
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          this.sugerenciasDestino = data
-            .filter((item: any) => item.address && item.address.country_code === "es")
-            .map((item: any) => {
-              const city = item.address.city || item.address.town || item.address.village || "Ubicación desconocida";
-              return {
-                display_name: item.display_name,
-                city: city,
-                lat: item.lat,
-                lon: item.lon
-              };
-            });
+          this.sugerenciasDestino = data.filter((item: any) =>
+            item.address && (item.address.city || item.address.town || item.address.village) &&
+            item.address.country_code === 'es'
+          );
         })
         .catch(error => {
           console.error('Error al obtener sugerencias de destino:', error);

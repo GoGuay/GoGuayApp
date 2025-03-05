@@ -1,28 +1,26 @@
 <div class="container">
   <h1>PUNTO DE PARTIDA</h1>
-  <input type="text" placeholder="{{ 'NUEVO_VIAJE.FROM' | translate }}" class="input-viaje form-control"
-    [(ngModel)]="origen" name="origen" [ngModelOptions]="{ standalone: true }"
-    (input)="obtenerSugerenciasOrigen($event)" />
+
+  <input [(ngModel)]="origen" (input)="obtenerSugerenciasOrigen($event)"
+    placeholder="{{ 'NUEVO_VIAJE.FROM' | translate }}" class="input-viaje form-control">
   <button type="button" mat-raised-button class="btn_bg"
     (click)="getUserLocationWithLeaflet()"><mat-icon>location_on</mat-icon>Usar mi ubicación</button>
-  <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-    <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
-      (click)="seleccionarLocalidadOrigen(localidad)">
-      {{ localidad.display_name }} - {{ localidad.city }}
+  <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+    <li *ngFor="let sugerencia of sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sugerencia)"
+      [ngClass]="{'list-group-item': true}">
+      {{ sugerencia.display_name }}
     </li>
-
   </ul>
 </div>
 
 <div class="container">
   <h1>LUGAR DE LLEGADA</h1>
-  <input type="text" placeholder="{{ 'NUEVO_VIAJE.TO' | translate }}" class="input-viaje form-control"
-    [(ngModel)]="destino" name="destino" [ngModelOptions]="{ standalone: true }"
-    (input)="obtenerSugerenciasDestino($event)" />
-  <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-    <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
-      (click)="seleccionarLocalidadDestino(localidad)">
-      {{ localidad.display_name }} - {{ localidad.city }}
+  <input [(ngModel)]="destino" (input)="obtenerSugerenciasDestino($event)"
+    placeholder="{{ 'NUEVO_VIAJE.TO' | translate }}" class="input-viaje form-control">
+  <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+    <li *ngFor="let sugerencia of sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
+      [ngClass]="{'list-group-item': true}">
+      {{ sugerencia.display_name }}
     </li>
   </ul>
 </div>
