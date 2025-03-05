@@ -51,16 +51,24 @@ export class SegundoPasoComponent implements OnInit {
  */
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-  
+
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      
+
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          this.sugerenciasOrigen = data.filter((item: any) => 
-            item.address && (item.address.city || item.address.town || item.address.village)
-          );
+          this.sugerenciasOrigen = data
+            .filter((item: any) => item.address && item.address.country_code === "es")
+            .map((item: any) => {
+              const city = item.address.city || item.address.town || item.address.village || "Ubicación desconocida";
+              return {
+                display_name: item.display_name,
+                city: city,
+                lat: item.lat,
+                lon: item.lon
+              };
+            });
         })
         .catch(error => {
           console.error('Error al obtener sugerencias de origen:', error);
@@ -78,16 +86,24 @@ export class SegundoPasoComponent implements OnInit {
   */
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-  
+
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      
+
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          this.sugerenciasDestino = data.filter((item: any) => 
-            item.address && (item.address.city || item.address.town || item.address.village)
-          );
+          this.sugerenciasDestino = data
+            .filter((item: any) => item.address && item.address.country_code === "es")
+            .map((item: any) => {
+              const city = item.address.city || item.address.town || item.address.village || "Ubicación desconocida";
+              return {
+                display_name: item.display_name,
+                city: city,
+                lat: item.lat,
+                lon: item.lon
+              };
+            });
         })
         .catch(error => {
           console.error('Error al obtener sugerencias de destino:', error);
@@ -96,6 +112,7 @@ export class SegundoPasoComponent implements OnInit {
       this.sugerenciasDestino = [];
     }
   }
+
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
@@ -198,10 +215,10 @@ export class SegundoPasoComponent implements OnInit {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           this.mapCenter = { lat, lng };
-  
+
           // Llamada a Nominatim para obtener la dirección inversa
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
-  
+
           fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -230,6 +247,6 @@ export class SegundoPasoComponent implements OnInit {
       console.error("La geolocalización no está soportada por este navegador.");
     }
   }
-  
+
 
 }

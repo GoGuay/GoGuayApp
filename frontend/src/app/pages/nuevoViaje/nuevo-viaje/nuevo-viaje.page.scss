@@ -175,7 +175,7 @@ ion-button {
 */
 .lista_sugerencias {
   position: absolute;
-  top: 100%; 
+  top: calc(100% + 5px);
   left: 0;
   width: 100%;
   background-color: white;

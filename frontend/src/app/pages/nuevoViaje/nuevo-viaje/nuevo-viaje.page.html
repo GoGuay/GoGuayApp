@@ -1,8 +1,4 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <ion-row class="primera-seccion">
@@ -12,64 +8,33 @@
           <div class="contenido_formulario">
             <div class="input-container">
               <mat-icon class="input-icon">location_on</mat-icon>
-              <input
-                type="text"
-                placeholder="{{ 'NUEVOVIAJE.PLACE_DONDE_COMIENZA' | translate }}"
-                class="input-viaje form-control"
-                [(ngModel)]="origen"
-                name="origen"
-                [ngModelOptions]="{ standalone: true }"
-                (input)="obtenerSugerenciasOrigen($event)"
-              />
-              <ul
-                *ngIf="sugerenciasOrigen.length > 2"
-                class="list-group lista_sugerencias"
-              >
-                <li
-                  *ngFor="let localidad of sugerenciasOrigen; let i = index"
-                  [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadOrigen(localidad)"
-                >
-                  {{ localidad.descripcion.split(',')[0].trim() }} - {{
-                  localidad.provincia }}
+              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_DONDE_COMIENZA' | translate }}"
+                class="input-viaje form-control" [(ngModel)]="origen" name="origen"
+                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasOrigen($event)" />
+              <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
+                <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
+                  (click)="seleccionarLocalidadOrigen(localidad)">
+                  {{ localidad.display_name }} - {{ localidad.city }}
                 </li>
               </ul>
             </div>
 
             <div class="input-container">
               <mat-icon class="input-icon">location_on</mat-icon>
-              <input
-                type="text"
-                placeholder="{{ 'NUEVOVIAJE.PLACE_HASTA_DONDE' | translate }}"
-                class="input-viaje form-control"
-                [(ngModel)]="destino"
-                name="destino"
-                [ngModelOptions]="{ standalone: true }"
-                (input)="obtenerSugerenciasDestino($event)"
-              />
-              <ul
-                *ngIf="sugerenciasDestino.length > 2"
-                class="list-group lista_sugerencias"
-              >
-                <li
-                  *ngFor="let localidad of sugerenciasDestino; let i = index"
-                  [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadDestino(localidad)"
-                >
-                  {{ localidad.descripcion.split(',')[0].trim() }} - {{
-                  localidad.provincia }}
+              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_HASTA_DONDE' | translate }}"
+                class="input-viaje form-control" [(ngModel)]="destino" name="destino"
+                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasDestino($event)" />
+                <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
+                <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
+                  (click)="seleccionarLocalidadDestino(localidad)">
+                  {{ localidad.display_name }} - {{ localidad.city }}
                 </li>
               </ul>
             </div>
 
-            <ion-select
-              aria-label="n_personas"
-              placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"
-              class="input-viaje form-control custom-select"
-              [(ngModel)]="plazas"
-              name="viajeros"
-              [ngModelOptions]="{standalone: true}"
-            >
+            <ion-select aria-label="n_personas" placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"
+              class="input-viaje form-control custom-select" [(ngModel)]="plazas" name="viajeros"
+              [ngModelOptions]="{standalone: true}">
               <mat-icon slot="start">
                 <span class="material-symbols-outlined"> group </span>
               </mat-icon>
@@ -81,12 +46,9 @@
             <div class="alert" *ngIf="!userLoggedIn">
               <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
               <div class="d-flex justify-content-center">
-                <button
-                  type="button"
-                  class="help_btn d-flex justify-content-center"
+                <button type="button" class="help_btn d-flex justify-content-center"
                   title="Ayuda para iniciar sesión / registrarse"
-                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
-                >
+                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
                   <mat-icon>help</mat-icon>
                 </button>
               </div>
@@ -94,26 +56,18 @@
             <div class="alert" *ngIf="userLoggedIn">
               <p>{{ 'NUEVOVIAJE.CARNET_NO_REGISTRADO' | translate }}</p>
               <div class="d-flex justify-content-center">
-                <button
-                  type="button"
-                  class="help_btn d-flex justify-content-center"
+                <button type="button" class="help_btn d-flex justify-content-center"
                   title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
-                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)"
-                >
+                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)">
                   <mat-icon>help</mat-icon>
                 </button>
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            class="btn-publicar ion-activatable ripple-parent circle"
-            title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}"
-            (click)="goTo()"
-            matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}"
-          >
-            {{ 'BOTON.PUBLICAR_VIAJE' | translate }}<ion-ripple-effect
-            ></ion-ripple-effect>
+          <button type="button" class="btn-publicar ion-activatable ripple-parent circle"
+            title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}" (click)="goTo()"
+            matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}">
+            {{ 'BOTON.PUBLICAR_VIAJE' | translate }}<ion-ripple-effect></ion-ripple-effect>
           </button>
         </form>
       </div>
@@ -125,12 +79,7 @@
       <h2>{{ 'CENTRODEAYUDA.TITULO' | translate }}</h2>
       <p>{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
       <div class="d-flex justify-content-center">
-        <button
-          type="button"
-          mat-raised-button
-          class="btn_bg"
-          routerLink="/centro-ayuda"
-        >
+        <button type="button" mat-raised-button class="btn_bg" routerLink="/centro-ayuda">
           {{ 'BOTON.CENTROAYUDA' | translate }}
         </button>
       </div>

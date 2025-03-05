@@ -3,12 +3,14 @@
   <input type="text" placeholder="{{ 'NUEVO_VIAJE.FROM' | translate }}" class="input-viaje form-control"
     [(ngModel)]="origen" name="origen" [ngModelOptions]="{ standalone: true }"
     (input)="obtenerSugerenciasOrigen($event)" />
-  <button type="button" mat-raised-button class="btn_bg" (click)="getUserLocationWithLeaflet()"><mat-icon>location_on</mat-icon>Usar mi ubicación</button>
-  <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+  <button type="button" mat-raised-button class="btn_bg"
+    (click)="getUserLocationWithLeaflet()"><mat-icon>location_on</mat-icon>Usar mi ubicación</button>
+  <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
     <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
       (click)="seleccionarLocalidadOrigen(localidad)">
-      {{ localidad.display_name.split(',')[0].trim() }} - {{ localidad.address.city || localidad.address.town || localidad.address.village }}
+      {{ localidad.display_name }} - {{ localidad.city }}
     </li>
+
   </ul>
 </div>
 
@@ -17,10 +19,10 @@
   <input type="text" placeholder="{{ 'NUEVO_VIAJE.TO' | translate }}" class="input-viaje form-control"
     [(ngModel)]="destino" name="destino" [ngModelOptions]="{ standalone: true }"
     (input)="obtenerSugerenciasDestino($event)" />
-  <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+  <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
     <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
       (click)="seleccionarLocalidadDestino(localidad)">
-      {{ localidad.display_name.split(',')[0].trim() }} - {{ localidad.address.city || localidad.address.town || localidad.address.village }}
+      {{ localidad.display_name }} - {{ localidad.city }}
     </li>
   </ul>
 </div>

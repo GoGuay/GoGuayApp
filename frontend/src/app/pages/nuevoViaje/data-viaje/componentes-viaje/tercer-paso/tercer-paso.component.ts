@@ -58,22 +58,17 @@ export class TercerPasoComponent implements OnInit {
   cargandoSugerencias: boolean = false;
   isUpdatingRoute: boolean = false;
   rutaConParadasSeleccionada: boolean = false;
-  marcaPeajes: boolean = false;
+  marcaPeajes: boolean = true; 
 
   origenCoords!: L.LatLng;
   destinoCoords!: L.LatLng;
 
   private lat = 40.4168;
   private lon = -3.7038;
-  private titulo = 'Ubicación';
 
-  constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) {
-
-
-  }
+  constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) {}
 
   ngOnInit() {
-
     setTimeout(() => {
       this.initMap();
     }, 300);
@@ -87,11 +82,6 @@ export class TercerPasoComponent implements OnInit {
     });
   }
 
-  /**
-   * Función que inicializa el mapa con unas coordenadas preestablecidas
-   * para mantener el centro.
-   * 
-   */
   private initMap(): void {
     if (this.map) {
       this.map.remove();
@@ -109,12 +99,6 @@ export class TercerPasoComponent implements OnInit {
     }).addTo(this.map);
   }
 
-
-  /**
-   * Función para obtener las coordenadas 
-   * teniendo en cuenta los puntos de origen y de destino.
-   * 
-   */
   buscarCoordenadas() {
     this.isLoadingRoutes = true;
     const urlOrigen = `https://nominatim.openstreetmap.org/search?format=json&q=${this.origen}`;
@@ -142,23 +126,11 @@ export class TercerPasoComponent implements OnInit {
     });
   }
 
-
-  /**
-   * Función para buscar una ruta en función del punto de destino y de origen.
-   * 
-   * 
-   * @param origenCoords Coordenadas del punto de origen.
-   * @param destinoCoords Coordenadas del punto de destino.
-   * @returns Devuelve la lista de rutas sugeridas.
-   */
   buscarRutas(origenCoords: L.LatLng, destinoCoords: L.LatLng) {
     if (!origenCoords || !destinoCoords) {
       console.error("Las coordenadas de origen o destino son inválidas:", origenCoords, destinoCoords);
       return;
     }
-
-    console.log('Coordenadas origen:', origenCoords);
-    console.log('Coordenadas destino:', destinoCoords);
 
     // Eliminar ruta anterior si existe
     if (this.routeControl) {
@@ -176,21 +148,9 @@ export class TercerPasoComponent implements OnInit {
 
     L.Marker.prototype.options.icon = iconDefault;
 
-    if (!this.map) {
-      this.map = L.map('map', {
-        center: [this.lat, this.lon],
-        zoom: 14,
-        attributionControl: false
-      });
-    }
-
     // Agregar marcadores de origen y destino
     L.marker(origenCoords).addTo(this.map).bindPopup(this.origen).openPopup();
-    L.marker(destinoCoords).addTo(this.map).bindPopup('Destino: '+this.destino).openPopup();
-
-    this.mapService.L.marker([origenCoords.lat + 0.005, origenCoords.lng + 0.005]).bindPopup(this.destino);
-    this.mapService.L.circleMarker([origenCoords.lat, origenCoords.lng]).addTo(this.map);
-
+    L.marker(destinoCoords).addTo(this.map).bindPopup('Destino: ' + this.destino).openPopup();
 
     // Configurar enrutador OSRM con o sin peajes
     const osrmOptions: any = {
@@ -203,32 +163,24 @@ export class TercerPasoComponent implements OnInit {
       osrmOptions.exclude = 'toll';
     }
 
-    if (this.routeControl) {
-      this.map.removeControl(this.routeControl);
-      this.routeControl = null;
-    }
-
     // Definir el control de rutas con el plan personalizado
-    L.Routing.control({
-      router: L.Routing.osrmv1({
-        serviceUrl: `https://router.project-osrm.org/route/v1/`
-      }),
+    this.routeControl = L.Routing.control({
+      router: L.Routing.osrmv1(osrmOptions),
       showAlternatives: true,
       fitSelectedRoutes: false,
       show: false,
       routeWhileDragging: true,
       waypoints: [
-        this.mapService.L.latLng(origenCoords.lat, origenCoords.lng),
-        this.mapService.L.latLng(destinoCoords.lat, destinoCoords.lng)
+        L.latLng(origenCoords.lat, origenCoords.lng),
+        L.latLng(destinoCoords.lat, destinoCoords.lng)
       ]
     })
       .on('routesfound', (event: any) => {
-        console.log("Rutas encontradas:", event.routes);
         this.routes = event.routes.map((route: any) => {
           const totalMinutes = Math.round(route.summary.totalTime / 60);
           const hours = Math.floor(totalMinutes / 60);
           const minutes = totalMinutes % 60;
-        
+
           return {
             distance: (route.summary.totalDistance / 1000).toFixed(2) + ' km',
             duration: `${hours}h ${minutes}min`,
@@ -239,8 +191,8 @@ export class TercerPasoComponent implements OnInit {
         // Seleccionar la primera ruta por defecto
         if (this.routes.length > 0) {
           this.selectedRouteIndex = 0;
+          this.selectRoute(this.routes[0]);
           this.mostrarRutaEnMapa(this.routes[0].coordinates);
-          this.selectRoute(this.routes[0])
         }
 
         this.isLoadingRoutes = false;
@@ -253,38 +205,31 @@ export class TercerPasoComponent implements OnInit {
       .addTo(this.map);
   }
 
-
   mostrarRutaEnMapa(coordinates: any[]) {
     if (!this.map) return;
-  
+
     if (this.selectedRouteLayer) {
       this.map.removeLayer(this.selectedRouteLayer);
     }
-  
+
     if (coordinates.length < 2) {
       console.error("No hay suficientes coordenadas para dibujar la ruta.");
       return;
     }
-  
+
     this.selectedRouteLayer = L.polyline(coordinates, {
       color: 'blue',
       weight: 6,
       opacity: 0.8
     }).addTo(this.map);
-  
+
     this.map.fitBounds(this.selectedRouteLayer.getBounds());
   }
-  
-
-  
-
 
   onPeajeOptionChange(event: any) {
     this.marcaPeajes = event.target.id === 'peajes';
-    if (this.routes.length > 0) {
-      this.routes = [];
-      this.buscarCoordenadas();
-    }
+    this.routes = []; // Reiniciar la lista de rutas
+    this.buscarCoordenadas(); // Volver a buscar rutas con la nueva opción
   }
 
   seleccionarParada(parada: any) {
@@ -295,14 +240,15 @@ export class TercerPasoComponent implements OnInit {
     }
   }
 
-
   actualizarRuta() {
     if (this.rutaConParadasSeleccionada) {
       this.isUpdatingRoute = true;
 
-      const waypoints = [this.origenCoords,
-      ...Array.from(this.paradasSeleccionadas).map(parada => parada.coords),
-      this.destinoCoords];
+      const waypoints = [
+        this.origenCoords,
+        ...Array.from(this.paradasSeleccionadas).map(parada => parada.coords),
+        this.destinoCoords
+      ];
 
       this.mostrarRutaEnMapa(waypoints);
 
@@ -317,22 +263,15 @@ export class TercerPasoComponent implements OnInit {
     this.buscarCoordenadas();
   }
 
-  /**
-   * Función para seleccionar una ruta.
-   * @param index 
-   */
   selectRoute(index: number) {
     this.selectedRouteIndex = index;
     const route = this.routes[index];
-  
+
     if (route) {
       this.mostrarRutaEnMapa(route.coordinates);
     }
   }
-  
 
-
-  // Método para verificar si la ruta está seleccionada
   isRouteSelected(index: number): boolean {
     return this.selectedRouteIndex === index;
   }
