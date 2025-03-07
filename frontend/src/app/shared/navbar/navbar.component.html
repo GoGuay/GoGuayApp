@@ -1,304 +1,190 @@
 <ion-header>
   <!-- Se muestra sólo en el Home -->
-  <nav class="navbar navbar-expand-lg navbar-diseno" *ngIf="validacionHomePage">
-    <div class="container">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        (click)="toggleMenu()"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
-        <mat-icon *ngIf="menuOpen"> close </mat-icon>
-      </button>
-      <div class="collapse navbar-collapse row" id="navbarSupportedContent">
-        <ul
-          class="navbar-nav me-auto justify-content-between mb-2 mb-lg-0 w-100 align-items-center"
+  <ng-container *ngIf="validacionHomePage; else otherPageNav">
+    <nav class="navbar navbar-expand-lg navbar-diseno">
+      <div class="container">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          (click)="toggleMenu()"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <li class="nav-item">
-            <a
-              class="nav-link active"
-              aria-current="page"
-              href="/sobre-nosotros"
-              >{{ "NAVBAR.QUIENES" | translate }}</a
-            >
-          </li>
+          <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
+          <mat-icon *ngIf="menuOpen"> close </mat-icon>
+        </button>
+        <div class="collapse navbar-collapse row" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto justify-content-between mb-2 mb-lg-0 w-100 align-items-center">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/sobre-nosotros">
+                {{ "NAVBAR.QUIENES" | translate }}
+              </a>
+            </li>
 
-          <li class="nav-item ion-activatable ripple-parent circle">
-            <a class="nav-link active" aria-current="page" href="/faqs">
-              FAQs
-            </a>
-          </li>
+            <li class="nav-item ion-activatable ripple-parent circle">
+              <a class="nav-link active" aria-current="page" href="/faqs">
+                FAQs
+              </a>
+            </li>
 
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/decalogo">{{
-              "NAVBAR.DECALOGO" | translate
-            }}</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/decalogo">
+                {{ "NAVBAR.DECALOGO" | translate }}
+              </a>
+            </li>
 
-          <li class="nav-item d-flex flex-column align-items-center">
-            <a class="" href="#">
-              <img
-                src="../../../assets/logo/PRIDECAR.png"
-                alt="Logo"
-                class="logo"
-              />
-            </a>
-            <h1 class="m-0 text-center">{{ "TITLE" | translate }}</h1>
-          </li>
+            <li class="nav-item d-flex flex-column align-items-center">
+              <a class="" href="#">
+                <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo" />
+              </a>
+              <h1 class="m-0 text-center">{{ "TITLE" | translate }}</h1>
+            </li>
 
-          <li class="nav-item">
-            <a
-              class="nav-link active d-flex align-items-center"
-              aria-current="page"
-              href="/busqueda-viajes"
-              >{{ "NAVBAR.BUSCAR_VIAJE" | translate }}
-              <mat-icon>search</mat-icon>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
+                {{ "NAVBAR.BUSCAR_VIAJE" | translate }}
+                <mat-icon>search</mat-icon>
+              </a>
+            </li>
 
-          <li class="nav-item">
-            <a
-              class="nav-link active"
-              href="#"
-              aria-current="page"
-              href="/nuevo-viaje"
-              >{{ "NAVBAR.PUBLICAR_VIAJE" | translate }}</a
-            >
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link active dropdown-toggle d-flex align-items-center"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              aria-current="page"
-            >
-              <mat-icon>language</mat-icon>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a
-                  type="button"
-                  class="dropdown-item"
-                  (click)="changeLanguage('es')"
-                  ><img
-                    src="../../../assets/flags/espana.png"
-                    class="flag-icon"
-                  />
-                  Español</a
-                >
-              </li>
-              <li>
-                <a
-                  type="button"
-                  class="dropdown-item"
-                  (click)="changeLanguage('en')"
-                  ><img
-                    src="../../../assets/flags/reino-unido.png"
-                    class="flag-icon"
-                  />
-                  Inglés</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown" *ngIf="!isLoggedIn">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <mat-icon class="caja-icono tamano-icono"> person_off </mat-icon>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/login">{{
-                  "NAVBAR.LOGIN" | translate
-                }}</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="/registro">{{
-                  "NAVBAR.REGISTRO" | translate
-                }}</a>
-              </li>
-            </ul>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/nuevo-viaje" aria-current="page">
+                {{ "NAVBAR.PUBLICAR_VIAJE" | translate }}
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <mat-icon>language</mat-icon>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a type="button" class="dropdown-item" (click)="changeLanguage('es')">
+                    <img src="../../../assets/flags/espana.png" class="flag-icon" />
+                    Español
+                  </a>
+                </li>
+                <li>
+                  <a type="button" class="dropdown-item" (click)="changeLanguage('en')">
+                    <img src="../../../assets/flags/reino-unido.png" class="flag-icon" />
+                    Inglés
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          <li class="nav-item dropdown" *ngIf="isLoggedIn">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <mat-icon class="caja-icono tamano-icono">
-                account_circle
-              </mat-icon>
-            </a>
-            <ul
-              class="dropdown-menu menuusuario"
-              aria-labelledby="navbarDropdown"
-              data-bs-auto-close="false"
-            >
-              <li class="perfil nav-item dropdown">
-                <a class="dropdown-item nav-link" href="/panel-usuario">{{
-                  "NAVBAR.PANEL" | translate
-                }}</a>
-              </li>
-              <nav class="nav nav-pills flex-column">
-                <ul class="">
+            <ng-container *ngIf="isLoggedIn; else loggedOutNav">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <mat-icon class="caja-icono tamano-icono"> account_circle </mat-icon>
+                </a>
+                <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
                   <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/mi-perfil">{{
-                      "NAVBAR.MIPERFIL" | translate
-                    }}</a>
+                    <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
                   </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/datos-contacto"
-                      >{{ "NAVBAR.DATOSCONTACTO" | translate }}
-                    </a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/verificaciones-perfil"
-                      >{{ "NAVBAR.VERIFICACION" | translate }}
-                    </a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/saldo-transferencias"
-                      >{{ "NAVBAR.SALDO" | translate }}
+                  <nav class="nav nav-pills flex-column">
+                    <ul>
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                      </li>
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
+                      </li>
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate }}</a>
+                      </li>
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                      </li>
+                    </ul>
+                  </nav>
+                  <mat-divider></mat-divider>
+                  <li class="logout d-flex align-items-center justify-content-center">
+                    <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
+                      <mat-icon class="me-2">power_settings_new</mat-icon>
+                      {{ "NAVBAR.SALIR" | translate }}
                     </a>
                   </li>
                 </ul>
-              </nav>
-              <mat-divider></mat-divider>
-              <li
-                class="logout d-flex align-items-center justify-content-center"
-              >
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  (click)="logout()"
-                  type="button"
-                >
-                  <mat-icon class="me-2">power_settings_new</mat-icon>
-                  {{ "NAVBAR.SALIR" | translate }}
-                </a>
               </li>
-            </ul>
-          </li>
-        </ul>
+            </ng-container>
+
+            <ng-template #loggedOutNav>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <mat-icon class="caja-icono tamano-icono"> person_off </mat-icon>
+                </a>
+                <ul class="dropdown-menu menuusuario">
+                  <li>
+                    <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
+                  </li>
+                </ul>
+              </li>
+            </ng-template>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </ng-container>
 
   <!-- Se muestra en cualquier pagina menos el Home -->
-  <nav
-    class="navbar navbar-expand-lg navbar-diseno"
-    *ngIf="!validacionHomePage"
-  >
-    <div class="container">
-      <ul class="menuusuario">
-        <li class="nav-item d-flex flex-column align-items-center">
-          <ion-button fill="clear" (click)="navigateBack()">
-            <mat-icon class="back-icon">arrow_back</mat-icon>
-            <img src="{{ logo }}" alt="Logo" class="logo" />
-            PrideRide
-          </ion-button>
-        </li>
-      </ul>
-
-      <div class="d-flex align-items-center buscar-viaje">
-        <a
-          *ngIf="searchRoute"
-          class="nav-link active d-flex align-items-center"
-          [routerLink]="searchRoute"
-        >
-          <span *ngIf="isDesktop">{{ dynamicTitle }}</span>
-          <mat-icon title="{{ dynamicTitle }}">{{ dynamicIcon }}</mat-icon>
-        </a>
-
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item dropdown" *ngIf="!isLoggedIn">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
-            </a>
-            <ul class="dropdown-menu menuusuario">
-              <li>
-                <a class="dropdown-item" href="/login">{{
-                  "NAVBAR.LOGIN" | translate
-                }}</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="/registro">{{
-                  "NAVBAR.REGISTRO" | translate
-                }}</a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="nav-item dropdown" *ngIf="isLoggedIn">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <mat-icon class="caja-icono tamano-icono"
-                >account_circle</mat-icon
-              >
-            </a>
-            <ul
-              class="dropdown-menu menuusuario"
-              aria-labelledby="navbarDropdown"
-              data-bs-auto-close="false"
-            >
-              <li class="perfil nav-item dropdown">
-                <a class="dropdown-item nav-link" href="/panel-usuario"
-                  >PANEL USUARIO</a
-                >
-                <nav class="nav nav-pills flex-column">
-                  <a class="nav-link ms-3" href="/mi-perfil">Mi perfil</a>
-                  <a class="nav-link ms-3" href="/datos-contacto"
-                    >Datos de contacto
-                  </a>
-                  <a class="nav-link ms-3" href="/verificaciones-perfil"
-                    >Verificación/ Password
-                  </a>
-                  <a class="nav-link ms-3" href="/saldo-transferencias"
-                    >Saldo y transferencias
-                  </a>
-                </nav>
-              </li>
-
-              <mat-divider></mat-divider>
-              <li
-                class="logout d-flex align-items-center justify-content-center"
-              >
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  (click)="logout()"
-                  type="button"
-                >
-                  <mat-icon class="me-2">power_settings_new</mat-icon> Salir
-                </a>
-              </li>
-            </ul>
+  <ng-template #otherPageNav>
+    <nav class="navbar navbar-expand-lg navbar-diseno">
+      <div class="container">
+        <ul class="menuusuario">
+          <li class="nav-item d-flex flex-column align-items-center">
+            <ion-button fill="clear" (click)="navigateBack()">
+              <mat-icon class="back-icon">arrow_back</mat-icon>
+              <img src="{{ logo }}" alt="Logo" class="logo" />
+              PrideRide
+            </ion-button>
           </li>
         </ul>
+        <div class="d-flex align-items-center buscar-viaje">
+          <a *ngIf="searchRoute" class="nav-link active d-flex align-items-center" [routerLink]="searchRoute">
+            <span *ngIf="isDesktop">{{ dynamicTitle }}</span>
+            <mat-icon title="{{ dynamicTitle }}">{{ dynamicIcon }}</mat-icon>
+          </a>
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item dropdown" *ngIf="!isLoggedIn">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
+              </a>
+              <ul class="dropdown-menu menuusuario">
+                <li>
+                  <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown" *ngIf="isLoggedIn">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <mat-icon class="caja-icono tamano-icono">account_circle</mat-icon>
+              </a>
+              <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
+                <li class="perfil nav-item dropdown">
+                  <a class="nav-link ms-3" href="/panel-usuario">PANEL USUARIO</a>
+                </li>
+                <mat-divider></mat-divider>
+                <li class="logout d-flex align-items-center justify-content-center">
+                  <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
+                    <mat-icon class="me-2">power_settings_new</mat-icon>
+                    Salir
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </ng-template>
 </ion-header>

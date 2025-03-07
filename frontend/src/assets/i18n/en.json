@@ -1,8 +1,8 @@
 {
   "TITLE": "PrideRide",
   "User Panel": "User Panel Page",
-  "USERPANEL": {
-    "USERPANEL": "User Panel",
+  "PANELUSUARIO": {
+    "PANELUSUARIO": "User Panel",
     "INFOPERSONAL": "PERSONAL INFORMATION",
     "ANADIR_EDITAR_FOTO": "Add/Edit Photo",
     "MIPERFIL": "My Profile",
@@ -18,9 +18,8 @@
     "SALDO_TOOL_TITULO": "Content on Balance and Transfers",
     "SALDO_TOOL_MODAL": "You can check your available balance, top-up methods, recent transactions, and transfer available balance to your bank account."
   },
-
   "__MyProfile": "My Profile Modal and Component",
-  "MY_PROFILE": {
+  "MI_PERFIL": {
     "TITULO": "My Profile",
     "DESCRIPCION_SECCION": "In this section, you can view and edit your personal information, as well as add your vehicles and travel preferences.",
     "INFO_PERSONAL": "Personal Information",
@@ -42,9 +41,8 @@
     "DORMIR": "Sleeping",
     "SILENCIO": "Silence"
   },
-
   "__ContactInfo": "Contact Modal and Page",
-  "CONTACT_INFO": {
+  "DATOS_CONTACTO": {
     "TITULO": "Contact Information",
     "DESCRIPCION_SECCION": "From this section, you can update your email and phone number. (Remember that these are important details when making a trip.)",
     "DESCRIPCION_SECCION_2": "Remember that if you want to be a verified profile, you must do so in the Verification section.",
@@ -55,9 +53,8 @@
     "CHECK_POR_EMAIL": "I agree to receive commercial communications via email",
     "CHECK_TERCEROS": "I agree that my data may be used for commercial purposes by third parties"
   },
-
   "__ProfileVerifications": "Modal and Page Verify Profile",
-  "PROFILE_VERIFICATION": {
+  "VERIF_PERFIL": {
     "TITULO": "Verify Profile / Change Password",
     "TITULO_VERIF_BASICA": "Basic Verification",
     "SUBTIT_VERIF_BASICA": "To become a verified user, you must confirm your email and phone number and upload a photo of your identity document (both sides).",
@@ -84,9 +81,8 @@
     "ELIMINAR_CTA": "Delete Account",
     "INFO_ELIMINAR_CTA": "This action will permanently delete your account. If you have a balance, remember to transfer it to your bank account first to avoid losing your money."
   },
-
   "BalanceAndTransfers": "Modal and Page for Balance and Transfers",
-  "BALANCE": {
+  "SALDO": {
     "SALDOTRANSF": "Balance and Transfers",
     "TITULO": "Balance and Transfers",
     "SUBTITULO1": "In this section, you can check your available balance, view recent transactions, set up your top-up methods, and make deposits.",
@@ -114,7 +110,6 @@
     "TRANS_CONCEPTO": "Transfer to Account",
     "SALDO": "Balance"
   },
-
   "__Pronombres": "Pronoun Selectors",
   "SELEC_PRONOMBRE": {
     "SELECCIONA": "Select your pronoun",
@@ -122,7 +117,6 @@
     "OTROS": "Others",
     "NO_RESPONDE": "I prefer not to answer"
   },
-
   "__Género": "Gender Selectors",
   "SELEC_GENERO": {
     "SELECCIONA": "Select your gender",
@@ -135,7 +129,6 @@
     "OTRO": "Other",
     "NO_RESPONDE": "I prefer not to answer"
   },
-
   "__Orientación": "Orientation Selectors",
   "ORIENTACION": {
     "SELECCIONA": "Select your orientation",
@@ -149,7 +142,6 @@
     "OTRO": "Other",
     "NO_RESPONDE": "I prefer not to answer"
   },
-
   "__Vehículos": "Brand, Model, and Colors",
   "VEHICULOS": {
     "MARCA": "Brand",
@@ -168,7 +160,6 @@
     "perla": "Pearl",
     "otro": "Other"
   },
-
   "__Botones": "My Profile Modal and My Profile Component",
   "BOTON": {
     "ANADIR_VEHICULO": "Add Vehicle",
@@ -176,9 +167,13 @@
     "CONFIRMAR_CODIGO_TFNO": "Confirm Code",
     "ELEGIR_ARCHIVOS": "Choose Files",
     "CAMBIAR": "Change!",
-    "ELIMINAR_CTA": "Delete My Account"
+    "ELIMINAR_CTA": "Delete My Account",
+    "BUSCAR": "Search",
+    "PUBLICA_TU_VIAJE_AQUI": "Publish your next trip here",
+    "CONSULTA_AQUI": "Check here",
+    "PUBLICAR_VIAJE": "Publish your trip",
+    "CENTROAYUDA": "Check our help center"
   },
-
   "NavBar Home": "Navbar options displayed on the Home page",
   "NAVBAR": {
     "QUIENES": "Who We Are",
@@ -194,24 +189,38 @@
     "REGISTRO": "Register",
     "SALIR": "Logout"
   },
-
   "_Footer": "Footer links",
   "FOOTER": {
     "TERMS": "Terms and Conditions",
     "COOKIES": "Cookies"
   },
-
   "antiguo": "debajo",
-
   "GUARDAR": "Save",
   "HOME": {
     "NEW_TRAVEL_TITLE": "Do you want to share your next trip?",
     "NEW_TRAVEL_BUTTON": "Post your next trip here",
     "MOST_POPULAR_TRAVELS_TITLE": "MOST POPULAR TRIPS",
     "QUESTIONS_TITLE": "DO YOU HAVE QUESTIONS?",
-    "CHECK_HERE": "Check here"
+    "CHECK_HERE": "Check here",
+    "JUMBO": {
+      "SLOGAN": "Whoever you are, we travel with you"
+    },
+    "BUSCADOR": {
+      "BUSCARVIAJE": "Search for a trip",
+      "DESDE": "From",
+      "A": "to",
+      "CUANDO": "When",
+      "NUMPASAJEROS": "Number of passengers"
+    },
+    "INFO": {
+      "TEXTO_1": "Explore new adventures and incredible destinations. Find travel companions who share your passion for discovering the world.",
+      "TEXTO_2": "Plan your next trip with ease. Connect with people going in the same direction.",
+      "TEXTO_3": "Share your experiences and create unforgettable memories with fellow travelers like you."
+    },
+    "QUIERES_PUBLICAR_VIAJE": "Do you want to share your next trip?",
+    "TRAYECTOS_POPULARES": "Most popular routes",
+    "DUDAS": "DO YOU HAVE QUESTIONS?"
   },
-
   "HEADER": {
     "ABOUT": "About us",
     "FAQS": "FAQs",
@@ -301,7 +310,6 @@
       "TRASERO": "Back of Driver’s License"
     }
   },
-
   "PERFIL_USUARIO": {
     "INFO_PERSONAL": "PERSONAL INFORMATION",
     "FOTO": "Add/Edit photo",
@@ -321,7 +329,6 @@
       "NO_RESPONDE": "Prefer not to answer"
     }
   },
-
   "MODAL_VERIFICACIONES": {
     "TITULO": "Contact details and verifications",
     "SUBTITULO1": "A verified user provides greater trust to other users.",
@@ -337,7 +344,6 @@
     "CCONDUCIR_TITULO": "ADDITIONAL VERIFICATION: DRIVING LICENSE",
     "CCONDUCIR_SUBTITULO": "If you plan to publish a trip at any point, we need your driving license verified."
   },
-
   "MODAL_AJCUENTA": {
     "TITULO": "Account settings",
     "SUBTITULO": "From here, you can change your password, choose your communication preferences, and permanently delete your account.",
@@ -354,7 +360,6 @@
     "BORRARCUENTA_BOTON": "Delete my account",
     "CAMBIO_IDIOMA": "Change language: "
   },
-
   "MODAL_SALDO": {
     "TITULO": "Balance and transfers to your account",
     "SUBTITULO1": "In this section, you can check your available balance, view recent transactions, set up your top-up methods, and make top-ups.",
@@ -380,7 +385,6 @@
     "TRANSF_IMPORTE": "Transferred amount",
     "TRANS_CONCEPTO": "Account transfer"
   },
-
   "NUEVO_VIAJE": {
     "TITLE_BTN_BACK": "PrideRide",
     "ALT_LOGO": "PrideRide Logo",
@@ -396,7 +400,6 @@
     "HELP_CENTER_SUBTITLE": "Do you have questions about your trips? We’re here to help.",
     "HELP_CENTER_BTN": "Visit our Help Center"
   },
-
   "RESULTADOS_BUSQUEDA": {
     "FILTRO_TITULO": "Filter by...",
     "HORA_SALIDA": "Departure time",

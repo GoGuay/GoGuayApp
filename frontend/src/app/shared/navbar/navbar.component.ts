@@ -6,6 +6,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
 import { Router, RouterLink } from '@angular/router';
+import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 
 @Component({
   selector: 'app-navbar',
@@ -41,7 +42,7 @@ export class NavbarComponent  implements OnInit {
   isMobileWeb: boolean = false;
   isDesktop: boolean = false;
   
-  constructor(private router: Router, private platform: Platform, private translate: TranslateService) { }
+  constructor(private router: Router, private platform: Platform, private languageService: LanguageService) { }
 
   ngOnInit() {
     /**
@@ -88,9 +89,9 @@ export class NavbarComponent  implements OnInit {
    * @param lang Recibe el idioma seleccionado en el selector de idiomas.
    */
   changeLanguage(lang: string) {
-    this.translate.use(lang);
-    localStorage.setItem('language', lang);
+    this.languageService.setLanguage(lang);
   }
+  
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
