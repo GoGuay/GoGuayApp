@@ -29,6 +29,9 @@ export class CuartoPasoComponent implements OnInit {
 
   onCuartoPasoComplete() {
     console.log('Precio ingresado:', this.precio);
+    console.log('Resumen del viaje: ', this.travelService.getViajeData());
+  
+    // Verificar si el precio es válido
     if (!this.precio || this.precio <= 0) {
       this.messageService.add({
         severity: 'error',
@@ -36,17 +39,37 @@ export class CuartoPasoComponent implements OnInit {
         detail: 'Por favor, introduce un precio válido para el viaje.',
         life: 3000
       });
-    } else {
-      const viajeData = {
-        ...this.travelService.getViajeData(),
-        precio_viaje: this.precio,
-      };
-      this.travelService.setViajeData(viajeData);
-      console.log('Datos guardados en TravelService:', this.travelService.getViajeData());
-      this.router.navigate(['/resumen-viaje'], {
-        queryParams: this.travelService.getViajeData()
-      });
+      return;
     }
+  
+    // Verificar que los datos del viaje sean completos
+    const viajeData = this.travelService.getViajeData();
+    if (!viajeData || !viajeData.origen || !viajeData.destino) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Datos incompletos',
+        detail: 'Por favor, asegúrate de que los datos del viaje estén completos.',
+        life: 3000
+      });
+      return;
+    }
+  
+    // Agregar el precio al objeto viajeData
+    const viajeDataConPrecio = {
+      ...viajeData,
+      precio_viaje: this.precio,
+    };
+    
+    // Guardar los datos en el TravelService
+    this.travelService.setViajeData(viajeDataConPrecio);
+    console.log('Datos guardados en TravelService:', this.travelService.getViajeData());
+  
+    // Almacenar los datos en localStorage (si es necesario)
+    localStorage.setItem('viajeData', JSON.stringify(viajeDataConPrecio));
+  
+    // Navegar a la página de resumen
+    this.router.navigate(['/resumen-viaje']);
     this.tercer_paso = false;
   }
+  
 }

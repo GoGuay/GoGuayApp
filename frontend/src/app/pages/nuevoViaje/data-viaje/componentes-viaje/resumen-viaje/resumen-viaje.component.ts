@@ -41,7 +41,8 @@ export class ResumenViajeComponent implements OnInit {
 
   ngOnInit() {
     this.currentViajeData = this.travelService.getViajeData();
-
+    const viajeData = JSON.parse(localStorage.getItem('viajeData') || '{}');
+    console.log('Datos del viaje desde localStorage:', viajeData);
     /**
      * Validamos los datos almacenados en el servicio.
      * Si no están correctamente almacenados, reenviamos al home para evitar errores.

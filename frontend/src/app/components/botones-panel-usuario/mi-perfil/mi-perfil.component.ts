@@ -18,6 +18,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -38,28 +39,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./mi-perfil.component.scss'],
 })
 export class MiPerfilComponent implements OnInit {
-  listadoCoches = CARS;
-  marcaSeleccionada: string = '';
-  modeloSeleccionado: string = '';
-  colorSeleccionado: string = '';
-  modelosFiltrados: string[] = [];
-  listadoColores: string[] = COLORES;
-  listColours: string[] = COLOURS;
-  validacionIdioma: boolean = true;
-
   constructor(
+    public funcionescomunes: FuncionesComunes,
     private dialogRef: MatDialogRef<MiPerfilComponent>,
     private router: Router
   ) {}
 
   ngOnInit() {
-    console.log(this.listadoCoches);
+    console.log(this.funcionescomunes.listadoCoches);
     const idioma = localStorage.getItem('language');
 
     if (idioma === 'es') {
-      this.validacionIdioma = true;
+      this.funcionescomunes.validacionIdioma = true;
     } else {
-      this.validacionIdioma = false;
+      this.funcionescomunes.validacionIdioma = false;
     }
   }
 
@@ -68,11 +61,11 @@ export class MiPerfilComponent implements OnInit {
   }
 
   filtrarModelos() {
-    const coche = this.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
+    const coche = this.funcionescomunes.listadoCoches.find(
+      (vehiculo) => vehiculo.marca === this.funcionescomunes.marcaSeleccionada
     );
-    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
-    this.modeloSeleccionado = '';
+    this.funcionescomunes.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+    this.funcionescomunes.modeloSeleccionado = '';
   }
 
   openInfoVisible() {

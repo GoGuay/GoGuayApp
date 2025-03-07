@@ -58,7 +58,7 @@ export class TercerPasoComponent implements OnInit {
   cargandoSugerencias: boolean = false;
   isUpdatingRoute: boolean = false;
   rutaConParadasSeleccionada: boolean = false;
-  marcaPeajes: boolean = true; 
+  marcaPeajes: boolean = true;
 
   origenCoords!: L.LatLng;
   destinoCoords!: L.LatLng;
@@ -66,7 +66,7 @@ export class TercerPasoComponent implements OnInit {
   private lat = 40.4168;
   private lon = -3.7038;
 
-  constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) {}
+  constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -100,10 +100,16 @@ export class TercerPasoComponent implements OnInit {
   }
 
   buscarCoordenadas() {
+    if (!this.origen || !this.destino) {
+      console.error('Coordenadas de origen o destino no válidas');
+      alert('Coordenadas no válidas. Por favor, verifica las direcciones.');
+      this.isLoadingRoutes = false;
+      return;
+    }
     this.isLoadingRoutes = true;
     const urlOrigen = `https://nominatim.openstreetmap.org/search?format=json&q=${this.origen}`;
     const urlDestino = `https://nominatim.openstreetmap.org/search?format=json&q=${this.destino}`;
-
+  
     forkJoin({
       origen: this.http.get<any[]>(urlOrigen),
       destino: this.http.get<any[]>(urlDestino)
@@ -114,10 +120,10 @@ export class TercerPasoComponent implements OnInit {
         this.isLoadingRoutes = false;
         return;
       }
-
+  
       this.origenCoords = L.latLng(origen[0].lat, origen[0].lon);
       this.destinoCoords = L.latLng(destino[0].lat, destino[0].lon);
-
+  
       if (this.origenCoords && this.destinoCoords) {
         this.buscarRutas(this.origenCoords, this.destinoCoords);
       } else {
@@ -176,6 +182,12 @@ export class TercerPasoComponent implements OnInit {
       ]
     })
       .on('routesfound', (event: any) => {
+        if (!event.routes || event.routes.length === 0) {
+          console.error("No se encontraron rutas.");
+          this.isLoadingRoutes = false;
+          return;
+        }
+
         this.routes = event.routes.map((route: any) => {
           const totalMinutes = Math.round(route.summary.totalTime / 60);
           const hours = Math.floor(totalMinutes / 60);
@@ -197,6 +209,7 @@ export class TercerPasoComponent implements OnInit {
 
         this.isLoadingRoutes = false;
       })
+
       .on('routingerror', (error: any) => {
         console.error("Error al obtener rutas:", error);
         alert("No se pudieron obtener rutas. Intenta con otra dirección.");
@@ -207,29 +220,35 @@ export class TercerPasoComponent implements OnInit {
 
   mostrarRutaEnMapa(coordinates: any[]) {
     if (!this.map) return;
-
+  
+    if (!this.routes || this.routes.length === 0) {
+      console.error("No hay rutas disponibles.");
+      return;
+    }
+  
     if (this.selectedRouteLayer) {
       this.map.removeLayer(this.selectedRouteLayer);
     }
-
+  
     if (coordinates.length < 2) {
       console.error("No hay suficientes coordenadas para dibujar la ruta.");
       return;
     }
-
+  
     this.selectedRouteLayer = L.polyline(coordinates, {
       color: 'blue',
       weight: 6,
       opacity: 0.8
     }).addTo(this.map);
-
+  
     this.map.fitBounds(this.selectedRouteLayer.getBounds());
   }
+  
 
   onPeajeOptionChange(event: any) {
     this.marcaPeajes = event.target.id === 'peajes';
-    this.routes = []; // Reiniciar la lista de rutas
-    this.buscarCoordenadas(); // Volver a buscar rutas con la nueva opción
+    this.routes = [];
+    this.buscarCoordenadas();
   }
 
   seleccionarParada(parada: any) {
@@ -238,39 +257,57 @@ export class TercerPasoComponent implements OnInit {
     } else {
       this.paradasSeleccionadas.add(parada);
     }
+  
+    console.log('Paradas seleccionadas:', this.paradasSeleccionadas);
   }
+  
 
   actualizarRuta() {
     if (this.rutaConParadasSeleccionada) {
       this.isUpdatingRoute = true;
-
+  
       const waypoints = [
         this.origenCoords,
         ...Array.from(this.paradasSeleccionadas).map(parada => parada.coords),
         this.destinoCoords
       ];
-
+  
+      // Verificar que los waypoints sean válidos
+      if (waypoints.length < 2) {
+        console.error("No hay suficientes puntos para la ruta.");
+        this.isUpdatingRoute = false;
+        return;
+      }
+  
       this.mostrarRutaEnMapa(waypoints);
-
       this.isUpdatingRoute = false;
     }
   }
+  
 
   eliminarRutaSeleccionada() {
     this.paradasSeleccionadas.clear();
     this.rutaConParadasSeleccionada = false;
     this.routes = [];
-    this.buscarCoordenadas();
+    this.isLoadingRoutes = false; // Para evitar que el estado se quede en "cargando"
+    this.buscarCoordenadas(); // Vuelve a iniciar el proceso de búsqueda
   }
 
   selectRoute(index: number) {
+    if (index < 0 || index >= this.routes.length) {
+      console.error('Índice de ruta no válido:', index);
+      return;
+    }
+
     this.selectedRouteIndex = index;
     const route = this.routes[index];
-
+    console.log('Ruta seleccionada: ', route);
+    
     if (route) {
       this.mostrarRutaEnMapa(route.coordinates);
     }
   }
+
 
   isRouteSelected(index: number): boolean {
     return this.selectedRouteIndex === index;

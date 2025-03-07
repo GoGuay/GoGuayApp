@@ -51,6 +51,8 @@ export class RegistroComponent implements OnInit {
       fecha_nacimiento: ['', Validators.required],
     });
 
+    console.log('Fecha nacimiento: ', this.fechaNacimiento);
+
     this.formulario2 = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],

@@ -3,16 +3,29 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import {
+  CARS,
+  COLORES,
+  COLOURS,
+} from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FuncionesComunes {
-
   userData: Usuario = {} as Usuario;
 
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
+
+  listadoCoches = CARS;
+  marcaSeleccionada: string = '';
+  modeloSeleccionado: string = '';
+  colorSeleccionado: string = '';
+  modelosFiltrados: string[] = [];
+  listadoColores: string[] = COLORES;
+  listColours: string[] = COLOURS;
+  validacionIdioma: boolean = true;
 
   constructor(private dialog: MatDialog) {
     this.loadUserData();
@@ -100,35 +113,37 @@ export class FuncionesComunes {
     });
   }
 
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * 
- *
- *     FUNCIONES PARA LAS SUGERENCIAS DE VIAJES 
- * 
- * * * * * * * * * * * * * * * * * * * * * * * * * */ 
-
+  /* * * * * * * * * * * * * * * * * * * * * * * * * *
+   *
+   *     FUNCIONES PARA LAS SUGERENCIAS DE VIAJES
+   *
+   * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   /**
-  * Función para obtener la lista de sugerencias para el origen
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
-   obtenerSugerenciasOrigen(evento: Event) {
+   * Función para obtener la lista de sugerencias para el origen
+   * en función de lo que escriba el usuario en el input correspondiente.
+   *
+   * @param evento Recibe el evento del input.
+   */
+  obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-  
+
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      
+
       fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasOrigen = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es' 
+        .then((response) => response.json())
+        .then((data) => {
+          this.sugerenciasOrigen = data.filter(
+            (item: any) =>
+              item.address &&
+              (item.address.city ||
+                item.address.town ||
+                item.address.village) &&
+              item.address.country_code === 'es'
           );
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error al obtener sugerencias de origen:', error);
         });
     } else {
@@ -137,24 +152,28 @@ export class FuncionesComunes {
   }
 
   /**
-  * Función para obtener la lista de sugerencias para el destino
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
+   * Función para obtener la lista de sugerencias para el destino
+   * en función de lo que escriba el usuario en el input correspondiente.
+   *
+   * @param evento Recibe el evento del input.
+   */
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
       fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasDestino = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es'
+        .then((response) => response.json())
+        .then((data) => {
+          this.sugerenciasDestino = data.filter(
+            (item: any) =>
+              item.address &&
+              (item.address.city ||
+                item.address.town ||
+                item.address.village) &&
+              item.address.country_code === 'es'
           );
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error al obtener sugerencias de destino:', error);
         });
     } else {
@@ -162,4 +181,11 @@ export class FuncionesComunes {
     }
   }
 
+  filtrarModelos() {
+    const coche = this.listadoCoches.find(
+      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
+    );
+    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+    this.modeloSeleccionado = '';
+  }
 }
