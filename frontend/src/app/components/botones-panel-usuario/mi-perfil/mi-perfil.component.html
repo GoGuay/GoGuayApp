@@ -182,7 +182,7 @@
             <ion-col size="4">
               <select
                 class="form-select"
-                [(ngModel)]="marcaSeleccionada"
+                [(ngModel)]="funcionescomunes.marcaSeleccionada"
                 (change)="filtrarModelos()"
                 [ngModelOptions]="{ standalone: true }"
                 aria-label="Selección de marca"
@@ -191,7 +191,7 @@
                   {{ "VEHICULOS.MARCA" | translate }}
                 </option>
                 <option
-                  *ngFor="let coche of listadoCoches"
+                  *ngFor="let coche of funcionescomunes.listadoCoches"
                   [value]="coche.marca"
                 >
                   {{ coche.marca }}
@@ -201,8 +201,8 @@
             <ion-col size="4">
               <select
                 class="form-select"
-                [(ngModel)]="modeloSeleccionado"
-                [disabled]="!marcaSeleccionada"
+                [(ngModel)]="funcionescomunes.modeloSeleccionado"
+                [disabled]="!funcionescomunes.marcaSeleccionada"
                 [ngModelOptions]="{ standalone: true }"
                 aria-label="Selección de modelo"
               >
@@ -210,7 +210,7 @@
                   {{ "VEHICULOS.MODELO" | translate }}
                 </option>
                 <option
-                  *ngFor="let modelo of modelosFiltrados"
+                  *ngFor="let modelo of funcionescomunes.modelosFiltrados"
                   [value]="modelo"
                 >
                   {{ modelo }}
@@ -218,35 +218,41 @@
               </select>
             </ion-col>
             <ion-col size="4">
-              <div *ngIf="validacionIdioma">
+              <div *ngIf="funcionescomunes.validacionIdioma">
                 <select
                   class="form-select"
                   aria-label="Selección de color"
-                  [(ngModel)]="colorSeleccionado"
+                  [(ngModel)]="funcionescomunes.colorSeleccionado"
                   [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!modeloSeleccionado"
+                  [disabled]="!funcionescomunes.modeloSeleccionado"
                 >
                   <option value="" disabled selected>
                     {{ "VEHICULOS.COLOR" | translate }}
                   </option>
-                  <option *ngFor="let color of listadoColores" [value]="color">
+                  <option
+                    *ngFor="let color of funcionescomunes.listadoColores"
+                    [value]="color"
+                  >
                     {{ color }}
                   </option>
                 </select>
               </div>
 
-              <div *ngIf="!validacionIdioma">
+              <div *ngIf="!funcionescomunes.validacionIdioma">
                 <select
                   class="form-select"
                   aria-label="Selección de color"
-                  [(ngModel)]="colorSeleccionado"
+                  [(ngModel)]="funcionescomunes.colorSeleccionado"
                   [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!modeloSeleccionado"
+                  [disabled]="!funcionescomunes.modeloSeleccionado"
                 >
                   <option value="" disabled selected>
                     {{ "VEHICULOS.COLOR" | translate }}
                   </option>
-                  <option *ngFor="let color of listColours" [value]="color">
+                  <option
+                    *ngFor="let color of funcionescomunes.listColours"
+                    [value]="color"
+                  >
                     {{ color }}
                   </option>
                 </select>

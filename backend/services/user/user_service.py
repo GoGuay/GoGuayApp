@@ -43,9 +43,10 @@ def crear_usuario():
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
         carnet_conducir_verificado=data.get('carnet_conducir_verificado', False),
         numero_carnet_conducir=data.get('numero_carnet_conducir'),
-        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') 
-        if data.get('fecha_vencimiento_carnet') else None
-        if data.get('fecha_nacimiento') else None
+        fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
+        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None
+        
+        
     )
 
     db.session.add(nuevo_usuario)
@@ -124,12 +125,49 @@ def actualizar_usuario(user_id):
     usuario = Usuario.query.get_or_404(user_id)
     data = request.json
     
-    for key in ['nombre', 'apellidos', 'telefono', 'biografia', 'direccion', 'fecha_nacimiento']:
+    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'telefono', 'biografia', 'direccion', 'fecha_nacimiento']:
         if key in data:
+            if key == 'nombre' and data[key]:
+                setattr(usuario, key, data['nombre'])
+            else:
+                setattr(usuario, key, data['nombre'])
+
+            if key == 'apellidos' and data[key]:
+                setattr(usuario, key, data['apellidos'])
+            else:
+                setattr(usuario, key, data['apellidos'])
+
+            if key == 'pronombre' and data[key]:
+                setattr(usuario, key, data['pronombre'])
+            else:
+                setattr(usuario, key, data['pronombre'])
+
+            if key == 'genero' and data[key]:
+                setattr(usuario, key, data['genero'])
+            else:
+                setattr(usuario, key, data['genero'])
+            
+            if key == 'orientacion' and data[key]:
+                setattr(usuario, key, data['orientacion'])
+            else:
+                setattr(usuario, key, data['orientacion'])
+
             if key == 'fecha_nacimiento' and data[key]:
                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))
             else:
                 setattr(usuario, key, data[key])
+            
+            # if key == 'telefono' and data[key]:
+            #     setattr(usuario, key, data['telefono'])
+            # else:
+            #     setattr(usuario, key, data['telefono'])
+            
+            if key == 'biografia' and data[key]:
+                setattr(usuario, key, data['biografia'])
+            else:
+                setattr(usuario, key, data['biografia'])
+            
+
     
     db.session.commit()
     return jsonify(usuario.serialize()), 200
