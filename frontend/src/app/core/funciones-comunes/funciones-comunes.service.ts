@@ -21,7 +21,7 @@ export class FuncionesComunes {
   /**
    * Función para recoger de "localStorage" los datos del usuario, si los hay.
    */
-  private loadUserData(): void {
+  loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 

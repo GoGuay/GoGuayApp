@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
-import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Subscription } from 'rxjs';
+import { LanguageService } from './core/lenguajes/languaje.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -23,19 +23,14 @@ export class AppComponent implements OnInit {
   constructor(
     private ccService: NgcCookieConsentService,
     private cookieService: CookieService,
-    private translate: TranslateService
+    private languageService: LanguageService
   ) {
     
-    // Establece el idioma predeterminado
-    this.translate.setDefaultLang('es');
-    this.translate.use('es');
+
+
   }
 
   ngOnInit() {
-    /**
-     * Se obtiene el idioma seleccionado desde la caché.
-     */
-    const savedLanguage = localStorage.getItem('language');
     const consentStatus = localStorage.getItem('cookieConsentStatus');
 
     this.ccService.popupOpen$.subscribe(() => {
@@ -56,7 +51,7 @@ export class AppComponent implements OnInit {
     
     if (consentStatus === 'allow' || consentStatus === 'deny') {
       // Si ya se ha dado consentimiento, no mostrar el banner
-      this.ccService.destroy();  // Elimina el banner si ya se ha aceptado o rechazado
+      this.ccService.destroy();
     } else {
       this.consentGivenSubscription = this.ccService.statusChange$.subscribe((event: NgcStatusChangeEvent) => {
         const status = event.status;
@@ -73,13 +68,12 @@ export class AppComponent implements OnInit {
      * pero si en algún momento el usuario cambia el idioma,
      * recoge el idioma que se ha cambiado de la caché.
      */
-    if (savedLanguage) {
-      this.translate.use(savedLanguage);
-    } else {
-      this.translate.setDefaultLang('es');
-    }
-
+    this.languageService.language$.subscribe((lang) => {
+      console.log(`Idioma cambiado a: ${lang}`);
+    });
   }
+
+
 
   ngOnDestroy() {
     if (this.consentGivenSubscription) {
