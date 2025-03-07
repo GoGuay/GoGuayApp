@@ -46,6 +46,7 @@ ion-button {
     right: 0;
     transform: translateY(0);
     z-index: 1050;
+    
     box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
   }
 }
@@ -55,7 +56,6 @@ ion-button {
   border: none;
   background-color: #F0D7B4;
   border-radius: 15px;
-  width: 250px;
 }
 
 .navbar .dropdown-menu .perfil a:hover {
