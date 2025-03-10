@@ -1,0 +1,55 @@
+.react-1 {
+    animation: moving 4s ease-in-out infinite, colorCycle 2s infinite;
+  }
+  
+  @keyframes moving {
+    0% {
+      width: 0%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0);
+    }
+    25% {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    }
+    50% {
+      width: 100%;
+      transform: translate(0%, 0);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.28);
+    }
+    75% {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); 
+    }
+    100% {
+      width: 0%;
+      transform: translate(100%, 0);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0); 
+    }
+  }
+  
+  @keyframes colorCycle {
+    0% {
+      fill: #ffb3ba;
+    }
+    16% {
+      fill: #ffdfba;
+    }
+    33% {
+      fill: #ffffba;
+    }
+    50% {
+      fill: #baffc9;
+    }
+    66% {
+      fill: #bae1ff;
+    }
+    83% {
+      fill: #e0baff;
+    }
+    100% {
+      fill: #ffb3ba;
+    }
+  }
+  
+  svg {
+    border-radius: 15px;
+  }
+  
