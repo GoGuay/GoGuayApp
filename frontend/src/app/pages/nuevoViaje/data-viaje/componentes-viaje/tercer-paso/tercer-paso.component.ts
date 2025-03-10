@@ -306,7 +306,6 @@ export class TercerPasoComponent implements OnInit {
   
     this.selectedRouteIndex = index;
     const route = this.routes[index];
-    console.log('Ruta seleccionada: ', route);
   
     if (route) {
       this.mostrarRutaEnMapa(route.coordinates);
@@ -323,9 +322,6 @@ export class TercerPasoComponent implements OnInit {
       };
   
       this.travelService.setViajeData(viajeDataConRuta);
-      console.log('Datos actualizados en TravelService:', this.travelService.getViajeData());
-  
-      // Guardar en localStorage
       localStorage.setItem('viajeData', JSON.stringify(viajeDataConRuta));
     }
   }

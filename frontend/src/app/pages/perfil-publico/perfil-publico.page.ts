@@ -118,9 +118,7 @@ export class PerfilPublicoPage implements OnInit {
    */
   obtenerViajes() {
     this.travelService.getViajesDeUsuario(this.userData.usuario.id)
-      .subscribe((result) => {
-        console.log('Viajes del usuario: ', result);
-        
+      .subscribe((result) => {        
         this.misViajes = result;
       });
   }

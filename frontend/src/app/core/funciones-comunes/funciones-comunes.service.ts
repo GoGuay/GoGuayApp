@@ -66,13 +66,17 @@ export class FuncionesComunes {
    */
   validacionPreferencias(preferencias: any): string {
     let preferencia: any;
-
-    if (!preferencias.viaje) {
-      preferencia = preferencias.preferencias;
+  
+    if (!preferencias || !preferencias.viaje) {
+      preferencia = preferencias ? preferencias.preferencias : '';
     } else {
-      preferencia = preferencias.viaje.usuario.preferencias;
+      preferencia = preferencias.viaje.usuario ? preferencias.viaje.usuario.preferencias : '';
     }
-
+  
+    if (!preferencia) {
+      return '';
+    }
+  
     switch (preferencia) {
       case 'Silencio':
         return 'Prefiere viajar en silencio';
@@ -86,6 +90,7 @@ export class FuncionesComunes {
         return '';
     }
   }
+  
 
   /**
    * Función para abrir la ventana modal con mensajes de error.

@@ -102,6 +102,8 @@ export class ResumenViajeComponent implements OnInit {
     const title: string = 'Confirmación de Viaje';
     const message: string = 'El viaje ha sido confirmado con éxito.';
   
+    this.currentViajeData.usuario = this.userData.usuario; // <- Se añaden todos los datos del usuario que ha creado el viaje.
+    this.currentViajeData.usuario_id = this.userData.usuario.id; // <- Se añade el ID del usuario que ha creado el viaje.
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
     if (isNaN(this.currentViajeData.plazas)) {
       this.openError('Error!', 'El número de plazas no es válido. Por favor, verifica los datos.');
