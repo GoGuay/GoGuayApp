@@ -66,18 +66,22 @@ export class TercerPasoComponent implements OnInit {
   private lat = 40.4168;
   private lon = -3.7038;
 
+  private coordenadasBuscadas = false;
+
   constructor(private travelService: TravelService, private http: HttpClient, private mapService: LeafletService) { }
 
   ngOnInit() {
     setTimeout(() => {
       this.initMap();
     }, 300);
-
+  
     this.travelService.viajeData$.subscribe((viajeData) => {
       this.origen = viajeData?.origen || '';
       this.destino = viajeData?.destino || '';
-      if (this.origen && this.destino) {
+  
+      if (this.origen && this.destino && !this.coordenadasBuscadas) {
         this.buscarCoordenadas();
+        this.coordenadasBuscadas = true;
       }
     });
   }
@@ -289,24 +293,43 @@ export class TercerPasoComponent implements OnInit {
     this.paradasSeleccionadas.clear();
     this.rutaConParadasSeleccionada = false;
     this.routes = [];
-    this.isLoadingRoutes = false; // Para evitar que el estado se quede en "cargando"
-    this.buscarCoordenadas(); // Vuelve a iniciar el proceso de búsqueda
+    this.isLoadingRoutes = false;
+    this.buscarCoordenadas();
   }
 
+  
   selectRoute(index: number) {
     if (index < 0 || index >= this.routes.length) {
       console.error('Índice de ruta no válido:', index);
       return;
     }
-
+  
     this.selectedRouteIndex = index;
     const route = this.routes[index];
     console.log('Ruta seleccionada: ', route);
-    
+  
     if (route) {
       this.mostrarRutaEnMapa(route.coordinates);
+  
+      // Guardar la ruta seleccionada en TravelService
+      const viajeData = this.travelService.getViajeData();
+      const viajeDataConRuta = {
+        ...viajeData,
+        ruta_seleccionada: {
+          distancia: route.distance,
+          duracion: route.duration,
+          routes: route.coordinates
+        }
+      };
+  
+      this.travelService.setViajeData(viajeDataConRuta);
+      console.log('Datos actualizados en TravelService:', this.travelService.getViajeData());
+  
+      // Guardar en localStorage
+      localStorage.setItem('viajeData', JSON.stringify(viajeDataConRuta));
     }
   }
+  
 
 
   isRouteSelected(index: number): boolean {

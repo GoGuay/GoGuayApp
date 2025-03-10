@@ -45,6 +45,20 @@
   overflow-y: auto;
 }
 
+.lista_sugerencias_origen {
+  position: absolute;
+  top: calc(64% + 5px);
+  left: 350px;
+  width: 50%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 .lista_sugerencias li {
   padding: 10px;
   cursor: pointer;

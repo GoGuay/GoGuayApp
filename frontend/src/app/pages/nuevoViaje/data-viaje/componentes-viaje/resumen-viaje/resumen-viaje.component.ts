@@ -94,19 +94,6 @@ export class ResumenViajeComponent implements OnInit {
       return;
     }
 
-    if (
-      !this.currentViajeData.ruta_seleccionada ||
-      !this.currentViajeData.ruta_seleccionada.routes ||
-      this.currentViajeData.ruta_seleccionada.routes.length === 0 ||
-      !this.currentViajeData.ruta_seleccionada.routes[0].overview_polyline ||
-      this.currentViajeData.ruta_seleccionada.routes[0].overview_polyline.length < 2 || 
-      !this.currentViajeData.ruta_seleccionada.routes[0].overview_path ||
-      this.currentViajeData.ruta_seleccionada.routes[0].overview_path.length < 2 
-    ) {
-      this.openError('Error', 'La polilínea de la ruta no es válida.');
-      return;
-    }
-
     const fechaSalida = new Date(this.currentViajeData.fecha_salida).toISOString().split('T')[0];
     this.currentViajeData.fecha_salida = fechaSalida;
     

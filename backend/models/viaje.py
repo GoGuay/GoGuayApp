@@ -13,7 +13,7 @@ class Viaje(db.Model):
     hora_salida = db.Column(db.String(5), nullable=False)
     hora_llegada = db.Column(db.String(5), nullable=True)
     fecha_salida = db.Column(db.DateTime, nullable=False)
-    duracion_viaje = db.Column(db.Integer, nullable=True)
+    duracion_viaje = db.Column(db.String(100), nullable=True)
     ruta_seleccionada = db.Column(db.JSON, nullable=True)
 
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)

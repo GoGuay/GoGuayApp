@@ -12,11 +12,44 @@
   padding: 8px 16px;
 }
 
+
+.input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .input-viaje {
   display: block;
-  width: 100%;
-  padding: 10px;
+  width: 20%; 
+  padding: 10px 10px 10px 30px; 
   margin: 20px 0;
   border: 1px solid #ccc;
   border-radius: 35px;
+  font-size: 1rem;
+  box-sizing: border-box; 
+}
+
+.input-viaje::-webkit-outer-spin-button,
+.input-viaje::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+/* Alineación del símbolo del euro */
+.currency-symbol {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.help-icon {
+  margin-left: 10px; 
+  font-size: 1.5rem;
+  cursor: pointer;
 }

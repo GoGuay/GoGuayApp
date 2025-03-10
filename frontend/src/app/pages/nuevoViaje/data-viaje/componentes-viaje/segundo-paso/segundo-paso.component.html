@@ -2,10 +2,10 @@
   <h1>PUNTO DE PARTIDA</h1>
 
   <input [(ngModel)]="origen" (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
-    placeholder="{{ 'NUEVO_VIAJE.FROM' | translate }}" class="input-viaje form-control">
+    placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control">
   <button type="button" mat-raised-button class="btn_bg"
     (click)="getUserLocationWithLeaflet()"><mat-icon>location_on</mat-icon>Usar mi ubicación</button>
-  <ul *ngIf="funcionesComunes.sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+  <ul *ngIf="funcionesComunes.sugerenciasOrigen.length > 0" class="list-group lista_sugerencias_origen">
     <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sugerencia)"
       [ngClass]="{'list-group-item': true}">
       {{ sugerencia.display_name }}
@@ -16,7 +16,7 @@
 <div class="container">
   <h1>LUGAR DE LLEGADA</h1>
   <input [(ngModel)]="destino" (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
-    placeholder="{{ 'NUEVO_VIAJE.TO' | translate }}" class="input-viaje form-control">
+    placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control">
   <ul *ngIf="funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
     <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
       [ngClass]="{'list-group-item': true}">

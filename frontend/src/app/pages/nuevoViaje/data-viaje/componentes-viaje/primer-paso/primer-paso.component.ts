@@ -10,7 +10,7 @@ import { CommonModule, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import {MatTimepickerModule} from '@angular/material/timepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -19,12 +19,12 @@ registerLocaleData(localeEs);
 @Component({
   selector: 'app-primer-paso',
   standalone: true,
-  imports: [IonicModule, 
-    MatIcon, 
-    MatCardModule, 
-    MatDatepickerModule, 
-    FormsModule, 
-    MatTimepickerModule, 
+  imports: [IonicModule,
+    MatIcon,
+    MatCardModule,
+    MatDatepickerModule,
+    FormsModule,
+    MatTimepickerModule,
     MatFormFieldModule,
     MatInputModule,
     CommonModule,
@@ -51,9 +51,11 @@ export class PrimerPasoComponent implements OnInit {
   isMobileWeb: boolean = false;
   isDesktop: boolean = true;
 
+  invalid_date: boolean = false;
+
   hoy: string = new Date().toISOString();
 
-  constructor(private travelService: TravelService, private platform: Platform) { 
+  constructor(private travelService: TravelService, private platform: Platform) {
     this._adapter.setLocale('es-ES');
   }
 
@@ -63,6 +65,8 @@ export class PrimerPasoComponent implements OnInit {
     this.isDesktop = this.platform.is('desktop');
 
     const date = new Date();
+    this.fecha_seleccionada = date.toISOString();
+    this.hora_seleccionada = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     this.fecha_seleccionada = date.toISOString();
     this.hora_seleccionada = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -76,6 +80,9 @@ export class PrimerPasoComponent implements OnInit {
       this.plazas = viajeData.plazas || '';
       this.cocheSeleccionado = viajeData.coche || '';
     }
+
+    this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
+    this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
   }
 
 
@@ -140,14 +147,23 @@ export class PrimerPasoComponent implements OnInit {
    */
   onTimeChange(event: any) {
     let timeValue: Date;
-  
+
     if (this.isDesktop) {
       timeValue = new Date(event);
     } else {
       timeValue = new Date(event.detail.value);
     }
-    this.hora_seleccionada = timeValue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (isNaN(timeValue.getTime())) {
+      this.invalid_date = true;
+      this.hora_seleccionada = '';
+    } else {
+      this.invalid_date = false;
+      this.hora_seleccionada = timeValue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
   }
-  
+
+
 }

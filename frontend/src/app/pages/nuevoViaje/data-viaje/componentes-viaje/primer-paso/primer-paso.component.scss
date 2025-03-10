@@ -126,3 +126,15 @@ ion-datetime.ios::part(calendar-day active):focus {
   background-color: rgb(154 209 98 / 0.2);
   color: #b3b5e6;
 }
+
+
+.error {
+  border: 2px solid red !important;
+  border-radius: 15px;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}

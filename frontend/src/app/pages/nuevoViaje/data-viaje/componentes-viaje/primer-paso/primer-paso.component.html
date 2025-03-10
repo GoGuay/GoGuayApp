@@ -16,14 +16,20 @@
         <div class="contenedor_hora">
           <!-- Selector de hora para escritorio -->
           <div *ngIf="isDesktop">
-            <mat-form-field>
+            <mat-form-field >
               <mat-label>Selecciona la hora</mat-label>
-              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker" (ngModelChange)="onTimeChange($event)">
+              <input 
+                matInput 
+                [(ngModel)]="hora_seleccionada" 
+                [matTimepicker]="minutesPicker" 
+                (ngModelChange)="onTimeChange($event)">
               <mat-timepicker-toggle matIconSuffix [for]="minutesPicker"/>
               <mat-timepicker interval="1min" #minutesPicker/>
             </mat-form-field>
-                                         
+          
+            <p *ngIf="invalid_date" class="error-text">Formato de hora inválido</p>
           </div>
+          
 
           <!-- Selector de hora para móvil -->
           <div *ngIf="!isDesktop">

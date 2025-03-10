@@ -18,8 +18,9 @@
                 <li><mat-icon>directions_car</mat-icon> <strong>Coche Seleccionado:</strong> {{ currentViajeData.coche }}</li>
                 <li><mat-icon>group</mat-icon> <strong>Número de Plazas Disponibles:</strong> {{ currentViajeData.plazas }}</li>
                 <li><mat-icon>event</mat-icon> <strong>Fecha de Salida:</strong> {{ getFormattedDate() }}</li>
-                <li><mat-icon>schedule</mat-icon> <strong>Hora de Salida:</strong> {{ currentViajeData.hora_salida }}</li>
-                <li><mat-icon>alt_route</mat-icon> <strong>Resumen de la Ruta:</strong> {{ currentViajeData.ruta_seleccionada.routes[0]?.summary }}</li>
+                <li><mat-icon>schedule</mat-icon> <strong>Hora de Salida:</strong> {{ currentViajeData?.hora_salida }}</li>
+                <li><mat-icon>euro</mat-icon> <strong>Precio para el viaje:</strong> {{ currentViajeData?.precio_viaje }}</li>
+                <!-- <li><mat-icon>alt_route</mat-icon> <strong>Resumen de la Ruta:</strong> {{ currentViajeData?.ruta_seleccionada.routes[0]?.summary }}</li> -->
               </ul>
             </div>
           </div>
