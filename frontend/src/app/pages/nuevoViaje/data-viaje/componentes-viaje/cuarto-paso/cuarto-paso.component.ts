@@ -68,7 +68,6 @@ export class CuartoPasoComponent implements OnInit {
     }
 
     let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, viajeData.ruta_seleccionada.duracion);
-    console.log('🕒 Hora de llegada calculada:', hora_llegada);
 
     if (!hora_llegada) {
       this.messageService.add({

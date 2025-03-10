@@ -1,68 +1,85 @@
 .container {
-    margin: 20px;
+  margin: 20px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.btn-banner button {
+  font-size: 0.9rem;
+  padding: 8px 16px;
+}
+
+.box_info {
+  height: 100px;
+  border: 1px solid #b3b5e6;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.box_img {
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 10px;
   }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  ul li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .btn-banner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-  
+
   .btn-banner button {
-    font-size: 0.9rem;
-    padding: 8px 16px;
+    font-size: 0.8rem;
+    padding: 6px 12px;
   }
-  
-  .box_info {
-    height: 100px;
-    border: 1px solid #b3b5e6;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  }
-  
+
   .box_img {
-    border-radius: 15px;
-    width: 100%;
-    max-width: 400px; 
+    width: 80%;
+    max-width: 250px;
+  }
+
+  .box_info {
     height: auto;
-    border: 1px solid #b3b5e6;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    padding: 10px;
+    font-size: 0.8rem;
   }
-  
-  @media (max-width: 768px) {
-    .container {
-      margin: 10px;
-    }
-  
-    .btn-banner button {
-      font-size: 0.8rem;
-      padding: 6px 12px;
-    }
-  
-    .box_img {
-      width: 80%;
-      max-width: 250px;
-    }
-  
-    .box_info {
-      height: auto;
-      padding: 10px;
-      font-size: 0.8rem;
-    }
-  }
-  
+}
+
+input {
+  border-radius: 35px !important;
+  border: none;
+  padding: 1%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.input-viaje {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 10px 30px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}

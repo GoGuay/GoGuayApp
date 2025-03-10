@@ -14,11 +14,15 @@ import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.com
 import { MatDialog } from '@angular/material/dialog';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-resumen-viaje',
   standalone: true,
-  imports: [IonicModule,
+  imports: [
+    IonicModule,
     MatIcon,
     MatCardModule,
     MatDatepickerModule,
@@ -26,7 +30,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
     NavbarComponent,
     MatDivider,
     MatButtonModule,
-    CommonModule
+    CommonModule,
+    TranslateModule
   ],
   templateUrl: './resumen-viaje.component.html',
   styleUrls: ['./resumen-viaje.component.scss'],
@@ -35,14 +40,23 @@ export class ResumenViajeComponent implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
 
-  currentViajeData: any;
+  editMode: any = {};
+  editableFields: any = {};
 
-  constructor(private travelService: TravelService, private router: Router, private dialog: MatDialog) { }
+  origen: string = '';
+  destino: string = '';
+
+  currentViajeData: any;
+  private destroy$ = new Subject<void>();
+
+  constructor(private travelService: TravelService,
+    private router: Router,
+    private dialog: MatDialog,
+    public funcionesComunes: FuncionesComunes
+  ) { }
 
   ngOnInit() {
     this.currentViajeData = this.travelService.getViajeData();
-    const viajeData = JSON.parse(localStorage.getItem('viajeData') || '{}');
-    console.log('Datos del viaje desde localStorage:', viajeData);
     /**
      * Validamos los datos almacenados en el servicio.
      * Si no están correctamente almacenados, reenviamos al home para evitar errores.
@@ -87,22 +101,16 @@ export class ResumenViajeComponent implements OnInit {
   confirmarViaje() {
     const title: string = 'Confirmación de Viaje';
     const message: string = 'El viaje ha sido confirmado con éxito.';
-
+  
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
     if (isNaN(this.currentViajeData.plazas)) {
       this.openError('Error!', 'El número de plazas no es válido. Por favor, verifica los datos.');
       return;
     }
-
+  
     const fechaSalida = new Date(this.currentViajeData.fecha_salida).toISOString().split('T')[0];
     this.currentViajeData.fecha_salida = fechaSalida;
-    
-    /**
-     * Se informa al usuario de que se va a confirmar (Guardar) el viaje que ha creado.
-     * Si acepta, el viaje se guardará en base de datos si todo está correcto.
-     * En caso de no estar algún dato correcto, se muestra un mensaje de error.
-     * 
-     */
+  
     const mensajeConfirmación = this.openHelp('Confirmar viaje', 'Si continuas se va a confirmar el viaje.');
     mensajeConfirmación.afterClosed().subscribe(() => {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
@@ -118,8 +126,7 @@ export class ResumenViajeComponent implements OnInit {
           console.error('Error al guardar el viaje:', error);
         }
       );
-    })
-
+    });
   }
 
   /**
@@ -167,4 +174,102 @@ export class ResumenViajeComponent implements OnInit {
       disableClose: true,
     });
   }
+
+  /**
+   * Función para editar el input seleccionado.
+   * 
+   * @param field Recibe los datos del input a editar
+   */
+  edicionInformacion(field: string) {
+    if (this.editMode[field]) {
+      this.currentViajeData[field] = this.editableFields[field];
+  
+      const viajeData = {
+        ...this.travelService.getViajeData(),
+        [field]: this.currentViajeData[field],
+      };
+      this.travelService.setViajeData(viajeData);
+    } else {
+      this.editableFields[field] = this.currentViajeData[field];
+    }
+    this.editMode[field] = !this.editMode[field];
+  }
+
+
+  /**
+   * Función para calcular la hora de llegada del viaje
+   * @param hora_salida 
+   * @param duracion_viaje 
+   * @returns 
+   */
+  calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
+    try {
+      let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
+      let salidaDate = new Date();
+      salidaDate.setHours(horasSalida, minutosSalida, 0);
+
+      let duracionHoras = 0;
+      let duracionMinutos = 0;
+
+      const duracionMatch = duracion_viaje.match(/(\d+)h\s*(\d+)?min?/);
+      if (duracionMatch) {
+        duracionHoras = Number(duracionMatch[1]) || 0;
+        duracionMinutos = Number(duracionMatch[2]) || 0;
+      }
+
+      let llegadaDate = new Date(salidaDate);
+      llegadaDate.setHours(llegadaDate.getHours() + duracionHoras);
+      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionMinutos);
+
+      return llegadaDate.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      console.error('Error al calcular hora de llegada:', error);
+      return null;
+    }
+  }
+
+  /**
+ * Función para guardar la información de la localidad de origen seleccionada.
+ * 
+ * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+ */
+  seleccionarLocalidadOrigen(localidad: any) {
+    this.origen = localidad.display_name.split(',')[0].trim();
+    const viajeData = {
+      ...this.travelService.getViajeData(),
+      origen: this.origen,
+    };
+    this.travelService.setViajeData(viajeData);
+    this.funcionesComunes.sugerenciasOrigen = [];
+  }
+
+
+  /**
+   * Función para guardar la información de la localidad de destino seleccionada.
+   * 
+   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+   */
+  seleccionarLocalidadDestino(localidad: any) {
+    this.destino = localidad.display_name.split(',')[0].trim();
+    const viajeData = {
+      ...this.travelService.getViajeData(),
+      destino: this.destino,
+    };
+    this.travelService.setViajeData(viajeData);
+    this.funcionesComunes.sugerenciasDestino = [];
+  }
+
+  actualizarInformacion() {
+    this.travelService.viajeData$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((viajeData) => {
+        this.currentViajeData = viajeData ?? {};
+        this.origen = this.currentViajeData?.origen || '';
+        // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
+      });
+  }
+
 }
