@@ -43,9 +43,8 @@ export class CuartoPasoComponent implements OnInit {
 
   onCuartoPasoComplete() {
     console.log('Precio ingresado:', this.precio);
-    console.log('Resumen del viaje: ', this.travelService.getViajeData());
+    console.log('Resumen del viaje antes de actualizar:', this.travelService.getViajeData());
 
-    // Verificar si el precio es válido
     if (!this.precio || this.precio <= 0) {
       this.messageService.add({
         severity: 'error',
@@ -56,34 +55,82 @@ export class CuartoPasoComponent implements OnInit {
       return;
     }
 
-    // Verificar que los datos del viaje sean completos
     const viajeData = this.travelService.getViajeData();
-    if (!viajeData || !viajeData.origen || !viajeData.destino) {
+    if (!viajeData || !viajeData.origen || !viajeData.destino || !viajeData.hora_salida || !viajeData.ruta_seleccionada?.duracion) {
       this.messageService.add({
         severity: 'error',
         summary: 'Datos incompletos',
         detail: 'Por favor, asegúrate de que los datos del viaje estén completos.',
         life: 3000
       });
+      console.error('Error: Faltan datos en viajeData', viajeData);
       return;
     }
 
-    // Agregar el precio al objeto viajeData
-    const viajeDataConPrecio = {
+    let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, viajeData.ruta_seleccionada.duracion);
+    console.log('🕒 Hora de llegada calculada:', hora_llegada);
+
+    if (!hora_llegada) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error al calcular la hora de llegada',
+        detail: 'Por favor, revisa la hora de salida y la duración del viaje.',
+        life: 3000
+      });
+      return;
+    }
+
+    const viajeDataFinal = {
       ...viajeData,
       precio_viaje: this.precio,
+      hora_llegada
     };
 
-    // Guardar los datos en el TravelService
-    this.travelService.setViajeData(viajeDataConPrecio);
-    console.log('Datos guardados en TravelService:', this.travelService.getViajeData());
+    this.travelService.setViajeData(viajeDataFinal);
 
-    // Almacenar los datos en localStorage (si es necesario)
-    localStorage.setItem('viajeData', JSON.stringify(viajeDataConPrecio));
+    localStorage.setItem('viajeData', JSON.stringify(viajeDataFinal));
 
-    // Navegar a la página de resumen
-    this.router.navigate(['/resumen-viaje']);
+    this.router.navigate(['/resumen-viaje']).then(success => {
+      if (!success) {
+        console.error('Error en la navegación a /resumen-viaje');
+      }
+    });
+
     this.tercer_paso = false;
   }
 
+  /**
+   * Función para calcular la hora de llegada
+   * @param hora_salida string en formato "HH:mm"
+   * @param duracion_viaje string en formato "Xh Ym"
+   * @returns string en formato "HH:mm"
+   */
+  calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
+    try {
+      let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
+      let salidaDate = new Date();
+      salidaDate.setHours(horasSalida, minutosSalida, 0);
+
+      let duracionHoras = 0;
+      let duracionMinutos = 0;
+
+      const duracionMatch = duracion_viaje.match(/(\d+)h\s*(\d+)?min?/);
+      if (duracionMatch) {
+        duracionHoras = Number(duracionMatch[1]) || 0;
+        duracionMinutos = Number(duracionMatch[2]) || 0;
+      }
+
+      let llegadaDate = new Date(salidaDate);
+      llegadaDate.setHours(llegadaDate.getHours() + duracionHoras);
+      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionMinutos);
+
+      return llegadaDate.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      console.error('Error al calcular hora de llegada:', error);
+      return null;
+    }
+  }
 }

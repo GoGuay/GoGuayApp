@@ -60,23 +60,26 @@
                     <ion-col class="text-start d-flex align-items-center">
                       <p>{{ resultado_del_viaje.hora_salida }}</p>
                     </ion-col>
-
+                  
                     <ion-col class="text-end">
-                      <p>18:00</p>
+                      <p>{{ resultado_del_viaje.hora_llegada }}</p>
                     </ion-col>
                   </ion-row>
-                  <ion-row>
+                  
+                  <ion-row class="d-flex align-items-center justify-content-center">
                     <div
                       class="d-flex align-items-center justify-content-center"
                     >
                       <mat-icon class="me-1">diversity_1</mat-icon>
                       <div
-                        class="me-2 linea1"
+                        class="me-2 linea"
                         style="border: 3px solid black"
                       ></div>
-                      <div>duracion</div>
+                      <div>
+                        <label>{{ resultado_del_viaje?.duracion_viaje }}</label>
+                      </div>
                       <div
-                        class="ms-2 linea2"
+                        class="ms-2 linea"
                         style="border: 3px solid black"
                       ></div>
                       <mat-icon class="ms-1">sports_score</mat-icon>

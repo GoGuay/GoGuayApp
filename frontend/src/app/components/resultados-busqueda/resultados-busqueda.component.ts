@@ -69,7 +69,7 @@ export class ResultadosBusquedaComponent implements OnInit {
    * @param id_usuario Recibe el ID del usuario a obtener datos.
    */
   obtenerUsuarioPorID(id_usuario: number): Observable<any> {
-    return this.userService.obtenerUsuarioPorID(id_usuario); // Aquí retornamos el Observable del servicio directamente
+    return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
   openPerfilPublico(id_usuario: number) {

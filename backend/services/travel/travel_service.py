@@ -56,6 +56,7 @@ def crear_viaje():
         destino=data['destino'],
         plazas=int(data['plazas']),
         hora_salida=data['hora_salida'],
+        hora_llegada=data['hora_llegada'],
         precio_viaje=data['precio_viaje'],
         duracion_viaje=data['ruta_seleccionada'].get('duracion', 'No especificado'),
         fecha_salida=fecha_salida,
