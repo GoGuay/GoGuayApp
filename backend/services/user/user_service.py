@@ -16,9 +16,9 @@ import cloudinary.uploader
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
 
-#
-# REGISTRAR USUARIO NUEVO
-#
+# # # # # # # # # # # # # # # # # # # #
+#       REGISTRAR USUARIO NUEVO
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/registro', methods=['POST'])
 def crear_usuario():
     data = request.json
@@ -66,9 +66,9 @@ def crear_usuario():
     }), 201
 
 
-#
-# LOGIN
-#
+# # # # # # # # # # # # # # # # # # # #
+#              LOGIN
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -93,9 +93,9 @@ def login():
         'access_token': access_token
     }), 200
 
-#
-# OBTENER TODOS LOS USUARIOS
-#
+# # # # # # # # # # # # # # # # # # # #
+#       OBTENER TODOS LOS USUARIOS
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/obtener_usuarios', methods=['GET'])
 def obtener_usuarios():
     lista_usuarios = Usuario.query.options(
@@ -107,9 +107,9 @@ def obtener_usuarios():
 
 
 
-#
-# OBTENER USUARIO POR ID
-#
+# # # # # # # # # # # # # # # # # # # #
+#       OBTENER USUARIO POR ID
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/obtener_usuario_por_id/<int:id>', methods=['GET'])
 def obtener_usuario_por_id(id):
     usuario = Usuario.query.get(id)
@@ -119,9 +119,9 @@ def obtener_usuario_por_id(id):
     return jsonify(usuario.serialize()), 200
 
 
-#
-# ACTUALIZAR DATOS DEL USUARIO
-#
+# # # # # # # # # # # # # # # # # # # #
+#   ACTUALIZAR DATOS DEL USUARIO
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/<int:user_id>', methods=['PUT'])
 def actualizar_usuario(user_id):
     usuario = Usuario.query.get_or_404(user_id)
@@ -175,9 +175,9 @@ def actualizar_usuario(user_id):
     return jsonify(usuario.serialize()), 200
 
 
-#
-# ELIMINAR USUARIO POR ID
-#
+# # # # # # # # # # # # # # # # # # # #
+#       ELIMINAR USUARIO POR ID
+# # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
 def eliminar_usuario(id):
     usuario = Usuario.query.get(id)
@@ -192,9 +192,9 @@ def eliminar_usuario(id):
     return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
 
 
-#
-# ACTUALIZAR IMAGEN DE PERFIL
-#
+# # # # # # # # # # # # # # # # # # # #
+#       ACTUALIZAR IMAGEN DE PERFIL
+# # # # # # # # # # # # # # # # # # # # 
 @user_blueprint.route('/actualizar_imagen_perfil/<int:user_id>', methods=['PUT'])
 def actualizar_imagen_perfil(user_id):
 
@@ -204,19 +204,21 @@ def actualizar_imagen_perfil(user_id):
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Subir imagen a Cloudinary
+    # Se sube la imagen a Cloudinary
+    # Para subirla, se crea una carpeta por cada usuario
+    # con el nombre genérico "user_" y se le añade el ID del usuario que está subiendo la imagen.
     carpeta_usuario = f"user_{user_id}"
     result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
 
-    # Actualizar la foto de perfil
+    # Se actualiza la información de la imagen en BBDD
     user.fotoPerfil = result['secure_url']
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de perfil actualizada correctamente", "url": result['secure_url']}), 200
 
-#
-# ACTUALIZAR IMAGEN DE CABECERA
-#
+# # # # # # # # # # # # # # # # # # # # 
+#       ACTUALIZAR IMAGEN DE CABECERA
+# # # # # # # # # # # # # # # # # # # # 
 @user_blueprint.route('/actualizar_imagen_cabecera/<int:user_id>', methods=['PUT'])
 def actualizar_imagen_cabecera(user_id):
     user = Usuario.query.get_or_404(user_id)
@@ -225,11 +227,13 @@ def actualizar_imagen_cabecera(user_id):
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Subir imagen a Cloudinary
+    # Se sube la imagen a Cloudinary
+    # Para subirla, se crea una carpeta por cada usuario
+    # con el nombre genérico "user_" y se le añade el ID del usuario que está subiendo la imagen.
     carpeta_usuario = f"user_{user_id}"
     result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
 
-    # Actualizar la foto de cabecera
+    # Se actualiza la información de la imagen en BBDD
     user.fotoCabecera = result['secure_url']
     db.session.commit()
 
