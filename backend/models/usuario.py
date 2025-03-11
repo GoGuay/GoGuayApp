@@ -35,23 +35,10 @@ class Usuario(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-
-    # 
     # Relaciones
-    # 
-
-    # Relación de la tabla Vehículos con el usuario.
     vehiculos = db.relationship('Vehiculo', backref='usuario', cascade='all, delete-orphan')
-
-    # Relación de la tabla Monedero con el usuario.
     monedero = db.relationship('Monedero', backref='usuario', uselist=False, cascade='all, delete-orphan')
-    
-    # Relación de la tabla Puntuación con el usuario.
     puntuaciones = db.relationship('Puntuacion', backref='usuario', cascade='all, delete-orphan', foreign_keys='Puntuacion.usuario_id')
-
-    # Relación para las evaluaciones:
-    # -> Evaluaciones realizadas (evaluador_id), 
-    # 
     evaluaciones_realizadas = db.relationship(
         'Puntuacion', 
         foreign_keys='Puntuacion.evaluador_id', 

@@ -8,6 +8,7 @@ import {
   COLORES,
   COLOURS,
 } from 'src/app/models/vehiculos/marcas_modelos.model';
+import { TravelService } from '../travel-services/travel.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class FuncionesComunes {
   listColours: string[] = COLOURS;
   validacionIdioma: boolean = true;
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog, private travelService: TravelService) {
     this.loadUserData();
   }
 
@@ -117,6 +118,7 @@ export class FuncionesComunes {
       disableClose: true,
     });
   }
+
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * *
    *

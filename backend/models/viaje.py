@@ -9,14 +9,16 @@ class Viaje(db.Model):
     origen = db.Column(db.String(100), nullable=False)
     destino = db.Column(db.String(100), nullable=False)
     plazas = db.Column(db.Integer, nullable=False)
-    precio_viaje = db.Column(db.Integer, nullable=True)
-    hora_salida = db.Column(db.String(5), nullable=False)
-    hora_llegada = db.Column(db.String(5), nullable=True)
+    hora_salida = db.Column(db.String(50), nullable=False)
+    hora_llegada = db.Column(db.String(50), nullable=False)
+    precio_viaje = db.Column(db.Float, nullable=False)
+    duracion_viaje = db.Column(db.String(50), nullable=True)
     fecha_salida = db.Column(db.DateTime, nullable=False)
-    duracion_viaje = db.Column(db.String(100), nullable=True)
-    ruta_seleccionada = db.Column(db.JSON, nullable=True)
-
+    ruta_seleccionada = db.Column(db.JSON, nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+
+    pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True)  # Cambiar el backref a 'viaje_pasajero'
+
     usuario = db.relationship('Usuario', backref='viajes')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -34,5 +36,14 @@ class Viaje(db.Model):
             "duracion_viaje": self.duracion_viaje,
             "ruta_seleccionada": self.ruta_seleccionada,
             "usuario_id": self.usuario_id,
+            "usuario_creador": {
+                "id": self.usuario.id,
+                "nombre": self.usuario.nombre,
+                "email": self.usuario.email
+            },
+            "acompañantes": [
+                {"id": pasajero.usuario.id, "nombre": pasajero.usuario.nombre, "email": pasajero.usuario.email}
+                for pasajero in self.pasajeros
+            ],
             "created_at": self.created_at.isoformat(),
         }

@@ -4,11 +4,11 @@ class PasajeroViaje(db.Model):
     __tablename__ = 'pasajeros_viaje'
 
     id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id'), nullable=False)
-
-    usuario = db.relationship('Usuario', backref='viajes_como_pasajero')
-    viaje = db.relationship('Viaje', backref='pasajeros')
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    
+    viaje = db.relationship('Viaje', backref='viaje_pasajero', lazy=True) 
+    usuario = db.relationship('Usuario', backref='pasajeros_viaje', lazy=True)
 
     def serialize(self):
         return {

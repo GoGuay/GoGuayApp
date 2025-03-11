@@ -1,8 +1,8 @@
 """Corregir relaciones con claves foráneas ambiguas
 
-Revision ID: 73d1873f4f6e
+Revision ID: fb11f1adb608
 Revises: 
-Create Date: 2025-02-21 22:42:52.969988
+Create Date: 2025-03-11 13:03:45.072852
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '73d1873f4f6e'
+revision = 'fb11f1adb608'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('carnet_conducir_verificado', sa.Boolean(), nullable=True),
     sa.Column('numero_carnet_conducir', sa.String(length=50), nullable=True),
     sa.Column('fecha_vencimiento_carnet', sa.Date(), nullable=True),
-    sa.Column('fecha_nacimiento', sa.Date(), nullable=False),
+    sa.Column('fecha_nacimiento', sa.Date(), nullable=True),
     sa.Column('comunic_comerciales', sa.Boolean(), nullable=True),
     sa.Column('comunic_terceros', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -82,12 +82,12 @@ def upgrade():
     sa.Column('origen', sa.String(length=100), nullable=False),
     sa.Column('destino', sa.String(length=100), nullable=False),
     sa.Column('plazas', sa.Integer(), nullable=False),
-    sa.Column('precio_viaje', sa.Integer(), nullable=True),
-    sa.Column('hora_salida', sa.String(length=5), nullable=False),
-    sa.Column('hora_llegada', sa.String(length=5), nullable=True),
+    sa.Column('hora_salida', sa.String(length=50), nullable=False),
+    sa.Column('hora_llegada', sa.String(length=50), nullable=False),
+    sa.Column('precio_viaje', sa.Float(), nullable=False),
+    sa.Column('duracion_viaje', sa.String(length=50), nullable=True),
     sa.Column('fecha_salida', sa.DateTime(), nullable=False),
-    sa.Column('duracion_viaje', sa.Integer(), nullable=True),
-    sa.Column('ruta_seleccionada', sa.JSON(), nullable=True),
+    sa.Column('ruta_seleccionada', sa.JSON(), nullable=False),
     sa.Column('usuario_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['usuario_id'], ['usuarios.id'], ),
@@ -95,8 +95,8 @@ def upgrade():
     )
     op.create_table('pasajeros_viaje',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('usuario_id', sa.Integer(), nullable=False),
     sa.Column('viaje_id', sa.Integer(), nullable=False),
+    sa.Column('usuario_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['usuario_id'], ['usuarios.id'], ),
     sa.ForeignKeyConstraint(['viaje_id'], ['viajes.id'], ),
     sa.PrimaryKeyConstraint('id')

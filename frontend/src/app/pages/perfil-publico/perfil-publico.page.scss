@@ -84,9 +84,10 @@ button {
 }
 
 .mis-viajes-container {
-  max-height: 200px;
+  max-height: 310px;
   overflow-y: auto;
-  border-radius: 10px;
+  border-radius: 15px;
+  max-width: 600px;
 }
 
 .mis-viajes-container label {

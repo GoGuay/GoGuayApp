@@ -43,9 +43,12 @@ export class PerfilPublicoPage implements OnInit {
   editar_perfil: boolean = false;
   userData: Usuario = {} as Usuario;
   preferenciasViaje: string = '';
-  misViajes: any[] = [];
+  misViajesAcompanante: Viaje[] = [];
+  misViajesCreados: Viaje[] = [];
+  misViajes: Viaje[] = [];
   imagenCabeceraSrc: string = '../../../assets/imgs/bridge1.jpg';
   imagenPerfilSrc: string = '../../../assets/User-Profile-PNG-Image.png';
+  filtroViajes: string = 'todos';
 
   constructor(
     private route: ActivatedRoute,
@@ -61,14 +64,59 @@ export class PerfilPublicoPage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.route.queryParams.subscribe((params) => {
       this.usuarioParams = params;
-
       const userId = parseInt(this.usuarioParams.id, 10);
       this.obtenerUsuarioPorID(userId);
       this.validacionPerilLogeado(userId);
-      this.obtenerViajes();
+      this.obtenerViajesComoAcompanante();
+      this.obtenerViajesCreados();
     });
   }
 
+  // Función para obtener los datos de un usuario
+  obtenerUsuarioPorID(id_usuario: number) {
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.usuario = resultadoUsuario;
+      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario);
+    });
+  }
+
+  // Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
+  obtenerViajesComoAcompanante() {
+    this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
+      .subscribe((result) => {        
+        this.misViajesAcompanante = result;
+        this.filtrarViajes(); // Actualizar lista de viajes al obtener los datos
+      });
+  }
+
+  // Función para obtener la lista de viajes que ha creado el usuario
+  obtenerViajesCreados() {
+    this.travelService.getViajesUsuario(this.userData.usuario.id)
+      .subscribe((result) => {
+        this.misViajesCreados = result.viajes;
+        this.filtrarViajes(); // Actualizar lista de viajes al obtener los datos
+      });
+  }
+
+  // Función para filtrar los viajes según el filtro seleccionado
+  filtrarViajes() {
+    if (this.filtroViajes === 'todos') {
+      this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
+    } else if (this.filtroViajes === 'conductor') {
+      this.misViajes = [...this.misViajesCreados];
+    } else if (this.filtroViajes === 'pasajero') {
+      this.misViajes = [...this.misViajesAcompanante];
+    }
+  }
+
+  // Función para abrir una modal con los detalles del viaje seleccionado
+  openDetalleViaje(viaje: Viaje) {
+    this.dialog.open(ViajeSeleccionadoComponent, {
+      data: { viaje }
+    });
+  }
+
+  // Función para modificar la imagen de la cabecera
   onImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -80,6 +128,7 @@ export class PerfilPublicoPage implements OnInit {
     }
   }
 
+  // Función para modificar la imagen del perfil
   onImageChangePerfil(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -91,6 +140,7 @@ export class PerfilPublicoPage implements OnInit {
     }
   }
 
+  // Función para validar si el perfil es el del usuario logueado
   validacionPerilLogeado(id_usuario: number) {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (id_usuario === this.userData.usuario.id) {
@@ -98,35 +148,5 @@ export class PerfilPublicoPage implements OnInit {
     } else {
       this.editar_perfil = false;
     }
-  }
-
-  /**
-   * Función para obtener los datos de un usuario.
-   * 
-   * @param id_usuario 
-   */
-  obtenerUsuarioPorID(id_usuario: number) {
-    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-      this.usuario = resultadoUsuario;
-      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario);
-    });
-  }
-
-  /**
-   * Función para obtener los viajes a los que el usuario
-   * se ha apuntado como pasajero.
-   */
-  obtenerViajes() {
-    this.travelService.getViajesDeUsuario(this.userData.usuario.id)
-      .subscribe((result) => {        
-        this.misViajes = result;
-      });
-  }
-
-
-  openDetalleViaje(viaje: Viaje) {
-    this.dialog.open(ViajeSeleccionadoComponent, {
-      data: { viaje }
-    });
   }
 }

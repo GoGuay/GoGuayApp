@@ -98,10 +98,12 @@ def obtener_viajes_usuario():
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/obtener_viajes', methods=['GET'])
 def obtener_viajes():
-    lista_viajes = Viaje.query.options(
-        joinedload(Viaje.usuario)
+    viajes = db.session.query(Viaje).options(
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
     ).all()
-    return jsonify([viaje.serialize() for viaje in lista_viajes]), 200
+
+    return jsonify([viaje.serialize() for viaje in viajes]), 200
+
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -147,7 +149,12 @@ def unirse_viaje():
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LOS VIAJES A LOS QUE EL USUARIO SE HA UNIDO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/viajes_del_usuario/<int:usuario_id>', methods=['GET'])
+@travel_blueprint.route('/viajes_como_acompanante/<int:usuario_id>', methods=['GET'])
 def obtener_viajes_pasajero(usuario_id):
-    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).all()
-    return jsonify([viaje.serialize() for viaje in viajes])
+    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).options(
+        joinedload(Viaje.usuario), 
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).all()
+    
+    return jsonify([viaje.serialize() for viaje in viajes]), 200
+
