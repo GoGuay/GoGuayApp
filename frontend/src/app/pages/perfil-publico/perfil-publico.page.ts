@@ -125,6 +125,20 @@ export class PerfilPublicoPage implements OnInit {
         this.imagenCabeceraSrc = e.target.result;
       };
       reader.readAsDataURL(input.files[0]);
+
+      const formData = new FormData();
+      formData.append('imagenCabecera', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id; 
+
+      this.userService.actualizarImagenCabecera(usuarioId, formData).subscribe({
+        next: (response) => {
+          console.log('Imagen de cabecera actualizada correctamente:', response);
+        },
+        error: (error) => {
+          console.error('Error al actualizar la imagen de cabecera:', error);
+        }
+      });
     }
   }
 
@@ -137,6 +151,20 @@ export class PerfilPublicoPage implements OnInit {
         this.imagenPerfilSrc = e.target.result;
       };
       reader.readAsDataURL(input.files[0]);
+
+      const formData = new FormData();
+      formData.append('imagenPerfil', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
+        next: (response) => {
+          console.log('Imagen de perfil actualizada correctamente:', response);
+        },
+        error: (error) => {
+          console.error('Error al actualizar la imagen del perfil:', error);
+        }
+      });
     }
   }
 

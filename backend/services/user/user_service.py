@@ -5,10 +5,12 @@
 from datetime import datetime
 from flask import Blueprint, jsonify, Response,  request
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from models import Usuario, Monedero, RolUsuarioEnum
+import cloudinary.uploader
 
 
 # Nombre único para evitar conflictos
@@ -188,3 +190,47 @@ def eliminar_usuario(id):
     db.session.commit()
     
     return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
+
+
+#
+# ACTUALIZAR IMAGEN DE PERFIL
+#
+@user_blueprint.route('/actualizar_imagen_perfil/<int:user_id>', methods=['PUT'])
+def actualizar_imagen_perfil(user_id):
+
+    user = Usuario.query.get_or_404(user_id)
+
+    imagen = request.files.get('imagenPerfil')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+
+    # Subir imagen a Cloudinary
+    carpeta_usuario = f"user_{user_id}"
+    result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
+
+    # Actualizar la foto de perfil
+    user.fotoPerfil = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de perfil actualizada correctamente", "url": result['secure_url']}), 200
+
+#
+# ACTUALIZAR IMAGEN DE CABECERA
+#
+@user_blueprint.route('/actualizar_imagen_cabecera/<int:user_id>', methods=['PUT'])
+def actualizar_imagen_cabecera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+
+    imagen = request.files.get('imagenCabecera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+
+    # Subir imagen a Cloudinary
+    carpeta_usuario = f"user_{user_id}"
+    result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
+
+    # Actualizar la foto de cabecera
+    user.fotoCabecera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200

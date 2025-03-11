@@ -161,3 +161,24 @@ button {
     margin-top: 8px;
   }
 }
+
+/** MODIFICA EL COLOR PRIMARIO DE IONIC */
+:root {
+  --ion-color-primary: #E9EDD5;
+}
+
+
+/* Cambiar el color de fondo de la barra de selección */
+ion-segment {
+  --background: #B3B5E6;
+  --color: #E9EDD5;
+  border-radius: 15px !important;
+  margin-bottom: 1%;
+}
+
+/* Cambiar el color de texto de los botones de segment (por defecto) */
+ion-segment-button {
+  --color: grey; 
+  --background-activated: #F0D7B4 !important;
+  --border-color: #ccc;
+}

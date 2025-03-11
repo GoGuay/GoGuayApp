@@ -1,4 +1,4 @@
-<app-navbar [backRoute]="'/busqueda-viajes'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container mt-4">
@@ -6,11 +6,13 @@
 
       <!-- Imagen de cabecera dinámica -->
       <div class="espacio_cabecera">
-        <img class="img-cabecera" [src]="imagenCabeceraSrc" alt="Cabecera">
-      </div>
+        <img class="img-cabecera" [src]="imagenCabeceraSrc" alt="Cabecera" *ngIf="!usuario?.fotoCabecera">
+        <img class="img-cabecera" [src]="usuario?.fotoCabecera" alt="Cabecera" *ngIf="usuario?.fotoCabecera">
+      </div>      
 
       <div class="imagen-perfil">
-        <img class="perfil-img" [src]="imagenPerfilSrc" alt="Perfil">
+        <img class="perfil-img" [src]="imagenPerfilSrc" alt="Perfil" *ngIf="!usuario?.fotoPerfil">
+        <img class="perfil-img" [src]="usuario?.fotoPerfil" alt="Perfil" *ngIf="usuario?.fotoPerfil">
       </div>
 
       <div class="botonEditarImgPerfil" *ngIf="editar_perfil">
@@ -79,10 +81,10 @@
                     Todos los viajes
                   </ion-segment-button>
                   <ion-segment-button value="conductor">
-                    Viajes como conductor
+                    Soy conductor
                   </ion-segment-button>
                   <ion-segment-button value="pasajero">
-                    Viajes como pasajero
+                    Soy pasajero
                   </ion-segment-button>
                 </ion-segment>
 
