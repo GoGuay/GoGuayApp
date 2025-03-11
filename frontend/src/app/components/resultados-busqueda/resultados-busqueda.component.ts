@@ -12,7 +12,7 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
 import { MatDialog } from '@angular/material/dialog';
-import { SpinnerComponent } from "../spinner/spinner/spinner.component";
+import { SpinnerComponent } from "../spinner/spinner.component";
 import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
 
 

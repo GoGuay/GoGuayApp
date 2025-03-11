@@ -19,7 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LeafletService } from 'src/app/core/leaflet/leaflet.service';
-import { SpinnerComponent } from 'src/app/components/spinner/spinner/spinner.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-tercer-paso',

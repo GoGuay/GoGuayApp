@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { SpinnerComponent } from "../../components/spinner/spinner/spinner.component";
+import { SpinnerComponent } from "../../components/spinner/spinner.component";
 
 @Component({
   selector: 'app-centro-ayuda',

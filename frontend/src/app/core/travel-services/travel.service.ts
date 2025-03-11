@@ -113,4 +113,8 @@ export class TravelService {
   }
 
 
+  getViaje(viajeID: number) {
+    return this.http.get<Viaje>(`travel/viajes/${viajeID}`);
+  }
+
 }
