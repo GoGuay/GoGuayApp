@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { IonicModule, Platform } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -49,7 +49,13 @@ export class NavbarComponent implements OnInit {
   isMobileWeb: boolean = false;
   isDesktop: boolean = false;
 
-  constructor(private router: Router, private platform: Platform, private languageService: LanguageService, private userService: UserServicesService) { }
+  constructor(
+    private router: Router, 
+    private platform: Platform, 
+    private languageService: LanguageService, 
+    private userService: UserServicesService, 
+    private element: ElementRef
+  ) { }
 
   async ngOnInit() {
     /**
@@ -107,6 +113,13 @@ export class NavbarComponent implements OnInit {
     this.languageService.setLanguage(lang);
   }
 
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    if (!this.element.nativeElement.contains(event.target)) {
+      this.isDropdownOpen = false;
+      this.isLenguageDropdownOpen = false;
+    }
+  }
 
   /**
    * Función para controlar el botón de menú abierto o menú cerrado (Versión móvil)

@@ -50,7 +50,8 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlechaIdioma()">
+                data-bs-toggle="dropdown" aria-expanded="false" (change)="cambioDireccionFlechaIdioma()"
+                (click)="cambioDireccionFlechaIdioma()">
                 <mat-icon>language</mat-icon>
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isLenguageDropdownOpen">expand_more</mat-icon>
@@ -73,6 +74,7 @@
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNav">
               <li class="nav-item dropdown">
+                  <!-- boton del menu -->
                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                   data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
                   <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
@@ -171,6 +173,7 @@
             </li>
 
             <li class="nav-item dropdown" *ngIf="isLoggedIn">
+              <!-- boton del menu -->
               <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
                 <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
@@ -180,6 +183,7 @@
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
+
               <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
                 <li class="perfil nav-item dropdown">
                   <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
