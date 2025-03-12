@@ -112,29 +112,26 @@ export class ResultadosBusquedaComponent implements OnInit {
     } else if (this.filtroSeleccionado === 'precioDesc') {
       this.listado_viajes.sort((a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0));
     } else if (this.filtroSeleccionado === 'horaSalida') {
-      const horaActual = new Date(); // Obtener la hora actual
+      const horaActual = new Date(); 
       const horaActualMilisegundos = horaActual.getTime();
   
       this.listado_viajes.sort((a, b) => {
-        // Crear fechas completas para comparar con la hora de salida (combinar la fecha actual con la hora)
         const [horaA, minutosA] = a.hora_salida.split(':').map(Number);
         const [horaB, minutosB] = b.hora_salida.split(':').map(Number);
   
         const fechaA = new Date(horaActual);
         const fechaB = new Date(horaActual);
   
-        // Establecer las horas y minutos para comparar
-        fechaA.setHours(horaA, minutosA, 0, 0); // Se establece hora y minutos
-        fechaB.setHours(horaB, minutosB, 0, 0); // Se establece hora y minutos
+        fechaA.setHours(horaA, minutosA, 0, 0);
+        fechaB.setHours(horaB, minutosB, 0, 0);
   
-        // Obtener los milisegundos y ordenar según la diferencia más cercana a la hora actual
         const diferenciaA = Math.abs(fechaA.getTime() - horaActualMilisegundos);
         const diferenciaB = Math.abs(fechaB.getTime() - horaActualMilisegundos);
   
         return diferenciaA - diferenciaB;
       });
     } else if (this.filtroSeleccionado === 'recientes') {
-      this.listado_viajes.sort((a, b) => b.id - a.id); // Ordenar por ID más alto (más reciente)
+      this.listado_viajes.sort((a, b) => b.id - a.id);
     }
   }
   

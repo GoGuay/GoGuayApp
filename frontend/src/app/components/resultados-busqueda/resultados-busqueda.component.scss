@@ -1,21 +1,21 @@
-.caja-resultado{
+.caja-resultado {
   width: 100%;
-  background-color: #B3B5E6;
+  background-color: #b3b5e6;
   border: 1px solid black;
   height: auto;
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
-.col-viaje{
+.col-viaje {
   border-right: 1px solid black;
 }
 
-.infoPrecio{
+.infoPrecio {
   display: flex;
   justify-content: center;
   font-size: 30px;
-  font-weight: bold ;
+  font-weight: bold;
 }
 
 .foto-usuario {
@@ -24,9 +24,9 @@
   align-items: center;
 }
 
-.caja-ordenar{
+.caja-ordenar {
   border: 1px red solid;
-  background-color: #F0D7B4;
+  background-color: #f0d7b4;
   height: auto;
   width: 250px;
   border-radius: 15px;
@@ -42,57 +42,82 @@
   border-right: none; /* Elimina la línea en la última columna */
 }
 
-.resultado-viaje{
+.resultado-viaje {
   width: 748px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f3ffaf;
 }
 
-.fila-hora{
+.fila-hora {
   height: 30px !important;
 }
 
-.user{
-  height: 50px;
+.user {
+  width: 50px; /* Establecer un ancho fijo */
+  height: 50px; /* Establecer una altura fija */
+  border-radius: 50%; /* Hacer la imagen redonda */
+  object-fit: cover; /* Asegurarse de que la imagen cubra todo el contenedor sin deformarse */
 }
 
-.linea{
+.linea {
   width: 220px;
 }
 
+.columna_scroll {
+  overflow-y: auto;
+  max-height: 45vh;
+}
 
+.fontSize {
+  font-size: 0.9rem;
+  width: fit-content; /* Hace que el contenedor se ajuste al contenido */
+  max-width: 100%; /* Evita que el texto se desborde del contenedor */
+}
 
+@media (max-width: 1024px) {
+  .columna_scroll {
+    max-height: 45vh; /* Para pantallas más pequeñas, como tablets */
+  }
+}
+
+@media (max-width: 783px) {
+  .columna_scroll {
+    max-height: 40vh; /* Para pantallas medianas, como móviles de tamaño medio */
+  }
+}
 
 @media (max-width: 576px) {
-
-  .caja-ordenar{
+  .columna_scroll {
+    max-height: 35vh; /* Para pantallas muy pequeñas, como móviles pequeños */
+  }
+}
+@media (max-width: 576px) {
+  .caja-ordenar {
     width: 100% !important;
     display: flex;
     flex-direction: row;
     margin-bottom: 15%;
     border-radius: 15px;
     padding: 1%;
-
   }
 
-  .inputs-filtro{
+  .inputs-filtro {
     margin-right: 5%;
   }
 
-  .disposicion{
+  .disposicion {
     display: flex;
     flex-direction: column;
   }
 
-  .resultado-viaje{
+  .resultado-viaje {
     width: 400px;
   }
 
-  .linea1{
+  .linea1 {
     width: 50px;
   }
-  .linea2{
+  .linea2 {
     width: 50px;
   }
-
 }

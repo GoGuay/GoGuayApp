@@ -47,7 +47,7 @@
         <ion-row class="d-flex justify-content-center">
           <p>{{ "BUSQUEDA.RESULTADOS" | translate }}</p>
         </ion-row>
-        <ion-row class="d-flex justify-content-center p-4">
+        <ion-row class="d-flex justify-content-center p-4 columna_scroll">
           <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
             <app-spinner></app-spinner>
             Cargando viajes...
@@ -100,13 +100,13 @@
                 </ion-col>
                 <ion-col (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)" type="button">
                   <ion-row class="d-flex justify-content-center">
-                    <p>{{ resultado_del_viaje.usuario?.nombre }}</p>
+                    <p class="fontSize">{{ resultado_del_viaje.usuario?.nombre }}</p>
                   </ion-row>
                   <ion-row class="d-flex justify-content-center">
                     <div class="d-flex justify-content-center">
-                      <img class="user" *ngIf="resultado_del_viaje.usuario?.foto"
-                        [src]="resultado_del_viaje.usuario?.foto" />
-                      <img class="user" *ngIf="!resultado_del_viaje.usuario?.foto"
+                      <img class="user" *ngIf="resultado_del_viaje.usuario_creador?.fotoPerfil"
+                        [src]="resultado_del_viaje.usuario_creador?.fotoPerfil" />
+                      <img class="user" *ngIf="!resultado_del_viaje.usuario_creador?.fotoPerfil"
                         src="../../../assets/User-Profile-PNG-Image.png" />
                     </div>
                   </ion-row>

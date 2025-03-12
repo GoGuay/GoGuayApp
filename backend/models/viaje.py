@@ -39,7 +39,9 @@ class Viaje(db.Model):
             "usuario_creador": {
                 "id": self.usuario.id,
                 "nombre": self.usuario.nombre,
-                "email": self.usuario.email
+                "email": self.usuario.email,
+                "fotoPerfil": self.usuario.fotoPerfil,
+                "puntuacion_promedio": self.usuario.puntuacion_promedio
             },
             "acompañantes": [
                 {"id": pasajero.usuario.id, "nombre": pasajero.usuario.nombre, "email": pasajero.usuario.email}

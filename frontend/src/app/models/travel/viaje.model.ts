@@ -14,4 +14,5 @@ export interface Viaje {
   usuario_id: number;
   created_at: string;
   usuario?: any; 
+  usuario_creador?: any;
 }
