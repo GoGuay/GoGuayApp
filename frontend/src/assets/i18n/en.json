@@ -177,6 +177,7 @@
   "NavBar Home": "Navbar options displayed on the Home page",
   "NAVBAR": {
     "QUIENES": "Who We Are",
+    "FAQS": "FAQs",
     "DECALOGO": "Decalogue",
     "BUSCAR_VIAJE": "Search Trip",
     "PUBLICAR_VIAJE": "Publish Trip",
@@ -187,7 +188,9 @@
     "SALDO": "Balance/Transfers",
     "LOGIN": "Login",
     "REGISTRO": "Register",
-    "SALIR": "Logout"
+    "SALIR": "Logout",
+    "IDIOMA_ESPANIOL": "Spanish",
+    "IDIOMA_INGLES": "English"
   },
   "_Footer": "Footer links",
   "FOOTER": {
