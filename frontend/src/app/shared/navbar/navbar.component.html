@@ -1,18 +1,11 @@
 <ion-header>
   <!-- Se muestra sólo en el Home -->
-  <ng-container *ngIf="validacionHomePage; else otherPageNav">
+  <ng-container>
     <nav class="navbar navbar-expand-lg navbar-diseno">
       <div class="container">
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          (click)="toggleMenu()"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
           <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
           <mat-icon *ngIf="menuOpen"> close </mat-icon>
         </button>
@@ -26,7 +19,7 @@
 
             <li class="nav-item ion-activatable ripple-parent circle">
               <a class="nav-link active" aria-current="page" href="/faqs">
-                FAQs
+                {{ "NAVBAR.FAQS" | translate }}
               </a>
             </li>
 
@@ -56,20 +49,23 @@
               </a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlechaIdioma()">
                 <mat-icon>language</mat-icon>
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                    [class.rotada]="isLenguageDropdownOpen">expand_more</mat-icon>
               </a>
               <ul class="dropdown-menu">
                 <li>
                   <a type="button" class="dropdown-item" (click)="changeLanguage('es')">
                     <img src="../../../assets/flags/espana.png" class="flag-icon" />
-                    Español
+                    {{ "NAVBAR.IDIOMA_ESPANIOL" | translate }}
                   </a>
                 </li>
                 <li>
                   <a type="button" class="dropdown-item" (click)="changeLanguage('en')">
                     <img src="../../../assets/flags/reino-unido.png" class="flag-icon" />
-                    Inglés
+                    {{ "NAVBAR.IDIOMA_INGLES" | translate }}
                   </a>
                 </li>
               </ul>
@@ -77,9 +73,16 @@
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNav">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <mat-icon class="caja-icono tamano-icono"> account_circle </mat-icon>
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                  <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
+                  <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
+                    <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
+                  </div>
+                  <mat-icon class="flecha-icono ms-2 flecha-animada"
+                    [class.rotada]="isDropdownOpen">expand_more</mat-icon>
                 </a>
+
                 <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
                   <li class="perfil nav-item dropdown">
                     <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
@@ -93,7 +96,8 @@
                         <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                       </li>
                       <li class="perfil nav-item dropdown">
-                        <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate }}</a>
+                        <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
+                          }}</a>
                       </li>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
@@ -113,7 +117,8 @@
 
             <ng-template #loggedOutNav>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
                   <mat-icon class="caja-icono tamano-icono"> person_off </mat-icon>
                 </a>
                 <ul class="dropdown-menu menuusuario">
@@ -132,59 +137,4 @@
     </nav>
   </ng-container>
 
-  <!-- Se muestra en cualquier pagina menos el Home -->
-  <ng-template #otherPageNav>
-    <nav class="navbar navbar-expand-lg navbar-diseno">
-      <div class="container">
-        <ul class="menuusuario">
-          <li class="nav-item d-flex flex-column align-items-center">
-            <ion-button fill="clear" (click)="navigateBack()">
-              <mat-icon class="back-icon">arrow_back</mat-icon>
-              <img src="{{ logo }}" alt="Logo" class="logo" />
-              PrideRide
-            </ion-button>
-          </li>
-        </ul>
-        <div class="d-flex align-items-center buscar-viaje">
-          <a *ngIf="searchRoute" class="nav-link active d-flex align-items-center" [routerLink]="searchRoute">
-            <span *ngIf="isDesktop">{{ dynamicTitle }}</span>
-            <mat-icon title="{{ dynamicTitle }}">{{ dynamicIcon }}</mat-icon>
-          </a>
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown" *ngIf="!isLoggedIn">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
-              </a>
-              <ul class="dropdown-menu menuusuario">
-                <li>
-                  <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="nav-item dropdown" *ngIf="isLoggedIn">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <mat-icon class="caja-icono tamano-icono">account_circle</mat-icon>
-              </a>
-              <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-                <li class="perfil nav-item dropdown">
-                  <a class="nav-link ms-3" href="/panel-usuario">PANEL USUARIO</a>
-                </li>
-                <mat-divider></mat-divider>
-                <li class="logout d-flex align-items-center justify-content-center">
-                  <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
-                    <mat-icon class="me-2">power_settings_new</mat-icon>
-                    Salir
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </ng-template>
 </ion-header>

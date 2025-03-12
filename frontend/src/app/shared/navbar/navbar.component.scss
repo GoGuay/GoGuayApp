@@ -24,6 +24,35 @@ ion-button {
   width: 50px !important;
 }
 
+.caja_imagen_perfil {
+  width: 60px; 
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.caja_imagen_perfil img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  
+}
+
+.flecha-animada {
+  transition: transform 0.3s ease;
+}
+
+.flecha-animada.rotada {
+  transform: rotate(180deg);
+}
+
+
+.dropdown-toggle::after {
+  content: none;
+}
+
 .tamano-icono {
   font-size: 50px !important;
   color: black;

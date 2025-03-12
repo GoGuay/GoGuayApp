@@ -1,21 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule, Platform } from '@ionic/angular';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
 import { Router, RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { lastValueFrom } from 'rxjs';
+
+
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink],
+  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent  implements OnInit {
+export class NavbarComponent implements OnInit {
 
   /**
    * Variables que van a recibir información de otros componentes
@@ -28,6 +32,7 @@ export class NavbarComponent  implements OnInit {
 
   logo: string = '../../../assets/logo/PRIDECAR.png';
   userData: Usuario = {} as Usuario;
+  usuario: any = {} as Usuario;
 
   /**
    * Variables para el título y el icono dinámicos.
@@ -38,29 +43,31 @@ export class NavbarComponent  implements OnInit {
 
   validacionHomePage: boolean = true;
   menuOpen = false;
+  isDropdownOpen = false;
+  isLenguageDropdownOpen = false;
 
   isMobileWeb: boolean = false;
   isDesktop: boolean = false;
-  
-  constructor(private router: Router, private platform: Platform, private languageService: LanguageService) { }
 
-  ngOnInit() {
+  constructor(private router: Router, private platform: Platform, private languageService: LanguageService, private userService: UserServicesService) { }
+
+  async ngOnInit() {
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
      */
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
-    
-    if(this.searchRoute === 'search') {
+
+    if (this.searchRoute === 'search') {
       this.searchRoute = '/busqueda-viajes';
       this.dynamicTitle = 'Buscar viaje';
       this.dynamicIcon = 'search';
-    } else if(this.searchRoute === 'newTravel') {
+    } else if (this.searchRoute === 'newTravel') {
       this.searchRoute = '/nuevo-viaje';
       this.dynamicTitle = 'Publicar viaje';
       this.dynamicIcon = 'add';
-    } 
-    
+    }
+
     if (this.searchRoute === '/home') {
       this.validacionHomePage = true;
     } else {
@@ -68,18 +75,26 @@ export class NavbarComponent  implements OnInit {
     }
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    await this.obtenerDatosUsuario(this.userData.usuario.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
-    /**
+  /**
    * Función para volver atrás en la aplicación.
    */
-    navigateBack() {
-      if (this.backRoute) {
-        this.router.navigate([this.backRoute]);
-      }
+  navigateBack() {
+    if (this.backRoute) {
+      this.router.navigate([this.backRoute]);
     }
+  }
 
+  /**
+   * Función para obtener los datos del usuario que está logado.
+   * @param id_usuario 
+   */
+  async obtenerDatosUsuario(id_usuario: number) {
+    this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+  }
 
   /**
    * Función para realizar el cambio de idiomas de la aplicación.
@@ -91,10 +106,24 @@ export class NavbarComponent  implements OnInit {
   changeLanguage(lang: string) {
     this.languageService.setLanguage(lang);
   }
-  
 
+
+  /**
+   * Función para controlar el botón de menú abierto o menú cerrado (Versión móvil)
+   */
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  /**
+   * Función para cambiar la dirección de la flecha del menú.
+   */
+  cambioDireccionFlecha() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  cambioDireccionFlechaIdioma() {
+    this.isLenguageDropdownOpen = !this.isLenguageDropdownOpen;
   }
 
   logout() {
