@@ -1,8 +1,8 @@
 """Corregir relaciones con claves foráneas ambiguas
 
-Revision ID: fb11f1adb608
+Revision ID: 71658b501e47
 Revises: 
-Create Date: 2025-03-11 13:03:45.072852
+Create Date: 2025-03-12 20:48:29.223081
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fb11f1adb608'
+revision = '71658b501e47'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -70,12 +70,12 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('marca', sa.String(length=100), nullable=False),
     sa.Column('modelo', sa.String(length=100), nullable=False),
-    sa.Column('año', sa.Integer(), nullable=False),
-    sa.Column('placa', sa.String(length=20), nullable=False),
-    sa.Column('usuario_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['usuario_id'], ['usuarios.id'], ),
+    sa.Column('color', sa.String(length=100), nullable=False),
+    sa.Column('matricula', sa.String(length=10), nullable=False),
+    sa.Column('fk_vehiculo_usuario', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['fk_vehiculo_usuario'], ['usuarios.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('placa')
+    sa.UniqueConstraint('matricula')
     )
     op.create_table('viajes',
     sa.Column('id', sa.Integer(), nullable=False),
