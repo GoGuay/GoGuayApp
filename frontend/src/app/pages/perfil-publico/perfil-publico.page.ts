@@ -201,4 +201,27 @@ export class PerfilPublicoPage implements OnInit {
       this.editar_perfil = false;
     }
   }
+
+  /**
+   * Función para validar si un viaje ha terminado o no.
+   * 
+   * @param fecha_salida 
+   * @returns 
+   */
+  esViajeFinalizado(fecha_salida: string): boolean {
+    const fechaViaje = new Date(fecha_salida);
+    const hoy = new Date();
+    return fechaViaje < hoy; 
+  }
+
+  /**
+   * Función para validar si se puede puntuar un viaje o no.
+   * 
+   * @param viaje 
+   */
+  puedePuntuar(viaje: Viaje): boolean {
+    const esFinalizado = this.esViajeFinalizado(viaje.fecha_salida);
+    const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
+    return esFinalizado && esPasajero;
+  }
 }

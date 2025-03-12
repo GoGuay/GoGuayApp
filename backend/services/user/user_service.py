@@ -12,6 +12,8 @@ from sqlalchemy.orm import joinedload
 from models import Usuario, Monedero, RolUsuarioEnum
 from cloudinary import uploader, utils
 import re
+from PIL import Image
+from io import BytesIO
 
 
 # Nombre único para evitar conflictos
@@ -201,6 +203,47 @@ def obtener_public_id(url):
         return match.group(1)
     return None
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   Función para reducir el tamaño de una imagen.
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+def reducir_imagen(imagen, max_size=10485760):  # 10 MB
+    img = Image.open(imagen)
+    output = BytesIO()
+    calidad = 85
+
+    # Reducir el tamaño de la imagen (opcional, puedes ajustar el tamaño máximo)
+    max_resolution = (1920, 1080)  # Puedes ajustar el tamaño máximo de la resolución
+    img.thumbnail(max_resolution)
+
+    # Obtener el formato original de la imagen
+    formato = img.format.lower()
+
+    # Comprimir según el formato
+    while True:
+        output.seek(0)
+        
+        if formato in ['jpeg', 'jpg']:  # JPEG
+            img.save(output, format="JPEG", quality=calidad, optimize=True)
+        elif formato == 'png':  # PNG
+            img.save(output, format="PNG", optimize=True)
+        elif formato == 'gif':  # GIF
+            img.save(output, format="GIF", optimize=True)
+        else:  # Otros formatos
+            img.save(output, format=formato, quality=calidad, optimize=True)
+
+        if output.tell() <= max_size or calidad <= 10:
+            break
+        
+        # Reducir la calidad más rápido al principio para acelerar la compresión
+        if calidad > 50:
+            calidad -= 10
+        else:
+            calidad -= 5
+
+    output.seek(0)
+    return output
+
+
 
 # # # # # # # # # # # # # # # # # # # # 
 #       ACTUALIZAR IMAGEN DE PERFIL
@@ -218,6 +261,8 @@ def actualizar_imagen_perfil(user_id):
         public_id = obtener_public_id(user.fotoPerfil)
         if public_id:
             uploader.destroy(public_id)
+
+    imagen = reducir_imagen(imagen) # Reduce el tamaño de la imagen llamando a la función.
 
     # Subir la nueva imagen a Cloudinary
     carpeta_usuario = f"user_{user_id}"

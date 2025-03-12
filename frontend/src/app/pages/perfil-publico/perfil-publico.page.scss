@@ -158,6 +158,19 @@ button {
   color: red;
 }
 
+.viajeFinalizado{
+  color: red;
+}
+
+.viajeApuntuar {
+  color: #3CD665;
+}
+
+.fontSize {
+  font-size: 0.9rem;
+  width: fit-content; /* Hace que el contenedor se ajuste al contenido */
+  max-width: 100%; /* Evita que el texto se desborde del contenedor */
+}
 
 @media (max-width: 576px) {
   .mi_viaje_box {
@@ -177,7 +190,7 @@ button {
 
 /** MODIFICA EL COLOR PRIMARIO DE IONIC */
 :root {
-  --ion-color-primary: #E9EDD5;
+  --ion-color-primary: black;
 }
 
 

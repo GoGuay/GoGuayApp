@@ -70,8 +70,8 @@
 
 .fontSize {
   font-size: 0.9rem;
-  width: fit-content; /* Hace que el contenedor se ajuste al contenido */
-  max-width: 100%; /* Evita que el texto se desborde del contenedor */
+  width: fit-content; 
+  max-width: 100%; 
 }
 
 @media (max-width: 1024px) {

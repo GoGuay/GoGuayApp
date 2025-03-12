@@ -16,8 +16,8 @@
         <img class="perfil-img" [src]="usuario?.fotoPerfil" alt="Perfil" *ngIf="usuario?.fotoPerfil">
       </div>
 
-      <div class="botonEditarImgPerfil" *ngIf="editar_perfil">
-        <button type="button" (click)="fileInputPerfil.click()">
+      <div class="botonEditarImgPerfil" *ngIf="editar_perfil" (click)="fileInputPerfil.click()">
+        <button type="button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="undefined">
             <path
               d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
@@ -28,8 +28,8 @@
           style="display: none;">
       </div>
 
-      <div class="botonEditarImgCabecera" *ngIf="editar_perfil">
-        <button type="button" (click)="fileInputCabecera.click()">
+      <div class="botonEditarImgCabecera" *ngIf="editar_perfil" (click)="fileInputCabecera.click()">
+        <button type="button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="undefined">
             <path
               d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
@@ -94,24 +94,36 @@
                   <p>Aún no tienes viajes en esta categoría.</p>
                 </div>
 
-                <div class="mi_viaje_box mb-1" *ngFor="let viaje of misViajes">
-                  <p>
-                    <span class="info-viaje">
-                      <strong class="me-1">Destino:</strong> {{ viaje.destino }}
-                      <strong class="me-1 ms-3">Fecha:</strong> {{ viaje.fecha_salida | date:'d-MM-yyyy' }}
-                    </span>
-
-                    <span class="botones">
-                      <button type="button" matTooltip="Más detalles" matTooltipClass="custom-tooltip"
-                        (click)="openDetalleViaje(viaje)">
-                        <mat-icon class="mas_detalle">loupe</mat-icon>
-                      </button>
-                      <button type="button" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip">
-                        <mat-icon class="eliminar_viaje">close</mat-icon>
-                      </button>
-                    </span>
-                  </p>
-                </div>
+                <div class="mi_viaje_box mb-2" *ngFor="let viaje of misViajes">
+                  <div class="row">
+                    <div class="col-3">
+                      <span class="info-viaje fontSize">
+                        <strong class="me-1">Destino:</strong> {{ viaje.destino }}
+                      </span>
+                    </div>
+                    <div class="col-3">
+                      <span class="info-viaje fontSize">
+                        <strong class="me-1 ms-3">Fecha:</strong> {{ viaje.fecha_salida | date:'d-MM-yyyy' }}
+                      </span>
+                    </div>
+                    <div class="col-3 text-center">
+                      <span *ngIf="esViajeFinalizado(viaje.fecha_salida)" class="viajeFinalizado fontSize">Finalizado</span>
+                      <span *ngIf="!esViajeFinalizado(viaje.fecha_salida)" class="fontSize">Pendiente</span>
+                      <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize">Puntuar</span>
+                    </div>
+                    <div class="col-3 text-end">
+                      <span class="botones">
+                        <button type="button" matTooltip="Más detalles" matTooltipClass="custom-tooltip"
+                          (click)="openDetalleViaje(viaje)">
+                          <mat-icon class="mas_detalle">loupe</mat-icon>
+                        </button>
+                        <button type="button" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip">
+                          <mat-icon class="eliminar_viaje">close</mat-icon>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>                
               </div>
             </div>
           </div>
