@@ -5,10 +5,14 @@ import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.
 import { Usuario } from 'src/app/models/user/usuario.model';
 import {
   CARS,
+  Coches,
   COLORES,
   COLOURS,
 } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { TravelService } from '../travel-services/travel.service';
+import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
+import { lastValueFrom } from 'rxjs';
+import { UserServicesService } from '../user-services/user-services.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,12 +27,22 @@ export class FuncionesComunes {
   marcaSeleccionada: string = '';
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
+  matricula: string = '';
   modelosFiltrados: string[] = [];
   listadoColores: string[] = COLORES;
   listColours: string[] = COLOURS;
   validacionIdioma: boolean = true;
+  mostrarSelectorVehiculo: boolean = false;
+  vehiculos_usuario: any[] = [];
 
-  constructor(private dialog: MatDialog, private travelService: TravelService) {
+  usuario: any = {} as Usuario;
+
+  constructor(
+    private dialog: MatDialog,
+    private travelService: TravelService,
+    private vehicleService: VehiculosServicesService,
+    private userService: UserServicesService
+  ) {
     this.loadUserData();
   }
 
@@ -67,17 +81,19 @@ export class FuncionesComunes {
    */
   validacionPreferencias(preferencias: any): string {
     let preferencia: any;
-  
+
     if (!preferencias || !preferencias.viaje) {
       preferencia = preferencias ? preferencias.preferencias : '';
     } else {
-      preferencia = preferencias.viaje.usuario ? preferencias.viaje.usuario.preferencias : '';
+      preferencia = preferencias.viaje.usuario
+        ? preferencias.viaje.usuario.preferencias
+        : '';
     }
-  
+
     if (!preferencia) {
       return '';
     }
-  
+
     switch (preferencia) {
       case 'Silencio':
         return 'Prefiere viajar en silencio';
@@ -91,7 +107,6 @@ export class FuncionesComunes {
         return '';
     }
   }
-  
 
   /**
    * Función para abrir la ventana modal con mensajes de error.
@@ -118,7 +133,6 @@ export class FuncionesComunes {
       disableClose: true,
     });
   }
-
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * *
    *
@@ -194,5 +208,42 @@ export class FuncionesComunes {
     );
     this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
     this.modeloSeleccionado = '';
+  }
+
+  /**
+   * Para mostrar (o no) el selector de marca, modelo y color de coche
+   */
+  botonAnadirVehiculo() {
+    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
+  }
+
+  obtenerDatosUsuario(id_usuario: number) {
+    this.usuario = lastValueFrom(
+      this.userService.obtenerUsuarioPorID(id_usuario)
+    );
+  }
+
+  guardarVehiculo() {
+    const nuevoCoche: Coches = {
+      marca: this.marcaSeleccionada,
+      modelo: this.modeloSeleccionado,
+      color: this.colorSeleccionado,
+      matricula: this.matricula,
+    };
+    nuevoCoche.usuario_id = this.userData.usuario.id;
+    this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
+      this.obtenerDatosUsuario(this.userData.usuario.id);
+      console.log('Vehiculo guardado correctamente:', resultado);
+    });
+  }
+
+  obtenerVehiculos() {
+    const id_usuario = this.userData.usuario.id;
+    this.vehicleService
+      .obtenerVehiculosUsuario(id_usuario)
+      .subscribe((resultado) => {
+        console.log('Vehículos: ', resultado.vehiculos);
+        this.vehiculos_usuario = resultado.vehiculos;
+      });
   }
 }
