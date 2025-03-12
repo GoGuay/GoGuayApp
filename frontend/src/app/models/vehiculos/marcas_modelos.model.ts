@@ -1,6 +1,9 @@
 export interface Coches {
   marca: string;
-  modelos: string[];
+  modelo?: string;
+  color?: string;
+  matricula?: string;
+  usuario_id?: number;
 }
 
 export const COLORES = [
@@ -34,7 +37,7 @@ export const COLOURS = [
   'other',
 ];
 
-export const CARS: Coches[] = [
+export const CARS: any[] = [
   {
     marca: 'Alfa-Romeo',
     modelos: [

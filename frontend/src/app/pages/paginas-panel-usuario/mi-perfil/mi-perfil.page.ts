@@ -8,6 +8,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -21,6 +22,7 @@ import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comu
     TranslateModule,
     MatDivider,
     NavbarComponent,
+    MatIcon,
   ],
 })
 export class MiPerfilPage implements OnInit {
@@ -49,6 +51,8 @@ export class MiPerfilPage implements OnInit {
       this.fechaNacimiento = this.userData.usuario.fecha_nacimiento;
       this.edad = this.calcularEdad(this.fechaNacimiento);
     }
+
+    this.funcionesComunes.obtenerVehiculos();
   }
 
   onFileSelected(event: Event): void {
@@ -79,6 +83,4 @@ export class MiPerfilPage implements OnInit {
     }
     return edad;
   }
-
-  anadirVehiculos() {}
 }
