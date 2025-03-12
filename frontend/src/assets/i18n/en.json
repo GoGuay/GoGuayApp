@@ -408,5 +408,14 @@
     "HORA_SALIDA": "Departure time",
     "PRECIO": "Price",
     "RESULTADOS": "Results found"
+  },
+  "_Búsqueda de viaje": "/busqueda-viajes",
+  "BUSQUEDA": {
+    "FILTRAR_POR": "Filter by...",
+    "HORA_SALIDA": "Departure time",
+    "PRECIO": "Price",
+    "PRECIO_ASC": "Price (Ascending)",
+    "PRECIO_DESC": "Price (Descending)",
+    "RESULTADOS": "Results found"
   }
 }

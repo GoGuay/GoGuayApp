@@ -1,20 +1,19 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
+import { Observable } from 'rxjs';
 import { SpinnerComponent } from "../spinner/spinner.component";
 import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
-
+import { IonicModule } from '@ionic/angular';
+import { MatIcon } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-resultados-busqueda',
@@ -29,11 +28,15 @@ export class ResultadosBusquedaComponent implements OnInit {
   userData: Usuario = {} as Usuario;
   listado_viajes: Viaje[] = [];
   usuarioPorID: Usuario | undefined;
+  filtroSeleccionado: string = 'horaSalida';
 
-  constructor(private travelService: TravelService,
-    private funcionesComunes: FuncionesComunes, private userService: UserServicesService,
+  constructor(
+    private travelService: TravelService,
+    private funcionesComunes: FuncionesComunes,
+    private userService: UserServicesService,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -41,11 +44,8 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.obtenerListaViajes();
   }
 
-
   /**
-   * Función para obtener la lista de viajes
-   * que se han publicado.
-   * 
+   * Función para obtener la lista de viajes completa
    */
   obtenerListaViajes() {
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
@@ -54,42 +54,90 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.listado_viajes.forEach((viaje) => {
         this.obtenerUsuarioPorID(viaje.usuario_id).subscribe((usuario: any) => {
           viaje.usuario = usuario;
-          console.log(viaje);
-
         });
       });
 
-      console.log('Listado de viajes con usuario:', this.listado_viajes);
+      // Aplica el filtro inicial
+      this.aplicarFiltro();
     });
   }
 
-
   /**
-   * Función para obtener un usuario por su ID.
+   * Función para obtener los datos del usuario logado.
    * 
-   * @param id_usuario Recibe el ID del usuario a obtener datos.
+   * @param id_usuario 
+   * @returns 
    */
   obtenerUsuarioPorID(id_usuario: number): Observable<any> {
     return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
+  /**
+   * Función para abrir el perfil público seleccionado.
+   * 
+   * @param id_usuario 
+   */
   openPerfilPublico(id_usuario: number) {
-    const usuario = {
-      id: id_usuario
-    }
+    const usuario = { id: id_usuario };
     this.router.navigate(['/perfil-publico'], {
       queryParams: usuario,
     });
   }
 
-
   /**
-   * Función para abrir un viaje y obtener mas detalles
+   * Función para abrir los detalles del viaje seleccionado.
+   * 
+   * @param viaje 
    */
   openDetalleViaje(viaje: Viaje) {
     this.dialog.open(ViajeSeleccionadoComponent, {
       data: { viaje }
     });
   }
+
+  /**
+   * Función para cambiar el filtro seleccionado
+   */
+  cambiarFiltro(filtro: string) {
+    this.filtroSeleccionado = filtro;
+    this.aplicarFiltro();
+  }
+
+  /**
+   * Función para aplicar el filtro a la lista de viajes
+   */
+  aplicarFiltro() {
+    if (this.filtroSeleccionado === 'precioAsc') {
+      this.listado_viajes.sort((a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0));
+    } else if (this.filtroSeleccionado === 'precioDesc') {
+      this.listado_viajes.sort((a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0));
+    } else if (this.filtroSeleccionado === 'horaSalida') {
+      const horaActual = new Date(); // Obtener la hora actual
+      const horaActualMilisegundos = horaActual.getTime();
+  
+      this.listado_viajes.sort((a, b) => {
+        // Crear fechas completas para comparar con la hora de salida (combinar la fecha actual con la hora)
+        const [horaA, minutosA] = a.hora_salida.split(':').map(Number);
+        const [horaB, minutosB] = b.hora_salida.split(':').map(Number);
+  
+        const fechaA = new Date(horaActual);
+        const fechaB = new Date(horaActual);
+  
+        // Establecer las horas y minutos para comparar
+        fechaA.setHours(horaA, minutosA, 0, 0); // Se establece hora y minutos
+        fechaB.setHours(horaB, minutosB, 0, 0); // Se establece hora y minutos
+  
+        // Obtener los milisegundos y ordenar según la diferencia más cercana a la hora actual
+        const diferenciaA = Math.abs(fechaA.getTime() - horaActualMilisegundos);
+        const diferenciaB = Math.abs(fechaB.getTime() - horaActualMilisegundos);
+  
+        return diferenciaA - diferenciaB;
+      });
+    } else if (this.filtroSeleccionado === 'recientes') {
+      this.listado_viajes.sort((a, b) => b.id - a.id); // Ordenar por ID más alto (más reciente)
+    }
+  }
+  
+  
   
 }

@@ -236,6 +236,9 @@
     "FILTRAR_POR": "Filtrar por...",
     "HORA_SALIDA": "Hora de salida",
     "PRECIO": "Precio",
+    "NUEVO": "Más reciente",
+    "PRECIO_ASC": "Precio (Ascendente)",
+    "PRECIO_DESC": "Precio (Descendente)",
     "RESULTADOS": "Resultados encontrados"
   },
 
