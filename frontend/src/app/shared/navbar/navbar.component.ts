@@ -15,7 +15,7 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider],
+  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
