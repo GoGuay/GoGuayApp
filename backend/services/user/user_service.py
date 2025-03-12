@@ -10,7 +10,8 @@ from flask_jwt_extended import create_access_token
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from models import Usuario, Monedero, RolUsuarioEnum
-import cloudinary.uploader
+from cloudinary import uploader, utils
+import re
 
 
 # Nombre único para evitar conflictos
@@ -192,29 +193,42 @@ def eliminar_usuario(id):
     return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
 
 
-# # # # # # # # # # # # # # # # # # # #
+
+def obtener_public_id(url):
+    """ Extrae el public_id desde la URL de la imagen en Cloudinary. """
+    match = re.search(r'/([^/]+)\.[a-zA-Z]+$', url)
+    if match:
+        return match.group(1)
+    return None
+
+
+# # # # # # # # # # # # # # # # # # # # 
 #       ACTUALIZAR IMAGEN DE PERFIL
 # # # # # # # # # # # # # # # # # # # # 
 @user_blueprint.route('/actualizar_imagen_perfil/<int:user_id>', methods=['PUT'])
 def actualizar_imagen_perfil(user_id):
-
     user = Usuario.query.get_or_404(user_id)
 
     imagen = request.files.get('imagenPerfil')
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Se sube la imagen a Cloudinary
-    # Para subirla, se crea una carpeta por cada usuario
-    # con el nombre genérico "user_" y se le añade el ID del usuario que está subiendo la imagen.
-    carpeta_usuario = f"user_{user_id}"
-    result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
+    # Eliminar imagen anterior si existe
+    if user.fotoPerfil:
+        public_id = obtener_public_id(user.fotoPerfil)
+        if public_id:
+            uploader.destroy(public_id)
 
-    # Se actualiza la información de la imagen en BBDD
+    # Subir la nueva imagen a Cloudinary
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    # Actualizar la información en la base de datos
     user.fotoPerfil = result['secure_url']
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de perfil actualizada correctamente", "url": result['secure_url']}), 200
+
 
 # # # # # # # # # # # # # # # # # # # # 
 #       ACTUALIZAR IMAGEN DE CABECERA
@@ -227,13 +241,17 @@ def actualizar_imagen_cabecera(user_id):
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Se sube la imagen a Cloudinary
-    # Para subirla, se crea una carpeta por cada usuario
-    # con el nombre genérico "user_" y se le añade el ID del usuario que está subiendo la imagen.
-    carpeta_usuario = f"user_{user_id}"
-    result = cloudinary.uploader.upload(imagen, folder=carpeta_usuario)
+    # Eliminar imagen anterior si existe
+    if user.fotoCabecera:
+        public_id = obtener_public_id(user.fotoCabecera)
+        if public_id:
+            uploader.destroy(public_id)
 
-    # Se actualiza la información de la imagen en BBDD
+    # Subir la nueva imagen a Cloudinary
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    # Actualizar la información en la base de datos
     user.fotoCabecera = result['secure_url']
     db.session.commit()
 

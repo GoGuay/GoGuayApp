@@ -53,10 +53,10 @@
 }
 
 .user {
-  width: 50px; /* Establecer un ancho fijo */
-  height: 50px; /* Establecer una altura fija */
-  border-radius: 50%; /* Hacer la imagen redonda */
-  object-fit: cover; /* Asegurarse de que la imagen cubra todo el contenedor sin deformarse */
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  object-fit: cover;
 }
 
 .linea {
@@ -86,11 +86,7 @@
   }
 }
 
-@media (max-width: 576px) {
-  .columna_scroll {
-    max-height: 35vh; /* Para pantallas muy pequeñas, como móviles pequeños */
-  }
-}
+
 @media (max-width: 576px) {
   .caja-ordenar {
     width: 100% !important;
@@ -99,6 +95,10 @@
     margin-bottom: 15%;
     border-radius: 15px;
     padding: 1%;
+  }
+
+  .columna_scroll {
+    max-height: 35vh;
   }
 
   .inputs-filtro {

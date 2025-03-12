@@ -14,6 +14,7 @@ import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material
 import { ViajeSeleccionadoComponent } from 'src/app/components/viaje-seleccionado/viaje-seleccionado.component';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { MatDialog } from '@angular/material/dialog';
+import { SpinnerComponent } from "../../components/spinner/spinner.component";
 
 
 @Component({
@@ -21,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, MatIcon, MatTooltipModule],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, MatIcon, MatTooltipModule, SpinnerComponent],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
@@ -49,6 +50,7 @@ export class PerfilPublicoPage implements OnInit {
   imagenCabeceraSrc: string = '../../../assets/imgs/bridge1.jpg';
   imagenPerfilSrc: string = '../../../assets/User-Profile-PNG-Image.png';
   filtroViajes: string = 'todos';
+  cargando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -135,21 +137,20 @@ export class PerfilPublicoPage implements OnInit {
    */
   onImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
+    this.cargando = true;
     if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagenCabeceraSrc = e.target.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-
       const formData = new FormData();
       formData.append('imagenCabecera', input.files[0]);
-
+  
       const usuarioId = this.userData.usuario.id; 
-
+  
       this.userService.actualizarImagenCabecera(usuarioId, formData).subscribe({
         next: (response) => {
-          console.log('Imagen de cabecera actualizada correctamente:', response);
+          this.cargando = false;
+          if (response && response.url) {
+            this.imagenCabeceraSrc = response.url;
+          }
+          this.obtenerUsuarioPorID(usuarioId);
         },
         error: (error) => {
           console.error('Error al actualizar la imagen de cabecera:', error);
@@ -165,21 +166,20 @@ export class PerfilPublicoPage implements OnInit {
    */
   onImageChangePerfil(event: Event) {
     const input = event.target as HTMLInputElement;
+    this.cargando = true;
     if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagenPerfilSrc = e.target.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-
       const formData = new FormData();
       formData.append('imagenPerfil', input.files[0]);
-
+  
       const usuarioId = this.userData.usuario.id;
-
+  
       this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
         next: (response) => {
-          console.log('Imagen de perfil actualizada correctamente:', response);
+          this.cargando = false;
+          if (response && response.nuevaUrl) {
+            this.imagenPerfilSrc = response.nuevaUrl;
+          }
+          this.obtenerUsuarioPorID(usuarioId);
         },
         error: (error) => {
           console.error('Error al actualizar la imagen del perfil:', error);
