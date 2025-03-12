@@ -246,4 +246,48 @@ export class FuncionesComunes {
         this.vehiculos_usuario = resultado.vehiculos;
       });
   }
+
+  mostrarColorCoche(color: string): string {
+    const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
+    const negro: string = '../../../assets/ColoresCoches/Negro.png';
+    const rojo: string = '../../../assets/ColoresCoches/Rojo.png';
+    const amarillo: string = '../../../assets/ColoresCoches/Amarillo.png';
+    const verde: string = '../../../assets/ColoresCoches/Verde.png';
+    const gris: string = '../../../assets/ColoresCoches/Gris.png';
+    const dorado: string = '../../../assets/ColoresCoches/Dorado.png';
+    const marron: string = '../../../assets/ColoresCoches/Marrón.png';
+    const morado: string = '';
+    const beige: string = '../../../assets/ColoresCoches/Beige.png';
+    const perla: string = '../../../assets/ColoresCoches/Perla.png';
+    const otro: string = '../../../assets/ColoresCoches/arcoiris.png';
+
+    switch (color) {
+      case 'blanco':
+        return blanco;
+      case 'negro':
+        return negro;
+      case 'rojo':
+        return rojo;
+      case 'amarillo':
+        return amarillo;
+      case 'verde':
+        return verde;
+      case 'gris':
+        return gris;
+      case 'dorado':
+        return dorado;
+      case 'marron':
+        return marron;
+      case 'morado':
+        return '';
+      case 'beige':
+        return beige;
+      case 'perla':
+        return perla;
+      case 'otro':
+        return otro;
+      default:
+        return '';
+    }
+  }
 }

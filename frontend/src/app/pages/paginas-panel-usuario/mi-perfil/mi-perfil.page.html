@@ -247,7 +247,12 @@
                           <!-- Color -->
                           <td>{{coche.modelo}}</td>
                           <!-- marca -->
-                          <td>{{coche.color}}</td>
+                          <td>
+                            <img
+                              class="colorCoche"
+                              [src]="funcionesComunes.mostrarColorCoche(coche.color)"
+                            />
+                          </td>
                           <!-- modelo -->
                           <td>{{coche.matricula}}</td>
                           <!-- opciones -->
