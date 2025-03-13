@@ -36,8 +36,11 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('DETALLES DEL VIAJE: ', this.data);
+    
     this.obtenerUsuarioActual();
-    this.obtenerViajesActualizados(); // Inicia la suscripción
+    this.obtenerViajesActualizados();
+    this.verificarSiEstaUnido();
   }
 
   ngOnDestroy() {
@@ -51,10 +54,14 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
+  /**
+   * Función para obtener los datos del usuario logado.
+   * 
+   */
   obtenerUsuarioActual() {
     this.usersService.obtenerUsuarioPorID(this.data.viaje.usuario_id).subscribe({
       next: (usuario) => {
-        this.userID = usuario.usuario.id;
+        this.userID = usuario.id;
         this.verificarSiEstaUnido();
       },
       error: (error) => {
@@ -63,51 +70,93 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Función para obtener los datos del viaje seleccionado.
+   * 
+   */
   obtenerViajesActualizados() {
-    // Suscripción para escuchar los cambios en los viajes
     this.viajesSubscription = this.travelService.viajeData$.subscribe((viajes) => {
-      // Actualiza el viaje si ha cambiado en la lista de viajes
-      const viajeActualizado = viajes.find((viaje: Viaje) => viaje.id === this.viaje.id);
-      if (viajeActualizado) {
-        this.viaje = viajeActualizado; // Actualiza la información del viaje
+      if (viajes && Array.isArray(viajes)) { 
+        const viajeActualizado = viajes.find((viaje: Viaje) => viaje.id === this.viaje.id);
+        if (viajeActualizado) {
+          this.viaje = viajeActualizado;  
+        }
+      } else {
+        console.warn('No se encontraron viajes actualizados o el formato no es correcto.');
       }
     });
   }
 
-  verificarSiEstaUnido() {
-    this.travelService.obtenerTodosLosViajes().subscribe({
-      next: (misViajes: Viaje[]) => {
-        this.yaUnido = misViajes.some(viaje => viaje.id === this.data.viaje.id);
-      },
-      error: (error) => {
-        console.error('Error al obtener los viajes del usuario:', error);
-      }
-    });
+/**
+ * Función para verificar si el usuario ya está unido al viaje seleccionado.
+ */
+verificarSiEstaUnido() {
+  const userDataString = localStorage.getItem('userData');
+
+  if (!userDataString) {
+    console.error('No hay datos de usuario en el almacenamiento local.');
+    this.yaUnido = false;
+    return;
   }
 
+  const userData = JSON.parse(userDataString);
+  const usuarioId = userData.usuario.id;
+
+  this.travelService.getViaje(this.data.viaje.id).subscribe({
+    next: (viaje) => {
+      // Se busca en la lista de acompañantes si el usuario ya está unido
+      this.yaUnido = viaje.acompañantes.some((acompañante: any) => acompañante.id === usuarioId);
+    },
+    error: (error) => {
+      console.error('Error al obtener el viaje:', error);
+      this.yaUnido = false;
+    }
+  });
+}
+
+
+  /**
+   * Función para unirse a un viaje.
+   * 
+   * @param viajeID 
+   * @returns 
+   */
   unirseAViaje(viajeID: number) {
     const title_error: string = '¡Algo anda mal!';
     const message_ya_unico: string = '<p>Ya estás unido a este viaje.</p>';
     const title_viaje_confirmado: string = '¡Confirmado!';
     const message_viaje_confirmado: string = 'Te has unido al viaje correctamente.';
     const message_error: string = 'Ya estás unido a este viaje.';
-
+  
     if (this.yaUnido) {
       this.funcionesComunes.openConfirmModal(title_error, message_ya_unico);
       return;
     }
-
+  
     this.travelService.unirseAViaje(viajeID).subscribe({
-      next: () => {
-        const dialogRef = this.funcionesComunes.openConfirmModal(title_viaje_confirmado, message_viaje_confirmado);
-        this.yaUnido = true;
-        dialogRef.afterClosed().subscribe(() => {
-          // Los viajes se actualizarán automáticamente a través de la suscripción
-        });
+      next: (response) => {
+        const viajesActualizados = response; 
+  
+        const viajeActualizado = viajesActualizados.find((viaje: any) => viaje.id === viajeID);
+  
+        if (viajeActualizado) {
+          this.viaje = viajeActualizado; 
+          this.viaje.plazas = viajeActualizado.plazas; 
+  
+          const dialogRef = this.funcionesComunes.openConfirmModal(title_viaje_confirmado, message_viaje_confirmado);
+          this.yaUnido = true;
+          dialogRef.afterClosed().subscribe(() => {
+            this.obtenerViajesActualizados()
+           });
+        } else {
+          this.funcionesComunes.openErrorModal(title_error, 'No se encontró el viaje actualizado.');
+        }
       },
       error: (error) => {
         this.funcionesComunes.openErrorModal(title_error, message_error);
       }
     });
   }
+  
+  
 }

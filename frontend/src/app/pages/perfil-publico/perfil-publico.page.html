@@ -107,17 +107,19 @@
                       </span>
                     </div>
                     <div class="col-3 text-center">
-                      <span *ngIf="esViajeFinalizado(viaje.fecha_salida)" class="viajeFinalizado fontSize">Finalizado</span>
-                      <span *ngIf="!esViajeFinalizado(viaje.fecha_salida)" class="fontSize">Pendiente</span>
-                      <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize">Puntuar</span>
-                    </div>
+                      <span *ngIf="esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" class="viajeFinalizado fontSize">Finalizado</span>
+                      <span *ngIf="!esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" class="fontSize">Pendiente</span>
+                      <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize" type="button">Puntuar</span>
+                      <br>
+                      <span><mat-icon type="button" class="notifications" (click)="leerNotificacion()">mark_email_unread</mat-icon></span>
+                    </div>                    
                     <div class="col-3 text-end">
                       <span class="botones">
                         <button type="button" matTooltip="Más detalles" matTooltipClass="custom-tooltip"
                           (click)="openDetalleViaje(viaje)">
                           <mat-icon class="mas_detalle">loupe</mat-icon>
                         </button>
-                        <button type="button" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip">
+                        <button type="button" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip" (click)="eliminarViaje(viaje.id)">
                           <mat-icon class="eliminar_viaje">close</mat-icon>
                         </button>
                       </span>

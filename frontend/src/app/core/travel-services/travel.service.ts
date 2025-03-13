@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 
 @Injectable({
@@ -96,7 +96,11 @@ export class TravelService {
       catchError((error) => {
         console.error('Error al unirse al viaje:', error);
         return throwError(() => error);
-      })
+      }),
+      // Una vez el usuario se ha unido correctamente, obtenemos los viajes actualizados
+      // y notificamos a los suscriptores
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
     );
   }
 
@@ -114,7 +118,54 @@ export class TravelService {
 
 
   getViaje(viajeID: number) {
-    return this.http.get<Viaje>(`${this.apiUrl}/travel/viajes/${viajeID}`);
+    return this.http.get<Viaje>(`${this.apiUrl}/travel/obtener_viaje/${viajeID}`);
+  }
+
+  /**
+  * Función para eliminar un viaje.
+  * @param viajeId ID del viaje que se quiere eliminar.
+  * @returns Observable con la respuesta del backend.
+  */
+  eliminarViaje(viajeId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`).pipe(
+      catchError((error) => {
+        console.error('Error al eliminar el viaje:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+    );
+  }
+
+  /**
+ * Función para que un usuario salga de un viaje.
+ * 
+ * @param viajeId ID del viaje del que el usuario quiere salir.
+ * @returns Observable con la respuesta del backend.
+ */
+  salirDeViaje(viajeId: number): Observable<any> {
+    const userDataString = localStorage.getItem('userData');
+
+    if (!userDataString) {
+      return throwError(() => new Error('No hay datos de usuario en el almacenamiento local.'));
+    }
+
+    const userData = JSON.parse(userDataString);
+    const usuarioId = userData.usuario.id;
+
+    const requestBody = {
+      usuario_id: usuarioId,
+      viaje_id: viajeId
+    };
+
+    return this.http.post(`${this.apiUrl}/travel/salir_viaje`, requestBody).pipe(
+      catchError((error) => {
+        console.error('Error al salir del viaje:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+    );
   }
 
 }

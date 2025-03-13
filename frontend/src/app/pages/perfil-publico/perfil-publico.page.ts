@@ -90,9 +90,9 @@ export class PerfilPublicoPage implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
-      .subscribe((result) => {        
+      .subscribe((result) => {
         this.misViajesAcompanante = result;
-        this.filtrarViajes(); 
+        this.filtrarViajes();
       });
   }
 
@@ -103,7 +103,7 @@ export class PerfilPublicoPage implements OnInit {
     this.travelService.getViajesUsuario(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesCreados = result.viajes;
-        this.filtrarViajes(); 
+        this.filtrarViajes();
       });
   }
 
@@ -141,9 +141,9 @@ export class PerfilPublicoPage implements OnInit {
     if (input.files && input.files[0]) {
       const formData = new FormData();
       formData.append('imagenCabecera', input.files[0]);
-  
-      const usuarioId = this.userData.usuario.id; 
-  
+
+      const usuarioId = this.userData.usuario.id;
+
       this.userService.actualizarImagenCabecera(usuarioId, formData).subscribe({
         next: (response) => {
           this.cargando = false;
@@ -170,9 +170,9 @@ export class PerfilPublicoPage implements OnInit {
     if (input.files && input.files[0]) {
       const formData = new FormData();
       formData.append('imagenPerfil', input.files[0]);
-  
+
       const usuarioId = this.userData.usuario.id;
-  
+
       this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
         next: (response) => {
           this.cargando = false;
@@ -208,10 +208,14 @@ export class PerfilPublicoPage implements OnInit {
    * @param fecha_salida 
    * @returns 
    */
-  esViajeFinalizado(fecha_salida: string): boolean {
+  esViajeFinalizado(fecha_salida: string, hora_salida: string): boolean {
     const fechaViaje = new Date(fecha_salida);
+    const horaViaje = hora_salida.split(":");
+    fechaViaje.setHours(parseInt(horaViaje[0]), parseInt(horaViaje[1]));
+
     const hoy = new Date();
-    return fechaViaje < hoy; 
+
+    return fechaViaje < hoy;
   }
 
   /**
@@ -220,8 +224,50 @@ export class PerfilPublicoPage implements OnInit {
    * @param viaje 
    */
   puedePuntuar(viaje: Viaje): boolean {
-    const esFinalizado = this.esViajeFinalizado(viaje.fecha_salida);
+    const esFinalizado = this.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
     const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
-    return esFinalizado && esPasajero;
+    const esCreador = viaje.usuario_id === this.userData.usuario.id;
+
+    // Solo se puede puntuar si el viaje ha finalizado, si es pasajero (no creador) y si no es el creador
+    return esFinalizado && esPasajero && !esCreador;
+  }
+
+  leerNotificacion() { }
+
+  /**
+   * Función para eliminar un viaje.
+   * 
+   * @param viajeId 
+   */
+  eliminarViaje(viajeId: number) {
+    this.travelService.eliminarViaje(viajeId).subscribe({
+      next: () => {
+        console.log('Viaje eliminado con éxito.');
+        this.obtenerViajesCreados();
+      },
+      error: (error) => {
+        console.error('Error al eliminar el viaje:', error);
+      }
+    });
+  }
+
+  /**
+   * Función para que un usuario salga de un viaje
+   * @param viajeId ID del viaje
+   */
+  salirDeViaje(viajeId: number) {
+    this.cargando = true;
+    this.travelService.salirDeViaje(viajeId).subscribe({
+      next: () => {
+        this.cargando = false;
+        console.log('El usuario ha salido del viaje con éxito');
+        this.obtenerViajesComoAcompanante();
+        this.obtenerViajesCreados();
+      },
+      error: (error) => {
+        this.cargando = false;
+        console.error('Error al salir del viaje:', error);
+      }
+    });
   }
 }

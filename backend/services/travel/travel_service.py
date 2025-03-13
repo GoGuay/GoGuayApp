@@ -158,3 +158,79 @@ def obtener_viajes_pasajero(usuario_id):
     
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER UN VIAJE POR SU ID
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_viaje/<int:viaje_id>', methods=['GET'])
+def obtener_viaje_por_id(viaje_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.usuario),
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    return jsonify(viaje.serialize()), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA ELIMINAR UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/eliminar_viaje/<int:viaje_id>', methods=['DELETE'])
+def eliminar_viaje(viaje_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    # Obtener los IDs de los acompañantes
+    acompanantes = [pasajero.usuario_id for pasajero in viaje.pasajeros]
+
+    # Eliminar a los pasajeros del viaje
+    PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
+
+    # Eliminar el viaje
+    db.session.delete(viaje)
+    db.session.commit()
+
+    # Simular el envío de notificaciones (puedes reemplazarlo con lógica real)
+    mensajes = [f"Aviso: El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado." for _ in acompanantes]
+
+    return jsonify({
+        "mensaje": "Viaje eliminado correctamente",
+        "avisos_enviados": mensajes
+    }), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA ELIMINAR UN PASAJERO DE UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/eliminar_pasajero/<int:viaje_id>/<int:usuario_id>', methods=['DELETE'])
+def eliminar_pasajero(viaje_id, usuario_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    if not pasajero:
+        return jsonify({"error": "El pasajero no está en este viaje"}), 404
+
+    # Eliminar al pasajero del viaje y aumentar las plazas
+    db.session.delete(pasajero)
+    viaje.plazas += 1
+    db.session.commit()
+
+    # Simular el envío de notificación al creador del viaje
+    mensaje = f"Aviso: El pasajero con ID {usuario_id} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
+
+    return jsonify({
+        "mensaje": "Pasajero eliminado correctamente del viaje",
+        "aviso_enviado": mensaje,
+        "plazas_actuales": viaje.plazas
+    }), 200

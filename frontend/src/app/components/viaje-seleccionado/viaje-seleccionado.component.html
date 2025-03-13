@@ -34,7 +34,11 @@
     </div>
 
     <div class="d-flex justify-content-center">
-      <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)" [disabled]="data.viaje.plazas === 0" ><mat-icon>no_crash</mat-icon>Quiero viajar aquí </button>
+      <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)"
+        [disabled]="data.viaje.plazas === 0 || yaUnido">
+        <mat-icon>no_crash</mat-icon>
+        {{ yaUnido ? 'Ya estás unido' : 'Quiero viajar aquí' }}
+      </button>
       <button mat-raised-button class="btn" (click)="closeDialog()">Cerrar</button>
     </div>
 

@@ -36,7 +36,7 @@ export class UserServicesService {
    * @param usuarioId Recibe el id del usuario seleccionado.
    * @returns Observable del objeto Usuario.
    */
-  obtenerUsuarioPorID(usuarioId: number): Observable<Usuario> {
+  obtenerUsuarioPorID(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(`${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`);
   }
 
