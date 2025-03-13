@@ -202,6 +202,20 @@ export class FuncionesComunes {
     }
   }
 
+  /******************************************
+   *                                        *
+   *  FUNCIONES PARA EL PERFIL DEL USUARIO  *
+   *                                        *
+   *****************************************/
+
+
+
+
+
+  /**
+   * Función para filtrar los modelos de los coches
+   * 
+   */
   filtrarModelos() {
     const coche = this.listadoCoches.find(
       (vehiculo) => vehiculo.marca === this.marcaSeleccionada
@@ -217,12 +231,22 @@ export class FuncionesComunes {
     this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
   }
 
+  /**
+   * Función para obtener los datos del usuario.
+   * 
+   * @param id_usuario 
+   */
   obtenerDatosUsuario(id_usuario: number) {
     this.usuario = lastValueFrom(
       this.userService.obtenerUsuarioPorID(id_usuario)
     );
   }
 
+  /**
+   * Función para guardar un coche en la 
+   * lista de vehículos del usuario.
+   * 
+   */
   guardarVehiculo() {
     const nuevoCoche: Coches = {
       marca: this.marcaSeleccionada,
@@ -232,11 +256,19 @@ export class FuncionesComunes {
     };
     nuevoCoche.usuario_id = this.userData.usuario.id;
     this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
-      this.obtenerDatosUsuario(this.userData.usuario.id);
       console.log('Vehiculo guardado correctamente:', resultado);
+      this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
+        this.userData = usuarioActualizado;
+        localStorage.setItem('userData', JSON.stringify(this.userData));
+        console.log('Usuario actualizado:', this.userData);
+      });
     });
   }
 
+  /**
+   * Función para obtener la lista de vehículos de un usuario.
+   * 
+   */
   obtenerVehiculos() {
     const id_usuario = this.userData.usuario.id;
     this.vehicleService
@@ -247,6 +279,13 @@ export class FuncionesComunes {
       });
   }
 
+  /**
+   * Función para mostrar las imágenes de colores de los coches
+   * según el color que se tenga seleccionado del coche.
+   * 
+   * @param color 
+   * @returns 
+   */
   mostrarColorCoche(color: string): string {
     const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
     const negro: string = '../../../assets/ColoresCoches/Negro.png';
@@ -256,10 +295,10 @@ export class FuncionesComunes {
     const gris: string = '../../../assets/ColoresCoches/Gris.png';
     const dorado: string = '../../../assets/ColoresCoches/Dorado.png';
     const marron: string = '../../../assets/ColoresCoches/Marrón.png';
-    const morado: string = '';
+    const morado: string = '../../../assets/ColoresCoches/Morado.png';
     const beige: string = '../../../assets/ColoresCoches/Beige.png';
     const perla: string = '../../../assets/ColoresCoches/Perla.png';
-    const otro: string = '../../../assets/ColoresCoches/arcoiris.png';
+    const otro: string = '../../../assets/ColoresCoches/Otros.png';
 
     switch (color) {
       case 'blanco':
@@ -279,7 +318,7 @@ export class FuncionesComunes {
       case 'marron':
         return marron;
       case 'morado':
-        return '';
+        return morado;
       case 'beige':
         return beige;
       case 'perla':

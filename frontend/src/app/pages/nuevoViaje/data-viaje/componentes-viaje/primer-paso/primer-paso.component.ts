@@ -13,6 +13,8 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { Usuario } from 'src/app/models/user/usuario.model';
 
 registerLocaleData(localeEs);
 
@@ -37,6 +39,8 @@ registerLocaleData(localeEs);
   styleUrls: ['./primer-paso.component.scss'],
 })
 export class PrimerPasoComponent implements OnInit {
+  userData: Usuario = {} as Usuario;
+
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);;
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
@@ -55,12 +59,12 @@ export class PrimerPasoComponent implements OnInit {
 
   hoy: string = new Date().toISOString();
 
-  constructor(private travelService: TravelService, private platform: Platform) {
+  constructor(private travelService: TravelService, private platform: Platform, private funcionesComunes: FuncionesComunes) {
     this._adapter.setLocale('es-ES');
   }
 
   ngOnInit() {
-
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
@@ -83,6 +87,7 @@ export class PrimerPasoComponent implements OnInit {
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
+    
   }
 
 
