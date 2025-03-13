@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { Viaje } from 'src/app/models/travel/viaje.model';
+import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,7 @@ export class TravelService {
   public notificacionPendiente: string | null = null;
   public esCreadorDelViaje: boolean = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dialog: MatDialog) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -183,11 +185,21 @@ export class TravelService {
   // Método para leer la notificación
   leerNotificacion(): void {
     if (this.notificacionPendiente) {
-      alert(this.notificacionPendiente);
+      this.mostrarNotificaciones(this.notificacionPendiente);
       this.notificacionPendiente = null;
       this.esCreadorDelViaje = false;
     }
   }
+
+    /**
+   * Función para abrir la ventana de notificaciones
+   * @param notificacion 
+   */
+    mostrarNotificaciones(notificacion: any) {
+      this.dialog.open(NotificacionesComponent, {
+        data: { notificacion }
+      });
+    }
 
   /**
  * Función para obtener las notificaciones de un usuario.

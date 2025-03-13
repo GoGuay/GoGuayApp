@@ -9,7 +9,6 @@ import {
   COLORES,
   COLOURS,
 } from 'src/app/models/vehiculos/marcas_modelos.model';
-import { TravelService } from '../travel-services/travel.service';
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
 import { lastValueFrom } from 'rxjs';
 import { UserServicesService } from '../user-services/user-services.service';
@@ -39,7 +38,6 @@ export class FuncionesComunes {
 
   constructor(
     private dialog: MatDialog,
-    private travelService: TravelService,
     private vehicleService: VehiculosServicesService,
     private userService: UserServicesService
   ) {
@@ -329,4 +327,6 @@ export class FuncionesComunes {
         return '';
     }
   }
+
+
 }
