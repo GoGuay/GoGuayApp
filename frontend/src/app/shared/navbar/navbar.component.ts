@@ -81,7 +81,7 @@ export class NavbarComponent implements OnInit {
     }
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    await this.obtenerDatosUsuario(this.userData.usuario.id);
+    await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
