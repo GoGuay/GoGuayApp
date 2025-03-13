@@ -12,6 +12,9 @@ export class TravelService {
   private viajeDataSubject = new BehaviorSubject<any>(null);
   viajeData$ = this.viajeDataSubject.asObservable();
 
+  public notificacionPendiente: string | null = null;
+  public esCreadorDelViaje: boolean = false;
+
   constructor(private http: HttpClient) { }
 
   /**
@@ -153,19 +156,50 @@ export class TravelService {
     const userData = JSON.parse(userDataString);
     const usuarioId = userData.usuario.id;
 
-    const requestBody = {
-      usuario_id: usuarioId,
-      viaje_id: viajeId
-    };
-
-    return this.http.post(`${this.apiUrl}/travel/salir_viaje`, requestBody).pipe(
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`, { withCredentials: true }).pipe(
       catchError((error) => {
         console.error('Error al salir del viaje:', error);
         return throwError(() => error);
       }),
-      switchMap(() => this.obtenerTodosLosViajes()),
+      switchMap((response: any) => {
+        if (response.mensaje === 'Pasajero eliminado correctamente del viaje') {
+          // Guarda la notificación si el usuario actual NO es el creador del viaje
+          if (response.creador_id !== usuarioId) {
+            this.notificacionPendiente = response.aviso_enviado;
+          }
+          return this.obtenerTodosLosViajes();
+        } else {
+          return throwError(() => new Error('No se pudo eliminar el pasajero del viaje.'));
+        }
+      }),
       tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
     );
   }
 
+  tieneNotificacionPendiente(): boolean {
+    return this.notificacionPendiente !== null && this.esCreadorDelViaje;
+  }
+
+  // Método para leer la notificación
+  leerNotificacion(): void {
+    if (this.notificacionPendiente) {
+      alert(this.notificacionPendiente);
+      this.notificacionPendiente = null;
+      this.esCreadorDelViaje = false;
+    }
+  }
+
+  /**
+ * Función para obtener las notificaciones de un usuario.
+ * @param usuarioId ID del usuario.
+ * @returns Observable con las notificaciones.
+ */
+  obtenerNotificaciones(usuarioId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/travel/obtener_notificaciones/${usuarioId}`).pipe(
+      catchError((error) => {
+        console.error('Error al obtener notificaciones:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

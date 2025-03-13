@@ -51,6 +51,7 @@ export class PerfilPublicoPage implements OnInit {
   imagenPerfilSrc: string = '../../../assets/User-Profile-PNG-Image.png';
   filtroViajes: string = 'todos';
   cargando = false;
+  conductor: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -72,6 +73,29 @@ export class PerfilPublicoPage implements OnInit {
       this.obtenerViajesComoAcompanante();
       this.obtenerViajesCreados();
     });
+
+    this.comprobarNotificaciones(); 
+    setInterval(() => {
+      this.comprobarNotificaciones();
+    }, 10000);
+  }
+
+  comprobarNotificaciones(): void {
+    this.travelService.obtenerNotificaciones(this.usuarioParams.id).subscribe(
+      (notificaciones) => {
+        // Verifica si el creador tiene notificaciones pendientes
+        if (notificaciones && notificaciones.length > 0) {
+          this.travelService.notificacionPendiente = notificaciones[0].mensaje;
+          this.travelService.esCreadorDelViaje = true;
+        } else {
+          this.travelService.notificacionPendiente = null;
+          this.travelService.esCreadorDelViaje = false;
+        }
+      },
+      (error) => {
+        console.error('Error al obtener notificaciones:', error);
+      }
+    );
   }
 
   /**
@@ -113,10 +137,13 @@ export class PerfilPublicoPage implements OnInit {
   filtrarViajes() {
     if (this.filtroViajes === 'todos') {
       this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
+      this.conductor = false; // Por defecto no es conductor
     } else if (this.filtroViajes === 'conductor') {
       this.misViajes = [...this.misViajesCreados];
+      this.conductor = true;  // El usuario es conductor
     } else if (this.filtroViajes === 'pasajero') {
       this.misViajes = [...this.misViajesAcompanante];
+      this.conductor = false; // El usuario es pasajero
     }
   }
 
@@ -232,8 +259,6 @@ export class PerfilPublicoPage implements OnInit {
     return esFinalizado && esPasajero && !esCreador;
   }
 
-  leerNotificacion() { }
-
   /**
    * Función para eliminar un viaje.
    * 
@@ -269,5 +294,14 @@ export class PerfilPublicoPage implements OnInit {
         console.error('Error al salir del viaje:', error);
       }
     });
+  }
+
+  // Método que se llama al hacer clic en el icono de notificación
+  leerNotificacion(): void {
+    this.travelService.leerNotificacion();
+  }
+
+  tieneNotificacionPendiente(): boolean {
+    return this.travelService.tieneNotificacionPendiente();
   }
 }

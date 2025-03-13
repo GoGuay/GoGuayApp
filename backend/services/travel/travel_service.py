@@ -4,7 +4,7 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje
+from models import Viaje, PasajeroViaje, Notificacion
 from extensions import db
 from sqlalchemy.orm import joinedload 
 
@@ -221,16 +221,51 @@ def eliminar_pasajero(viaje_id, usuario_id):
     if not pasajero:
         return jsonify({"error": "El pasajero no está en este viaje"}), 404
 
-    # Eliminar al pasajero del viaje y aumentar las plazas
+    # Obtener el usuario (pasajero) para acceder al nombre y apellidos
+    usuario = pasajero.usuario  # Esto asume que tienes la relación configurada correctamente
+
+    # Si no se encuentran los datos del usuario
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
+
+    # Obtener nombre y apellidos del pasajero
+    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+
     db.session.delete(pasajero)
     viaje.plazas += 1
-    db.session.commit()
 
-    # Simular el envío de notificación al creador del viaje
-    mensaje = f"Aviso: El pasajero con ID {usuario_id} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
+    # Verifica si 'viaje_id' no es None antes de crear la notificación
+    if viaje_id is None:
+        return jsonify({"error": "El viaje no tiene un ID válido"}), 400
+
+    # Crear notificación solo para el creador del viaje
+    creador_id = viaje.usuario_id
+
+    # Verificar que la notificación solo se envíe al creador del viaje
+    if creador_id != usuario_id:  # Asegúrate de que no se envíe al pasajero eliminado
+        mensaje = f"Aviso: El pasajero {nombre_completo} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
+        notificacion = Notificacion(
+            usuario_id=creador_id,
+            viaje_id=viaje_id,
+            mensaje=mensaje
+        )
+        db.session.add(notificacion)
+
+    db.session.commit()
 
     return jsonify({
         "mensaje": "Pasajero eliminado correctamente del viaje",
-        "aviso_enviado": mensaje,
-        "plazas_actuales": viaje.plazas
+        "aviso_enviado": mensaje if creador_id != usuario_id else None,
+        "plazas_actuales": viaje.plazas,
+        "creador_id": creador_id
     }), 200
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER LAS NOTIFICACIONES DE UN USUARIO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_notificaciones/<int:usuario_id>', methods=['GET'])
+def obtener_notificaciones(usuario_id):
+    notificaciones = Notificacion.query.filter_by(usuario_id=usuario_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
