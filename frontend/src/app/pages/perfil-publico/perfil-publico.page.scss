@@ -162,9 +162,7 @@ button {
   color: red;
 }
 
-.viajeApuntuar {
-  color: #3CD665;
-}
+
 
 .fontSize {
   font-size: 0.9rem;
@@ -173,6 +171,18 @@ button {
 }
 
 .icon_shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.puntuar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  background-color: #B3B5E6;
+  padding: 2%;
+  color: white;
+}
+
+.btn_shadow:hover {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 

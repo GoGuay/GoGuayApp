@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
@@ -16,6 +16,8 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { MatDialog } from '@angular/material/dialog';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { PuntuacionesComponent } from 'src/app/components/puntuaciones/puntuaciones.component';
 
 
 @Component({
@@ -55,6 +57,8 @@ export class PerfilPublicoPage implements OnInit {
   pasajero: boolean = false;
   conductor: boolean = false;
   notificacionLeida: boolean = false;
+
+  private _bottomSheet = inject(MatBottomSheet);
 
   constructor(
     private route: ActivatedRoute,
@@ -346,5 +350,12 @@ export class PerfilPublicoPage implements OnInit {
    */
   tieneNotificacionPendiente(): boolean {
     return this.notificacionesService.tieneNotificacionPendiente();
+  }
+
+  /**
+   * Función para puntuar un viaje
+   */
+  puntuarViaje(){
+    this._bottomSheet.open(PuntuacionesComponent);
   }
 }
