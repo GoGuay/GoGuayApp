@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { Viaje } from 'src/app/models/travel/viaje.model';
-import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
-import { MatDialog } from '@angular/material/dialog';
+import { NotificacionesService } from '../notificaciones/notificaciones.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +13,9 @@ export class TravelService {
   private viajeDataSubject = new BehaviorSubject<any>(null);
   viajeData$ = this.viajeDataSubject.asObservable();
 
-  public notificacionPendiente: string | null = null;
-  public esCreadorDelViaje: boolean = false;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) { }
+
+  constructor(private http: HttpClient, private notificacionesService: NotificacionesService) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -167,7 +165,7 @@ export class TravelService {
         if (response.mensaje === 'Pasajero eliminado correctamente del viaje') {
           // Guarda la notificación si el usuario actual NO es el creador del viaje
           if (response.creador_id !== usuarioId) {
-            this.notificacionPendiente = response.aviso_enviado;
+            this.notificacionesService.notificacionPendiente = response.aviso_enviado;
           }
           return this.obtenerTodosLosViajes();
         } else {
@@ -178,40 +176,5 @@ export class TravelService {
     );
   }
 
-  tieneNotificacionPendiente(): boolean {
-    return this.notificacionPendiente !== null && this.esCreadorDelViaje;
-  }
 
-  // Método para leer la notificación
-  leerNotificacion(): void {
-    if (this.notificacionPendiente) {
-      this.mostrarNotificaciones(this.notificacionPendiente);
-      this.notificacionPendiente = null;
-      this.esCreadorDelViaje = false;
-    }
-  }
-
-    /**
-   * Función para abrir la ventana de notificaciones
-   * @param notificacion 
-   */
-    mostrarNotificaciones(notificacion: any) {
-      this.dialog.open(NotificacionesComponent, {
-        data: { notificacion }
-      });
-    }
-
-  /**
- * Función para obtener las notificaciones de un usuario.
- * @param usuarioId ID del usuario.
- * @returns Observable con las notificaciones.
- */
-  obtenerNotificaciones(usuarioId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/travel/obtener_notificaciones/${usuarioId}`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener notificaciones:', error);
-        return throwError(() => error);
-      })
-    );
-  }
 }

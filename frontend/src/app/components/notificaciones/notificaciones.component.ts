@@ -7,18 +7,21 @@ import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-notificaciones',
   standalone: true,
-  imports: [MatButtonModule, MatDivider],
+  imports: [MatButtonModule, MatDivider, MatIcon],
   templateUrl: './notificaciones.component.html',
   styleUrls: ['./notificaciones.component.scss'],
 })
 export class NotificacionesComponent implements OnInit {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string }, 
+    @Inject(MAT_DIALOG_DATA) public data: { titulo: string; notificacion: any }, 
     private dialogRef: MatDialogRef<NotificacionesComponent>
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log('Notificación: ', this.data);
+    
+   }
 
 
   close() {

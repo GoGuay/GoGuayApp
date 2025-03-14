@@ -113,8 +113,8 @@
                         class="fontSize">Pendiente</span>
                       <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize" type="button">Puntuar</span>
                       <br>
-                      <span *ngIf="tieneNotificacionPendiente()">
-                        <mat-icon type="button" class="notifications" (click)="leerNotificacion()">mark_email_unread</mat-icon>
+                      <span *ngIf="viaje.notificaciones && viaje.notificaciones.length > 0">
+                        <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications" (click)="leerNotificacion()">mark_email_unread</mat-icon>
                       </span>
                     </div>
                     <div class="col-3 text-end">

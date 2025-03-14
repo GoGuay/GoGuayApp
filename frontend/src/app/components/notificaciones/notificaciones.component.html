@@ -1,12 +1,19 @@
 <div class="container">
   <div class="modal-header d-flex align-items-center">
-
+    <div class="d-flex align-items-center">
+      <mat-icon class="icon_notification">mark_email_unread</mat-icon>
+      <h2 class="ms-2">{{ data.titulo }}</h2>
+    </div>
+    <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
   <mat-divider></mat-divider>
   <div class="modal-body">
-    <p>{{ data.message }}</p>
+    <p>{{ data.notificacion[0].mensaje }}</p>
+    <span class="advertencia"><strong>* </strong> Al aceptar el mensaje marcarás la notificación como leída.</span>
   </div>
   <div class="modal-footer">
-    <button mat-button (click)="close()">Cerrar</button>
+    <button mat-button class="btn_bg" (click)="close()">Aceptar</button>
   </div>
 </div>

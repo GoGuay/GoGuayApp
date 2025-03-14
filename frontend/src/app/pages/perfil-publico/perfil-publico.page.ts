@@ -15,6 +15,7 @@ import { ViajeSeleccionadoComponent } from 'src/app/components/viaje-seleccionad
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { MatDialog } from '@angular/material/dialog';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
+import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 
 
 @Component({
@@ -52,11 +53,13 @@ export class PerfilPublicoPage implements OnInit {
   filtroViajes: string = 'todos';
   cargando = false;
   conductor: boolean = false;
+  notificacionLeida: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
+    private notificacionesService: NotificacionesService,
     private travelService: TravelService,
     private dialog: MatDialog
   ) {
@@ -80,16 +83,36 @@ export class PerfilPublicoPage implements OnInit {
     }, 10000);
   }
 
+  /**
+   * Función para obtener las notificaciones del usuario logado
+   * Además se obtienen las notificaciones pertenecientes a cada viaje.
+   * 
+   * 
+   */
   comprobarNotificaciones(): void {
-    this.travelService.obtenerNotificaciones(this.usuarioParams.id).subscribe(
+    this.notificacionesService.obtenerNotificaciones(this.usuarioParams.id).subscribe(
       (notificaciones) => {
-        // Verifica si el creador tiene notificaciones pendientes
         if (notificaciones && notificaciones.length > 0) {
-          this.travelService.notificacionPendiente = notificaciones[0].mensaje;
-          this.travelService.esCreadorDelViaje = true;
+          this.notificacionesService.notificacionPendiente = notificaciones;
+          this.notificacionesService.esCreadorDelViaje = true;
+          notificaciones.forEach((notificacion: any) => {
+            this.notificacionesService.obtenerNotificacionesDeUnViaje(notificacion.viaje_id).subscribe(
+              (respuesta) => {
+                if(respuesta[0].leida === true){
+                  this.notificacionLeida = true;
+                } else {
+                  this.notificacionLeida = false;
+                }
+                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);
+                if (viaje) {
+                  viaje.notificaciones = respuesta;
+                }
+              }
+            );
+          });
         } else {
-          this.travelService.notificacionPendiente = null;
-          this.travelService.esCreadorDelViaje = false;
+          this.notificacionesService.notificacionPendiente = null;
+          this.notificacionesService.esCreadorDelViaje = false;
         }
       },
       (error) => {
@@ -97,6 +120,7 @@ export class PerfilPublicoPage implements OnInit {
       }
     );
   }
+  
 
   /**
    * Función para obtener los datos de un usuario
@@ -296,12 +320,20 @@ export class PerfilPublicoPage implements OnInit {
     });
   }
 
-  // Método que se llama al hacer clic en el icono de notificación
+  /**
+   * Función para poder leer las notificaciones del viaje
+   * 
+   */
   leerNotificacion(): void {
-    this.travelService.leerNotificacion();
+    this.notificacionesService.leerNotificacion();
   }
 
+  /**
+   * Función para saber si tiene notificaciones pendientes en el viaje.
+   * 
+   * @returns Devuelve las notificaciones que tenga el viaje
+   */
   tieneNotificacionPendiente(): boolean {
-    return this.travelService.tieneNotificacionPendiente();
+    return this.notificacionesService.tieneNotificacionPendiente();
   }
 }

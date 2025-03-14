@@ -269,3 +269,25 @@ def eliminar_pasajero(viaje_id, usuario_id):
 def obtener_notificaciones(usuario_id):
     notificaciones = Notificacion.query.filter_by(usuario_id=usuario_id).order_by(Notificacion.fecha.desc()).all()
     return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER NOTIFICACIONES DE UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_notificaciones_viaje/<int:viaje_id>', methods=['GET'])
+def obtener_notificaciones_viaje(viaje_id):
+    notificaciones = Notificacion.query.filter_by(viaje_id=viaje_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA MARCAR UNA NOTIFICACIÓN COMO LEÍDA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/marcar_notificacion_leida/<int:notificacion_id>', methods=['PUT'])
+def marcar_notificacion_leida(notificacion_id):
+    notificacion = Notificacion.query.get(notificacion_id)
+    if not notificacion:
+        return jsonify({"error": "Notificación no encontrada"}), 404
+
+    notificacion.leida = True
+    db.session.commit()
+    return jsonify({"message": "Notificación leída"}), 200

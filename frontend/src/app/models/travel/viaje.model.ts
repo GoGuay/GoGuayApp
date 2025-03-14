@@ -16,4 +16,5 @@ export interface Viaje {
   usuario?: any; 
   usuario_creador?: any;
   acompañantes?: any;
+  notificaciones?: any;
 }
