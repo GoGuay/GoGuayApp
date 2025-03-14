@@ -172,6 +172,10 @@ button {
   max-width: 100%; /* Evita que el texto se desborde del contenedor */
 }
 
+.icon_shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 @media (max-width: 576px) {
   .mi_viaje_box {
     flex-direction: column;
