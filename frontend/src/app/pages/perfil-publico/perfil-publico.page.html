@@ -114,7 +114,7 @@
                       <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize" type="button">Puntuar</span>
                       <br>
                       <span *ngIf="viaje.notificaciones && viaje.notificaciones.length > 0">
-                        <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications" (click)="leerNotificacion()">mark_email_unread</mat-icon>
+                        <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications" (click)="leerNotificacion(viaje.notificaciones)">mark_email_unread</mat-icon>
                       </span>
                     </div>
                     <div class="col-3 text-end">
@@ -124,11 +124,11 @@
                           <mat-icon class="mas_detalle">loupe</mat-icon>
                         </button>
                         <button type="button" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip"
-                          (click)="eliminarViaje(viaje.id)" *ngIf="conductor">
+                          (click)="eliminarViaje(viaje.id)" *ngIf="conductor && !pasajero">
                           <mat-icon class="eliminar_viaje">delete</mat-icon>
                         </button>
                         <button type="button" matTooltip="Salir del viaje" matTooltipClass="custom-tooltip"
-                          (click)="salirDeViaje(viaje.id)" *ngIf="!conductor">
+                          (click)="salirDeViaje(viaje.id)" *ngIf="!conductor && pasajero">
                           <mat-icon class="eliminar_viaje">delete</mat-icon>
                         </button>
                       </span>

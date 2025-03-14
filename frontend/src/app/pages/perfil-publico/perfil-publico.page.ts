@@ -52,6 +52,7 @@ export class PerfilPublicoPage implements OnInit {
   imagenPerfilSrc: string = '../../../assets/User-Profile-PNG-Image.png';
   filtroViajes: string = 'todos';
   cargando = false;
+  pasajero: boolean = false;
   conductor: boolean = false;
   notificacionLeida: boolean = false;
 
@@ -78,6 +79,10 @@ export class PerfilPublicoPage implements OnInit {
     });
 
     this.comprobarNotificaciones(); 
+    /**
+     * Se comprueba cada 10 segundos si el usuario tiene notificaiones
+     * en algún viaje en los que es conductor.
+     */
     setInterval(() => {
       this.comprobarNotificaciones();
     }, 10000);
@@ -104,6 +109,8 @@ export class PerfilPublicoPage implements OnInit {
                   this.notificacionLeida = false;
                 }
                 const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);
+                console.log('viaje ', viaje);
+                
                 if (viaje) {
                   viaje.notificaciones = respuesta;
                 }
@@ -161,13 +168,16 @@ export class PerfilPublicoPage implements OnInit {
   filtrarViajes() {
     if (this.filtroViajes === 'todos') {
       this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
-      this.conductor = false; // Por defecto no es conductor
+      this.conductor = false; 
+      this.pasajero = false;
     } else if (this.filtroViajes === 'conductor') {
       this.misViajes = [...this.misViajesCreados];
       this.conductor = true;  // El usuario es conductor
+      this.pasajero = false;
     } else if (this.filtroViajes === 'pasajero') {
       this.misViajes = [...this.misViajesAcompanante];
       this.conductor = false; // El usuario es pasajero
+      this.pasajero = true;
     }
   }
 
@@ -312,6 +322,7 @@ export class PerfilPublicoPage implements OnInit {
         console.log('El usuario ha salido del viaje con éxito');
         this.obtenerViajesComoAcompanante();
         this.obtenerViajesCreados();
+        this.comprobarNotificaciones(); 
       },
       error: (error) => {
         this.cargando = false;
@@ -324,8 +335,8 @@ export class PerfilPublicoPage implements OnInit {
    * Función para poder leer las notificaciones del viaje
    * 
    */
-  leerNotificacion(): void {
-    this.notificacionesService.leerNotificacion();
+  leerNotificacion(notificaciones: any): void {
+    this.notificacionesService.leerNotificacion(notificaciones);
   }
 
   /**

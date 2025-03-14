@@ -19,11 +19,10 @@ export class NotificacionesService {
     }
 
     // Método para leer la notificación
-    leerNotificacion(): void {
+    leerNotificacion( notificaciones: any ): void {
         if (this.notificacionPendiente) {
             console.log('NOTIF. PDTE: ', this.notificacionPendiente);
-            
-            this.mostrarNotificaciones(this.notificacionPendiente);
+            this.mostrarNotificaciones(notificaciones);
             this.notificacionPendiente = null;
             this.esCreadorDelViaje = false;
         }

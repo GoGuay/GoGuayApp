@@ -139,6 +139,25 @@ def unirse_viaje():
     viaje.plazas -= 1
     db.session.commit()
 
+    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    usuario = pasajero.usuario 
+    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+    
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
+    
+    # Se notifica al creador del viaje la unión al mismo como pasajero
+    creador_id = viaje.usuario_id
+    if creador_id != usuario_id: 
+        mensaje = f"Aviso: El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
+        notificacion = Notificacion(
+            usuario_id=creador_id,
+            viaje_id=viaje_id,
+            mensaje=mensaje
+        )
+        db.session.add(notificacion)
+        db.session.commit()
+
     return jsonify({
         "mensaje": "Usuario agregado al viaje correctamente",
         "viaje": viaje.serialize(),
