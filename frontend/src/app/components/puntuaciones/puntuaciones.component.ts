@@ -4,11 +4,12 @@ import {
   MatBottomSheetRef
 } from '@angular/material/bottom-sheet';
 import {MatListModule} from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-puntuaciones',
+  standalone: true,
   imports: [MatButtonModule, MatBottomSheetModule, MatListModule, MatIcon],
   templateUrl: './puntuaciones.component.html',
   styleUrls: ['./puntuaciones.component.scss'],
