@@ -30,6 +30,7 @@ export class MiPerfilPage implements OnInit {
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
   edad: number = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
+  editandoVehiculo: boolean = false;
 
   constructor(public funcionesComunes: FuncionesComunes) {}
 
@@ -53,6 +54,11 @@ export class MiPerfilPage implements OnInit {
     }
 
     this.funcionesComunes.obtenerVehiculos();
+
+    //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
+    this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
+      vehiculo.editandoVehiculo = false;
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -67,5 +73,13 @@ export class MiPerfilPage implements OnInit {
         `${fileNames.length} imágenes seleccionadas: ${fileNames.join(', ')}`
       );
     }
+  }
+  editarFilaVehiculo(vehiculo: any) {
+    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
+  }
+
+  guardarVehículoEditado(vehiculo: any) {
+    console.log('Guardando cambios en el vehículo: ', vehiculo);
+    vehiculo.editandoVehiculo = false;
   }
 }

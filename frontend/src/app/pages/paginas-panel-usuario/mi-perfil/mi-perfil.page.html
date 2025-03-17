@@ -242,27 +242,77 @@
                           <th scope="col">Opciones</th>
                         </tr>
                       </thead>
-                      <tbody
-                        *ngFor="let coche of funcionesComunes.vehiculos_usuario"
-                      >
-                        <tr>
-                          <td scope="row">{{coche.marca}}</td>
-                          <!-- Color -->
-                          <td>{{coche.modelo}}</td>
-                          <!-- marca -->
+                      <tbody>
+                        <tr
+                          *ngFor="let coche of funcionesComunes.vehiculos_usuario"
+                        >
+                          <td>
+                            <ng-container
+                              *ngIf="coche.editando; else noEditMarca"
+                            >
+                              <input
+                                type="text"
+                                [(ngModel)]="coche.marca"
+                                class="form-control"
+                              />
+                            </ng-container>
+                            <ng-template #noEditMarca
+                              >{{ coche.marca }}</ng-template
+                            >
+                          </td>
+                          <td>
+                            <ng-container
+                              *ngIf="coche.editando; else noEditModelo"
+                            >
+                              <input
+                                type="text"
+                                [(ngModel)]="coche.modelo"
+                                class="form-control"
+                              />
+                            </ng-container>
+                            <ng-template #noEditModelo
+                              >{{ coche.modelo }}</ng-template
+                            >
+                          </td>
+
                           <td>
                             <img
                               class="colorCoche"
                               [src]="funcionesComunes.mostrarColorCoche(coche.color)"
                             />
                           </td>
+
                           <!-- modelo -->
-                          <td>{{coche.matricula}}</td>
-                          <!-- opciones -->
+                          <td>
+                            <ng-container
+                              *ngIf="coche.editando; else noEditMatricula"
+                            >
+                              <input
+                                type="text"
+                                [(ngModel)]="coche.matricula"
+                                class="form-control"
+                              />
+                            </ng-container>
+                            <ng-template #noEditMatricula
+                              >{{ coche.matricula }}</ng-template
+                            >
+                          </td>
+
                           <td>
                             <div class="row">
-                              <div class="col"><mat-icon>edit</mat-icon></div>
-                              <div class="col"><mat-icon>delete</mat-icon></div>
+                              <div class="col">
+                                <button mat-icon-button>
+                                  <mat-icon
+                                    >{{ coche.editando ? 'save' : 'edit'
+                                    }}</mat-icon
+                                  >
+                                </button>
+                              </div>
+                              <div class="col">
+                                <button mat-icon-button>
+                                  <mat-icon>delete</mat-icon>
+                                </button>
+                              </div>
                             </div>
                           </td>
                         </tr>
