@@ -18,6 +18,7 @@ import { SpinnerComponent } from "../../components/spinner/spinner.component";
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PuntuacionesComponent } from 'src/app/components/puntuaciones/puntuaciones.component';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -162,8 +163,18 @@ export class PerfilPublicoPage implements OnInit {
     this.travelService.getViajesUsuario(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesCreados = result.viajes;
+        this.misViajesCreados.forEach((viaje) => {
+          this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
+            viaje.usuario = usuario;
+          });
+        })
         this.filtrarViajes();
       });
+  }
+
+
+  obtenerUsuario(id_usuario: number): Observable<any> {
+    return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
   /**
@@ -190,6 +201,9 @@ export class PerfilPublicoPage implements OnInit {
    * @param viaje Recibe la información del viaje seleccionado.
    */
   openDetalleViaje(viaje: Viaje) {
+    this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
+      viaje.usuario = usuario;
+    });
     this.dialog.open(ViajeSeleccionadoComponent, {
       data: { viaje }
     });

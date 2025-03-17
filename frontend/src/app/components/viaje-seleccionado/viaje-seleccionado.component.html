@@ -19,6 +19,7 @@
         <p><strong>Origen:</strong> {{ data.viaje.origen }}</p>
         <p><strong>Destino:</strong> {{ data.viaje.destino }}</p>
         <p><strong>Hora de salida:</strong> {{ data.viaje.hora_salida }}</p>
+        <p><strong>Hora de llegada (Aprox.):</strong> {{ data.viaje.hora_llegada }}</p>
         <p><strong>Plazas libres:</strong> {{ data.viaje.plazas }}</p>
         <p *ngIf="data.viaje.precio_viaje"><strong>Precio:</strong> {{ data.viaje.precio_viaje }} €</p>
         <p *ngIf="!data.viaje.precio_viaje"><strong>Precio:</strong> Sin precio asignado </p>
@@ -30,6 +31,9 @@
         <p><strong>Apellidos:</strong> {{ data.viaje.usuario.apellidos }}</p>
         <p><strong>Preferencias:</strong> {{ preferencias}}</p>
         <p><strong>Puntuación:</strong> {{ data.viaje.usuario.puntuacion_promedio }}</p>
+        <p>
+          <button type="button" mat-raised-button class="btn" (click)="masDetallesUsuario(data.viaje.usuario.id)">Más información</button>
+        </p>
       </div>
     </div>
 

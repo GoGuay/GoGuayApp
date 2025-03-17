@@ -106,15 +106,16 @@
                         <strong class="me-1 ms-3">Fecha:</strong> {{ viaje.fecha_salida | date:'d-MM-yyyy' }}
                       </span>
                     </div>
-                    <div class="col-3 text-center">
+                    <div class="col-3 col-puntuar text-center">
                       <span *ngIf="esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                        class="viajeFinalizado fontSize">Finalizado</span>
+                            class="viajeFinalizado fontSize">Finalizado</span>
                       <span *ngIf="!esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                        class="fontSize">Pendiente</span>
-                      <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize btn_shadow puntuar" type="button" (click)="puntuarViaje()">Puntuar viaje</span>
-                      <br>
-                      <span *ngIf="viaje.notificaciones && viaje.notificaciones.length > 0">
-                        <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications notificaciones_anim icon_shadow" (click)="leerNotificacion(viaje.notificaciones)">mark_email_unread</mat-icon>
+                            class="fontSize">Pendiente</span>
+                      <span *ngIf="puedePuntuar(viaje)"
+                            class="viajeApuntuar fontSize btn_shadow puntuar"
+                            type="button"
+                            (click)="puntuarViaje()">
+                        Puntuar viaje
                       </span>
                     </div>
                     <div class="col-3 text-end">

@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
@@ -29,7 +30,8 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: { viaje: Viaje },
     private funcionesComunes: FuncionesComunes,
     private travelService: TravelService,
-    private usersService: UserServicesService
+    private usersService: UserServicesService,
+    private router: Router
   ) {
     this.preferencias = this.funcionesComunes.validacionPreferencias(this.data);
     this.viaje = { ...this.data.viaje }; // Inicializa con los datos del viaje
@@ -158,5 +160,20 @@ verificarSiEstaUnido() {
     });
   }
   
+
+  /**
+   * Función para redirigir al perfil público del usuario.
+   * 
+   * @param id_usuario 
+   */
+  masDetallesUsuario(id_usuario: number){
+    const usuario = {
+      id: id_usuario
+    }
+    this.router.navigate(['/perfil-publico'], {
+      queryParams: usuario,
+    });
+    this.closeDialog();
+  }
   
 }
