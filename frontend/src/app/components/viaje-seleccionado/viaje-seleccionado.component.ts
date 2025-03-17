@@ -1,20 +1,35 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { Subscription } from 'rxjs';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Viaje } from 'src/app/models/travel/viaje.model';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-viaje-seleccionado',
   standalone: true,
-  imports: [MatDivider, MatIcon, MatDialogContent, MatButtonModule, CommonModule],
+  imports: [ 
+    MatDivider, 
+    MatIcon, 
+    MatDialogContent,
+    MatDialogActions, 
+    MatButtonModule, 
+    CommonModule, 
+    MatAccordion, 
+    MatExpansionModule, 
+    MatFormFieldModule
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideNativeDateAdapter()],
   templateUrl: './viaje-seleccionado.component.html',
   styleUrls: ['./viaje-seleccionado.component.scss'],
 })
@@ -24,11 +39,12 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   userID!: number;
   viaje!: Viaje;
   viajesSubscription: Subscription = new Subscription(); // Para gestionar la suscripción
+  accordion = viewChild.required(MatAccordion);
 
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { viaje: Viaje },
-    private funcionesComunes: FuncionesComunes,
+    public funcionesComunes: FuncionesComunes,
     private travelService: TravelService,
     private usersService: UserServicesService,
     private router: Router
@@ -46,7 +62,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Limpia la suscripción cuando el componente se destruya
     if (this.viajesSubscription) {
       this.viajesSubscription.unsubscribe();
     }

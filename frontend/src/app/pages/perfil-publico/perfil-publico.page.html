@@ -107,16 +107,21 @@
                       </span>
                     </div>
                     <div class="col-3 col-puntuar text-center">
-                      <span *ngIf="esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                            class="viajeFinalizado fontSize">Finalizado</span>
-                      <span *ngIf="!esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                            class="fontSize">Pendiente</span>
+                      <span *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
+                            class="viajeFinalizado fontSize mb-3">Finalizado</span>
+                      <span *ngIf="!funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
+                            class="fontSize etiquetaPendiente mb-3">Pendiente</span>
                       <span *ngIf="puedePuntuar(viaje)"
-                            class="viajeApuntuar fontSize btn_shadow puntuar"
+                            class="viajeApuntuar fontSize btn_shadow puntuar mb-3"
                             type="button"
                             (click)="puntuarViaje()">
                         Puntuar viaje
                       </span>
+                      <div class="d-flex justify-content-center align-items-center">
+                        <span *ngIf="viaje.notificaciones && viaje.notificaciones.length > 0">
+                          <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications notificaciones_anim icon_shadow" (click)="leerNotificacion(viaje.notificaciones)">mark_email_unread</mat-icon>
+                        </span>
+                      </div>
                     </div>
                     <div class="col-3 text-end">
                       <span class="botones ">

@@ -1,8 +1,22 @@
-.btnStar{
-    border-radius: 50%;
-    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+@import '../../../animations.scss';
+
+.container {
+  perspective: 500px;
 }
 
-.containerbox{
-    width: 90%;
+.btnStar {
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+}
+
+.btnStar:hover {
+  -webkit-animation: expandir_anim 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+          animation: expandir_anim 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  height: 314px;
 }

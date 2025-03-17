@@ -200,6 +200,22 @@ export class FuncionesComunes {
     }
   }
 
+  /**
+   * Función para validar si un viaje ha terminado o no.
+   * 
+   * @param fecha_salida 
+   * @returns 
+   */
+  esViajeFinalizado(fecha_salida: string, hora_llegada: string): boolean {
+    const fechaViaje = new Date(fecha_salida);
+    const [hora, minutos] = hora_llegada.split(":").map(Number);
+    fechaViaje.setHours(hora, minutos, 0, 0);
+  
+    const ahora = new Date();
+    
+    return ahora > fechaViaje;
+  }
+
   /******************************************
    *                                        *
    *  FUNCIONES PARA EL PERFIL DEL USUARIO  *

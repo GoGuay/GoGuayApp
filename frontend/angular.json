@@ -34,6 +34,7 @@
             ],
             "styles": [
               "src/global.scss",
+              "src/animations.scss",
               "src/theme/variables.scss",
               "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
@@ -119,6 +120,7 @@
             "styles": [
               "src/global.scss",
               "src/theme/variables.scss",
+              "src/animations.scss",
               "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ],

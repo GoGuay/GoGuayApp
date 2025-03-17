@@ -63,7 +63,7 @@ export class PerfilPublicoPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private funcionesComunes: FuncionesComunes,
+    public funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
     private notificacionesService: NotificacionesService,
     private travelService: TravelService,
@@ -113,9 +113,7 @@ export class PerfilPublicoPage implements OnInit {
                 } else {
                   this.notificacionLeida = false;
                 }
-                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);
-                console.log('viaje ', viaje);
-                
+                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);                
                 if (viaje) {
                   viaje.notificaciones = respuesta;
                 }
@@ -173,7 +171,7 @@ export class PerfilPublicoPage implements OnInit {
   }
 
 
-  obtenerUsuario(id_usuario: number): Observable<any> {
+  obtenerUsuario(id_usuario: number): Observable<Usuario> {
     return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
@@ -282,28 +280,12 @@ export class PerfilPublicoPage implements OnInit {
   }
 
   /**
-   * Función para validar si un viaje ha terminado o no.
-   * 
-   * @param fecha_salida 
-   * @returns 
-   */
-  esViajeFinalizado(fecha_salida: string, hora_salida: string): boolean {
-    const fechaViaje = new Date(fecha_salida);
-    const horaViaje = hora_salida.split(":");
-    fechaViaje.setHours(parseInt(horaViaje[0]), parseInt(horaViaje[1]));
-
-    const hoy = new Date();
-
-    return fechaViaje < hoy;
-  }
-
-  /**
    * Función para validar si se puede puntuar un viaje o no.
    * 
    * @param viaje 
    */
   puedePuntuar(viaje: Viaje): boolean {
-    const esFinalizado = this.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
+    const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
     const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
     const esCreador = viaje.usuario_id === this.userData.usuario.id;
 
