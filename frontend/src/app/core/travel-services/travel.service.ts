@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { Viaje } from 'src/app/models/travel/viaje.model';
+import { NotificacionesService } from '../notificaciones/notificaciones.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,9 @@ export class TravelService {
   private viajeDataSubject = new BehaviorSubject<any>(null);
   viajeData$ = this.viajeDataSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+
+
+  constructor(private http: HttpClient, private notificacionesService: NotificacionesService) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -96,7 +99,11 @@ export class TravelService {
       catchError((error) => {
         console.error('Error al unirse al viaje:', error);
         return throwError(() => error);
-      })
+      }),
+      // Una vez el usuario se ha unido correctamente, obtenemos los viajes actualizados
+      // y notificamos a los suscriptores
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
     );
   }
 
@@ -114,7 +121,60 @@ export class TravelService {
 
 
   getViaje(viajeID: number) {
-    return this.http.get<Viaje>(`${this.apiUrl}/travel/viajes/${viajeID}`);
+    return this.http.get<Viaje>(`${this.apiUrl}/travel/obtener_viaje/${viajeID}`);
   }
+
+  /**
+  * Función para eliminar un viaje.
+  * @param viajeId ID del viaje que se quiere eliminar.
+  * @returns Observable con la respuesta del backend.
+  */
+  eliminarViaje(viajeId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`).pipe(
+      catchError((error) => {
+        console.error('Error al eliminar el viaje:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+    );
+  }
+
+  /**
+ * Función para que un usuario salga de un viaje.
+ * 
+ * @param viajeId ID del viaje del que el usuario quiere salir.
+ * @returns Observable con la respuesta del backend.
+ */
+  salirDeViaje(viajeId: number): Observable<any> {
+    const userDataString = localStorage.getItem('userData');
+
+    if (!userDataString) {
+      return throwError(() => new Error('No hay datos de usuario en el almacenamiento local.'));
+    }
+
+    const userData = JSON.parse(userDataString);
+    const usuarioId = userData.usuario.id;
+
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`, { withCredentials: true }).pipe(
+      catchError((error) => {
+        console.error('Error al salir del viaje:', error);
+        return throwError(() => error);
+      }),
+      switchMap((response: any) => {
+        if (response.mensaje === 'Pasajero eliminado correctamente del viaje') {
+          // Guarda la notificación si el usuario actual NO es el creador del viaje
+          if (response.creador_id !== usuarioId) {
+            this.notificacionesService.notificacionPendiente = response.aviso_enviado;
+          }
+          return this.obtenerTodosLosViajes();
+        } else {
+          return throwError(() => new Error('No se pudo eliminar el pasajero del viaje.'));
+        }
+      }),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+    );
+  }
+
 
 }

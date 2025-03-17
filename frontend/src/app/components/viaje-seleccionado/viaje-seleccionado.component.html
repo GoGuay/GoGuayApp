@@ -10,7 +10,10 @@
 
   <mat-dialog-content>
     <div class="info_viaje" *ngIf="data.viaje.plazas === 0">
-      <p>Este viaje ya no dispone de plazas 🥴​ </p>
+      <p>Este viaje ya no dispone de plazas. 🥴​ </p>
+    </div>
+    <div class="info_viaje" *ngIf="funcionesComunes.esViajeFinalizado">
+      <p>Este viaje ya ha terminado. 🥴​ </p>
     </div>
     <div class="row">
       <div class="col">
@@ -19,24 +22,42 @@
         <p><strong>Origen:</strong> {{ data.viaje.origen }}</p>
         <p><strong>Destino:</strong> {{ data.viaje.destino }}</p>
         <p><strong>Hora de salida:</strong> {{ data.viaje.hora_salida }}</p>
+        <p><strong>Hora de llegada (Aprox.):</strong> {{ data.viaje.hora_llegada }}</p>
         <p><strong>Plazas libres:</strong> {{ data.viaje.plazas }}</p>
         <p *ngIf="data.viaje.precio_viaje"><strong>Precio:</strong> {{ data.viaje.precio_viaje }} €</p>
         <p *ngIf="!data.viaje.precio_viaje"><strong>Precio:</strong> Sin precio asignado </p>
       </div>
-      <div class="col">
-        <h2>Usuario <mat-icon>article_person</mat-icon></h2>
-        <mat-divider class="mb-2"></mat-divider>
-        <p><strong>Nombre:</strong> {{ data.viaje.usuario.nombre }}</p>
-        <p><strong>Apellidos:</strong> {{ data.viaje.usuario.apellidos }}</p>
-        <p><strong>Preferencias:</strong> {{ preferencias}}</p>
-        <p><strong>Puntuación:</strong> {{ data.viaje.usuario.puntuacion_promedio }}</p>
+      <div class="col mt-3 mb-3">
+        <mat-accordion class="headers-align" multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> Usuario </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon>account_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <p><strong>Nombre:</strong> {{ data.viaje.usuario.nombre }}</p>
+            <p><strong>Apellidos:</strong> {{ data.viaje.usuario.apellidos }}</p>
+            <p><strong>Preferencias:</strong> {{ preferencias}}</p>
+            <p><strong>Puntuación:</strong> {{ data.viaje.usuario.puntuacion_promedio }}</p>
+            <p>
+              <button type="button" mat-raised-button class="btn" (click)="masDetallesUsuario(data.viaje.usuario.id)">Más
+                información</button>
+            </p>
+          </mat-expansion-panel>
+        </mat-accordion>
       </div>
     </div>
-
-    <div class="d-flex justify-content-center">
-      <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)" [disabled]="data.viaje.plazas === 0" ><mat-icon>no_crash</mat-icon>Quiero viajar aquí </button>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="d-flex justify-content-center mt-4">
+      <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)"
+        [disabled]="data.viaje.plazas === 0 || yaUnido || funcionesComunes.esViajeFinalizado">
+        <mat-icon>no_crash</mat-icon>
+        {{ yaUnido ? 'Ya estás unido' : 'Quiero viajar aquí' }}
+      </button>
       <button mat-raised-button class="btn" (click)="closeDialog()">Cerrar</button>
     </div>
-
-  </mat-dialog-content>
+  </mat-dialog-actions>
 </div>

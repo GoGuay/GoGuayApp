@@ -1,42 +1,64 @@
-.modal-infovisible{
-    width: 560px;
+.modal-infovisible {
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  // height: 560px;
+  height: auto;
+}
+
+mat-dialog-content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.style_h2 {
+  padding: 5%;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-header h2 {
+  margin: 0;
+}
+
+.dialog-header button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.info_viaje {
+  text-align: center;
+  padding-left: 2%;
+  padding-top: 3%;
+  border: 1px solid grey;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  background-color: #f0d7b4;
+}
+
+@media (max-width: 576px) {
+  .modal-infovisible {
+    width: auto;
     height: auto;
   }
+}
 
-  .style_h2{
-    padding: 5%;
-  }
-  
-  .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .dialog-header h2 {
-    margin: 0;
-  }
-  
-  .dialog-header button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .info_viaje {
-    text-align: center;
-    padding-left: 2%;
-    padding-top: 3%;
-    border: 1px solid grey;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-    background-color: #f0d7b4;
-  }
+.headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
 
-  @media (max-width: 576px) {
-    .modal-infovisible{
-      width: auto;
-      height: auto;
-    }
-  }
-  
+.headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}

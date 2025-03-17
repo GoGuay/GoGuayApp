@@ -15,4 +15,6 @@ export interface Viaje {
   created_at: string;
   usuario?: any; 
   usuario_creador?: any;
+  acompañantes?: any;
+  notificaciones?: any;
 }

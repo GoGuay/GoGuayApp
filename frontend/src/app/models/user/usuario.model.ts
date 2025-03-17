@@ -22,7 +22,7 @@ export interface Usuario {
     fecha_vencimiento_carnet?: string;
     comunic_comerciales?: boolean;
     comunic_terceros?: boolean;
-    vehiculos?: string;
+    vehiculos?: any;
     created_at?: string;
     updated_at?: string;
     token?: string;

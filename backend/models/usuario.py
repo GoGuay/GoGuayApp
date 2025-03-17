@@ -45,6 +45,7 @@ class Usuario(db.Model):
         backref='evaluador',
         cascade='all, delete-orphan'
     )
+    notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
 
     @property
     def puntuacion_promedio(self):

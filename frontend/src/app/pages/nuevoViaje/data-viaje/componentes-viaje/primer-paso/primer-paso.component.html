@@ -16,20 +16,17 @@
         <div class="contenedor_hora">
           <!-- Selector de hora para escritorio -->
           <div *ngIf="isDesktop">
-            <mat-form-field >
+            <mat-form-field>
               <mat-label>Selecciona la hora</mat-label>
-              <input 
-                matInput 
-                [(ngModel)]="hora_seleccionada" 
-                [matTimepicker]="minutesPicker" 
+              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
                 (ngModelChange)="onTimeChange($event)">
-              <mat-timepicker-toggle matIconSuffix [for]="minutesPicker"/>
-              <mat-timepicker interval="1min" #minutesPicker/>
+              <mat-timepicker-toggle matIconSuffix [for]="minutesPicker" />
+              <mat-timepicker interval="1min" #minutesPicker />
             </mat-form-field>
-          
+
             <p *ngIf="invalid_date" class="error-text">Formato de hora inválido</p>
           </div>
-          
+
 
           <!-- Selector de hora para móvil -->
           <div *ngIf="!isDesktop">
@@ -77,10 +74,11 @@
                 directions_car
               </span>
             </mat-icon>
-            <ion-select-option value="Coche 1">Coche 1</ion-select-option>
-            <ion-select-option value="Coche 2">Coche 2</ion-select-option>
-            <ion-select-option value="Coche 3">Coche 3</ion-select-option>
+            <ion-select-option *ngFor="let coche of userData?.usuario?.vehiculos" [value]="coche">
+              {{ coche.marca }} {{ coche.modelo }}
+            </ion-select-option>
           </ion-select>
+
         </div>
       </div>
     </ion-col>

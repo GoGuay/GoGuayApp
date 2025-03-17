@@ -106,7 +106,7 @@ button {
 .mis-viajes-container label {
   position: sticky;
   top: 0;
-  background-color: #E9EDD5;
+  background-color: #e9edd5;
   padding: 5px 0;
   z-index: 10;
   display: block;
@@ -143,7 +143,7 @@ button {
 
 .botones {
   display: flex;
-  gap: 12px;
+  gap: 50px;
 }
 
 .mi_viaje_box button {
@@ -151,25 +151,48 @@ button {
 }
 
 .mas_detalle {
-  color: #B3B5E6;
+  color: #b3b5e6;
 }
 
 .eliminar_viaje {
   color: red;
 }
 
-.viajeFinalizado{
+.viajeFinalizado {
   color: red;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  padding: 2%;
 }
 
-.viajeApuntuar {
-  color: #3CD665;
+.etiquetaPendiente {
+  background-color: #b7e0b4;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
 }
 
 .fontSize {
   font-size: 0.9rem;
   width: fit-content; /* Hace que el contenedor se ajuste al contenido */
   max-width: 100%; /* Evita que el texto se desborde del contenedor */
+}
+
+.icon_shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.puntuar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  background-color: #b3b5e6;
+  padding: 3%;
+  color: white;
+}
+
+.btn_shadow:hover {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 576px) {
@@ -188,23 +211,37 @@ button {
   }
 }
 
+.notifications {
+  color: #b7e0b4;
+  width: 20px;
+  height: 20px;
+}
+
 /** MODIFICA EL COLOR PRIMARIO DE IONIC */
 :root {
   --ion-color-primary: black;
 }
 
-
 /* Cambiar el color de fondo de la barra de selección */
 ion-segment {
-  --background: #B3B5E6;
-  --color: #E9EDD5;
+  --background: #b3b5e6;
+  --color: #e9edd5;
   border-radius: 15px !important;
   margin-bottom: 1%;
 }
 
 /* Cambiar el color de texto de los botones de segment (por defecto) */
 ion-segment-button {
-  --color: grey; 
-  --background-activated: #F0D7B4 !important;
+  --color: grey;
+  --background-activated: #f0d7b4 !important;
   --border-color: #ccc;
+}
+
+.col-puntuar {
+  width: 120px;
+  text-align: center;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

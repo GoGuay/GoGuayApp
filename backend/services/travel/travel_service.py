@@ -4,7 +4,7 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje
+from models import Viaje, PasajeroViaje, Notificacion
 from extensions import db
 from sqlalchemy.orm import joinedload 
 
@@ -139,6 +139,25 @@ def unirse_viaje():
     viaje.plazas -= 1
     db.session.commit()
 
+    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    usuario = pasajero.usuario 
+    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+    
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
+    
+    # Se notifica al creador del viaje la unión al mismo como pasajero
+    creador_id = viaje.usuario_id
+    if creador_id != usuario_id: 
+        mensaje = f"Aviso: El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
+        notificacion = Notificacion(
+            usuario_id=creador_id,
+            viaje_id=viaje_id,
+            mensaje=mensaje
+        )
+        db.session.add(notificacion)
+        db.session.commit()
+
     return jsonify({
         "mensaje": "Usuario agregado al viaje correctamente",
         "viaje": viaje.serialize(),
@@ -158,3 +177,136 @@ def obtener_viajes_pasajero(usuario_id):
     
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER UN VIAJE POR SU ID
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_viaje/<int:viaje_id>', methods=['GET'])
+def obtener_viaje_por_id(viaje_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.usuario),
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    return jsonify(viaje.serialize()), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA ELIMINAR UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/eliminar_viaje/<int:viaje_id>', methods=['DELETE'])
+def eliminar_viaje(viaje_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    # Obtener los IDs de los acompañantes
+    acompanantes = [pasajero.usuario_id for pasajero in viaje.pasajeros]
+
+    # Eliminar a los pasajeros del viaje
+    PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
+
+    # Eliminar el viaje
+    db.session.delete(viaje)
+    db.session.commit()
+
+    # Simular el envío de notificaciones (puedes reemplazarlo con lógica real)
+    mensajes = [f"Aviso: El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado." for _ in acompanantes]
+
+    return jsonify({
+        "mensaje": "Viaje eliminado correctamente",
+        "avisos_enviados": mensajes
+    }), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA ELIMINAR UN PASAJERO DE UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/eliminar_pasajero/<int:viaje_id>/<int:usuario_id>', methods=['DELETE'])
+def eliminar_pasajero(viaje_id, usuario_id):
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    if not pasajero:
+        return jsonify({"error": "El pasajero no está en este viaje"}), 404
+
+    # Obtener el usuario (pasajero) para acceder al nombre y apellidos
+    usuario = pasajero.usuario  # Esto asume que tienes la relación configurada correctamente
+
+    # Si no se encuentran los datos del usuario
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
+
+    # Obtener nombre y apellidos del pasajero
+    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+
+    db.session.delete(pasajero)
+    viaje.plazas += 1
+
+    # Verifica si 'viaje_id' no es None antes de crear la notificación
+    if viaje_id is None:
+        return jsonify({"error": "El viaje no tiene un ID válido"}), 400
+
+    # Crear notificación solo para el creador del viaje
+    creador_id = viaje.usuario_id
+
+    # Verificar que la notificación solo se envíe al creador del viaje
+    if creador_id != usuario_id:  # Asegúrate de que no se envíe al pasajero eliminado
+        mensaje = f"Aviso: El pasajero {nombre_completo} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
+        notificacion = Notificacion(
+            usuario_id=creador_id,
+            viaje_id=viaje_id,
+            mensaje=mensaje
+        )
+        db.session.add(notificacion)
+
+    db.session.commit()
+
+    return jsonify({
+        "mensaje": "Pasajero eliminado correctamente del viaje",
+        "aviso_enviado": mensaje if creador_id != usuario_id else None,
+        "plazas_actuales": viaje.plazas,
+        "creador_id": creador_id
+    }), 200
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER LAS NOTIFICACIONES DE UN USUARIO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_notificaciones/<int:usuario_id>', methods=['GET'])
+def obtener_notificaciones(usuario_id):
+    notificaciones = Notificacion.query.filter_by(usuario_id=usuario_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER NOTIFICACIONES DE UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/obtener_notificaciones_viaje/<int:viaje_id>', methods=['GET'])
+def obtener_notificaciones_viaje(viaje_id):
+    notificaciones = Notificacion.query.filter_by(viaje_id=viaje_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA MARCAR UNA NOTIFICACIÓN COMO LEÍDA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/marcar_notificacion_leida/<int:notificacion_id>', methods=['PUT'])
+def marcar_notificacion_leida(notificacion_id):
+    notificacion = Notificacion.query.get(notificacion_id)
+    if not notificacion:
+        return jsonify({"error": "Notificación no encontrada"}), 404
+
+    notificacion.leida = True
+    db.session.commit()
+    return jsonify({"message": "Notificación leída"}), 200
