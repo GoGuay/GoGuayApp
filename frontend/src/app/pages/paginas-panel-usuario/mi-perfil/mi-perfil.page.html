@@ -16,7 +16,7 @@
     <div class="container">
       <ion-row>
         <!-- Información personal -->
-        <ion-col size="6" class="mr-3">
+        <ion-col size="7" class="mr-3">
           <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
           <ion-row>
             <ion-col>
@@ -51,11 +51,14 @@
 
             <ion-col>
               <div class="mb-3">
-                <label for="pronombre" class="form-label"
+                <label for="pronombre" class="form-label pronombre"
                   >{{'MI_PERFIL.PRONOMBRE' | translate}}</label
                 >
-                <select class="form-select" aria-label="Selección de pronombre">
-                  <option selected disabled>Selecciona una opcion</option>
+                <select
+                  class="form-select w-150"
+                  aria-label="Selección de pronombre"
+                >
+                  <option selected disabled>Escoge una opcion</option>
                   <option value="1">Él / He / Him</option>
                   <option value="2">Ella / She / Her</option>
                   <option value="3">Elle / They / Them</option>

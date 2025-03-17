@@ -33,6 +33,8 @@ export class FuncionesComunes {
   validacionIdioma: boolean = true;
   mostrarSelectorVehiculo: boolean = false;
   vehiculos_usuario: any[] = [];
+  fechaNacimiento: string = '';
+  edad: number = this.calcularEdad(this.fechaNacimiento);
 
   usuario: any = {} as Usuario;
 
@@ -202,17 +204,17 @@ export class FuncionesComunes {
 
   /**
    * Función para validar si un viaje ha terminado o no.
-   * 
-   * @param fecha_salida 
-   * @returns 
+   *
+   * @param fecha_salida
+   * @returns
    */
   esViajeFinalizado(fecha_salida: string, hora_llegada: string): boolean {
     const fechaViaje = new Date(fecha_salida);
-    const [hora, minutos] = hora_llegada.split(":").map(Number);
+    const [hora, minutos] = hora_llegada.split(':').map(Number);
     fechaViaje.setHours(hora, minutos, 0, 0);
-  
+
     const ahora = new Date();
-    
+
     return ahora > fechaViaje;
   }
 
@@ -222,13 +224,9 @@ export class FuncionesComunes {
    *                                        *
    *****************************************/
 
-
-
-
-
   /**
    * Función para filtrar los modelos de los coches
-   * 
+   *
    */
   filtrarModelos() {
     const coche = this.listadoCoches.find(
@@ -247,8 +245,8 @@ export class FuncionesComunes {
 
   /**
    * Función para obtener los datos del usuario.
-   * 
-   * @param id_usuario 
+   *
+   * @param id_usuario
    */
   obtenerDatosUsuario(id_usuario: number) {
     this.usuario = lastValueFrom(
@@ -257,9 +255,9 @@ export class FuncionesComunes {
   }
 
   /**
-   * Función para guardar un coche en la 
+   * Función para guardar un coche en la
    * lista de vehículos del usuario.
-   * 
+   *
    */
   guardarVehiculo() {
     const nuevoCoche: Coches = {
@@ -271,17 +269,39 @@ export class FuncionesComunes {
     nuevoCoche.usuario_id = this.userData.usuario.id;
     this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
       console.log('Vehiculo guardado correctamente:', resultado);
-      this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
-        this.userData = usuarioActualizado;
-        localStorage.setItem('userData', JSON.stringify(this.userData));
-        console.log('Usuario actualizado:', this.userData);
-      });
+      this.userService
+        .obtenerUsuarioPorID(this.userData.usuario.id)
+        .subscribe((usuarioActualizado) => {
+          this.userData = usuarioActualizado;
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+          console.log('Usuario actualizado:', this.userData);
+        });
     });
   }
 
   /**
+   * Función para calcular la edad de un usuario en función de su fecha de nacimiento
+   * @param fechaNacimiento
+   * @returns
+   */
+  calcularEdad(fechaNacimiento: string) {
+    if (!fechaNacimiento) {
+      return 0;
+    }
+    const fechaNac = new Date(fechaNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+    const mesDif = hoy.getMonth() - fechaNac.getMonth();
+
+    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
+      edad--;
+    }
+    return edad;
+  }
+
+  /**
    * Función para obtener la lista de vehículos de un usuario.
-   * 
+   *
    */
   obtenerVehiculos() {
     const id_usuario = this.userData.usuario.id;
@@ -296,9 +316,9 @@ export class FuncionesComunes {
   /**
    * Función para mostrar las imágenes de colores de los coches
    * según el color que se tenga seleccionado del coche.
-   * 
-   * @param color 
-   * @returns 
+   *
+   * @param color
+   * @returns
    */
   mostrarColorCoche(color: string): string {
     const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
@@ -343,6 +363,4 @@ export class FuncionesComunes {
         return '';
     }
   }
-
-
 }
