@@ -25,7 +25,7 @@ export class VehiculosServicesService {
 
   editarVehiculo(vehiculo_id: number, vehiculoData: any): Observable<any> {
     return this.http
-      .put(`${this.apiUrl}editarVehiculo/${vehiculo_id}`, vehiculoData)
+      .put(`${this.apiUrl}/vehicle/editarVehiculo/${vehiculo_id}`, vehiculoData)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Error al editar los datos del vehículo', error);

@@ -86,32 +86,26 @@ def obtenerVehiculos_usuario():
 def editarVehiculo(vehiculo_id):
     vehiculo = Vehiculo.query.get_or_404(vehiculo_id)
     data = request.json
+    print ('Print data: ', data)
 
-    for key in ['marca', 'modelo', 'color', 'matricula']:
-        if key in data:
-            if key == 'marca' and data[key]:
-                setattr(vehiculo, key, data['marca'])
-            else:
-                setattr(vehiculo, key, data['marca'])
+    try:
+        if 'marca' in data:
+            vehiculo.marca = data['marca']
+        if 'modelo' in data:
+            vehiculo.modelo = data['modelo']
+        if 'color' in data:
+            vehiculo.color = data['color']
+        if 'matricula' in data:
+            vehiculo.matricula = data['matricula']
 
-        if key in data:
-            if key == 'modelo' and data[key]:
-                setattr(vehiculo, key, data['modelo'])
-            else:
-                setattr(vehiculo, key, data['modelo'])
+        db.session.commit()
+        return jsonify(vehiculo.serialize()), 200
 
-        if key in data:
-            if key == 'color' and data[key]:
-                setattr(vehiculo, key, data['color'])
-            else:
-                setattr(vehiculo, key, data['color'])
-
-        if key in data:
-            if key == 'matricula' and data[key]:
-                setattr(vehiculo, key, data['matricula'])
-            else:
-                setattr(vehiculo, key, data['matricula'])
     
-    db.session.commit()
-    return jsonify(vehiculo.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"Error": str(e)}), 500
+
+    
+
 

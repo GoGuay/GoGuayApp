@@ -9,6 +9,7 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { MatIcon } from '@angular/material/icon';
+import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/tabla-vehiculos.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -23,6 +24,7 @@ import { MatIcon } from '@angular/material/icon';
     MatDivider,
     NavbarComponent,
     MatIcon,
+    TablaVehiculosComponent,
   ],
 })
 export class MiPerfilPage implements OnInit {
@@ -59,23 +61,6 @@ export class MiPerfilPage implements OnInit {
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
       vehiculo.editandoVehiculo = false;
     });
-  }
-
-  editarFilaVehiculo(vehiculo: any) {
-    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
-
-    if (vehiculo.editandoVehiculo) {
-      this.funcionesComunes.marcaSeleccionada = vehiculo.marca;
-      this.funcionesComunes.modeloSeleccionado = vehiculo.modelo;
-      this.funcionesComunes.colorSeleccionado = vehiculo.color;
-      this.funcionesComunes.matricula = vehiculo.matricula;
-      this.funcionesComunes.filtrarModelos();
-    }
-  }
-
-  guardarVehículoEditado(vehiculo: any) {
-    console.log('Guardando cambios en el vehículo: ', vehiculo);
-    vehiculo.editandoVehiculo = false;
   }
 
   actualizarEdad() {

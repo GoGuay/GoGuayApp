@@ -1,0 +1,88 @@
+.colorCoche{
+  height: 30px;
+  width: 35px;
+}
+
+.pronombre{
+  width: 200px;
+}
+
+.tabla{
+  margin-left: 50px;
+  width: auto;
+
+}
+
+.table td {
+  min-width: 150px;
+}
+
+.table th {
+  text-align: start;
+  vertical-align: middle;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 122px; /* Ajusta el tamaño según lo que necesites */
+  min-width: 90px;
+  max-width: 130px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Reducir el ancho de la columna Matrícula */
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 120px; /* Ajusta el tamaño según lo que necesites */
+  min-width: 100px;
+  max-width: 150px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Reducir el ancho de la columna Opciones */
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 100px; /* Ajusta el tamaño según lo que necesites */
+  min-width: 80px;
+  max-width: 120px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+/* Ejemplo con color HSL */
+.table{
+    --bs-table-hover-bg: #F0D7B4;
+}
+
+
+
+
+
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead tr:first-child th:first-child {
+  border-top-left-radius: 15px;
+}
+
+.table thead tr:first-child th:last-child {
+  border-top-right-radius: 15px;
+}
+
+.table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 15px;
+}
+
+.table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 15px;
+}
+
+.table tbody tr:last-child th:first-child {
+  border-bottom-left-radius: 15px;
+}
