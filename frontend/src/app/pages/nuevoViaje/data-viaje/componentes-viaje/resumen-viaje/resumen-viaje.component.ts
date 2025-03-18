@@ -55,46 +55,11 @@ export class ResumenViajeComponent implements OnInit {
     private travelService: TravelService,
     private router: Router,
     private dialog: MatDialog,
-    public funcionesComunes: FuncionesComunes
-  ) {}
-
-  ngOnInit() {
-    this.currentViajeData = this.travelService.getViajeData();
-    /**
-     * Validamos los datos almacenados en el servicio.
-     * Si no están correctamente almacenados, reenviamos al home para evitar errores.
-     *
-     * Si están correctos se muestra un resumen del viaje.
-     */
-    if (
-      !this.currentViajeData ||
-      !this.currentViajeData.coche ||
-      !this.currentViajeData.destino ||
-      !this.currentViajeData.fecha_salida ||
-      !this.currentViajeData.hora_salida ||
-      !this.currentViajeData.origen ||
-      !this.currentViajeData.plazas
-    ) {
-      this.router.navigate(['/home']);
-      return;
-    }
-
-    /**
-     * Se valida si el usuario está logado o no
-     */
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (
-      this.userData &&
-      Object.keys(this.userData).length > 0 &&
-      this.userData.usuario.email
-    ) {
-      this.userLoggedIn = true;
-    } else {
-      this.userLoggedIn = false;
-    }
     public funcionesComunes: FuncionesComunes,
     private route: ActivatedRoute
-  ) { }
+  ) {}
+
+
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
