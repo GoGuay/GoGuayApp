@@ -76,6 +76,14 @@ export class MiPerfilPage implements OnInit {
   }
   editarFilaVehiculo(vehiculo: any) {
     vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
+
+    if (vehiculo.editandoVehiculo) {
+      this.funcionesComunes.marcaSeleccionada = vehiculo.marca;
+      this.funcionesComunes.modeloSeleccionado = vehiculo.modelo;
+      this.funcionesComunes.colorSeleccionado = vehiculo.color;
+      this.funcionesComunes.matricula = vehiculo.matricula;
+      this.funcionesComunes.filtrarModelos();
+    }
   }
 
   guardarVehículoEditado(vehiculo: any) {

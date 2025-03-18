@@ -248,27 +248,41 @@
                         >
                           <td>
                             <ng-container
-                              *ngIf="coche.editando; else noEditMarca"
+                              *ngIf="coche.editandoVehiculo; else noEditMarca"
                             >
-                              <input
-                                type="text"
+                              <select
+                                class="form-select"
                                 [(ngModel)]="coche.marca"
-                                class="form-control"
-                              />
+                                (change)="funcionesComunes.filtrarModelos()"
+                              >
+                                <option
+                                  *ngFor="let coche of funcionesComunes.listadoCoches"
+                                  [value]="coche.marca"
+                                >
+                                  {{ coche.marca }}
+                                </option>
+                              </select>
                             </ng-container>
                             <ng-template #noEditMarca
                               >{{ coche.marca }}</ng-template
                             >
                           </td>
+
                           <td>
                             <ng-container
-                              *ngIf="coche.editando; else noEditModelo"
+                              *ngIf="coche.editandoVehiculo; else noEditModelo"
                             >
-                              <input
-                                type="text"
+                              <select
+                                class="form-select"
                                 [(ngModel)]="coche.modelo"
-                                class="form-control"
-                              />
+                              >
+                                <option
+                                  *ngFor="let modelo of funcionesComunes.modelosFiltrados"
+                                  [value]="modelo"
+                                >
+                                  {{ modelo }}
+                                </option>
+                              </select>
                             </ng-container>
                             <ng-template #noEditModelo
                               >{{ coche.modelo }}</ng-template
@@ -276,16 +290,32 @@
                           </td>
 
                           <td>
-                            <img
-                              class="colorCoche"
-                              [src]="funcionesComunes.mostrarColorCoche(coche.color)"
-                            />
+                            <ng-container
+                              *ngIf="coche.editandoVehiculo; else noEditColor"
+                            >
+                              <select
+                                class="form-select"
+                                [(ngModel)]="coche.color"
+                              >
+                                <option
+                                  *ngFor="let color of funcionesComunes.listadoColores"
+                                  [value]="color"
+                                >
+                                  {{ color }}
+                                </option>
+                              </select>
+                            </ng-container>
+                            <ng-template #noEditColor>
+                              <img
+                                class="colorCoche"
+                                [src]="funcionesComunes.mostrarColorCoche(coche.color)"
+                              />
+                            </ng-template>
                           </td>
 
-                          <!-- modelo -->
                           <td>
                             <ng-container
-                              *ngIf="coche.editando; else noEditMatricula"
+                              *ngIf="coche.editandoVehiculo; else noEditMatricula"
                             >
                               <input
                                 type="text"
@@ -298,16 +328,21 @@
                             >
                           </td>
 
+                          <!-- Botón para editar el vehículo -->
                           <td>
                             <div class="row">
                               <div class="col">
-                                <button mat-icon-button>
+                                <button
+                                  mat-icon-button
+                                  (click)="editarFilaVehiculo(coche)"
+                                >
                                   <mat-icon
-                                    >{{ coche.editando ? 'save' : 'edit'
+                                    >{{ coche.editandoVehiculo ? 'save' : 'edit'
                                     }}</mat-icon
                                   >
                                 </button>
                               </div>
+                              <!-- Botón para eliminar el vehículo -->
                               <div class="col">
                                 <button mat-icon-button>
                                   <mat-icon>delete</mat-icon>
