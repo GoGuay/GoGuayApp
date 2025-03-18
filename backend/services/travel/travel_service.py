@@ -4,7 +4,7 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje, Notificacion
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo
 from extensions import db
 from sqlalchemy.orm import joinedload 
 
@@ -22,12 +22,13 @@ def crear_viaje():
     except Exception as e:
         return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
 
-    campos_obligatorios = ['origen', 'destino', 'plazas', 'hora_salida', 'fecha_salida', 'ruta_seleccionada', 'usuario_id']
+    campos_obligatorios = ['origen', 'destino', 'plazas', 'hora_salida', 'fecha_salida', 'ruta_seleccionada', 'usuario_id', 'coche']
     for campo in campos_obligatorios:
         if campo not in data:
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
 
     fecha_salida_str = data['fecha_salida']
+    
     formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d']
     fecha_salida = None
     for formato in formatos_fecha:
@@ -50,6 +51,23 @@ def crear_viaje():
     usuario_id = data.get('usuario_id')
     if usuario_id is None:
         return jsonify({"error": "Falta el campo 'usuario_id'"}), 400
+    
+    coche = data.get('coche')  # Aquí asumimos que 'coche' es un objeto completo
+    if not coche:
+        return jsonify({"error": "Falta el campo 'coche'"}), 400
+
+    vehiculo_id = coche.get('id')
+    if not vehiculo_id:
+        return jsonify({"error": "El campo 'id' del coche es obligatorio"}), 400
+
+    # Verificar si el vehículo pertenece al usuario actual
+    vehiculo = Vehiculo.query.filter_by(id=vehiculo_id, usuario_id=usuario_id).first()
+
+    if not vehiculo:
+        return jsonify({"error": "El vehículo no pertenece al usuario actual"}), 400
+
+    if not vehiculo:
+        return jsonify({"Error": "el vehículo no pertenece al usuario actual"}), 400
 
     nuevo_viaje = Viaje(
         origen=data['origen'],
@@ -61,7 +79,8 @@ def crear_viaje():
         duracion_viaje=data['ruta_seleccionada'].get('duracion', 'No especificado'),
         fecha_salida=fecha_salida,
         ruta_seleccionada=ruta_seleccionada,
-        usuario_id=usuario_id
+        usuario_id=usuario_id,
+        vehiculo = vehiculo_id
     )
 
     db.session.add(nuevo_viaje)

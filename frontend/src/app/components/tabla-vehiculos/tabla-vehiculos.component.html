@@ -1,0 +1,238 @@
+<div class="mb-5">
+  <h4 class="text-center mb-4 mt-0">
+    {{ "MI_PERFIL.MIS_VEHICULOS" | translate }}
+  </h4>
+
+  <!--Se muestra la tabla si hay vehículos-->
+  <div *ngIf="userData?.usuario?.vehiculos?.length != 0" class="tabla">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Marca</th>
+          <th scope="col">Modelo</th>
+          <th scope="col">Color</th>
+          <th scope="col">Matrícula</th>
+          <th scope="col">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let coche of funcionesComunes.vehiculos_usuario">
+          <td>
+            <ng-container *ngIf="coche.editandoVehiculo; else noEditMarca">
+              <select
+                class="form-select"
+                [(ngModel)]="coche.marca"
+                (change)="filtrarModelosEditando(coche)"
+              >
+                <option
+                  *ngFor="let coche of funcionesComunes.listadoCoches"
+                  [value]="coche.marca"
+                >
+                  {{ coche.marca }}
+                </option>
+              </select>
+            </ng-container>
+            <ng-template #noEditMarca>{{ coche.marca }}</ng-template>
+          </td>
+
+          <td>
+            <ng-container *ngIf="coche.editandoVehiculo; else noEditModelo">
+              <select class="form-select" [(ngModel)]="coche.modelo">
+                <option
+                  *ngFor="let modelo of funcionesComunes.modelosFiltrados"
+                  [value]="modelo"
+                >
+                  {{ modelo }}
+                </option>
+              </select>
+            </ng-container>
+            <ng-template #noEditModelo>{{ coche.modelo }}</ng-template>
+          </td>
+
+          <td>
+            <ng-container *ngIf="coche.editandoVehiculo; else noEditColor">
+              <select class="form-select" [(ngModel)]="coche.color">
+                <option
+                  *ngFor="let color of funcionesComunes.listadoColores"
+                  [value]="color"
+                >
+                  {{ color }}
+                </option>
+              </select>
+            </ng-container>
+            <ng-template #noEditColor>
+              <img
+                class="colorCoche"
+                [src]="funcionesComunes.mostrarColorCoche(coche.color)"
+              />
+            </ng-template>
+          </td>
+
+          <td>
+            <ng-container *ngIf="coche.editandoVehiculo; else noEditMatricula">
+              <input
+                type="text"
+                [(ngModel)]="coche.matricula"
+                class="form-control"
+              />
+            </ng-container>
+            <ng-template #noEditMatricula>{{ coche.matricula }}</ng-template>
+          </td>
+
+          <!-- Botón para editar el vehículo -->
+          <td>
+            <div class="row">
+              <div class="col">
+                <button
+                  mat-icon-button
+                  (click)="
+                    coche.editandoVehiculo
+                      ? guardarVehiculoEditado(coche)
+                      : editarFilaVehiculo(coche)
+                  "
+                >
+                  <mat-icon>{{
+                    coche.editandoVehiculo ? "save" : "edit"
+                  }}</mat-icon>
+                </button>
+              </div>
+              <!-- Botón para eliminar el vehículo -->
+              <div class="col">
+                <button mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <!-- Marca -->
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    *ngIf="userData?.usuario?.vehiculos?.length === 0"
+    class="mt-3 d-flex justify-content-center"
+  >
+    <span>No tienes vehículos añadidos</span>
+  </div>
+
+  <!-- Boton para añadir vehiculos -->
+  <div class="d-flex justify-content-center">
+    <button
+      type="button"
+      class="btn btn_bg mt-3"
+      style="height: 33px"
+      (click)="funcionesComunes.botonAnadirVehiculo()"
+    >
+      {{ "BOTON.ANADIR_VEHICULO" | translate }}
+    </button>
+  </div>
+
+  <!--Selector de marca, modelo y color de vehiculos y botón para guardar vehiculo-->
+  <div class="mt-3" *ngIf="funcionesComunes.mostrarSelectorVehiculo">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4">
+          <select
+            class="form-select"
+            [(ngModel)]="funcionesComunes.marcaSeleccionada"
+            (change)="funcionesComunes.filtrarModelos()"
+            [ngModelOptions]="{ standalone: true }"
+            aria-label="Selección de marca"
+          >
+            <option value="" disabled selected>
+              {{ "VEHICULOS.MARCA" | translate }}
+            </option>
+            <option
+              *ngFor="let coche of funcionesComunes.listadoCoches"
+              [value]="coche.marca"
+            >
+              {{ coche.marca }}
+            </option>
+          </select>
+        </ion-col>
+        <ion-col size="4">
+          <select
+            class="form-select"
+            [(ngModel)]="funcionesComunes.modeloSeleccionado"
+            [disabled]="!funcionesComunes.marcaSeleccionada"
+            [ngModelOptions]="{ standalone: true }"
+            aria-label="Selección de modelo"
+          >
+            <option value="" disabled selected>
+              {{ "VEHICULOS.MODELO" | translate }}
+            </option>
+            <option
+              *ngFor="let modelo of funcionesComunes.modelosFiltrados"
+              [value]="modelo"
+            >
+              {{ modelo }}
+            </option>
+          </select>
+        </ion-col>
+        <ion-col size="4">
+          <div *ngIf="funcionesComunes.validacionIdioma">
+            <select
+              class="form-select"
+              aria-label="Selección de color"
+              [(ngModel)]="funcionesComunes.colorSeleccionado"
+              [ngModelOptions]="{ standalone: true }"
+              [disabled]="!funcionesComunes.modeloSeleccionado"
+            >
+              <option value="" disabled selected>
+                {{ "VEHICULOS.COLOR" | translate }}
+              </option>
+              <option
+                *ngFor="let color of funcionesComunes.listadoColores"
+                [value]="color"
+              >
+                {{ color }}
+              </option>
+            </select>
+          </div>
+
+          <div *ngIf="!funcionesComunes.validacionIdioma">
+            <select
+              class="form-select"
+              aria-label="Selección de color"
+              [(ngModel)]="funcionesComunes.colorSeleccionado"
+              [ngModelOptions]="{ standalone: true }"
+              [disabled]="!funcionesComunes.modeloSeleccionado"
+            >
+              <option value="" disabled selected>
+                {{ "VEHICULOS.COLOR" | translate }}
+              </option>
+              <option
+                *ngFor="let color of funcionesComunes.listColours"
+                [value]="color"
+              >
+                {{ color }}
+              </option>
+            </select>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <div>
+          <input
+            placeholder="Matrícula"
+            [(ngModel)]="funcionesComunes.matricula"
+          />
+        </div>
+      </ion-row>
+      <ion-row>
+        <div class="container d-flex justify-content-center mt-2">
+          <button
+            type="button"
+            class="btn btn_bg"
+            mat-raised-button
+            (click)="funcionesComunes.guardarVehiculo()"
+          >
+            Guardar vehículo
+          </button>
+        </div>
+      </ion-row>
+    </ion-grid>
+  </div>
+</div>

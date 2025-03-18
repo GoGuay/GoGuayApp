@@ -1,6 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpResponse,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
@@ -17,5 +21,16 @@ export class VehiculosServicesService {
     return this.http.get(this.apiUrl + '/vehicle/obtenerVehiculos_usuario', {
       params: { usuario_id: usuario_id.toString() },
     });
+  }
+
+  editarVehiculo(vehiculo_id: number, vehiculoData: any): Observable<any> {
+    return this.http
+      .put(`${this.apiUrl}/vehicle/editarVehiculo/${vehiculo_id}`, vehiculoData)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al editar los datos del vehículo', error);
+          return throwError(() => error);
+        })
+      );
   }
 }

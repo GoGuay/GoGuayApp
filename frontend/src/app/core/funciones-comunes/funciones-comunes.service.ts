@@ -203,8 +203,7 @@ export class FuncionesComunes {
   }
 
   /**
-   * Función para validar si un viaje ha terminado o no.
-   *
+   * Función para validar si un viaje ha terminado o no.   *
    * @param fecha_salida
    * @returns
    */
@@ -225,58 +224,13 @@ export class FuncionesComunes {
    *****************************************/
 
   /**
-   * Función para filtrar los modelos de los coches
-   *
-   */
-  filtrarModelos() {
-    const coche = this.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
-    );
-    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
-    this.modeloSeleccionado = '';
-  }
-
-  /**
-   * Para mostrar (o no) el selector de marca, modelo y color de coche
-   */
-  botonAnadirVehiculo() {
-    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
-  }
-
-  /**
-   * Función para obtener los datos del usuario.
-   *
+   * Función para obtener los datos del usuario.   *
    * @param id_usuario
    */
   obtenerDatosUsuario(id_usuario: number) {
     this.usuario = lastValueFrom(
       this.userService.obtenerUsuarioPorID(id_usuario)
     );
-  }
-
-  /**
-   * Función para guardar un coche en la
-   * lista de vehículos del usuario.
-   *
-   */
-  guardarVehiculo() {
-    const nuevoCoche: Coches = {
-      marca: this.marcaSeleccionada,
-      modelo: this.modeloSeleccionado,
-      color: this.colorSeleccionado,
-      matricula: this.matricula,
-    };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
-    this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
-      console.log('Vehiculo guardado correctamente:', resultado);
-      this.userService
-        .obtenerUsuarioPorID(this.userData.usuario.id)
-        .subscribe((usuarioActualizado) => {
-          this.userData = usuarioActualizado;
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          console.log('Usuario actualizado:', this.userData);
-        });
-    });
   }
 
   /**
@@ -299,9 +253,64 @@ export class FuncionesComunes {
     return edad;
   }
 
+  /******************************************
+   *                                        *
+   *  FUNCIONES PARA VEHÍCULOS              *
+   *                                        *
+   *****************************************/
+
   /**
-   * Función para obtener la lista de vehículos de un usuario.
-   *
+   * Función para guardar un coche en la
+   * lista de vehículos del usuario.
+   */
+  guardarVehiculo() {
+    const nuevoCoche: Coches = {
+      marca: this.marcaSeleccionada,
+      modelo: this.modeloSeleccionado,
+      color: this.colorSeleccionado,
+      matricula: this.matricula,
+    };
+    nuevoCoche.usuario_id = this.userData.usuario.id;
+    this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
+      console.log('Vehiculo guardado correctamente:', resultado);
+      this.userService
+        .obtenerUsuarioPorID(this.userData.usuario.id)
+        .subscribe((usuarioActualizado) => {
+          this.userData = usuarioActualizado;
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+          console.log('Usuario actualizado:', this.userData);
+        });
+    });
+  }
+
+  /**
+   * Función para filtrar los modelos de los coches
+   */
+  filtrarModelos() {
+    const coche = this.listadoCoches.find(
+      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
+    );
+    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+    this.modeloSeleccionado = '';
+  }
+
+  // filtrarModelosEditando(coche: any) {
+  //   if (!coche.marca) return;
+
+  //   this.listadoCoches.find((vehiculo) => vehiculo.marca === coche.marca);
+  //   this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+  //   this.modeloSeleccionado = '';
+  // }
+
+  /**
+   * Para mostrar (o no) el selector de marca, modelo y color de coche
+   */
+  botonAnadirVehiculo() {
+    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
+  }
+
+  /**
+   * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
     const id_usuario = this.userData.usuario.id;
@@ -315,8 +324,7 @@ export class FuncionesComunes {
 
   /**
    * Función para mostrar las imágenes de colores de los coches
-   * según el color que se tenga seleccionado del coche.
-   *
+   * según el color que se tenga seleccionado del coche.   *
    * @param color
    * @returns
    */
@@ -364,5 +372,13 @@ export class FuncionesComunes {
     }
   }
 
+  editarVehiculo(vehiculo: any): any {
+    console.log('Vehiculo modificado: ', vehiculo);
 
+    this.vehicleService
+      .editarVehiculo(vehiculo.id, vehiculo)
+      .subscribe((resultado) => {
+        console.log('Resultado: ', resultado);
+      });
+  }
 }
