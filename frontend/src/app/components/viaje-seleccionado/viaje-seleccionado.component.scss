@@ -47,6 +47,19 @@ mat-dialog-actions {
   background-color: #f0d7b4;
 }
 
+.imgPerfilAcordeon{
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid black;
+  gap: 10px;
+}
+
+.green-border .mat-expansion-panel {
+  border: 1px solid #4caf50;
+}
+
 @media (max-width: 576px) {
   .modal-infovisible {
     width: auto;

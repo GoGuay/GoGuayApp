@@ -40,6 +40,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   viaje!: Viaje;
   viajesSubscription: Subscription = new Subscription(); // Para gestionar la suscripción
   accordion = viewChild.required(MatAccordion);
+  conductor: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
@@ -59,6 +60,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();
     this.verificarSiEstaUnido();
+    
   }
 
   ngOnDestroy() {
@@ -80,6 +82,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
       next: (usuario) => {
         this.userID = usuario.id;
         this.verificarSiEstaUnido();
+        this.validarSiEsConductor(this.userID, this.data.viaje);
       },
       error: (error) => {
         console.error('Error al obtener el usuario:', error);
@@ -122,7 +125,7 @@ verificarSiEstaUnido() {
   this.travelService.getViaje(this.data.viaje.id).subscribe({
     next: (viaje) => {
       // Se busca en la lista de acompañantes si el usuario ya está unido
-      this.yaUnido = viaje.acompañantes.some((acompañante: any) => acompañante.id === usuarioId);
+      this.yaUnido = viaje.acompanantes.some((acompañante: any) => acompañante.id === usuarioId);
     },
     error: (error) => {
       console.error('Error al obtener el viaje:', error);
@@ -191,4 +194,16 @@ verificarSiEstaUnido() {
     this.closeDialog();
   }
   
+  /**
+   * Función para validar si el usuario que está viendo los detalles 
+   * es conductor en el viaje o no.
+   * 
+   * @param usuario_id 
+   * @param viaje 
+   */
+  validarSiEsConductor(usuario_id: number, viaje: Viaje) {
+    if(usuario_id === viaje.usuario_id) {
+      this.conductor = true;
+    } else {this.conductor = false;}
+  }
 }

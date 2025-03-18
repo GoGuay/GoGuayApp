@@ -43,7 +43,7 @@ class Viaje(db.Model):
                 "fotoPerfil": self.usuario.fotoPerfil,
                 "puntuacion_promedio": self.usuario.puntuacion_promedio
             },
-            "acompañantes": [
+            "acompanantes": [
                 {"id": pasajero.usuario.id, "nombre": pasajero.usuario.nombre, "email": pasajero.usuario.email}
                 for pasajero in self.pasajeros
             ],
