@@ -29,7 +29,8 @@ export class MiPerfilPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
-  edad: number = this.calcularEdad(this.fechaNacimiento);
+  edad: number = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
+  editandoVehiculo: boolean = false;
 
   constructor(public funcionesComunes: FuncionesComunes) {}
 
@@ -49,10 +50,15 @@ export class MiPerfilPage implements OnInit {
     }
     if (this.userData.usuario.fecha_nacimiento) {
       this.fechaNacimiento = this.userData.usuario.fecha_nacimiento;
-      this.edad = this.calcularEdad(this.fechaNacimiento);
+      this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
     }
 
     this.funcionesComunes.obtenerVehiculos();
+
+    //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
+    this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
+      vehiculo.editandoVehiculo = false;
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -68,19 +74,12 @@ export class MiPerfilPage implements OnInit {
       );
     }
   }
+  editarFilaVehiculo(vehiculo: any) {
+    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
+  }
 
-  calcularEdad(fechaNacimiento: string) {
-    if (!fechaNacimiento) {
-      return 0;
-    }
-    const fechaNac = new Date(fechaNacimiento);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
-    const mesDif = hoy.getMonth() - fechaNac.getMonth();
-
-    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
-      edad--;
-    }
-    return edad;
+  guardarVehículoEditado(vehiculo: any) {
+    console.log('Guardando cambios en el vehículo: ', vehiculo);
+    vehiculo.editandoVehiculo = false;
   }
 }
