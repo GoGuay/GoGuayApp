@@ -61,19 +61,6 @@ export class MiPerfilPage implements OnInit {
     });
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files) {
-      const fileNames = Array.from(input.files).map((file) => file.name);
-      console.log('Archivos seleccionados:', fileNames);
-
-      // Aquí puedes manejar los archivos, por ejemplo, enviarlos a un servidor
-      alert(
-        `${fileNames.length} imágenes seleccionadas: ${fileNames.join(', ')}`
-      );
-    }
-  }
   editarFilaVehiculo(vehiculo: any) {
     vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
 
@@ -89,5 +76,9 @@ export class MiPerfilPage implements OnInit {
   guardarVehículoEditado(vehiculo: any) {
     console.log('Guardando cambios en el vehículo: ', vehiculo);
     vehiculo.editandoVehiculo = false;
+  }
+
+  actualizarEdad() {
+    this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
   }
 }

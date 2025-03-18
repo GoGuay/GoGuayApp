@@ -5,7 +5,7 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
+  <div class="container-fluid">
     <div class="d-flex justify-content-center">
       <h1>{{'MI_PERFIL.TITULO' | translate}}</h1>
     </div>
@@ -13,10 +13,10 @@
       {{'MI_PERFIL.DESCRIPCION_SECCION' | translate}}
     </p>
 
-    <div class="container">
+    <div class="container-fluid">
       <ion-row>
         <!-- Información personal -->
-        <ion-col size="7" class="mr-3">
+        <ion-col size="5" class="mx-5">
           <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
           <ion-row>
             <ion-col>
@@ -181,22 +181,18 @@
                   type="date"
                   class="form-control"
                   id="fnacimiento"
-                  value="{{userData.usuario.fecha_nacimiento}}"
+                  [(ngModel)]="fechaNacimiento"
+                  (ngModelChange)="actualizarEdad()"
                 />
               </div>
             </ion-col>
             <ion-col>
               <div class="mb-3">
-                <label for="edad" class="form-label"
+                <label for="edad" class="form-label mb-3"
                   >{{'MI_PERFIL.EDAD' | translate}}</label
                 >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="edad"
-                  [value]="edad"
-                  readonly
-                />
+                <br />
+                <span> {{edad}} </span>
               </div>
             </ion-col>
           </ion-row>
@@ -221,18 +217,21 @@
         <mat-divider vertical="" class="ms-4"></mat-divider>
 
         <!-- Mis vehículos y preferencias de viaje -->
-        <ion-col class="col-separator">
+        <ion-col class="col-separator" size="5">
           <ion-row class="d-flex justify-content-center mb-0">
             <ion-row>
               <ion-col>
                 <div class="mb-5">
-                  <h4 class="text-center mb-0 mt-0">
+                  <h4 class="text-center mb-4 mt-0">
                     {{'MI_PERFIL.MIS_VEHICULOS' | translate}}
                   </h4>
 
                   <!--Se muestra la tabla si hay vehículos-->
-                  <div *ngIf="userData?.usuario?.vehiculos?.length != 0">
-                    <table class="table">
+                  <div
+                    *ngIf="userData?.usuario?.vehiculos?.length != 0"
+                    class="tabla"
+                  >
+                    <table class="table table-hover">
                       <thead>
                         <tr>
                           <th scope="col">Marca</th>

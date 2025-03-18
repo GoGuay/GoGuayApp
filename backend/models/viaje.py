@@ -16,9 +16,11 @@ class Viaje(db.Model):
     fecha_salida = db.Column(db.DateTime, nullable=False)
     ruta_seleccionada = db.Column(db.JSON, nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    vehiculo = db.Column(db.Integer, nullable=False)
 
     pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True)  # Cambiar el backref a 'viaje_pasajero'
 
+  
     usuario = db.relationship('Usuario', backref='viajes')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -36,6 +38,7 @@ class Viaje(db.Model):
             "duracion_viaje": self.duracion_viaje,
             "ruta_seleccionada": self.ruta_seleccionada,
             "usuario_id": self.usuario_id,
+            "vehiculo": self.vehiculo,
             "usuario_creador": {
                 "id": self.usuario.id,
                 "nombre": self.usuario.nombre,

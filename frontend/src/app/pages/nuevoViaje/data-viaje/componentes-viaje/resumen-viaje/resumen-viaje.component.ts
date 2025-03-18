@@ -31,7 +31,7 @@ import { Subject, takeUntil } from 'rxjs';
     MatDivider,
     MatButtonModule,
     CommonModule,
-    TranslateModule
+    TranslateModule,
   ],
   templateUrl: './resumen-viaje.component.html',
   styleUrls: ['./resumen-viaje.component.scss'],
@@ -49,18 +49,19 @@ export class ResumenViajeComponent implements OnInit {
   currentViajeData: any;
   private destroy$ = new Subject<void>();
 
-  constructor(private travelService: TravelService,
+  constructor(
+    private travelService: TravelService,
     private router: Router,
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.currentViajeData = this.travelService.getViajeData();
     /**
      * Validamos los datos almacenados en el servicio.
      * Si no están correctamente almacenados, reenviamos al home para evitar errores.
-     * 
+     *
      * Si están correctos se muestra un resumen del viaje.
      */
     if (
@@ -95,25 +96,34 @@ export class ResumenViajeComponent implements OnInit {
    * Función para confirmar el viaje.
    * Al confirmar mostramos un mensaje de confirmación para informar al usuario
    * Y a continuación se guardam los datos en BBDD.
-   * 
+   *
    * Una vez confirmado el mensaje, se reenvía a la ventana home.
    */
   confirmarViaje() {
     const title: string = 'Confirmación de Viaje';
     const message: string = 'El viaje ha sido confirmado con éxito.';
-  
+
     this.currentViajeData.usuario = this.userData.usuario; // <- Se añaden todos los datos del usuario que ha creado el viaje.
     this.currentViajeData.usuario_id = this.userData.usuario.id; // <- Se añade el ID del usuario que ha creado el viaje.
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
     if (isNaN(this.currentViajeData.plazas)) {
-      this.openError('Error!', 'El número de plazas no es válido. Por favor, verifica los datos.');
+      this.openError(
+        'Error!',
+        'El número de plazas no es válido. Por favor, verifica los datos.'
+      );
       return;
     }
-  
-    const fechaSalida = new Date(this.currentViajeData.fecha_salida).toISOString().split('T')[0];
+
+    const fechaSalida = new Date(this.currentViajeData.fecha_salida)
+      .toISOString()
+      .split('T')[0];
     this.currentViajeData.fecha_salida = fechaSalida;
-  
-    const mensajeConfirmación = this.openHelp('Confirmar viaje', 'Si continuas se va a confirmar el viaje.');
+    console.log('Resumen viaje: ', this.currentViajeData);
+
+    const mensajeConfirmación = this.openHelp(
+      'Confirmar viaje',
+      'Si continuas se va a confirmar el viaje.'
+    );
     mensajeConfirmación.afterClosed().subscribe(() => {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
         (response) => {
@@ -124,7 +134,10 @@ export class ResumenViajeComponent implements OnInit {
           });
         },
         (error) => {
-          this.openError('Error!', 'Error al guardar el viaje. Por favor, inténtalo de nuevo más tarde.');
+          this.openError(
+            'Error!',
+            'Error al guardar el viaje. Por favor, inténtalo de nuevo más tarde.'
+          );
           console.error('Error al guardar el viaje:', error);
         }
       );
@@ -137,7 +150,11 @@ export class ResumenViajeComponent implements OnInit {
   getFormattedDate(): string {
     if (this.currentViajeData.fecha_salida) {
       const date = new Date(this.currentViajeData.fecha_salida);
-      return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
     }
     return 'Ninguna fecha seleccionada.';
   }
@@ -152,7 +169,7 @@ export class ResumenViajeComponent implements OnInit {
   /**
    * Función para abrir la ventana emergente de ayuda
    * para informar al usuario.
-   * 
+   *
    * @param title Título que se va a mostrar en la ventana
    * @param message Mensaje que se va a mostrar en la ventana
    */
@@ -166,7 +183,7 @@ export class ResumenViajeComponent implements OnInit {
   /**
    * Función para abrir la ventana emergente de error
    * para informar al usuario.
-   * 
+   *
    * @param title Título que se va a mostrar en la ventana
    * @param message Mensaje que se va a mostrar en la ventana
    */
@@ -179,13 +196,13 @@ export class ResumenViajeComponent implements OnInit {
 
   /**
    * Función para editar el input seleccionado.
-   * 
+   *
    * @param field Recibe los datos del input a editar
    */
   edicionInformacion(field: string) {
     if (this.editMode[field]) {
       this.currentViajeData[field] = this.editableFields[field];
-  
+
       const viajeData = {
         ...this.travelService.getViajeData(),
         [field]: this.currentViajeData[field],
@@ -197,14 +214,16 @@ export class ResumenViajeComponent implements OnInit {
     this.editMode[field] = !this.editMode[field];
   }
 
-
   /**
    * Función para calcular la hora de llegada del viaje
-   * @param hora_salida 
-   * @param duracion_viaje 
-   * @returns 
+   * @param hora_salida
+   * @param duracion_viaje
+   * @returns
    */
-  calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
+  calcularHoraLlegada(
+    hora_salida: string,
+    duracion_viaje: string
+  ): string | null {
     try {
       let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
       let salidaDate = new Date();
@@ -234,10 +253,10 @@ export class ResumenViajeComponent implements OnInit {
   }
 
   /**
- * Función para guardar la información de la localidad de origen seleccionada.
- * 
- * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
- */
+   * Función para guardar la información de la localidad de origen seleccionada.
+   *
+   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+   */
   seleccionarLocalidadOrigen(localidad: any) {
     this.origen = localidad.display_name.split(',')[0].trim();
     const viajeData = {
@@ -248,10 +267,9 @@ export class ResumenViajeComponent implements OnInit {
     this.funcionesComunes.sugerenciasOrigen = [];
   }
 
-
   /**
    * Función para guardar la información de la localidad de destino seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadDestino(localidad: any) {
@@ -273,5 +291,4 @@ export class ResumenViajeComponent implements OnInit {
         // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
       });
   }
-
 }
