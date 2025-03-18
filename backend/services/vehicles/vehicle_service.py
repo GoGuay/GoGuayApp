@@ -80,3 +80,38 @@ def obtenerVehiculos_usuario():
         "vehiculos": [vehiculo.serialize() for vehiculo in vehiculos]
     }), 200
 
+
+#Función para editar un vehículo ya añadido
+@vehicle_blueprint.route('/editarVehiculo/<int:vehiculo_id>', methods=['PUT'])
+def editarVehiculo(vehiculo_id):
+    vehiculo = Vehiculo.query.get_or_404(vehiculo_id)
+    data = request.json
+
+    for key in ['marca', 'modelo', 'color', 'matricula']:
+        if key in data:
+            if key == 'marca' and data[key]:
+                setattr(vehiculo, key, data['marca'])
+            else:
+                setattr(vehiculo, key, data['marca'])
+
+        if key in data:
+            if key == 'modelo' and data[key]:
+                setattr(vehiculo, key, data['modelo'])
+            else:
+                setattr(vehiculo, key, data['modelo'])
+
+        if key in data:
+            if key == 'color' and data[key]:
+                setattr(vehiculo, key, data['color'])
+            else:
+                setattr(vehiculo, key, data['color'])
+
+        if key in data:
+            if key == 'matricula' and data[key]:
+                setattr(vehiculo, key, data['matricula'])
+            else:
+                setattr(vehiculo, key, data['matricula'])
+    
+    db.session.commit()
+    return jsonify(vehiculo.serialize()), 200
+
