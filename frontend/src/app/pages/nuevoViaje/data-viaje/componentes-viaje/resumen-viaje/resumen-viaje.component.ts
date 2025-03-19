@@ -17,6 +17,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-resumen-viaje',
@@ -53,43 +55,54 @@ export class ResumenViajeComponent implements OnInit {
     private travelService: TravelService,
     private router: Router,
     private dialog: MatDialog,
-    public funcionesComunes: FuncionesComunes
+    public funcionesComunes: FuncionesComunes,
+    private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
-    this.currentViajeData = this.travelService.getViajeData();
-    /**
-     * Validamos los datos almacenados en el servicio.
-     * Si no están correctamente almacenados, reenviamos al home para evitar errores.
-     *
-     * Si están correctos se muestra un resumen del viaje.
-     */
-    if (
-      !this.currentViajeData ||
-      !this.currentViajeData.coche ||
-      !this.currentViajeData.destino ||
-      !this.currentViajeData.fecha_salida ||
-      !this.currentViajeData.hora_salida ||
-      !this.currentViajeData.origen ||
-      !this.currentViajeData.plazas
-    ) {
-      this.router.navigate(['/home']);
-      return;
-    }
 
-    /**
-     * Se valida si el usuario está logado o no
-     */
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (
-      this.userData &&
-      Object.keys(this.userData).length > 0 &&
-      this.userData.usuario.email
-    ) {
-      this.userLoggedIn = true;
-    } else {
-      this.userLoggedIn = false;
-    }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const viajeId = params['id'];
+  
+      this.currentViajeData = this.travelService.getViajeData();
+      this.obtenerViaje(viajeId);
+      // Si no hay viajeId y los datos no están completos, redirigir al home
+      if (
+        !viajeId &&
+        (
+          !this.currentViajeData ||
+          !this.currentViajeData.coche ||
+          !this.currentViajeData.destino ||
+          !this.currentViajeData.fecha_salida ||
+          !this.currentViajeData.hora_salida ||
+          !this.currentViajeData.origen ||
+          !this.currentViajeData.plazas
+        )
+      ) {
+        this.router.navigate(['/home']);
+        return;
+      }
+  
+      // Verificación del usuario logueado
+      this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (
+        this.userData &&
+        Object.keys(this.userData).length > 0 &&
+        this.userData.usuario.email
+      ) {
+        this.userLoggedIn = true;
+      } else {
+        this.userLoggedIn = false;
+      }
+    });
+  }
+  
+  obtenerViaje(viaje_id: number){
+    this.travelService.getViaje(viaje_id).subscribe((resultado) => {
+      console.log('Viaje a editar: ', resultado);
+      this.currentViajeData = resultado;
+    })
   }
 
   /**

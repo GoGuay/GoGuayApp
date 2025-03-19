@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { IonicModule } from '@ionic/angular';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
@@ -67,7 +67,8 @@ export class PerfilPublicoPage implements OnInit {
     private userService: UserServicesService,
     private notificacionesService: NotificacionesService,
     private travelService: TravelService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
 
   }
@@ -353,5 +354,18 @@ export class PerfilPublicoPage implements OnInit {
    */
   puntuarViaje(){
     this._bottomSheet.open(PuntuacionesComponent);
+  }
+
+  /**
+   * Función para poder editar un viaje
+   * @param viaje_id 
+   */
+  editarViaje(viaje_id: number){
+    const viaje = {
+      id: viaje_id
+    }
+    this.router.navigate(['/resumen-viaje'], {
+      queryParams: viaje,
+    });
   }
 }

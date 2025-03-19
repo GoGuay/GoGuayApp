@@ -208,15 +208,23 @@ export class FuncionesComunes {
    * @returns
    */
   esViajeFinalizado(fecha_salida: string, hora_llegada: string): boolean {
+    // Crear objeto Date con la fecha de salida
     const fechaViaje = new Date(fecha_salida);
+  
+    // Extraer hora y minutos de hora_llegada
     const [hora, minutos] = hora_llegada.split(':').map(Number);
+  
+    // Añadir la hora de llegada a la fecha de salida
     fechaViaje.setHours(hora, minutos, 0, 0);
-
+  
+    // Obtener la fecha y hora actuales
     const ahora = new Date();
-
+  
+    // Comparar si el viaje ya terminó
     return ahora > fechaViaje;
   }
-
+  
+  
   /******************************************
    *                                        *
    *  FUNCIONES PARA EL PERFIL DEL USUARIO  *

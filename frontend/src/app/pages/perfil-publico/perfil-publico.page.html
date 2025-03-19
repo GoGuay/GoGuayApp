@@ -68,7 +68,7 @@
             <div class="container ms-3">
               <label class="mb-3"><strong>Biografía: </strong></label>
               <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
-              <p *ngIf="!usuario?.biografia">Este usuario aún no tiene biografía.</p>
+              <p *ngIf="!usuario?.biografia">Aún no tienes biografía.</p>
             </div>
           </div>
           <div class="col-12 col-md-6">
@@ -108,33 +108,39 @@
                     </div>
                     <div class="col-3 col-puntuar text-center">
                       <span *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                            class="viajeFinalizado fontSize mb-3">Finalizado</span>
+                        class="viajeFinalizado fontSize mb-3">Finalizado</span>
                       <span *ngIf="!funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-                            class="fontSize etiquetaPendiente mb-3">Pendiente</span>
-                      <span *ngIf="puedePuntuar(viaje)"
-                            class="viajeApuntuar fontSize btn_shadow puntuar mb-3"
-                            type="button"
-                            (click)="puntuarViaje()">
+                        class="fontSize etiquetaPendiente mb-3">Pendiente</span>
+                      <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize btn_shadow puntuar mb-3"
+                        type="button" (click)="puntuarViaje()">
                         Puntuar viaje
                       </span>
                       <div class="d-flex justify-content-center align-items-center">
                         <span *ngIf="viaje.notificaciones && viaje.notificaciones.length > 0">
-                          <mat-icon *ngIf="!notificacionLeida" type="button" class="notifications notificaciones_anim icon_shadow" (click)="leerNotificacion(viaje.notificaciones)">mark_email_unread</mat-icon>
+                          <mat-icon *ngIf="!notificacionLeida" type="button"
+                            class="notifications notificaciones_anim icon_shadow"
+                            (click)="leerNotificacion(viaje.notificaciones)">mark_email_unread</mat-icon>
                         </span>
                       </div>
                     </div>
                     <div class="col-3 text-end">
                       <span class="botones ">
-                        <button type="button" class="btn_shadow" matTooltip="Más detalles" matTooltipClass="custom-tooltip"
-                          (click)="openDetalleViaje(viaje)">
+                        <button type="button" class="btn_shadow" matTooltip="Más detalles"
+                          matTooltipClass="custom-tooltip" (click)="openDetalleViaje(viaje)">
                           <mat-icon class="mas_detalle">loupe</mat-icon>
                         </button>
-                        <button type="button" class="btn_shadow" matTooltip="Eliminar viaje" matTooltipClass="custom-tooltip"
-                          (click)="eliminarViaje(viaje.id)" *ngIf="conductor && !pasajero">
+                        <button type="button" class="btn_shadow" matTooltip="Editar viaje"
+                          matTooltipClass="custom-tooltip" (click)="editarViaje(viaje.id)">
+                          <mat-icon class="mas_detalle">edit</mat-icon>
+                        </button>
+                        <button type="button" class="btn_shadow" matTooltip="Eliminar viaje"
+                          matTooltipClass="custom-tooltip" (click)="eliminarViaje(viaje.id)"
+                          *ngIf="conductor && !pasajero">
                           <mat-icon class="eliminar_viaje">delete</mat-icon>
                         </button>
-                        <button type="button" class="btn_shadow" matTooltip="Salir del viaje" matTooltipClass="custom-tooltip"
-                          (click)="salirDeViaje(viaje.id)" *ngIf="!conductor && pasajero">
+                        <button type="button" class="btn_shadow" matTooltip="Salir del viaje"
+                          matTooltipClass="custom-tooltip" (click)="salirDeViaje(viaje.id)"
+                          *ngIf="!conductor && pasajero">
                           <mat-icon class="eliminar_viaje">delete</mat-icon>
                         </button>
                       </span>

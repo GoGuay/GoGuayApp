@@ -13,6 +13,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Component({
   selector: 'app-viaje-seleccionado',
@@ -40,6 +41,8 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   viaje!: Viaje;
   viajesSubscription: Subscription = new Subscription(); // Para gestionar la suscripción
   accordion = viewChild.required(MatAccordion);
+  conductor: boolean = false;
+  userData: Usuario = {} as Usuario;
 
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
@@ -54,11 +57,13 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     console.log('DETALLES DEL VIAJE: ', this.data);
     
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();
     this.verificarSiEstaUnido();
+    this.validarSiEsConductor(this.userData.usuario.id, this.data.viaje);
   }
 
   ngOnDestroy() {
@@ -122,7 +127,7 @@ verificarSiEstaUnido() {
   this.travelService.getViaje(this.data.viaje.id).subscribe({
     next: (viaje) => {
       // Se busca en la lista de acompañantes si el usuario ya está unido
-      this.yaUnido = viaje.acompañantes.some((acompañante: any) => acompañante.id === usuarioId);
+      this.yaUnido = viaje.acompanantes.some((acompañante: any) => acompañante.id === usuarioId);
     },
     error: (error) => {
       console.error('Error al obtener el viaje:', error);
@@ -191,4 +196,16 @@ verificarSiEstaUnido() {
     this.closeDialog();
   }
   
+  /**
+   * Función para validar si el usuario que está viendo los detalles 
+   * es conductor en el viaje o no.
+   * 
+   * @param usuario_id 
+   * @param viaje 
+   */
+  validarSiEsConductor(usuario_id: number, viaje: Viaje) {
+    if(usuario_id === viaje.usuario_id) {
+      this.conductor = true;
+    } else {this.conductor = false;}
+  }
 }
