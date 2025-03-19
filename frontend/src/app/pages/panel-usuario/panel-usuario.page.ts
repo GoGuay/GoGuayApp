@@ -15,6 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { Router } from '@angular/router';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 
 @Component({
   selector: 'app-panel-usuario',
@@ -50,12 +51,14 @@ export class PanelUsuarioPage implements OnInit {
   constructor(
     private dialog: MatDialog,
     private travelService: TravelService,
-    private router: Router
+    private router: Router,
+    private funcionesComunes: FuncionesComunes
   ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+    this.funcionesComunes.getBaseUrl();
   }
   openMiPerfil() {
     this.dialog.open(MiPerfilComponent, {});

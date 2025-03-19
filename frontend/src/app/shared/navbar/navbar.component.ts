@@ -29,6 +29,7 @@ export class NavbarComponent implements OnInit {
   @Input() searchRoute: string | null = '/home';
   @Input() isLoggedIn: boolean = false;
   @Input() isPublishRoute: boolean = false;
+  @Input() origin: string = '';
 
   logo: string = '../../../assets/logo/PRIDECAR.png';
   userData: Usuario = {} as Usuario;
@@ -50,10 +51,10 @@ export class NavbarComponent implements OnInit {
   isDesktop: boolean = false;
 
   constructor(
-    private router: Router, 
-    private platform: Platform, 
-    private languageService: LanguageService, 
-    private userService: UserServicesService, 
+    private router: Router,
+    private platform: Platform,
+    private languageService: LanguageService,
+    private userService: UserServicesService,
     private element: ElementRef
   ) { }
 
@@ -83,6 +84,36 @@ export class NavbarComponent implements OnInit {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
+  }
+
+  /**
+   * Función para obtener la ruta desde donde
+   * estaba el usuario posicionado anteriormente.
+   * 
+   * @returns Devuelve la ruta a la que va de regreso.
+   */
+  getBackRoute(): string {
+    switch (this.origin) {
+
+      case 'home':
+        return '/home';
+      case '/busqueda-viajes':
+        return '/busqueda-viajes';
+      case '/panel-usuario':
+        return '/panel-usuario';
+      case '/nuevo-viaje':
+        return '/nuevo-viaje';
+      default:
+        return '/home';
+    }
+  }
+
+  /**
+   * Función para hacer la navegación en la dirección indicada
+   */
+  goBack() {
+    const backRoute = this.getBackRoute();
+    this.router.navigate([backRoute]);
   }
 
   /**

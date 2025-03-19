@@ -1,8 +1,5 @@
-<app-navbar
-  [backRoute]="'/nuevo-viaje'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [origin]="'/nuevo-viaje'" [backRoute]="'/nuevo-viaje'" [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
   <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
     [imageSrc]="'../../assets/folder/jumbo4.jpg'" [helpText]="'JUMBOTRON.HELP'">
@@ -39,7 +36,7 @@
   </div>
 
   <!-- TERCER PASO PARA CREAR UN VIAJE -->
-   <div *ngIf="tercer_paso">
+  <div *ngIf="tercer_paso">
     <app-tercer-paso></app-tercer-paso>
     <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">
       <!-- Botón Atrás -->
@@ -50,11 +47,11 @@
         Continuar
       </button>
     </div>
-   </div>
+  </div>
 
-   <div *ngIf="cuarto_paso">
+  <div *ngIf="cuarto_paso">
     <app-cuarto-paso></app-cuarto-paso>
 
-   </div>
-  
+  </div>
+
 </ion-content>

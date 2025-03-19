@@ -12,6 +12,7 @@ import {
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
 import { lastValueFrom } from 'rxjs';
 import { UserServicesService } from '../user-services/user-services.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,8 @@ export class FuncionesComunes {
   constructor(
     private dialog: MatDialog,
     private vehicleService: VehiculosServicesService,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private router: Router
   ) {
     this.loadUserData();
   }
@@ -66,8 +68,20 @@ export class FuncionesComunes {
     if (!this.userData) return false;
     if (Object.keys(this.userData).length === 0) return false;
     if (!this.userData.usuario?.email) return false;
-
     return true;
+  }
+
+
+  /**
+   * Función para obtener la url en la que está posicionado el usuario.
+   * 
+   * @returns 
+   */
+  getBaseUrl() {
+    const url = this.router.url;
+    const baseUrl = url.split('?')[0];
+    localStorage.setItem('url_anterior', baseUrl);
+    return baseUrl;
   }
 
   /**

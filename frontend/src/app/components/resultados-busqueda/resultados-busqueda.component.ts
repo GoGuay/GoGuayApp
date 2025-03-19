@@ -42,6 +42,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.obtenerListaViajes();
+    this.funcionesComunes.getBaseUrl();
   }
 
   /**

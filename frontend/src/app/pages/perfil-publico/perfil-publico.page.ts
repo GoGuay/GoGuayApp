@@ -58,6 +58,10 @@ export class PerfilPublicoPage implements OnInit {
   pasajero: boolean = false;
   conductor: boolean = false;
   notificacionLeida: boolean = false;
+  busquedaParams: any = {};
+
+  urlPrevia: string = '';
+  urlParaVolver: string = '';
 
   private _bottomSheet = inject(MatBottomSheet);
 
@@ -83,8 +87,9 @@ export class PerfilPublicoPage implements OnInit {
       this.obtenerViajesComoAcompanante();
       this.obtenerViajesCreados();
     });
-
-    this.comprobarNotificaciones(); 
+    this.urlPrevia = localStorage.getItem('url_anterior') || '';
+    this.urlParaVolver  = this.comprobarUrls(this.urlPrevia);
+    this.comprobarNotificaciones();
     /**
      * Se comprueba cada 10 segundos si el usuario tiene notificaiones
      * en algún viaje en los que es conductor.
@@ -92,6 +97,28 @@ export class PerfilPublicoPage implements OnInit {
     setInterval(() => {
       this.comprobarNotificaciones();
     }, 10000);
+  }
+
+
+  /**
+   * Función para obtener la url desde la que proviene el usuario.
+   * 
+   * Se va a utilizar para poder permitir regresar a diferentes urls
+   * dependiendo desde donde se acceda a este.
+   * 
+   * 
+   * @param urlAnterior 
+   * @returns 
+   */
+  comprobarUrls(urlAnterior: string): string {
+    switch (urlAnterior) {
+      case '/busqueda-viajes':
+        return '/busqueda-viajes';
+      case '/panel-usuario':
+        return '/panel-usuario';
+      default:
+        return '';
+    }
   }
 
   /**
@@ -109,12 +136,12 @@ export class PerfilPublicoPage implements OnInit {
           notificaciones.forEach((notificacion: any) => {
             this.notificacionesService.obtenerNotificacionesDeUnViaje(notificacion.viaje_id).subscribe(
               (respuesta) => {
-                if(respuesta[0].leida === true){
+                if (respuesta[0].leida === true) {
                   this.notificacionLeida = true;
                 } else {
                   this.notificacionLeida = false;
                 }
-                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);                
+                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);
                 if (viaje) {
                   viaje.notificaciones = respuesta;
                 }
@@ -131,7 +158,7 @@ export class PerfilPublicoPage implements OnInit {
       }
     );
   }
-  
+
 
   /**
    * Función para obtener los datos de un usuario
@@ -182,7 +209,7 @@ export class PerfilPublicoPage implements OnInit {
   filtrarViajes() {
     if (this.filtroViajes === 'todos') {
       this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
-      this.conductor = false; 
+      this.conductor = false;
       this.pasajero = false;
     } else if (this.filtroViajes === 'conductor') {
       this.misViajes = [...this.misViajesCreados];
@@ -323,7 +350,7 @@ export class PerfilPublicoPage implements OnInit {
         console.log('El usuario ha salido del viaje con éxito');
         this.obtenerViajesComoAcompanante();
         this.obtenerViajesCreados();
-        this.comprobarNotificaciones(); 
+        this.comprobarNotificaciones();
       },
       error: (error) => {
         this.cargando = false;
@@ -352,7 +379,7 @@ export class PerfilPublicoPage implements OnInit {
   /**
    * Función para puntuar un viaje
    */
-  puntuarViaje(){
+  puntuarViaje() {
     this._bottomSheet.open(PuntuacionesComponent);
   }
 
@@ -360,7 +387,7 @@ export class PerfilPublicoPage implements OnInit {
    * Función para poder editar un viaje
    * @param viaje_id 
    */
-  editarViaje(viaje_id: number){
+  editarViaje(viaje_id: number) {
     const viaje = {
       id: viaje_id
     }
