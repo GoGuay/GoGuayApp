@@ -13,6 +13,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Component({
   selector: 'app-viaje-seleccionado',
@@ -41,6 +42,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   viajesSubscription: Subscription = new Subscription(); // Para gestionar la suscripción
   accordion = viewChild.required(MatAccordion);
   conductor: boolean = false;
+  userData: Usuario = {} as Usuario;
 
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
@@ -55,12 +57,13 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     console.log('DETALLES DEL VIAJE: ', this.data);
     
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();
     this.verificarSiEstaUnido();
-    
+    this.validarSiEsConductor(this.userData.usuario.id, this.data.viaje);
   }
 
   ngOnDestroy() {
@@ -82,7 +85,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
       next: (usuario) => {
         this.userID = usuario.id;
         this.verificarSiEstaUnido();
-        this.validarSiEsConductor(this.userID, this.data.viaje);
       },
       error: (error) => {
         console.error('Error al obtener el usuario:', error);

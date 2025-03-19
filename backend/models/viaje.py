@@ -47,7 +47,13 @@ class Viaje(db.Model):
                 "puntuacion_promedio": self.usuario.puntuacion_promedio
             },
             "acompanantes": [
-                {"id": pasajero.usuario.id, "nombre": pasajero.usuario.nombre, "email": pasajero.usuario.email}
+                {
+                    "id": pasajero.usuario.id, 
+                    "nombre": pasajero.usuario.nombre, 
+                    "apellidos": pasajero.usuario.apellidos, 
+                    "email": pasajero.usuario.email, 
+                    "preferencias": pasajero.usuario.preferencias
+                }
                 for pasajero in self.pasajeros
             ],
             "created_at": self.created_at.isoformat(),
