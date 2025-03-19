@@ -48,7 +48,7 @@ export class LoginPage implements OnInit {
     if (rememberMe && savedEmail) {
       this.loginForm.patchValue({
         emailFormControl: savedEmail,
-        passwordFormControl: savedPassword,
+        passwordFormControl: savedPassword ? atob(savedPassword) : '',
         check: rememberMe,
       });
     }
