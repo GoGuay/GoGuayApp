@@ -14,6 +14,9 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import { ChangeDetectorRef } from '@angular/core';
+
+
 
 @Component({
   selector: 'app-viaje-seleccionado',
@@ -39,7 +42,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   preferencias: string = '';
   userID!: number;
   viaje!: Viaje;
-  viajesSubscription: Subscription = new Subscription(); // Para gestionar la suscripción
+  viajesSubscription: Subscription = new Subscription(); 
   accordion = viewChild.required(MatAccordion);
   conductor: boolean = false;
   userData: Usuario = {} as Usuario;
@@ -50,10 +53,12 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     public funcionesComunes: FuncionesComunes,
     private travelService: TravelService,
     private usersService: UserServicesService,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {
     this.preferencias = this.funcionesComunes.validacionPreferencias(this.data);
-    this.viaje = { ...this.data.viaje }; // Inicializa con los datos del viaje
+    this.viaje = { ...this.data.viaje };
+    this.verificarSiEstaUnido();
   }
 
   ngOnInit() {
@@ -62,7 +67,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();
-    this.verificarSiEstaUnido();
     this.validarSiEsConductor(this.userData.usuario.id, this.data.viaje);
   }
 
@@ -128,10 +132,12 @@ verificarSiEstaUnido() {
     next: (viaje) => {
       // Se busca en la lista de acompañantes si el usuario ya está unido
       this.yaUnido = viaje.acompanantes.some((acompañante: any) => acompañante.id === usuarioId);
+      this.cdRef.detectChanges();
     },
     error: (error) => {
       console.error('Error al obtener el viaje:', error);
       this.yaUnido = false;
+      this.cdRef.detectChanges();
     }
   });
 }
@@ -167,6 +173,9 @@ verificarSiEstaUnido() {
   
           const dialogRef = this.funcionesComunes.openConfirmModal(title_viaje_confirmado, message_viaje_confirmado);
           this.yaUnido = true;
+
+          this.cdRef.detectChanges(); 
+
           dialogRef.afterClosed().subscribe(() => {
             this.obtenerViajesActualizados()
            });
