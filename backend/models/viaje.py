@@ -52,7 +52,8 @@ class Viaje(db.Model):
                     "nombre": pasajero.usuario.nombre, 
                     "apellidos": pasajero.usuario.apellidos, 
                     "email": pasajero.usuario.email, 
-                    "preferencias": pasajero.usuario.preferencias
+                    "preferencias": pasajero.usuario.preferencias,
+                    "fotoPerfil": pasajero.usuario.fotoPerfil
                 }
                 for pasajero in self.pasajeros
             ],
