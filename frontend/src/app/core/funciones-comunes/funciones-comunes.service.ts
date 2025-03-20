@@ -36,6 +36,7 @@ export class FuncionesComunes {
   vehiculos_usuario: any[] = [];
   fechaNacimiento: string = '';
   edad: number = this.calcularEdad(this.fechaNacimiento);
+  VehiculoYaAnadido: boolean = false;
 
   usuario: any = {} as Usuario;
 
@@ -71,11 +72,10 @@ export class FuncionesComunes {
     return true;
   }
 
-
   /**
    * Función para obtener la url en la que está posicionado el usuario.
-   * 
-   * @returns 
+   *
+   * @returns
    */
   getBaseUrl() {
     const url = this.router.url;
@@ -224,21 +224,20 @@ export class FuncionesComunes {
   esViajeFinalizado(fecha_salida: string, hora_llegada: string): boolean {
     // Crear objeto Date con la fecha de salida
     const fechaViaje = new Date(fecha_salida);
-  
+
     // Extraer hora y minutos de hora_llegada
     const [hora, minutos] = hora_llegada.split(':').map(Number);
-  
+
     // Añadir la hora de llegada a la fecha de salida
     fechaViaje.setHours(hora, minutos, 0, 0);
-  
+
     // Obtener la fecha y hora actuales
     const ahora = new Date();
-  
+
     // Comparar si el viaje ya terminó
     return ahora > fechaViaje;
   }
-  
-  
+
   /******************************************
    *                                        *
    *  FUNCIONES PARA EL PERFIL DEL USUARIO  *
@@ -293,14 +292,20 @@ export class FuncionesComunes {
       matricula: this.matricula,
     };
     nuevoCoche.usuario_id = this.userData.usuario.id;
+
     this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
       console.log('Vehiculo guardado correctamente:', resultado);
+      this.vehiculos_usuario.push(nuevoCoche);
       this.userService
         .obtenerUsuarioPorID(this.userData.usuario.id)
         .subscribe((usuarioActualizado) => {
           this.userData = usuarioActualizado;
-          localStorage.setItem('userData', JSON.stringify(this.userData));
+          this.botonAnadirVehiculo();
           console.log('Usuario actualizado:', this.userData);
+          this.marcaSeleccionada = '';
+          this.modeloSeleccionado = '';
+          this.colorSeleccionado = '';
+          this.matricula = '';
         });
     });
   }

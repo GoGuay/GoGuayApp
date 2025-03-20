@@ -108,6 +108,11 @@
         <!-- Marca -->
       </tbody>
     </table>
+    <div *ngIf="modificandoMarca">
+      <p class="text-danger">
+        Recuerda que si cambiar la marca, debes modificar también el modelo
+      </p>
+    </div>
   </div>
 
   <div
@@ -213,7 +218,7 @@
           </div>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row class="d-flex justify-content-center">
         <div>
           <input
             placeholder="Matrícula"

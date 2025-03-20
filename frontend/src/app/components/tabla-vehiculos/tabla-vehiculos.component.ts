@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
@@ -17,11 +17,17 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 export class TablaVehiculosComponent implements OnInit {
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
-  constructor(public funcionesComunes: FuncionesComunes) {}
+  modificandoMarca: boolean = false;
+
+  constructor(
+    public funcionesComunes: FuncionesComunes,
+    private cdRef: ChangeDetectorRef
+  ) {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
 
   ngOnInit() {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+    // this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
   }
 
   /**
@@ -41,16 +47,19 @@ export class TablaVehiculosComponent implements OnInit {
   }
 
   filtrarModelosEditando(coche: any) {
+    this.modificandoMarca = !this.modificandoMarca;
     if (!coche.marca) return;
 
     const vehiculo = this.funcionesComunes.listadoCoches.find(
       (c) => c.marca === coche.marca
     );
-    coche.modelos = vehiculo.modelos;
-    // Reinicia el modelo si no existe en la nueva marca
-    // if (!coche.modelosFiltrados.includes(coche.modelo)) {
-    //   coche.modelos;
-    // }
+    this.funcionesComunes.modelosFiltrados = vehiculo.modelos;
+
+    if (this.funcionesComunes.modelosFiltrados.length > 0) {
+      coche.modelo = this.funcionesComunes.modelosFiltrados[0]; // Establecemos el modelo por defecto
+    } else {
+      coche.modelo = ''; // Si no hay modelos, dejamos el modelo vacío
+    }
   }
 
   /**
@@ -61,5 +70,8 @@ export class TablaVehiculosComponent implements OnInit {
     console.log('Guardando cambios en el vehículo: ', vehiculo);
     vehiculo.editandoVehiculo = false;
     this.funcionesComunes.editarVehiculo(vehiculo);
+    if (this.modificandoMarca) {
+      this.modificandoMarca = false;
+    }
   }
 }
