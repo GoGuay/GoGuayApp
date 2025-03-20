@@ -14,7 +14,7 @@ import {
   COLORES,
   COLOURS,
 } from '../../../models/vehiculos/marcas_modelos.model';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -42,7 +42,7 @@ export class MiPerfilComponent implements OnInit {
   constructor(
     public funcionescomunes: FuncionesComunes,
     private dialogRef: MatDialogRef<MiPerfilComponent>,
-    private router: Router
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
@@ -69,7 +69,7 @@ export class MiPerfilComponent implements OnInit {
   }
 
   openInfoVisible() {
-    this.router.navigate(['/info-visible'], {});
+    this.navCtrl.navigateRoot('/info-visible');
     this.closeDialog();
   }
 }

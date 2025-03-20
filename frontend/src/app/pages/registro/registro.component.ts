@@ -16,6 +16,7 @@ import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { DialogRef } from '@angular/cdk/dialog';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-registro',
@@ -42,7 +43,7 @@ export class RegistroComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
-    private router: Router,
+    private navCtrl: NavController,
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes
   ) {
@@ -154,8 +155,7 @@ export class RegistroComponent implements OnInit {
           </p>
         `;
           this.openHelp(title, message);
-
-          this.router.navigate(['/home']);
+          this.navCtrl.navigateRoot('/home');
         },
         error: (err) => {
           const title = 'Error!';
@@ -184,7 +184,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para volver al home
   volverAlHome() {
-    this.router.navigate(['/home']);
+    this.navCtrl.navigateRoot('/home');
   }
 
   validacionEdad(): boolean {
@@ -216,7 +216,7 @@ export class RegistroComponent implements OnInit {
       );
 
       dialogRef.afterClosed().subscribe(() => {
-        this.router.navigate(['/home']);
+        this.navCtrl.navigateRoot('/home');
       });
       this.fechaNacimiento = '';
       return false; // Si es menor de edad, devuelve false

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,7 +53,7 @@ export class ResumenViajeComponent implements OnInit {
 
   constructor(
     private travelService: TravelService,
-    private router: Router,
+    private navCtrl: NavController,
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
     private route: ActivatedRoute
@@ -80,7 +80,7 @@ export class ResumenViajeComponent implements OnInit {
           !this.currentViajeData.plazas
         )
       ) {
-        this.router.navigate(['/home']);
+        this.navCtrl.navigateRoot('/home');
         return;
       }
   
@@ -143,7 +143,7 @@ export class ResumenViajeComponent implements OnInit {
           const dialogRef = this.openHelp(title, message);
           console.log('Viaje guardado correctamente:', response);
           dialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['/home']);
+            this.navCtrl.navigateRoot('/home');
           });
         },
         (error) => {
@@ -176,7 +176,7 @@ export class ResumenViajeComponent implements OnInit {
    * Función que nos va a devolver a la pantalla de inicio del viaje
    */
   volverAInicioDelViaje() {
-    this.router.navigate(['/data-viaje']);
+    this.navCtrl.navigateRoot('/data-viaje');
   }
 
   /**

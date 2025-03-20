@@ -10,7 +10,7 @@ import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccio
 import { Observable } from 'rxjs';
 import { SpinnerComponent } from "../spinner/spinner.component";
 import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
@@ -34,7 +34,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     private travelService: TravelService,
     private funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
-    private router: Router,
+    private navCtrl: NavController,
     private dialog: MatDialog
   ) {}
 
@@ -80,7 +80,7 @@ export class ResultadosBusquedaComponent implements OnInit {
    */
   openPerfilPublico(id_usuario: number) {
     const usuario = { id: id_usuario };
-    this.router.navigate(['/perfil-publico'], {
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
   }

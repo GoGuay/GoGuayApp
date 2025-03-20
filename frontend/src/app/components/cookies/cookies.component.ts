@@ -9,6 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { NavController } from '@ionic/angular';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class CookiesComponent implements OnInit {
 
   constructor(
     private cookieService: CookieService, 
-    private router: Router, 
+    private navCtrl: NavController, 
     private dialogRef: MatDialogRef<CookiesComponent>
   ) { }
 
@@ -50,7 +51,7 @@ export class CookiesComponent implements OnInit {
   }
 
   openCookiePreferences() {
-    this.router.navigate(['/cookies'], {});
+    this.navCtrl.navigateRoot('/cookies');
     this.closeDialog();
   }
 

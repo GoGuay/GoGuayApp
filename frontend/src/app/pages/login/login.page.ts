@@ -7,6 +7,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,7 @@ export class LoginPage implements OnInit {
   loginForm: FormGroup;
   listaUsuarios: Usuario[] = [];
 
-  constructor(private userService: UserServicesService, private router: Router, private dialog: MatDialog) {
+  constructor(private userService: UserServicesService, private navCtrl: NavController, private dialog: MatDialog) {
     this.loginForm = new FormGroup({
       emailFormControl: new FormControl('', [Validators.required, Validators.email]),
       passwordFormControl: new FormControl('', [Validators.required]),
@@ -105,7 +106,7 @@ export class LoginPage implements OnInit {
           localStorage.removeItem('password');
           localStorage.removeItem('remember_me');
         }
-        this.router.navigate(['/home'], {
+        this.navCtrl.navigateRoot(['/home'], {
           queryParams: usuario
         });
       },

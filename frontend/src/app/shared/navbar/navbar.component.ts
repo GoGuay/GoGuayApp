@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonicModule, NavController, Platform } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
   isDesktop: boolean = false;
 
   constructor(
-    private router: Router,
+    private navCtrl: NavController,
     private platform: Platform,
     private languageService: LanguageService,
     private userService: UserServicesService,
@@ -113,7 +113,7 @@ export class NavbarComponent implements OnInit {
    */
   goBack() {
     const backRoute = this.getBackRoute();
-    this.router.navigate([backRoute]);
+    this.navCtrl.navigateRoot([backRoute]);
   }
 
   /**
@@ -121,7 +121,7 @@ export class NavbarComponent implements OnInit {
    */
   navigateBack() {
     if (this.backRoute) {
-      this.router.navigate([this.backRoute]);
+    this.navCtrl.navigateRoot([this.backRoute]);
     }
   }
 

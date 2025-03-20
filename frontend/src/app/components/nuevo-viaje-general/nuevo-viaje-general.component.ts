@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -14,12 +14,15 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NuevoViajeGeneralComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private navCtrl: NavController) { }
 
   ngOnInit() { }
 
 
+  /**
+   * Función para navegar hasta el componente de "nuevo-viaje"
+   */
   openNewTravel() {
-    this.router.navigate(['/nuevo-viaje'], {});
+    this.navCtrl.navigateRoot('/nuevo-viaje');
   }
 }

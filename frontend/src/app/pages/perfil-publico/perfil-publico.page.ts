@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -72,7 +72,7 @@ export class PerfilPublicoPage implements OnInit {
     private notificacionesService: NotificacionesService,
     private travelService: TravelService,
     private dialog: MatDialog,
-    private router: Router
+    private navCtrl: NavController
   ) {
 
   }
@@ -391,7 +391,7 @@ export class PerfilPublicoPage implements OnInit {
     const viaje = {
       id: viaje_id
     }
-    this.router.navigate(['/resumen-viaje'], {
+    this.navCtrl.navigateRoot('/resumen-viaje', {
       queryParams: viaje,
     });
   }

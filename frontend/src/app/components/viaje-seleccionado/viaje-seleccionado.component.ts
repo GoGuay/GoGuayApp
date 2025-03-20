@@ -15,6 +15,7 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 
 
@@ -53,7 +54,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     public funcionesComunes: FuncionesComunes,
     private travelService: TravelService,
     private usersService: UserServicesService,
-    private router: Router,
+    private navCtrl: NavController,
     private cdRef: ChangeDetectorRef
   ) {
     this.preferencias = this.funcionesComunes.validacionPreferencias(this.data);
@@ -199,7 +200,7 @@ verificarSiEstaUnido() {
     const usuario = {
       id: id_usuario
     }
-    this.router.navigate(['/perfil-publico'], {
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
     this.closeDialog();

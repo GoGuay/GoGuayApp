@@ -8,6 +8,7 @@ import { trigger, style, transition, animate } from '@angular/animations';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-help-modal',
@@ -39,7 +40,7 @@ export class HelpModalComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; showAcceptButton: boolean; showMoreInfoButton: boolean },
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<HelpModalComponent>,
-    private router: Router) {
+    private navCtrl: NavController) {
     this.title = data.title;
     this.message = this.sanitizer.bypassSecurityTrustHtml(data.message);
   }
@@ -57,7 +58,7 @@ export class HelpModalComponent implements OnInit {
 
   abrirMasDetalles() {
     this.dialogRef.close();
-    this.router.navigate(['/decalogo']);
+    this.navCtrl.navigateRoot('/decalogo');
   }
 
   cerrarParaMasInfo(accepted: string) {

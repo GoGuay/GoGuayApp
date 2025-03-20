@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-cuarto-paso',
@@ -32,7 +33,7 @@ export class CuartoPasoComponent implements OnInit {
   tercer_paso: boolean = false;
   cuarto_paso: boolean = false;
 
-  constructor(private travelService: TravelService, private messageService: MessageService, private router: Router) { }
+  constructor(private travelService: TravelService, private messageService: MessageService, private navCtrl: NavController) { }
 
   ngOnInit() { }
 
@@ -88,8 +89,7 @@ export class CuartoPasoComponent implements OnInit {
     this.travelService.setViajeData(viajeDataFinal);
 
     localStorage.setItem('viajeData', JSON.stringify(viajeDataFinal));
-
-    this.router.navigate(['/resumen-viaje']).then(success => {
+    this.navCtrl.navigateRoot(['/resumen-viaje']).then(success => {
       if (!success) {
         console.error('Error en la navegación a /resumen-viaje');
       }

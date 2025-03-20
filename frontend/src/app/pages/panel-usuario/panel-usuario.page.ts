@@ -9,7 +9,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario/datos-contacto/datos-contacto.component';
 import { VerificarPerfilComponent } from 'src/app/components/botones-panel-usuario/verificar-perfil/verificar-perfil.component';
 import { SaldoTransferenciasComponent } from 'src/app/components/botones-panel-usuario/saldo-transferencias/saldo-transferencias.component';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { MiPerfilComponent } from 'src/app/components/botones-panel-usuario/mi-perfil/mi-perfil.component';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
@@ -51,7 +51,7 @@ export class PanelUsuarioPage implements OnInit {
   constructor(
     private dialog: MatDialog,
     private travelService: TravelService,
-    private router: Router,
+    private navCtrl: NavController,
     private funcionesComunes: FuncionesComunes
   ) {}
 
@@ -129,7 +129,7 @@ export class PanelUsuarioPage implements OnInit {
     const usuario = {
       id: id_usuario
     }
-    this.router.navigate(['/perfil-publico'], {
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
   }

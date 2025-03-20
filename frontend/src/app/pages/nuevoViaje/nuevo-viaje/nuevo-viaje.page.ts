@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -49,7 +49,7 @@ export class NuevoViajePage implements OnInit {
   sugerenciasDestino: any[] = [];
 
   constructor(
-    private router: Router,
+    private navCtrl: NavController,
     private viajesService: TravelService,
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService
@@ -94,7 +94,7 @@ export class NuevoViajePage implements OnInit {
        * Se almacena temporalmente los datos del viaje.
        */
       this.viajesService.setViajeData(viajeData);
-      this.router.navigate(['/data-viaje']);
+      this.navCtrl.navigateRoot('/data-viaje');
     }
   }
 

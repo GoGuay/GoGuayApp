@@ -2,7 +2,7 @@ import { Component, OnInit, model, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { JumbotronComponent } from '../../jumbotron/jumbotron.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -65,7 +65,7 @@ export class DataViajePage implements OnInit {
   sugerenciasParadas: any[] = [];
 
   constructor(
-    private router: Router,
+    private navCtrl: NavController,
     private travelService: TravelService,
     private messageService: MessageService,
   ) {
@@ -184,7 +184,7 @@ export class DataViajePage implements OnInit {
         life: 3000
       });
     } else {
-      this.router.navigate(['/resumen-viaje'], {
+      this.navCtrl.navigateRoot(['/resumen-viaje'], {
         queryParams: currentViajeData
       });
     }

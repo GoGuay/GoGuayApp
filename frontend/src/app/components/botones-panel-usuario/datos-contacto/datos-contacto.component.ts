@@ -9,7 +9,7 @@ import {
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { IonRow, IonCol } from '@ionic/angular/standalone';
+import { IonRow, IonCol, NavController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -32,13 +32,13 @@ import { TranslateModule } from '@ngx-translate/core';
 export class DatosContactoComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<DatosContactoComponent>,
-    private router: Router
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {}
 
   openDatosContacto() {
-    this.router.navigate(['/info-visible'], {});
+    this.navCtrl.navigateRoot('/info-visible');
     this.closeDialog();
   }
 
