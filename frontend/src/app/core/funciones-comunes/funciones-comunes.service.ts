@@ -37,6 +37,7 @@ export class FuncionesComunes {
   fechaNacimiento: string = '';
   edad: number = this.calcularEdad(this.fechaNacimiento);
   VehiculoYaAnadido: boolean = false;
+  matriculaNoValida: boolean = false;
 
   usuario: any = {} as Usuario;
 
@@ -285,6 +286,7 @@ export class FuncionesComunes {
    * lista de vehículos del usuario.
    */
   guardarVehiculo() {
+    this.loadUserData();
     const nuevoCoche: Coches = {
       marca: this.marcaSeleccionada,
       modelo: this.modeloSeleccionado,
@@ -311,6 +313,13 @@ export class FuncionesComunes {
   }
 
   /**
+   * Función para verificar si el usuario tiene vehículos
+   */
+  get noVehiculos(): boolean {
+    return this.userData?.usuario?.vehiculos?.length === 0;
+  }
+
+  /**
    * Función para filtrar los modelos de los coches
    */
   filtrarModelos() {
@@ -320,14 +329,6 @@ export class FuncionesComunes {
     this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
     this.modeloSeleccionado = '';
   }
-
-  // filtrarModelosEditando(coche: any) {
-  //   if (!coche.marca) return;
-
-  //   this.listadoCoches.find((vehiculo) => vehiculo.marca === coche.marca);
-  //   this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
-  //   this.modeloSeleccionado = '';
-  // }
 
   /**
    * Para mostrar (o no) el selector de marca, modelo y color de coche
@@ -399,6 +400,11 @@ export class FuncionesComunes {
     }
   }
 
+  /**
+   * Función para editar los datos de un vehículo añadido
+   * @param vehiculo
+   */
+
   editarVehiculo(vehiculo: any): any {
     console.log('Vehiculo modificado: ', vehiculo);
 
@@ -407,5 +413,45 @@ export class FuncionesComunes {
       .subscribe((resultado) => {
         console.log('Resultado: ', resultado);
       });
+  }
+
+  /**
+   * Función para eliminar un vehículo del usuario
+   * @param vehiculo
+   */
+  eliminarVehiculo(vehiculo: any): any {
+    this.vehicleService
+      .eliminarVehiculo(vehiculo.id, vehiculo)
+      .subscribe((resultado) => {
+        this.vehiculos_usuario = this.vehiculos_usuario.filter(
+          (coche) => coche.id !== vehiculo.id
+        );
+        this.userService
+          .obtenerUsuarioPorID(this.userData.usuario.id)
+          .subscribe((usuarioActualizado) => {
+            this.userData = usuarioActualizado;
+            console.log('Usuario actualizado:', this.userData);
+          });
+        console.log('Resultado: ', resultado);
+      });
+  }
+
+  /**
+   * Función para validar que la matrícula tenga el formato 0000ABC
+   */
+  validarMatricula(): void {
+    const regex = /^[0-9]{4}[A-Z]{3}$/;
+
+    // Convertir a mayúsculas automáticamente
+    this.matricula = this.matricula.toUpperCase();
+
+    if (!regex.test(this.matricula)) {
+      console.log(
+        'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
+      );
+      this.matriculaNoValida = true;
+    } else {
+      this.matriculaNoValida = false;
+    }
   }
 }

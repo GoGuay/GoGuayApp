@@ -4,7 +4,10 @@
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
-  <div *ngIf="userData?.usuario?.vehiculos?.length != 0" class="tabla">
+  <div
+    *ngIf="userData?.usuario?.vehiculos?.length > 0; else noVehiculos"
+    class="tabla"
+  >
     <table class="table table-hover">
       <thead>
         <tr>
@@ -84,6 +87,7 @@
             <div class="row">
               <div class="col">
                 <button
+                  class="botones_tabla btn_bg"
                   mat-icon-button
                   (click)="
                     coche.editandoVehiculo
@@ -98,7 +102,11 @@
               </div>
               <!-- Botón para eliminar el vehículo -->
               <div class="col">
-                <button mat-icon-button>
+                <button
+                  class="botones_tabla btn_bg"
+                  mat-icon-button
+                  (click)="modalEliminarVehiculo(coche)"
+                >
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
@@ -115,18 +123,17 @@
     </div>
   </div>
 
-  <div
-    *ngIf="userData?.usuario?.vehiculos?.length === 0"
-    class="mt-3 d-flex justify-content-center"
-  >
-    <span>No tienes vehículos añadidos</span>
-  </div>
+  <ng-template #noVehiculos>
+    <div class="mt-3 d-flex justify-content-center">
+      <span>No tienes vehículos añadidos</span>
+    </div>
+  </ng-template>
 
   <!-- Boton para añadir vehiculos -->
   <div class="d-flex justify-content-center">
     <button
       type="button"
-      class="btn btn_bg mt-3"
+      class="btn btn_bg mt-3 boton_anadir"
       style="height: 33px"
       (click)="funcionesComunes.botonAnadirVehiculo()"
     >
@@ -219,17 +226,34 @@
         </ion-col>
       </ion-row>
       <ion-row class="d-flex justify-content-center">
-        <div>
+        <div class="position-relative text-center">
           <input
-            placeholder="Matrícula"
+            type="text"
+            class="form-control-sm"
+            placeholder="0000XXX"
+            id="matricula"
+            pattern="^[0-9]{4}[A-Za-z]{3}$"
+            required
+            maxlength="7"
+            aria-describedby="matricula"
             [(ngModel)]="funcionesComunes.matricula"
+            (ngModelChange)="funcionesComunes.validarMatricula()"
+            style="width: 120px"
           />
+          <!-- Mensaje de error -->
+          <div>
+            <div *ngIf="funcionesComunes.matriculaNoValida" class="text-danger">
+              Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej:
+              1234ABC).
+            </div>
+          </div>
         </div>
       </ion-row>
       <ion-row>
         <div class="container d-flex justify-content-center mt-2">
           <button
             type="button"
+            [disabled]="funcionesComunes.matriculaNoValida"
             class="btn btn_bg"
             mat-raised-button
             (click)="funcionesComunes.guardarVehiculo()"

@@ -4,7 +4,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, retry, throwError } from 'rxjs';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +29,20 @@ export class VehiculosServicesService {
       .pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Error al editar los datos del vehículo', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  eliminarVehiculo(vehiculo_id: number, vehiculoData: any): Observable<any> {
+    return this.http
+      .delete(
+        `${this.apiUrl}/vehicle/eliminarVehiculo/${vehiculo_id}`,
+        vehiculoData
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al eliminar el vehículo', error);
           return throwError(() => error);
         })
       );

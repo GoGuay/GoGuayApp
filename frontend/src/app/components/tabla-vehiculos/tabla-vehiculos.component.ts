@@ -6,13 +6,23 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import { HelpModalComponent } from '../help-modal/help-modal.component';
+import { DialogConfig, DialogRef } from '@angular/cdk/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-tabla-vehiculos',
   templateUrl: './tabla-vehiculos.component.html',
   styleUrls: ['./tabla-vehiculos.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, TranslateModule, MatIcon],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    MatIcon,
+    HelpModalComponent,
+  ],
 })
 export class TablaVehiculosComponent implements OnInit {
   userData: Usuario = {} as Usuario;
@@ -21,14 +31,13 @@ export class TablaVehiculosComponent implements OnInit {
 
   constructor(
     public funcionesComunes: FuncionesComunes,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
-  ngOnInit() {
-    // this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-  }
+  ngOnInit() {}
 
   /**
    * Poner los campos del vehículo en editables (selectores e input)
@@ -73,5 +82,19 @@ export class TablaVehiculosComponent implements OnInit {
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }
+  }
+
+  modalEliminarVehiculo(cocheAEliminar: any) {
+    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
+    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.funcionesComunes.eliminarVehiculo(cocheAEliminar);
+      }
+    });
   }
 }

@@ -106,6 +106,23 @@ def editarVehiculo(vehiculo_id):
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
 
+
+@vehicle_blueprint.route('/eliminarVehiculo/<int:id>', methods=['DELETE'])
+def eliminarVehiculo(id):
+    vehiculo = Vehiculo.query.get(id)
+
+    if vehiculo is None:
+        return jsonify ({"error": "no se encuentra el vehiculo"}), 400
+    
+    try:
+        db.session.delete(vehiculo)
+        db.session.commit()
+        return jsonify ({"Eliminado" : "el vehiculo se ha eliminado correctamente"}),200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify ({"Error": str(e)}), 500
+
+
     
 
 
