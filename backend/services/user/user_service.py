@@ -130,7 +130,7 @@ def actualizar_usuario(user_id):
     usuario = Usuario.query.get_or_404(user_id)
     data = request.json
     
-    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'telefono', 'biografia', 'direccion', 'fecha_nacimiento']:
+    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'telefono', 'biografia', 'direccion', 'fecha_nacimiento', 'preferencias']:
         if key in data:
             if key == 'nombre' and data[key]:
                 setattr(usuario, key, data['nombre'])
@@ -161,11 +161,6 @@ def actualizar_usuario(user_id):
                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))
             else:
                 setattr(usuario, key, data[key])
-            
-            # if key == 'telefono' and data[key]:
-            #     setattr(usuario, key, data['telefono'])
-            # else:
-            #     setattr(usuario, key, data['telefono'])
             
             if key == 'biografia' and data[key]:
                 setattr(usuario, key, data['biografia'])

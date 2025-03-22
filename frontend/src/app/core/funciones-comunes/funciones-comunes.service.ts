@@ -390,28 +390,6 @@ export class FuncionesComunes {
   }
 
   /**
-   * Función para eliminar un vehículo del usuario
-   * @param vehiculo
-   */
-  eliminarVehiculo(vehiculo: any): any {
-    this.vehicleService
-      .eliminarVehiculo(vehiculo.id, vehiculo)
-      .subscribe((resultado) => {
-        this.vehiculos_usuario = this.vehiculos_usuario.filter(
-          (coche) => coche.id !== vehiculo.id
-        );
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            this.userData = usuarioActualizado;
-            localStorage.setItem('userData', JSON.stringify(this.userData));
-            console.log('Usuario actualizado:', this.userData);
-          });
-        console.log('Resultado: ', resultado);
-      });
-  }
-
-  /**
    * Función para validar que la matrícula tenga el formato 0000ABC
    */
   validarMatricula(): void {

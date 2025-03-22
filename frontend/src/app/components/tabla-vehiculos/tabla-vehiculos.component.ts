@@ -47,16 +47,14 @@ export class TablaVehiculosComponent implements OnInit {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
-
-
   ngOnInit() {
     this.loadUserData();
-    this.obtenerVehiculos()
+    this.obtenerVehiculos();
   }
 
-
-
-
+  /**
+   * Función para añadir un vehículo a la tabla
+   */
   guardarVehiculo() {
     this.loadUserData();
     const nuevoCoche: Coches = {
@@ -82,7 +80,6 @@ export class TablaVehiculosComponent implements OnInit {
           );
         }
 
-        // this.vehiculos_usuario.push(nuevoCoche);
         this.userService
           .obtenerUsuarioPorID(this.userData.usuario.id)
           .subscribe((usuarioActualizado) => {
@@ -95,24 +92,25 @@ export class TablaVehiculosComponent implements OnInit {
             this.funcionesComunes.colorSeleccionado = '';
             this.funcionesComunes.matricula = '';
 
+            this.funcionesComunes.mostrarSelectorVehiculo = false;
+
             this.cdr.detectChanges();
           });
       });
   }
 
-
-    /**
+  /**
    * Función para obtener la lista de vehículos de un usuario.   *
    */
-    obtenerVehiculos() {
-      const id_usuario = this.userData.usuario.id;
-      this.vehiculosServicesService
-        .obtenerVehiculosUsuario(id_usuario)
-        .subscribe((resultado) => {
-          console.log('Vehículos: ', resultado.vehiculos);
-          this.vehiculos_usuario = resultado.vehiculos;
-        });
-    }
+  obtenerVehiculos() {
+    const id_usuario = this.userData.usuario.id;
+    this.vehiculosServicesService
+      .obtenerVehiculosUsuario(id_usuario)
+      .subscribe((resultado) => {
+        console.log('Vehículos: ', resultado.vehiculos);
+        this.vehiculos_usuario = resultado.vehiculos;
+      });
+  }
 
   /**
    * Poner los campos del vehículo en editables (selectores e input)
@@ -160,6 +158,29 @@ export class TablaVehiculosComponent implements OnInit {
     }
   }
 
+  /**
+   * Función para eliminar un vehículo del usuario
+   * @param vehiculo
+   */
+  eliminarVehiculo(vehiculo: any): any {
+    this.vehiculosServicesService
+      .eliminarVehiculo(vehiculo.id, vehiculo)
+      .subscribe((resultado) => {
+        this.vehiculos_usuario = this.vehiculos_usuario.filter(
+          (coche) => coche.id !== vehiculo.id
+        );
+        this.cdr.detectChanges();
+
+        this.userService
+          .obtenerUsuarioPorID(this.userData.usuario.id)
+          .subscribe((usuarioActualizado) => {
+            this.userData = usuarioActualizado;
+            console.log('Usuario actualizado:', this.userData);
+          });
+        console.log('Resultado: ', resultado);
+      });
+  }
+
   modalEliminarVehiculo(cocheAEliminar: any) {
     const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
     const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
@@ -169,7 +190,8 @@ export class TablaVehiculosComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((confirmar) => {
       if (confirmar) {
-        this.funcionesComunes.eliminarVehiculo(cocheAEliminar);
+        this.eliminarVehiculo(cocheAEliminar);
+        this.vehiculos_usuario;
       }
     });
   }
