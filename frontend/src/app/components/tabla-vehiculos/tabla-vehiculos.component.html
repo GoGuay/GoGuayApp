@@ -4,8 +4,7 @@
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
-  <div
-    *ngIf="userData?.usuario?.vehiculos?.length > 0; else noVehiculos"
+  <div   *ngIf="vehiculos_usuario && vehiculos_usuario.length > 0; else noVehiculos"
     class="tabla"
   >
     <table class="table table-hover">
@@ -19,7 +18,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let coche of funcionesComunes.vehiculos_usuario">
+        <tr *ngFor="let coche of vehiculos_usuario">
           <td>
             <ng-container *ngIf="coche.editandoVehiculo; else noEditMarca">
               <select
@@ -256,7 +255,7 @@
             [disabled]="funcionesComunes.matriculaNoValida"
             class="btn btn_bg"
             mat-raised-button
-            (click)="funcionesComunes.guardarVehiculo()"
+            (click)="guardarVehiculo()"
           >
             Guardar vehículo
           </button>

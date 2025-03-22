@@ -285,32 +285,6 @@ export class FuncionesComunes {
    * Función para guardar un coche en la
    * lista de vehículos del usuario.
    */
-  guardarVehiculo() {
-    this.loadUserData();
-    const nuevoCoche: Coches = {
-      marca: this.marcaSeleccionada,
-      modelo: this.modeloSeleccionado,
-      color: this.colorSeleccionado,
-      matricula: this.matricula,
-    };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
-
-    this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
-      console.log('Vehiculo guardado correctamente:', resultado);
-      this.vehiculos_usuario.push(nuevoCoche);
-      this.userService
-        .obtenerUsuarioPorID(this.userData.usuario.id)
-        .subscribe((usuarioActualizado) => {
-          this.userData = usuarioActualizado;
-          this.botonAnadirVehiculo();
-          console.log('Usuario actualizado:', this.userData);
-          this.marcaSeleccionada = '';
-          this.modeloSeleccionado = '';
-          this.colorSeleccionado = '';
-          this.matricula = '';
-        });
-    });
-  }
 
   /**
    * Función para verificar si el usuario tiene vehículos
@@ -430,6 +404,7 @@ export class FuncionesComunes {
           .obtenerUsuarioPorID(this.userData.usuario.id)
           .subscribe((usuarioActualizado) => {
             this.userData = usuarioActualizado;
+            localStorage.setItem('userData', JSON.stringify(this.userData));
             console.log('Usuario actualizado:', this.userData);
           });
         console.log('Resultado: ', resultado);

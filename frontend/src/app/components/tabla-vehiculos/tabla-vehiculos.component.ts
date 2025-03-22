@@ -9,6 +9,9 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from '../help-modal/help-modal.component';
 import { DialogConfig, DialogRef } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
+import { VehiculosServicesService } from '../../core/vehiculos-services/vehiculos-services.service';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -28,16 +31,88 @@ export class TablaVehiculosComponent implements OnInit {
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
   modificandoMarca: boolean = false;
+  vehiculos_usuario: any[] = [];
 
   constructor(
     public funcionesComunes: FuncionesComunes,
-    private cdRef: ChangeDetectorRef,
-    private dialog: MatDialog
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private vehiculosServicesService: VehiculosServicesService,
+    private userService: UserServicesService
   ) {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
-  ngOnInit() {}
+  loadUserData(): void {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+
+
+  ngOnInit() {
+    this.loadUserData();
+    this.obtenerVehiculos()
+  }
+
+
+
+
+  guardarVehiculo() {
+    this.loadUserData();
+    const nuevoCoche: Coches = {
+      marca: this.funcionesComunes.marcaSeleccionada,
+      modelo: this.funcionesComunes.modeloSeleccionado,
+      color: this.funcionesComunes.colorSeleccionado,
+      matricula: this.funcionesComunes.matricula,
+    };
+    nuevoCoche.usuario_id = this.userData.usuario.id;
+
+    this.vehiculosServicesService
+      .anadirVehiculo(nuevoCoche)
+      .subscribe((resultado: any) => {
+        console.log('Vehiculo guardado correctamente:', resultado);
+        if (
+          resultado.vehiculos_usuario &&
+          resultado.vehiculos_usuario.length > 0
+        ) {
+          this.vehiculos_usuario = [...resultado.vehiculos_usuario];
+        } else {
+          console.error(
+            'No se recibieron vehículos actualizados desde el backend.'
+          );
+        }
+
+        // this.vehiculos_usuario.push(nuevoCoche);
+        this.userService
+          .obtenerUsuarioPorID(this.userData.usuario.id)
+          .subscribe((usuarioActualizado) => {
+            localStorage.setItem('userData', JSON.stringify(this.userData));
+            this.userData = usuarioActualizado;
+            // this.botonAnadirVehiculo();
+            console.log('Usuario actualizado:', this.userData);
+            this.funcionesComunes.marcaSeleccionada = '';
+            this.funcionesComunes.modeloSeleccionado = '';
+            this.funcionesComunes.colorSeleccionado = '';
+            this.funcionesComunes.matricula = '';
+
+            this.cdr.detectChanges();
+          });
+      });
+  }
+
+
+    /**
+   * Función para obtener la lista de vehículos de un usuario.   *
+   */
+    obtenerVehiculos() {
+      const id_usuario = this.userData.usuario.id;
+      this.vehiculosServicesService
+        .obtenerVehiculosUsuario(id_usuario)
+        .subscribe((resultado) => {
+          console.log('Vehículos: ', resultado.vehiculos);
+          this.vehiculos_usuario = resultado.vehiculos;
+        });
+    }
 
   /**
    * Poner los campos del vehículo en editables (selectores e input)
@@ -79,6 +154,7 @@ export class TablaVehiculosComponent implements OnInit {
     console.log('Guardando cambios en el vehículo: ', vehiculo);
     vehiculo.editandoVehiculo = false;
     this.funcionesComunes.editarVehiculo(vehiculo);
+    this.cdr.detectChanges();
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }

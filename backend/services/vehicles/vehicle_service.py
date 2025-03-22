@@ -74,7 +74,7 @@ def obtenerVehiculos_usuario():
     vehiculos = Vehiculo.query.filter_by(usuario_id=usuario_id).all()
 
     if not vehiculos:
-        return jsonify({"mensaje": "El usuario no tiene vehiculos guardados"}), 404
+         return jsonify({"vehiculos": []}), 200 
     
     return jsonify({
         "vehiculos": [vehiculo.serialize() for vehiculo in vehiculos]
@@ -106,7 +106,7 @@ def editarVehiculo(vehiculo_id):
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
 
-
+#Función para eliminar un vehículo del usuario
 @vehicle_blueprint.route('/eliminarVehiculo/<int:id>', methods=['DELETE'])
 def eliminarVehiculo(id):
     vehiculo = Vehiculo.query.get(id)
