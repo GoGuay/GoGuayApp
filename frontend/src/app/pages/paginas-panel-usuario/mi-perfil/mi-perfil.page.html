@@ -291,7 +291,12 @@
       <!-- Botón para guardar los cambios -->
       <ion-row class="d-flex justify-content-center ms-5 mt-5 mb-3">
         <div>
-          <button type="button" class="btn btn_bg" mat-raised-button>
+          <button
+            type="button"
+            class="btn btn_bg"
+            mat-raised-button
+            (click)="editarDatos()"
+          >
             {{'BOTON.GUARDAR' | translate}}
           </button>
         </div>
