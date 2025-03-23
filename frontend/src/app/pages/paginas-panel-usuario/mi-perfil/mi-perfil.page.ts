@@ -11,6 +11,7 @@ import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comu
 import { MatIcon } from '@angular/material/icon';
 import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/tabla-vehiculos.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -32,43 +33,35 @@ export class MiPerfilPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
-  edad: number = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
   editandoVehiculo: boolean = false;
   datosActualizados: any = {};
-  nombreEditado: string = '';
-  apellidosEditados: string = '';
-  pronombreEditado: string = '';
-  generoEditado: string = '';
-  orientacionEditada: string = '';
-  fechaNacimientoEditada: string = '';
-  bioEditada: string = '';
-  preferenciasSeleccionadas: string[] = [];
-  usuario: Usuario = {} as Usuario;
+  edad: number = this.funcionesUsuario.calcularEdad(
+    this.funcionesUsuario.fechaNacimientoEditada
+  );
 
   constructor(
     public funcionesComunes: FuncionesComunes,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    public funcionesUsuario: FuncionesUsuario
   ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
     console.log('Datos usuario: ', this.userData);
-    this.obtenerUsuario();
 
-    this.nombreEditado = this.userData.usuario.nombre;
-    this.apellidosEditados = this.userData.usuario?.apellidos;
-    this.pronombreEditado = this.userData.usuario?.pronombre || '';
-    this.generoEditado = this.userData.usuario.genero || '';
-    this.orientacionEditada = this.userData.usuario.orientacion || '';
-    this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
-    this.bioEditada = this.userData.usuario.biografia || '';
-    this.preferenciasSeleccionadas = this.userData.usuario.preferencias || [];
-
-    if (this.userData.usuario.fecha_nacimiento) {
-      this.fechaNacimiento = this.userData.usuario.fecha_nacimiento;
-      this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
-    }
+    this.funcionesUsuario.nombreEditado = this.userData.usuario.nombre;
+    this.funcionesUsuario.apellidosEditados = this.userData.usuario?.apellidos;
+    this.funcionesUsuario.pronombreEditado =
+      this.userData.usuario?.pronombre || '';
+    this.funcionesUsuario.generoEditado = this.userData.usuario.genero || '';
+    this.funcionesUsuario.orientacionEditada =
+      this.userData.usuario.orientacion || '';
+    this.funcionesUsuario.fechaNacimientoEditada =
+      this.userData.usuario.fecha_nacimiento || '';
+    this.funcionesUsuario.bioEditada = this.userData.usuario.biografia || '';
+    this.funcionesUsuario.preferenciasSeleccionadas =
+      this.userData.usuario.preferencias || [];
 
     this.funcionesComunes.obtenerVehiculos();
 
@@ -79,72 +72,8 @@ export class MiPerfilPage implements OnInit {
   }
 
   actualizarEdad() {
-    this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
-  }
-
-  obtenerUsuario() {
-    this.userService
-      .obtenerUsuarioPorID(this.userData.usuario.id)
-      .subscribe((respuesta) => {
-        this.usuario = respuesta;
-      });
-  }
-
-  editarDatos() {
-    if (
-      !this.userData.usuario.nombre ||
-      !this.userData.usuario.apellidos ||
-      !this.userData.usuario.genero ||
-      !this.userData.usuario.orientacion ||
-      !this.userData.usuario.fecha_nacimiento
-    ) {
-      console.log('Falta algún dato obligatorio');
-      return;
-    }
-
-    const nuevoUsuario = {
-      nombre: this.nombreEditado,
-      apellidos: this.apellidosEditados,
-      pronombre: this.pronombreEditado,
-      genero: this.generoEditado,
-      orientacion: this.orientacionEditada,
-      fecha_nacimiento: this.fechaNacimientoEditada,
-      biografia: this.bioEditada,
-      preferencias: this.preferenciasSeleccionadas,
-    };
-    console.log('Objeto modificado: ', nuevoUsuario);
-
-    this.userService
-      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
-      .subscribe(
-        (response) => {
-          console.log('Datos actualizado con exito', response);
-          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          this.obtenerUsuario();
-        },
-        (error) => {
-          console.error('Error al actualizar los datos', error);
-        }
-      );
-  }
-
-  actualizarPreferencias(event: any) {
-    const valor = event.target.value;
-
-    if (!Array.isArray(this.preferenciasSeleccionadas)) {
-      this.preferenciasSeleccionadas = [];
-    }
-    if (event.target.checked) {
-      if (!this.preferenciasSeleccionadas.includes(valor)) {
-        this.preferenciasSeleccionadas.push(valor);
-      }
-    } else {
-      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
-        (pref) => pref !== valor
-      );
-    }
-
-    console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
+    this.edad = this.funcionesUsuario.calcularEdad(
+      this.funcionesUsuario.fechaNacimientoEditada
+    );
   }
 }

@@ -34,8 +34,6 @@ export class FuncionesComunes {
   validacionIdioma: boolean = true;
   mostrarSelectorVehiculo: boolean = false;
   vehiculos_usuario: any[] = [];
-  fechaNacimiento: string = '';
-  edad: number = this.calcularEdad(this.fechaNacimiento);
   VehiculoYaAnadido: boolean = false;
   matriculaNoValida: boolean = false;
 
@@ -253,26 +251,6 @@ export class FuncionesComunes {
     this.usuario = lastValueFrom(
       this.userService.obtenerUsuarioPorID(id_usuario)
     );
-  }
-
-  /**
-   * Función para calcular la edad de un usuario en función de su fecha de nacimiento
-   * @param fechaNacimiento
-   * @returns
-   */
-  calcularEdad(fechaNacimiento: string) {
-    if (!fechaNacimiento) {
-      return 0;
-    }
-    const fechaNac = new Date(fechaNacimiento);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
-    const mesDif = hoy.getMonth() - fechaNac.getMonth();
-
-    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
-      edad--;
-    }
-    return edad;
   }
 
   /******************************************
