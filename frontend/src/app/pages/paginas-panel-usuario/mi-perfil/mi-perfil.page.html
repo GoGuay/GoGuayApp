@@ -29,7 +29,7 @@
                   class="form-control"
                   id="nombre"
                   aria-describedby="nombre"
-                  value="{{userData.usuario.nombre}}"
+                  [(ngModel)]="nombreEditado"
                 />
               </div>
             </ion-col>
@@ -44,7 +44,7 @@
                   class="form-control"
                   id="apellidos"
                   aria-describedby="apellidos"
-                  value="{{userData.usuario.apellidos}}"
+                  [(ngModel)]="apellidosEditados"
                 />
               </div>
             </ion-col>
@@ -57,14 +57,19 @@
                 <select
                   class="form-select w-150"
                   aria-label="Selección de pronombre"
+                  [(ngModel)]="pronombreEditado"
                 >
                   <option selected disabled>Escoge una opcion</option>
-                  <option value="1">Él / He / Him</option>
-                  <option value="2">Ella / She / Her</option>
-                  <option value="3">Elle / They / Them</option>
-                  <option value="4">Otros</option>
-                  <option value="5">No uso ninguno concreto</option>
-                  <option value="6">Prefiero no responder</option>
+                  <option value="Él / He / Him">Él / He / Him</option>
+                  <option value="Ella / She / Her">Ella / She / Her</option>
+                  <option value="Elle / They / Them">Elle / They / Them</option>
+                  <option value="Otros">Otros</option>
+                  <option value="No uso ninguno concreto">
+                    No uso ninguno concreto
+                  </option>
+                  <option value="Prefiero no responder">
+                    Prefiero no responder
+                  </option>
                 </select>
               </div>
             </ion-col>
@@ -87,7 +92,7 @@
 
                 <select
                   class="form-select"
-                  [(ngModel)]="userData.usuario.genero"
+                  [(ngModel)]="generoEditado"
                   aria-label="Selección de género"
                 >
                   <option value="" selected disabled>
@@ -134,9 +139,9 @@
                   </span>
                 </label>
                 <select
+                  [(ngModel)]="orientacionEditada"
                   class="form-select"
                   aria-label="Selección de orientación sexual"
-                  [(ngModel)]="userData.usuario.orientacion"
                 >
                   >
                   <option selected>
@@ -181,7 +186,7 @@
                   type="date"
                   class="form-control"
                   id="fnacimiento"
-                  [(ngModel)]="fechaNacimiento"
+                  [(ngModel)]="fechaNacimientoEditada"
                   (ngModelChange)="actualizarEdad()"
                 />
               </div>
@@ -207,7 +212,7 @@
                   id="bio"
                   rows="5"
                   placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
-                  [(ngModel)]="userData.usuario.biografia"
+                  [(ngModel)]="bioEditada"
                 ></textarea>
               </div>
             </ion-col>
@@ -237,10 +242,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
+                          [value]="'Hablar'"
+                          (change)="actualizarPreferencias($event)"
+                          [checked]="preferenciasSeleccionadas.includes('Hablar')"
+                          id="hablar"
                         />
-                        <label class="form-check-label" for="flexCheckDefault">
+                        <label class="form-check-label" for="hablar">
                           {{'MI_PERFIL.HABLAR' | translate}}
                         </label>
                       </div>
@@ -248,10 +255,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          [value]="'Escuchar música'"
+                          (change)="actualizarPreferencias($event)"
+                          [checked]="preferenciasSeleccionadas.includes('Escuchar música')"
+                          id="escucharmusica"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="escucharmusica">
                           {{'MI_PERFIL.ESCUCHAR_MUSICA' | translate}}
                         </label>
                       </div>
@@ -259,10 +268,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          [value]="'Dormir'"
+                          (change)="actualizarPreferencias($event)"
+                          [checked]="preferenciasSeleccionadas.includes('Dormir')"
+                          id="Dormir"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="Dormir">
                           {{'MI_PERFIL.DORMIR' | translate}}
                         </label>
                       </div>
@@ -271,11 +282,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
-                          [checked]="userData.usuario.preferencias === 'Silencio'"
+                          [value]="'Ir en silencio'"
+                          (change)="actualizarPreferencias($event)"
+                          [checked]="preferenciasSeleccionadas.includes('Ir en silencio')"
+                          id="silencio"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="silencio">
                           {{'MI_PERFIL.SILENCIO' | translate}}
                         </label>
                       </div>
