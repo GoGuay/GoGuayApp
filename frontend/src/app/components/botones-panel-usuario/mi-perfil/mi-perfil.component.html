@@ -32,14 +32,28 @@
         <label for="nombre" class="form-label">{{
           "MI_PERFIL.NOMBRE" | translate
         }}</label>
-        <input type="text" class="form-control" id="nombre" />
+        <input
+          type="text"
+          class="form-control"
+          id="nombre"
+          aria-describedby="nombre"
+          [(ngModel)]="funcionesUsuario.nombreEditado"
+          name="nombre"
+        />
       </div>
 
       <div class="mb-3">
         <label for="apellidos" class="form-label">{{
           "MI_PERFIL.APELLIDOS" | translate
         }}</label>
-        <input type="text" class="form-control" id="apellidos" />
+        <input
+          type="text"
+          class="form-control"
+          id="apellidos"
+          aria-describedby="apellidos"
+          [(ngModel)]="funcionesUsuario.apellidosEditados"
+          name="apellidos"
+        />
       </div>
 
       <!-- Pronombre -->
@@ -51,6 +65,8 @@
           class="form-select"
           id="pronombre"
           aria-label="Selección de pronombre"
+          name="pronombre"
+          [(ngModel)]="funcionesUsuario.pronombreEditado"
         >
           <option selected disabled>
             {{ "SELEC_PRONOMBRE.SELECCIONA" | translate }}
@@ -78,7 +94,9 @@
         <select
           class="form-select"
           id="genero"
-          aria-label="Selección de pronombre"
+          name="genero"
+          [(ngModel)]="funcionesUsuario.generoEditado"
+          aria-label="Selección de genero"
         >
           <option selected disabled>
             {{ "SELEC_GENERO.SELECCIONA" | translate }}
@@ -122,9 +140,10 @@
           </span>
         </label>
         <select
+          [(ngModel)]="funcionesUsuario.orientacionEditada"
+          name="orientacion"
           class="form-select"
-          aria-label="Selección de orientación"
-          formControlName="orientacion"
+          aria-label="Selección de orientación sexual"
         >
           <option value="" disabled selected>
             {{ "ORIENTACION.SELECCIONA" | translate }}
@@ -146,14 +165,23 @@
         <label for="fnacimiento" class="form-label">{{
           "MI_PERFIL.FECHA_NACIMIENTO" | translate
         }}</label>
-        <input type="date" class="form-control" id="fnacimiento" />
+        <input
+          type="date"
+          class="form-control"
+          id="fnacimiento"
+          [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+          name="fnacimiento"
+          (ngModelChange)="actualizarEdad()"
+        />
       </div>
 
       <!-- Edad -->
       <div class="mb-3">
-        <label for="edad" class="form-label"
-          >{{ "MI_PERFIL.EDAD" | translate }}:
-        </label>
+        <label for="edad" class="form-label mb-3">{{
+          "MI_PERFIL.EDAD" | translate
+        }}</label>
+        <br />
+        <span> {{ edad }} </span>
       </div>
 
       <div class="mb-3">
@@ -161,114 +189,16 @@
           "MI_PERFIL.SOBRE_TI" | translate
         }}</label>
         <textarea
-          class="form-control"
+          class="form-control bio"
           id="bio"
           rows="5"
           placeholder="{{ 'MI_PERFIL.CUENTANOS' | translate }}"
+          [(ngModel)]="funcionesUsuario.bioEditada"
+          name="bio"
         ></textarea>
       </div>
 
-      <!-- Mis vehículos -->
-      <ion-row class="d-flex justify-content-center">
-        <h6>{{ "MI_PERFIL.MIS_VEHICULOS" | translate }}</h6>
-      </ion-row>
-      <div class="mb-4">
-        <ul>
-          <li>Ford Focus Rojo</li>
-          <li>Opel Astra Blanco</li>
-        </ul>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="4">
-              <select
-                class="form-select"
-                [(ngModel)]="funcionescomunes.marcaSeleccionada"
-                (change)="filtrarModelos()"
-                [ngModelOptions]="{ standalone: true }"
-                aria-label="Selección de marca"
-              >
-                <option value="" disabled selected>
-                  {{ "VEHICULOS.MARCA" | translate }}
-                </option>
-                <option
-                  *ngFor="let coche of funcionescomunes.listadoCoches"
-                  [value]="coche.marca"
-                >
-                  {{ coche.marca }}
-                </option>
-              </select>
-            </ion-col>
-            <ion-col size="4">
-              <select
-                class="form-select"
-                [(ngModel)]="funcionescomunes.modeloSeleccionado"
-                [disabled]="!funcionescomunes.marcaSeleccionada"
-                [ngModelOptions]="{ standalone: true }"
-                aria-label="Selección de modelo"
-              >
-                <option value="" disabled selected>
-                  {{ "VEHICULOS.MODELO" | translate }}
-                </option>
-                <option
-                  *ngFor="let modelo of funcionescomunes.modelosFiltrados"
-                  [value]="modelo"
-                >
-                  {{ modelo }}
-                </option>
-              </select>
-            </ion-col>
-            <ion-col size="4">
-              <div *ngIf="funcionescomunes.validacionIdioma">
-                <select
-                  class="form-select"
-                  aria-label="Selección de color"
-                  [(ngModel)]="funcionescomunes.colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!funcionescomunes.modeloSeleccionado"
-                >
-                  <option value="" disabled selected>
-                    {{ "VEHICULOS.COLOR" | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of funcionescomunes.listadoColores"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
-
-              <div *ngIf="!funcionescomunes.validacionIdioma">
-                <select
-                  class="form-select"
-                  aria-label="Selección de color"
-                  [(ngModel)]="funcionescomunes.colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!funcionescomunes.modeloSeleccionado"
-                >
-                  <option value="" disabled selected>
-                    {{ "VEHICULOS.COLOR" | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of funcionescomunes.listColours"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <div class="container d-flex justify-content-center mt-2">
-              <button type="button" class="btn btn_bg" mat-raised-button>
-                {{ "BOTON.ANADIR_VEHICULO" | translate }}
-              </button>
-            </div>
-          </ion-row>
-        </ion-grid>
-      </div>
-
+      <app-tabla-vehiculos />
       <div class="mb-4">
         <ion-row class="d-flex justify-content-center">
           <h6>{{ "MI_PERFIL.PREF_VIAJE" | translate }}</h6>
