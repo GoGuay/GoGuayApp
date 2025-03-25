@@ -33,6 +33,7 @@
                     id="nombre"
                     aria-describedby="nombre"
                     [(ngModel)]="funcionesUsuario.nombreEditado"
+                    name="nombre"
                   />
                 </div>
               </ion-col>
@@ -48,6 +49,7 @@
                     id="apellidos"
                     aria-describedby="apellidos"
                     [(ngModel)]="funcionesUsuario.apellidosEditados"
+                    name="apellidos"
                   />
                 </div>
               </ion-col>
@@ -61,6 +63,7 @@
                     class="form-select w-150"
                     aria-label="Selección de pronombre"
                     [(ngModel)]="funcionesUsuario.pronombreEditado"
+                    name="pronombre"
                   >
                     <option selected disabled>Escoge una opcion</option>
                     <option value="Él / He / Him">Él / He / Him</option>
@@ -98,6 +101,7 @@
                   <select
                     class="form-select"
                     [(ngModel)]="funcionesUsuario.generoEditado"
+                    name="genero"
                     aria-label="Selección de género"
                   >
                     <option value="" selected disabled>
@@ -145,6 +149,7 @@
                   </label>
                   <select
                     [(ngModel)]="funcionesUsuario.orientacionEditada"
+                    name="orientacion"
                     class="form-select"
                     aria-label="Selección de orientación sexual"
                   >
@@ -194,6 +199,7 @@
                     class="form-control"
                     id="fnacimiento"
                     [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+                    name="fnacimiento"
                     (ngModelChange)="actualizarEdad()"
                   />
                 </div>
@@ -220,6 +226,7 @@
                     rows="5"
                     placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
                     [(ngModel)]="funcionesUsuario.bioEditada"
+                    name="bio"
                   ></textarea>
                 </div>
               </ion-col>
