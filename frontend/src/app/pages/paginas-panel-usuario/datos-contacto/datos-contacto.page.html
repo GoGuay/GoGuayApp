@@ -20,6 +20,7 @@
           <ion-row>
             <h6>{{'DATOS_CONTACTO.MODIF_CORREO_TFNO' | translate}}</h6>
           </ion-row>
+
           <ion-row>
             <div class="mb-3">
               <div>
@@ -33,7 +34,9 @@
                 type="email"
                 class="form-control"
                 id="email"
-                aria-describedby="emailHelp"
+                aria-describedby="email"
+                [(ngModel)]="funcionesUsuario.emailEditado"
+                name="email"
               />
             </div>
           </ion-row>
@@ -48,7 +51,9 @@
                 type="text"
                 class="form-control"
                 id="telefono"
-                aria-describedby="emailHelp"
+                aria-describedby="telefono"
+                [(ngModel)]="funcionesUsuario.telefonoEditado"
+                name="telefono"
               />
             </div>
           </ion-row>
@@ -86,8 +91,13 @@
         </ion-col>
       </ion-row>
       <div class="d-flex justify-content-center me-5 mt-5">
-        <button type="button" class="btn btn_bg">
-          {{ "BOTON.GUARDAR" | translate }}
+        <button
+          type="button"
+          class="btn btn_bg"
+          mat-raised-button
+          (click)="funcionesUsuario.editarCorreoTelefono()"
+        >
+          {{'BOTON.GUARDAR' | translate}}
         </button>
       </div>
     </div>

@@ -102,8 +102,6 @@ export class PanelUsuarioPage implements OnInit {
       data: { title: titulo, message: mensaje },
       disableClose: true,
       panelClass: 'custom-modal-width',
-      width: '90vw', // Ancho del 90% de la pantalla
-      maxWidth: '100vw',
     });
     this.cdr.detectChanges(); // Fuerza la detección de cambios
   }

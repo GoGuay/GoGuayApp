@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 .modal-infovisible {
   max-width: 90vw !important; /* Que el modal use el 90% del ancho de la pantalla */
   max-height: 90vh; /* Que el modal no supere el 90% del alto de la pantalla */
@@ -35,6 +37,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
+}
+
+:root {
+  @include mat.dialog-overrides((
+    container-max-width: 1500px
+ ));
 }
 
 @media (max-width: 576px) {

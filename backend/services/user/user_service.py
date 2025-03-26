@@ -122,56 +122,6 @@ def obtener_usuario_por_id(id):
     return jsonify(usuario.serialize()), 200
 
 
-# # # # # # # # # # # # # # # # # # # #
-#   ACTUALIZAR DATOS DEL USUARIO
-# # # # # # # # # # # # # # # # # # # #
-# @user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
-# def actualizar_usuario(user_id):
-#     usuario = Usuario.query.get_or_404(user_id)
-#     data = request.json
-#     print('Data: ', data)
-    
-#     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion',  'biografia', 'fecha_nacimiento', 'preferencias']:
-#         if key in data:
-#             if key == 'nombre' and data[key]:
-#                 setattr(usuario, key, data['nombre'])
-#             else:
-#                 setattr(usuario, key, data['nombre'])
-
-#             if key == 'apellidos' and data[key]:
-#                 setattr(usuario, key, data['apellidos'])
-#             else:
-#                 setattr(usuario, key, data['apellidos'])
-
-#             if key == 'pronombre' and data[key]:
-#                 setattr(usuario, key, data['pronombre'])
-#             else:
-#                 setattr(usuario, key, data['pronombre'])
-
-#             if key == 'genero' and data[key]:
-#                 setattr(usuario, key, data['genero'])
-#             else:
-#                 setattr(usuario, key, data['genero'])
-            
-#             if key == 'orientacion' and data[key]:
-#                 setattr(usuario, key, data['orientacion'])
-#             else:
-#                 setattr(usuario, key, data['orientacion'])
-
-#             if key == 'fecha_nacimiento' and data[key]:
-#                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))
-#             else:
-#                 setattr(usuario, key, data[key])
-            
-#             if key == 'biografia' and data[key]:
-#                 setattr(usuario, key, data['biografia'])
-#             else:
-#                 setattr(usuario, key, data['biografia'])
-            
-
-    
-#     db.session.commit()
-#     return jsonify(usuario.serialize()), 200
 
 @user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
 def actualizar_usuario(user_id):

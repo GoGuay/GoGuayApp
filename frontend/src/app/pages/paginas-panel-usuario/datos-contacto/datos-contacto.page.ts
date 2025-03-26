@@ -12,6 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { MatDivider } from '@angular/material/divider';
+import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuario.service';
 
 @Component({
   selector: 'app-datos-contacto',
@@ -32,7 +33,10 @@ import { MatDivider } from '@angular/material/divider';
 export class DatosContactoPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    public funcionesUsuario: FuncionesUsuario
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');

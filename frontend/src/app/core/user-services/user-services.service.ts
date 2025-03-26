@@ -125,8 +125,7 @@ export class UserServicesService {
         })
       );
   }
-
-  //TODO Pendiente revisar función para guardar los cambios
+  // Función para editar los cambios en la info personal del usuario
   editarDatosUsuario(usuarioId: number, userData: any): Observable<any> {
     const datosAActualizar = {};
     return this.http.put(
