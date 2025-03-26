@@ -69,8 +69,10 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
-                id="flexCheckDefault"
+                name="comunComerciales"
+                id="comunComerciales"
+                (change)="funcionesUsuario.preferenciasComunicacion()"
+                [(ngModel)]="funcionesUsuario.comunComerciales"
               />
               <label class="form-check-label" for="flexCheckDefault">
                 {{ "DATOS_CONTACTO.CHECK_POR_EMAIL" | translate }}
@@ -80,8 +82,10 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
-                id="flexCheckChecked"
+                name="comunTerceros"
+                id="comunTerceros"
+                (change)="funcionesUsuario.preferenciasComunicacion()"
+                [(ngModel)]="funcionesUsuario.comunTerceros"
               />
               <label class="form-check-label" for="flexCheckChecked">
                 {{ "DATOS_CONTACTO.CHECK_TERCEROS" | translate }}

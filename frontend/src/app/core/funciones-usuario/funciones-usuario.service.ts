@@ -19,6 +19,8 @@ export class FuncionesUsuario {
   edad: number = this.calcularEdad(this.fechaNacimientoEditada);
   bioEditada: string = '';
   preferenciasSeleccionadas: string[] = [];
+  comunComerciales: boolean = false;
+  comunTerceros: boolean = false;
   emailEditado: string = '';
   telefonoEditado: string = '';
   usuario: Usuario = {} as Usuario;
@@ -33,6 +35,8 @@ export class FuncionesUsuario {
 
     this.emailEditado = this.userData.usuario.email || '';
     this.telefonoEditado = this.userData.usuario.telefono || '';
+    this.comunComerciales = this.userData.usuario.comunic_comerciales || false;
+    this.comunTerceros = this.userData.usuario.comunic_terceros || false;
   }
 
   loadUserData(): void {
@@ -107,6 +111,48 @@ export class FuncionesUsuario {
       preferencias: this.userData.usuario.preferencias,
       email: this.emailEditado,
       telefono: this.telefonoEditado,
+    };
+    console.log('Objeto modificado: ', nuevoUsuario);
+
+    this.userService
+      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
+      .subscribe(
+        (response) => {
+          console.log('Datos actualizado con exito', response);
+          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+          this.obtenerUsuario();
+        },
+        (error) => {
+          console.error('Error al actualizar los datos', error);
+        }
+      );
+  }
+
+  preferenciasComunicacion() {
+    if (
+      !this.userData.usuario.nombre ||
+      !this.userData.usuario.apellidos ||
+      !this.userData.usuario.genero ||
+      !this.userData.usuario.orientacion ||
+      !this.userData.usuario.fecha_nacimiento
+    ) {
+      console.log('Falta algún dato obligatorio');
+      return;
+    }
+    const nuevoUsuario = {
+      nombre: this.userData.usuario.nombre,
+      apellidos: this.userData.usuario.apellidos,
+      pronombre: this.pronombreEditado,
+      genero: this.userData.usuario.genero,
+      orientacion: this.userData.usuario.orientacion,
+      fecha_nacimiento: this.userData.usuario.fecha_nacimiento,
+      biografia: this.userData.usuario.biografia,
+      preferencias: this.userData.usuario.preferencias,
+      email: this.emailEditado || this.userData.usuario.email,
+      telefono: this.telefonoEditado || this.userData.usuario.telefono,
+      comunic_comerciales: this.comunComerciales,
+      comunic_terceros: this.comunTerceros,
     };
     console.log('Objeto modificado: ', nuevoUsuario);
 
