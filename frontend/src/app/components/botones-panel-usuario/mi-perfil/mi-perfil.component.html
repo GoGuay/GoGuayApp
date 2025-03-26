@@ -68,21 +68,15 @@
           name="pronombre"
           [(ngModel)]="funcionesUsuario.pronombreEditado"
         >
-          <option selected disabled>
-            {{ "SELEC_PRONOMBRE.SELECCIONA" | translate }}
+          <option selected disabled>Escoge una opcion</option>
+          <option value="Él / He / Him">Él / He / Him</option>
+          <option value="Ella / She / Her">Ella / She / Her</option>
+          <option value="Elle / They / Them">Elle / They / Them</option>
+          <option value="Otros">Otros</option>
+          <option value="No uso ninguno concreto">
+            No uso ninguno concreto
           </option>
-          <option value="1">Él / He / Him</option>
-          <option value="2">Ella / She / Her</option>
-          <option value="3">Elle / They / Them</option>
-          <option value="4">
-            {{ "SELEC_PRONOMBRE.NINGUNO" | translate }}
-          </option>
-          <option value="5">
-            {{ "SELEC_PRONOMBRE.OTROS" | translate }}
-          </option>
-          <option value="6">
-            {{ "SELEC_PRONOMBRE.NO_RESPONDE" | translate }}
-          </option>
+          <option value="Prefiero no responder">Prefiero no responder</option>
         </select>
       </div>
 
@@ -98,7 +92,7 @@
           [(ngModel)]="funcionesUsuario.generoEditado"
           aria-label="Selección de genero"
         >
-          <option selected disabled>
+          <option value="" selected disabled>
             {{ "SELEC_GENERO.SELECCIONA" | translate }}
           </option>
           <option value="HOMBRE_CIS">
@@ -119,7 +113,9 @@
           <option value="NO_FLUIDO">
             {{ "SELEC_GENERO.NO_FLUIDO" | translate }}
           </option>
-          <option value="OTRO">{{ "SELEC_GENERO.OTRO" | translate }}</option>
+          <option value="OTRO">
+            {{ "SELEC_GENERO.OTRO" | translate }}
+          </option>
           <option value="NO_RESPONDE">
             {{ "SELEC_GENERO.NO_RESPONDE" | translate }}
           </option>
@@ -145,18 +141,36 @@
           class="form-select"
           aria-label="Selección de orientación sexual"
         >
-          <option value="" disabled selected>
+          <option selected>
             {{ "ORIENTACION.SELECCIONA" | translate }}
           </option>
-          <option value="1">{{ "ORIENTACION.GAY" | translate }}</option>
-          <option value="2">{{ "ORIENTACION.LESBIANA" | translate }}</option>
-          <option value="3">{{ "ORIENTACION.BISEXUAL" | translate }}</option>
-          <option value="4">{{ "ORIENTACION.PANSEXUAL" | translate }}</option>
-          <option value="5">{{ "ORIENTACION.ASEXUAL" | translate }}</option>
-          <option value="6">{{ "ORIENTACION.DEMISEXUAL" | translate }}</option>
-          <option value="7">{{ "ORIENTACION.QUEER" | translate }}</option>
-          <option value="7">{{ "ORIENTACION.OTRO" | translate }}</option>
-          <option value="8">{{ "ORIENTACION.NO_RESPONDE" | translate }}</option>
+          <option value="GAY">
+            {{ "ORIENTACION.GAY" | translate }}
+          </option>
+          <option value="LESBIANA">
+            {{ "ORIENTACION.LESBIANA" | translate }}
+          </option>
+          <option value="BISEXUAL">
+            {{ "ORIENTACION.BISEXUAL" | translate }}
+          </option>
+          <option value="PANSEXUAL">
+            {{ "ORIENTACION.PANSEXUAL" | translate }}
+          </option>
+          <option value="ASEXUAL">
+            {{ "ORIENTACION.ASEXUAL" | translate }}
+          </option>
+          <option value="DEMISEXUAL">
+            {{ "ORIENTACION.DEMISEXUAL" | translate }}
+          </option>
+          <option value="QUEER">
+            {{ "ORIENTACION.QUEER" | translate }}
+          </option>
+          <option value="OTRO">
+            {{ "ORIENTACION.OTRO" | translate }}
+          </option>
+          <option value="NO_RESPONDE">
+            {{ "ORIENTACION.NO_RESPONDE" | translate }}
+          </option>
         </select>
       </div>
 
