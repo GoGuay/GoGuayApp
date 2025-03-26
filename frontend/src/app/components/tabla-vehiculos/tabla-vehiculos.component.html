@@ -1,10 +1,11 @@
-<div class="mb-5">
+<div class="mb-5 container">
   <h4 class="text-center mb-4 mt-0">
     {{ "MI_PERFIL.MIS_VEHICULOS" | translate }}
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
-  <div   *ngIf="vehiculos_usuario && vehiculos_usuario.length > 0; else noVehiculos"
+  <div
+    *ngIf="vehiculos_usuario && vehiculos_usuario.length > 0; else noVehiculos"
     class="tabla"
   >
     <table class="table table-hover">

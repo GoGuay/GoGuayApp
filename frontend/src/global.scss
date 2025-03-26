@@ -184,7 +184,7 @@ html.cdk-global-scrollblock {
 
 /* BARRA DE SCROLL */
 ::-webkit-scrollbar {
-  width: 12px; 
+  width: 12px;
   height: 12px;
 }
 
@@ -200,10 +200,10 @@ html.cdk-global-scrollblock {
     180deg,
     #ffb3b3,
     #ffcc99,
-    #b3e6b3, 
+    #b3e6b3,
     #99ccff,
-    #d1b3ff, 
-    #ffb3d1 
+    #d1b3ff,
+    #ffb3d1
   );
   border-radius: 10px;
   border: 2px solid #f5f5f5;
@@ -213,12 +213,12 @@ html.cdk-global-scrollblock {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(
     180deg,
-    #ff9999, 
-    #ffb366, 
-    #99d699, 
-    #66b2ff, 
-    #c299ff, 
-    #ff99c2 
+    #ff9999,
+    #ffb366,
+    #99d699,
+    #66b2ff,
+    #c299ff,
+    #ff99c2
   );
 }
 
@@ -227,8 +227,8 @@ html.cdk-global-scrollblock {
 
 
 
-/* 
- *    BARRA DE SCROLL GENERAL PERSONALIZADA 
+/*
+ *    BARRA DE SCROLL GENERAL PERSONALIZADA
 */
 ion-content {
   --overflow: auto !important; /* Asegura que se muestre el scroll */
@@ -238,7 +238,7 @@ ion-content {
 /* Para navegadores basados en WebKit */
 ion-content::-webkit-scrollbar,
 ::part(scroll)::-webkit-scrollbar {
-  width: 12px; 
+  width: 12px;
   height: 12px;
 }
 
@@ -273,29 +273,32 @@ ion-content::-webkit-scrollbar-thumb:hover,
     #66b3ff,
     #b366ff,
     #ff66b3
-  ); 
+  );
 }
 
 
 /* AJUSTES PARA EL TOOLTIP */
 .custom-tooltip {
-  background: linear-gradient(45deg, 
+  background: linear-gradient(45deg,
     #FFB3BA,
     #FFDFBA,
     #FFFFBA,
     #BAFFC9,
     #BAE1FF,
-    #E0BAFF 
+    #E0BAFF
   ) !important;
-  color: #333 !important; 
+  color: #333 !important;
   font-size: 14px !important;
   padding: 8px 12px !important;
   border-radius: 6px !important;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.2); 
+  border: 1px solid rgba(0, 0, 0, 0.2);
   font-weight: bold;
 }
 
 .custom-tooltip::before {
   border-top-color: #FFB3BA !important;
 }
+
+
+

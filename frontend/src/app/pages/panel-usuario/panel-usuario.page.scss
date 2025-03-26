@@ -52,6 +52,14 @@
   clip-path: polygon(0 0, 100% 0, 100% 12%, 98% 50%, 100% 90%, 100% 100%, 0 100%);
 }
 
+.custom-modal-width .mat-dialog-container {
+  width: 90vw !important; /* Ancho del 90% de la pantalla */
+  max-width: 90vw !important; /* Evitar restricciones */
+  height: auto;
+  max-height: 90vh; /* Que el modal no supere el 90% del alto de la pantalla */
+  overflow: auto; /* Habilita el scroll si es necesario */
+}
+
 @media (max-width: 576px) {
   .boton-foto {
     width: 50px;
