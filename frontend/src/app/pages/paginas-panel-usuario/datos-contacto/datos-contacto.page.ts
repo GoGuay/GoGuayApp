@@ -33,6 +33,7 @@ import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuar
 export class DatosContactoPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  botonHabilitado: boolean = false;
   constructor(
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario
@@ -54,5 +55,27 @@ export class DatosContactoPage implements OnInit {
   changeLanguage(lang: string) {
     this.translate.use(lang);
     localStorage.setItem('language', lang);
+  }
+
+  // Función que se llama cuando hay un cambio en los inputs o checkboxes
+  onInputChange() {
+    this.checkForChanges();
+  }
+
+  // Función que verifica si los valores han cambiado
+  checkForChanges() {
+    const emailChanged =
+      this.funcionesUsuario.emailEditado !== this.userData.usuario.email;
+    const telefonoChanged =
+      this.funcionesUsuario.telefonoEditado !== this.userData.usuario.telefono;
+
+    // Verifica si los checkboxes han cambiado
+    const checkboxesChanged =
+      this.funcionesUsuario.comunComerciales !==
+        !!this.userData.usuario.comunic_comerciales ||
+      this.funcionesUsuario.comunTerceros !==
+        !!this.userData.usuario.comunic_terceros;
+
+    this.botonHabilitado = emailChanged || telefonoChanged || checkboxesChanged;
   }
 }
