@@ -130,7 +130,7 @@ def actualizar_usuario(user_id):
     print('Data recibida: ', data)
 
     # Iterar sobre los campos posibles para actualizar
-    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias']:
+    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros']:
         if key in data and data[key] is not None:  # Asegúrate de que el campo esté presente y no sea None
             if key == 'fecha_nacimiento' and data[key]:
                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  # Para 'fecha_nacimiento', conviértelo a datetime
