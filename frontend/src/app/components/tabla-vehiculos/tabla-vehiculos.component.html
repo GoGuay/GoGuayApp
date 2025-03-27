@@ -123,6 +123,7 @@
     </div>
   </div>
 
+  <!--Mensaje si no hay ningún vehículo añadido-->
   <ng-template #noVehiculos>
     <div class="mt-3 d-flex justify-content-center">
       <span>No tienes vehículos añadidos</span>
@@ -135,10 +136,12 @@
       <mat-accordion multi>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
+            <!-- Cabeza del acordeon: marca y modelo  -->
             <mat-panel-title>
               {{ coche.marca }} {{ coche.modelo }}
             </mat-panel-title>
           </mat-expansion-panel-header>
+          <!-- Contenido: marca y modelo -->
           <ion-row class="d-flex justify-content-center mb-2">
             <div>
               <ng-container *ngIf="coche.editandoVehiculo; else noEditMarca">
@@ -170,6 +173,7 @@
               <ng-template #noEditModelo>{{ coche.modelo }}</ng-template>
             </div>
           </ion-row>
+          <!-- Contenido: color y matrícula -->
           <ion-row class="mb-2">
             <ion-col class="d-flex justify-content-center">
               <ng-container *ngIf="coche.editandoVehiculo; else noEditColor">
@@ -202,6 +206,7 @@
               <ng-template #noEditMatricula>{{ coche.matricula }}</ng-template>
             </ion-col>
           </ion-row>
+          <!-- Botones: editar y eliminar vehículo -->
           <div class="d-flex justify-content-center">
             <button
               class="botones_tabla btn_bg me-3"
