@@ -19,11 +19,18 @@ ion-button {
   color: #000;
 }
 
+.idiomas{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  mix-blend-mode: multiply; // elimina el fondo blanco del gif
+}
+
 .caja-icono {
   height: 50px !important;
   width: 50px !important;
   border-radius: 50%;
-  border: 1px solid black;
+  mix-blend-mode: multiply;
 }
 
 .caja_imagen_perfil {
