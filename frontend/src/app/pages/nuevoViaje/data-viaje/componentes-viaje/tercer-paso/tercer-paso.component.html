@@ -1,4 +1,5 @@
 <div id="tercer_paso">
+
   <div class="container">
     <h1>SELECCIONA UNA RUTA</h1>
   </div>
@@ -31,8 +32,7 @@
               </label>
             </div>
             <div class="form-check" *ngIf="rutaConParadasSeleccionada">
-              <button type="button" class="trashBtn" (click)="eliminarRutaSeleccionada()"><mat-icon
-                  class="trahsIcon">delete</mat-icon></button>
+              <button type="button" class="trashBtn" (click)="eliminarRutaSeleccionada()"><mat-icon class="trahsIcon">delete</mat-icon></button>
             </div>
           </div>
           <div *ngIf="routes.length > 0">
@@ -41,49 +41,57 @@
               <mat-spinner></mat-spinner>
               <p style="color: #B3B5E6" class="mt-2"> Cargando posibles paradas... </p>
             </div>
-            <div class="container" *ngIf="sugerenciasParadas.length > 0">
+             <div class="container" *ngIf="sugerenciasParadas.length > 0">
               <span>Sugerencias de paradas</span>
               <ul class="list-group sugerencia_paradas">
-                <li *ngFor="let parada of sugerenciasParadas"
+                <li 
+                  *ngFor="let parada of sugerenciasParadas" 
                   class="list-group-item d-flex justify-content-between align-items-center"
                   (click)="seleccionarParada(parada)">
                   {{ parada.nombre }} - {{ parada.distancia }}
-                  <span *ngIf="paradasSeleccionadas.has(parada.nombre)"><mat-icon
-                      class="checkRutaSeleccionada">check</mat-icon></span>
+                  <span *ngIf="paradasSeleccionadas.has(parada.nombre)"><mat-icon class="checkRutaSeleccionada">check</mat-icon></span>
                 </li>
               </ul>
-            </div>
+              
+             </div>
 
             <div class="route-list-container">
               <div *ngFor="let route of routes; let i = index" (click)="selectRoute(i)" class="route-option"
-                [class.selected]="isRouteSelected(i)">
+                [class.selected]="selectedRoute?.routes?.[0] === route">
                 <div class="d-flex justify-content-between align-items-center">
                   <h3>
-                    {{ origen }} <mat-icon>arrow_right_alt</mat-icon> {{ destino }}
+                    {{ origen }} <mat-icon>arrow_right_alt</mat-icon> {{
+                    destino }}
                   </h3>
-                  <label class="toll-label">{{ route.tolls }}</label>
+                  <label class="toll-label" *ngIf="marcaPeajes">Incluye peajes</label>
+                  <label class="toll-label" *ngIf="!marcaPeajes">Sin peajes</label>
                 </div>
-                <p>Distancia: {{ route.distance }}</p>
-                <p>Duración: {{ route.duration }}</p>
+                <p>Distancia: {{ route.legs[0].distance?.text }}</p>
+                <p>Duración: {{ route.legs[0].duration?.text }}</p>
               </div>
             </div>
-
           </div>
           <div *ngIf="routes.length === 0">
             <!-- Spinner "Cargando rutas" -->
             <div *ngIf="isLoadingRoutes" class="tercer_paso_container">
-              <div class="spinner-overlay">
-                <app-spinner></app-spinner>
-                <p class="mt-2 mb-4">Cargando rutas...</p>
-              </div>
+              <ngx-spinner bdColor="rgba(0,0,0,0.8)" size="small" color="#B3B5E6" type="square-jelly-box"
+                [fullScreen]="false">
+                <div class="spinner_box">
+                  <mat-spinner></mat-spinner>
+                  <p style="color: #B3B5E6" class="mt-2"> Cargando rutas... </p>
+                </div>
+              </ngx-spinner>
             </div>
 
             <!-- Spinner "Actualizando ruta" -->
             <div *ngIf="isUpdatingRoute" class="tercer_paso_container">
-              <div class="spinner-overlay">
-                <app-spinner></app-spinner>
-                <p style="color: #B7E0B4" class="mt-2">Actualizando rutas...</p>
-              </div>
+              <ngx-spinner bdColor="rgba(0,0,0,0.8)" size="small" color="#B3B5E6" type="square-jelly-box"
+                [fullScreen]="false">
+                <div class="spinner_box">
+                  <mat-spinner></mat-spinner>
+                  <p style="color: #B3B5E6" class="mt-2"> Actualizando ruta... </p>
+                </div>
+              </ngx-spinner>
             </div>
             <div *ngIf="!isLoadingRoutes && routes.length === 0">
               <p>
@@ -97,7 +105,9 @@
         <!-- MAPA -->
         <ion-col>
           <div class="contenedor_mapa">
-            <div id="map" style="height: 500px; width: 100%;"></div>
+            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="500px" width="100%">
+              <map-directions-renderer *ngIf="selectedRoute" [directions]="selectedRoute"></map-directions-renderer>
+            </google-map>
           </div>
         </ion-col>
       </ion-row>

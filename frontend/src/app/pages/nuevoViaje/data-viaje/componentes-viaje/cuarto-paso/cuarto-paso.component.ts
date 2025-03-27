@@ -57,7 +57,7 @@ export class CuartoPasoComponent implements OnInit {
     }
 
     const viajeData = this.travelService.getViajeData();
-    if (!viajeData || !viajeData.origen || !viajeData.destino || !viajeData.hora_salida || !viajeData.ruta_seleccionada?.duracion) {
+    if (!viajeData || !viajeData.origen || !viajeData.destino || !viajeData.hora_salida || !viajeData.ruta_seleccionada?.legs[0]?.routes[0]?.duration?.text) {
       this.messageService.add({
         severity: 'error',
         summary: 'Datos incompletos',

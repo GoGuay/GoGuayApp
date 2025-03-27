@@ -4,65 +4,29 @@
   position: relative;
   width: 100%;
   overflow: hidden;
+  height: 40px;
 }
 
 .moving-wrapper {
   display: flex;
   align-items: center;
-  animation: moving 4s ease-in-out infinite;
-}
-
-.moving-svg {
-  width: 30px;
-}
-
-.react-1 {
-  animation: colorCycle 2s infinite;
-}
-
-.moving-span {
-  display: inline-block;
-  font-size: 24px;
-  margin-left: 5px;
-  transform: scaleX(-1);
+  animation: moving 6s linear infinite;
+  white-space: nowrap;
+  position: absolute;
+  width: 100%;
 }
 
 @keyframes moving {
   0% {
-    transform: translateX(0%);
+    transform: translateX(-100%);
   }
-  50% {
+  100% {
     transform: translateX(100%);
   }
-  100% {
-    transform: translateX(0%);
-  }
 }
 
-@keyframes colorCycle {
-  0% {
-    fill: #ffb3ba;
-  }
-  16% {
-    fill: #ffdfba;
-  }
-  33% {
-    fill: #ffffba;
-  }
-  50% {
-    fill: #baffc9;
-  }
-  66% {
-    fill: #bae1ff;
-  }
-  83% {
-    fill: #e0baff;
-  }
-  100% {
-    fill: #ffb3ba;
-  }
-}
-
-svg {
-  border-radius: 15px;
+.carMove {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
 }
