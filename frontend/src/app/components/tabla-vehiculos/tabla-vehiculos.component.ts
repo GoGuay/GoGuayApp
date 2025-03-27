@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -12,6 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../../core/vehiculos-services/vehiculos-services.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -25,6 +27,9 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
     TranslateModule,
     MatIcon,
     HelpModalComponent,
+    MatAccordion,
+    MatExpansionModule,
+    MatFormFieldModule,
   ],
 })
 export class TablaVehiculosComponent implements OnInit {
@@ -32,13 +37,16 @@ export class TablaVehiculosComponent implements OnInit {
   userLoggedIn: boolean = false;
   modificandoMarca: boolean = false;
   vehiculos_usuario: any[] = [];
+  isMobileWeb: boolean = false;
+  isDesktop: boolean = true;
 
   constructor(
     public funcionesComunes: FuncionesComunes,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private vehiculosServicesService: VehiculosServicesService,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private platform: Platform
   ) {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
@@ -50,6 +58,8 @@ export class TablaVehiculosComponent implements OnInit {
   ngOnInit() {
     this.loadUserData();
     this.obtenerVehiculos();
+    this.isMobileWeb = this.platform.is('mobileweb');
+    this.isDesktop = this.platform.is('desktop');
   }
 
   /**
