@@ -219,13 +219,13 @@
 
       <ion-col size="12" size-md="5" class="mx-md-5">
         <!-- Tabla vehiculos -->
-        <ion-row class="d-flex justify-content-center" *ngIf="isDesktop">
+        <ion-row *ngIf="isDesktop">
           <div class="contenedor_tabla">
             <app-tabla-vehiculos />
           </div>
         </ion-row>
 
-        <ion-row class="d-flex justify-content-center" *ngIf="!isDesktop">
+        <ion-row *ngIf="!isDesktop">
           <div class="contenedor_tabla">
             <app-vista-acordeon-vehiculos />
           </div>

@@ -52,6 +52,15 @@ export class FuncionesUsuario {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
+  /*********************************************************
+   * FUNCIONES RELACIONADAS CON "MI PERFI"                  **
+   ***********************************************************
+   */
+
+  /**
+   *  Editar los datos del usuario, excepto correo y teléfono
+   * @returns
+   */
   editarDatos() {
     console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
 
@@ -95,6 +104,219 @@ export class FuncionesUsuario {
       );
   }
 
+  /**
+   * Se obtiene un usuario a través del id
+   */
+  obtenerUsuario() {
+    this.userService
+      .obtenerUsuarioPorID(this.userData.usuario.id)
+      .subscribe((respuesta) => {
+        this.usuario = respuesta;
+      });
+  }
+
+  /**
+   * Función para calcular la edad de un usuario en función de su fecha de nacimiento
+   * @param fechaNacimiento
+   * @returns
+   */
+  calcularEdad(fechaNacimiento: string) {
+    if (!fechaNacimiento) {
+      return 0;
+    }
+    const fechaNac = new Date(fechaNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+    const mesDif = hoy.getMonth() - fechaNac.getMonth();
+
+    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
+      edad--;
+    }
+    return edad;
+  }
+
+  /**
+   * Actualiza y modifica las preferencias de viaje del usuario
+   * @param event
+   */
+  actualizarPreferencias(event: any) {
+    const valor = event.target.value;
+
+    if (!Array.isArray(this.preferenciasSeleccionadas)) {
+      this.preferenciasSeleccionadas = [];
+    }
+    if (event.target.checked) {
+      if (!this.preferenciasSeleccionadas.includes(valor)) {
+        this.preferenciasSeleccionadas.push(valor);
+      }
+    } else {
+      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
+        (pref) => pref !== valor
+      );
+    }
+
+    console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
+  }
+
+  /*********************************************************
+   * FUNCIONES RELACIONADAS CON LOS VEHÍCULOS DEL USUARIO **
+   *********************************************************
+   */
+
+  /**
+   * Función para guardar un vehículo al pulsar el botón "Añadir vehículo"
+   */
+  guardarVehiculo() {
+    this.loadUserData();
+    const nuevoCoche: Coches = {
+      marca: this.funcionesComunes.marcaSeleccionada,
+      modelo: this.funcionesComunes.modeloSeleccionado,
+      color: this.funcionesComunes.colorSeleccionado,
+      matricula: this.funcionesComunes.matricula,
+    };
+    nuevoCoche.usuario_id = this.userData.usuario.id;
+
+    this.vehiculosServices
+      .anadirVehiculo(nuevoCoche)
+      .subscribe((resultado: any) => {
+        console.log('Vehiculo guardado correctamente:', resultado);
+        if (
+          resultado.vehiculos_usuario &&
+          resultado.vehiculos_usuario.length > 0
+        ) {
+          this.vehiculos_usuario = [...resultado.vehiculos_usuario];
+        } else {
+          console.error(
+            'No se recibieron vehículos actualizados desde el backend.'
+          );
+        }
+
+        this.userService
+          .obtenerUsuarioPorID(this.userData.usuario.id)
+          .subscribe((usuarioActualizado) => {
+            localStorage.setItem('userData', JSON.stringify(this.userData));
+            this.userData = usuarioActualizado;
+            // this.botonAnadirVehiculo();
+            console.log('Usuario actualizado:', this.userData);
+            this.funcionesComunes.marcaSeleccionada = '';
+            this.funcionesComunes.modeloSeleccionado = '';
+            this.funcionesComunes.colorSeleccionado = '';
+            this.funcionesComunes.matricula = '';
+
+            this.funcionesComunes.mostrarSelectorVehiculo = false;
+          });
+      });
+  }
+
+  /**
+   * Modal para que se levante una ventana modal para confirmar la eliminación de un vehículo
+   * @param cocheAEliminar
+   */
+  modalEliminarVehiculo(cocheAEliminar: any) {
+    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
+    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.eliminarVehiculo(cocheAEliminar);
+        this.vehiculos_usuario;
+      }
+    });
+  }
+
+  /**
+   * Función para eliminar un vehículo de la lista del usuario
+   * @param vehiculo
+   */
+  eliminarVehiculo(vehiculo: any): any {
+    this.vehiculosServices
+      .eliminarVehiculo(vehiculo.id, vehiculo)
+      .subscribe((resultado) => {
+        this.vehiculos_usuario = this.vehiculos_usuario.filter(
+          (coche) => coche.id !== vehiculo.id
+        );
+
+        this.userService
+          .obtenerUsuarioPorID(this.userData.usuario.id)
+          .subscribe((usuarioActualizado) => {
+            this.userData = usuarioActualizado;
+            console.log('Usuario actualizado:', this.userData);
+          });
+        console.log('Resultado: ', resultado);
+      });
+  }
+
+  /**
+   * Función para guardar un vehículo una vez editado
+   * @param vehiculo
+   */
+  guardarVehiculoEditado(vehiculo: any) {
+    console.log('Guardando cambios en el vehículo: ', vehiculo);
+    vehiculo.editandoVehiculo = false;
+    this.funcionesComunes.editarVehiculo(vehiculo);
+
+    if (this.modificandoMarca) {
+      this.modificandoMarca = false;
+    }
+  }
+
+  /**
+   * Poner los campos del vehículo en editables (selectores e input)
+   * @param vehiculo
+   */
+  editarFilaVehiculo(vehiculo: any) {
+    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
+
+    if (vehiculo.editandoVehiculo) {
+      this.funcionesComunes.marcaSeleccionada = vehiculo.marca;
+      this.funcionesComunes.modeloSeleccionado = vehiculo.modelo;
+      this.funcionesComunes.colorSeleccionado = vehiculo.color;
+      this.funcionesComunes.matricula = vehiculo.matricula;
+      this.funcionesComunes.filtrarModelos();
+    }
+  }
+
+  filtrarModelosEditando(coche: any) {
+    this.modificandoMarca = !this.modificandoMarca;
+    if (!coche.marca) return;
+
+    const vehiculo = this.funcionesComunes.listadoCoches.find(
+      (c) => c.marca === coche.marca
+    );
+    this.funcionesComunes.modelosFiltrados = vehiculo.modelos;
+
+    if (this.funcionesComunes.modelosFiltrados.length > 0) {
+      coche.modelo = this.funcionesComunes.modelosFiltrados[0];
+    } else {
+      coche.modelo = '';
+    }
+  }
+
+  /**
+   * Obtener los vehículos que tiene un usuario en su lista
+   */
+  obtenerVehiculos() {
+    const id_usuario = this.userData.usuario.id;
+    this.vehiculosServices
+      .obtenerVehiculosUsuario(id_usuario)
+      .subscribe((resultado) => {
+        console.log('Vehículos: ', resultado.vehiculos);
+        this.vehiculos_usuario = resultado.vehiculos;
+      });
+  }
+
+  /*********************************************************
+   * FUNCIONES RELACIONADAS CON DATOS DE CONTACTO **
+   *********************************************************
+   */
+
+  /**
+   * Edita los datos de correo y teléfono del usuario
+   * @returns
+   */
   editarCorreoTelefono() {
     console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
 
@@ -138,6 +360,10 @@ export class FuncionesUsuario {
       );
   }
 
+  /**
+   * Edita las preferencias de comunicación del usuario
+   * @returns
+   */
   preferenciasComunicacion() {
     if (
       !this.userData.usuario.nombre ||
@@ -178,179 +404,5 @@ export class FuncionesUsuario {
           console.error('Error al actualizar los datos', error);
         }
       );
-  }
-
-  obtenerUsuario() {
-    this.userService
-      .obtenerUsuarioPorID(this.userData.usuario.id)
-      .subscribe((respuesta) => {
-        this.usuario = respuesta;
-      });
-  }
-
-  /**
-   * Función para calcular la edad de un usuario en función de su fecha de nacimiento
-   * @param fechaNacimiento
-   * @returns
-   */
-  calcularEdad(fechaNacimiento: string) {
-    if (!fechaNacimiento) {
-      return 0;
-    }
-    const fechaNac = new Date(fechaNacimiento);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
-    const mesDif = hoy.getMonth() - fechaNac.getMonth();
-
-    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
-      edad--;
-    }
-    return edad;
-  }
-
-  actualizarPreferencias(event: any) {
-    const valor = event.target.value;
-
-    if (!Array.isArray(this.preferenciasSeleccionadas)) {
-      this.preferenciasSeleccionadas = [];
-    }
-    if (event.target.checked) {
-      if (!this.preferenciasSeleccionadas.includes(valor)) {
-        this.preferenciasSeleccionadas.push(valor);
-      }
-    } else {
-      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
-        (pref) => pref !== valor
-      );
-    }
-
-    console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
-  }
-
-  guardarVehiculo() {
-    this.loadUserData();
-    const nuevoCoche: Coches = {
-      marca: this.funcionesComunes.marcaSeleccionada,
-      modelo: this.funcionesComunes.modeloSeleccionado,
-      color: this.funcionesComunes.colorSeleccionado,
-      matricula: this.funcionesComunes.matricula,
-    };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
-
-    this.vehiculosServices
-      .anadirVehiculo(nuevoCoche)
-      .subscribe((resultado: any) => {
-        console.log('Vehiculo guardado correctamente:', resultado);
-        if (
-          resultado.vehiculos_usuario &&
-          resultado.vehiculos_usuario.length > 0
-        ) {
-          this.vehiculos_usuario = [...resultado.vehiculos_usuario];
-        } else {
-          console.error(
-            'No se recibieron vehículos actualizados desde el backend.'
-          );
-        }
-
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            localStorage.setItem('userData', JSON.stringify(this.userData));
-            this.userData = usuarioActualizado;
-            // this.botonAnadirVehiculo();
-            console.log('Usuario actualizado:', this.userData);
-            this.funcionesComunes.marcaSeleccionada = '';
-            this.funcionesComunes.modeloSeleccionado = '';
-            this.funcionesComunes.colorSeleccionado = '';
-            this.funcionesComunes.matricula = '';
-
-            this.funcionesComunes.mostrarSelectorVehiculo = false;
-          });
-      });
-  }
-
-  modalEliminarVehiculo(cocheAEliminar: any) {
-    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
-    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
-    const dialogRef = this.dialog.open(HelpModalComponent, {
-      data: { title: titulo, message: mensaje, showAcceptButton: true },
-      disableClose: true,
-    });
-    dialogRef.afterClosed().subscribe((confirmar) => {
-      if (confirmar) {
-        this.eliminarVehiculo(cocheAEliminar);
-        this.vehiculos_usuario;
-      }
-    });
-  }
-
-  eliminarVehiculo(vehiculo: any): any {
-    this.vehiculosServices
-      .eliminarVehiculo(vehiculo.id, vehiculo)
-      .subscribe((resultado) => {
-        this.vehiculos_usuario = this.vehiculos_usuario.filter(
-          (coche) => coche.id !== vehiculo.id
-        );
-
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            this.userData = usuarioActualizado;
-            console.log('Usuario actualizado:', this.userData);
-          });
-        console.log('Resultado: ', resultado);
-      });
-  }
-
-  guardarVehiculoEditado(vehiculo: any) {
-    console.log('Guardando cambios en el vehículo: ', vehiculo);
-    vehiculo.editandoVehiculo = false;
-    this.funcionesComunes.editarVehiculo(vehiculo);
-
-    if (this.modificandoMarca) {
-      this.modificandoMarca = false;
-    }
-  }
-
-  /**
-   * Poner los campos del vehículo en editables (selectores e input)
-   * @param vehiculo
-   */
-  editarFilaVehiculo(vehiculo: any) {
-    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
-
-    if (vehiculo.editandoVehiculo) {
-      this.funcionesComunes.marcaSeleccionada = vehiculo.marca;
-      this.funcionesComunes.modeloSeleccionado = vehiculo.modelo;
-      this.funcionesComunes.colorSeleccionado = vehiculo.color;
-      this.funcionesComunes.matricula = vehiculo.matricula;
-      this.funcionesComunes.filtrarModelos();
-    }
-  }
-
-  filtrarModelosEditando(coche: any) {
-    this.modificandoMarca = !this.modificandoMarca;
-    if (!coche.marca) return;
-
-    const vehiculo = this.funcionesComunes.listadoCoches.find(
-      (c) => c.marca === coche.marca
-    );
-    this.funcionesComunes.modelosFiltrados = vehiculo.modelos;
-
-    if (this.funcionesComunes.modelosFiltrados.length > 0) {
-      coche.modelo = this.funcionesComunes.modelosFiltrados[0]; // Establecemos el modelo por defecto
-    } else {
-      coche.modelo = ''; // Si no hay modelos, dejamos el modelo vacío
-    }
-  }
-
-  obtenerVehiculos() {
-    const id_usuario = this.userData.usuario.id;
-    this.vehiculosServices
-      .obtenerVehiculosUsuario(id_usuario)
-      .subscribe((resultado) => {
-        console.log('Vehículos: ', resultado.vehiculos);
-        this.vehiculos_usuario = resultado.vehiculos;
-      });
   }
 }
