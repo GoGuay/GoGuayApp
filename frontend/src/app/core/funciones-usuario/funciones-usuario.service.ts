@@ -30,6 +30,7 @@ export class FuncionesUsuario {
   usuario: Usuario = {} as Usuario;
   vehiculos_usuario: any[] = [];
   modificandoMarca: boolean = false;
+  telefonoInvalido: boolean = false;
 
   constructor(
     private userService: UserServicesService,
@@ -404,5 +405,10 @@ export class FuncionesUsuario {
           console.error('Error al actualizar los datos', error);
         }
       );
+  }
+
+  validarTelefono() {
+    const telefonoRegex = /^[0-9]{9}$/;
+    this.telefonoInvalido = !telefonoRegex.test(this.telefonoEditado);
   }
 }
