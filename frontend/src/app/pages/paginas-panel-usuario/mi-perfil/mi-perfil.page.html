@@ -6,8 +6,14 @@
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
-    <ion-row>
-      <ion-col>
+    <div class="d-flex justify-content-center">
+      <h1>{{'MI_PERFIL.TITULO' | translate}}</h1>
+    </div>
+    <p class="d-flex justify-content-center">
+      {{'MI_PERFIL.DESCRIPCION_SECCION' | translate}}
+    </p>
+    <ion-row class="d-flex justify-content-center">
+      <ion-col size="12" size-md="5" class="mx-md-5">
         <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
         <ion-row class="fila-datos">
           <ion-col class="col-nombre-apellidos">
@@ -209,7 +215,9 @@
         </ion-row>
       </ion-col>
 
-      <ion-col>
+      <mat-divider vertical="" class="ms-4 mat-divider-mobile"></mat-divider>
+
+      <ion-col size="12" size-md="5" class="mx-md-5">
         <!-- Tabla vehiculos -->
         <ion-row class="d-flex justify-content-center">
           <div class="contenedor_tabla">
@@ -218,8 +226,9 @@
         </ion-row>
 
         <!-- Preferencias -->
-        <ion-row>
-          <div class="mb-4 mt-4">
+        <ion-row class="d-flex justify-content-center">
+          <div class="mb-2">
+            <h4 class="text-center">{{'MI_PERFIL.PREF_VIAJE' | translate}}</h4>
             <label for="preferencias" class="form-label"
               >{{'MI_PERFIL.CUANDO_VIAJO_PREFIERO' | translate}}</label
             >
@@ -279,6 +288,19 @@
           </div>
         </ion-row>
       </ion-col>
+    </ion-row>
+    <!-- Botón para guardar los cambios -->
+    <ion-row class="d-flex justify-content-center ms-1 mt-5 mb-3">
+      <div>
+        <button
+          type="button"
+          class="btn btn_bg"
+          mat-raised-button
+          (click)="funcionesUsuario.editarDatos()"
+        >
+          {{'BOTON.GUARDAR' | translate}}
+        </button>
+      </div>
     </ion-row>
   </div>
 </ion-content>
