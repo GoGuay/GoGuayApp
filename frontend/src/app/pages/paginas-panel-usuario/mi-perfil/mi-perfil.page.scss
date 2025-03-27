@@ -97,6 +97,10 @@
   min-width: 0;
 }
 
+.contenedor_tabla{
+  width: 400px;
+}
+
 /* Estilos específicos para móviles */
 @media (max-width: 576px) {
   .fila-datos {
@@ -114,9 +118,7 @@
     display: none;
   }
 
-  .contenedor_tabla{
-    width: 400px;
-  }
+
 
 }
 

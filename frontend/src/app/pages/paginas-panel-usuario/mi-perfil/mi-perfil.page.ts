@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { MatIcon } from '@angular/material/icon';
-import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/tabla-vehiculos.component';
+import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
+import { VistaAcordeonVehiculosComponent } from '../../../components/tabla-vehiculos/vista-acordeon-vehiculos/vista-acordeon-vehiculos.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -27,6 +28,7 @@ import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usua
     NavbarComponent,
     MatIcon,
     TablaVehiculosComponent,
+    VistaAcordeonVehiculosComponent,
   ],
 })
 export class MiPerfilPage implements OnInit {
@@ -39,13 +41,20 @@ export class MiPerfilPage implements OnInit {
     this.funcionesUsuario.fechaNacimientoEditada
   );
 
+  isMobileWeb: boolean = false;
+  isDesktop: boolean = true;
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
-    public funcionesUsuario: FuncionesUsuario
+    public funcionesUsuario: FuncionesUsuario,
+    private platform: Platform,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
     console.log('Datos usuario: ', this.userData);
@@ -69,6 +78,17 @@ export class MiPerfilPage implements OnInit {
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
       vehiculo.editandoVehiculo = false;
     });
+  }
+
+  checkScreenSize() {
+    this.isDesktop = window.innerWidth > 576;
+    console.log(
+      'Tamaño detectado:',
+      window.innerWidth,
+      'isDesktop:',
+      this.isDesktop
+    );
+    this.cdr.detectChanges();
   }
 
   actualizarEdad() {

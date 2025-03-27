@@ -3,136 +3,9 @@
     {{ "MI_PERFIL.MIS_VEHICULOS" | translate }}
   </h4>
 
-  <!--Se muestra la tabla si hay vehículos-->
-  <div
-    *ngIf="vehiculos_usuario && vehiculos_usuario.length > 0; else noVehiculos"
-    class="tabla"
-  >
-    <table class="table table-hover" *ngIf="isDesktop">
-      <thead>
-        <tr>
-          <th scope="col">Marca</th>
-          <th scope="col">Modelo</th>
-          <th scope="col">Color</th>
-          <th scope="col">Matrícula</th>
-          <th scope="col">Opciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let coche of vehiculos_usuario">
-          <td>
-            <ng-container *ngIf="coche.editandoVehiculo; else noEditMarca">
-              <select
-                class="form-select"
-                [(ngModel)]="coche.marca"
-                (change)="filtrarModelosEditando(coche)"
-              >
-                <option
-                  *ngFor="let coche of funcionesComunes.listadoCoches"
-                  [value]="coche.marca"
-                >
-                  {{ coche.marca }}
-                </option>
-              </select>
-            </ng-container>
-            <ng-template #noEditMarca>{{ coche.marca }}</ng-template>
-          </td>
-
-          <td>
-            <ng-container *ngIf="coche.editandoVehiculo; else noEditModelo">
-              <select class="form-select" [(ngModel)]="coche.modelo">
-                <option
-                  *ngFor="let modelo of funcionesComunes.modelosFiltrados"
-                  [value]="modelo"
-                >
-                  {{ modelo }}
-                </option>
-              </select>
-            </ng-container>
-            <ng-template #noEditModelo>{{ coche.modelo }}</ng-template>
-          </td>
-
-          <td>
-            <ng-container *ngIf="coche.editandoVehiculo; else noEditColor">
-              <select class="form-select" [(ngModel)]="coche.color">
-                <option
-                  *ngFor="let color of funcionesComunes.listadoColores"
-                  [value]="color"
-                >
-                  {{ color }}
-                </option>
-              </select>
-            </ng-container>
-            <ng-template #noEditColor>
-              <img
-                class="colorCoche"
-                [src]="funcionesComunes.mostrarColorCoche(coche.color)"
-              />
-            </ng-template>
-          </td>
-
-          <td>
-            <ng-container *ngIf="coche.editandoVehiculo; else noEditMatricula">
-              <input
-                type="text"
-                [(ngModel)]="coche.matricula"
-                class="form-control"
-              />
-            </ng-container>
-            <ng-template #noEditMatricula>{{ coche.matricula }}</ng-template>
-          </td>
-
-          <!-- Botón para editar el vehículo -->
-          <td>
-            <div class="row">
-              <div class="col">
-                <button
-                  class="botones_tabla btn_bg"
-                  mat-icon-button
-                  (click)="
-                    coche.editandoVehiculo
-                      ? guardarVehiculoEditado(coche)
-                      : editarFilaVehiculo(coche)
-                  "
-                >
-                  <mat-icon>{{
-                    coche.editandoVehiculo ? "save" : "edit"
-                  }}</mat-icon>
-                </button>
-              </div>
-              <!-- Botón para eliminar el vehículo -->
-              <div class="col">
-                <button
-                  class="botones_tabla btn_bg"
-                  mat-icon-button
-                  (click)="modalEliminarVehiculo(coche)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          </td>
-        </tr>
-        <!-- Marca -->
-      </tbody>
-    </table>
-    <div *ngIf="modificandoMarca">
-      <p class="text-danger">
-        Recuerda que si cambiar la marca, debes modificar también el modelo
-      </p>
-    </div>
-  </div>
-
-  <!--Mensaje si no hay ningún vehículo añadido-->
-  <ng-template #noVehiculos>
-    <div class="mt-3 d-flex justify-content-center">
-      <span>No tienes vehículos añadidos</span>
-    </div>
-  </ng-template>
-
   <!-- Acordeones coches del usuario para vista móvil -->
-  <div class="acordeones_vehiculos" *ngIf="!isDesktop">
-    <div class="mt-3" *ngFor="let coche of vehiculos_usuario">
+  <div class="acordeones_vehiculos">
+    <div class="mt-3" *ngFor="let coche of funcionesUsuario.vehiculos_usuario">
       <mat-accordion multi>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -148,7 +21,7 @@
                 <select
                   class="form-select"
                   [(ngModel)]="coche.marca"
-                  (change)="filtrarModelosEditando(coche)"
+                  (change)="funcionesUsuario.filtrarModelosEditando(coche)"
                 >
                   <option
                     *ngFor="let coche of funcionesComunes.listadoCoches"
@@ -213,8 +86,8 @@
               mat-icon-button
               (click)="
                 coche.editandoVehiculo
-                  ? guardarVehiculoEditado(coche)
-                  : editarFilaVehiculo(coche)
+                  ? funcionesUsuario.guardarVehiculoEditado(coche)
+                  : funcionesUsuario.editarFilaVehiculo(coche)
               "
             >
               <mat-icon>{{
@@ -224,7 +97,7 @@
             <button
               class="botones_tabla btn_bg"
               mat-icon-button
-              (click)="modalEliminarVehiculo(coche)"
+              (click)="funcionesUsuario.modalEliminarVehiculo(coche)"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -233,6 +106,12 @@
       </mat-accordion>
     </div>
   </div>
+  <!--Mensaje si no hay ningún vehículo añadido-->
+  <ng-template #noVehiculos>
+    <div class="mt-3 d-flex justify-content-center">
+      <span>No tienes vehículos añadidos</span>
+    </div>
+  </ng-template>
 
   <!-- Boton para añadir vehiculos -->
   <div class="d-flex justify-content-center">
@@ -361,7 +240,7 @@
             [disabled]="funcionesComunes.matriculaNoValida"
             class="btn btn_bg"
             mat-raised-button
-            (click)="guardarVehiculo()"
+            (click)="funcionesUsuario.guardarVehiculo()"
           >
             Guardar vehículo
           </button>
