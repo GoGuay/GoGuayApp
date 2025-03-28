@@ -57,6 +57,7 @@
   height: 50px; 
   border-radius: 50%; 
   object-fit: cover;
+  
 }
 
 .linea {
@@ -126,4 +127,5 @@
   height: 30px;
   width: 30px;
   border-radius: 50%;
+  mix-blend-mode: multiply;
 }
