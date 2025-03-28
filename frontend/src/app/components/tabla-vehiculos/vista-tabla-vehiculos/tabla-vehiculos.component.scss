@@ -44,8 +44,8 @@
 /* Reducir el ancho de la columna Opciones */
 .table th:nth-child(5),
 .table td:nth-child(5) {
-  width: 100px; /* Ajusta el tamaño según lo que necesites */
-  min-width: 80px;
+  width: 110px;
+  min-width: 100px;
   max-width: 120px;
   text-align: center;
   white-space: nowrap;
@@ -67,10 +67,6 @@
 .boton_anadir{
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
-
-
-
-
 
 
 .table {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -30,10 +30,12 @@ import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuar
     MatDivider,
   ],
 })
-export class DatosContactoPage implements OnInit {
+export class DatosContactoPage implements OnInit, AfterViewInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   botonHabilitado: boolean = false;
+  emailRef: any;
+
   constructor(
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario
@@ -41,15 +43,25 @@ export class DatosContactoPage implements OnInit {
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (
-      this.userData &&
-      Object.keys(this.userData).length > 0 &&
-      this.userData.usuario.email
-    ) {
+    if (this.userData?.usuario) {
       this.userLoggedIn = true;
+
+      // Asignar valores iniciales
+      this.funcionesUsuario.emailEditado = this.userData.usuario.email || '';
+      this.funcionesUsuario.telefonoEditado =
+        this.userData.usuario.telefono || '';
+      this.funcionesUsuario.comunComerciales =
+        !!this.userData.usuario.comunic_comerciales;
+      this.funcionesUsuario.comunTerceros =
+        !!this.userData.usuario.comunic_terceros;
     } else {
       this.userLoggedIn = false;
     }
+  }
+
+  ngAfterViewInit() {
+    // Usamos AfterViewInit para asegurarnos de que la vista esté completamente cargada
+    this.checkForChanges();
   }
 
   changeLanguage(lang: string) {
@@ -64,18 +76,24 @@ export class DatosContactoPage implements OnInit {
 
   // Función que verifica si los valores han cambiado
   checkForChanges() {
-    const emailChanged =
-      this.funcionesUsuario.emailEditado !== this.userData.usuario.email;
-    const telefonoChanged =
-      this.funcionesUsuario.telefonoEditado !== this.userData.usuario.telefono;
+    if (!this.userData || !this.userData.usuario) {
+      this.botonHabilitado = false;
+      return;
+    }
 
-    // Verifica si los checkboxes han cambiado
+    const emailChanged =
+      this.funcionesUsuario.emailEditado.trim() !==
+      (this.userData.usuario.email || '').trim();
+    const telefonoChanged =
+      this.funcionesUsuario.telefonoEditado.trim() !==
+      (this.userData.usuario.telefono || '').trim();
     const checkboxesChanged =
       this.funcionesUsuario.comunComerciales !==
         !!this.userData.usuario.comunic_comerciales ||
       this.funcionesUsuario.comunTerceros !==
         !!this.userData.usuario.comunic_terceros;
 
+    // Solo habilitar el botón si hay cambios reales
     this.botonHabilitado = emailChanged || telefonoChanged || checkboxesChanged;
   }
 }

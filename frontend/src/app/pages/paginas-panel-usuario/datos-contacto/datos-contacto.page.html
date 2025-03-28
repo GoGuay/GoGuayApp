@@ -43,8 +43,21 @@
                 aria-describedby="email"
                 [(ngModel)]="funcionesUsuario.emailEditado"
                 name="email"
+                #emailRef="ngModel"
                 (change)="onInputChange()"
+                required
               />
+              <div
+                *ngIf="emailRef.invalid && emailRef.touched"
+                style="color: red"
+              >
+                <span *ngIf="emailRef.errors?.['required']"
+                  >El correo es obligatorio</span
+                >
+                <span *ngIf="emailRef.errors?.['email']"
+                  >Formato incorrecto</span
+                >
+              </div>
             </div>
             <div class="mb-3">
               <div>
@@ -116,7 +129,7 @@
         class="btn btn_bg"
         mat-raised-button
         (click)="funcionesUsuario.editarCorreoTelefono()"
-        [disabled]="!botonHabilitado"
+        [disabled]="emailRef.invalid || !funcionesUsuario.emailEditado"
       >
         {{'BOTON.GUARDAR' | translate}}
       </button>
