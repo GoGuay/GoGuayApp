@@ -31,7 +31,7 @@
                   </option>
                 </select>
               </ng-container>
-              /
+
               <ng-template #noEditMarca>{{ coche.marca }}</ng-template>
               <ng-container *ngIf="coche.editandoVehiculo; else noEditModelo">
                 <select class="form-select" [(ngModel)]="coche.modelo">
@@ -224,6 +224,7 @@
             (ngModelChange)="funcionesComunes.validarMatricula()"
             style="width: 120px"
           />
+
           <!-- Mensaje de error -->
           <div>
             <div *ngIf="funcionesComunes.matriculaNoValida" class="text-danger">

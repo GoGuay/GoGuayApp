@@ -1,13 +1,13 @@
-.colorCoche{
+.colorCoche {
   height: 30px;
   width: 35px;
 }
 
-.pronombre{
+.pronombre {
   width: 200px;
 }
 
-.tabla{
+.tabla {
   margin-left: 50px;
   width: auto;
 
@@ -24,7 +24,8 @@
 
 .table th:nth-child(3),
 .table td:nth-child(3) {
-  width: 122px; /* Ajusta el tamaño según lo que necesites */
+  width: 122px;
+  /* Ajusta el tamaño según lo que necesites */
   min-width: 90px;
   max-width: 130px;
   text-align: center;
@@ -34,7 +35,8 @@
 /* Reducir el ancho de la columna Matrícula */
 .table th:nth-child(4),
 .table td:nth-child(4) {
-  width: 120px; /* Ajusta el tamaño según lo que necesites */
+  width: 120px;
+  /* Ajusta el tamaño según lo que necesites */
   min-width: 100px;
   max-width: 150px;
   text-align: center;
@@ -45,26 +47,26 @@
 .table th:nth-child(5),
 .table td:nth-child(5) {
   width: 110px;
-  min-width: 100px;
+  min-width: 120px;
   max-width: 120px;
   text-align: center;
   white-space: nowrap;
 }
 
 
-/* Ejemplo con color HSL */
-.table{
-    --bs-table-hover-bg: #F0D7B4;
-      table-layout: auto;
+
+.table {
+  --bs-table-hover-bg: #F0D7B4;
+  table-layout: auto;
 }
 
-.botones_tabla{
+.botones_tabla {
   border-radius: 15%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 
 }
 
-.boton_anadir{
+.boton_anadir {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
@@ -96,5 +98,6 @@
   border-bottom-left-radius: 15px;
 }
 
-
-
+.inputs_selectores {
+  width: 200px;
+}

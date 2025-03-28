@@ -31,12 +31,12 @@ export class FuncionesUsuario {
   vehiculos_usuario: any[] = [];
   modificandoMarca: boolean = false;
   telefonoInvalido: boolean = false;
+  botonHabilitado: boolean = false;
 
   constructor(
     private userService: UserServicesService,
     private funcionesComunes: FuncionesComunes,
     private vehiculosServices: VehiculosServicesService,
-
     private dialog: MatDialog
   ) {
     this.loadUserData();
