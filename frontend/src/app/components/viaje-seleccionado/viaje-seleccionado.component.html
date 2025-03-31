@@ -21,7 +21,7 @@
         <mat-divider class="mb-2"></mat-divider>
         <p><strong>Origen:</strong> {{ data.viaje.origen }}</p>
         <p><strong>Destino:</strong> {{ data.viaje.destino }}</p>
-        <p><strong>Fecha de salida:</strong> {{ data.viaje.fecha_salida}}</p>
+        <p><strong>Fecha de salida:</strong> {{formatData(data.viaje.fecha_salida) }}</p>
         <p><strong>Hora de salida:</strong> {{ data.viaje.hora_salida }}</p>
         <p><strong>Hora de llegada (Aprox.):</strong> {{ data.viaje.hora_llegada }}</p>
         <p><strong>Plazas libres:</strong> {{ data.viaje.plazas }}</p>

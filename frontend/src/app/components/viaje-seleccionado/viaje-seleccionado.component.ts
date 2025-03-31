@@ -218,4 +218,8 @@ verificarSiEstaUnido() {
       this.conductor = true;
     } else {this.conductor = false;}
   }
+
+  formatData(date: any){
+    return date.split('T')[0].trim();
+  }
 }
