@@ -28,60 +28,76 @@
 
         <ion-row>
           <ion-col class="d-flex flex-column align-items-center">
-            <div class="mb-3">
-              <div>
+            <form [formGroup]="formEmailTfno">
+              <!-- Input correo electrónico  -->
+              <div class="mb-3">
                 <div>
-                  <label for="email" class="form-label"
-                    >{{'DATOS_CONTACTO.MI_CORREO' | translate}}</label
+                  <div>
+                    <label for="email" class="form-label"
+                      >{{'DATOS_CONTACTO.MI_CORREO' | translate}}</label
+                    >
+                  </div>
+                </div>
+                <input
+                  type="email"
+                  class="form-control inputs_emailtfno"
+                  id="emailControl"
+                  aria-describedby="email"
+                  [(ngModel)]="funcionesUsuario.emailEditado"
+                  formControlName="emailControl"
+                  name="emailControl"
+                  (ngModelChange)="onInputChange()"
+                />
+                <div
+                  *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched"
+                  style="color: red"
+                >
+                  <span
+                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['required']"
+                    >El correo es obligatorio</span
+                  >
+                  <span
+                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['pattern']"
+                    >Formato incorrecto</span
+                  >
+                  <span
+                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['email']"
+                    >El formato no es válido</span
                   >
                 </div>
               </div>
-              <input
-                type="email"
-                class="form-control inputs_emailtfno"
-                id="email"
-                aria-describedby="email"
-                [(ngModel)]="funcionesUsuario.emailEditado"
-                name="email"
-                #emailRef="ngModel"
-                (change)="onInputChange()"
-                required
-              />
-              <div
-                *ngIf="emailRef.invalid && emailRef.touched"
-                style="color: red"
-              >
-                <span *ngIf="emailRef.errors?.['required']"
-                  >El correo es obligatorio</span
+              <!-- Input teléfono  -->
+              <div class="mb-3">
+                <div>
+                  <label for="telefono" class="form-label"
+                    >{{'DATOS_CONTACTO.MI_TFNO' | translate}}</label
+                  >
+                </div>
+                <input
+                  type="text"
+                  class="form-control inputs_emailtfno"
+                  id="telefonoControl"
+                  aria-describedby="telefono"
+                  [(ngModel)]="funcionesUsuario.telefonoEditado"
+                  name="telefonoControl"
+                  formControlName="telefonoControl"
+                  (ngModelChange)="onInputChange()"
+                />
+                <div
+                  *ngIf="formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched"
+                  style="color: red"
                 >
-                <span *ngIf="emailRef.errors?.['email']"
-                  >Formato incorrecto</span
-                >
+                  <span
+                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']"
+                    >El teléfono es obligatorio</span
+                  >
+                  <span
+                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
+                    >Formato incorrecto: debe tener 9 dígitos numéricos</span
+                  >
+                </div>
               </div>
-            </div>
-            <div class="mb-3">
-              <div>
-                <label for="telefono" class="form-label"
-                  >{{'DATOS_CONTACTO.MI_TFNO' | translate}}</label
-                >
-              </div>
-              <input
-                type="text"
-                class="form-control inputs_emailtfno"
-                id="telefono"
-                aria-describedby="telefono"
-                [(ngModel)]="funcionesUsuario.telefonoEditado"
-                name="telefono"
-                (change)="onInputChange()"
-                (ngModelChange)="funcionesUsuario.validarTelefono()"
-              />
-              <div
-                *ngIf="funcionesUsuario.telefonoInvalido"
-                class="text-danger mt-1"
-              >
-                El número debe tener exactamente 9 dígitos y ser numérico.
-              </div>
-            </div>
+            </form>
           </ion-col>
         </ion-row>
       </ion-col>
@@ -129,7 +145,7 @@
         class="btn btn_bg"
         mat-raised-button
         (click)="funcionesUsuario.editarCorreoTelefono()"
-        [disabled]="emailRef.invalid || !funcionesUsuario.emailEditado"
+        [disabled]="!botonHabilitado"
       >
         {{'BOTON.GUARDAR' | translate}}
       </button>

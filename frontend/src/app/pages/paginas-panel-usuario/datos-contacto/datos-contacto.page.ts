@@ -1,6 +1,12 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   IonContent,
   IonHeader,
@@ -28,6 +34,7 @@ import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuar
     TranslateModule,
     NavbarComponent,
     MatDivider,
+    ReactiveFormsModule,
   ],
 })
 export class DatosContactoPage implements OnInit, AfterViewInit {
@@ -35,11 +42,24 @@ export class DatosContactoPage implements OnInit, AfterViewInit {
   userData: Usuario = {} as Usuario;
   botonHabilitado: boolean = false;
   emailRef: any;
+  telefonoRef: any;
+  formEmailTfno: FormGroup;
 
   constructor(
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario
-  ) {}
+  ) {
+    this.formEmailTfno = new FormGroup({
+      emailControl: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      ]),
+      telefonoControl: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[0-9]{9}$/),
+      ]),
+    });
+  }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -69,11 +89,6 @@ export class DatosContactoPage implements OnInit, AfterViewInit {
     localStorage.setItem('language', lang);
   }
 
-  // Función que se llama cuando hay un cambio en los inputs o checkboxes
-  onInputChange() {
-    this.checkForChanges();
-  }
-
   // Función que verifica si los valores han cambiado
   checkForChanges() {
     if (!this.userData || !this.userData.usuario) {
@@ -87,13 +102,13 @@ export class DatosContactoPage implements OnInit, AfterViewInit {
     const telefonoChanged =
       this.funcionesUsuario.telefonoEditado.trim() !==
       (this.userData.usuario.telefono || '').trim();
-    const checkboxesChanged =
-      this.funcionesUsuario.comunComerciales !==
-        !!this.userData.usuario.comunic_comerciales ||
-      this.funcionesUsuario.comunTerceros !==
-        !!this.userData.usuario.comunic_terceros;
 
     // Solo habilitar el botón si hay cambios reales
-    this.botonHabilitado = emailChanged || telefonoChanged || checkboxesChanged;
+    this.botonHabilitado = emailChanged || telefonoChanged;
+  }
+
+  // Función que se llama cuando hay un cambio en los inputs o checkboxes
+  onInputChange() {
+    this.botonHabilitado = this.formEmailTfno.valid;
   }
 }

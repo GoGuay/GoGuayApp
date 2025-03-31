@@ -32,6 +32,7 @@ export class FuncionesUsuario {
   modificandoMarca: boolean = false;
   telefonoInvalido: boolean = false;
   botonHabilitado: boolean = false;
+  telefonoRef: any;
 
   constructor(
     private userService: UserServicesService,
@@ -408,7 +409,9 @@ export class FuncionesUsuario {
   }
 
   validarTelefono() {
-    const telefonoRegex = /^[0-9]{9}$/;
-    this.telefonoInvalido = !telefonoRegex.test(this.telefonoEditado);
+    const telefonoRegex = /^\d{9}$/; // Expresión regular para un teléfono de 9 dígitos
+    if (!telefonoRegex.test(this.telefonoEditado)) {
+      this.telefonoRef.control.setErrors({ pattern: true }); // Establece el error de patrón si no es válido
+    }
   }
 }
