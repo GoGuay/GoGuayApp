@@ -343,7 +343,7 @@ export class TercerPasoComponent implements OnInit {
             this.cargandoSugerencias = false;
           }
         });
-      }, index * 300);  // 🔥 Retraso de 300ms entre cada petición
+      }, index * 3000);  // 🔥 Retraso de 300ms entre cada petición
     });
   }
   
