@@ -7,6 +7,7 @@ import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -31,8 +32,10 @@ export class FuncionesUsuario {
   vehiculos_usuario: any[] = [];
   modificandoMarca: boolean = false;
   telefonoInvalido: boolean = false;
-  botonHabilitado: boolean = false;
+  botonHabilitadoMiPerfil: boolean = false;
+  botonHabilitadoContacto: boolean = false;
   telefonoRef: any;
+  formEmailTfno: FormGroup;
 
   constructor(
     private userService: UserServicesService,
@@ -48,6 +51,16 @@ export class FuncionesUsuario {
     this.telefonoEditado = this.userData.usuario.telefono || '';
     this.comunComerciales = this.userData.usuario.comunic_comerciales || false;
     this.comunTerceros = this.userData.usuario.comunic_terceros || false;
+    this.formEmailTfno = new FormGroup({
+      emailControl: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      ]),
+      telefonoControl: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[0-9]{9}$/),
+      ]),
+    });
   }
 
   loadUserData(): void {
@@ -408,10 +421,8 @@ export class FuncionesUsuario {
       );
   }
 
-  validarTelefono() {
-    const telefonoRegex = /^\d{9}$/; // Expresión regular para un teléfono de 9 dígitos
-    if (!telefonoRegex.test(this.telefonoEditado)) {
-      this.telefonoRef.control.setErrors({ pattern: true }); // Establece el error de patrón si no es válido
-    }
+  // Función que se llama cuando hay un cambio en los inputs o checkboxes
+  onInputChange() {
+    this.botonHabilitadoContacto = this.formEmailTfno.valid;
   }
 }

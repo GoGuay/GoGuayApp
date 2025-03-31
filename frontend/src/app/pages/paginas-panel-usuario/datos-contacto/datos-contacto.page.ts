@@ -37,29 +37,17 @@ import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuar
     ReactiveFormsModule,
   ],
 })
-export class DatosContactoPage implements OnInit, AfterViewInit {
+export class DatosContactoPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   botonHabilitado: boolean = false;
   emailRef: any;
   telefonoRef: any;
-  formEmailTfno: FormGroup;
 
   constructor(
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario
-  ) {
-    this.formEmailTfno = new FormGroup({
-      emailControl: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      ]),
-      telefonoControl: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[0-9]{9}$/),
-      ]),
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -79,36 +67,9 @@ export class DatosContactoPage implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-    // Usamos AfterViewInit para asegurarnos de que la vista esté completamente cargada
-    this.checkForChanges();
-  }
-
+  //Para cambiar idioma -- no se está usando
   changeLanguage(lang: string) {
     this.translate.use(lang);
     localStorage.setItem('language', lang);
-  }
-
-  // Función que verifica si los valores han cambiado
-  checkForChanges() {
-    if (!this.userData || !this.userData.usuario) {
-      this.botonHabilitado = false;
-      return;
-    }
-
-    const emailChanged =
-      this.funcionesUsuario.emailEditado.trim() !==
-      (this.userData.usuario.email || '').trim();
-    const telefonoChanged =
-      this.funcionesUsuario.telefonoEditado.trim() !==
-      (this.userData.usuario.telefono || '').trim();
-
-    // Solo habilitar el botón si hay cambios reales
-    this.botonHabilitado = emailChanged || telefonoChanged;
-  }
-
-  // Función que se llama cuando hay un cambio en los inputs o checkboxes
-  onInputChange() {
-    this.botonHabilitado = this.formEmailTfno.valid;
   }
 }

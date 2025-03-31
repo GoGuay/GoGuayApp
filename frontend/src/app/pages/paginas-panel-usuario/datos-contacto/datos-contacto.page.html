@@ -28,7 +28,7 @@
 
         <ion-row>
           <ion-col class="d-flex flex-column align-items-center">
-            <form [formGroup]="formEmailTfno">
+            <form [formGroup]="funcionesUsuario.formEmailTfno">
               <!-- Input correo electrónico  -->
               <div class="mb-3">
                 <div>
@@ -46,22 +46,22 @@
                   [(ngModel)]="funcionesUsuario.emailEditado"
                   formControlName="emailControl"
                   name="emailControl"
-                  (ngModelChange)="onInputChange()"
+                  (ngModelChange)="funcionesUsuario.onInputChange()"
                 />
                 <div
-                  *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched"
+                  *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.invalid && funcionesUsuario.formEmailTfno.get('emailControl')?.touched"
                   style="color: red"
                 >
                   <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['required']"
+                    *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['required']"
                     >El correo es obligatorio</span
                   >
                   <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['pattern']"
+                    *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['pattern']"
                     >Formato incorrecto</span
                   >
                   <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['email']"
+                    *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['email']"
                     >El formato no es válido</span
                   >
                 </div>
@@ -81,18 +81,18 @@
                   [(ngModel)]="funcionesUsuario.telefonoEditado"
                   name="telefonoControl"
                   formControlName="telefonoControl"
-                  (ngModelChange)="onInputChange()"
+                  (ngModelChange)="funcionesUsuario.onInputChange()"
                 />
                 <div
-                  *ngIf="formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched"
+                  *ngIf="funcionesUsuario.formEmailTfno.get('telefonoControl')?.invalid && funcionesUsuario.formEmailTfno.get('telefonoControl')?.touched"
                   style="color: red"
                 >
                   <span
-                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']"
+                    *ngIf="funcionesUsuario.formEmailTfno.get('telefonoControl')?.errors?.['required']"
                     >El teléfono es obligatorio</span
                   >
                   <span
-                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
+                    *ngIf="funcionesUsuario.formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
                     >Formato incorrecto: debe tener 9 dígitos numéricos</span
                   >
                 </div>
@@ -116,7 +116,7 @@
               id="comunComerciales"
               (change)="funcionesUsuario.preferenciasComunicacion()"
               [(ngModel)]="funcionesUsuario.comunComerciales"
-              (change)="onInputChange()"
+              (change)="funcionesUsuario.onInputChange()"
             />
             <label class="form-check-label" for="flexCheckDefault">
               {{ "DATOS_CONTACTO.CHECK_POR_EMAIL" | translate }}
@@ -130,7 +130,7 @@
               id="comunTerceros"
               (change)="funcionesUsuario.preferenciasComunicacion()"
               [(ngModel)]="funcionesUsuario.comunTerceros"
-              (change)="onInputChange()"
+              (change)="funcionesUsuario.onInputChange()"
             />
             <label class="form-check-label" for="flexCheckChecked">
               {{ "DATOS_CONTACTO.CHECK_TERCEROS" | translate }}
@@ -145,7 +145,7 @@
         class="btn btn_bg"
         mat-raised-button
         (click)="funcionesUsuario.editarCorreoTelefono()"
-        [disabled]="!botonHabilitado"
+        [disabled]="!funcionesUsuario.botonHabilitadoContacto"
       >
         {{'BOTON.GUARDAR' | translate}}
       </button>
