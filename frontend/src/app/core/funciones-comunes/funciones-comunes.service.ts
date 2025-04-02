@@ -34,8 +34,8 @@ export class FuncionesComunes {
   validacionIdioma: boolean = true;
   mostrarSelectorVehiculo: boolean = false;
   vehiculos_usuario: any[] = [];
-  fechaNacimiento: string = '';
-  edad: number = this.calcularEdad(this.fechaNacimiento);
+  VehiculoYaAnadido: boolean = false;
+  matriculaNoValida: boolean = false;
 
   usuario: any = {} as Usuario;
 
@@ -71,11 +71,10 @@ export class FuncionesComunes {
     return true;
   }
 
-
   /**
    * Función para obtener la url en la que está posicionado el usuario.
-   * 
-   * @returns 
+   *
+   * @returns
    */
   getBaseUrl() {
     const url = this.router.url;
@@ -224,21 +223,20 @@ export class FuncionesComunes {
   esViajeFinalizado(fecha_salida: string, hora_llegada: string): boolean {
     // Crear objeto Date con la fecha de salida
     const fechaViaje = new Date(fecha_salida);
-  
+
     // Extraer hora y minutos de hora_llegada
     const [hora, minutos] = hora_llegada.split(':').map(Number);
-  
+
     // Añadir la hora de llegada a la fecha de salida
     fechaViaje.setHours(hora, minutos, 0, 0);
-  
+
     // Obtener la fecha y hora actuales
     const ahora = new Date();
-  
+
     // Comparar si el viaje ya terminó
     return ahora > fechaViaje;
   }
-  
-  
+
   /******************************************
    *                                        *
    *  FUNCIONES PARA EL PERFIL DEL USUARIO  *
@@ -255,26 +253,6 @@ export class FuncionesComunes {
     );
   }
 
-  /**
-   * Función para calcular la edad de un usuario en función de su fecha de nacimiento
-   * @param fechaNacimiento
-   * @returns
-   */
-  calcularEdad(fechaNacimiento: string) {
-    if (!fechaNacimiento) {
-      return 0;
-    }
-    const fechaNac = new Date(fechaNacimiento);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
-    const mesDif = hoy.getMonth() - fechaNac.getMonth();
-
-    if (mesDif < 0 || (mesDif === 0 && hoy.getDate() < fechaNac.getDate())) {
-      edad--;
-    }
-    return edad;
-  }
-
   /******************************************
    *                                        *
    *  FUNCIONES PARA VEHÍCULOS              *
@@ -285,24 +263,12 @@ export class FuncionesComunes {
    * Función para guardar un coche en la
    * lista de vehículos del usuario.
    */
-  guardarVehiculo() {
-    const nuevoCoche: Coches = {
-      marca: this.marcaSeleccionada,
-      modelo: this.modeloSeleccionado,
-      color: this.colorSeleccionado,
-      matricula: this.matricula,
-    };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
-    this.vehicleService.anadirVehiculo(nuevoCoche).subscribe((resultado) => {
-      console.log('Vehiculo guardado correctamente:', resultado);
-      this.userService
-        .obtenerUsuarioPorID(this.userData.usuario.id)
-        .subscribe((usuarioActualizado) => {
-          this.userData = usuarioActualizado;
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          console.log('Usuario actualizado:', this.userData);
-        });
-    });
+
+  /**
+   * Función para verificar si el usuario tiene vehículos
+   */
+  get noVehiculos(): boolean {
+    return this.userData?.usuario?.vehiculos?.length === 0;
   }
 
   /**
@@ -315,14 +281,6 @@ export class FuncionesComunes {
     this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
     this.modeloSeleccionado = '';
   }
-
-  // filtrarModelosEditando(coche: any) {
-  //   if (!coche.marca) return;
-
-  //   this.listadoCoches.find((vehiculo) => vehiculo.marca === coche.marca);
-  //   this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
-  //   this.modeloSeleccionado = '';
-  // }
 
   /**
    * Para mostrar (o no) el selector de marca, modelo y color de coche
@@ -394,6 +352,11 @@ export class FuncionesComunes {
     }
   }
 
+  /**
+   * Función para editar los datos de un vehículo añadido
+   * @param vehiculo
+   */
+
   editarVehiculo(vehiculo: any): any {
     console.log('Vehiculo modificado: ', vehiculo);
 
@@ -402,5 +365,24 @@ export class FuncionesComunes {
       .subscribe((resultado) => {
         console.log('Resultado: ', resultado);
       });
+  }
+
+  /**
+   * Función para validar que la matrícula tenga el formato 0000ABC
+   */
+  validarMatricula(): void {
+    const regex = /^[0-9]{4}[A-Z]{3}$/;
+
+    // Convertir a mayúsculas automáticamente
+    this.matricula = this.matricula.toUpperCase();
+
+    if (!regex.test(this.matricula)) {
+      console.log(
+        'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
+      );
+      this.matriculaNoValida = true;
+    } else {
+      this.matriculaNoValida = false;
+    }
   }
 }

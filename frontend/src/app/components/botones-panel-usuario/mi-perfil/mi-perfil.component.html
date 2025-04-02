@@ -20,7 +20,7 @@
 
   <mat-divider></mat-divider>
 
-  <mat-dialog-content>
+  <div>
     <p>{{ "MI_PERFIL.DESCRIPCION_SECCION" | translate }}</p>
 
     <mat-divider></mat-divider>
@@ -32,14 +32,28 @@
         <label for="nombre" class="form-label">{{
           "MI_PERFIL.NOMBRE" | translate
         }}</label>
-        <input type="text" class="form-control" id="nombre" />
+        <input
+          type="text"
+          class="form-control"
+          id="nombre"
+          aria-describedby="nombre"
+          [(ngModel)]="funcionesUsuario.nombreEditado"
+          name="nombre"
+        />
       </div>
 
       <div class="mb-3">
         <label for="apellidos" class="form-label">{{
           "MI_PERFIL.APELLIDOS" | translate
         }}</label>
-        <input type="text" class="form-control" id="apellidos" />
+        <input
+          type="text"
+          class="form-control"
+          id="apellidos"
+          aria-describedby="apellidos"
+          [(ngModel)]="funcionesUsuario.apellidosEditados"
+          name="apellidos"
+        />
       </div>
 
       <!-- Pronombre -->
@@ -51,22 +65,18 @@
           class="form-select"
           id="pronombre"
           aria-label="Selección de pronombre"
+          name="pronombre"
+          [(ngModel)]="funcionesUsuario.pronombreEditado"
         >
-          <option selected disabled>
-            {{ "SELEC_PRONOMBRE.SELECCIONA" | translate }}
+          <option selected disabled>Escoge una opcion</option>
+          <option value="Él / He / Him">Él / He / Him</option>
+          <option value="Ella / She / Her">Ella / She / Her</option>
+          <option value="Elle / They / Them">Elle / They / Them</option>
+          <option value="Otros">Otros</option>
+          <option value="No uso ninguno concreto">
+            No uso ninguno concreto
           </option>
-          <option value="1">Él / He / Him</option>
-          <option value="2">Ella / She / Her</option>
-          <option value="3">Elle / They / Them</option>
-          <option value="4">
-            {{ "SELEC_PRONOMBRE.NINGUNO" | translate }}
-          </option>
-          <option value="5">
-            {{ "SELEC_PRONOMBRE.OTROS" | translate }}
-          </option>
-          <option value="6">
-            {{ "SELEC_PRONOMBRE.NO_RESPONDE" | translate }}
-          </option>
+          <option value="Prefiero no responder">Prefiero no responder</option>
         </select>
       </div>
 
@@ -78,9 +88,11 @@
         <select
           class="form-select"
           id="genero"
-          aria-label="Selección de pronombre"
+          name="genero"
+          [(ngModel)]="funcionesUsuario.generoEditado"
+          aria-label="Selección de genero"
         >
-          <option selected disabled>
+          <option value="" selected disabled>
             {{ "SELEC_GENERO.SELECCIONA" | translate }}
           </option>
           <option value="HOMBRE_CIS">
@@ -101,7 +113,9 @@
           <option value="NO_FLUIDO">
             {{ "SELEC_GENERO.NO_FLUIDO" | translate }}
           </option>
-          <option value="OTRO">{{ "SELEC_GENERO.OTRO" | translate }}</option>
+          <option value="OTRO">
+            {{ "SELEC_GENERO.OTRO" | translate }}
+          </option>
           <option value="NO_RESPONDE">
             {{ "SELEC_GENERO.NO_RESPONDE" | translate }}
           </option>
@@ -122,22 +136,41 @@
           </span>
         </label>
         <select
+          [(ngModel)]="funcionesUsuario.orientacionEditada"
+          name="orientacion"
           class="form-select"
-          aria-label="Selección de orientación"
-          formControlName="orientacion"
+          aria-label="Selección de orientación sexual"
         >
-          <option value="" disabled selected>
+          <option selected>
             {{ "ORIENTACION.SELECCIONA" | translate }}
           </option>
-          <option value="1">{{ "ORIENTACION.GAY" | translate }}</option>
-          <option value="2">{{ "ORIENTACION.LESBIANA" | translate }}</option>
-          <option value="3">{{ "ORIENTACION.BISEXUAL" | translate }}</option>
-          <option value="4">{{ "ORIENTACION.PANSEXUAL" | translate }}</option>
-          <option value="5">{{ "ORIENTACION.ASEXUAL" | translate }}</option>
-          <option value="6">{{ "ORIENTACION.DEMISEXUAL" | translate }}</option>
-          <option value="7">{{ "ORIENTACION.QUEER" | translate }}</option>
-          <option value="7">{{ "ORIENTACION.OTRO" | translate }}</option>
-          <option value="8">{{ "ORIENTACION.NO_RESPONDE" | translate }}</option>
+          <option value="GAY">
+            {{ "ORIENTACION.GAY" | translate }}
+          </option>
+          <option value="LESBIANA">
+            {{ "ORIENTACION.LESBIANA" | translate }}
+          </option>
+          <option value="BISEXUAL">
+            {{ "ORIENTACION.BISEXUAL" | translate }}
+          </option>
+          <option value="PANSEXUAL">
+            {{ "ORIENTACION.PANSEXUAL" | translate }}
+          </option>
+          <option value="ASEXUAL">
+            {{ "ORIENTACION.ASEXUAL" | translate }}
+          </option>
+          <option value="DEMISEXUAL">
+            {{ "ORIENTACION.DEMISEXUAL" | translate }}
+          </option>
+          <option value="QUEER">
+            {{ "ORIENTACION.QUEER" | translate }}
+          </option>
+          <option value="OTRO">
+            {{ "ORIENTACION.OTRO" | translate }}
+          </option>
+          <option value="NO_RESPONDE">
+            {{ "ORIENTACION.NO_RESPONDE" | translate }}
+          </option>
         </select>
       </div>
 
@@ -146,14 +179,23 @@
         <label for="fnacimiento" class="form-label">{{
           "MI_PERFIL.FECHA_NACIMIENTO" | translate
         }}</label>
-        <input type="date" class="form-control" id="fnacimiento" />
+        <input
+          type="date"
+          class="form-control"
+          id="fnacimiento"
+          [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+          name="fnacimiento"
+          (ngModelChange)="actualizarEdad()"
+        />
       </div>
 
       <!-- Edad -->
       <div class="mb-3">
-        <label for="edad" class="form-label"
-          >{{ "MI_PERFIL.EDAD" | translate }}:
-        </label>
+        <label for="edad" class="form-label mb-3">{{
+          "MI_PERFIL.EDAD" | translate
+        }}</label>
+        <br />
+        <span> {{ edad }} </span>
       </div>
 
       <div class="mb-3">
@@ -161,112 +203,16 @@
           "MI_PERFIL.SOBRE_TI" | translate
         }}</label>
         <textarea
-          class="form-control"
+          class="form-control bio"
           id="bio"
           rows="5"
           placeholder="{{ 'MI_PERFIL.CUENTANOS' | translate }}"
+          [(ngModel)]="funcionesUsuario.bioEditada"
+          name="bio"
         ></textarea>
       </div>
-
-      <!-- Mis vehículos -->
-      <ion-row class="d-flex justify-content-center">
-        <h6>{{ "MI_PERFIL.MIS_VEHICULOS" | translate }}</h6>
-      </ion-row>
-      <div class="mb-4">
-        <ul>
-          <li>Ford Focus Rojo</li>
-          <li>Opel Astra Blanco</li>
-        </ul>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="4">
-              <select
-                class="form-select"
-                [(ngModel)]="funcionescomunes.marcaSeleccionada"
-                (change)="filtrarModelos()"
-                [ngModelOptions]="{ standalone: true }"
-                aria-label="Selección de marca"
-              >
-                <option value="" disabled selected>
-                  {{ "VEHICULOS.MARCA" | translate }}
-                </option>
-                <option
-                  *ngFor="let coche of funcionescomunes.listadoCoches"
-                  [value]="coche.marca"
-                >
-                  {{ coche.marca }}
-                </option>
-              </select>
-            </ion-col>
-            <ion-col size="4">
-              <select
-                class="form-select"
-                [(ngModel)]="funcionescomunes.modeloSeleccionado"
-                [disabled]="!funcionescomunes.marcaSeleccionada"
-                [ngModelOptions]="{ standalone: true }"
-                aria-label="Selección de modelo"
-              >
-                <option value="" disabled selected>
-                  {{ "VEHICULOS.MODELO" | translate }}
-                </option>
-                <option
-                  *ngFor="let modelo of funcionescomunes.modelosFiltrados"
-                  [value]="modelo"
-                >
-                  {{ modelo }}
-                </option>
-              </select>
-            </ion-col>
-            <ion-col size="4">
-              <div *ngIf="funcionescomunes.validacionIdioma">
-                <select
-                  class="form-select"
-                  aria-label="Selección de color"
-                  [(ngModel)]="funcionescomunes.colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!funcionescomunes.modeloSeleccionado"
-                >
-                  <option value="" disabled selected>
-                    {{ "VEHICULOS.COLOR" | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of funcionescomunes.listadoColores"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
-
-              <div *ngIf="!funcionescomunes.validacionIdioma">
-                <select
-                  class="form-select"
-                  aria-label="Selección de color"
-                  [(ngModel)]="funcionescomunes.colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!funcionescomunes.modeloSeleccionado"
-                >
-                  <option value="" disabled selected>
-                    {{ "VEHICULOS.COLOR" | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of funcionescomunes.listColours"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <div class="container d-flex justify-content-center mt-2">
-              <button type="button" class="btn btn_bg" mat-raised-button>
-                {{ "BOTON.ANADIR_VEHICULO" | translate }}
-              </button>
-            </div>
-          </ion-row>
-        </ion-grid>
+      <div class="caja_vehiculos">
+        <app-tabla-vehiculos />
       </div>
 
       <div class="mb-4">
@@ -329,5 +275,5 @@
         </button>
       </div>
     </form>
-  </mat-dialog-content>
+  </div>
 </div>

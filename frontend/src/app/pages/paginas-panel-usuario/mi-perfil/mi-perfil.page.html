@@ -16,7 +16,7 @@
     <div class="container-fluid">
       <ion-row>
         <!-- Información personal -->
-        <ion-col size="5" class="mx-5">
+        <ion-col size="12" size-md="5" class="mx-md-5">
           <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
           <ion-row>
             <ion-col>
@@ -26,10 +26,11 @@
                 >
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control w-100"
                   id="nombre"
                   aria-describedby="nombre"
-                  value="{{userData.usuario.nombre}}"
+                  [(ngModel)]="funcionesUsuario.nombreEditado"
+                  name="nombre"
                 />
               </div>
             </ion-col>
@@ -44,7 +45,8 @@
                   class="form-control"
                   id="apellidos"
                   aria-describedby="apellidos"
-                  value="{{userData.usuario.apellidos}}"
+                  [(ngModel)]="funcionesUsuario.apellidosEditados"
+                  name="apellidos"
                 />
               </div>
             </ion-col>
@@ -57,14 +59,20 @@
                 <select
                   class="form-select w-150"
                   aria-label="Selección de pronombre"
+                  [(ngModel)]="funcionesUsuario.pronombreEditado"
+                  name="pronombre"
                 >
                   <option selected disabled>Escoge una opcion</option>
-                  <option value="1">Él / He / Him</option>
-                  <option value="2">Ella / She / Her</option>
-                  <option value="3">Elle / They / Them</option>
-                  <option value="4">Otros</option>
-                  <option value="5">No uso ninguno concreto</option>
-                  <option value="6">Prefiero no responder</option>
+                  <option value="Él / He / Him">Él / He / Him</option>
+                  <option value="Ella / She / Her">Ella / She / Her</option>
+                  <option value="Elle / They / Them">Elle / They / Them</option>
+                  <option value="Otros">Otros</option>
+                  <option value="No uso ninguno concreto">
+                    No uso ninguno concreto
+                  </option>
+                  <option value="Prefiero no responder">
+                    Prefiero no responder
+                  </option>
                 </select>
               </div>
             </ion-col>
@@ -86,8 +94,10 @@
                 </label>
 
                 <select
+                  id="genero"
                   class="form-select"
-                  [(ngModel)]="userData.usuario.genero"
+                  [(ngModel)]="funcionesUsuario.generoEditado"
+                  name="genero"
                   aria-label="Selección de género"
                 >
                   <option value="" selected disabled>
@@ -134,9 +144,10 @@
                   </span>
                 </label>
                 <select
+                  [(ngModel)]="funcionesUsuario.orientacionEditada"
+                  name="orientacion"
                   class="form-select"
                   aria-label="Selección de orientación sexual"
-                  [(ngModel)]="userData.usuario.orientacion"
                 >
                   >
                   <option selected>
@@ -181,7 +192,8 @@
                   type="date"
                   class="form-control"
                   id="fnacimiento"
-                  [(ngModel)]="fechaNacimiento"
+                  [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+                  name="fnacimiento"
                   (ngModelChange)="actualizarEdad()"
                 />
               </div>
@@ -203,11 +215,12 @@
                   >{{'MI_PERFIL.SOBRE_TI' | translate}}</label
                 >
                 <textarea
-                  class="form-control"
+                  class="form-control bio"
                   id="bio"
                   rows="5"
                   placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
-                  [(ngModel)]="userData.usuario.biografia"
+                  [(ngModel)]="funcionesUsuario.bioEditada"
+                  name="bio"
                 ></textarea>
               </div>
             </ion-col>
@@ -237,10 +250,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
+                          [value]="'Hablar'"
+                          (change)="funcionesUsuario.actualizarPreferencias($event)"
+                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Hablar')"
+                          id="hablar"
                         />
-                        <label class="form-check-label" for="flexCheckDefault">
+                        <label class="form-check-label" for="hablar">
                           {{'MI_PERFIL.HABLAR' | translate}}
                         </label>
                       </div>
@@ -248,10 +263,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          [value]="'Escuchar música'"
+                          (change)="funcionesUsuario.actualizarPreferencias($event)"
+                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Escuchar música')"
+                          id="escucharmusica"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="escucharmusica">
                           {{'MI_PERFIL.ESCUCHAR_MUSICA' | translate}}
                         </label>
                       </div>
@@ -259,10 +276,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          [value]="'Dormir'"
+                          (change)="funcionesUsuario.actualizarPreferencias($event)"
+                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Dormir')"
+                          id="Dormir"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="Dormir">
                           {{'MI_PERFIL.DORMIR' | translate}}
                         </label>
                       </div>
@@ -271,10 +290,12 @@
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          value=""
-                          id="flexCheckChecked"
+                          [value]="'Ir en silencio'"
+                          (change)="funcionesUsuario.actualizarPreferencias($event)"
+                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Ir en silencio')"
+                          id="silencio"
                         />
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <label class="form-check-label" for="silencio">
                           {{'MI_PERFIL.SILENCIO' | translate}}
                         </label>
                       </div>
@@ -290,7 +311,12 @@
       <!-- Botón para guardar los cambios -->
       <ion-row class="d-flex justify-content-center ms-5 mt-5 mb-3">
         <div>
-          <button type="button" class="btn btn_bg" mat-raised-button>
+          <button
+            type="button"
+            class="btn btn_bg"
+            mat-raised-button
+            (click)="funcionesUsuario.editarDatos()"
+          >
             {{'BOTON.GUARDAR' | translate}}
           </button>
         </div>

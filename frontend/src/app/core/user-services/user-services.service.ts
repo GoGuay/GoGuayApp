@@ -1,18 +1,18 @@
+import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';
-import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserServicesService {
-
   private apiUrl = 'http://127.0.0.1:5000';
+  userData: Usuario = {} as Usuario;
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Función para obtener los usuarios registrados.
@@ -23,12 +23,14 @@ export class UserServicesService {
       return of(this.usuariosCache);
     }
 
-    return this.http.get<Usuario[]>(`${this.apiUrl}/user/obtener_usuarios`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener los usuarios registrados:', error);
-        throw error;
-      })
-    );
+    return this.http
+      .get<Usuario[]>(`${this.apiUrl}/user/obtener_usuarios`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al obtener los usuarios registrados:', error);
+          throw error;
+        })
+      );
   }
 
   /**
@@ -37,7 +39,9 @@ export class UserServicesService {
    * @returns Observable del objeto Usuario.
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
-    return this.http.get<Usuario>(`${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`);
+    return this.http.get<Usuario>(
+      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`
+    );
   }
 
   /**
@@ -66,12 +70,14 @@ export class UserServicesService {
    * @returns Observable con la respuesta del backend.
    */
   eliminarUsuario(id: string): Observable<Usuario> {
-    return this.http.delete<Usuario>(`${this.apiUrl}/user/eliminar_usuario/${id}`).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al eliminar el usuario: ', error);
-        return throwError(error);
-      })
-    );
+    return this.http
+      .delete<Usuario>(`${this.apiUrl}/user/eliminar_usuario/${id}`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al eliminar el usuario: ', error);
+          return throwError(error);
+        })
+      );
   }
 
   /**
@@ -80,13 +86,21 @@ export class UserServicesService {
    * @param imagenPerfil FormData con la imagen de perfil.
    * @returns Observable con la respuesta del backend.
    */
-  actualizarImagenPerfil(usuarioId: number, imagenPerfil: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/actualizar_imagen_perfil/${usuarioId}`, imagenPerfil).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la imagen de perfil: ', error);
-        return throwError(error);
-      })
-    );
+  actualizarImagenPerfil(
+    usuarioId: number,
+    imagenPerfil: FormData
+  ): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/actualizar_imagen_perfil/${usuarioId}`,
+        imagenPerfil
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la imagen de perfil: ', error);
+          return throwError(error);
+        })
+      );
   }
 
   /**
@@ -95,13 +109,28 @@ export class UserServicesService {
    * @param imagenCabecera FormData con la imagen de cabecera.
    * @returns Observable con la respuesta del backend.
    */
-  actualizarImagenCabecera(usuarioId: number, imagenCabecera: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/actualizar_imagen_cabecera/${usuarioId}`, imagenCabecera).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la imagen de cabecera: ', error);
-        return throwError(error);
-      })
+  actualizarImagenCabecera(
+    usuarioId: number,
+    imagenCabecera: FormData
+  ): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/actualizar_imagen_cabecera/${usuarioId}`,
+        imagenCabecera
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la imagen de cabecera: ', error);
+          return throwError(error);
+        })
+      );
+  }
+  // Función para editar los cambios en la info personal del usuario
+  editarDatosUsuario(usuarioId: number, userData: any): Observable<any> {
+    const datosAActualizar = {};
+    return this.http.put(
+      `${this.apiUrl}/user/editarusuario/${usuarioId}`,
+      userData
     );
   }
-
 }

@@ -1,7 +1,9 @@
+from flask import json
 from models.enums import PreferenciasViajeEnum, RolUsuarioEnum, Genero, Orientacion
 from extensions import db
 from datetime import datetime
 from enum import Enum
+from sqlalchemy import JSON
 
 
 
@@ -23,7 +25,7 @@ class Usuario(db.Model):
     biografia = db.Column(db.String(500), nullable=True) 
     fotoPerfil = db.Column(db.String(250), nullable=True)
     fotoCabecera = db.Column(db.String(250), nullable=True)
-    preferencias = db.Column(db.String(50), nullable=False, default=PreferenciasViajeEnum.silencio.value)
+    preferencias = db.Column(JSON, nullable=False, default=lambda: [PreferenciasViajeEnum.silencio.value]) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
     dni_verificado = db.Column(db.Boolean, default=False, nullable=True)
     carnet_conducir_verificado = db.Column(db.Boolean, default=False, nullable=True)
@@ -53,6 +55,14 @@ class Usuario(db.Model):
         return round(mean((p.puntuacion for p in self.puntuaciones)), 1) if self.puntuaciones else 0
 
     def serialize(self):
+        preferencias = self.preferencias
+        if isinstance(preferencias, str):
+            try:
+                preferencias = json.loads(preferencias)
+            except json.JSONDecodeError:
+                preferencias = []  # Si no es válido, asignamos un valor por defecto (vacío)
+        elif preferencias is None:
+            preferencias = [] 
         return {
             "id": self.id,
             "nombre": self.nombre,
@@ -67,7 +77,7 @@ class Usuario(db.Model):
             "biografia": self.biografia,
             "fotoPerfil": self.fotoPerfil,
             "fotoCabecera": self.fotoCabecera,
-            "preferencias": self.preferencias,      
+            "preferencias": preferencias,
             "rolPerfil": self.rolPerfil,
             "dni_verificado": self.dni_verificado,
             "carnet_conducir_verificado": self.carnet_conducir_verificado,
