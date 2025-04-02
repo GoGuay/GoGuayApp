@@ -1,7 +1,23 @@
-.modal-infovisible{
-  width: 560px;
-  height: auto;
+@use "@angular/material" as mat;
+
+.modal-infovisible {
+  max-width: 90vw !important; /* Que el modal use el 90% del ancho de la pantalla */
+  max-height: 90vh; /* Que el modal no supere el 90% del alto de la pantalla */
+  overflow-y: auto; /* Habilita el scroll vertical si es necesario */
 }
+
+
+
+.caja_vehiculos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden; /* Evita el desplazamiento horizontal */
+}
+
+
+
 
 .style_h2{
   padding: 5%;
@@ -21,6 +37,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
+}
+
+:root {
+  @include mat.dialog-overrides((
+    container-max-width: 1500px
+ ));
 }
 
 @media (max-width: 576px) {

@@ -10,6 +10,8 @@ import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { MatIcon } from '@angular/material/icon';
 import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/tabla-vehiculos.component';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -31,29 +33,35 @@ export class MiPerfilPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
-  edad: number = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
   editandoVehiculo: boolean = false;
+  datosActualizados: any = {};
+  edad: number = this.funcionesUsuario.calcularEdad(
+    this.funcionesUsuario.fechaNacimientoEditada
+  );
 
-  constructor(public funcionesComunes: FuncionesComunes) {}
+  constructor(
+    public funcionesComunes: FuncionesComunes,
+    private userService: UserServicesService,
+    public funcionesUsuario: FuncionesUsuario
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
     console.log('Datos usuario: ', this.userData);
 
-    // Si el usuario no tiene un género guardado, asignar vacío ("")
-    if (!this.userData.usuario.genero) {
-      this.userData.usuario.genero = '';
-    }
-
-    // Si el usuario no tiene un pronombre guardado, asignar vacío ("")
-    if (!this.userData.usuario.pronombre) {
-      this.userData.usuario.pronombre = '';
-    }
-    if (this.userData.usuario.fecha_nacimiento) {
-      this.fechaNacimiento = this.userData.usuario.fecha_nacimiento;
-      this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
-    }
+    this.funcionesUsuario.nombreEditado = this.userData.usuario.nombre;
+    this.funcionesUsuario.apellidosEditados = this.userData.usuario?.apellidos;
+    this.funcionesUsuario.pronombreEditado =
+      this.userData.usuario?.pronombre || '';
+    this.funcionesUsuario.generoEditado = this.userData.usuario.genero || '';
+    this.funcionesUsuario.orientacionEditada =
+      this.userData.usuario.orientacion || '';
+    this.funcionesUsuario.fechaNacimientoEditada =
+      this.userData.usuario.fecha_nacimiento || '';
+    this.funcionesUsuario.bioEditada = this.userData.usuario.biografia || '';
+    this.funcionesUsuario.preferenciasSeleccionadas =
+      this.userData.usuario.preferencias || [];
 
     this.funcionesComunes.obtenerVehiculos();
 
@@ -64,6 +72,8 @@ export class MiPerfilPage implements OnInit {
   }
 
   actualizarEdad() {
-    this.edad = this.funcionesComunes.calcularEdad(this.fechaNacimiento);
+    this.edad = this.funcionesUsuario.calcularEdad(
+      this.funcionesUsuario.fechaNacimientoEditada
+    );
   }
 }

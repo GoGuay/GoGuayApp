@@ -9,7 +9,7 @@ class PreferenciasViajeEnum(Enum):
     hablar = "Hablar"
     escuchar = "Escuchar música"
     dormir = "Dormir"
-    silencio = "Silencio"
+    silencio = "Ir en silencio"
 
 class Genero(Enum):
     defecto = ""

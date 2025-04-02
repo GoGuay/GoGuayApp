@@ -18,7 +18,7 @@ export interface Usuario {
     carnet_conducir_verificado?: boolean;
     dni_verificado?: boolean;
     numero_carnet_conducir?: string;
-    preferencias?: 'Hablar' | 'Escuchar música' | 'Dormir' | 'Silencio';
+    preferencias?: string[];
     fecha_vencimiento_carnet?: string;
     comunic_comerciales?: boolean;
     comunic_terceros?: boolean;

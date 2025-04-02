@@ -1,5 +1,10 @@
 import { Usuario } from './../../models/user/usuario.model';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -14,7 +19,10 @@ import { MiPerfilComponent } from 'src/app/components/botones-panel-usuario/mi-p
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { Router } from '@angular/router';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
+import {
+  MAT_TOOLTIP_DEFAULT_OPTIONS,
+  MatTooltipModule,
+} from '@angular/material/tooltip';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 
 @Component({
@@ -29,7 +37,7 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
     TranslateModule,
     IonicModule,
     MatIcon,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   providers: [
     {
@@ -38,11 +46,11 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
         showDelay: 500,
         hideDelay: 200,
         touchGestures: 'auto',
-        position: 'below'
-      }
-    }
+        position: 'below',
+      },
+    },
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class PanelUsuarioPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -52,7 +60,8 @@ export class PanelUsuarioPage implements OnInit {
     private dialog: MatDialog,
     private travelService: TravelService,
     private navCtrl: NavController,
-    private funcionesComunes: FuncionesComunes
+    private funcionesComunes: FuncionesComunes,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -92,7 +101,9 @@ export class PanelUsuarioPage implements OnInit {
     this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje },
       disableClose: true,
+      panelClass: 'custom-modal-width',
     });
+    this.cdr.detectChanges(); // Fuerza la detección de cambios
   }
   openHelpDatosContacto() {
     const titulo: string = 'Contenido Datos de contacto';
@@ -127,8 +138,8 @@ export class PanelUsuarioPage implements OnInit {
 
   openPerfilPublico(id_usuario: number) {
     const usuario = {
-      id: id_usuario
-    }
+      id: id_usuario,
+    };
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
