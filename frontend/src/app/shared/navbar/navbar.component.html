@@ -165,7 +165,9 @@
             <li class="nav-item dropdown" *ngIf="!isLoggedIn">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
+                <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif">
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
               <ul class="dropdown-menu menuusuario">
                 <li>
@@ -181,7 +183,8 @@
               <!-- boton del menu -->
               <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
-                <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
+                <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
+                <!-- <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon> -->
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                   <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
                 </div>
