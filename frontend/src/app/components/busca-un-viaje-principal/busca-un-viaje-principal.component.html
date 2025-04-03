@@ -1,0 +1,33 @@
+<div id="contenedor_publicar_viaje" class="p-2">
+  <ion-grid [fixed]="true" class="d-flex justify-content-center">
+    <ion-row>
+      <ion-col>
+        <div class="container">
+          <img
+            title="imagen publicación de viaje"
+            src="../../../assets/banco_imagenes/pareja2.png"
+            class="img_travel"
+          />
+        </div>
+      </ion-col>
+      <ion-col>
+        <div class="container">
+          <h2>{{ "HOME.QUIERES_BUSCAR_VIAJE" | translate }}</h2>
+          <div class="d-flex justify-content-center">
+            <button
+              type="button"
+              mat-raised-button
+              class="me-2 btns btn_bg travel-btn"
+              (click)="openSearch()"
+            >
+              <mat-icon class="travel-icon">search</mat-icon>
+              <span class="travel-text">{{
+                "BOTON.BUSCA_TU_VIAJE_AQUI" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

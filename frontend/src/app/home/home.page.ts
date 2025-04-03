@@ -12,6 +12,8 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
+import { IonicModule } from '@ionic/angular';
+import { BuscaUnViajePrincipalComponent } from "../components/busca-un-viaje-principal/busca-un-viaje-principal.component";
 
 @Component({
   selector: 'app-home',
@@ -19,18 +21,19 @@ import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.se
   standalone: true,
   styleUrls: ['home.page.scss'],
   imports: [
-    IonContent,
     FooterComponent,
     JumbotronComponent,
     BuscadorComponent,
     InfoComponent,
+    IonicModule,
     NuevoViajeGeneralComponent,
     MatDividerModule,
     TrayectosPopularesComponent,
     VentanaDudasComponent,
     TranslateModule,
     AnimateOnScrollModule,
-    NavbarComponent
+    NavbarComponent,
+    BuscaUnViajePrincipalComponent
 ]
 })
 export class HomePage implements OnInit {

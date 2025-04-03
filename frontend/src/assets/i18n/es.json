@@ -179,6 +179,7 @@
     "ELIMINAR_CTA": "Eliminar mi cuenta",
     "BUSCAR": "Buscar",
     "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
+    "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
     "CONSULTA_AQUI": "Consulta aquí",
     "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
@@ -226,9 +227,10 @@
       "TEXTO_2": "Planea tu próximo viaje con facilidad. Conéctate con personas que van en la misma dirección.",
       "TEXTO_3": "Comparte tus experiencias y crea recuerdos inolvidables con viajeros como tú."
     },
-    "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje",
-    "TRAYECTOS_POPULARES": "Trayectos más populares",
-    "DUDAS": "¿TIENES DUDAS?"
+    "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje?",
+    "TRAYECTOS_POPULARES": "¿Hay un evento cercano?",
+    "DUDAS": "¿TIENES DUDAS?",
+    "QUIERES_BUSCAR_VIAJE":"¿Quieres buscar un viaje?"
   },
 
   "_Búsqueda de viaje": "/busqueda-viajes",
