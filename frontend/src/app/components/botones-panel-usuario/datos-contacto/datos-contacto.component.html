@@ -29,32 +29,79 @@
         <ion-row class="d-flex justify-content-center">
           <h6>{{ "DATOS_CONTACTO.MODIF_CORREO_TFNO" | translate }}</h6>
         </ion-row>
-        <div class="mb-3">
-          <div>
-            <label for="email" class="form-label"
-              >{{ "DATOS_CONTACTO.MI_CORREO" | translate }}:</label
+        <form [formGroup]="funcionesUsuario.formEmailTfno">
+          <div class="mb-3">
+            <div>
+              <label for="email" class="form-label"
+                >{{ "DATOS_CONTACTO.MI_CORREO" | translate }}:</label
+              >
+            </div>
+            <input
+              type="email"
+              class="form-control inputs_emailtfno"
+              id="emailControl"
+              aria-describedby="email"
+              [(ngModel)]="funcionesUsuario.emailEditado"
+              formControlName="emailControl"
+              name="emailControl"
+              (ngModelChange)="funcionesUsuario.onInputChange()"
+            />
+            <div
+              *ngIf="
+                funcionesUsuario.formEmailTfno.get('emailControl')?.invalid &&
+                funcionesUsuario.formEmailTfno.get('emailControl')?.touched
+              "
+              style="color: red"
             >
+              <span
+                *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['required']"
+                >El correo es obligatorio</span
+              >
+              <span
+                *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['pattern']"
+                >Formato incorrecto</span
+              >
+              <span
+                *ngIf="funcionesUsuario.formEmailTfno.get('emailControl')?.errors?.['email']"
+                >El formato no es válido</span
+              >
+            </div>
           </div>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            aria-describedby="emailHelp"
-          />
-        </div>
-        <div class="mb-3">
-          <div>
-            <label for="telefono" class="form-label">{{
-              "DATOS_CONTACTO.MI_TFNO" | translate
-            }}</label>
+          <div class="mb-3">
+            <div>
+              <label for="telefono" class="form-label">{{
+                "DATOS_CONTACTO.MI_TFNO" | translate
+              }}</label>
+            </div>
+            <input
+              type="text"
+              class="form-control inputs_emailtfno"
+              id="telefonoControl"
+              aria-describedby="telefono"
+              [(ngModel)]="funcionesUsuario.telefonoEditado"
+              name="telefonoControl"
+              formControlName="telefonoControl"
+              (ngModelChange)="funcionesUsuario.onInputChange()"
+            />
+            <div
+              *ngIf="
+                funcionesUsuario.formEmailTfno.get('telefonoControl')
+                  ?.invalid &&
+                funcionesUsuario.formEmailTfno.get('telefonoControl')?.touched
+              "
+              style="color: red"
+            >
+              <span
+                *ngIf="funcionesUsuario.formEmailTfno.get('telefonoControl')?.errors?.['required']"
+                >El teléfono es obligatorio</span
+              >
+              <span
+                *ngIf="funcionesUsuario.formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
+                >Formato incorrecto: debe tener 9 dígitos numéricos</span
+              >
+            </div>
           </div>
-          <input
-            type="telefono"
-            class="form-control"
-            id="text"
-            aria-describedby="emailHelp"
-          />
-        </div>
+        </form>
       </ion-col>
     </ion-row>
 
@@ -68,8 +115,11 @@
         <input
           class="form-check-input"
           type="checkbox"
-          value=""
-          id="flexCheckDefault"
+          name="comunComerciales"
+          id="comunComerciales"
+          (change)="funcionesUsuario.preferenciasComunicacion()"
+          [(ngModel)]="funcionesUsuario.comunComerciales"
+          (change)="funcionesUsuario.onInputChange()"
         />
         <label class="form-check-label" for="flexCheckDefault">
           {{ "DATOS_CONTACTO.CHECK_POR_EMAIL" | translate }}
@@ -79,8 +129,11 @@
         <input
           class="form-check-input"
           type="checkbox"
-          value=""
-          id="flexCheckChecked"
+          name="comunTerceros"
+          id="comunTerceros"
+          (change)="funcionesUsuario.preferenciasComunicacion()"
+          [(ngModel)]="funcionesUsuario.comunTerceros"
+          (change)="funcionesUsuario.onInputChange()"
         />
         <label class="form-check-label" for="flexCheckChecked">
           {{ "DATOS_CONTACTO.CHECK_TERCEROS" | translate }}
@@ -89,7 +142,13 @@
     </ion-row>
     <ion-row class="d-flex justify-content-center mb-3">
       <div>
-        <button type="button" mat-raised-button class="btn btn_bg btn_opciones">
+        <button
+          type="button"
+          class="btn btn_bg"
+          mat-raised-button
+          (click)="clickEditar()"
+          [disabled]="!funcionesUsuario.botonHabilitadoContacto"
+        >
           {{ "BOTON.GUARDAR" | translate }}
         </button>
       </div>

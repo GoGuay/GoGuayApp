@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable, Optional } from '@angular/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { UserServicesService } from '../user-services/user-services.service';
 import { FuncionesComunes } from '../funciones-comunes/funciones-comunes.service';
@@ -6,8 +6,10 @@ import { BehaviorSubject } from 'rxjs';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DialogRef } from '@angular/cdk/dialog';
+import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario/datos-contacto/datos-contacto.component';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +43,9 @@ export class FuncionesUsuario {
     private userService: UserServicesService,
     private funcionesComunes: FuncionesComunes,
     private vehiculosServices: VehiculosServicesService,
+    @Optional()
+    private cerrarCompDatosContacto: MatDialogRef<DatosContactoComponent>,
+
     private dialog: MatDialog
   ) {
     this.loadUserData();
@@ -332,7 +337,7 @@ export class FuncionesUsuario {
    * Edita los datos de correo y teléfono del usuario
    * @returns
    */
-  editarCorreoTelefono() {
+  editarCorreoTelefono(): any {
     console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
 
     if (
@@ -368,6 +373,7 @@ export class FuncionesUsuario {
           this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
           localStorage.setItem('userData', JSON.stringify(this.userData));
           this.obtenerUsuario();
+          return response;
         },
         (error) => {
           console.error('Error al actualizar los datos', error);

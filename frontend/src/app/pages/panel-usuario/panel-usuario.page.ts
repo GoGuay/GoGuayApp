@@ -70,16 +70,20 @@ export class PanelUsuarioPage implements OnInit {
     this.funcionesComunes.getBaseUrl();
   }
   openMiPerfil() {
-    this.dialog.open(MiPerfilComponent, {});
+    // this.dialog.open(MiPerfilComponent, {});
+    this.navCtrl.navigateRoot(['/mi-perfil']);
   }
   openDatosContacto() {
-    this.dialog.open(DatosContactoComponent, {});
+    // this.dialog.open(DatosContactoComponent, {});
+    this.navCtrl.navigateRoot(['/datos-contacto']);
   }
   openVerificarPerfil() {
-    this.dialog.open(VerificarPerfilComponent, {});
+    // this.dialog.open(VerificarPerfilComponent, {});
+    this.navCtrl.navigateRoot(['/verificaciones-perfil']);
   }
   openSaldoTransferencias() {
-    this.dialog.open(SaldoTransferenciasComponent, {});
+    // this.dialog.open(SaldoTransferenciasComponent, {});
+    this.navCtrl.navigateRoot(['/saldo-transferencias']);
   }
 
   /**
