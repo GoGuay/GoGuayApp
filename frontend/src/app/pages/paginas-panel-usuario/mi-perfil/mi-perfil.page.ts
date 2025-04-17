@@ -93,7 +93,7 @@ export class MiPerfilPage implements OnInit {
     this.bioEditada = this.userData.usuario.biografia || '';
     this.preferenciasSeleccionadas = this.userData.usuario.preferencias || [];
 
-    this.funcionesComunes.obtenerVehiculos();
+    // this.funcionesComunes.obtenerVehiculos();
 
     //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {

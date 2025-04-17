@@ -24,19 +24,10 @@ export class FuncionesComunes {
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
-  listadoCoches = CARS;
-  marcaSeleccionada: string = '';
-  modeloSeleccionado: string = '';
-  colorSeleccionado: string = '';
-  matricula: string = '';
-  modelosFiltrados: string[] = [];
-  listadoColores: string[] = COLORES;
-  listColours: string[] = COLOURS;
   validacionIdioma: boolean = true;
-  mostrarSelectorVehiculo: boolean = false;
+
   vehiculos_usuario: any[] = [];
   VehiculoYaAnadido: boolean = false;
-  matriculaNoValida: boolean = false;
 
   usuario: any = {} as Usuario;
 
@@ -273,87 +264,6 @@ export class FuncionesComunes {
   }
 
   /**
-   * Función para filtrar los modelos de los coches
-   */
-  filtrarModelos() {
-    const coche = this.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
-    );
-    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
-    this.modeloSeleccionado = '';
-  }
-
-  /**
-   * Para mostrar (o no) el selector de marca, modelo y color de coche
-   */
-  botonAnadirVehiculo() {
-    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
-  }
-
-  /**
-   * Función para obtener la lista de vehículos de un usuario.   *
-   */
-  obtenerVehiculos() {
-    const id_usuario = this.userData.usuario.id;
-    this.vehicleService
-      .obtenerVehiculosUsuario(id_usuario)
-      .subscribe((resultado) => {
-        console.log('Vehículos: ', resultado.vehiculos);
-        this.vehiculos_usuario = resultado.vehiculos;
-      });
-  }
-
-  /**
-   * Función para mostrar las imágenes de colores de los coches
-   * según el color que se tenga seleccionado del coche.   *
-   * @param color
-   * @returns
-   */
-  mostrarColorCoche(color: string): string {
-    const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
-    const negro: string = '../../../assets/ColoresCoches/Negro.png';
-    const rojo: string = '../../../assets/ColoresCoches/Rojo.png';
-    const amarillo: string = '../../../assets/ColoresCoches/Amarillo.png';
-    const verde: string = '../../../assets/ColoresCoches/Verde.png';
-    const gris: string = '../../../assets/ColoresCoches/Gris.png';
-    const dorado: string = '../../../assets/ColoresCoches/Dorado.png';
-    const marron: string = '../../../assets/ColoresCoches/Marrón.png';
-    const morado: string = '../../../assets/ColoresCoches/Morado.png';
-    const beige: string = '../../../assets/ColoresCoches/Beige.png';
-    const perla: string = '../../../assets/ColoresCoches/Perla.png';
-    const otro: string = '../../../assets/ColoresCoches/Otros.png';
-
-    switch (color) {
-      case 'blanco':
-        return blanco;
-      case 'negro':
-        return negro;
-      case 'rojo':
-        return rojo;
-      case 'amarillo':
-        return amarillo;
-      case 'verde':
-        return verde;
-      case 'gris':
-        return gris;
-      case 'dorado':
-        return dorado;
-      case 'marron':
-        return marron;
-      case 'morado':
-        return morado;
-      case 'beige':
-        return beige;
-      case 'perla':
-        return perla;
-      case 'otro':
-        return otro;
-      default:
-        return '';
-    }
-  }
-
-  /**
    * Función para editar los datos de un vehículo añadido
    * @param vehiculo
    */
@@ -366,24 +276,5 @@ export class FuncionesComunes {
       .subscribe((resultado) => {
         console.log('Resultado: ', resultado);
       });
-  }
-
-  /**
-   * Función para validar que la matrícula tenga el formato 0000ABC
-   */
-  validarMatricula(): void {
-    const regex = /^[0-9]{4}[A-Z]{3}$/;
-
-    // Convertir a mayúsculas automáticamente
-    this.matricula = this.matricula.toUpperCase();
-
-    if (!regex.test(this.matricula)) {
-      console.log(
-        'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
-      );
-      this.matriculaNoValida = true;
-    } else {
-      this.matriculaNoValida = false;
-    }
   }
 }
