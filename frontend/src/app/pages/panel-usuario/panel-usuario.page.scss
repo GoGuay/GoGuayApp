@@ -1,5 +1,5 @@
 .btn_opciones {
-  width: 238px;
+  width: 265px;
 }
 
 .boton-foto {
@@ -53,10 +53,14 @@
 }
 
 .custom-modal-width .mat-dialog-container {
-  width: 100% !important;      /* 90% del ancho de la ventana */
-  height: auto !important;     /* Altura automática para que el modal ajuste su tamaño según el contenido */
-  max-height: 90vh !important; /* Máxima altura del 90% de la ventana */
-  overflow: auto !important;   /* Habilita el desplazamiento si el contenido supera la altura del modal */
+  width: 100% !important;
+  /* 90% del ancho de la ventana */
+  height: auto !important;
+  /* Altura automática para que el modal ajuste su tamaño según el contenido */
+  max-height: 90vh !important;
+  /* Máxima altura del 90% de la ventana */
+  overflow: auto !important;
+  /* Habilita el desplazamiento si el contenido supera la altura del modal */
 }
 
 @media (max-width: 576px) {

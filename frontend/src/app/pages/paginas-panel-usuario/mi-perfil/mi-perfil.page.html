@@ -27,7 +27,7 @@
                 type="text"
                 class="form-control w-100"
                 id="nombre"
-                [(ngModel)]="funcionesUsuario.nombreEditado"
+                [(ngModel)]="nombreEditado"
                 name="nombre"
                 (ngModelChange)="onInputChange()"
               />
@@ -40,7 +40,7 @@
                 type="text"
                 class="form-control"
                 id="apellidos"
-                [(ngModel)]="funcionesUsuario.apellidosEditados"
+                [(ngModel)]="apellidosEditados"
                 name="apellidos"
                 (ngModelChange)="onInputChange()"
               />
@@ -54,7 +54,7 @@
               >
               <select
                 class="form-select w-150"
-                [(ngModel)]="funcionesUsuario.pronombreEditado"
+                [(ngModel)]="pronombreEditado"
                 name="pronombre"
                 (ngModelChange)="onInputChange()"
               >
@@ -91,7 +91,7 @@
               <select
                 id="genero"
                 class="form-select"
-                [(ngModel)]="funcionesUsuario.generoEditado"
+                [(ngModel)]="generoEditado"
                 name="genero"
                 aria-label="Selección de género"
                 (ngModelChange)="onInputChange()"
@@ -140,7 +140,7 @@
                 </span>
               </label>
               <select
-                [(ngModel)]="funcionesUsuario.orientacionEditada"
+                [(ngModel)]="orientacionEditada"
                 name="orientacion"
                 class="form-select"
                 aria-label="Selección de orientación sexual"
@@ -187,7 +187,7 @@
                 type="date"
                 class="form-control"
                 id="fnacimiento"
-                [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+                [(ngModel)]="fechaNacimientoEditada"
                 name="fnacimiento"
                 (ngModelChange)="actualizarEdad()"
                 (ngModelChange)="onInputChange()"
@@ -215,7 +215,7 @@
                 id="bio"
                 rows="5"
                 placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
-                [(ngModel)]="funcionesUsuario.bioEditada"
+                [(ngModel)]="bioEditada"
                 name="bio"
                 (ngModelChange)="onInputChange()"
               ></textarea>
@@ -253,7 +253,7 @@
                 type="checkbox"
                 [value]="'Hablar'"
                 (change)="onCheckboxChange('Hablar', $event)"
-                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Hablar')"
+                [checked]="preferenciasSeleccionadas.includes('Hablar')"
                 id="hablar"
               />
               <label class="form-check-label" for="hablar">
@@ -266,7 +266,7 @@
                 type="checkbox"
                 [value]="'Escuchar música'"
                 (change)="onCheckboxChange('Escuchar música', $event)"
-                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Escuchar música')"
+                [checked]="preferenciasSeleccionadas.includes('Escuchar música')"
                 id="escucharmusica"
               />
               <label class="form-check-label" for="escucharmusica">
@@ -279,7 +279,7 @@
                 type="checkbox"
                 [value]="'Dormir'"
                 (change)="onCheckboxChange('Dormir', $event)"
-                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Dormir')"
+                [checked]="preferenciasSeleccionadas.includes('Dormir')"
                 id="Dormir"
               />
               <label class="form-check-label" for="Dormir">
@@ -293,7 +293,7 @@
                 type="checkbox"
                 [value]="'Ir en silencio'"
                 (change)="onCheckboxChange('Ir en silencio', $event)"
-                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Ir en silencio')"
+                [checked]="preferenciasSeleccionadas.includes('Ir en silencio')"
                 id="silencio"
               />
               <label class="form-check-label" for="silencio">
@@ -307,12 +307,13 @@
     <!-- Botón para guardar los cambios -->
     <ion-row class="d-flex justify-content-center ms-1 mt-5 mb-3">
       <div>
+        <p-toast position="bottom-center"></p-toast>
         <button
           type="button"
           class="btn btn_bg"
           mat-raised-button
           [disabled]="!botonHabilitado"
-          (click)="funcionesUsuario.editarDatos()"
+          (click)="editarDatos()"
         >
           {{'BOTON.GUARDAR' | translate}}
         </button>

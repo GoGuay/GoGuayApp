@@ -37,68 +37,60 @@ import { VistaAcordeonVehiculosComponent } from '../../tabla-vehiculos/vista-aco
   templateUrl: './mi-perfil.component.html',
   styleUrls: ['./mi-perfil.component.scss'],
 })
-export class MiPerfilComponent implements OnInit {
-  userLoggedIn: boolean = false;
-  userData: Usuario = {} as Usuario;
-  edad: number = this.funcionesUsuario.calcularEdad(
-    this.funcionesUsuario.fechaNacimientoEditada
-  );
-  constructor(
-    public funcionescomunes: FuncionesComunes,
-    private dialogRef: MatDialogRef<MiPerfilComponent>,
-    private navCtrl: NavController,
-    private userService: UserServicesService,
-    public funcionesUsuario: FuncionesUsuario
-  ) {}
-
-  ngOnInit() {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-    console.log('Datos usuario: ', this.userData);
-    const idioma = localStorage.getItem('language');
-
-    if (idioma === 'es') {
-      this.funcionescomunes.validacionIdioma = true;
-    } else {
-      this.funcionescomunes.validacionIdioma = false;
-    }
-
-    this.funcionesUsuario.nombreEditado = this.userData.usuario.nombre;
-    this.funcionesUsuario.apellidosEditados = this.userData.usuario?.apellidos;
-    this.funcionesUsuario.pronombreEditado =
-      this.userData.usuario?.pronombre || '';
-    this.funcionesUsuario.generoEditado = this.userData.usuario.genero || '';
-    this.funcionesUsuario.orientacionEditada =
-      this.userData.usuario.orientacion || '';
-    this.funcionesUsuario.fechaNacimientoEditada =
-      this.userData.usuario.fecha_nacimiento || '';
-    this.funcionesUsuario.bioEditada = this.userData.usuario.biografia || '';
-    this.funcionesUsuario.preferenciasSeleccionadas =
-      this.userData.usuario.preferencias || [];
-
-    this.funcionescomunes.obtenerVehiculos();
-  }
-
-  closeDialog() {
-    this.dialogRef.close();
-  }
-
-  filtrarModelos() {
-    const coche = this.funcionescomunes.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.funcionescomunes.marcaSeleccionada
-    );
-    this.funcionescomunes.modelosFiltrados = coche ? coche.modelos : [];
-    this.funcionescomunes.modeloSeleccionado = '';
-  }
-
-  openInfoVisible() {
-    this.navCtrl.navigateRoot('/info-visible');
-    this.closeDialog();
-  }
-
-  actualizarEdad() {
-    this.edad = this.funcionesUsuario.calcularEdad(
-      this.funcionesUsuario.fechaNacimientoEditada
-    );
-  }
+export class MiPerfilComponent {
+  // userLoggedIn: boolean = false;
+  // userData: Usuario = {} as Usuario;
+  // edad: number = this.funcionesUsuario.calcularEdad(
+  //   this.funcionesUsuario.fechaNacimientoEditada
+  // );
+  // constructor(
+  //   public funcionescomunes: FuncionesComunes,
+  //   private dialogRef: MatDialogRef<MiPerfilComponent>,
+  //   private navCtrl: NavController,
+  //   private userService: UserServicesService,
+  //   public funcionesUsuario: FuncionesUsuario
+  // ) {}
+  // ngOnInit() {
+  //   this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  //   this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+  //   console.log('Datos usuario: ', this.userData);
+  //   const idioma = localStorage.getItem('language');
+  //   if (idioma === 'es') {
+  //     this.funcionescomunes.validacionIdioma = true;
+  //   } else {
+  //     this.funcionescomunes.validacionIdioma = false;
+  //   }
+  //   this.funcionesUsuario.nombreEditado = this.userData.usuario.nombre;
+  //   this.funcionesUsuario.apellidosEditados = this.userData.usuario?.apellidos;
+  //   this.funcionesUsuario.pronombreEditado =
+  //     this.userData.usuario?.pronombre || '';
+  //   this.funcionesUsuario.generoEditado = this.userData.usuario.genero || '';
+  //   this.funcionesUsuario.orientacionEditada =
+  //     this.userData.usuario.orientacion || '';
+  //   this.funcionesUsuario.fechaNacimientoEditada =
+  //     this.userData.usuario.fecha_nacimiento || '';
+  //   this.funcionesUsuario.bioEditada = this.userData.usuario.biografia || '';
+  //   this.funcionesUsuario.preferenciasSeleccionadas =
+  //     this.userData.usuario.preferencias || [];
+  //   this.funcionescomunes.obtenerVehiculos();
+  // }
+  // closeDialog() {
+  //   this.dialogRef.close();
+  // }
+  // filtrarModelos() {
+  //   const coche = this.funcionescomunes.listadoCoches.find(
+  //     (vehiculo) => vehiculo.marca === this.funcionescomunes.marcaSeleccionada
+  //   );
+  //   this.funcionescomunes.modelosFiltrados = coche ? coche.modelos : [];
+  //   this.funcionescomunes.modeloSeleccionado = '';
+  // }
+  // openInfoVisible() {
+  //   this.navCtrl.navigateRoot('/info-visible');
+  //   this.closeDialog();
+  // }
+  // actualizarEdad() {
+  //   this.edad = this.funcionesUsuario.calcularEdad(
+  //     this.funcionesUsuario.fechaNacimientoEditada
+  //   );
+  // }
 }
