@@ -1,19 +1,9 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  CARS,
-  COLORES,
-  COLOURS,
-} from '../../../models/vehiculos/marcas_modelos.model';
 import { IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,15 +11,17 @@ import { Router } from '@angular/router';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuario.service';
-import { TablaVehiculosComponent } from '../../tabla-vehiculos/tabla-vehiculos.component';
+import { TablaVehiculosComponent } from '../../tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { VistaAcordeonVehiculosComponent } from '../../tabla-vehiculos/vista-acordeon-vehiculos/vista-acordeon-vehiculos.component';
 
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
   imports: [
     MatDialogTitle,
-    MatDialogContent,
     MatDividerModule,
     MatIcon,
     TranslateModule,
@@ -38,7 +30,9 @@ import { Usuario } from 'src/app/models/user/usuario.model';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    TablaVehiculosComponent,
+    MatExpansionModule,
+    MatFormFieldModule,
+    VistaAcordeonVehiculosComponent,
   ],
   templateUrl: './mi-perfil.component.html',
   styleUrls: ['./mi-perfil.component.scss'],
@@ -93,7 +87,7 @@ export class MiPerfilComponent implements OnInit {
     const coche = this.funcionescomunes.listadoCoches.find(
       (vehiculo) => vehiculo.marca === this.funcionescomunes.marcaSeleccionada
     );
-    this.funcionescomunes.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+    this.funcionescomunes.modelosFiltrados = coche ? coche.modelos : [];
     this.funcionescomunes.modeloSeleccionado = '';
   }
 

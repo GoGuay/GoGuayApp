@@ -1,12 +1,15 @@
 <div class="mb-5 container">
-  <h4 class="text-center mb-4 mt-0">
+  <h4 class="text-center mb-1 mb-sm-1 mb-md-5">
     {{ "MI_PERFIL.MIS_VEHICULOS" | translate }}
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
   <div
-    *ngIf="vehiculos_usuario && vehiculos_usuario.length > 0; else noVehiculos"
-    class="tabla"
+    *ngIf="
+      funcionesUsuario.vehiculos_usuario &&
+        funcionesUsuario.vehiculos_usuario.length > 0;
+      else noVehiculos
+    "
   >
     <table class="table table-hover">
       <thead>
@@ -19,13 +22,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let coche of vehiculos_usuario">
+        <tr *ngFor="let coche of funcionesUsuario.vehiculos_usuario">
           <td>
             <ng-container *ngIf="coche.editandoVehiculo; else noEditMarca">
               <select
                 class="form-select"
                 [(ngModel)]="coche.marca"
-                (change)="filtrarModelosEditando(coche)"
+                (change)="funcionesUsuario.filtrarModelosEditando(coche)"
               >
                 <option
                   *ngFor="let coche of funcionesComunes.listadoCoches"
@@ -91,8 +94,8 @@
                   mat-icon-button
                   (click)="
                     coche.editandoVehiculo
-                      ? guardarVehiculoEditado(coche)
-                      : editarFilaVehiculo(coche)
+                      ? funcionesUsuario.guardarVehiculoEditado(coche)
+                      : funcionesUsuario.editarFilaVehiculo(coche)
                   "
                 >
                   <mat-icon>{{
@@ -105,7 +108,7 @@
                 <button
                   class="botones_tabla btn_bg"
                   mat-icon-button
-                  (click)="modalEliminarVehiculo(coche)"
+                  (click)="funcionesUsuario.modalEliminarVehiculo(coche)"
                 >
                   <mat-icon>delete</mat-icon>
                 </button>
@@ -123,6 +126,7 @@
     </div>
   </div>
 
+  <!--Mensaje si no hay ningún vehículo añadido-->
   <ng-template #noVehiculos>
     <div class="mt-3 d-flex justify-content-center">
       <span>No tienes vehículos añadidos</span>
@@ -143,93 +147,95 @@
 
   <!--Selector de marca, modelo y color de vehiculos y botón para guardar vehiculo-->
   <div class="mt-3" *ngIf="funcionesComunes.mostrarSelectorVehiculo">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="4">
+    <ion-row style="width: 650px">
+      <!-- Selector de marca -->
+      <ion-col size="4">
+        <select
+          class="form-select"
+          [(ngModel)]="funcionesComunes.marcaSeleccionada"
+          (change)="funcionesComunes.filtrarModelos()"
+          [ngModelOptions]="{ standalone: true }"
+          aria-label="Selección de marca"
+        >
+          <option value="" disabled selected>
+            {{ "VEHICULOS.MARCA" | translate }}
+          </option>
+          <option
+            *ngFor="let coche of funcionesComunes.listadoCoches"
+            [value]="coche.marca"
+          >
+            {{ coche.marca }}
+          </option>
+        </select>
+      </ion-col>
+      <!-- Selector de modelo -->
+      <ion-col size="3">
+        <select
+          class="form-select"
+          [(ngModel)]="funcionesComunes.modeloSeleccionado"
+          [disabled]="!funcionesComunes.marcaSeleccionada"
+          [ngModelOptions]="{ standalone: true }"
+          aria-label="Selección de modelo"
+        >
+          <option value="" disabled selected>
+            {{ "VEHICULOS.MODELO" | translate }}
+          </option>
+          <option
+            *ngFor="let modelo of funcionesComunes.modelosFiltrados"
+            [value]="modelo"
+          >
+            {{ modelo }}
+          </option>
+        </select>
+      </ion-col>
+      <!-- Selector de color -->
+      <ion-col size="2">
+        <div *ngIf="funcionesComunes.validacionIdioma">
           <select
             class="form-select"
-            [(ngModel)]="funcionesComunes.marcaSeleccionada"
-            (change)="funcionesComunes.filtrarModelos()"
+            aria-label="Selección de color"
+            [(ngModel)]="funcionesComunes.colorSeleccionado"
             [ngModelOptions]="{ standalone: true }"
-            aria-label="Selección de marca"
+            [disabled]="!funcionesComunes.modeloSeleccionado"
           >
             <option value="" disabled selected>
-              {{ "VEHICULOS.MARCA" | translate }}
+              {{ "VEHICULOS.COLOR" | translate }}
             </option>
             <option
-              *ngFor="let coche of funcionesComunes.listadoCoches"
-              [value]="coche.marca"
+              *ngFor="let color of funcionesComunes.listadoColores"
+              [value]="color"
             >
-              {{ coche.marca }}
+              {{ color }}
             </option>
           </select>
-        </ion-col>
-        <ion-col size="4">
-          <select
-            class="form-select"
-            [(ngModel)]="funcionesComunes.modeloSeleccionado"
-            [disabled]="!funcionesComunes.marcaSeleccionada"
-            [ngModelOptions]="{ standalone: true }"
-            aria-label="Selección de modelo"
-          >
-            <option value="" disabled selected>
-              {{ "VEHICULOS.MODELO" | translate }}
-            </option>
-            <option
-              *ngFor="let modelo of funcionesComunes.modelosFiltrados"
-              [value]="modelo"
-            >
-              {{ modelo }}
-            </option>
-          </select>
-        </ion-col>
-        <ion-col size="4">
-          <div *ngIf="funcionesComunes.validacionIdioma">
-            <select
-              class="form-select"
-              aria-label="Selección de color"
-              [(ngModel)]="funcionesComunes.colorSeleccionado"
-              [ngModelOptions]="{ standalone: true }"
-              [disabled]="!funcionesComunes.modeloSeleccionado"
-            >
-              <option value="" disabled selected>
-                {{ "VEHICULOS.COLOR" | translate }}
-              </option>
-              <option
-                *ngFor="let color of funcionesComunes.listadoColores"
-                [value]="color"
-              >
-                {{ color }}
-              </option>
-            </select>
-          </div>
+        </div>
 
-          <div *ngIf="!funcionesComunes.validacionIdioma">
-            <select
-              class="form-select"
-              aria-label="Selección de color"
-              [(ngModel)]="funcionesComunes.colorSeleccionado"
-              [ngModelOptions]="{ standalone: true }"
-              [disabled]="!funcionesComunes.modeloSeleccionado"
+        <div *ngIf="!funcionesComunes.validacionIdioma">
+          <select
+            class="form-select inputs_selectores"
+            aria-label="Selección de color"
+            [(ngModel)]="funcionesComunes.colorSeleccionado"
+            [ngModelOptions]="{ standalone: true }"
+            [disabled]="!funcionesComunes.modeloSeleccionado"
+          >
+            <option value="" disabled selected>
+              {{ "VEHICULOS.COLOR" | translate }}
+            </option>
+            <option
+              *ngFor="let color of funcionesComunes.listColours"
+              [value]="color"
             >
-              <option value="" disabled selected>
-                {{ "VEHICULOS.COLOR" | translate }}
-              </option>
-              <option
-                *ngFor="let color of funcionesComunes.listColours"
-                [value]="color"
-              >
-                {{ color }}
-              </option>
-            </select>
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row class="d-flex justify-content-center">
-        <div class="position-relative text-center">
+              {{ color }}
+            </option>
+          </select>
+        </div>
+      </ion-col>
+      <!-- Input matricula -->
+      <ion-col size="3">
+        <div>
           <input
             type="text"
-            class="form-control-sm"
+            class="form-control-sm inputs_selectores"
             placeholder="0000XXX"
             id="matricula"
             pattern="^[0-9]{4}[A-Za-z]{3}$"
@@ -248,20 +254,21 @@
             </div>
           </div>
         </div>
-      </ion-row>
-      <ion-row>
-        <div class="container d-flex justify-content-center mt-2">
-          <button
-            type="button"
-            [disabled]="funcionesComunes.matriculaNoValida"
-            class="btn btn_bg"
-            mat-raised-button
-            (click)="guardarVehiculo()"
-          >
-            Guardar vehículo
-          </button>
-        </div>
-      </ion-row>
-    </ion-grid>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <div class="container d-flex justify-content-center mt-2">
+        <button
+          type="button"
+          [disabled]="funcionesComunes.matriculaNoValida"
+          class="btn btn_bg"
+          mat-raised-button
+          (click)="funcionesUsuario.guardarVehiculo()"
+        >
+          Guardar vehículo
+        </button>
+      </div>
+    </ion-row>
   </div>
 </div>

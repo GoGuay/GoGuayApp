@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   IonContent,
   IonHeader,
@@ -28,12 +34,16 @@ import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuar
     TranslateModule,
     NavbarComponent,
     MatDivider,
+    ReactiveFormsModule,
   ],
 })
 export class DatosContactoPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   botonHabilitado: boolean = false;
+  emailRef: any;
+  telefonoRef: any;
+
   constructor(
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario
@@ -41,41 +51,25 @@ export class DatosContactoPage implements OnInit {
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (
-      this.userData &&
-      Object.keys(this.userData).length > 0 &&
-      this.userData.usuario.email
-    ) {
+    if (this.userData?.usuario) {
       this.userLoggedIn = true;
+
+      // Asignar valores iniciales
+      this.funcionesUsuario.emailEditado = this.userData.usuario.email || '';
+      this.funcionesUsuario.telefonoEditado =
+        this.userData.usuario.telefono || '';
+      this.funcionesUsuario.comunComerciales =
+        !!this.userData.usuario.comunic_comerciales;
+      this.funcionesUsuario.comunTerceros =
+        !!this.userData.usuario.comunic_terceros;
     } else {
       this.userLoggedIn = false;
     }
   }
 
+  //Para cambiar idioma -- no se está usando
   changeLanguage(lang: string) {
     this.translate.use(lang);
     localStorage.setItem('language', lang);
-  }
-
-  // Función que se llama cuando hay un cambio en los inputs o checkboxes
-  onInputChange() {
-    this.checkForChanges();
-  }
-
-  // Función que verifica si los valores han cambiado
-  checkForChanges() {
-    const emailChanged =
-      this.funcionesUsuario.emailEditado !== this.userData.usuario.email;
-    const telefonoChanged =
-      this.funcionesUsuario.telefonoEditado !== this.userData.usuario.telefono;
-
-    // Verifica si los checkboxes han cambiado
-    const checkboxesChanged =
-      this.funcionesUsuario.comunComerciales !==
-        !!this.userData.usuario.comunic_comerciales ||
-      this.funcionesUsuario.comunTerceros !==
-        !!this.userData.usuario.comunic_terceros;
-
-    this.botonHabilitado = emailChanged || telefonoChanged || checkboxesChanged;
   }
 }

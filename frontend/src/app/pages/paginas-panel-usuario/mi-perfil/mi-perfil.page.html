@@ -13,314 +13,310 @@
       {{'MI_PERFIL.DESCRIPCION_SECCION' | translate}}
     </p>
 
-    <div class="container-fluid">
-      <ion-row>
-        <!-- Información personal -->
-        <ion-col size="12" size-md="5" class="mx-md-5">
-          <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
-          <ion-row>
-            <ion-col>
-              <div class="mb-3">
-                <label for="nombre" class="form-label"
-                  >{{'MI_PERFIL.NOMBRE' | translate}}</label
-                >
-                <input
-                  type="text"
-                  class="form-control w-100"
-                  id="nombre"
-                  aria-describedby="nombre"
-                  [(ngModel)]="funcionesUsuario.nombreEditado"
-                  name="nombre"
-                />
-              </div>
-            </ion-col>
+    <!-- Modificación de datos personales -->
+    <ion-row class="d-flex justify-content-center">
+      <ion-col size="12" size-md="5" class="mx-md-5">
+        <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
+        <ion-row class="fila-datos">
+          <ion-col class="col-nombre-apellidos">
+            <div class="mb-3">
+              <label for="nombre" class="form-label"
+                >{{'MI_PERFIL.NOMBRE' | translate}}</label
+              >
+              <input
+                type="text"
+                class="form-control w-100"
+                id="nombre"
+                [(ngModel)]="funcionesUsuario.nombreEditado"
+                name="nombre"
+                (ngModelChange)="onInputChange()"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="apellidos" class="form-label"
+                >{{'MI_PERFIL.APELLIDOS' | translate}}</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="apellidos"
+                [(ngModel)]="funcionesUsuario.apellidosEditados"
+                name="apellidos"
+                (ngModelChange)="onInputChange()"
+              />
+            </div>
+          </ion-col>
 
-            <ion-col>
-              <div class="mb-3">
-                <label for="apellidos" class="form-label"
-                  >{{'MI_PERFIL.APELLIDOS' | translate}}</label
+          <ion-col class="col-pronombre">
+            <div class="mb-3">
+              <label for="pronombre" class="form-label pronombre"
+                >{{'MI_PERFIL.PRONOMBRE' | translate}}</label
+              >
+              <select
+                class="form-select w-150"
+                [(ngModel)]="funcionesUsuario.pronombreEditado"
+                name="pronombre"
+                (ngModelChange)="onInputChange()"
+              >
+                <option selected disabled>Escoge una opcion</option>
+                <option value="Él / He / Him">Él / He / Him</option>
+                <option value="Ella / She / Her">Ella / She / Her</option>
+                <option value="Elle / They / Them">Elle / They / Them</option>
+                <option value="Otros">Otros</option>
+                <option value="No uso ninguno concreto">
+                  No uso ninguno concreto
+                </option>
+                <option value="Prefiero no responder">
+                  Prefiero no responder
+                </option>
+              </select>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div class="mb-3">
+              <label for="genero" class="form-label">
+                {{'MI_PERFIL.GENERO' | translate}}
+                <span
+                  class="ms-2 text-primary"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Más detalles"
                 >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="apellidos"
-                  aria-describedby="apellidos"
-                  [(ngModel)]="funcionesUsuario.apellidosEditados"
-                  name="apellidos"
-                />
-              </div>
-            </ion-col>
+                  <i class="bi-question-circle"></i>
+                </span>
+              </label>
 
-            <ion-col>
-              <div class="mb-3">
-                <label for="pronombre" class="form-label pronombre"
-                  >{{'MI_PERFIL.PRONOMBRE' | translate}}</label
+              <select
+                id="genero"
+                class="form-select"
+                [(ngModel)]="funcionesUsuario.generoEditado"
+                name="genero"
+                aria-label="Selección de género"
+                (ngModelChange)="onInputChange()"
+              >
+                <option value="" selected disabled>
+                  {{'SELEC_GENERO.SELECCIONA' | translate}}
+                </option>
+                <option value="HOMBRE_CIS">
+                  {{'SELEC_GENERO.HOMBRE_CIS' | translate}}
+                </option>
+                <option value="MUJER_CIS">
+                  {{'SELEC_GENERO.MUJER_CIS' | translate}}
+                </option>
+                <option value="TRANSEXUAL">
+                  {{'SELEC_GENERO.TRANSEXUAL' | translate}}
+                </option>
+                <option value="NO_BINARIO">
+                  {{'SELEC_GENERO.NO_BINARIO' | translate}}
+                </option>
+                <option value="INTERGENERO">
+                  {{'SELEC_GENERO.INTERGENERO' | translate}}
+                </option>
+                <option value="NO_FLUIDO">
+                  {{'SELEC_GENERO.NO_FLUIDO' | translate}}
+                </option>
+                <option value="OTRO">
+                  {{'SELEC_GENERO.OTRO' | translate}}
+                </option>
+                <option value="NO_RESPONDE">
+                  {{'SELEC_GENERO.NO_RESPONDE' | translate}}
+                </option>
+              </select>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div class="mb-3">
+              <label for="orientacion" class="form-label"
+                >{{'MI_PERFIL.ORIENTACION' | translate}}
+                <span
+                  class="ms-2 text-primary"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Más detalles"
                 >
-                <select
-                  class="form-select w-150"
-                  aria-label="Selección de pronombre"
-                  [(ngModel)]="funcionesUsuario.pronombreEditado"
-                  name="pronombre"
+                  <i class="bi-question-circle"></i>
+                </span>
+              </label>
+              <select
+                [(ngModel)]="funcionesUsuario.orientacionEditada"
+                name="orientacion"
+                class="form-select"
+                aria-label="Selección de orientación sexual"
+                (ngModelChange)="onInputChange()"
+              >
                 >
-                  <option selected disabled>Escoge una opcion</option>
-                  <option value="Él / He / Him">Él / He / Him</option>
-                  <option value="Ella / She / Her">Ella / She / Her</option>
-                  <option value="Elle / They / Them">Elle / They / Them</option>
-                  <option value="Otros">Otros</option>
-                  <option value="No uso ninguno concreto">
-                    No uso ninguno concreto
-                  </option>
-                  <option value="Prefiero no responder">
-                    Prefiero no responder
-                  </option>
-                </select>
-              </div>
-            </ion-col>
-          </ion-row>
+                <option selected>
+                  {{'ORIENTACION.SELECCIONA' | translate}}
+                </option>
+                <option value="GAY">{{'ORIENTACION.GAY' | translate}}</option>
+                <option value="LESBIANA">
+                  {{'ORIENTACION.LESBIANA' | translate}}
+                </option>
+                <option value="BISEXUAL">
+                  {{'ORIENTACION.BISEXUAL' | translate}}
+                </option>
+                <option value="PANSEXUAL">
+                  {{'ORIENTACION.PANSEXUAL' | translate}}
+                </option>
+                <option value="ASEXUAL">
+                  {{'ORIENTACION.ASEXUAL' | translate}}
+                </option>
+                <option value="DEMISEXUAL">
+                  {{'ORIENTACION.DEMISEXUAL' | translate}}
+                </option>
+                <option value="QUEER">
+                  {{'ORIENTACION.QUEER' | translate}}
+                </option>
+                <option value="OTRO">{{'ORIENTACION.OTRO' | translate}}</option>
+                <option value="NO_RESPONDE">
+                  {{'ORIENTACION.NO_RESPONDE' | translate}}
+                </option>
+              </select>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div class="mb-3">
+              <label for="fnacimiento" class="form-label"
+                >{{'MI_PERFIL.FECHA_NACIMIENTO' | translate}}</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="fnacimiento"
+                [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
+                name="fnacimiento"
+                (ngModelChange)="actualizarEdad()"
+                (ngModelChange)="onInputChange()"
+              />
+            </div>
+          </ion-col>
+          <ion-col>
+            <div class="mb-3">
+              <label for="edad" class="form-label mb-3"
+                >{{'MI_PERFIL.EDAD' | translate}}</label
+              >
+              <br />
+              <span> {{edad}} </span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div class="mb-3">
+              <label for="bio" class="form-label"
+                >{{'MI_PERFIL.SOBRE_TI' | translate}}</label
+              >
+              <textarea
+                class="form-control bio"
+                id="bio"
+                rows="5"
+                placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
+                [(ngModel)]="funcionesUsuario.bioEditada"
+                name="bio"
+                (ngModelChange)="onInputChange()"
+              ></textarea>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-col>
 
-          <ion-row>
-            <ion-col>
-              <div class="mb-3">
-                <label for="genero" class="form-label">
-                  {{'MI_PERFIL.GENERO' | translate}}
-                  <span
-                    class="ms-2 text-primary"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Más detalles"
-                  >
-                    <i class="bi-question-circle"></i>
-                  </span>
-                </label>
+      <mat-divider vertical="" class="ms-4 mat-divider-mobile"></mat-divider>
 
-                <select
-                  id="genero"
-                  class="form-select"
-                  [(ngModel)]="funcionesUsuario.generoEditado"
-                  name="genero"
-                  aria-label="Selección de género"
-                >
-                  <option value="" selected disabled>
-                    {{'SELEC_GENERO.SELECCIONA' | translate}}
-                  </option>
-                  <option value="HOMBRE_CIS">
-                    {{'SELEC_GENERO.HOMBRE_CIS' | translate}}
-                  </option>
-                  <option value="MUJER_CIS">
-                    {{'SELEC_GENERO.MUJER_CIS' | translate}}
-                  </option>
-                  <option value="TRANSEXUAL">
-                    {{'SELEC_GENERO.TRANSEXUAL' | translate}}
-                  </option>
-                  <option value="NO_BINARIO">
-                    {{'SELEC_GENERO.NO_BINARIO' | translate}}
-                  </option>
-                  <option value="INTERGENERO">
-                    {{'SELEC_GENERO.INTERGENERO' | translate}}
-                  </option>
-                  <option value="NO_FLUIDO">
-                    {{'SELEC_GENERO.NO_FLUIDO' | translate}}
-                  </option>
-                  <option value="OTRO">
-                    {{'SELEC_GENERO.OTRO' | translate}}
-                  </option>
-                  <option value="NO_RESPONDE">
-                    {{'SELEC_GENERO.NO_RESPONDE' | translate}}
-                  </option>
-                </select>
-              </div>
-            </ion-col>
-            <ion-col>
-              <div class="mb-3">
-                <label for="orientacion" class="form-label"
-                  >{{'MI_PERFIL.ORIENTACION' | translate}}
-                  <span
-                    class="ms-2 text-primary"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Más detalles"
-                  >
-                    <i class="bi-question-circle"></i>
-                  </span>
-                </label>
-                <select
-                  [(ngModel)]="funcionesUsuario.orientacionEditada"
-                  name="orientacion"
-                  class="form-select"
-                  aria-label="Selección de orientación sexual"
-                >
-                  >
-                  <option selected>
-                    {{'ORIENTACION.SELECCIONA' | translate}}
-                  </option>
-                  <option value="GAY">{{'ORIENTACION.GAY' | translate}}</option>
-                  <option value="LESBIANA">
-                    {{'ORIENTACION.LESBIANA' | translate}}
-                  </option>
-                  <option value="BISEXUAL">
-                    {{'ORIENTACION.BISEXUAL' | translate}}
-                  </option>
-                  <option value="PANSEXUAL">
-                    {{'ORIENTACION.PANSEXUAL' | translate}}
-                  </option>
-                  <option value="ASEXUAL">
-                    {{'ORIENTACION.ASEXUAL' | translate}}
-                  </option>
-                  <option value="DEMISEXUAL">
-                    {{'ORIENTACION.DEMISEXUAL' | translate}}
-                  </option>
-                  <option value="QUEER">
-                    {{'ORIENTACION.QUEER' | translate}}
-                  </option>
-                  <option value="OTRO">
-                    {{'ORIENTACION.OTRO' | translate}}
-                  </option>
-                  <option value="NO_RESPONDE">
-                    {{'ORIENTACION.NO_RESPONDE' | translate}}
-                  </option>
-                </select>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <div class="mb-3">
-                <label for="fnacimiento" class="form-label"
-                  >{{'MI_PERFIL.FECHA_NACIMIENTO' | translate}}</label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="fnacimiento"
-                  [(ngModel)]="funcionesUsuario.fechaNacimientoEditada"
-                  name="fnacimiento"
-                  (ngModelChange)="actualizarEdad()"
-                />
-              </div>
-            </ion-col>
-            <ion-col>
-              <div class="mb-3">
-                <label for="edad" class="form-label mb-3"
-                  >{{'MI_PERFIL.EDAD' | translate}}</label
-                >
-                <br />
-                <span> {{edad}} </span>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <div class="mb-3">
-                <label for="bio" class="form-label"
-                  >{{'MI_PERFIL.SOBRE_TI' | translate}}</label
-                >
-                <textarea
-                  class="form-control bio"
-                  id="bio"
-                  rows="5"
-                  placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
-                  [(ngModel)]="funcionesUsuario.bioEditada"
-                  name="bio"
-                ></textarea>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-col>
+      <ion-col size="12" size-md="5" class="mx-md-5">
+        <!-- Tabla vehiculos -->
+        <ion-row class="d-flex justify-content-center" *ngIf="isDesktop">
+          <div class="">
+            <app-tabla-vehiculos />
+          </div>
+        </ion-row>
 
-        <mat-divider vertical="" class="ms-4"></mat-divider>
+        <ion-row class="d-flex justify-content-center" *ngIf="!isDesktop">
+          <div class="contenedor_tabla">
+            <app-vista-acordeon-vehiculos />
+          </div>
+        </ion-row>
 
-        <!-- Mis vehículos y preferencias de viaje -->
-        <ion-col class="col-separator" size="5">
-          <ion-row class="d-flex justify-content-center mb-0">
-            <ion-row>
-              <ion-col>
-                <app-tabla-vehiculos />
-                <!--Preferencias de viaje-->
-                <div class="mb-0 mt-3">
-                  <h4 class="text-center">
-                    {{'MI_PERFIL.PREF_VIAJE' | translate}}
-                  </h4>
-                  <ion-row class="d-flex justify-content-center">
-                    <div class="mb-4 mt-4">
-                      <label for="preferencias" class="form-label"
-                        >{{'MI_PERFIL.CUANDO_VIAJO_PREFIERO' |
-                        translate}}</label
-                      >
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          [value]="'Hablar'"
-                          (change)="funcionesUsuario.actualizarPreferencias($event)"
-                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Hablar')"
-                          id="hablar"
-                        />
-                        <label class="form-check-label" for="hablar">
-                          {{'MI_PERFIL.HABLAR' | translate}}
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          [value]="'Escuchar música'"
-                          (change)="funcionesUsuario.actualizarPreferencias($event)"
-                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Escuchar música')"
-                          id="escucharmusica"
-                        />
-                        <label class="form-check-label" for="escucharmusica">
-                          {{'MI_PERFIL.ESCUCHAR_MUSICA' | translate}}
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          [value]="'Dormir'"
-                          (change)="funcionesUsuario.actualizarPreferencias($event)"
-                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Dormir')"
-                          id="Dormir"
-                        />
-                        <label class="form-check-label" for="Dormir">
-                          {{'MI_PERFIL.DORMIR' | translate}}
-                        </label>
-                      </div>
+        <!-- Preferencias -->
+        <ion-row class="d-flex justify-content-center">
+          <div class="mb-2">
+            <h4 class="text-center">{{'MI_PERFIL.PREF_VIAJE' | translate}}</h4>
+            <label for="preferencias" class="form-label"
+              >{{'MI_PERFIL.CUANDO_VIAJO_PREFIERO' | translate}}</label
+            >
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [value]="'Hablar'"
+                (change)="onCheckboxChange('Hablar', $event)"
+                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Hablar')"
+                id="hablar"
+              />
+              <label class="form-check-label" for="hablar">
+                {{'MI_PERFIL.HABLAR' | translate}}
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [value]="'Escuchar música'"
+                (change)="onCheckboxChange('Escuchar música', $event)"
+                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Escuchar música')"
+                id="escucharmusica"
+              />
+              <label class="form-check-label" for="escucharmusica">
+                {{'MI_PERFIL.ESCUCHAR_MUSICA' | translate}}
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [value]="'Dormir'"
+                (change)="onCheckboxChange('Dormir', $event)"
+                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Dormir')"
+                id="Dormir"
+              />
+              <label class="form-check-label" for="Dormir">
+                {{'MI_PERFIL.DORMIR' | translate}}
+              </label>
+            </div>
 
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          [value]="'Ir en silencio'"
-                          (change)="funcionesUsuario.actualizarPreferencias($event)"
-                          [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Ir en silencio')"
-                          id="silencio"
-                        />
-                        <label class="form-check-label" for="silencio">
-                          {{'MI_PERFIL.SILENCIO' | translate}}
-                        </label>
-                      </div>
-                    </div>
-                  </ion-row>
-                </div>
-              </ion-col>
-            </ion-row>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-
-      <!-- Botón para guardar los cambios -->
-      <ion-row class="d-flex justify-content-center ms-5 mt-5 mb-3">
-        <div>
-          <button
-            type="button"
-            class="btn btn_bg"
-            mat-raised-button
-            (click)="funcionesUsuario.editarDatos()"
-          >
-            {{'BOTON.GUARDAR' | translate}}
-          </button>
-        </div>
-      </ion-row>
-    </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [value]="'Ir en silencio'"
+                (change)="onCheckboxChange('Ir en silencio', $event)"
+                [checked]="funcionesUsuario.preferenciasSeleccionadas.includes('Ir en silencio')"
+                id="silencio"
+              />
+              <label class="form-check-label" for="silencio">
+                {{'MI_PERFIL.SILENCIO' | translate}}
+              </label>
+            </div>
+          </div>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+    <!-- Botón para guardar los cambios -->
+    <ion-row class="d-flex justify-content-center ms-1 mt-5 mb-3">
+      <div>
+        <button
+          type="button"
+          class="btn btn_bg"
+          mat-raised-button
+          [disabled]="!botonHabilitado"
+          (click)="funcionesUsuario.editarDatos()"
+        >
+          {{'BOTON.GUARDAR' | translate}}
+        </button>
+      </div>
+    </ion-row>
   </div>
 </ion-content>

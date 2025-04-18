@@ -19,8 +19,8 @@
 }
 
 .dropdown-menu li a:hover {
-  padding: auto; 
-  border: none; 
+  padding: auto;
+  border: none;
   background-color: #F0D7B4;
   border-radius: 15px;
 }
@@ -46,4 +46,16 @@ h1 {
 
 input, button{
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+}
+
+.inputs_emailtfno{
+  width: 400px;
+}
+
+
+@media (max-width: 576px) {
+.container{
+  display: flex;
+  flex-direction: column;
+}
 }

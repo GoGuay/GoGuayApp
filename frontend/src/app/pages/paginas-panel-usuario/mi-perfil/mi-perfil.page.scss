@@ -1,7 +1,4 @@
-.input-container {
-  display: flex;
-  gap: 10px;
-}
+
 
 .digit-input {
   width: 40px;
@@ -14,6 +11,7 @@
   background-color: #fff;
   transition: border-color 0.3s;
 }
+
 .file-upload {
   display: inline-block;
   position: relative;
@@ -23,7 +21,6 @@
   display: none;
 }
 
-/* Botón personalizado con el símbolo "+" */
 .upload-button {
   display: flex;
   justify-content: center;
@@ -46,16 +43,15 @@
   background-color: #E0A667;
 }
 
-.btn_bg{
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+.btn_bg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
-.label-uverif{
+.label-uverif {
   font-size: 1.5rem;
-
 }
 
-.checkverficado{
+.checkverficado {
   border: 1px solid black;
   border-radius: 15px;
   background-color: #E0A667;
@@ -73,28 +69,56 @@
 }
 
 .container-fluid input,
-.container-fluid select{
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+.container-fluid select,
+.bio {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+.fila-datos {
+  display: flex;
+  flex-wrap: nowrap; /* Evita saltos de línea en escritorio */
+  gap: 10px;
+  width: 100%;
 }
 
-.bio{
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+.col-nombre-apellidos {
+  display: flex;
+  flex: 2; /* Ocupará más espacio */
+  gap: 10px;
+}
+.col-pronombre {
+  flex: 1; /* Menos espacio que nombre y apellidos */
+  display: flex;
+  align-items: center;
 }
 
+.fila-datos .col-nombre-apellidos ion-col,
+.fila-datos .col-pronombre ion-col {
+  flex: 1;
+  min-width: 0;
+}
 
+.contenedor_tabla{
+  width: 400px;
+}
 
-
+/* Estilos específicos para móviles */
 @media (max-width: 576px) {
-.fila-datos{
-  flex-direction: column !important;
-  display: flex !important;
+  .fila-datos {
+    flex-wrap: wrap !important;
+  }
+  .col-nombre-apellidos {
+    flex: 1 1 100%; /* Ocupa toda la fila */
+  }
+  .col-pronombre {
+    flex: 1 1 100%; /* Se baja a la segunda fila */
+    justify-content: center;
+  }
+
+  .mat-divider-mobile{
+    display: none;
+  }
+
+
+
 }
-.fila-datos ion-col {
-  flex: 1 1 100%; /* Ocupa el 100% del ancho */
-  max-width: 100%; /* Evita que se desborde */
-  text-align: center; /* Centra el contenido */
-}
-.checkverficado{
-  width: 60%;
-}
-}
+
