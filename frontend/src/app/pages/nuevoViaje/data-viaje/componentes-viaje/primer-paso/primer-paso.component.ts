@@ -15,13 +15,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
+import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
 
 registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-primer-paso',
   standalone: true,
-  imports: [IonicModule,
+  imports: [
+    IonicModule,
     MatIcon,
     MatCardModule,
     MatDatepickerModule,
@@ -41,7 +43,8 @@ registerLocaleData(localeEs);
 export class PrimerPasoComponent implements OnInit {
   userData: Usuario = {} as Usuario;
 
-  private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);;
+  private readonly _adapter =
+    inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
 
@@ -59,8 +62,13 @@ export class PrimerPasoComponent implements OnInit {
 
   hoy: string = new Date().toISOString();
 
-  constructor(private travelService: TravelService, private platform: Platform, private funcionesComunes: FuncionesComunes) {
+  constructor(
+    private travelService: TravelService,
+    private platform: Platform,
+    private vehiculosServicesService: VehiculosServicesService
+  ) {
     this._adapter.setLocale('es-ES');
+    this.obtenerVehiculos();
   }
 
   ngOnInit() {
@@ -70,15 +78,22 @@ export class PrimerPasoComponent implements OnInit {
 
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
-    this.hora_seleccionada = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    this.hora_seleccionada = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
     this.fecha_seleccionada = date.toISOString();
-    this.hora_seleccionada = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    this.hora_seleccionada = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
     const viajeData = this.travelService.getViajeData();
 
     if (viajeData) {
-      this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
+      this.fecha_seleccionada =
+        viajeData.fecha_salida || this.fecha_seleccionada;
       this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
       this.viajeros = viajeData.viajeros || '0';
       this.plazas = viajeData.plazas || '';
@@ -87,15 +102,25 @@ export class PrimerPasoComponent implements OnInit {
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
-    
   }
 
-
+  /**
+   * Función para obtener la lista de vehículos de un usuario.   *
+   */
+  obtenerVehiculos() {
+    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
+    this.vehiculosServicesService
+      .obtenerVehiculosUsuario(usuario.usuario.id)
+      .subscribe((resultado) => {
+        console.log('Vehículos: ', resultado.vehiculos);
+        this.userData.usuario.vehiculos = resultado.vehiculos;
+      });
+  }
 
   /**
    * Función para guardar los datos temporalmente en el servicio de los viajes.
    * -> Esta función recibe dos parámetros de entrada: "clave" y "valor"
-   * 
+   *
    * @param clave Es el nombre que va a recibir el atributo del objeto "Viaje"
    * @param valor Es el valor que va a recibir el atributo.
    * ------------------------------------------------------------------
@@ -114,25 +139,31 @@ export class PrimerPasoComponent implements OnInit {
 
   /**
    * Función para obtener la fecha actual y darle un formato específico.
-   * 
+   *
    * @returns Si hay una fecha seleccionada la devuelve en el formato configurado,
    * en el caso de no tener una fecha seleccionada devuelve el string.
    */
   getFormattedDate(): string {
     if (this.fecha_seleccionada) {
       const date = new Date(this.fecha_seleccionada);
-      return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
     }
     return 'Ninguna fecha seleccionada.';
   }
 
   /**
    * Función para obtener la hora actual.
-   * 
+   *
    * @returns Devuelve la hora seleccionada.
    */
   getTime(): string {
-    return this.hora_seleccionada ? this.hora_seleccionada : 'Ninguna hora seleccionada.';
+    return this.hora_seleccionada
+      ? this.hora_seleccionada
+      : 'Ninguna hora seleccionada.';
   }
 
   onDateChange(event: any) {
@@ -147,7 +178,7 @@ export class PrimerPasoComponent implements OnInit {
    * -> Damos un formato a la hora de 2 dígitos tanto para la hora como para los minutos.
    * -> Llamamos a la función que recibe los datos de la hora seleccionada
    *    para guardarlos en el servicio de los viajes.
-   * 
+   *
    * @param event -> Recibe la información del evento en el input de la selección de hora.
    */
   onTimeChange(event: any) {
@@ -164,11 +195,12 @@ export class PrimerPasoComponent implements OnInit {
       this.hora_seleccionada = '';
     } else {
       this.invalid_date = false;
-      this.hora_seleccionada = timeValue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      this.hora_seleccionada = timeValue.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     }
 
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
   }
-
-
 }

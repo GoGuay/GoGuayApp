@@ -79,9 +79,9 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
    * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
-    const id_usuario = this.userData.usuario.id;
+    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
     this.vehiculosServicesService
-      .obtenerVehiculosUsuario(id_usuario)
+      .obtenerVehiculosUsuario(usuario.usuario.id)
       .subscribe((resultado) => {
         console.log('Vehículos: ', resultado.vehiculos);
         this.funcionesUsuario.vehiculos_usuario = resultado.vehiculos;
@@ -178,14 +178,8 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
           (coche) => coche.id !== vehiculo.id
         );
         this.cdr.detectChanges();
-
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            this.userData = usuarioActualizado;
-            console.log('Usuario actualizado:', this.userData);
-            this.obtenerVehiculos();
-          });
+        this.obtenerVehiculos();
+        this.mostrarSelectorVehiculo = false;
         console.log('Resultado: ', resultado);
       });
   }
@@ -217,6 +211,10 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.matricula = '';
   }
 
   /**

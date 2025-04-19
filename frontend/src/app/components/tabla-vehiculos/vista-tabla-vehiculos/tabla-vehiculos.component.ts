@@ -177,6 +177,12 @@ export class TablaVehiculosComponent implements OnInit {
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.matricula = '';
+
+    this.mostrarSelectorVehiculo = false;
   }
 
   /**
@@ -191,14 +197,8 @@ export class TablaVehiculosComponent implements OnInit {
           (coche) => coche.id !== vehiculo.id
         );
         this.cdr.detectChanges();
-
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            this.userData = usuarioActualizado;
-            console.log('Usuario actualizado:', this.userData);
-            this.obtenerVehiculos();
-          });
+        this.obtenerVehiculos();
+        this.mostrarSelectorVehiculo = false;
         console.log('Resultado: ', resultado);
       });
   }
