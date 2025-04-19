@@ -52,7 +52,8 @@
               <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (change)="cambioDireccionFlechaIdioma()"
                 (click)="cambioDireccionFlechaIdioma()">
-                <mat-icon>language</mat-icon>
+                <!-- <mat-icon>language</mat-icon> -->
+                <img class="idiomas" src="../../../assets/sistema/espanol.gif">
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isLenguageDropdownOpen">expand_more</mat-icon>
               </a>
@@ -74,10 +75,12 @@
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNav">
               <li class="nav-item dropdown">
-                  <!-- boton del menu -->
+                <!-- boton del menu -->
                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                   data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
-                  <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
+                  <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"
+                    src="../../../assets/user/logOn.gif">
+                  <!-- <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon> -->
                   <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                     <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
                   </div>
@@ -119,9 +122,11 @@
 
             <ng-template #loggedOutNav>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  <mat-icon class="caja-icono tamano-icono"> person_off </mat-icon>
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                  <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif">
+                  <mat-icon class="flecha-icono ms-2 flecha-animada"
+                    [class.rotada]="isDropdownOpen">expand_more</mat-icon>
                 </a>
                 <ul class="dropdown-menu menuusuario">
                   <li>
@@ -144,7 +149,7 @@
       <div class="container">
         <ul class="menuusuario">
           <li class="nav-item d-flex flex-column align-items-center">
-            <ion-button fill="clear"  (click)="goBack()">
+            <ion-button fill="clear" (click)="goBack()">
               <mat-icon class="back-icon">arrow_back</mat-icon>
               <img src="{{ logo }}" alt="Logo" class="logo" />
               PrideRide
@@ -160,7 +165,9 @@
             <li class="nav-item dropdown" *ngIf="!isLoggedIn">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                <mat-icon class="caja-icono tamano-icono">person_off</mat-icon>
+                <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif">
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
               <ul class="dropdown-menu menuusuario">
                 <li>
@@ -176,7 +183,8 @@
               <!-- boton del menu -->
               <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
-                <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon>
+                <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
+                <!-- <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon> -->
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                   <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
                 </div>

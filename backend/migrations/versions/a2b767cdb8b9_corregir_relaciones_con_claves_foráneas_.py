@@ -1,8 +1,8 @@
 """Corregir relaciones con claves foráneas ambiguas
 
-Revision ID: f8751d06045b
+Revision ID: a2b767cdb8b9
 Revises: 
-Create Date: 2025-03-23 13:59:46.307440
+Create Date: 2025-04-02 19:28:28.084612
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f8751d06045b'
+revision = 'a2b767cdb8b9'
 down_revision = None
 branch_labels = None
 depends_on = None

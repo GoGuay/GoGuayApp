@@ -2,36 +2,23 @@
   <h1 class="text-center">Puntúa el viaje que has realizado</h1>
   <mat-divider class="mb-2"></mat-divider>
 
-  <div class="container text-center mt-4">
-    <div class="row">
-      <div class="col">
-        <button type="button" class="btn_bg btnStar">
-          <mat-icon>mood</mat-icon>
-        </button>
-
-      </div>
-      <div class="col">
-        <button type="button" class="btn_bg btnStar">
-          <mat-icon>mood</mat-icon>
-        </button>
-      </div>
-      <div class="col">
-        <button type="button" class="btn_bg btnStar">
-          <mat-icon>mood</mat-icon>
-        </button>
-      </div>
-      <div class="col">
-        <button type="button" class="btn_bg btnStar">
-          <mat-icon>mood</mat-icon>
-        </button>
-      </div>
-      <div class="col">
-        <button type="button" class="btn_bg btnStar">
-          <mat-icon>mood</mat-icon>
-        </button>
+  <form [formGroup]="puntuacionForm" (ngSubmit)="verificarEncuesta()">
+    <div class="container text-center mt-4">
+      <div class="row">
+        <div class="container row">
+          <h3>1. ¿Con qué probabilidad recomendarías PrideRide para realizar viajes a un familiar o amigo?</h3>
+          <div class="d-flex justify-content-center starsContainer">
+            <img *ngFor="let estrella of estrellas; let i = index" 
+                 src="{{ i < calificacionSeleccionada ? '../../../../../assets/rating/como.gif' : '../../../../../assets/rating/favorito.gif' }}" 
+                 class="stars" 
+                 type="button" 
+                 (click)="seleccionarCalificacion(i + 1)">
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </form>
+
 
   <div class="container mt-4">
     <p>

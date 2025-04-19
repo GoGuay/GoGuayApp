@@ -9,10 +9,10 @@
   <mat-divider></mat-divider>
 
   <mat-dialog-content>
-    <div class="info_viaje" *ngIf="data.viaje.plazas === 0">
+    <div class="info_viaje mb-2" *ngIf="data.viaje.plazas === 0">
       <p>Este viaje ya no dispone de plazas. 🥴​ </p>
     </div>
-    <div class="info_viaje" *ngIf="funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
+    <div class="info_viaje mb-2" *ngIf="funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
       <p>Este viaje ya ha terminado. 🥴​ </p>
     </div>
     <div class="row">
@@ -21,7 +21,7 @@
         <mat-divider class="mb-2"></mat-divider>
         <p><strong>Origen:</strong> {{ data.viaje.origen }}</p>
         <p><strong>Destino:</strong> {{ data.viaje.destino }}</p>
-        <p><strong>Fecha de salida:</strong> {{ data.viaje.fecha_salida}}</p>
+        <p><strong>Fecha de salida:</strong> {{formatData(data.viaje.fecha_salida) }}</p>
         <p><strong>Hora de salida:</strong> {{ data.viaje.hora_salida }}</p>
         <p><strong>Hora de llegada (Aprox.):</strong> {{ data.viaje.hora_llegada }}</p>
         <p><strong>Plazas libres:</strong> {{ data.viaje.plazas }}</p>

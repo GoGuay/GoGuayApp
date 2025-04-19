@@ -1,10 +1,10 @@
 .img_travel {
   // width: 100%;
-  max-width: 250px; 
+  max-width: 250px;
   height: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   border-radius: 15px;
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 .travel-btn {
@@ -26,7 +26,7 @@
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 576px) {
   // .img_travel {
-  //   max-width: 250px; 
+  //   max-width: 350px; 
   // }
 
   .travel-btn {

@@ -52,7 +52,7 @@ export class PerfilPublicoPage implements OnInit {
   misViajesCreados: Viaje[] = [];
   misViajes: Viaje[] = [];
   imagenCabeceraSrc: string = '../../../assets/imgs/bridge1.jpg';
-  imagenPerfilSrc: string = '../../../assets/User-Profile-PNG-Image.png';
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
   filtroViajes: string = 'todos';
   cargando = false;
   pasajero: boolean = false;

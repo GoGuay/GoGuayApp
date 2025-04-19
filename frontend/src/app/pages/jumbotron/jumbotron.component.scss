@@ -45,3 +45,10 @@
   display: inline-block;
   transform: rotate(90deg);
 }
+
+.img{
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}

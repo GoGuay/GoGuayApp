@@ -33,6 +33,7 @@
   width: 900px;
   border-radius: 35px;
   box-shadow: -9px 5px 9px rgba(0, 0, 0, 0.28);
+  padding: 1%;
 }
 
 .tabla {
@@ -77,4 +78,24 @@
 .table td:nth-last-child(1) {
   width: 1%;
   white-space: nowrap;
+}
+
+.stars{
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  margin-right: 2%;
+}
+.stars:hover {
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+}
+
+.starsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  width: fit-content;
+  margin: 0 auto; 
+  padding: 10px;
 }

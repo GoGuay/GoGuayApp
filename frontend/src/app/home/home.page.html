@@ -1,43 +1,49 @@
 <app-navbar [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
   <!-- COMPONENTE DEL JUMBOTRON -->
-  <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/folder/jumbo.jpg'" [helpText]="'JUMBOTRON.HELP'">
+  <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/banco_imagenes/manosunidas.jpg'"
+    [helpText]="'JUMBOTRON.HELP'">
   </app-jumbotron>
+
   <!-- COMPONENTE DEL BUSCADOR DE VIAJES -->
   <div class="buscador_box">
     <div class="seeker">
-      <app-buscador></app-buscador>
+      <!-- <app-buscador></app-buscador> -->
     </div>
   </div>
 
-  <div class="h-[30rem]"></div>
-
   <div class="contenido_principal">
+    <ion-grid>
+      <ion-row >
+        <ion-col size="12" size-md="6">
+          <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
+          <div id="publicar_viaje">
+            <app-nuevo-viaje-general></app-nuevo-viaje-general>
+          </div>
+  
+        </ion-col>
+        <ion-col size="12" size-md="6">
+          <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
+          <div id="publicar_viaje">
+            <app-busca-un-viaje-principal></app-busca-un-viaje-principal>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+
     <!-- COMPONENTE QUE MUESTRA INFORMACIÓN GENERAL DE LA APLICACIÓN -->
-    <div id="contenedor_texto" class="p-2" >
-      <app-info></app-info>
+    <div id="contenedor_texto" class="p-2">
+      <!-- <app-info></app-info> -->
     </div>
-
-    <mat-divider></mat-divider>
-    <div class="h-[30rem]"></div>
-    <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
-    <div id="publicar_viaje">
-      <app-nuevo-viaje-general></app-nuevo-viaje-general>
-    </div>
-
-    <mat-divider></mat-divider>
-    <div class="h-[30rem]"></div>
 
     <!-- COMPONENTE DE TRAYECTOS MAS POPULARES -->
-    <div class="d-flex justify-content-center p-2" >
+    <div class="d-flex justify-content-center p-2">
       <app-trayectos-populares></app-trayectos-populares>
     </div>
 
-    <mat-divider></mat-divider>
-    <div class="h-[30rem]"></div>
-
     <!-- COMPONENTE DE LAS DUDAS GENERALES -->
-    <div class="d-flex justify-content-center p-2" >
+    <div class="d-flex justify-content-center p-2">
       <app-ventana-dudas></app-ventana-dudas>
     </div>
   </div>
