@@ -47,7 +47,7 @@ ion-item {
   border: none;
 }
 
-ion-select {
+ion-select, ion-list {
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
@@ -137,4 +137,19 @@ ion-datetime.ios::part(calendar-day active):focus {
   color: red;
   font-size: 14px;
   margin-top: 4px;
+}
+
+.colorCoche {
+  height: 30px;
+  width: 35px;
+}
+
+
+.scrollable-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.mensaje-sin-vehiculos {
+  text-align: center;
 }

@@ -7,11 +7,13 @@ import { MessageService } from 'primeng/api';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { NavController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-cuarto-paso',
   standalone: true,
-  imports: [MatButtonModule, FormsModule, MatIcon, MatTooltipModule],
+  imports: [MatButtonModule, FormsModule, MatIcon, MatTooltipModule, CommonModule, ToastModule],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
@@ -29,9 +31,11 @@ import { NavController } from '@ionic/angular';
 })
 export class CuartoPasoComponent implements OnInit {
 
-  precio: number | null = null;
   tercer_paso: boolean = false;
   cuarto_paso: boolean = false;
+  initialValue = 5;
+  precio = this.initialValue;
+  max = this.initialValue * 2;
 
   constructor(private travelService: TravelService, private messageService: MessageService, private navCtrl: NavController) { }
 
@@ -43,28 +47,28 @@ export class CuartoPasoComponent implements OnInit {
   }
 
   onCuartoPasoComplete() {
-    console.log('Precio ingresado:', this.precio);
-    console.log('Resumen del viaje antes de actualizar:', this.travelService.getViajeData());
+    const errores: string[] = [];
+    const viajeData = this.travelService.getViajeData();
 
-    if (!this.precio || this.precio <= 0) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Precio no válido',
-        detail: 'Por favor, introduce un precio válido para el viaje.',
-        life: 3000
-      });
-      return;
+    if (!viajeData) {
+      errores.push('viajeData');
+    } else {
+      if (!viajeData.origen) errores.push('No hay un lugar de origen seleccionado');
+      if (!viajeData.destino) errores.push('No hay un lugar de destino seleccionado');
+      if (!viajeData.hora_salida) errores.push('No hay una hora de salida seleccionada');
+      if (!viajeData.ruta_seleccionada?.legs?.[0]?.routes?.[0]?.duration?.text) {
+        errores.push('No hay una ruta seleccionada.');
+      }
     }
 
-    const viajeData = this.travelService.getViajeData();
-    if (!viajeData || !viajeData.origen || !viajeData.destino || !viajeData.hora_salida || !viajeData.ruta_seleccionada?.legs[0]?.routes[0]?.duration?.text) {
+    if (errores.length > 0) {
       this.messageService.add({
         severity: 'error',
         summary: 'Datos incompletos',
-        detail: 'Por favor, asegúrate de que los datos del viaje estén completos.',
+        detail: `Faltan los siguientes datos del viaje: ${errores.join(', ')}`,
         life: 3000
       });
-      console.error('Error: Faltan datos en viajeData', viajeData);
+      console.error('Error: Campos incompletos en viajeData →', errores, viajeData);
       return;
     }
 
@@ -130,6 +134,62 @@ export class CuartoPasoComponent implements OnInit {
     } catch (error) {
       console.error('Error al calcular hora de llegada:', error);
       return null;
+    }
+  }
+
+  /**
+   * Función para sumar a la cantidad del precio de la plaza del viaje.
+   * 
+   */
+  sumarCantidad() {
+    if (this.precio < this.max) {
+      this.precio++;
+    } 
+    
+    if (this.precio >= this.initialValue * 2){
+      this.messageService.add({
+        severity: 'error',
+        summary: '¡Algo anda mal!',
+        detail: `Por favor, intenta no abusar del precio.`,
+        life: 3000
+      });
+    }
+  }
+
+  /**
+   * Función para restar a la cantidad del precio de la plaza. 
+   * 
+   */
+  restarCantidad() {
+    if (this.precio > 3) {
+      this.precio--;
+    }
+
+    if(this.precio <= 3){
+      this.messageService.add({
+        severity: 'error',
+        summary: '¡Algo anda mal!',
+        detail: `Por favor, intenta ajustar el precio de la plaza.`,
+        life: 3000
+      });
+    }
+  }
+
+  /**
+   * Función para obtener el precio de la plaza
+   * Esta función modifica el color que se muestra en el precio.
+   * 
+   * @returns Devuelve el color que corresponde.
+   */
+  getprecioColor(): string {
+    const ratio = this.precio / this.max;
+
+    if (ratio <= 0.33) {
+      return '#3498db'; // azul
+    } else if (ratio <= 0.66) {
+      return '#AAD1A7'; // verde
+    } else {
+      return '#e74c3c'; // rojo
     }
   }
 }
