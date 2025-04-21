@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Detalles del evento</h2>
+
+<mat-dialog-content>
+  <p>{{ data.evento.detalles }}</p>
+</mat-dialog-content>
+
+<h3 mat-dialog-title>Fuentes</h3>
+<mat-dialog-content>
+  <a href="{{data.evento.fuentes}}" target="_blank" rel="noopener">{{ data.evento.fuentes }}</a>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close class="btn btn_bg">Cerrar</button>
+</mat-dialog-actions>
