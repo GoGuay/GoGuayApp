@@ -9,20 +9,21 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventosComponent } from '../detalle-eventos/detalle-eventos.component';
 import { MatIcon } from '@angular/material/icon';
+import { HelpModalComponent } from '../help-modal/help-modal.component';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, MatButton, TranslateModule, CommonModule, MatTableModule, MatIcon ],
+  imports: [IonicModule, MatButton, TranslateModule, CommonModule, MatTableModule, MatIcon],
   templateUrl: './trayectos-populares.component.html',
   styleUrls: ['./trayectos-populares.component.scss'],
 })
-export class TrayectosPopularesComponent  implements OnInit {
+export class TrayectosPopularesComponent implements OnInit {
   displayedColumns: string[] = ['ciudad', 'fecha', 'detalles', 'viaje'];
   dataSource: Evento[] = [];
   expandedRows: { [key: number]: boolean } = {};
 
-  constructor(private viajesService: TravelService,private navCtrl: NavController, public dialog: MatDialog) { }
+  constructor(private viajesService: TravelService, private navCtrl: NavController, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.dataSource = Eventos;
@@ -49,10 +50,20 @@ export class TrayectosPopularesComponent  implements OnInit {
     this.navCtrl.navigateRoot('/data-viaje');
   }
 
-  openDetallesModal(evento: string) {
+  openDetallesModal(evento: any) {
     this.dialog.open(DetalleEventosComponent, {
       width: '400px',
       data: { evento }
+    });
+  }
+
+  openHelpModal() {
+    const titulo: string = 'Centro de ayuda';
+    const mensaje: string = `Al crear un viaje desde aquí, se seleccionará el lugar de destino del evento que hayas seleccionado.`;
+
+    this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
     });
   }
 }
