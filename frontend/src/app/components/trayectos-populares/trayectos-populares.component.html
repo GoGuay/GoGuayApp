@@ -28,11 +28,18 @@
 
     <!-- Viaje -->
     <ng-container matColumnDef="viaje">
-      <th mat-header-cell *matHeaderCellDef> Viaje </th>
+      <th mat-header-cell *matHeaderCellDef> 
+        <span class="viaje-texto">
+          Viaje
+          <button type="button" class="dudasViaje">
+            <mat-icon>question_mark</mat-icon>
+          </button>
+        </span>
+      </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-button type="button" class="btn btn_bg" *ngIf="!element.viaje" (click)="crearViaje(element)">Crear
-          viaje</button>
-        <span *ngIf="element.viaje">Viaje creado</span>
+        <button mat-button type="button" class="btn btn_bg" (click)="crearViaje(element)">
+          Crear viaje
+        </button>
       </td>
     </ng-container>
 

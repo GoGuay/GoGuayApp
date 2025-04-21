@@ -32,6 +32,29 @@
 .table-wrapper {
   border-radius: 15px;
   overflow: hidden;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
+}
+
+.dudasViaje {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: #b3b5e6;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+mat-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.viaje-texto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }

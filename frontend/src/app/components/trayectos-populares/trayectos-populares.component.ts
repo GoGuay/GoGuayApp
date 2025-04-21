@@ -8,11 +8,12 @@ import { Evento, Eventos } from '../../models/eventos/eventos'
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventosComponent } from '../detalle-eventos/detalle-eventos.component';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, MatButton, TranslateModule, CommonModule, MatTableModule ],
+  imports: [IonicModule, MatButton, TranslateModule, CommonModule, MatTableModule, MatIcon ],
   templateUrl: './trayectos-populares.component.html',
   styleUrls: ['./trayectos-populares.component.scss'],
 })
@@ -42,7 +43,7 @@ export class TrayectosPopularesComponent  implements OnInit {
    */
   crearViaje(element: any) {
     const viajeData = {
-      origen: element.ciudad
+      destino: element.ciudad
     };
     this.viajesService.setViajeData(viajeData);
     this.navCtrl.navigateRoot('/data-viaje');
