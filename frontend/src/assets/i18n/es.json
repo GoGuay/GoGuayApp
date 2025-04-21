@@ -19,28 +19,53 @@
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
 
-  "__MiPerfil": "Modal de Mi perfil y componente mi perfil",
-  "MI_PERFIL": {
-    "TITULO": "Mi perfil",
-    "DESCRIPCION_SECCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+  "__MiPerfil": " OK OK OK OK OK OK Modal de Mi perfil y componente mi perfil",
+  "MIPERFIL": {
+    "MI_PERFIL": "Mi perfil",
+    "DESCRIPCION_MIPERFIL": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
     "INFO_PERSONAL": "Información personal",
     "NOMBRE": "Nombre",
+    "NOMBRE_AYUDA": "Campo para escribir tu nombre",
     "APELLIDOS": "Apellidos",
+    "APELLIDOS_AYUDA": "Campo para escribir tus apellidos",
     "PRONOMBRE": "Pronombre",
+    "PRONOMBRE_TOOLTIP": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle",
+    "PRONOMBRE_SELECCIONA": "Escoge tu pronombre",
     "GENERO": "Género",
+    "GENERO_TOOLTIP": "Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer",
+    "GENERO_SELECCIONA": "Escoge tu género",
     "ORIENTACION": "Orientación",
+    "ORIENTACION_TOOLTIP": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales. Puede ser gay, lesbiana, bisexual, pansexual, asexual, entre muchas otras posibilidades",
+    "ORIENTACION_SELECCIONA": "Escoge tu orientación",
     "FECHA_NACIMIENTO": "Fecha de nacimiento",
     "EDAD": "Edad",
     "SOBRE_TI": "Sobre ti",
     "CUENTANOS": "¡Puedes contar todo lo que quieras sobre ti!",
-    "VEHÍCULOS_PREF": "Mis vehículos / Preferencias de viaje",
-    "MIS_VEHICULOS": "Mis vehículos",
     "PREF_VIAJE": "Preferencias de viaje",
     "CUANDO_VIAJO_PREFIERO": "Cuando viajo prefiero...",
     "HABLAR": "Hablar",
     "ESCUCHAR_MUSICA": "Escuchar música",
     "DORMIR": "Dormir",
     "SILENCIO": "Silencio"
+  },
+
+  "__Vehículos": " OK OK OK OK OK OK OK Marca, modelo y colores",
+  "VEHICULOS": {
+    "MIS_VEHICULOS": "Mis vehículos",
+    "FORMULARIO_ANADIR": "Formulario para añadir un nuevo vehículo",
+    "IMAGEN": "Muestra el dibujo de un coche con el color seleccionado",
+    "EDITAR": "Edita los datos de tu vehículo si están erróneos",
+    "GUARDAR": "Guarda los nuevos datos del vehículo",
+    "ADVERTENCIA": " Recuerda que si cambiar la marca, debes modificar también el modelo",
+    "ELIMINAR": "Elimina el vehículo seleccionado",
+    "COLOR_VEHICULO": "Color del vehículo: {{color}}",
+    "MARCA": "Marca",
+    "MODELO": "Modelo",
+    "COLOR": "Color",
+    "MATRICULA": "Matrícula",
+    "OPCIONES": "Opciones",
+    "SIN_VEHICULOS": "No tienes vehículos añadidos",
+    "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC)."
   },
 
   "__DatosContacto": "Modal y página de contacto",
@@ -150,25 +175,6 @@
     "NO_RESPONDE": "Prefiero no responder"
   },
 
-  "__Vehículos": "Marca, modelo y colores",
-  "VEHICULOS": {
-    "MARCA": "Marca",
-    "MODELO": "Modelo",
-    "COLOR": "Color",
-    "blanco": "Blanco",
-    "negro": "Negro",
-    "rojo": "Rojo",
-    "amarillo": "Amarillo",
-    "verde": "Verde",
-    "gris": "Gris",
-    "dorado": "Dorado",
-    "marron": "Marrón",
-    "morado": "Purple",
-    "beige": "Beige",
-    "perla": "Perla",
-    "otro": "Otro"
-  },
-
   "__Botones": "Modal de Mi perfil y componente mi perfil",
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
@@ -200,8 +206,8 @@
     "LOGIN": "Login",
     "REGISTRO": "Registrarse",
     "SALIR": "Salir",
-    "IDIOMA_ESPANIOL":"Español",
-    "IDIOMA_INGLES":"Inglés"
+    "IDIOMA_ESPANIOL": "Español",
+    "IDIOMA_INGLES": "Inglés"
   },
 
   "_Footer": "Links del footer",
@@ -230,7 +236,7 @@
     "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje?",
     "TRAYECTOS_POPULARES": "¿Hay un evento cercano?",
     "DUDAS": "¿TIENES DUDAS?",
-    "QUIERES_BUSCAR_VIAJE":"¿Quieres buscar un viaje?"
+    "QUIERES_BUSCAR_VIAJE": "¿Quieres buscar un viaje?"
   },
 
   "_Búsqueda de viaje": "/busqueda-viajes",

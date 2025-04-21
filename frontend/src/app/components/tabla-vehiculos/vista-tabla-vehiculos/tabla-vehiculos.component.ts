@@ -20,6 +20,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -34,6 +35,7 @@ import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usua
     MatIcon,
     MatExpansionModule,
     MatFormFieldModule,
+    MatTooltipModule,
   ],
 })
 export class TablaVehiculosComponent implements OnInit {
@@ -107,15 +109,12 @@ export class TablaVehiculosComponent implements OnInit {
           .subscribe((usuarioActualizado) => {
             localStorage.setItem('userData', JSON.stringify(this.userData));
             this.userData = usuarioActualizado;
-            // this.botonAnadirVehiculo();
             console.log('Usuario actualizado:', this.userData);
             this.marcaSeleccionada = '';
             this.modeloSeleccionado = '';
             this.colorSeleccionado = '';
             this.matricula = '';
-
             this.mostrarSelectorVehiculo = false;
-
             this.cdr.detectChanges();
             this.obtenerVehiculos();
           });
@@ -292,6 +291,11 @@ export class TablaVehiculosComponent implements OnInit {
     } else {
       this.matriculaNoValida = false;
     }
+  }
+
+  esMatriculaValida(matricula: string): boolean {
+    const regex = /^[0-9]{4}[A-Za-z]{3}$/;
+    return regex.test(matricula);
   }
 
   /**

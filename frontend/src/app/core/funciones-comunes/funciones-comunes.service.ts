@@ -38,6 +38,12 @@ export class FuncionesComunes {
     private router: Router
   ) {
     this.loadUserData();
+    const idioma = localStorage.getItem('language');
+    if (idioma === 'es') {
+      this.validacionIdioma = true;
+    } else {
+      this.validacionIdioma = false;
+    }
   }
 
   /**
