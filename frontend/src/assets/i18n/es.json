@@ -65,7 +65,10 @@
     "MATRICULA": "Matrícula",
     "OPCIONES": "Opciones",
     "SIN_VEHICULOS": "No tienes vehículos añadidos",
-    "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC)."
+    "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).",
+    "SELECTOR_MARCA": "Selección de marca",
+    "SELECTOR_MODELO": "Selección de modelo",
+    "SELECTOR_COLOR": "Selección de color"
   },
 
   "__DatosContacto": "Modal y página de contacto",

@@ -51,9 +51,9 @@
   "VEHICULOS": {
     "MIS_VEHICULOS": "My vehicles",
     "FORMULARIO_ANADIR": "Form to add a new vehicle",
-    "IMAGEN": "Shows a drawing of a car with the selected color",
-    "EDITAR": "Edit your vehicle's data if it is incorrect",
-    "GUARDAR": "Save the updated vehicle data",
+    "IMAGEN": "Displays a drawing of a car with the selected color",
+    "EDITAR": "Edit the details of your vehicle if they are incorrect",
+    "GUARDAR": "Save the new vehicle data",
     "ADVERTENCIA": "Remember that if you change the brand, you must also modify the model",
     "ELIMINAR": "Delete the selected vehicle",
     "COLOR_VEHICULO": "Vehicle color: {{color}}",
@@ -62,7 +62,11 @@
     "COLOR": "Color",
     "MATRICULA": "License plate",
     "OPCIONES": "Options",
-    "SIN_VEHICULOS": "You have no vehicles added"
+    "SIN_VEHICULOS": "You have no vehicles added",
+    "MAT_NO_VALIDA": "Invalid license plate. It must have 4 numbers followed by 3 letters (e.g., 1234ABC).",
+    "SELECTOR_MARCA": "Brand selection",
+    "SELECTOR_MODELO": "Model selection",
+    "SELECTOR_COLOR": "Color selection"
   },
 
   "__ContactInfo": "Contact Modal and Page",
