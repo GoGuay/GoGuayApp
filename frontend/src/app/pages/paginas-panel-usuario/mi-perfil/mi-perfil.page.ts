@@ -97,6 +97,7 @@ export class MiPerfilPage implements OnInit {
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
       vehiculo.editandoVehiculo = false;
     });
+    this.actualizarEdad();
   }
 
   loadUserData(): void {

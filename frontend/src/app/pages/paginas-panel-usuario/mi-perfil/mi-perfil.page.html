@@ -27,11 +27,10 @@
                 type="text"
                 class="form-control w-100"
                 id="nombre"
-                [(ngModel)]="nombreEditado"
                 name="nombre"
-                (ngModelChange)="onInputChange()"
                 aria-required="true"
-                aria-describedby="nombreHelp"
+                [(ngModel)]="nombreEditado"
+                (ngModelChange)="onInputChange()"
               />
               <span id="nombreHelp" class="visually-hidden">
                 {{ 'MIPERFIL.NOMBRE_AYUDA' | translate }}
@@ -45,11 +44,10 @@
                 type="text"
                 class="form-control"
                 id="apellidos"
-                [(ngModel)]="apellidosEditados"
                 name="apellidos"
-                (ngModelChange)="onInputChange()"
                 aria-required="true"
-                aria-describedby="apellidosHelp"
+                [(ngModel)]="apellidosEditados"
+                (ngModelChange)="onInputChange()"
               />
               <span id="apellidosHelp" class="visually-hidden">
                 {{ 'MIPERFIL.APELLIDOS_AYUDA' | translate }}
@@ -71,10 +69,12 @@
                 </span>
               </label>
               <select
+                id="pronombre"
                 class="form-select w-150"
                 [(ngModel)]="pronombreEditado"
                 name="pronombre"
                 (ngModelChange)="onInputChange()"
+                [attr.aria-describedby]="'pronombreHelp'"
               >
                 <option selected disabled>
                   {{"MIPERFIL.PRONOMBRE_SELECCIONA" | translate}}
@@ -90,6 +90,9 @@
                   Prefiero no responder / Prefer not to say
                 </option>
               </select>
+              <span id="pronombreHelp" class="visually-hidden">
+                {{ 'MIPERFIL.PRONOMBRE_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
@@ -113,7 +116,7 @@
                 class="form-select"
                 [(ngModel)]="generoEditado"
                 name="genero"
-                aria-label="Selección de género"
+                [attr.aria-describedby]="'generoHelp'"
                 (ngModelChange)="onInputChange()"
               >
                 <option value="" selected disabled>
@@ -130,6 +133,9 @@
                   Prefiero no responder / Prefer not to answer
                 </option>
               </select>
+              <span id="generoHelp" class="visually-hidden">
+                {{ 'MIPERFIL.PRONOMBRE_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
           <ion-col>
@@ -147,9 +153,10 @@
               </label>
               <select
                 [(ngModel)]="orientacionEditada"
+                id="orientacion"
                 name="orientacion"
                 class="form-select"
-                aria-label="Selección de orientación sexual"
+                [attr.aria-describedby]="'orientacionHelp'"
                 (ngModelChange)="onInputChange()"
               >
                 >
@@ -168,6 +175,9 @@
                   Prefiero no responder / Prefer not to answer
                 </option>
               </select>
+              <span id="orientacionHelp" class="visually-hidden">
+                {{ 'MIPERFIL.ORIENTACION_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
@@ -185,16 +195,25 @@
                 name="fnacimiento"
                 (ngModelChange)="actualizarEdad()"
                 (ngModelChange)="onInputChange()"
+                [attr.aria-describedby]="'fnacimientoHelp'"
               />
+              <span id="fnacimientoHelp" class="visually-hidden">
+                {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
           <ion-col>
             <div class="mb-3">
-              <label for="edad" class="form-label mb-3"
-                >{{'MIPERFIL.EDAD' | translate}}</label
-              >
+              <label for="edad" class="form-label mb-3">
+                {{'MIPERFIL.EDAD' | translate}}
+              </label>
               <br />
-              <span> {{edad}} </span>
+              <span id="edadValue" aria-live="polite" aria-labelledby="edad">
+                {{edad}}
+              </span>
+              <span id="edadDescription" class="visually-hidden">
+                {{'MIPERFIL.EDAD_CALCULADA' | translate}}: {{edad}}
+              </span>
             </div>
           </ion-col>
         </ion-row>

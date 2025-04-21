@@ -240,27 +240,50 @@ export class TablaVehiculosComponent implements OnInit {
     switch (color) {
       case 'blanco':
         return blanco;
+      case 'white':
+        return blanco;
       case 'negro':
+        return negro;
+      case 'black':
         return negro;
       case 'rojo':
         return rojo;
+      case 'red':
+        return rojo;
       case 'amarillo':
         return amarillo;
+      case 'yellow':
+        return amarillo;
+      case 'green':
+        return verde;
       case 'verde':
         return verde;
       case 'gris':
         return gris;
+      case 'grey':
+        return gris;
       case 'dorado':
         return dorado;
+      case 'gold':
+        return dorado;
+
       case 'marron':
         return marron;
+      case 'brown':
+        return marron;
       case 'morado':
+        return morado;
+      case 'purple':
         return morado;
       case 'beige':
         return beige;
       case 'perla':
         return perla;
+      case 'pearl':
+        return perla;
       case 'otro':
+        return otro;
+      case 'other':
         return otro;
       default:
         return '';
