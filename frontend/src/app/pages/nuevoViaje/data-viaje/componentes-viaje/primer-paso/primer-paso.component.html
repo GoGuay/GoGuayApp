@@ -48,7 +48,7 @@
 
     <!-- Columna derecha: Número de plazas y coche -->
     <ion-col size="12" size-xl="6">
-      <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS</h1>
+      <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
       <div class="contenedor_inputs">
         <ion-select aria-label="n_personas" placeholder="Número de plazas" [(ngModel)]="plazas"
           (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas)" class="form-control">
@@ -81,8 +81,9 @@
 
           <ng-container *ngIf="userData?.usuario?.vehiculos?.length > 0; else sinVehiculos">
             <ion-list class="scrollable-list">
-              <ion-radio-group [(ngModel)]="cocheSeleccionado" (ionChange)="guardaDatosDelViajeEnServicio('coche', cocheSeleccionado)">
-                <ion-item *ngFor="let coche of userData?.usuario?.vehiculos">
+              <ion-radio-group [(ngModel)]="cocheSeleccionado">
+                <ion-item *ngFor="let coche of userData?.usuario?.vehiculos"
+                          (click)="seleccionarCoche(coche)">
                   <ion-label>
                     <img class="colorCoche" [src]="mostrarColorCoche(coche.color)" />
                     {{ coche.marca }} {{ coche.modelo }}
@@ -93,6 +94,7 @@
             </ion-list>
           </ng-container>
           
+
           <ng-template #sinVehiculos>
             <div class="mensaje-sin-vehiculos">
               <p>No tienes vehículos registrados, por favor, registra tu vehículo para poder publicar el viaje.</p>
@@ -101,7 +103,7 @@
               </button>
             </div>
           </ng-template>
-          
+
 
         </div>
       </div>

@@ -252,6 +252,11 @@ export class PrimerPasoComponent implements OnInit {
     }
   }
 
+  seleccionarCoche(coche: any) {
+    this.cocheSeleccionado = coche;
+    this.guardaDatosDelViajeEnServicio('coche', coche);
+  }
+  
   irARegistrarVehiculo() {
     this.router.navigate(['/mi-perfil']);
   }

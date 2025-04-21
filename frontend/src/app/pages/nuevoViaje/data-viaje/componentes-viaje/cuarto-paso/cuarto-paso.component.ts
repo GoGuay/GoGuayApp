@@ -56,7 +56,7 @@ export class CuartoPasoComponent implements OnInit {
       if (!viajeData.origen) errores.push('No hay un lugar de origen seleccionado');
       if (!viajeData.destino) errores.push('No hay un lugar de destino seleccionado');
       if (!viajeData.hora_salida) errores.push('No hay una hora de salida seleccionada');
-      if (!viajeData.ruta_seleccionada?.legs?.[0]?.routes?.[0]?.duration?.text) {
+      if (!viajeData.ruta_seleccionada?.routes?.[0].legs?.[0]?.duration?.text) {
         errores.push('No hay una ruta seleccionada.');
       }
     }
@@ -72,7 +72,8 @@ export class CuartoPasoComponent implements OnInit {
       return;
     }
 
-    let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, viajeData.ruta_seleccionada.duracion);
+    let horaEnRutaSeleccionada = viajeData.ruta_seleccionada?.routes?.[0].legs?.[0]?.duration?.text
+    let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, horaEnRutaSeleccionada);
 
     if (!hora_llegada) {
       this.messageService.add({
