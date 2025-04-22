@@ -29,7 +29,7 @@
                   </option>
                 </select>
               </ng-container>
-
+              &nbsp;
               <ng-template #noEditMarca>{{ coche.marca }}</ng-template>
               <ng-container *ngIf="coche.editandoVehiculo; else noEditModelo">
                 <select class="form-select" [(ngModel)]="coche.modelo">
@@ -58,6 +58,11 @@
                 <img
                   class="colorCoche"
                   [src]="mostrarColorCoche(coche.color)"
+                  role="img"
+                  [attr.alt]="
+                    'VEHICULOS.COLOR_VEHICULO'
+                      | translate : { color: (coche.color | translate) }
+                  "
                 />
               </ng-template>
             </ion-col>
@@ -69,6 +74,7 @@
                   type="text"
                   [(ngModel)]="coche.matricula"
                   class="form-control"
+                  [attr.aria-label]="'VEHICULOS.MATRICULA' | translate"
                 />
               </ng-container>
               <ng-template #noEditMatricula>{{ coche.matricula }}</ng-template>
@@ -93,6 +99,7 @@
               class="botones_tabla btn_bg"
               mat-icon-button
               (click)="modalEliminarVehiculo(coche)"
+              [attr.aria-label]="'VEHICULOS.ELIMINAR' | translate"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -104,7 +111,7 @@
 
   <ng-template #noVehiculos>
     <div class="mt-3 d-flex justify-content-center">
-      <span>No tienes vehículos añadidos</span>
+      <span>{{ "VEHICULOS.SIN_VEHICULOS" | translate }}</span>
     </div>
   </ng-template>
 

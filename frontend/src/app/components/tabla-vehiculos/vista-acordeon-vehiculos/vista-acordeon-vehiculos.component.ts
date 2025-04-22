@@ -18,6 +18,7 @@ import {
   COLORES,
   COLOURS,
 } from 'src/app/models/vehiculos/marcas_modelos.model';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-vista-acordeon-vehiculos',
@@ -30,6 +31,7 @@ import {
     IonicModule,
     FormsModule,
     MatIcon,
+    MatTooltip,
   ],
   templateUrl: './vista-acordeon-vehiculos.component.html',
   styleUrls: ['./vista-acordeon-vehiculos.component.scss'],
