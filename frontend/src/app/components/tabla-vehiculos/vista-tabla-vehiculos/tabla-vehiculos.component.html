@@ -67,12 +67,8 @@
               <img
                 class="colorCoche"
                 [src]="mostrarColorCoche(coche.color)"
-                [attr.alt]="
-                  'VEHICULOS.COLOR_VEHICULO'
-                    | translate : { color: (coche.color | translate) }
-                "
                 role="img"
-                [attr.aria-label]="
+                [attr.alt]="
                   'VEHICULOS.COLOR_VEHICULO'
                     | translate : { color: (coche.color | translate) }
                 "
@@ -121,12 +117,16 @@
                       ? guardarVehiculoEditado(coche)
                       : editarFilaVehiculo(coche)
                   "
+                  [attr.aria-label]="
+                    coche.editandoVehiculo
+                      ? ('VEHICULOS.GUARDAR_FILA' | translate)
+                      : ('VEHICULOS.EDITAR_FILA' | translate)
+                  "
                   [matTooltip]="
                     coche.editandoVehiculo
-                      ? ('VEHICULOS.GUARDAR' | translate)
-                      : ('VEHICULOS.EDITAR' | translate)
+                      ? ('VEHICULOS.GUARDAR_TOOLTIP' | translate)
+                      : ('VEHICULOS.EDITAR_TOOLTIP' | translate)
                   "
-                  [attr.aria-labelledby]="'accionVehiculo_' + coche.id"
                 >
                   <mat-icon>{{
                     coche.editandoVehiculo ? "save" : "edit"
@@ -146,7 +146,7 @@
                   (click)="modalEliminarVehiculo(coche)"
                   [matTooltip]="'VEHICULOS.ELIMINAR' | translate"
                 >
-                  <mat-icon>delete</mat-icon>
+                  <mat-icon aria-hidden="true">delete</mat-icon>
                 </button>
               </div>
             </div>
