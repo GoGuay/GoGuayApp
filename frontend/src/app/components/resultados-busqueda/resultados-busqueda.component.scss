@@ -35,11 +35,11 @@
 }
 
 .col-separator {
-  border-right: 1px solid rgb(143, 141, 141); /* Línea vertical */
+  border-right: 1px solid rgb(143, 141, 141); 
 }
 
 .col-separator:last-child {
-  border-right: none; /* Elimina la línea en la última columna */
+  border-right: none;
 }
 
 .resultado-viaje {
@@ -61,7 +61,7 @@
 }
 
 .linea {
-  width: 220px;
+  width: 196px;
 }
 
 .columna_scroll {
@@ -90,20 +90,17 @@
 
 @media (max-width: 576px) {
   .caja-ordenar {
-    width: 100% !important;
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 15%;
-    border-radius: 15px;
-    padding: 1%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .inputs-filtro {
+    flex: 1 1 45%;
   }
 
   .columna_scroll {
     max-height: 35vh;
-  }
-
-  .inputs-filtro {
-    margin-right: 5%;
   }
 
   .disposicion {

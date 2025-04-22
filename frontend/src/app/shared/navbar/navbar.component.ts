@@ -174,4 +174,12 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('userData');
     window.location.reload();
   }
+
+  openPerfilPublico(){
+    const usuario = { id:  this.userData.usuario.id }
+    
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
+      queryParams: usuario,
+    });
+  }
 }
