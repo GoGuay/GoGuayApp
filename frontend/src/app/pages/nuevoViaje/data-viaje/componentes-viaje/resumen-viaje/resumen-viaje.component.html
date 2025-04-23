@@ -80,7 +80,7 @@
                 <li>
                   <mat-icon>schedule</mat-icon> <strong>Hora de llegada:</strong>
                   <span>{{ calcularHoraLlegada(currentViajeData.hora_salida,
-                    currentViajeData.ruta_seleccionada.duracion) }}</span>
+                    currentViajeData.tiempoTotal) }}</span>
                 </li>
 
                 <li>
@@ -94,10 +94,10 @@
 
                 <li>
                   <mat-icon>attach_money</mat-icon> <strong>Precio:</strong>
-                  <span *ngIf="!editMode.precio">{{ currentViajeData.precio }}</span>
-                  <input *ngIf="editMode.precio" type="number" [(ngModel)]="editableFields.precio" />
-                  <button mat-icon-button (click)="edicionInformacion('precio')">
-                    <mat-icon>{{ editMode.precio ? 'save' : 'edit_square' }}</mat-icon>
+                  <span *ngIf="!editMode.precio_viaje">{{ currentViajeData.precio_viaje }} €</span>
+                  <input *ngIf="editMode.precio_viaje" type="number" [(ngModel)]="editableFields.precio_viaje" class="currencyInput"/>
+                  <button mat-icon-button (click)="edicionInformacion('precio_viaje')">
+                    <mat-icon>{{ editMode.precio_viaje ? 'save' : 'edit_square' }}</mat-icon>
                   </button>
                 </li>
               </ul>

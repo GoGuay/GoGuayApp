@@ -4,6 +4,7 @@
     "plazas": "3",
     "hora_salida": "15:20",
     "fecha_salida": "2025-04-27T11:16:00",
+    "precio_viaje": 4,
     "coche": {
         "color": "rojo",
         "id": 1,

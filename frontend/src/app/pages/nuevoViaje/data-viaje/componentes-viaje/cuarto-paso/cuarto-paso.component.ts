@@ -10,6 +10,8 @@ import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 
+import viajeMock from '../../../../../../assets/mocks/viaje.mock.json'
+
 @Component({
   selector: 'app-cuarto-paso',
   standalone: true,
@@ -37,6 +39,8 @@ export class CuartoPasoComponent implements OnInit {
   precio = this.initialValue;
   max = this.initialValue * 2;
 
+  viajeMock: any = viajeMock;
+
   constructor(private travelService: TravelService, private messageService: MessageService, private navCtrl: NavController) { }
 
   ngOnInit() { }
@@ -48,8 +52,10 @@ export class CuartoPasoComponent implements OnInit {
 
   onCuartoPasoComplete() {
     const errores: string[] = [];
-    const viajeData = this.travelService.getViajeData();
-
+    // const viajeData = this.travelService.getViajeData();
+    const viajeData = this.viajeMock;
+    console.log('VIAJE MOCK: ', this.viajeMock);
+    
     if (!viajeData) {
       errores.push('viajeData');
     } else {

@@ -241,20 +241,15 @@ export class ResumenViajeComponent implements OnInit {
       let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
       let salidaDate = new Date();
       salidaDate.setHours(horasSalida, minutosSalida, 0);
-
-      let duracionHoras = 0;
-      let duracionMinutos = 0;
-
-      const duracionMatch = duracion_viaje.match(/(\d+)h\s*(\d+)?min?/);
-      if (duracionMatch) {
-        duracionHoras = Number(duracionMatch[1]) || 0;
-        duracionMinutos = Number(duracionMatch[2]) || 0;
-      }
-
+  
+      // Extraer minutos de duracion_viaje (asumiendo formato "2348:00")
+      const [minutosTotalesStr] = duracion_viaje.split(':');
+      const duracionEnMinutos = parseInt(minutosTotalesStr, 10);
+  
+      // Calcular nueva hora de llegada
       let llegadaDate = new Date(salidaDate);
-      llegadaDate.setHours(llegadaDate.getHours() + duracionHoras);
-      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionMinutos);
-
+      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionEnMinutos);
+  
       return llegadaDate.toLocaleTimeString('es-ES', {
         hour: '2-digit',
         minute: '2-digit',
@@ -264,6 +259,7 @@ export class ResumenViajeComponent implements OnInit {
       return null;
     }
   }
+  
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
