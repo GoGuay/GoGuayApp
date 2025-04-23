@@ -131,7 +131,8 @@
                           <mat-icon class="mas_detalle">loupe</mat-icon>
                         </button>
                         <button type="button" class="btn_shadow" matTooltip="Editar viaje"
-                          matTooltipClass="custom-tooltip" (click)="editarViaje(viaje.id)">
+                          matTooltipClass="custom-tooltip" (click)="editarViaje(viaje.id)"
+                          *ngIf="conductor && !pasajero">
                           <mat-icon class="mas_detalle">edit</mat-icon>
                         </button>
                         <button type="button" class="btn_shadow" matTooltip="Eliminar viaje"
