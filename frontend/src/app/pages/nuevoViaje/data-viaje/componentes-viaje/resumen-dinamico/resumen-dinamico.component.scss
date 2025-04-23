@@ -45,17 +45,48 @@ div[slot="content"] {
   background-color: #f0f0f0;
 }
 
-button{
+button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
-input, select {
+input,
+select {
   margin-bottom: 1%;
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
-.btn_bg_cancel{
-  background-color: #E0B6B6 !important;
+.btn_bg_cancel {
+  background-color: #e0b6b6 !important;
   color: black !important;
+}
+
+.input-viaje {
+  display: block;
+  width: 60%;
+  padding: 10px 10px 10px 30px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.selectCar {
+  margin-bottom: 1%;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  width: 50%;
+}
+
+.selecthour{
+  width: 20%;
+}
+
+.selectDate{
+  width: 30%;
+}
+
+.selectPlaces{
+  width: 20%;
 }

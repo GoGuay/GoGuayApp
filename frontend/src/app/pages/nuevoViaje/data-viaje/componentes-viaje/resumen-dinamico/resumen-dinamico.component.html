@@ -18,7 +18,7 @@
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
                     <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="origen"
                       name="origen" [ngModelOptions]="{ standalone: true }"
-                      (input)="obtenerSugerenciasOrigen($event)" />
+                      (input)="obtenerSugerenciasOrigen($event)" placeholder="Busca tu lugar de origen"/>
 
                     <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
                       <li *ngFor="let localidad of sugerenciasOrigen; let i = index"
@@ -33,7 +33,7 @@
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
                     <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="destino"
                       name="origen" [ngModelOptions]="{ standalone: true }"
-                      (input)="obtenerSugerenciasDestino($event)" />
+                      (input)="obtenerSugerenciasDestino($event)" placeholder="Busca tu lugar de destino"/>
 
                     <ul *ngIf="sugerenciasDestino.length > 2" class="list-group lista_sugerencias">
                       <li *ngFor="let localidad of sugerenciasDestino; let i = index"
@@ -47,7 +47,7 @@
                     <strong>Coche seleccionado: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo
                       }}</span>
-                    <select *ngIf="editandoViaje" class="form-control" [(ngModel)]="currentViajeData.coche">
+                    <select *ngIf="editandoViaje" class="form-control selectCar" [(ngModel)]="currentViajeData.coche">
                       <option [ngValue]="null" disabled selected *ngIf="!currentViajeData?.coche">
                         Selecciona un coche para el viaje
                       </option>
@@ -65,22 +65,22 @@
                     <mat-icon>group</mat-icon>
                     <strong>Plazas disponibles: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
-                    <input *ngIf="editandoViaje" type="number" [(ngModel)]="currentViajeData.plazas"
-                      class="form-control" />
+                    <input *ngIf="editandoViaje" type="number" min="1" max="4" [(ngModel)]="currentViajeData.plazas"
+                      class="form-control selectPlaces" />
                   </li>
                   <li>
                     <mat-icon>event</mat-icon>
                     <strong>Fecha de salida: </strong>
                     <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
                     <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
-                      class="form-control" />
+                      class="form-control selectDate" />
                   </li>
                   <li>
                     <mat-icon>schedule</mat-icon>
                     <strong>Hora de salida: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>
                     <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
-                      class="form-control" />
+                      class="form-control selecthour" />
                   </li>
                 </ul>
               </div>
