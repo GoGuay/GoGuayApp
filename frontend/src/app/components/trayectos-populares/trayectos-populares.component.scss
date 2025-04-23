@@ -57,10 +57,14 @@
   -webkit-backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.6);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
+  
 }
 
 table {
   background-color: transparent !important;
+  width: 100%;
+  min-width: 600px; /* para que no colapsen las columnas en móviles */
+  border-collapse: collapse;
 }
 
 .dudasViaje {
@@ -134,8 +138,34 @@ div[slot='content']::before {
   opacity: 0.8; 
 }
 
-
 .leer-mas {
   color: white;
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+
+@media (max-width: 576px) {
+  .table-wrapper {
+    border-radius: 0;
+    box-shadow: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
+    width: 385px;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .spanInformativo {
+    font-size: 12px;
+    padding: 0 10px;
+    display: block;
+    text-align: center;
+  }
+
+  .leer-mas {
+    font-size: 12px;
+  }
 }
