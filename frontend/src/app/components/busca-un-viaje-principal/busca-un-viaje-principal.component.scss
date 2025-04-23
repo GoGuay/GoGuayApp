@@ -1,7 +1,8 @@
 .img_travel {
-  // width: 100%;
   max-width: 250px;
-  height: auto;
+  max-height: 250px;
+  height: 250px;
+  width: 250px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   border-radius: 15px;
   object-fit: cover;
@@ -17,6 +18,9 @@
 
 .travel-icon {
   font-size: 20px;
+  height: 20px;
+  width: 20px;
+  margin-right: 4px;
 }
 
 .travel-text {
