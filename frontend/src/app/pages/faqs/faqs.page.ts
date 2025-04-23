@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { VentanaDudasComponent } from "../../components/ventana-dudas/ventana-dudas.component";
 
 @Component({
   selector: 'app-faqs',
@@ -23,7 +24,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
     RouterModule,
     JumbotronComponent,
     NavbarComponent,
-  ],
+    VentanaDudasComponent
+],
 })
 export class FaqsPage implements OnInit {
   userLoggedIn: boolean = false;

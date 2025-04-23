@@ -24,6 +24,7 @@ import {
   MatTooltipModule,
 } from '@angular/material/tooltip';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
   selector: 'app-panel-usuario',
@@ -53,15 +54,20 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
   encapsulation: ViewEncapsulation.None,
 })
 export class PanelUsuarioPage implements OnInit {
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  cargando = false;
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
+  usuario: Usuario = {} as Usuario;
 
   constructor(
     private dialog: MatDialog,
     private travelService: TravelService,
     private navCtrl: NavController,
     private funcionesComunes: FuncionesComunes,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private userService: UserServicesService
   ) {}
 
   ngOnInit() {
@@ -148,4 +154,39 @@ export class PanelUsuarioPage implements OnInit {
       queryParams: usuario,
     });
   }
+
+  onImageChangePerfil(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargando = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('imagenPerfil', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
+        next: (response) => {
+          this.cargando = false;
+          if (response && response.nuevaUrl) {
+            this.imagenPerfilSrc = response.nuevaUrl;
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error('Error al actualizar la imagen del perfil:', error);
+        }
+      });
+    }
+  }
+
+    /**
+   * Función para obtener los datos de un usuario
+   * @param id_usuario Recibe el ID del usuario que está logado
+   */
+    obtenerUsuarioPorID(id_usuario: number) {
+      this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+        this.usuario = resultadoUsuario;
+      });
+    }
+  
 }

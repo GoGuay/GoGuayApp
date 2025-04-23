@@ -11,9 +11,17 @@
 
     <ion-row class="d-flex justify-content-center mb-4 position-relative">
       <div class="boton-foto">
-        <button type="button" class="btn btn_bg boton">
+        <button type="button" class="btn btn_bg boton" (click)="fileInputPerfil.click()">
           {{ "PANELUSUARIO.ANADIR_EDITAR_FOTO" | translate }}
         </button>
+      
+        <input
+          type="file"
+          #fileInputPerfil
+          accept="image/*"
+          (change)="onImageChangePerfil($event)"
+          style="display: none;"
+        />
       </div>
       <div class="boton-x">
         <button
@@ -21,7 +29,7 @@
           matTooltip="Elimina tu foto"
           class="btn text-boton d-flex justify-content-center align-items-center btn_bg"
         >
-          X
+          <img class="delete-icon" src="../../../assets/sistema/cruz.png">
         </button>
       </div>
 
