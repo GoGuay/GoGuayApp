@@ -11,14 +11,9 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario/datos-contacto/datos-contacto.component';
-import { VerificarPerfilComponent } from 'src/app/components/botones-panel-usuario/verificar-perfil/verificar-perfil.component';
-import { SaldoTransferenciasComponent } from 'src/app/components/botones-panel-usuario/saldo-transferencias/saldo-transferencias.component';
 import { IonicModule, NavController } from '@ionic/angular';
-import { MiPerfilComponent } from 'src/app/components/botones-panel-usuario/mi-perfil/mi-perfil.component';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { Router } from '@angular/router';
 import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipModule,
@@ -68,7 +63,7 @@ export class PanelUsuarioPage implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private cdr: ChangeDetectorRef,
     private userService: UserServicesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -179,14 +174,14 @@ export class PanelUsuarioPage implements OnInit {
     }
   }
 
-    /**
-   * Función para obtener los datos de un usuario
-   * @param id_usuario Recibe el ID del usuario que está logado
-   */
-    obtenerUsuarioPorID(id_usuario: number) {
-      this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-        this.usuario = resultadoUsuario;
-      });
-    }
-  
+  /**
+ * Función para obtener los datos de un usuario
+ * @param id_usuario Recibe el ID del usuario que está logado
+ */
+  obtenerUsuarioPorID(id_usuario: number) {
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.usuario = resultadoUsuario;
+    });
+  }
+
 }
