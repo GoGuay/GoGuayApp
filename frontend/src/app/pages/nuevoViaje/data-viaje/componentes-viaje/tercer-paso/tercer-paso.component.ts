@@ -463,7 +463,7 @@ export class TercerPasoComponent implements OnInit {
     // Guardar en localStorage
     localStorage.setItem('rutaSeleccionada', JSON.stringify(viajeData));
 
-    this.obtenerCiudadesEnRuta();
+    // this.obtenerCiudadesEnRuta();
   }
 
 

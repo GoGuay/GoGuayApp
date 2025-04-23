@@ -13,9 +13,11 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+
 
 registerLocaleData(localeEs);
 
@@ -32,6 +34,7 @@ registerLocaleData(localeEs);
     MatFormFieldModule,
     MatInputModule,
     CommonModule,
+    MatButtonModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -65,7 +68,8 @@ export class PrimerPasoComponent implements OnInit {
   constructor(
     private travelService: TravelService,
     private platform: Platform,
-    private vehiculosServicesService: VehiculosServicesService
+    private vehiculosServicesService: VehiculosServicesService,
+    private router: Router
   ) {
     this._adapter.setLocale('es-ES');
     this.obtenerVehiculos();
@@ -202,5 +206,58 @@ export class PrimerPasoComponent implements OnInit {
     }
 
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
+  }
+
+  mostrarColorCoche(color: string): string {
+    const blanco: string = '../../../../../../assets/ColoresCoches/Blanco.png';
+    const negro: string = '../../../../../../assets/ColoresCoches/Negro.png';
+    const rojo: string = '../../../../../../assets/ColoresCoches/Rojo.png';
+    const amarillo: string = '../../../../../../assets/ColoresCoches/Amarillo.png';
+    const verde: string = '../../../../../../assets/ColoresCoches/Verde.png';
+    const gris: string = '../../../../../../assets/ColoresCoches/Gris.png';
+    const dorado: string = '../../../../../../assets/ColoresCoches/Dorado.png';
+    const marron: string = '../../../../../../assets/ColoresCoches/Marrón.png';
+    const morado: string = '../../../../../../assets/ColoresCoches/Morado.png';
+    const beige: string = '../../../../../../assets/ColoresCoches/Beige.png';
+    const perla: string = '../../../../../../assets/ColoresCoches/Perla.png';
+    const otro: string = '../../../../../../assets/ColoresCoches/Otros.png';
+
+    switch (color) {
+      case 'blanco':
+        return blanco;
+      case 'negro':
+        return negro;
+      case 'rojo':
+        return rojo;
+      case 'amarillo':
+        return amarillo;
+      case 'verde':
+        return verde;
+      case 'gris':
+        return gris;
+      case 'dorado':
+        return dorado;
+      case 'marron':
+        return marron;
+      case 'morado':
+        return morado;
+      case 'beige':
+        return beige;
+      case 'perla':
+        return perla;
+      case 'otro':
+        return otro;
+      default:
+        return '';
+    }
+  }
+
+  seleccionarCoche(coche: any) {
+    this.cocheSeleccionado = coche;
+    this.guardaDatosDelViajeEnServicio('coche', coche);
+  }
+  
+  irARegistrarVehiculo() {
+    this.router.navigate(['/mi-perfil']);
   }
 }
