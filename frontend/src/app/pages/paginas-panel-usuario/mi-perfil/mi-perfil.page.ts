@@ -62,6 +62,7 @@ export class MiPerfilPage implements OnInit {
   edad: number = this.funcionesUsuario.calcularEdad(
     this.fechaNacimientoEditada
   );
+  lang: string = '';
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -74,7 +75,7 @@ export class MiPerfilPage implements OnInit {
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
-
+    this.lang = this.translate.currentLang;
     this.emailEditado = this.userData.usuario.email || '';
     this.telefonoEditado = this.userData.usuario.telefono || '';
     this.comunComerciales = this.userData.usuario.comunic_comerciales || false;
@@ -268,151 +269,147 @@ export class MiPerfilPage implements OnInit {
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
   }
 
-  numeroALetras(valor: number | string, lang: string): string {
-    // Define los números escritos en ambos idiomas
-    const unidadesEsp = [
-      '',
-      'uno',
-      'dos',
-      'tres',
-      'cuatro',
-      'cinco',
-      'seis',
-      'siete',
-      'ocho',
-      'nueve',
-    ];
-    const especialesEsp = [
-      'diez',
-      'once',
-      'doce',
-      'trece',
-      'catorce',
-      'quince',
-      'dieciséis',
-      'diecisiete',
-      'dieciocho',
-      'diecinueve',
-    ];
-    const decenasEsp = [
-      '',
-      '',
-      'veinte',
-      'treinta',
-      'cuarenta',
-      'cincuenta',
-      'sesenta',
-      'setenta',
-      'ochenta',
-      'noventa',
-    ];
-    const centenasEsp = [
-      '',
-      'ciento',
-      'doscientos',
-      'trescientos',
-      'cuatrocientos',
-      'quinientos',
-      'seiscientos',
-      'setecientos',
-      'ochocientos',
-      'novecientos',
-    ];
+  // numeroALetras(valor: number | string, lang: string): string {
 
-    const unidadesEng = [
-      '',
-      'one',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-    ];
-    const especialesEng = [
-      'ten',
-      'eleven',
-      'twelve',
-      'thirteen',
-      'fourteen',
-      'fifteen',
-      'sixteen',
-      'seventeen',
-      'eighteen',
-      'nineteen',
-    ];
-    const decenasEng = [
-      '',
-      '',
-      'twenty',
-      'thirty',
-      'forty',
-      'fifty',
-      'sixty',
-      'seventy',
-      'eighty',
-      'ninety',
-    ];
-    const centenasEng = [
-      '',
-      'one hundred',
-      'two hundred',
-      'three hundred',
-      'four hundred',
-      'five hundred',
-      'six hundred',
-      'seven hundred',
-      'eight hundred',
-      'nine hundred',
-    ];
+  //   const unidadesEsp = [
+  //     '',
+  //     'uno',
+  //     'dos',
+  //     'tres',
+  //     'cuatro',
+  //     'cinco',
+  //     'seis',
+  //     'siete',
+  //     'ocho',
+  //     'nueve',
+  //   ];
+  //   const especialesEsp = [
+  //     'diez',
+  //     'once',
+  //     'doce',
+  //     'trece',
+  //     'catorce',
+  //     'quince',
+  //     'dieciséis',
+  //     'diecisiete',
+  //     'dieciocho',
+  //     'diecinueve',
+  //   ];
+  //   const decenasEsp = [
+  //     '',
+  //     '',
+  //     'veinte',
+  //     'treinta',
+  //     'cuarenta',
+  //     'cincuenta',
+  //     'sesenta',
+  //     'setenta',
+  //     'ochenta',
+  //     'noventa',
+  //   ];
+  //   const centenasEsp = [
+  //     '',
+  //     'ciento',
+  //     'doscientos',
+  //     'trescientos',
+  //     'cuatrocientos',
+  //     'quinientos',
+  //     'seiscientos',
+  //     'setecientos',
+  //     'ochocientos',
+  //     'novecientos',
+  //   ];
 
-    let num = parseInt(valor.toString(), 10);
+  //   const unidadesEng = [
+  //     '',
+  //     'one',
+  //     'two',
+  //     'three',
+  //     'four',
+  //     'five',
+  //     'six',
+  //     'seven',
+  //     'eight',
+  //     'nine',
+  //   ];
+  //   const especialesEng = [
+  //     'ten',
+  //     'eleven',
+  //     'twelve',
+  //     'thirteen',
+  //     'fourteen',
+  //     'fifteen',
+  //     'sixteen',
+  //     'seventeen',
+  //     'eighteen',
+  //     'nineteen',
+  //   ];
+  //   const decenasEng = [
+  //     '',
+  //     '',
+  //     'twenty',
+  //     'thirty',
+  //     'forty',
+  //     'fifty',
+  //     'sixty',
+  //     'seventy',
+  //     'eighty',
+  //     'ninety',
+  //   ];
+  //   const centenasEng = [
+  //     '',
+  //     'one hundred',
+  //     'two hundred',
+  //     'three hundred',
+  //     'four hundred',
+  //     'five hundred',
+  //     'six hundred',
+  //     'seven hundred',
+  //     'eight hundred',
+  //     'nine hundred',
+  //   ];
 
-    if (isNaN(num) || num <= 0 || num > 2100) {
-      return lang === 'es' ? 'Número fuera de rango' : 'Number out of range';
-    }
+  //   let num = parseInt(valor.toString(), 10);
 
-    let texto = '';
+  //   if (isNaN(num) || num <= 0 || num > 2100) {
+  //     return lang === 'es' ? 'Número fuera de rango' : 'Number out of range';
+  //   }
 
-    // Miles
-    if (num >= 2000) {
-      texto += lang === 'es' ? 'dos mil ' : 'two thousand ';
-      num -= 2000;
-    } else if (num >= 1000) {
-      texto += lang === 'es' ? 'mil ' : 'one thousand ';
-      num -= 1000;
-    }
+  //   let texto = '';
 
-    // Centenas
-    if (num >= 100) {
-      const c = Math.floor(num / 100);
-      texto += lang === 'es' ? `${centenasEsp[c]} ` : `${centenasEng[c]} `;
-      num = num % 100;
-    }
+  //   if (num >= 2000) {
+  //     texto += lang === 'es' ? 'dos mil ' : 'two thousand ';
+  //     num -= 2000;
+  //   } else if (num >= 1000) {
+  //     texto += lang === 'es' ? 'mil ' : 'one thousand ';
+  //     num -= 1000;
+  //   }
 
-    // Especiales (10-19)
-    if (num >= 10 && num < 20) {
-      texto +=
-        lang === 'es'
-          ? `${especialesEsp[num - 10]}`
-          : `${especialesEng[num - 10]}`;
-      return texto.trim();
-    }
+  //   if (num >= 100) {
+  //     const c = Math.floor(num / 100);
+  //     texto += lang === 'es' ? `${centenasEsp[c]} ` : `${centenasEng[c]} `;
+  //     num = num % 100;
+  //   }
 
-    // Decenas
-    if (num >= 20) {
-      const d = Math.floor(num / 10);
-      const u = num % 10;
-      texto += lang === 'es' ? `${decenasEsp[d]}` : `${decenasEng[d]}`;
-      if (u !== 0) {
-        texto += lang === 'es' ? ` y ${unidadesEsp[u]}` : ` ${unidadesEng[u]}`;
-      }
-    } else if (num > 0) {
-      texto += lang === 'es' ? unidadesEsp[num] : unidadesEng[num];
-    }
+  //   if (num >= 10 && num < 20) {
+  //     texto +=
+  //       lang === 'es'
+  //         ? `${especialesEsp[num - 10]}`
+  //         : `${especialesEng[num - 10]}`;
+  //     return texto.trim();
+  //   }
 
-    return texto.trim();
-  }
+  //   if (num >= 20) {
+  //     const d = Math.floor(num / 10);
+  //     const u = num % 10;
+  //     texto += lang === 'es' ? `${decenasEsp[d]}` : `${decenasEng[d]}`;
+  //     if (u !== 0) {
+  //       texto += lang === 'es' ? ` y ${unidadesEsp[u]}` : ` ${unidadesEng[u]}`;
+  //     }
+  //   } else if (num > 0) {
+  //     texto += lang === 'es' ? unidadesEsp[num] : unidadesEng[num];
+  //   }
+
+  //   return texto.trim();
+  // }
 }

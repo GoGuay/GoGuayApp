@@ -35,7 +35,7 @@
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
-ul{
+ul {
   width: 40%;
 }
 
@@ -44,18 +44,27 @@ h1 {
   font-size: 1.52rem;
 }
 
-input, button{
+input,
+button {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
-.inputs_emailtfno{
+.inputs_emailtfno {
   width: 400px;
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
 }
 
 
 @media (max-width: 576px) {
-.container{
-  display: flex;
-  flex-direction: column;
-}
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
 }
