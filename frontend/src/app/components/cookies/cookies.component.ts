@@ -27,25 +27,42 @@ import { NavController } from '@ionic/angular';
 })
 export class CookiesComponent implements OnInit {
 
+  preferences = {
+    analytics: false,
+    advertising: false,
+    essential: false
+  };
+
   constructor(
     private cookieService: CookieService, 
     private navCtrl: NavController, 
     private dialogRef: MatDialogRef<CookiesComponent>
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+
+    const analyticsCookie = this.cookieService.get('analytics');
+    const advertisingCookie = this.cookieService.get('advertising');
+
+    this.preferences.analytics = analyticsCookie === 'true';
+    this.preferences.advertising = advertisingCookie === 'true';
+
+  }
 
   acceptAllCookies() {
-    this.cookieService.set('analytics', 'true', 365);
-    this.cookieService.set('preferences', 'true', 365);
-    this.cookieService.set('essential', 'true', 365);
+    this.cookieService.set('analytics', String(this.preferences.analytics), 365);
+    this.cookieService.set('advertising', String(this.preferences.advertising), 365);
+    // this.cookieService.set('analytics', 'true', 365);
+    // this.cookieService.set('preferences', 'true', 365);
+    // this.cookieService.set('essential', 'true', 365);
     this.hideBanner();
     this.closeDialog();
   }
 
   rejectAllCookies() {
     this.cookieService.deleteAll();
-    this.cookieService.set('essential', 'true', 365);
+    this.cookieService.set('essential', String(this.preferences.advertising), 365);
+    // this.cookieService.set('essential', 'true', 365);
     this.hideBanner();
     this.closeDialog();
   }
