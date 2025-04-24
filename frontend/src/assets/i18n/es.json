@@ -19,18 +19,31 @@
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
 
-  "__MiPerfil": "Modal de Mi perfil y componente mi perfil",
-  "MI_PERFIL": {
-    "TITULO": "Mi perfil",
-    "DESCRIPCION_SECCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+  "__MiPerfil": " OK OK OK OK OK OK Modal de Mi perfil y componente mi perfil",
+  "MIPERFIL": {
+    "MI_PERFIL": "Mi perfil",
+    "DESCRIPCION_MIPERFIL": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
     "INFO_PERSONAL": "Información personal",
     "NOMBRE": "Nombre",
+    "NOMBRE_AYUDA": "Campo para escribir tu nombre",
     "APELLIDOS": "Apellidos",
+    "APELLIDOS_AYUDA": "Campo para escribir tus apellidos",
     "PRONOMBRE": "Pronombre",
+    "PRONOMBRE_TOOLTIP": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle",
+    "PRONOMBRE_SELECCIONA": "Escoge tu pronombre",
+    "PRONOMBRE_AYUDA": "Selector de opciones para elegir tu pronombre",
     "GENERO": "Género",
+    "GENERO_TOOLTIP": "Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer",
+    "GENERO_SELECCIONA": "Escoge tu género",
+    "GENERO_AYUDA": "Selector de opciones para elegir tu género",
     "ORIENTACION": "Orientación",
+    "ORIENTACION_TOOLTIP": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales. Puede ser gay, lesbiana, bisexual, pansexual, asexual, entre muchas otras posibilidades",
+    "ORIENTACION_SELECCIONA": "Escoge tu orientación",
+    "ORIENTACION_AYUDA": "Selector de opciones para elegir tu orientación",
     "FECHA_NACIMIENTO": "Fecha de nacimiento",
+    "FECHA_NACIMIENTO_AYUDA": "Formato requerido: dia (2 digitos), mes (2 digitos), año (4 dígitos).",
     "EDAD": "Edad",
+    "EDAD_CALCULADA": "Tu edad es:",
     "SOBRE_TI": "Sobre ti",
     "CUENTANOS": "¡Aquí puedes contarnos lo que quieras sobre ti!",
     "PREF_VIAJE": "Preferencias de viaje",
@@ -64,7 +77,7 @@
     "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).",
     "SELECTOR_MARCA": "Selección de marca",
     "SELECTOR_MODELO": "Selección de modelo",
-    "SELECTOR_COLOR": "Selección de color"
+    "SELECTOR_COLOR": "Color"
   },
 
   "__DatosContacto": "Modal y página de contacto",
@@ -178,6 +191,7 @@
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
     "GUARDAR": "Guardar",
+    "GUARDAR_VEHICULO": "Guardar vehículo",
     "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
     "ELEGIR_ARCHIVOS": "Elegir archivos",
     "CAMBIAR": "Cambiar!",
