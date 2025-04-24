@@ -53,3 +53,39 @@
   font-size: 1.5rem;
   cursor: pointer;
 }
+
+.font_precio{
+  font-size: 150px;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  transition: color 0.3s ease-in-out;
+}
+
+.precio_btn {
+  font-size: 150px;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.currency{
+  font-size: 110px;
+}
+
+.recommend{
+  background-color: #AAD1A7;
+  border-radius: 15px;
+  padding: 5px;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.recommend_info{
+  padding: 5px;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}

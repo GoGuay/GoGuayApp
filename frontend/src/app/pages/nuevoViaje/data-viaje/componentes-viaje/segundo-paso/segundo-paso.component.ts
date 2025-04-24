@@ -7,11 +7,12 @@ import { ChangeDetectorRef } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { SpinnerComponent } from "../../../../../components/spinner/spinner.component";
 
 @Component({
   selector: 'app-segundo-paso',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, MatIcon, MatButtonModule],
+  imports: [CommonModule, FormsModule, TranslateModule, MatIcon, MatButtonModule, SpinnerComponent],
   templateUrl: './segundo-paso.component.html',
   styleUrls: ['./segundo-paso.component.scss'],
 })
@@ -29,6 +30,8 @@ export class SegundoPasoComponent implements OnInit {
 
   mapCenter: { lat: number; lng: number } = { lat: 40.4168, lng: -3.7038 };
 
+  cargandoOrigen: boolean = false;
+  cargandoDestino: boolean = false;
 
   currentViajeData: any;
 
@@ -82,10 +85,10 @@ export class SegundoPasoComponent implements OnInit {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           this.mapCenter = { lat, lng };
-  
+
           // Llamada a Nominatim para obtener la dirección inversa
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
-  
+
           fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -114,6 +117,25 @@ export class SegundoPasoComponent implements OnInit {
       console.error("La geolocalización no está soportada por este navegador.");
     }
   }
-  
+
+
+  buscarSugerenciasOrigen(event: Event) {
+    this.cargandoOrigen = true;
+    this.funcionesComunes.obtenerSugerenciasOrigen(event)
+      .finally(() => {
+        console.log("Búsqueda de sugerencias completada");
+        this.cargandoOrigen = false;
+        this.cdr.detectChanges(); // fuerza render del componente
+      });
+  }
+
+  buscarSugerenciasDestino(event: Event) {
+    this.cargandoDestino = true;
+    this.funcionesComunes.obtenerSugerenciasDestino(event)
+      .finally(() => {
+        this.cargandoDestino = false;
+        this.cdr.detectChanges();
+      });
+  }
 
 }

@@ -1,15 +1,20 @@
 <div id="cuarto_paso">
   <div class="container">
     <h4>Estamos a un paso de terminar.</h4>
-    <h1>PON UN PRECIO  A TU VIAJE</h1>
+    <h1>Fija el precio por plaza</h1>
+    <span class="recommend"> Precio recomendado: 5€ - 8€ </span>
+    <br>
+    <span class="recommend_info"> Conseguirás pasajeros más fácilmente si no abusas del precio </span>
   </div>
 
-  <div class="container">
+  <div class="container d-flex justify-content-center">
     <div class="input-container">
-      <input type="number" placeholder="Pon un precio a tu viaje" class="input-viaje form-control" [(ngModel)]="precio" min="0">
-      <span class="currency-symbol">€</span>
+      <button class="precio_btn" (click)="restarCantidad()" [disabled]="precio <= 3">-</button>
+      <span class="font_precio" [ngStyle]="{ color: getprecioColor() }">{{ precio }}</span> <span class="currency">€</span>
+      <button class="precio_btn" (click)="sumarCantidad()" [disabled]="precio >= initialValue * 2">+</button>
       <mat-icon class="help-icon" matTooltip="Recuerda poner un precio justo a tu viaje." matTooltipClass="custom-tooltip">question_mark</mat-icon>
     </div>
+    <p-toast position="bottom-center"></p-toast>
   </div>
 
   <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">

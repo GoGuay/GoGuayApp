@@ -33,6 +33,7 @@ export const COLOURS = [
   'purple',
   'beige',
   'pearl',
+  'perla',
   'other',
 ];
 

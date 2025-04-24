@@ -1,6 +1,6 @@
 <div class="mb-5 container">
   <h4 class="text-center mb-1 mb-sm-1 mb-md-5">
-    {{ "VEHICULOS.MIS_VEHICULOS" | translate }}
+    {{ "MI_PERFIL.MIS_VEHICULOS" | translate }}
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
@@ -14,11 +14,11 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">{{ "VEHICULOS.MARCA" | translate }}</th>
-          <th scope="col">{{ "VEHICULOS.MODELO" | translate }}</th>
-          <th scope="col">{{ "VEHICULOS.COLOR" | translate }}</th>
-          <th scope="col">{{ "VEHICULOS.MATRICULA" | translate }}</th>
-          <th scope="col">{{ "VEHICULOS.OPCIONES" | translate }}</th>
+          <th scope="col">Marca</th>
+          <th scope="col">Modelo</th>
+          <th scope="col">Color</th>
+          <th scope="col">Matrícula</th>
+          <th scope="col">Opciones</th>
         </tr>
       </thead>
       <tbody>
@@ -79,16 +79,9 @@
           <td>
             <ng-container *ngIf="coche.editandoVehiculo; else noEditMatricula">
               <input
-                [id]="'matricula_' + coche.modelo"
                 type="text"
                 [(ngModel)]="coche.matricula"
                 class="form-control"
-                pattern="^[0-9]{4}[A-Za-z]{3}$"
-                maxlength="7"
-                [ngClass]="{
-                  'is-invalid': !esMatriculaValida(coche.matricula)
-                }"
-                [attr.aria-label]="'VEHICULOS.MATRICULA' | translate"
               />
             </ng-container>
             <ng-template #noEditMatricula>{{ coche.matricula }}</ng-template>
@@ -98,18 +91,7 @@
           <td>
             <div class="row">
               <div class="col">
-                <span
-                  [id]="'accionVehiculo_' + coche.id"
-                  class="visually-hidden"
-                >
-                  {{
-                    coche.editandoVehiculo
-                      ? ("VEHICULOS.GUARDAR" | translate)
-                      : ("VEHICULOS.EDITAR" | translate)
-                  }}
-                </span>
                 <button
-                  type="button"
                   class="botones_tabla btn_bg"
                   mat-icon-button
                   (click)="
@@ -135,16 +117,10 @@
               </div>
               <!-- Botón para eliminar el vehículo -->
               <div class="col">
-                <span id="editarLabel" class="visually-hidden">
-                  {{ "VEHICULOS.ELIMINAR" | translate }}
-                </span>
                 <button
-                  type="button"
                   class="botones_tabla btn_bg"
                   mat-icon-button
-                  [attr.aria-label]="'VEHICULOS.ELIMINAR' | translate"
                   (click)="modalEliminarVehiculo(coche)"
-                  [matTooltip]="'VEHICULOS.ELIMINAR' | translate"
                 >
                   <mat-icon aria-hidden="true">delete</mat-icon>
                 </button>
@@ -155,10 +131,9 @@
         <!-- Marca -->
       </tbody>
     </table>
-
     <div *ngIf="modificandoMarca">
       <p class="text-danger">
-        {{ "VEHICULOS.ADVERTENCIA" | translate }}
+        Recuerda que si cambiar la marca, debes modificar también el modelo
       </p>
     </div>
   </div>
@@ -166,7 +141,7 @@
   <!--Mensaje si no hay ningún vehículo añadido-->
   <ng-template #noVehiculos>
     <div class="mt-3 d-flex justify-content-center">
-      <span>{{ "VEHICULOS.SIN_VEHICULOS" | translate }}</span>
+      <span>No tienes vehículos añadidos</span>
     </div>
   </ng-template>
 
@@ -187,18 +162,14 @@
     <ion-row style="width: 650px">
       <!-- Selector de marca -->
       <ion-col size="4">
-        <label id="labelMarca" for="marca" class="visually-hidden">
-          {{ "VEHICULOS.MARCA" | translate }}
-        </label>
         <select
-          id="marca"
           class="form-select"
           [(ngModel)]="marcaSeleccionada"
           (change)="filtrarModelos()"
           [ngModelOptions]="{ standalone: true }"
-          aria-labelledby="labelMarca"
+          aria-label="Selección de marca"
         >
-          <option value="" disabled>
+          <option value="" disabled selected>
             {{ "VEHICULOS.MARCA" | translate }}
           </option>
           <option *ngFor="let coche of listadoCoches" [value]="coche.marca">
@@ -208,18 +179,14 @@
       </ion-col>
       <!-- Selector de modelo -->
       <ion-col size="3">
-        <label for="modelo" class="visually-hidden">
-          {{ "VEHICULOS.MODELO" | translate }}
-        </label>
         <select
-          id="modelo"
           class="form-select"
           [(ngModel)]="modeloSeleccionado"
           [disabled]="!marcaSeleccionada"
           [ngModelOptions]="{ standalone: true }"
-          aria-label="'VEHICULOS.SELECTOR_MODELO' | translate"
+          aria-label="Selección de modelo"
         >
-          <option value="" disabled>
+          <option value="" disabled selected>
             {{ "VEHICULOS.MODELO" | translate }}
           </option>
           <option *ngFor="let modelo of modelosFiltrados" [value]="modelo">
@@ -230,18 +197,14 @@
       <!-- Selector de color -->
       <ion-col size="2">
         <div *ngIf="funcionesComunes.validacionIdioma">
-          <label for="color" class="visually-hidden">
-            {{ "VEHICULOS.COLOR" | translate }}
-          </label>
           <select
-            id="color"
             class="form-select"
-            [attr.aria-label]="'VEHICULOS.SELECTOR_COLOR' | translate"
+            aria-label="Selección de color"
             [(ngModel)]="colorSeleccionado"
             [ngModelOptions]="{ standalone: true }"
             [disabled]="!modeloSeleccionado"
           >
-            <option value="" disabled>
+            <option value="" disabled selected>
               {{ "VEHICULOS.COLOR" | translate }}
             </option>
             <option *ngFor="let color of listadoColores" [value]="color">
@@ -252,14 +215,13 @@
 
         <div *ngIf="!funcionesComunes.validacionIdioma">
           <select
-            id="color"
-            class="form-select"
-            [attr.aria-label]="'VEHICULOS.SELECTOR_COLOR' | translate"
+            class="form-select inputs_selectores"
+            aria-label="Selección de color"
             [(ngModel)]="colorSeleccionado"
             [ngModelOptions]="{ standalone: true }"
             [disabled]="!modeloSeleccionado"
           >
-            <option value="" selected>
+            <option value="" disabled selected>
               {{ "VEHICULOS.COLOR" | translate }}
             </option>
             <option *ngFor="let color of listColours" [value]="color">
@@ -271,35 +233,24 @@
       <!-- Input matricula -->
       <ion-col size="3">
         <div>
-          <label for="nueva-matricula" class="visually-hidden">
-            {{ "VEHICULOS.MATRICULA" | translate }}
-          </label>
           <input
             type="text"
             class="form-control-sm inputs_selectores"
             placeholder="0000XXX"
-            id="nueva-matricula"
+            id="matricula"
             pattern="^[0-9]{4}[A-Za-z]{3}$"
             required
             maxlength="7"
-            [attr.aria-describedby]="
-              matriculaNoValida ? 'error-matricula' : null
-            "
-            [attr.aria-invalid]="matriculaNoValida ? 'true' : null"
+            aria-describedby="matricula"
             [(ngModel)]="matricula"
             (ngModelChange)="validarMatricula()"
             style="width: 120px"
           />
           <!-- Mensaje de error -->
           <div>
-            <div
-              *ngIf="matriculaNoValida"
-              id="error-matricula"
-              class="text-danger"
-              role="alert"
-              aria-live="polite"
-            >
-              {{ "VEHICULOS.MAT_NO_VALIDA" | translate }}
+            <div *ngIf="matriculaNoValida" class="text-danger">
+              Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej:
+              1234ABC).
             </div>
           </div>
         </div>

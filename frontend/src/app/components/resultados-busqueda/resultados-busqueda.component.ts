@@ -4,21 +4,19 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
 import { Observable } from 'rxjs';
 import { SpinnerComponent } from "../spinner/spinner.component";
 import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
 import { IonicModule, NavController } from '@ionic/angular';
-import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, MatIcon, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
+  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })

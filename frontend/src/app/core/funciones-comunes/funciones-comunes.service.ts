@@ -26,6 +26,9 @@ export class FuncionesComunes {
 
   validacionIdioma: boolean = true;
 
+  cargandoOrigen: boolean = false;
+  cargandoDestino: boolean = false;
+
   vehiculos_usuario: any[] = [];
   VehiculoYaAnadido: boolean = false;
 
@@ -38,12 +41,6 @@ export class FuncionesComunes {
     private router: Router
   ) {
     this.loadUserData();
-    const idioma = localStorage.getItem('language');
-    if (idioma === 'es') {
-      this.validacionIdioma = true;
-    } else {
-      this.validacionIdioma = false;
-    }
   }
 
   /**
@@ -157,61 +154,83 @@ export class FuncionesComunes {
    *
    * @param evento Recibe el evento del input.
    */
-  obtenerSugerenciasOrigen(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
+  private sugerenciasTimeout: any;
 
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          this.sugerenciasOrigen = data.filter(
-            (item: any) =>
-              item.address &&
-              (item.address.city ||
-                item.address.town ||
-                item.address.village) &&
-              item.address.country_code === 'es'
-          );
-        })
-        .catch((error) => {
-          console.error('Error al obtener sugerencias de origen:', error);
-        });
-    } else {
-      this.sugerenciasOrigen = [];
-    }
+  obtenerSugerenciasOrigen(evento: Event): Promise<void> {
+    return new Promise((resolve, reject) => {
+      clearTimeout(this.sugerenciasTimeout); // Cancelar timeout anterior si el usuario sigue escribiendo
+  
+      const contenidoInput = (evento.target as HTMLInputElement).value;
+  
+      if (contenidoInput.length > 2) {
+        this.sugerenciasTimeout = setTimeout(() => {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
+  
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              this.sugerenciasOrigen = data.filter(
+                (item: any) =>
+                  item.address &&
+                  (item.address.city || item.address.town || item.address.village) &&
+                  item.address.country_code === 'es'
+              );
+              resolve();
+            })
+            .catch((error) => {
+              console.error('Error al obtener sugerencias de origen:', error);
+              reject(error);
+            });
+        }, 500); // Esperamos 500 ms antes de hacer la petición
+      } else {
+        this.sugerenciasOrigen = [];
+        resolve();
+      }
+    });
   }
-
+  
+  
   /**
    * Función para obtener la lista de sugerencias para el destino
    * en función de lo que escriba el usuario en el input correspondiente.
    *
    * @param evento Recibe el evento del input.
    */
-  obtenerSugerenciasDestino(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          this.sugerenciasDestino = data.filter(
-            (item: any) =>
-              item.address &&
-              (item.address.city ||
-                item.address.town ||
-                item.address.village) &&
-              item.address.country_code === 'es'
-          );
-        })
-        .catch((error) => {
-          console.error('Error al obtener sugerencias de destino:', error);
-        });
-    } else {
-      this.sugerenciasDestino = [];
-    }
+  private sugerenciasDestinoTimeout: any;
+
+  obtenerSugerenciasDestino(evento: Event): Promise<void> {
+    return new Promise((resolve, reject) => {
+      clearTimeout(this.sugerenciasDestinoTimeout);
+  
+      const contenidoInput = (evento.target as HTMLInputElement).value;
+  
+      if (contenidoInput.length > 2) {
+        this.sugerenciasDestinoTimeout = setTimeout(() => {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
+  
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              this.sugerenciasDestino = data.filter(
+                (item: any) =>
+                  item.address &&
+                  (item.address.city || item.address.town || item.address.village) &&
+                  item.address.country_code === 'es'
+              );
+              resolve();
+            })
+            .catch((error) => {
+              console.error('Error al obtener sugerencias de destino:', error);
+              reject(error);
+            });
+        }, 500);
+      } else {
+        this.sugerenciasDestino = [];
+        resolve();
+      }
+    });
   }
+  
 
   /**
    * Función para validar si un viaje ha terminado o no.   *

@@ -39,7 +39,7 @@
             <li class="nav-item">
               <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
                 {{ "NAVBAR.BUSCAR_VIAJE" | translate }}
-                <mat-icon>search</mat-icon>
+                <img src="../../../assets/sistema/busqueda.png" class="search-icon">
               </a>
             </li>
 
@@ -96,6 +96,9 @@
                     <ul>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                      </li>
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
                       </li>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
@@ -200,6 +203,9 @@
                   <ul>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>

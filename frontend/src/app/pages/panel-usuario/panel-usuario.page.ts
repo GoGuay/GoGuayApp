@@ -11,19 +11,15 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario/datos-contacto/datos-contacto.component';
-import { VerificarPerfilComponent } from 'src/app/components/botones-panel-usuario/verificar-perfil/verificar-perfil.component';
-import { SaldoTransferenciasComponent } from 'src/app/components/botones-panel-usuario/saldo-transferencias/saldo-transferencias.component';
 import { IonicModule, NavController } from '@ionic/angular';
-import { MiPerfilComponent } from 'src/app/components/botones-panel-usuario/mi-perfil/mi-perfil.component';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { Router } from '@angular/router';
 import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipModule,
 } from '@angular/material/tooltip';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
   selector: 'app-panel-usuario',
@@ -53,16 +49,21 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
   encapsulation: ViewEncapsulation.None,
 })
 export class PanelUsuarioPage implements OnInit {
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  cargando = false;
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
+  usuario: Usuario = {} as Usuario;
 
   constructor(
     private dialog: MatDialog,
     private travelService: TravelService,
     private navCtrl: NavController,
     private funcionesComunes: FuncionesComunes,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private userService: UserServicesService
+  ) { }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -148,4 +149,39 @@ export class PanelUsuarioPage implements OnInit {
       queryParams: usuario,
     });
   }
+
+  onImageChangePerfil(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargando = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('imagenPerfil', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
+        next: (response) => {
+          this.cargando = false;
+          if (response && response.nuevaUrl) {
+            this.imagenPerfilSrc = response.nuevaUrl;
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error('Error al actualizar la imagen del perfil:', error);
+        }
+      });
+    }
+  }
+
+  /**
+ * Función para obtener los datos de un usuario
+ * @param id_usuario Recibe el ID del usuario que está logado
+ */
+  obtenerUsuarioPorID(id_usuario: number) {
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.usuario = resultadoUsuario;
+    });
+  }
+
 }

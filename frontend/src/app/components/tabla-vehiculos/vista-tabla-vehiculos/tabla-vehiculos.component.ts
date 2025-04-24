@@ -113,6 +113,7 @@ export class TablaVehiculosComponent implements OnInit {
             localStorage.setItem('userData', JSON.stringify(this.userData));
             this.userData = usuarioActualizado;
             // this.botonAnadirVehiculo();
+            // this.botonAnadirVehiculo();
             console.log('Usuario actualizado:', this.userData);
             this.translate
               .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
@@ -263,50 +264,27 @@ export class TablaVehiculosComponent implements OnInit {
     switch (color) {
       case 'blanco':
         return blanco;
-      case 'white':
-        return blanco;
       case 'negro':
-        return negro;
-      case 'black':
         return negro;
       case 'rojo':
         return rojo;
-      case 'red':
-        return rojo;
       case 'amarillo':
         return amarillo;
-      case 'yellow':
-        return amarillo;
-      case 'green':
-        return verde;
       case 'verde':
         return verde;
       case 'gris':
         return gris;
-      case 'grey':
-        return gris;
       case 'dorado':
         return dorado;
-      case 'gold':
-        return dorado;
-
       case 'marron':
         return marron;
-      case 'brown':
-        return marron;
       case 'morado':
-        return morado;
-      case 'purple':
         return morado;
       case 'beige':
         return beige;
       case 'perla':
         return perla;
-      case 'pearl':
-        return perla;
       case 'otro':
-        return otro;
-      case 'other':
         return otro;
       default:
         return '';
@@ -337,11 +315,6 @@ export class TablaVehiculosComponent implements OnInit {
     } else {
       this.matriculaNoValida = false;
     }
-  }
-
-  esMatriculaValida(matricula: string): boolean {
-    const regex = /^[0-9]{4}[A-Za-z]{3}$/;
-    return regex.test(matricula);
   }
 
   /**

@@ -37,7 +37,7 @@
           </div>
           <div *ngIf="routes.length > 0">
             <!-- Lista de sugerencias de paradas -->
-            <div class="spinner_box" *ngIf="cargandoSugerencias">
+            <!-- <div class="spinner_box" *ngIf="cargandoSugerencias">
               <mat-spinner></mat-spinner>
               <p style="color: #B3B5E6" class="mt-2"> Cargando posibles paradas... </p>
             </div>
@@ -53,7 +53,7 @@
                 </li>
               </ul>
               
-             </div>
+             </div> -->
 
             <div class="route-list-container">
               <div *ngFor="let route of routes; let i = index" (click)="selectRoute(i)" class="route-option"

@@ -8,6 +8,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
+import { Usuario } from 'src/app/models/user/usuario.model';
 
 @Component({
   selector: 'app-resumen-dinamico',
@@ -18,6 +20,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 })
 export class ResumenDinamicoComponent implements OnInit {
 
+  userData: Usuario = {} as Usuario;
   currentViajeData: any;
   private destroy$ = new Subject<void>();
   editandoViaje: boolean = false;
@@ -33,10 +36,14 @@ export class ResumenDinamicoComponent implements OnInit {
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
-  constructor(private travelService: TravelService, private googleService: GoogleServices) { }
+  marcaModeloUnido: string = ''
+
+  constructor(private travelService: TravelService, private googleService: GoogleServices, private vehiculosServicesService: VehiculosServicesService) { }
 
   ngOnInit() {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.actualizarInformacion();
+    this.obtenerVehiculos();
   }
 
   /**
@@ -48,6 +55,7 @@ export class ResumenDinamicoComponent implements OnInit {
       .subscribe((viajeData) => {
         this.currentViajeData = viajeData ?? {};
         this.origen = this.currentViajeData?.origen || '';
+        this.marcaModeloUnido = `${this.currentViajeData?.coche?.marca} ${this.currentViajeData?.coche?.modelo}`;
         // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
       });
   }
@@ -79,6 +87,10 @@ export class ResumenDinamicoComponent implements OnInit {
     this.actualizarInformacion();
   }
 
+  seleccionarCoche(){
+
+  }
+  
   /**
    * Función para cancelar la edición del viaje que se está creando.
    */
@@ -126,5 +138,18 @@ export class ResumenDinamicoComponent implements OnInit {
     this.sugerenciasDestino = [];
   }
 
+
+/**
+ * Función para obtener la lista de vehículos de un usuario.   *
+ */
+  obtenerVehiculos() {
+    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
+    this.vehiculosServicesService
+      .obtenerVehiculosUsuario(usuario.usuario.id)
+      .subscribe((resultado) => {
+        console.log('Vehículos: ', resultado.vehiculos);
+        this.userData.usuario.vehiculos = resultado.vehiculos;
+      });
+  }
 
 }
