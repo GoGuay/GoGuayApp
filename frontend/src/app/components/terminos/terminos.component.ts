@@ -26,6 +26,7 @@ import { AnimationController } from '@ionic/angular/standalone';
 export class TerminosComponent  implements OnInit {
  
   fechaActual: string = '';
+  email: string = 'gestion.prideride@gmail.com';
   
   constructor(private dialogRef: MatDialogRef<TerminosComponent>, private animationCtrl: AnimationController) { }
 

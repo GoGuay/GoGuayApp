@@ -130,6 +130,10 @@ export const routes: Routes = [
     path: 'encuesta-satisfaccion',
     loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then( m => m.EncuestaSatisfaccionPage)
   },
+  {
+    path: 'centro-contacto',
+    loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then( m => m.CentroContactoPage)
+  },
 
 
 ];
