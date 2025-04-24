@@ -6,8 +6,8 @@
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
-    <div class="d-flex justify-content-center">
-      <h1>{{'DATOS_CONTACTO.TITULO' | translate}}</h1>
+    <div class="col-12 text-center">
+      <h1>{{ 'DATOS_CONTACTO.TITULO' | translate }}</h1>
     </div>
     <p class="d-flex justify-content-center">
       {{'DATOS_CONTACTO.DESCRIPCION_SECCION' | translate}}
@@ -17,8 +17,8 @@
     </p>
 
     <ion-grid>
-      <ion-row>
-        <ion-col size="6">
+      <ion-row class="mobile">
+        <ion-col size="6" class="correotelefono">
           <h4 class="text-center mb-4">
             {{'DATOS_CONTACTO.MODIF_CORREO_TFNO' | translate}}
           </h4>
@@ -137,7 +137,6 @@
       </ion-row>
       <ion-row class="d-flex justify-content-center mt-5">
         <div>
-          <p-toast position="bottom-center"></p-toast>
           <button
             type="button"
             class="btn btn_bg"

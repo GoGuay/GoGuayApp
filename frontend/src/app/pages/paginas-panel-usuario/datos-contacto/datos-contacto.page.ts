@@ -176,7 +176,7 @@ export class DatosContactoPage implements OnInit {
       preferencias: this.userData.usuario.preferencias,
       // email: this.emailEditado || this.userData.usuario.email,
       // telefono: this.telefonoEditado || this.userData.usuario.telefono,
-      // comunic_comerciales: this.comunComerciales,
+      comunic_comerciales: this.comunComerciales,
       comunic_terceros: this.comunTerceros,
     };
     console.log('Objeto modificado: ', nuevoUsuario);
