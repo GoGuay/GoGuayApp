@@ -12,7 +12,7 @@
     <p class="d-flex justify-content-center">
       {{'DATOS_CONTACTO.DESCRIPCION_SECCION' | translate}}
     </p>
-    <p class="d-flex justify-content-center">
+    <p class="d-flex justify-content-center descripcion">
       {{'DATOS_CONTACTO.DESCRIPCION_SECCION_2' | translate}}
     </p>
 
@@ -22,7 +22,7 @@
           <h4 class="text-center mb-4">
             {{'DATOS_CONTACTO.MODIF_CORREO_TFNO' | translate}}
           </h4>
-          <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center formulario">
             <form [formGroup]="formEmailTfno">
               <!-- Input correo electrónico  -->
               <div class="mb-3">
@@ -139,7 +139,7 @@
         <div>
           <button
             type="button"
-            class="btn btn_bg"
+            class="btn btn_bg boton-mobile"
             mat-raised-button
             (click)="editarCorreoTelefono()"
             [disabled]="!botonHabilitadoContacto"
