@@ -25,8 +25,19 @@ import { TranslateModule } from '@ngx-translate/core';
 export class VerificacionesPerfilPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  emailUsuario: string = '';
+  telefonoUsuario: string = '';
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (this.userData?.usuario) {
+      this.userLoggedIn = true;
+    }
+    if (this.userData && this.userData.usuario) {
+      this.emailUsuario = this.userData.usuario.email || '';
+      this.telefonoUsuario = this.userData.usuario.telefono || '';
+    }
+  }
 }

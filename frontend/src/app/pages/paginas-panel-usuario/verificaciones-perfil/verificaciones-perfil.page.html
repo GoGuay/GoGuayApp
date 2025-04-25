@@ -7,29 +7,35 @@
 <ion-content [fullscreen]="true">
   <div class="container">
     <ion-row>
-      <ion-col class="d-flex flex-column align-items-center">
-        <div class="text-center">
-          <h4>{{'VERIF_PERFIL.TITULO_VERIF_BASICA' | translate}}</h4>
-          <p>{{'VERIF_PERFIL.SUBTIT_VERIF_BASICA' | translate}}</p>
+      <ion-col class="d-flex flex-column">
+        <div>
+          <h1 class="text-center mb-5">
+            {{'VERIF_PERFIL.TITULO_VERIF_BASICA' | translate}}
+          </h1>
+          <p class="vbasica">
+            {{'VERIF_PERFIL.SUBTIT_VERIF_BASICA' | translate}}
+          </p>
         </div>
       </ion-col>
     </ion-row>
 
     <ion-row class="justify-content-between fila_superior">
-      <ion-col size="3">
-        <!-- Verificación de correo -->
+      <!-- Verificación de correo -->
+      <ion-col>
         <div class="mt-2 text-center">
-          <p>
+          <p class="mb-4">
             <strong>{{'VERIF_PERFIL.VERIFICA_TU_CORREO' | translate}}</strong>
           </p>
           <ion-col>
-            <button type="btn" class="btn btn_bg" mat-raised-button>
-              micorreo
+            <button type="btn" class="btn btn_bg mb-4 w-100" mat-raised-button>
+              {{emailUsuario}}
             </button>
           </ion-col>
           <ion-row>
             <ion-col>
-              <p>{{'VERIF_PERFIL.INFO_VERIF_CORREO' | translate}}</p>
+              <p class="text-align-justify" style="font-size: 15px">
+                {{'VERIF_PERFIL.INFO_VERIF_CORREO' | translate}}
+              </p>
             </ion-col>
           </ion-row>
         </div>
@@ -39,8 +45,8 @@
         <mat-divider vertical></mat-divider>
       </div>
 
-      <ion-col size="3">
-        <!-- Verificación de teléfono -->
+      <!-- Verificación de teléfono -->
+      <ion-col>
         <div class="mt-2 text-center">
           <p>
             <strong>{{'VERIF_PERFIL.VERIFICA_TU_TFNO' | translate}}</strong>
@@ -52,12 +58,14 @@
               mat-raised-button
               type="btn"
             >
-              66666666666
+              {{telefonoUsuario}}
             </button>
           </ion-col>
           <ion-row>
             <ion-col class="mt-3">
-              <p>{{'VERIF_PERFIL.INFO_VERIF_TFNO' | translate}}</p>
+              <p style="font-size: 15px">
+                {{'VERIF_PERFIL.INFO_VERIF_TFNO' | translate}}
+              </p>
             </ion-col>
           </ion-row>
           <div class="input-container d-flex justify-content-center">
@@ -74,13 +82,16 @@
       <div class="divider-container">
         <mat-divider vertical></mat-divider>
       </div>
-      <ion-col size="3">
-        <!-- Verificación DNI -->
+
+      <!-- Verificación DNI -->
+      <ion-col>
         <div class="mt-2 text-center">
-          <p>
+          <p class="mb-4">
             <strong>{{'BOTON.VERIF_TU_IDENTIDAD' | translate}}</strong>
           </p>
-          <ion-col class="d-flex justify-content-center align-items-center">
+          <ion-col
+            class="d-flex justify-content-center align-items-center mb-5"
+          >
             <div class="d-flex justify-content-center position-relative">
               <div class="file-upload">
                 <label for="identidad" class="upload-button floating-plus"
@@ -98,22 +109,25 @@
           </ion-col>
           <ion-row class="d-flex justify-content-center align-items-center">
             <ion-col class="texto">
-              <p>{{'VERIF_PERFIL.INFO_VERIFIDENTIDAD2' | translate}}</p>
+              <p style="font-size: 15px" class="text-align-justify">
+                {{'VERIF_PERFIL.INFO_VERIFIDENTIDAD2' | translate}}
+              </p>
             </ion-col>
           </ion-row>
         </div>
       </ion-col>
-    </ion-row>
+      <div class="divider-container">
+        <mat-divider vertical></mat-divider>
+      </div>
 
-    <ion-row class="justify-content-between mb-5 mt-5">
       <!-- Verificación adicional -->
-      <ion-col size="3" class="d-flex align-items-start">
-        <div class="text-center">
-          <p class="text-center fs-8" style="font-size: 14px">
+      <ion-col class="d-flex align-items-start">
+        <div class="text-center vadicional">
+          <p class="text-center fs-8 mt-2 caja">
             <strong>{{'VERIF_PERFIL.VERIF_ADIC_CONDUCIR' | translate}}</strong>
           </p>
           <div class="d-flex justify-content-center position-relative">
-            <div class="file-upload">
+            <div class="file-upload mb-5">
               <label for="identidad" class="upload-button floating-plus"
                 >+</label
               >
@@ -126,12 +140,14 @@
               />
             </div>
           </div>
-          <p class="texto text-align-justify">
+          <p class="texto text-align-justify" style="font-size: 14px">
             {{'VERIF_PERFIL.INFO_VERIFCONDUCIR' | translate}}
           </p>
         </div>
       </ion-col>
+    </ion-row>
 
+    <ion-row class="justify-content-between mb-5 mt-5">
       <!-- Línea divisoria -->
       <div class="divider-container">
         <mat-divider vertical class="mat-divider-2"></mat-divider>

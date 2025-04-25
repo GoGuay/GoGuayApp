@@ -80,7 +80,7 @@
     "SELECTOR_COLOR": "Color"
   },
 
-  "__DatosContacto": "Modal y página de contacto",
+  "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
     "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
@@ -96,16 +96,16 @@
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil",
   "VERIF_PERFIL": {
     "TITULO": "Verificar perfil / Cambiar la contraseña",
-    "TITULO_VERIF_BASICA": "Verificación básica",
-    "SUBTIT_VERIF_BASICA": "Para ser un usuario verificado debes confirmar tu correo y teléfono y subir una foto de tu documento de identidad por ambas caras",
+    "TITULO_VERIF_BASICA": "Verificación del usuario",
+    "SUBTIT_VERIF_BASICA": "Verificación básica: confirma tu correo, teléfono y adjunta fotos de tu documento",
     "DESCRIPCION_SECCION": "Desde aquí podrás hacer la verificación de tu perfil. Debes confirmar:",
     "LI_CORREO": "Correo electrónico",
     "LI_TELÉFONO": "Teléfono",
     "LI_DNI": "Subir foto del DNI (ambas caras)",
     "DESCRIPCION_SECCION_2": "Si eres conductor (o planeas hacer algún viaje como conductor) debes subir la foto de tu carnet de conducir por ambas caras",
     "DESCRIPCION_SECCION_3": "Además, en esta sección, puedes cambiar la contraseña para entrar a la web-app",
-    "VERIFICA_TU_CORREO": "Verifica tu correo electrónico:",
-    "INFO_VERIF_CORREO": "Se enviará un correo a tu dirección, solo tienes que confirmar en el enlace que aparecerá.",
+    "VERIFICA_TU_CORREO": "Verifica tu correo:",
+    "INFO_VERIF_CORREO": "Se enviará un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
     "VERIFICA_TU_TFNO": "Verifica tu teléfono:",
     "INFO_VERIF_TFNO": "Introduce aquí los 4 dígitos que has recibido:",
     "VERIF_TU_IDENTIDAD": "Verifica tu identidad:",
