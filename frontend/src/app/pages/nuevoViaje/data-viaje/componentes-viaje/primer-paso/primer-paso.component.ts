@@ -260,4 +260,5 @@ export class PrimerPasoComponent implements OnInit {
   irARegistrarVehiculo() {
     this.router.navigate(['/mi-perfil']);
   }
+  
 }

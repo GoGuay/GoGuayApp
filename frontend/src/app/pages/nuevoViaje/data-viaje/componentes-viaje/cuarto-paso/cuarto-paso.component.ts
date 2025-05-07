@@ -52,8 +52,8 @@ export class CuartoPasoComponent implements OnInit {
 
   onCuartoPasoComplete() {
     const errores: string[] = [];
-    // const viajeData = this.travelService.getViajeData();
-    const viajeData = this.viajeMock;
+    const viajeData = this.travelService.getViajeData();
+    // const viajeData = this.viajeMock;
     console.log('VIAJE MOCK: ', this.viajeMock);
     
     if (!viajeData) {
