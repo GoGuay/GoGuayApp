@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -31,6 +32,7 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
     MatDialogModule,
     MatTooltipModule,
     ToastModule,
+    SpinnerComponent
   ],
 })
 export class NuevoViajePage implements OnInit {
@@ -48,11 +50,16 @@ export class NuevoViajePage implements OnInit {
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
+  cargandoOrigen: boolean = false;
+  cargandoDestino: boolean = false;
+
   constructor(
     private navCtrl: NavController,
     private viajesService: TravelService,
     public funcionesComunes: FuncionesComunes,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
@@ -94,10 +101,30 @@ export class NuevoViajePage implements OnInit {
        * Se almacena temporalmente los datos del viaje.
        */
       this.viajesService.setViajeData(viajeData);
-      this.navCtrl.navigateRoot('/data-viaje');
+      this.navCtrl.navigateRoot('/data-viaje', { replaceUrl: true });
+
     }
   }
 
+
+  buscarSugerenciasOrigen(event: Event) {
+    this.cargandoOrigen = true;
+    this.funcionesComunes.obtenerSugerenciasOrigen(event)
+      .finally(() => {
+        console.log("Búsqueda de sugerencias completada");
+        this.cargandoOrigen = false;
+        this.cdr.detectChanges(); // fuerza render del componente
+      });
+  }
+
+  buscarSugerenciasDestino(event: Event) {
+    this.cargandoDestino = true;
+    this.funcionesComunes.obtenerSugerenciasDestino(event)
+      .finally(() => {
+        this.cargandoDestino = false;
+        this.cdr.detectChanges();
+      });
+  }
 
   /**
   * Función para obtener la lista de sugerencias para el origen
@@ -107,16 +134,16 @@ export class NuevoViajePage implements OnInit {
   */
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-  
+
     if (contenidoInput.length > 2) {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      
+
       fetch(url)
         .then(response => response.json())
         .then(data => {
           this.sugerenciasOrigen = data.filter((item: any) =>
             item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es' 
+            item.address.country_code === 'es'
           );
         })
         .catch(error => {
@@ -155,21 +182,32 @@ export class NuevoViajePage implements OnInit {
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
-   *
+   * 
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadOrigen(localidad: any) {
-    this.origen = localidad.descripcion.split(',')[0].trim();
-    this.sugerenciasOrigen = [];
+    this.origen = localidad.display_name.split(',')[0].trim();
+    const viajeData = {
+      ...this.viajesService.getViajeData(),
+      origen: this.origen,
+    };
+    this.viajesService.setViajeData(viajeData);
+    this.funcionesComunes.sugerenciasOrigen = [];
   }
+
 
   /**
    * Función para guardar la información de la localidad de destino seleccionada.
-   *
+   * 
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadDestino(localidad: any) {
-    this.destino = localidad.descripcion.split(',')[0].trim();
-    this.sugerenciasDestino = [];
+    this.destino = localidad.display_name.split(',')[0].trim();
+    const viajeData = {
+      ...this.viajesService.getViajeData(),
+      destino: this.destino,
+    };
+    this.viajesService.setViajeData(viajeData);
+    this.funcionesComunes.sugerenciasDestino = [];
   }
 }
