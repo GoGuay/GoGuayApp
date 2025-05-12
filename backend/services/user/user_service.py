@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from flask import Blueprint, jsonify, Response,  request
+from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token
@@ -15,9 +16,53 @@ import re
 from PIL import Image
 from io import BytesIO
 
+from flask_mail import Mail, Message
+
+
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
+
+
+mail = None
+serializer = None
+
+
+
+@user_blueprint.route('/enviar_email', methods=['POST'])
+def enviar_email():
+    email = request.json['email']
+    salt = 'email-verify'
+    token = serializer.dumps(email, salt=salt)
+    link= f"http://localhost:4200/verificar-email/{token}"
+    msg = Message("Verifica tu correo", recipients=[email])
+    msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
+    mail.send(msg)
+
+    return jsonify({'message': 'Correo enviado'}), 200
+
+@user_blueprint.route('/verificar_email', methods=['POST'])
+def verificar_email():
+    token = request.json['token']
+    salt = 'email-verify'
+    try:
+
+        email = serializer.loads(token, salt=salt, max_age=3600)
+        print(f"Email extraído del token: {email}") 
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario:
+            usuario.emailVerificado = True
+            db.session.commit()
+            return jsonify({'message': 'Correo verificado correctamente'}), 200
+        else:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+    except Exception as e:
+        return jsonify({'error': 'Token invalido o expirado'}), 400
+
+
+
+
 
 # # # # # # # # # # # # # # # # # # # #
 #       REGISTRAR USUARIO NUEVO
@@ -264,3 +309,18 @@ def actualizar_imagen_cabecera(user_id):
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# Función para que el usuario suba fotos del documento de identidad
+@user_blueprint.route('/subirfoto_documento/<int:user_id>', methods=['PUT'])
+def subirfoto_documento(user_id):
+    fotos = request.files.getlist('files')
+    if fotos:
+        urls = []
+        for foto in fotos:
+            upload = uploader.upload(foto)
+            carpeta_usuario = f"user_{user_id}"
+            result = uploader.upload(foto, folder=carpeta_usuario)
+            urls.append(upload['secure_url'])
+        return jsonify ({"urls": urls})
+    return jsonify ({"error": "no se han subido las imágenes"})

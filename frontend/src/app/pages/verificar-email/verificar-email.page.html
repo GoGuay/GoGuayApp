@@ -1,0 +1,8 @@
+<ion-content [fullscreen]="true">
+  <div class="verify-message">
+    <h2 *ngIf="verified; else errorMsg">¡CORREO VERIFICADO CORRECTAMENTE</h2>
+    <ng-template #errorMsg>
+      <h2>El enlace de verificación no es valido o ha expirado</h2>
+    </ng-template>
+  </div>
+</ion-content>

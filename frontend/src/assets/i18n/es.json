@@ -191,6 +191,7 @@
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
     "GUARDAR": "Guardar",
+    "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
     "GUARDAR_VEHICULO": "Guardar vehículo",
     "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
     "ELEGIR_ARCHIVOS": "Elegir archivos",

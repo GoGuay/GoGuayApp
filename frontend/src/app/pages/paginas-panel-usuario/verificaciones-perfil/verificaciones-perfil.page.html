@@ -27,7 +27,12 @@
             <strong>{{'VERIF_PERFIL.VERIFICA_TU_CORREO' | translate}}</strong>
           </p>
           <ion-col>
-            <button type="btn" class="btn btn_bg mb-4 w-100" mat-raised-button>
+            <button
+              type="btn"
+              class="btn btn_bg mb-4 w-100"
+              mat-raised-button
+              (click)="verificar_email(emailUsuario)"
+            >
               {{emailUsuario}}
             </button>
           </ion-col>
@@ -61,7 +66,7 @@
               {{telefonoUsuario}}
             </button>
           </ion-col>
-          <ion-row>
+          <ion-row class="mt-4">
             <ion-col class="mt-3">
               <p style="font-size: 15px">
                 {{'VERIF_PERFIL.INFO_VERIF_TFNO' | translate}}
@@ -89,29 +94,96 @@
           <p class="mb-4">
             <strong>{{'BOTON.VERIF_TU_IDENTIDAD' | translate}}</strong>
           </p>
-          <ion-col
+          <!-- <ion-col
             class="d-flex justify-content-center align-items-center mb-5"
           >
             <div class="d-flex justify-content-center position-relative">
               <div class="file-upload">
-                <label for="identidad" class="upload-button floating-plus"
+                <label for="docdelantera" class="upload-button floating-plus"
                   >+</label
                 >
                 <input
                   type="file"
-                  id="identidad"
+                  id="docdelantera"
                   class="file-input"
                   accept="image/*"
-                  multiple
                 />
               </div>
             </div>
-          </ion-col>
-          <ion-row class="d-flex justify-content-center align-items-center">
-            <ion-col class="texto">
-              <p style="font-size: 15px" class="text-align-justify">
-                {{'VERIF_PERFIL.INFO_VERIFIDENTIDAD2' | translate}}
-              </p>
+
+            <div class="d-flex justify-content-center position-relative">
+              <div class="file-upload">
+                <label for="doctrasera" class="upload-button floating-plus"
+                  >*</label
+                >
+                <input
+                  type="file"
+                  id="doctrasera"
+                  class="file-input"
+                  accept="image/*"
+                />
+              </div>
+            </div>
+          </ion-col> -->
+
+          <ion-row>
+            <ion-col class="filadocumentodelantero">
+              <div class="file-upload">
+                <label for="docdelantera" class="upload-button floating-plus"
+                  >+</label
+                >
+                <input
+                  type="file"
+                  id="docdelantera"
+                  class="file-input"
+                  accept="image/*"
+                />
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img src="../../../../assets/user/SinFotoDelantera.png" />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="mb-3">
+            <ion-col>
+              <div>
+                <p style="font-size: 13px">
+                  Pulsa en el botón para añadir una foto delantera de tu
+                  documento
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="filadocumentodelantero">
+              <div class="file-upload">
+                <label for="docdelantera" class="upload-button floating-plus"
+                  >+</label
+                >
+                <input
+                  type="file"
+                  id="docdelantera"
+                  class="file-input"
+                  accept="image/*"
+                />
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img src="../../../../assets/user/SinFotoTrasera.png" />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div>
+                <p style="font-size: 13px">
+                  Pulsa en el botón para añadir una foto trasera de tu documento
+                </p>
+              </div>
             </ion-col>
           </ion-row>
         </div>

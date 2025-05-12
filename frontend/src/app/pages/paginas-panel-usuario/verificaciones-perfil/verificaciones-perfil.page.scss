@@ -58,11 +58,16 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
+.fotoDocumento {
+  height: 50px;
+  width: 100px;
+}
+
 .floating-plus {
   position: absolute;
-  top: -10px;
+
   /* Ajusta según sea necesario */
-  left: 50%;
+
   transform: translateX(-50%);
   font-size: 24px;
   background-color: #B3B5E6;
@@ -75,6 +80,13 @@
   justify-content: center;
   cursor: pointer;
 }
+
+.filadocumentodelantero {
+  display: flex;
+  justify-content: space-between;
+
+}
+
 
 .upload-button:hover {
   background-color: #E0A667;
@@ -104,6 +116,8 @@
   margin-left: 65px;
 
 }
+
+
 
 mat-divider[vertical] {
   height: 100%;
