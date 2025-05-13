@@ -80,6 +80,9 @@ export class PrimerPasoComponent implements OnInit {
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
+    console.log('MOBILE: ', this.isMobileWeb);
+    console.log('DESKTOP: ', this.isDesktop);
+    
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
     this.hora_seleccionada = date.toLocaleTimeString([], {

@@ -39,6 +39,7 @@
               </ul>
             </div>
             
+            <div >
             <ion-select aria-label="n_personas" placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"
               class="input-viaje form-control custom-select" [(ngModel)]="plazas" name="viajeros"
               [ngModelOptions]="{standalone: true}" interface="popover">
@@ -50,6 +51,8 @@
               <ion-select-option value="3">3</ion-select-option>
               <ion-select-option value="4">4</ion-select-option>
             </ion-select>
+            </div>
+
 
 
             <div class="alert" *ngIf="!userLoggedIn">

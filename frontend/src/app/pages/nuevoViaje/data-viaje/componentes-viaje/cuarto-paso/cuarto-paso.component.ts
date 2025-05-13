@@ -55,6 +55,8 @@ export class CuartoPasoComponent implements OnInit {
     const viajeData = this.travelService.getViajeData();
     // const viajeData = this.viajeMock;
     console.log('VIAJE MOCK: ', this.viajeMock);
+    console.log('VIAJE: ', viajeData);
+
     
     if (!viajeData) {
       errores.push('viajeData');

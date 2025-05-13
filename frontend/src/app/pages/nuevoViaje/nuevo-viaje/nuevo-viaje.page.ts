@@ -210,4 +210,5 @@ export class NuevoViajePage implements OnInit {
     this.viajesService.setViajeData(viajeData);
     this.funcionesComunes.sugerenciasDestino = [];
   }
+  
 }

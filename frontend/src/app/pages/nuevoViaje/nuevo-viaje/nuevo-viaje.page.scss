@@ -163,10 +163,9 @@ ion-button {
 }
 
 ion-select {
+  flex-grow: 1;
+  padding-left: 50px !important; 
   height: 40px !important;
-  display: flex;
-  align-items: center;
-  position: relative;
 }
 
 ion-select::part(placeholder) {
@@ -190,7 +189,7 @@ ion-select::part(icon) {
 
 .mat-icon {
   position: absolute;
-  left: 8px;
+  left: -39px;
   top: 30%;
   transform: translateY(-50%);
   display: flex;
