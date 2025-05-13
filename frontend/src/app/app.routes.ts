@@ -126,6 +126,21 @@ export const routes: Routes = [
       import(
         './pages/paginas-panel-usuario/verificaciones-perfil/verificaciones-perfil.page'
       ).then((m) => m.VerificacionesPerfilPage),
+  },
+  {
+    path: 'encuesta-satisfaccion',
+    loadComponent: () =>
+      import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(
+        (m) => m.EncuestaSatisfaccionPage
+      ),
+  },
+  {
+    path: 'verificar-email/:token',
+    loadComponent: () =>
+      import('./pages/verificar-email/verificar-email.page').then(
+        (m) => m.VerificarEmailPage
+      ),
+  },
   },  {
     path: 'encuesta-satisfaccion',
     loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then( m => m.EncuestaSatisfaccionPage)

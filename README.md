@@ -14,3 +14,9 @@
 	*** NOTA: Si aparece el error que no encuentra una versión anterior, seguir los siguientes pasos:
 		- Eliminar el directorio 'migrations'
 		- Eliminar el directorio '__pycache__'
+
+
+
+python app.py
+
+yipf iibf txew sgsm

@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule, Platform } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from '../../help-modal/help-modal.component';
@@ -20,6 +20,8 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -34,6 +36,7 @@ import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usua
     MatIcon,
     MatExpansionModule,
     MatFormFieldModule,
+    MatTooltipModule,
   ],
 })
 export class TablaVehiculosComponent implements OnInit {
@@ -59,7 +62,9 @@ export class TablaVehiculosComponent implements OnInit {
     private dialog: MatDialog,
     private vehiculosServicesService: VehiculosServicesService,
     private userService: UserServicesService,
-    private platform: Platform
+    private platform: Platform,
+    private messageService: MessageService,
+    private translate: TranslateService
   ) {
     this.loadUserData();
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -108,7 +113,17 @@ export class TablaVehiculosComponent implements OnInit {
             localStorage.setItem('userData', JSON.stringify(this.userData));
             this.userData = usuarioActualizado;
             // this.botonAnadirVehiculo();
+            // this.botonAnadirVehiculo();
             console.log('Usuario actualizado:', this.userData);
+            this.translate
+              .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
+              .subscribe((vehiculoGuardadoMessage: string) => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: vehiculoGuardadoMessage, // Título traducido
+                  detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'), // Detalles traducidos
+                });
+              });
             this.marcaSeleccionada = '';
             this.modeloSeleccionado = '';
             this.colorSeleccionado = '';
@@ -177,11 +192,19 @@ export class TablaVehiculosComponent implements OnInit {
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }
+    this.translate
+      .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
+      .subscribe((vehiculoGuardadoMessage: string) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: vehiculoGuardadoMessage, // Título traducido
+          detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'), // Detalles traducidos
+        });
+      });
     this.marcaSeleccionada = '';
     this.modeloSeleccionado = '';
     this.colorSeleccionado = '';
     this.matricula = '';
-
     this.mostrarSelectorVehiculo = false;
   }
 

@@ -1,61 +1,76 @@
-.input-contras {
-  width: 400px;
-}
-
-.col-separator {
-  border-right: 1px solid rgb(143, 141, 141);
-  padding-right: 15px;
-  margin-right: 15px;
-}
-
-.col-separator:last-child {
-  border-right: none;
-}
-
-.flag-icon {
-  width: 20%;
-  border-radius: 8px;
-  margin-right: 8%;
-}
-
-.dropdown-menu li a:hover {
-  padding: auto;
-  border: none;
-  background-color: #F0D7B4;
-  border-radius: 15px;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: auto;
-  right: 0;
-  transform: translateY(0);
-  z-index: 1050;
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-}
-
-ul{
-  width: 40%;
-}
-
 h1 {
   margin-top: 20px;
   font-size: 1.52rem;
 }
 
-input, button{
+input,
+button {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
-.inputs_emailtfno{
+.inputs_emailtfno {
   width: 400px;
 }
 
-
-@media (max-width: 576px) {
-.container{
+.checks {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
 }
+
+
+
+
+@media (max-width: 576px) {
+  .mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .correotelefono {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .inputs_emailtfno {
+    width: 280px;
+    margin: 0 auto;
+  }
+
+  .checks {
+    align-items: center;
+    text-align: center;
+  }
+
+  .boton-mobile {
+    width: 100%;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px;
+    /* 👈 aumenta el espacio superior */
+    margin-bottom: 2rem;
+  }
+
+  .boton-mobile button {
+    width: 80%;
+    max-width: 280px;
+  }
+
+  .descripcion {
+    text-align: justify;
+  }
 }

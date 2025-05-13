@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+from flask_mail import Mail
+from itsdangerous import URLSafeTimedSerializer
 load_dotenv()  # Debe ir al principio para cargar las variables de entorno
 
 import os
@@ -17,11 +19,22 @@ from services.user.user_service import user_blueprint
 from services.travel.travel_service import travel_blueprint
 from services.vehicles.vehicle_service import vehicle_blueprint
 from services.apigoogle.apigoogle_service import apigoogle_blueprint
+from services.user import user_service
 
 
 
 def create_app():
     app = Flask(__name__)
+
+    app.config['SECRET_KEY'] = 'tu_clave_secreta'
+    app.config['MAIL_DEFAULT_SENDER'] = 'noreply@prideride.com'
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USERNAME'] = 'gestion.prideride@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'yipf iibf txew sgsm'
+    app.config['MAIL_USE_TLS'] = True
+    mail = Mail(app)
+
 
     app.config.from_object(Config)
     JWTManager(app)
@@ -54,6 +67,10 @@ def create_app():
     app.register_blueprint(travel_blueprint, url_prefix="/travel")
     app.register_blueprint(vehicle_blueprint, url_prefix="/vehicle")
     app.register_blueprint(apigoogle_blueprint, url_prefix="/apigoogle")
+
+ 
+    user_service.mail = mail
+    user_service.serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
     return app
 

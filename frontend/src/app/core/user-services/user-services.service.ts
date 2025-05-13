@@ -1,7 +1,7 @@
 import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -132,5 +132,24 @@ export class UserServicesService {
       `${this.apiUrl}/user/editarusuario/${usuarioId}`,
       userData
     );
+  }
+
+  enviar_email_verif(email: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/user/enviar_email`,
+      { email: email },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  verificar_email(token: any): Observable<boolean> {
+    return this.http
+      .post(`${this.apiUrl}/user/verificar_email`, { token })
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 }

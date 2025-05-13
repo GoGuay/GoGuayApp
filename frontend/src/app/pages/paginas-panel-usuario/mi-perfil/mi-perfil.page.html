@@ -7,21 +7,21 @@
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
     <div class="d-flex justify-content-center">
-      <h1>{{'MI_PERFIL.TITULO' | translate}}</h1>
+      <h1>{{'MIPERFIL.MI_PERFIL' | translate}}</h1>
     </div>
     <p class="d-flex justify-content-center">
-      {{'MI_PERFIL.DESCRIPCION_SECCION' | translate}}
+      {{'MIPERFIL.DESCRIPCION_MIPERFIL' | translate}}
     </p>
 
     <!-- Modificación de datos personales -->
     <ion-row class="d-flex justify-content-center">
       <ion-col size="12" size-md="5" class="mx-md-5">
-        <h4 class="text-center">{{'MI_PERFIL.INFO_PERSONAL' | translate}}</h4>
+        <h4 class="text-center">{{'MIPERFIL.INFO_PERSONAL' | translate}}</h4>
         <ion-row class="fila-datos">
           <ion-col class="col-nombre-apellidos">
             <div class="mb-3">
               <label for="nombre" class="form-label"
-                >{{'MI_PERFIL.NOMBRE' | translate}}</label
+                >{{'MIPERFIL.NOMBRE' | translate}}</label
               >
               <input
                 type="text"
@@ -34,7 +34,7 @@
             </div>
             <div class="mb-3">
               <label for="apellidos" class="form-label"
-                >{{'MI_PERFIL.APELLIDOS' | translate}}</label
+                >{{'MIPERFIL.APELLIDOS' | translate}}</label
               >
               <input
                 type="text"
@@ -46,17 +46,29 @@
               />
             </div>
           </ion-col>
-
+          <!-- Selector de pronombre -->
           <ion-col class="col-pronombre">
             <div class="mb-3">
               <label for="pronombre" class="form-label pronombre"
-                >{{'MI_PERFIL.PRONOMBRE' | translate}}</label
-              >
+                >{{'MIPERFIL.PRONOMBRE' | translate}}
+                <span
+                  class="ms-2 text-primary"
+                  tabindex="0"
+                  role="button"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  [attr.title]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
+                  [attr.aria-label]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
+                >
+                  <i class="bi-question-circle" aria-hidden="true"></i>
+                </span>
+              </label>
               <select
                 class="form-select w-150"
                 [(ngModel)]="pronombreEditado"
                 name="pronombre"
                 (ngModelChange)="onInputChange()"
+                aria-describedby="pronombreHelp"
               >
                 <option selected disabled>Escoge una opcion</option>
                 <option value="Él / He / Him">Él / He / Him</option>
@@ -70,19 +82,26 @@
                   Prefiero no responder
                 </option>
               </select>
+              <span id="pronombreHelp" class="visually-hidden">
+                {{ 'MIPERFIL.PRONOMBRE_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
+            <!-- Selector de género -->
             <div class="mb-3">
               <label for="genero" class="form-label">
-                {{'MI_PERFIL.GENERO' | translate}}
+                {{'MIPERFIL.GENERO' | translate}}
                 <span
+                  tabindex="0"
+                  role="button"
                   class="ms-2 text-primary"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  title="Más detalles"
+                  [attr.title]="'MIPERFIL.GENERO_TOOLTIP' | translate"
+                  [attr.aria-label]="'MIPERFIL.GENERO_TOOLTIP' | translate"
                 >
                   <i class="bi-question-circle"></i>
                 </span>
@@ -93,8 +112,8 @@
                 class="form-select"
                 [(ngModel)]="generoEditado"
                 name="genero"
-                aria-label="Selección de género"
                 (ngModelChange)="onInputChange()"
+                aria-describedby="generoHelp"
               >
                 <option value="" selected disabled>
                   {{'SELEC_GENERO.SELECCIONA' | translate}}
@@ -124,17 +143,24 @@
                   {{'SELEC_GENERO.NO_RESPONDE' | translate}}
                 </option>
               </select>
+              <span id="generoHelp" class="visually-hidden">
+                {{ 'MIPERFIL.GENERO_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
           <ion-col>
+            <!-- Selector de orientación -->
             <div class="mb-3">
               <label for="orientacion" class="form-label"
-                >{{'MI_PERFIL.ORIENTACION' | translate}}
+                >{{'MIPERFIL.ORIENTACION' | translate}}
                 <span
                   class="ms-2 text-primary"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  title="Más detalles"
+                  tabindex="0"
+                  role="button"
+                  [attr.title]="'MIPERFIL.ORIENTACION_TOOLTIP' | translate"
+                  [attr.aria-label]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
                 >
                   <i class="bi-question-circle"></i>
                 </span>
@@ -143,8 +169,8 @@
                 [(ngModel)]="orientacionEditada"
                 name="orientacion"
                 class="form-select"
-                aria-label="Selección de orientación sexual"
                 (ngModelChange)="onInputChange()"
+                aria-describedby="orientacionHelp"
               >
                 >
                 <option selected>
@@ -174,14 +200,18 @@
                   {{'ORIENTACION.NO_RESPONDE' | translate}}
                 </option>
               </select>
+              <span id="orientacionHelp" class="visually-hidden">
+                {{ 'MIPERFIL.ORIENTACION_AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
+            <!-- Fecha de nacimiento -->
             <div class="mb-3">
               <label for="fnacimiento" class="form-label"
-                >{{'MI_PERFIL.FECHA_NACIMIENTO' | translate}}</label
+                >{{'MIPERFIL.FECHA_NACIMIENTO' | translate}}</label
               >
               <input
                 type="date"
@@ -191,30 +221,39 @@
                 name="fnacimiento"
                 (ngModelChange)="actualizarEdad()"
                 (ngModelChange)="onInputChange()"
+                aria-describedby="fechaNacimientoHelp"
               />
+              <small id="fechaNacimientoHelp" class="visually-hidden">
+                {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
+              </small>
             </div>
           </ion-col>
           <ion-col>
+            <!-- Edad -->
             <div class="mb-3">
               <label for="edad" class="form-label mb-3"
-                >{{'MI_PERFIL.EDAD' | translate}}</label
+                >{{'MIPERFIL.EDAD' | translate}}</label
               >
               <br />
-              <span> {{edad}} </span>
+
+              <span id="edad" role="status" aria-live="polite">
+                {{ edad }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
+            <!-- Sobre tí -->
             <div class="mb-3">
               <label for="bio" class="form-label"
-                >{{'MI_PERFIL.SOBRE_TI' | translate}}</label
+                >{{'MIPERFIL.SOBRE_TI' | translate}}</label
               >
               <textarea
                 class="form-control bio"
                 id="bio"
                 rows="5"
-                placeholder="{{'MI_PERFIL.CUENTANOS' | translate}}"
+                placeholder="{{'MIPERFIL.CUENTANOS' | translate}}"
                 [(ngModel)]="bioEditada"
                 name="bio"
                 (ngModelChange)="onInputChange()"
@@ -243,9 +282,9 @@
         <!-- Preferencias -->
         <ion-row class="d-flex justify-content-center">
           <div class="mb-2">
-            <h4 class="text-center">{{'MI_PERFIL.PREF_VIAJE' | translate}}</h4>
+            <h4 class="text-center">{{'MIPERFIL.PREF_VIAJE' | translate}}</h4>
             <label for="preferencias" class="form-label"
-              >{{'MI_PERFIL.CUANDO_VIAJO_PREFIERO' | translate}}</label
+              >{{'MIPERFIL.CUANDO_VIAJO_PREFIERO' | translate}}</label
             >
             <div class="form-check">
               <input
@@ -257,7 +296,7 @@
                 id="hablar"
               />
               <label class="form-check-label" for="hablar">
-                {{'MI_PERFIL.HABLAR' | translate}}
+                {{'MIPERFIL.HABLAR' | translate}}
               </label>
             </div>
             <div class="form-check">
@@ -270,7 +309,7 @@
                 id="escucharmusica"
               />
               <label class="form-check-label" for="escucharmusica">
-                {{'MI_PERFIL.ESCUCHAR_MUSICA' | translate}}
+                {{'MIPERFIL.ESCUCHAR_MUSICA' | translate}}
               </label>
             </div>
             <div class="form-check">
@@ -283,7 +322,7 @@
                 id="Dormir"
               />
               <label class="form-check-label" for="Dormir">
-                {{'MI_PERFIL.DORMIR' | translate}}
+                {{'MIPERFIL.DORMIR' | translate}}
               </label>
             </div>
 
@@ -297,7 +336,7 @@
                 id="silencio"
               />
               <label class="form-check-label" for="silencio">
-                {{'MI_PERFIL.SILENCIO' | translate}}
+                {{'MIPERFIL.SILENCIO' | translate}}
               </label>
             </div>
           </div>

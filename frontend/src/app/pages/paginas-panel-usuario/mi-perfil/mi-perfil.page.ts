@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IonicModule, Platform } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -16,6 +16,7 @@ import { VistaAcordeonVehiculosComponent } from '../../../components/tabla-vehic
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+
 @Component({
   selector: 'app-mi-perfil',
   templateUrl: './mi-perfil.page.html',
@@ -33,6 +34,7 @@ import { ToastModule } from 'primeng/toast';
     VistaAcordeonVehiculosComponent,
     ToastModule,
   ],
+
   providers: [MessageService],
 })
 export class MiPerfilPage implements OnInit {
@@ -60,6 +62,7 @@ export class MiPerfilPage implements OnInit {
   edad: number = this.funcionesUsuario.calcularEdad(
     this.fechaNacimientoEditada
   );
+  lang: string = '';
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -67,11 +70,12 @@ export class MiPerfilPage implements OnInit {
     public funcionesUsuario: FuncionesUsuario,
     private platform: Platform,
     private cdr: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public translate: TranslateService
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
-
+    this.lang = this.translate.currentLang;
     this.emailEditado = this.userData.usuario.email || '';
     this.telefonoEditado = this.userData.usuario.telefono || '';
     this.comunComerciales = this.userData.usuario.comunic_comerciales || false;
@@ -97,6 +101,8 @@ export class MiPerfilPage implements OnInit {
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
       vehiculo.editandoVehiculo = false;
     });
+
+    this.actualizarEdad();
   }
 
   loadUserData(): void {
@@ -262,4 +268,148 @@ export class MiPerfilPage implements OnInit {
 
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
   }
+
+  // numeroALetras(valor: number | string, lang: string): string {
+
+  //   const unidadesEsp = [
+  //     '',
+  //     'uno',
+  //     'dos',
+  //     'tres',
+  //     'cuatro',
+  //     'cinco',
+  //     'seis',
+  //     'siete',
+  //     'ocho',
+  //     'nueve',
+  //   ];
+  //   const especialesEsp = [
+  //     'diez',
+  //     'once',
+  //     'doce',
+  //     'trece',
+  //     'catorce',
+  //     'quince',
+  //     'dieciséis',
+  //     'diecisiete',
+  //     'dieciocho',
+  //     'diecinueve',
+  //   ];
+  //   const decenasEsp = [
+  //     '',
+  //     '',
+  //     'veinte',
+  //     'treinta',
+  //     'cuarenta',
+  //     'cincuenta',
+  //     'sesenta',
+  //     'setenta',
+  //     'ochenta',
+  //     'noventa',
+  //   ];
+  //   const centenasEsp = [
+  //     '',
+  //     'ciento',
+  //     'doscientos',
+  //     'trescientos',
+  //     'cuatrocientos',
+  //     'quinientos',
+  //     'seiscientos',
+  //     'setecientos',
+  //     'ochocientos',
+  //     'novecientos',
+  //   ];
+
+  //   const unidadesEng = [
+  //     '',
+  //     'one',
+  //     'two',
+  //     'three',
+  //     'four',
+  //     'five',
+  //     'six',
+  //     'seven',
+  //     'eight',
+  //     'nine',
+  //   ];
+  //   const especialesEng = [
+  //     'ten',
+  //     'eleven',
+  //     'twelve',
+  //     'thirteen',
+  //     'fourteen',
+  //     'fifteen',
+  //     'sixteen',
+  //     'seventeen',
+  //     'eighteen',
+  //     'nineteen',
+  //   ];
+  //   const decenasEng = [
+  //     '',
+  //     '',
+  //     'twenty',
+  //     'thirty',
+  //     'forty',
+  //     'fifty',
+  //     'sixty',
+  //     'seventy',
+  //     'eighty',
+  //     'ninety',
+  //   ];
+  //   const centenasEng = [
+  //     '',
+  //     'one hundred',
+  //     'two hundred',
+  //     'three hundred',
+  //     'four hundred',
+  //     'five hundred',
+  //     'six hundred',
+  //     'seven hundred',
+  //     'eight hundred',
+  //     'nine hundred',
+  //   ];
+
+  //   let num = parseInt(valor.toString(), 10);
+
+  //   if (isNaN(num) || num <= 0 || num > 2100) {
+  //     return lang === 'es' ? 'Número fuera de rango' : 'Number out of range';
+  //   }
+
+  //   let texto = '';
+
+  //   if (num >= 2000) {
+  //     texto += lang === 'es' ? 'dos mil ' : 'two thousand ';
+  //     num -= 2000;
+  //   } else if (num >= 1000) {
+  //     texto += lang === 'es' ? 'mil ' : 'one thousand ';
+  //     num -= 1000;
+  //   }
+
+  //   if (num >= 100) {
+  //     const c = Math.floor(num / 100);
+  //     texto += lang === 'es' ? `${centenasEsp[c]} ` : `${centenasEng[c]} `;
+  //     num = num % 100;
+  //   }
+
+  //   if (num >= 10 && num < 20) {
+  //     texto +=
+  //       lang === 'es'
+  //         ? `${especialesEsp[num - 10]}`
+  //         : `${especialesEng[num - 10]}`;
+  //     return texto.trim();
+  //   }
+
+  //   if (num >= 20) {
+  //     const d = Math.floor(num / 10);
+  //     const u = num % 10;
+  //     texto += lang === 'es' ? `${decenasEsp[d]}` : `${decenasEng[d]}`;
+  //     if (u !== 0) {
+  //       texto += lang === 'es' ? ` y ${unidadesEsp[u]}` : ` ${unidadesEng[u]}`;
+  //     }
+  //   } else if (num > 0) {
+  //     texto += lang === 'es' ? unidadesEsp[num] : unidadesEng[num];
+  //   }
+
+  //   return texto.trim();
+  // }
 }

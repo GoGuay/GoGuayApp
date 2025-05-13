@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { FuncionesUsuario } from 'src/app/core/funciones-usuario/funciones-usuario.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -18,6 +18,8 @@ import {
   COLORES,
   COLOURS,
 } from 'src/app/models/vehiculos/marcas_modelos.model';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-vista-acordeon-vehiculos',
@@ -30,6 +32,7 @@ import {
     IonicModule,
     FormsModule,
     MatIcon,
+    MatTooltip,
   ],
   templateUrl: './vista-acordeon-vehiculos.component.html',
   styleUrls: ['./vista-acordeon-vehiculos.component.scss'],
@@ -48,6 +51,7 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
   matriculaNoValida: boolean = false;
   vehiculos_usuario: any[] = [];
   modificandoMarca: boolean = false;
+  botonEliminarLabel: string = '';
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -55,7 +59,9 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
     private vehiculosServicesService: VehiculosServicesService,
     private userService: UserServicesService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private messageService: MessageService,
+    private translate: TranslateService
   ) {
     this.loadUserData();
   }
@@ -153,6 +159,15 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
             this.userData = usuarioActualizado;
             // this.botonAnadirVehiculo();
             console.log('Usuario actualizado:', this.userData);
+            this.translate
+              .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
+              .subscribe((vehiculoGuardadoMessage: string) => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: vehiculoGuardadoMessage, // Título traducido
+                  detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'), // Detalles traducidos
+                });
+              });
             this.marcaSeleccionada = '';
             this.modeloSeleccionado = '';
             this.colorSeleccionado = '';
@@ -203,6 +218,10 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
    * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
    * @param vehiculo
    */
+  /**
+   * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
+   * @param vehiculo
+   */
   guardarVehiculoEditado(vehiculo: any) {
     console.log('Guardando cambios en el vehículo: ', vehiculo);
     vehiculo.editandoVehiculo = false;
@@ -211,10 +230,20 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
     if (this.modificandoMarca) {
       this.modificandoMarca = false;
     }
+    this.translate
+      .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
+      .subscribe((vehiculoGuardadoMessage: string) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: vehiculoGuardadoMessage, // Título traducido
+          detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'), // Detalles traducidos
+        });
+      });
     this.marcaSeleccionada = '';
     this.modeloSeleccionado = '';
     this.colorSeleccionado = '';
     this.matricula = '';
+    this.mostrarSelectorVehiculo = false;
   }
 
   /**
@@ -270,27 +299,50 @@ export class VistaAcordeonVehiculosComponent implements OnInit {
     switch (color) {
       case 'blanco':
         return blanco;
+      case 'white':
+        return blanco;
       case 'negro':
+        return negro;
+      case 'black':
         return negro;
       case 'rojo':
         return rojo;
+      case 'red':
+        return rojo;
       case 'amarillo':
         return amarillo;
+      case 'yellow':
+        return amarillo;
+      case 'green':
+        return verde;
       case 'verde':
         return verde;
       case 'gris':
         return gris;
+      case 'grey':
+        return gris;
       case 'dorado':
         return dorado;
+      case 'gold':
+        return dorado;
+
       case 'marron':
         return marron;
+      case 'brown':
+        return marron;
       case 'morado':
+        return morado;
+      case 'purple':
         return morado;
       case 'beige':
         return beige;
       case 'perla':
         return perla;
+      case 'pearl':
+        return perla;
       case 'otro':
+        return otro;
+      case 'other':
         return otro;
       default:
         return '';

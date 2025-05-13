@@ -3,6 +3,23 @@
   gap: 10px;
 }
 
+.vbasica {
+  width: 950px;
+  text-align: start;
+  margin-left: 15rem;
+}
+
+.vadicional {
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+
+}
+
+.caja {
+  margin-top: 10% !important;
+
+}
+
 .digit-input {
   width: 40px;
   height: 40px;
@@ -41,10 +58,16 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
+.fotoDocumento {
+  height: 50px;
+  width: 100px;
+}
+
 .floating-plus {
   position: absolute;
-  top: -10px; /* Ajusta según sea necesario */
-  left: 50%;
+
+  /* Ajusta según sea necesario */
+
   transform: translateX(-50%);
   font-size: 24px;
   background-color: #B3B5E6;
@@ -58,20 +81,27 @@
   cursor: pointer;
 }
 
+.filadocumentodelantero {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+
 .upload-button:hover {
   background-color: #E0A667;
 }
 
-.btn_bg{
+.btn_bg {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
   top: 10%;
 }
 
-.texto{
+.texto {
   margin-top: 10%;
 }
 
-.mat-divider{
+.mat-divider {
   display: block;
   height: 8px;
   background-color: rgba(0, 0, 0, 0.12);
@@ -82,12 +112,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 65px;
+  margin-left: 65px;
+
 }
+
+
 
 mat-divider[vertical] {
   height: 100%;
   width: 2px;
-  background-color: rgba(0, 0, 0, 0.12); /* Ajusta el color según necesites */
+  background-color: rgba(0, 0, 0, 0.12);
+  /* Ajusta el color según necesites */
 }
 
 .mat-divider-2 {
@@ -97,7 +133,8 @@ mat-divider[vertical] {
 }
 
 .content-box {
-  max-width: 500px; /* Ajusta el ancho según lo necesites */
+  max-width: 500px;
+  /* Ajusta el ancho según lo necesites */
   text-align: center;
 }
 
@@ -105,6 +142,6 @@ mat-divider[vertical] {
   display: flex;
 }
 
-.fila_superior{
+.fila_superior {
   margin-bottom: 7%;
 }

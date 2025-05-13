@@ -16,43 +16,21 @@ import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario
 })
 export class FuncionesUsuario {
   userData: Usuario = {} as Usuario;
-
-  comunTerceros: boolean = false;
-
   usuario: Usuario = {} as Usuario;
   vehiculos_usuario: any[] = [];
   modificandoMarca: boolean = false;
   telefonoInvalido: boolean = false;
   botonHabilitadoMiPerfil: boolean = false;
-  botonHabilitadoContacto: boolean = false;
   telefonoRef: any;
-  formEmailTfno: FormGroup;
-  comunComerciales: boolean = false;
-  emailEditado: string = '';
-  telefonoEditado: string = '';
 
   constructor(
     private userService: UserServicesService,
     private funcionesComunes: FuncionesComunes,
     private vehiculosServices: VehiculosServicesService,
-    @Optional()
-    private cerrarCompDatosContacto: MatDialogRef<DatosContactoComponent>,
 
     private dialog: MatDialog
   ) {
     this.loadUserData();
-
-    this.comunTerceros = this.userData.usuario.comunic_terceros || false;
-    this.formEmailTfno = new FormGroup({
-      emailControl: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      ]),
-      telefonoControl: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[0-9]{9}$/),
-      ]),
-    });
   }
 
   loadUserData(): void {
@@ -93,179 +71,5 @@ export class FuncionesUsuario {
       edad--;
     }
     return edad;
-  }
-
-  /*********************************************************
-   * FUNCIONES RELACIONADAS CON LOS VEHÍCULOS DEL USUARIO **
-   *********************************************************
-   */
-
-  /**
-   * Función para eliminar un vehículo de la lista del usuario
-   * @param vehiculo
-   */
-  // eliminarVehiculo(vehiculo: any): any {
-  //   this.vehiculosServices
-  //     .eliminarVehiculo(vehiculo.id, vehiculo)
-  //     .subscribe((resultado) => {
-  //       this.vehiculos_usuario = this.vehiculos_usuario.filter(
-  //         (coche) => coche.id !== vehiculo.id
-  //       );
-
-  //       this.userService
-  //         .obtenerUsuarioPorID(this.userData.usuario.id)
-  //         .subscribe((usuarioActualizado) => {
-  //           this.userData = usuarioActualizado;
-  //           console.log('Usuario actualizado:', this.userData);
-  //         });
-  //       console.log('Resultado: ', resultado);
-  //     });
-  // }
-
-  /**
-   * Función para guardar un vehículo una vez editado
-   * @param vehiculo
-   */
-  // guardarVehiculoEditado(vehiculo: any) {
-  //   console.log('Guardando cambios en el vehículo: ', vehiculo);
-  //   vehiculo.editandoVehiculo = false;
-  //   this.funcionesComunes.editarVehiculo(vehiculo);
-
-  //   if (this.modificandoMarca) {
-  //     this.modificandoMarca = false;
-  //   }
-  // }
-
-  // filtrarModelosEditando(coche: any) {
-  //   this.modificandoMarca = !this.modificandoMarca;
-  //   if (!coche.marca) return;
-
-  //   const vehiculo = this.funcionesComunes.listadoCoches.find(
-  //     (c) => c.marca === coche.marca
-  //   );
-  //   this.funcionesComunes.modelosFiltrados = vehiculo.modelos;
-
-  //   if (this.funcionesComunes.modelosFiltrados.length > 0) {
-  //     coche.modelo = this.funcionesComunes.modelosFiltrados[0];
-  //   } else {
-  //     coche.modelo = '';
-  //   }
-  // }
-
-  /**
-   * Obtener los vehículos que tiene un usuario en su lista
-   */
-  // obtenerVehiculos() {
-  //   const id_usuario = this.userData.usuario.id;
-  //   this.vehiculosServices
-  //     .obtenerVehiculosUsuario(id_usuario)
-  //     .subscribe((resultado) => {
-  //       console.log('Vehículos: ', resultado.vehiculos);
-  //       this.vehiculos_usuario = resultado.vehiculos;
-  //     });
-  // }
-
-  /*********************************************************
-   * FUNCIONES RELACIONADAS CON DATOS DE CONTACTO **
-   *********************************************************
-   */
-
-  /**
-   * Edita los datos de correo y teléfono del usuario
-   * @returns
-   */
-  editarCorreoTelefono(): any {
-    console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
-
-    if (
-      !this.userData.usuario.nombre ||
-      !this.userData.usuario.apellidos ||
-      !this.userData.usuario.genero ||
-      !this.userData.usuario.orientacion ||
-      !this.userData.usuario.fecha_nacimiento
-    ) {
-      console.log('Falta algún dato obligatorio');
-      return;
-    }
-
-    const nuevoUsuario = {
-      nombre: this.userData.usuario.nombre,
-      apellidos: this.userData.usuario.apellidos,
-      // pronombre: this.pronombreEditado,
-      genero: this.userData.usuario.genero,
-      orientacion: this.userData.usuario.orientacion,
-      fecha_nacimiento: this.userData.usuario.fecha_nacimiento,
-      biografia: this.userData.usuario.biografia,
-      preferencias: this.userData.usuario.preferencias,
-      // email: this.emailEditado,
-      // telefono: this.telefonoEditado,
-    };
-    console.log('Objeto modificado: ', nuevoUsuario);
-
-    this.userService
-      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
-      .subscribe(
-        (response) => {
-          console.log('Datos actualizado con exito', response);
-          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          this.obtenerUsuario();
-          return response;
-        },
-        (error) => {
-          console.error('Error al actualizar los datos', error);
-        }
-      );
-  }
-
-  /**
-   * Edita las preferencias de comunicación del usuario
-   * @returns
-   */
-  preferenciasComunicacion() {
-    if (
-      !this.userData.usuario.nombre ||
-      !this.userData.usuario.apellidos ||
-      !this.userData.usuario.genero ||
-      !this.userData.usuario.orientacion ||
-      !this.userData.usuario.fecha_nacimiento
-    ) {
-      console.log('Falta algún dato obligatorio');
-      return;
-    }
-    const nuevoUsuario = {
-      nombre: this.userData.usuario.nombre,
-      apellidos: this.userData.usuario.apellidos,
-      // pronombre: this.pronombreEditado,
-      genero: this.userData.usuario.genero,
-      orientacion: this.userData.usuario.orientacion,
-      fecha_nacimiento: this.userData.usuario.fecha_nacimiento,
-      biografia: this.userData.usuario.biografia,
-      preferencias: this.userData.usuario.preferencias,
-      // email: this.emailEditado || this.userData.usuario.email,
-      // telefono: this.telefonoEditado || this.userData.usuario.telefono,
-      // comunic_comerciales: this.comunComerciales,
-      comunic_terceros: this.comunTerceros,
-    };
-    console.log('Objeto modificado: ', nuevoUsuario);
-
-    this.userService
-      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
-      .subscribe(
-        (response) => {
-          console.log('Datos actualizado con exito', response);
-          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          this.obtenerUsuario();
-        },
-        (error) => {
-          console.error('Error al actualizar los datos', error);
-        }
-      );
-  }
-
-  // Función que se llama cuando hay un cambio en los inputs o checkboxes
-  onInputChange() {
-    this.botonHabilitadoContacto = this.formEmailTfno.valid;
   }
 }
