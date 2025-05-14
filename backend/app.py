@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
+import vonage
 load_dotenv()  # Debe ir al principio para cargar las variables de entorno
 
 import os
@@ -34,6 +35,9 @@ def create_app():
     app.config['MAIL_PASSWORD'] = 'yipf iibf txew sgsm'
     app.config['MAIL_USE_TLS'] = True
     mail = Mail(app)
+
+
+
 
 
     app.config.from_object(Config)

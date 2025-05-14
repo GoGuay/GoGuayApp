@@ -46,4 +46,11 @@ export class VerificacionesPerfilPage implements OnInit {
       console.log(respuesta);
     });
   }
+
+  enviar_sms(telefono: string) {
+    const teléfonoConPrefijo = '+93' + telefono;
+    this.userService.enviar_sms(teléfonoConPrefijo).subscribe((respuesta) => {
+      console.log('Respuesta: ', respuesta);
+    });
+  }
 }

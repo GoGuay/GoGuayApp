@@ -3,8 +3,10 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 from datetime import datetime
+import random
 from flask import Blueprint, jsonify, Response,  request
 from itsdangerous import URLSafeTimedSerializer
+import nexmo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token
@@ -15,8 +17,9 @@ from cloudinary import uploader, utils
 import re
 from PIL import Image
 from io import BytesIO
-
+from flask_cors import CORS
 from flask_mail import Mail, Message
+
 
 
 
@@ -24,41 +27,22 @@ from flask_mail import Mail, Message
 user_blueprint = Blueprint('user', __name__)
 
 
+
 mail = None
 serializer = None
 
 
 
-@user_blueprint.route('/enviar_email', methods=['POST'])
-def enviar_email():
-    email = request.json['email']
-    salt = 'email-verify'
-    token = serializer.dumps(email, salt=salt)
-    link= f"http://localhost:4200/verificar-email/{token}"
-    msg = Message("Verifica tu correo", recipients=[email])
-    msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
-    mail.send(msg)
 
-    return jsonify({'message': 'Correo enviado'}), 200
+key = '54b8296c'
+secret = '9up6axu0PVauefvs'
+http_client = nexmo.Client(key=key, secret=secret)
+http_client.send_message({'from': 'Vonage', 'to': 'YOUR-PHONE-NUMBER', 'text': 'Hello world'})
 
-@user_blueprint.route('/verificar_email', methods=['POST'])
-def verificar_email():
-    token = request.json['token']
-    salt = 'email-verify'
-    try:
+otp_store = {}
 
-        email = serializer.loads(token, salt=salt, max_age=3600)
-        print(f"Email extraído del token: {email}") 
-        usuario = Usuario.query.filter_by(email=email).first()
-        if usuario:
-            usuario.emailVerificado = True
-            db.session.commit()
-            return jsonify({'message': 'Correo verificado correctamente'}), 200
-        else:
-            return jsonify({'error': 'Usuario no encontrado'}), 404
 
-    except Exception as e:
-        return jsonify({'error': 'Token invalido o expirado'}), 400
+
 
 
 
@@ -324,3 +308,72 @@ def subirfoto_documento(user_id):
             urls.append(upload['secure_url'])
         return jsonify ({"urls": urls})
     return jsonify ({"error": "no se han subido las imágenes"})
+
+
+
+
+#Función para enviar sms al teléfono del usuario.
+# NO SE ESTA USANDO DE MOMENTO #
+@user_blueprint.route('/enviar_sms', methods=['POST'])
+def enviar_sms():
+        data = request.get_json()
+        telefonoAVerificar = request.json['telefono']
+
+        if not telefonoAVerificar:
+            return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+
+        otp = str(random.randint(100000, 999999))    
+        otp_store[telefonoAVerificar] = otp
+
+        message_body = f'Tu código de verificación es: {otp}'
+        responseData = http_client.send_message({
+            "from": "+34639981207",
+            "to": telefonoAVerificar,
+            "text": message_body
+        })
+
+        if responseData["messages"][0]["status"] == "0":
+            return jsonify({"success": True, 'message': "código enviado correctamente"})
+        else:
+            return jsonify({'success': False, 'message': responseData["messages"][0]["error-text"]}), 500
+
+
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#      ENVIO Y VERIFICACIÓN DE EMAIL
+# # # # # # # # # # # # # # # # # # # # 
+
+#Función backend para envíar el correo de verificación al usuario
+@user_blueprint.route('/enviar_email', methods=['POST'])
+def enviar_email():
+    email = request.json['email']
+    salt = 'email-verify'
+    token = serializer.dumps(email, salt=salt)
+    link= f"http://localhost:4200/verificar-email/{token}"
+    msg = Message("Verifica tu correo", recipients=[email])
+    msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
+    mail.send(msg)
+
+    return jsonify({'message': 'Correo enviado'}), 200
+
+#Función backend para verificar el correo
+@user_blueprint.route('/verificar_email', methods=['POST'])
+def verificar_email():
+    token = request.json['token']
+    salt = 'email-verify'
+    try:
+
+        email = serializer.loads(token, salt=salt, max_age=3600)
+        print(f"Email extraído del token: {email}") 
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario:
+            usuario.emailVerificado = True
+            db.session.commit()
+            return jsonify({'message': 'Correo verificado correctamente'}), 200
+        else:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+    except Exception as e:
+        print(f"Error al verificar token: {e}")
+        return jsonify({'error': 'Token invalido o expirado'}), 400

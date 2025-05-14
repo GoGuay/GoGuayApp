@@ -51,7 +51,7 @@
       </div>
 
       <!-- Verificación de teléfono -->
-      <ion-col>
+      <!-- <ion-col>
         <div class="mt-2 text-center">
           <p>
             <strong>{{'VERIF_PERFIL.VERIFICA_TU_TFNO' | translate}}</strong>
@@ -62,6 +62,7 @@
               class="btn btn_bg"
               mat-raised-button
               type="btn"
+              (click)="enviar_sms(telefonoUsuario)"
             >
               {{telefonoUsuario}}
             </button>
@@ -83,7 +84,7 @@
             {{'BOTON.CONFIRMAR_CODIGO_TFNO' | translate}}
           </button>
         </div>
-      </ion-col>
+      </ion-col> -->
       <div class="divider-container">
         <mat-divider vertical></mat-divider>
       </div>

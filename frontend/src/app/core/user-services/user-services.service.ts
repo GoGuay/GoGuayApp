@@ -134,6 +134,11 @@ export class UserServicesService {
     );
   }
 
+  /**
+   * Función para el envío de mail de verificación.
+   * @param email
+   * @returns
+   */
   enviar_email_verif(email: string): Observable<any> {
     return this.http.post(
       `${this.apiUrl}/user/enviar_email`,
@@ -144,6 +149,11 @@ export class UserServicesService {
     );
   }
 
+  /**
+   * Función para verificar el correo que le ha llegado al usuario.
+   * @param token
+   * @returns
+   */
   verificar_email(token: any): Observable<boolean> {
     return this.http
       .post(`${this.apiUrl}/user/verificar_email`, { token })
@@ -151,5 +161,9 @@ export class UserServicesService {
         map(() => true),
         catchError(() => of(false))
       );
+  }
+
+  enviar_sms(telefono: string) {
+    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
   }
 }
