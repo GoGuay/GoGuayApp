@@ -250,3 +250,11 @@ ion-segment-button {
   align-items: center;
   justify-content: center;
 }
+
+
+.biografia-container {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 15px;
+}
