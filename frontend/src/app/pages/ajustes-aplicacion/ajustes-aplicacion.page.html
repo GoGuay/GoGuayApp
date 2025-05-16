@@ -3,7 +3,9 @@
 <ion-content [fullscreen]="true">
   <div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
     <div class="container text-center d-flex flex-column align-items-center">
-      <h1 class="mb-4">Ajustes</h1>
+
+      <h1 class="mb-4">Ajustes <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif"></h1>
+
       <p>Espacio para ajustar la aplicación</p>
       <!-- Sección de selección de idioma -->
       <div class="box-section">
@@ -21,7 +23,8 @@
       <div class="box-section">
         <h3>Mostrar banner</h3>
         <mat-divider></mat-divider>
-        <p class="mt-2 text-start">Este ajuste oculta o muestra el banner que aparece en algunas pantallas de la aplicación.</p>
+        <p class="mt-2 text-start">Este ajuste oculta o muestra el banner que aparece en algunas pantallas de la
+          aplicación.</p>
         <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="guardarAjustes()"></ion-toggle>
       </div>
 
@@ -33,12 +36,9 @@
         <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
       </div>
 
-      <!-- Botón para guardar cambios -->
-      <!-- <div>
-        <button type="button" class="btn btn-primary">Guardar ajustes</button>
-      </div> -->
       <!-- Mensaje de confirmación de los cambios -->
       <p-toast position="bottom-center"></p-toast>
+      <p class="info-text">Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D. </p>
     </div>
   </div>
 </ion-content>
