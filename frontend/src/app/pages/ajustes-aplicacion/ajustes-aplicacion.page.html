@@ -9,7 +9,7 @@
       <div class="box-section">
         <h3>Selección de idioma</h3>
         <select class="form-select" aria-label="Selecciona un idioma" (change)="changeLanguage($event)">
-          <option selected>Selecciona un idioma</option>
+          <option selected disabled>Selecciona un idioma</option>
           <option value="es">Español</option>
           <option value="en">Inglés</option>
         </select>
@@ -31,6 +31,8 @@
       <div>
         <button type="button" class="btn btn-primary">Guardar ajustes</button>
       </div>
+      <!-- Mensaje de confirmación de los cambios -->
+      <p-toast position="bottom-center"></p-toast>
     </div>
   </div>
 </ion-content>
