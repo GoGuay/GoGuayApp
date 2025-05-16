@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -13,7 +14,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule]
 })
 export class AjustesAplicacionPage implements OnInit {
 
@@ -21,11 +22,14 @@ export class AjustesAplicacionPage implements OnInit {
   mostrarBanner = true;
   notificacionesActivas = true;
   theme = 'light';
+  mostrarJumbotron = true;
 
   constructor(private languageService: LanguageService, private messageService: MessageService) { }
 
   ngOnInit() {
     this.selectedLanguage = this.languageService.getLanguage();
+    const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = savedJumbotronSetting === 'true';
   }
 
 
@@ -33,11 +37,22 @@ export class AjustesAplicacionPage implements OnInit {
    * Función para guardar los ajustes seleccionados por el usuario
    */
   guardarAjustes() {
-    console.log('Idioma seleccionado:', this.selectedLanguage);
-    console.log('Mostrar banner:', this.mostrarBanner);
-    console.log('Notificaciones activas:', this.notificacionesActivas);
-    console.log('Tema:', this.theme);
-    alert('Ajustes guardados correctamente!');
+    localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron ? 'true' : 'false');
+    if (this.selectedLanguage === 'es') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Ajustes del banner',
+        detail: 'Se han modificado los ajustes del banner correctamente.',
+        life: 3000,
+      });
+    } else if (this.selectedLanguage === 'en') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Banner Settings',
+        detail: 'The banner settings have been updated successfully.',
+        life: 3000,
+      });
+    }
   }
 
   changeLanguage(event: Event) {

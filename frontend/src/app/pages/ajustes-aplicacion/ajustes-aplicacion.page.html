@@ -8,6 +8,8 @@
       <!-- Sección de selección de idioma -->
       <div class="box-section">
         <h3>Selección de idioma</h3>
+        <mat-divider></mat-divider>
+        <p class="mt-2 text-start">Este ajuste te permite modificar el idioma de la aplicación.</p>
         <select class="form-select" aria-label="Selecciona un idioma" (change)="changeLanguage($event)">
           <option selected disabled>Selecciona un idioma</option>
           <option value="es">Español</option>
@@ -18,19 +20,23 @@
       <!-- Sección de mostrar banner -->
       <div class="box-section">
         <h3>Mostrar banner</h3>
-        <ion-toggle [(ngModel)]="mostrarBanner"></ion-toggle>
+        <mat-divider></mat-divider>
+        <p class="mt-2 text-start">Este ajuste oculta o muestra el banner que aparece en algunas pantallas de la aplicación.</p>
+        <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="guardarAjustes()"></ion-toggle>
       </div>
 
       <!-- Sección de notificaciones -->
       <div class="box-section">
         <h3>Notificaciones</h3>
+        <mat-divider></mat-divider>
+        <p class="mt-2 text-start">Este ajuste te permite configurar las notificaciones.</p>
         <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
       </div>
 
       <!-- Botón para guardar cambios -->
-      <div>
+      <!-- <div>
         <button type="button" class="btn btn-primary">Guardar ajustes</button>
-      </div>
+      </div> -->
       <!-- Mensaje de confirmación de los cambios -->
       <p-toast position="bottom-center"></p-toast>
     </div>
