@@ -48,10 +48,7 @@ export class HomePage implements OnInit {
   changeLanguage(lang: string) {
     this.translate.use(lang);
   }
-  ionViewWillEnter() {
-    console.log('ionViewWillEnter: carga configuración de jumbotron');
-    this.loadJumbotronSetting();
-  }
+
   loadJumbotronSetting() {
     const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
     this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';

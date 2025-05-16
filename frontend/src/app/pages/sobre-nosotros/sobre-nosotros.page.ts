@@ -18,27 +18,28 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
   styleUrls: ['./sobre-nosotros.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,  
-    CommonModule, 
-    FormsModule, 
+    IonicModule,
+    CommonModule,
+    FormsModule,
     RouterModule,
     MatDividerModule,
     MatButtonModule,
     MatCardModule,
     JumbotronComponent,
-    NavbarComponent,
-    MatIcon
+    NavbarComponent
   ]
 })
 export class SobreNosotrosPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  mostrarJumbotron = true;
 
   constructor(private funcionesComunes: FuncionesComunes) { }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+    this.loadJumbotronSetting();
   }
 
   /**
@@ -47,24 +48,29 @@ export class SobreNosotrosPage implements OnInit {
    * @param perfil Recibe el nombre del perfil que se va a abrir.
    */
   openLinkedin(perfil: string) {
-    if(perfil === 'Dani') {
+    if (perfil === 'Dani') {
       window.open('https://www.linkedin.com/in/daniel-garc%C3%ADa-d%C3%ADaz-0a970862/', '_blank');
     } else if (perfil === 'Tomas') {
       window.open('https://www.linkedin.com/in/jtomas88/', '_blank');
     }
   }
-  
-    /**
-   * Función para abrir los perfiles de GitHub de cada uno.
-   * 
-   * @param perfil Recibe el nombre del perfil que se va a abrir.
-   */
-    openGitHub(perfil: string) {
-      if(perfil === 'Dani') {
-        window.open('https://github.com/Daniel160490', '_blank');
-      } else if (perfil === 'Tomas') {
-        window.open('https://github.com/JTomas88', '_blank');
-      }
-    }
 
+  /**
+ * Función para abrir los perfiles de GitHub de cada uno.
+ * 
+ * @param perfil Recibe el nombre del perfil que se va a abrir.
+ */
+  openGitHub(perfil: string) {
+    if (perfil === 'Dani') {
+      window.open('https://github.com/Daniel160490', '_blank');
+    } else if (perfil === 'Tomas') {
+      window.open('https://github.com/JTomas88', '_blank');
+    }
+  }
+
+
+  loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+  }
 }
