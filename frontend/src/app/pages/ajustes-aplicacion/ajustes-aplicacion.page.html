@@ -8,12 +8,11 @@
       <!-- Sección de selección de idioma -->
       <div class="box-section">
         <h3>Selección de idioma</h3>
-        <select class="form-select" aria-label="Selecciona un idioma">
+        <select class="form-select" aria-label="Selecciona un idioma" (change)="changeLanguage($event)">
           <option selected>Selecciona un idioma</option>
           <option value="es">Español</option>
           <option value="en">Inglés</option>
         </select>
-
       </div>
 
       <!-- Sección de mostrar banner -->
@@ -26,15 +25,6 @@
       <div class="box-section">
         <h3>Notificaciones</h3>
         <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
-      </div>
-
-      <!-- Sección de tema -->
-      <div class="box-section">
-        <h3>Tema de la aplicación</h3>
-        <ion-segment [(ngModel)]="theme">
-          <ion-segment-button value="light">Claro</ion-segment-button>
-          <ion-segment-button value="dark">Oscuro</ion-segment-button>
-        </ion-segment>
       </div>
 
       <!-- Botón para guardar cambios -->

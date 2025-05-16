@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from "../../shared/navbar/navbar.component";
 import { IonicModule } from '@ionic/angular';
+import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -18,9 +19,10 @@ export class AjustesAplicacionPage implements OnInit {
   notificacionesActivas = true;
   theme = 'light';
 
-  constructor() { }
+  constructor(private languageService: LanguageService) { }
 
   ngOnInit() {
+    this.selectedLanguage = this.languageService.getLanguage();
   }
 
 
@@ -33,5 +35,11 @@ export class AjustesAplicacionPage implements OnInit {
     console.log('Notificaciones activas:', this.notificacionesActivas);
     console.log('Tema:', this.theme);
     alert('Ajustes guardados correctamente!');
+  }
+
+  changeLanguage(event: Event) {
+    const selectedLanguage = (event.target as HTMLSelectElement).value;
+    this.languageService.setLanguage(selectedLanguage);
+    this.selectedLanguage = selectedLanguage;
   }
 }
