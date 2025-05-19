@@ -5,7 +5,7 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
+  <div class="container mb-5">
     <ion-row>
       <ion-col class="d-flex flex-column">
         <div>
@@ -45,10 +45,6 @@
           </ion-row>
         </div>
       </ion-col>
-
-      <div class="divider-container">
-        <mat-divider vertical></mat-divider>
-      </div>
 
       <!-- Verificación de teléfono -->
       <!-- <ion-col>
@@ -220,42 +216,44 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="justify-content-between mb-5 mt-5">
-      <!-- Línea divisoria -->
-      <div class="divider-container">
-        <mat-divider vertical class="mat-divider-2"></mat-divider>
-      </div>
-
+    <ion-row class="justify-content-center mt-5">
       <!-- Cambio de contraseña -->
-      <ion-col size="3" class="d-flex align-items-center justify-content-start">
-        <div class="text-center">
+      <ion-col size="4">
+        <div class="text-center mb-2">
           <p class="text-center">
             <strong>{{'VERIF_PERFIL.CAMBIO_CONTRAS' | translate}}</strong>
           </p>
-          <ion-row class="mb-1">
-            <ion-col size="12">
-              <label for="cActual" class="form-label">
-                {{'VERIF_PERFIL.CONTRAS_ACTUAL' | translate}}
-              </label>
-              <input type="password" class="form-control" id="cActual" />
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <label for="pNueva" class="form-label">
-                {{'VERIF_PERFIL.NUEVA_CONTRAS' | translate}}
-              </label>
-              <input type="password" class="form-control" id="pNueva" />
-            </ion-col>
-            <ion-col>
-              <label for="pNuevaConfirm" class="form-label">
-                {{'VERIF_PERFIL.CONF_NUEVA_CONTRAS' | translate}}
-              </label>
-              <input type="password" class="form-control" id="pNuevaConfirm" />
-            </ion-col>
-          </ion-row>
 
-          <ion-row class="mt-2 d-flex justify-content-center">
+          <div class="mb-4">
+            <label for="cActual" class="form-label">
+              {{'VERIF_PERFIL.CONTRAS_ACTUAL' | translate}}
+            </label>
+            <input type="password" class="form-control w-10" id="cActual" />
+          </div>
+
+          <!-- Nueva contraseña -->
+          <div class="mb-3">
+            <label for="pNueva" class="form-label">
+              {{'VERIF_PERFIL.NUEVA_CONTRAS' | translate}}
+            </label>
+            <input type="password" class="form-control w-10" id="pNueva" />
+          </div>
+
+          <!-- Confirmar nueva contraseña -->
+          <div>
+            <label for="pNuevaConfirm" class="form-label label_nuevapass">
+              {{'VERIF_PERFIL.CONF_NUEVA_CONTRAS' | translate}}
+            </label>
+            <input
+              type="password"
+              class="form-control w-10"
+              id="pNuevaConfirm"
+            />
+          </div>
+
+          <!-- Contraseña Actual -->
+
+          <ion-row class="mt-3 d-flex justify-content-center">
             <button type="button" class="btn btn_bg" mat-raised-button>
               {{ "BOTON.CAMBIAR" | translate }}
             </button>
@@ -264,22 +262,33 @@
       </ion-col>
 
       <!-- Línea divisoria -->
-      <div class="divider-container">
+      <div class="divider-container-final">
         <mat-divider vertical class="mat-divider-2"></mat-divider>
       </div>
 
       <!-- Eliminar la cuenta -->
-      <ion-col size="3">
+      <ion-col size="3" class="ms-5">
         <div class="text-center">
           <p class="text-center">
             <strong>{{ "VERIF_PERFIL.ELIMINAR_CTA" | translate }}</strong>
           </p>
           <div>
-            <p style="color: red; font-weight: bold; text-align: justify">
-              {{ "VERIF_PERFIL.INFO_ELIMINAR_CTA" | translate }}
+            <p
+              class="mt-4"
+              style="color: red; font-weight: bold; text-align: justify"
+            >
+              Esta acción eliminará tu cuenta de manera permanente, sin
+              posiblidad de recuperarla en el futuro.
+            </p>
+            <p
+              class="mt-5 mb-4"
+              style="color: red; font-weight: bold; text-align: justify"
+            >
+              Si tienes saldo, recuerda realizar primero la transferencia a tu
+              cuenta bancaria para no perder ese dinero.
             </p>
             <div class="d-flex justify-content-center">
-              <button type="button" class="btn btn_bg" mat-raised-button>
+              <button type="button" class="btn btn_bg mt-4" mat-raised-button>
                 {{ "BOTON.ELIMINAR_CTA" | translate }}
               </button>
             </div>

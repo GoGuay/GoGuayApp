@@ -118,6 +118,13 @@
 }
 
 
+.divider-container-final {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 100px;
+  margin-left: 100px;
+}
 
 mat-divider[vertical] {
   height: 100%;
