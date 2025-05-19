@@ -5,7 +5,7 @@
 
 .vbasica {
   width: 950px;
-  text-align: start;
+  text-align: center;
   margin-left: 15rem;
 }
 
@@ -151,4 +151,11 @@ mat-divider[vertical] {
 
 .fila_superior {
   margin-bottom: 7%;
+}
+
+
+@media (max-width: 576px) {
+  .mat-divider {
+    display: none;
+  }
 }

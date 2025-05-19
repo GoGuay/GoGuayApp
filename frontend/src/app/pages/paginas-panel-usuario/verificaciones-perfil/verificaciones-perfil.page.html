@@ -5,27 +5,32 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container mb-5">
-    <ion-row>
-      <ion-col class="d-flex flex-column">
-        <div>
-          <h1 class="text-center mb-5">
-            {{'VERIF_PERFIL.TITULO_VERIF_BASICA' | translate}}
-          </h1>
-          <p class="vbasica">
-            {{'VERIF_PERFIL.SUBTIT_VERIF_BASICA' | translate}}
-          </p>
-        </div>
-      </ion-col>
-    </ion-row>
+  <div class="container">
+    <div class="d-flex justify-content-center">
+      <h1 class="text-center mb-5">{{'VERIF.TITULO' | translate}}</h1>
+    </div>
+
+    <div class="text-center">
+      <p class="mb-2">{{'VERIF.TITULO_VERIF_BASICA' | translate}}</p>
+    </div>
+    <div class="text-center">
+      <p class="mb-4">{{'VERIF.TITULO_VERIF_ADICIONAL' | translate}}</p>
+    </div>
 
     <ion-row class="justify-content-between fila_superior">
       <!-- Verificación de correo -->
-      <ion-col>
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="mt-2 text-center">
           <p class="mb-4">
-            <strong>{{'VERIF_PERFIL.VERIFICA_TU_CORREO' | translate}}</strong>
+            <strong>{{'VERIF.VERIFICA_TU_CORREO' | translate}}</strong>
           </p>
+          <ion-row>
+            <ion-col>
+              <p class="text-align-justify" style="font-size: 14px">
+                {{'VERIF.INFO_VERIF_CORREO' | translate}}
+              </p>
+            </ion-col>
+          </ion-row>
           <ion-col>
             <button
               type="btn"
@@ -36,13 +41,6 @@
               {{emailUsuario}}
             </button>
           </ion-col>
-          <ion-row>
-            <ion-col>
-              <p class="text-align-justify" style="font-size: 15px">
-                {{'VERIF_PERFIL.INFO_VERIF_CORREO' | translate}}
-              </p>
-            </ion-col>
-          </ion-row>
         </div>
       </ion-col>
 
@@ -81,20 +79,25 @@
           </button>
         </div>
       </ion-col> -->
+
       <div class="divider-container">
         <mat-divider vertical></mat-divider>
       </div>
 
       <!-- Verificación DNI -->
-      <ion-col>
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="mt-2 text-center">
           <p class="mb-4">
-            <strong>{{'BOTON.VERIF_TU_IDENTIDAD' | translate}}</strong>
+            <strong>{{'VERIF.VERIF_TU_IDENTIDAD' | translate}}</strong>
           </p>
-          <!-- <ion-col
-            class="d-flex justify-content-center align-items-center mb-5"
-          >
-            <div class="d-flex justify-content-center position-relative">
+          <p style="font-size: 14px">
+            {{'VERIF.INFO_VERIFIDENTIDAD' | translate}}
+          </p>
+
+          <ion-row>
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
                 <label for="docdelantera" class="upload-button floating-plus"
                   >+</label
@@ -106,25 +109,74 @@
                   accept="image/*"
                 />
               </div>
-            </div>
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img src="../../../../assets/user/SinFotoDelantera.png" />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="mb-3">
+            <ion-col>
+              <div>
+                <p style="font-size: 14px">
+                  {{'VERIF.FOTODELANTERA' | translate}}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
 
-            <div class="d-flex justify-content-center position-relative">
+          <ion-row>
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
-                <label for="doctrasera" class="upload-button floating-plus"
-                  >*</label
+                <label for="docdelantera" class="upload-button floating-plus"
+                  >+</label
                 >
                 <input
                   type="file"
-                  id="doctrasera"
+                  id="docdelantera"
                   class="file-input"
                   accept="image/*"
                 />
               </div>
-            </div>
-          </ion-col> -->
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img src="../../../../assets/user/SinFotoTrasera.png" />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div>
+                <p style="font-size: 14px">
+                  {{'VERIF.FOTOTRASERA' | translate}}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-col>
+      <div class="divider-container hide-on-mobile">
+        <mat-divider vertical></mat-divider>
+      </div>
+
+      <!-- Verificación adicional -->
+      <ion-col size="12" size-md="3">
+        <div class="mt-2 text-center">
+          <p class="mb-4">
+            <strong>{{ 'VERIF.VERIFADICIONAL' | translate }}</strong>
+          </p>
+          <p style="font-size: 14px" class="mb-3">
+            {{'VERIF.VERIFADICIONALINFO1' | translate}}
+          </p>
 
           <ion-row>
-            <ion-col class="filadocumentodelantero">
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
                 <label for="docdelantera" class="upload-button floating-plus"
                   >+</label
@@ -147,15 +199,16 @@
             <ion-col>
               <div>
                 <p style="font-size: 13px">
-                  Pulsa en el botón para añadir una foto delantera de tu
-                  documento
+                  {{'VERIF.FOTODELANTERA' | translate}}
                 </p>
               </div>
             </ion-col>
           </ion-row>
 
           <ion-row>
-            <ion-col class="filadocumentodelantero">
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
                 <label for="docdelantera" class="upload-button floating-plus"
                   >+</label
@@ -178,55 +231,26 @@
             <ion-col>
               <div>
                 <p style="font-size: 13px">
-                  Pulsa en el botón para añadir una foto trasera de tu documento
+                  {{'VERIF.FOTOTRASERA' | translate}}
                 </p>
               </div>
             </ion-col>
           </ion-row>
         </div>
       </ion-col>
-      <div class="divider-container">
-        <mat-divider vertical></mat-divider>
-      </div>
-
-      <!-- Verificación adicional -->
-      <ion-col class="d-flex align-items-start">
-        <div class="text-center vadicional">
-          <p class="text-center fs-8 mt-2 caja">
-            <strong>{{'VERIF_PERFIL.VERIF_ADIC_CONDUCIR' | translate}}</strong>
-          </p>
-          <div class="d-flex justify-content-center position-relative">
-            <div class="file-upload mb-5">
-              <label for="identidad" class="upload-button floating-plus"
-                >+</label
-              >
-              <input
-                type="file"
-                id="identidad"
-                class="file-input"
-                accept="image/*"
-                multiple
-              />
-            </div>
-          </div>
-          <p class="texto text-align-justify" style="font-size: 14px">
-            {{'VERIF_PERFIL.INFO_VERIFCONDUCIR' | translate}}
-          </p>
-        </div>
-      </ion-col>
     </ion-row>
 
     <ion-row class="justify-content-center mt-5">
       <!-- Cambio de contraseña -->
-      <ion-col size="4">
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="text-center mb-2">
           <p class="text-center">
-            <strong>{{'VERIF_PERFIL.CAMBIO_CONTRAS' | translate}}</strong>
+            <strong>{{ 'VERIF.CAMBIO_CONTRAS' | translate }}</strong>
           </p>
 
           <div class="mb-4">
             <label for="cActual" class="form-label">
-              {{'VERIF_PERFIL.CONTRAS_ACTUAL' | translate}}
+              {{'VERIF.CONTRAS_ACTUAL' | translate}}
             </label>
             <input type="password" class="form-control w-10" id="cActual" />
           </div>
@@ -234,7 +258,7 @@
           <!-- Nueva contraseña -->
           <div class="mb-3">
             <label for="pNueva" class="form-label">
-              {{'VERIF_PERFIL.NUEVA_CONTRAS' | translate}}
+              {{'VERIF.NUEVA_CONTRAS' | translate}}
             </label>
             <input type="password" class="form-control w-10" id="pNueva" />
           </div>
@@ -242,7 +266,7 @@
           <!-- Confirmar nueva contraseña -->
           <div>
             <label for="pNuevaConfirm" class="form-label label_nuevapass">
-              {{'VERIF_PERFIL.CONF_NUEVA_CONTRAS' | translate}}
+              {{'VERIF.CONF_NUEVA_CONTRAS' | translate}}
             </label>
             <input
               type="password"
@@ -262,30 +286,28 @@
       </ion-col>
 
       <!-- Línea divisoria -->
-      <div class="divider-container-final">
+      <div class="divider-container-final hide-on-mobile">
         <mat-divider vertical class="mat-divider-2"></mat-divider>
       </div>
 
       <!-- Eliminar la cuenta -->
-      <ion-col size="3" class="ms-5">
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="text-center">
           <p class="text-center">
-            <strong>{{ "VERIF_PERFIL.ELIMINAR_CTA" | translate }}</strong>
+            <strong>{{ "VERIF.ELIMINAR_CTA" | translate }}</strong>
           </p>
           <div>
             <p
               class="mt-4"
               style="color: red; font-weight: bold; text-align: justify"
             >
-              Esta acción eliminará tu cuenta de manera permanente, sin
-              posiblidad de recuperarla en el futuro.
+              {{ "VERIF.INFO_ELIMINAR_CTA" | translate }}
             </p>
             <p
               class="mt-5 mb-4"
               style="color: red; font-weight: bold; text-align: justify"
             >
-              Si tienes saldo, recuerda realizar primero la transferencia a tu
-              cuenta bancaria para no perder ese dinero.
+              {{ "VERIF.INFO_ELIMINAR_CTA2" | translate }}
             </p>
             <div class="d-flex justify-content-center">
               <button type="button" class="btn btn_bg mt-4" mat-raised-button>
