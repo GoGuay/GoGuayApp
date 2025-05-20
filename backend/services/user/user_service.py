@@ -295,9 +295,9 @@ def actualizar_imagen_cabecera(user_id):
     return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200
 
 
-# Función para que el usuario suba fotos del documento de identidad
-@user_blueprint.route('/subirfoto_documento/<int:user_id>', methods=['PUT'])
-def subirfoto_documento(user_id):
+# Función para que el usuario suba la foto DELANTERA del documento de IDENTIDAD
+@user_blueprint.route('/subirfoto_documentodelantera/<int:user_id>', methods=['PUT'])
+def subirfoto_documentodelantera(user_id):
     user = Usuario.query.get_or_404(user_id)
 
     imagen = request.files.get('fotoDocumentoDelantera')
@@ -318,6 +318,33 @@ def subirfoto_documento(user_id):
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# Función para que el usuario suba la foto TRASERA del documento de IDENTIDAD
+@user_blueprint.route('/subirfoto_documentotrasera/<int:user_id>', methods=['PUT'])
+def subirfoto_documentotrasera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    imagen = request.files.get('fotoDocumentoTrasera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoDocumentoTrasera:
+        public_id =  obtener_public_id(user.fotoDocumentoTrasera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoDocumentoTrasera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+
 
 
 

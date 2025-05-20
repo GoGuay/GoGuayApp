@@ -35,10 +35,10 @@ export class VerificacionesPerfilPage implements OnInit {
   subiendoDocumento: boolean = false;
   sinDocumentoDelantera: string =
     '../../../../assets/user/SinFotoDelantera.png';
-  sinDocumentoTrasera: string =
-    '../../../../assets/user/sinDocumentoTrasera.png';
+  sinDocumentoTrasera: string = '../../../../assets/user/SinFotoTrasera.png';
 
-  cargando: boolean = false;
+  cargandoDelantera: boolean = false;
+  cargandoTrasera: boolean = false;
   documentoDelantera: string = '';
   documentoTrasera: string = '';
 
@@ -87,9 +87,10 @@ export class VerificacionesPerfilPage implements OnInit {
     });
   }
 
+  // Función para subir la foto delantera del documento de identidad
   fotoDocumentoDelantera(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.cargando = true;
+    this.cargandoDelantera = true;
     if (input.files && input.files[0]) {
       const formData = new FormData();
       formData.append('fotoDocumentoDelantera', input.files[0]);
@@ -98,10 +99,40 @@ export class VerificacionesPerfilPage implements OnInit {
 
       this.userService.fotoDocumentoDelantera(formData, usuarioId).subscribe({
         next: (response) => {
-          this.cargando = false;
+          this.cargandoDelantera = false;
           if (response && response.url) {
             this.documentoDelantera = response.url;
             console.log('fotodocumentodelantera:', this.documentoDelantera);
+            console.log('response :', response.url);
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error(
+            'Error al subir la imagen delantera del documento:',
+            error
+          );
+        },
+      });
+    }
+  }
+
+  // Función para subir la foto trasera del documento de identidad
+  fotoDocumentoTrasera(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargandoTrasera = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('fotoDocumentoTrasera', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.fotoDocumentoTrasera(formData, usuarioId).subscribe({
+        next: (response) => {
+          this.cargandoTrasera = false;
+          if (response && response.url) {
+            this.documentoTrasera = response.url;
+            console.log('fotoDocumentoTrasera:', this.documentoTrasera);
             console.log('response :', response.url);
           }
           this.obtenerUsuarioPorID(usuarioId);

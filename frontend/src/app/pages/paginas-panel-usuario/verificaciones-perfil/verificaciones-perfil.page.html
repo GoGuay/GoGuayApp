@@ -127,7 +127,7 @@
                   [src]="usuario.fotoDocumentoDelantera"
                 />
               </div>
-              <div class="overlay" *ngIf="cargando">
+              <div class="overlay" *ngIf="cargandoDelantera">
                 <app-spinner></app-spinner>
               </div>
             </ion-col>
@@ -148,22 +148,35 @@
             >
               <div class="file-upload">
                 <label
-                  for="docdelantera"
+                  for="doctrasera"
                   class="upload-button floating-plus"
                   aria-label="Botón para subir documento trasero"
                   >+</label
                 >
                 <input
                   type="file"
-                  id="docdelantera"
+                  id="doctrasera"
                   class="file-input"
                   accept="image/*"
+                  (change)="fotoDocumentoTrasera($event)"
                 />
               </div>
             </ion-col>
             <ion-col>
               <div class="fotoDocumento">
-                <img [src]="sinDocumentoDelantera" />
+                <img
+                  [src]="sinDocumentoTrasera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoDocumentoTrasera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoDocumentoTrasera"
+                  [src]="usuario.fotoDocumentoTrasera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoTrasera">
+                <app-spinner></app-spinner>
               </div>
             </ion-col>
           </ion-row>

@@ -1,6 +1,7 @@
 import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Form } from '@angular/forms';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
@@ -169,7 +170,24 @@ export class UserServicesService {
 
   fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {
     return this.http
-      .put(`${this.apiUrl}/user/subirfoto_documento/${usuarioId}`, imagen)
+      .put(
+        `${this.apiUrl}/user/subirfoto_documentodelantera/${usuarioId}`,
+        imagen
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto delantera de documento');
+          return throwError(error);
+        })
+      );
+  }
+
+  fotoDocumentoTrasera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/subirfoto_documentotrasera/${usuarioId}`,
+        imagen
+      )
       .pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Error al actualizar la foto delantera de documento');
