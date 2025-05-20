@@ -298,16 +298,27 @@ def actualizar_imagen_cabecera(user_id):
 # Función para que el usuario suba fotos del documento de identidad
 @user_blueprint.route('/subirfoto_documento/<int:user_id>', methods=['PUT'])
 def subirfoto_documento(user_id):
-    fotos = request.files.getlist('files')
-    if fotos:
-        urls = []
-        for foto in fotos:
-            upload = uploader.upload(foto)
-            carpeta_usuario = f"user_{user_id}"
-            result = uploader.upload(foto, folder=carpeta_usuario)
-            urls.append(upload['secure_url'])
-        return jsonify ({"urls": urls})
-    return jsonify ({"error": "no se han subido las imágenes"})
+    user = Usuario.query.get_or_404(user_id)
+
+    imagen = request.files.get('fotoDocumentoDelantera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoDocumentoDelantera:
+        public_id =  obtener_public_id(user.fotoDocumentoDelantera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoDocumentoDelantera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
+
 
 
 

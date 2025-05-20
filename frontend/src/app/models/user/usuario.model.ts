@@ -16,6 +16,10 @@ export interface Usuario {
     fotoCabecera?: string;
     rolPerfil: 'usuario' | 'admin' | 'moderador';
     carnet_conducir_verificado?: boolean;
+    fotoDocumentoDelantera?: string;
+    fotoDocumentoTrasera?: string;
+    fotoCarnetCondDelantera?: string;
+    fotoCarnetCondTrasera?: string;
     dni_verificado?: boolean;
     numero_carnet_conducir?: string;
     preferencias?: string[];

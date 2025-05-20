@@ -1,8 +1,8 @@
 """Corregir relaciones con claves foráneas ambiguas
 
-Revision ID: a2b767cdb8b9
+Revision ID: 9dfc0a6181f5
 Revises: 
-Create Date: 2025-04-02 19:28:28.084612
+Create Date: 2025-05-20 19:08:46.325734
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a2b767cdb8b9'
+revision = '9dfc0a6181f5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,6 +36,10 @@ def upgrade():
     sa.Column('preferencias', sa.JSON(), nullable=False),
     sa.Column('rolPerfil', sa.String(length=50), nullable=True),
     sa.Column('dni_verificado', sa.Boolean(), nullable=True),
+    sa.Column('fotoDocumentoDelantera', sa.String(length=250), nullable=True),
+    sa.Column('fotoDocumentoTrasera', sa.String(length=250), nullable=True),
+    sa.Column('fotoCarnetCondDelantera', sa.String(length=250), nullable=True),
+    sa.Column('fotoCarnetCondTrasera', sa.String(length=250), nullable=True),
     sa.Column('carnet_conducir_verificado', sa.Boolean(), nullable=True),
     sa.Column('numero_carnet_conducir', sa.String(length=50), nullable=True),
     sa.Column('fecha_vencimiento_carnet', sa.Date(), nullable=True),

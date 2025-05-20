@@ -166,4 +166,15 @@ export class UserServicesService {
   enviar_sms(telefono: string) {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
   }
+
+  fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(`${this.apiUrl}/user/subirfoto_documento/${usuarioId}`, imagen)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto delantera de documento');
+          return throwError(error);
+        })
+      );
+  }
 }
