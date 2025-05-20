@@ -98,5 +98,5 @@ class Usuario(db.Model):
             "fotoDocumentoDelantera": self.fotoDocumentoDelantera,
             "fotoDocumentoTrasera": self.fotoDocumentoTrasera,
             "fotoCarnetCondDelantera": self.fotoCarnetCondDelantera,
-            "fotoDocumentoTrasera": self.fotoDocumentoTrasera,
+            "fotoCarnetCondTrasera": self.fotoCarnetCondTrasera,
         }

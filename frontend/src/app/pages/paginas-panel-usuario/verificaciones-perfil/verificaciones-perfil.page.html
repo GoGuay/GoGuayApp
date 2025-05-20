@@ -255,20 +255,33 @@
               class="filadocumentodelantero d-flex justify-content-center d-md-block"
             >
               <div class="file-upload">
-                <label for="docdelantera" class="upload-button floating-plus"
+                <label for="carnettrasera" class="upload-button floating-plus"
                   >+</label
                 >
                 <input
                   type="file"
-                  id="docdelantera"
+                  id="carnettrasera"
                   class="file-input"
                   accept="image/*"
+                  (change)="fotoCarnetTrasera($event)"
                 />
               </div>
             </ion-col>
             <ion-col>
               <div class="fotoDocumento">
-                <img src="../../../../assets/user/SinFotoTrasera.png" />
+                <img
+                  [src]="sinDocumentoTrasera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoCarnetCondTrasera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoCarnetCondTrasera"
+                  [src]="usuario?.fotoCarnetCondTrasera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoCarnetTrasera">
+                <app-spinner></app-spinner>
               </div>
             </ion-col>
           </ion-row>

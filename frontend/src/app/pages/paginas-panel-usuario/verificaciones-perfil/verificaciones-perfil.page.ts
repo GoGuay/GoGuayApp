@@ -151,6 +151,7 @@ export class VerificacionesPerfilPage implements OnInit {
     }
   }
 
+  // Función para cargar la foto delantera del carnet de conducir
   fotoCarnetDelantera(event: Event) {
     const input = event.target as HTMLInputElement;
     this.cargandoCarnetDelantera = true;
@@ -160,7 +161,7 @@ export class VerificacionesPerfilPage implements OnInit {
 
       const usuarioId = this.userData.usuario.id;
 
-      this.userService.fotoCarnetTrasera(formData, usuarioId).subscribe({
+      this.userService.fotoCarnetDelantera(formData, usuarioId).subscribe({
         next: (response) => {
           this.cargandoCarnetDelantera = false;
           if (response && response.url) {
@@ -172,9 +173,36 @@ export class VerificacionesPerfilPage implements OnInit {
         },
         error: (error) => {
           console.error(
-            'Error al subir la imagen delantera del documento:',
+            'Error al subir la imagen delantera del carnet:',
             error
           );
+        },
+      });
+    }
+  }
+
+  // Función para cargar la foto trasera del carnet de conducir
+  fotoCarnetTrasera(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargandoCarnetTrasera = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('fotoCarnetCondTrasera', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.fotoCarnetTrasera(formData, usuarioId).subscribe({
+        next: (response) => {
+          this.cargandoCarnetTrasera = false;
+          if (response && response.url) {
+            this.carnetTrasera = response.url;
+            console.log('carnet Trasera:', this.carnetTrasera);
+            console.log('response :', response.url);
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error('Error al subir la imagen trasera del carnet:', error);
         },
       });
     }

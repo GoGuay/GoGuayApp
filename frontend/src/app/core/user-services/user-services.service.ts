@@ -196,12 +196,23 @@ export class UserServicesService {
       );
   }
 
-  fotoCarnetTrasera(imagen: FormData, usuarioId: number): Observable<any> {
+  fotoCarnetDelantera(imagen: FormData, usuarioId: number): Observable<any> {
     return this.http
       .put(`${this.apiUrl}/user/subirfoto_carnetdelantera/${usuarioId}`, imagen)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Error al actualizar la foto delantera del carnet');
+          return throwError(error);
+        })
+      );
+  }
+
+  fotoCarnetTrasera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(`${this.apiUrl}/user/subirfoto_carnettrasera/${usuarioId}`, imagen)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto trasera del carnet');
           return throwError(error);
         })
       );
