@@ -39,8 +39,12 @@ export class VerificacionesPerfilPage implements OnInit {
 
   cargandoDelantera: boolean = false;
   cargandoTrasera: boolean = false;
+  cargandoCarnetDelantera: boolean = false;
+  cargandoCarnetTrasera: boolean = false;
   documentoDelantera: string = '';
   documentoTrasera: string = '';
+  carnetTrasera: string = '';
+  carnetDelantera: string = '';
 
   constructor(private userService: UserServicesService) {}
 
@@ -133,6 +137,35 @@ export class VerificacionesPerfilPage implements OnInit {
           if (response && response.url) {
             this.documentoTrasera = response.url;
             console.log('fotoDocumentoTrasera:', this.documentoTrasera);
+            console.log('response :', response.url);
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error(
+            'Error al subir la imagen delantera del documento:',
+            error
+          );
+        },
+      });
+    }
+  }
+
+  fotoCarnetDelantera(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargandoCarnetDelantera = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('fotoCarnetCondDelantera', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.fotoCarnetTrasera(formData, usuarioId).subscribe({
+        next: (response) => {
+          this.cargandoCarnetDelantera = false;
+          if (response && response.url) {
+            this.carnetDelantera = response.url;
+            console.log('carnet Delantera:', this.carnetDelantera);
             console.log('response :', response.url);
           }
           this.obtenerUsuarioPorID(usuarioId);

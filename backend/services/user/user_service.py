@@ -341,7 +341,32 @@ def subirfoto_documentotrasera(user_id):
     user.fotoDocumentoTrasera = result['secure_url']
     db.session.commit()
 
-    return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
+    return jsonify({"mensaje": "Imagen de documento trasera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# Función para que el usuario suba la foto DELANTERA del carnet de conducir
+@user_blueprint.route('/subirfoto_carnetdelantera/<int:user_id>', methods=['PUT'])
+def subirfoto_carnetdelantera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    imagen = request.files.get('fotoCarnetCondDelantera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoCarnetCondDelantera:
+        public_id =  obtener_public_id(user.fotoCarnetCondDelantera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoCarnetCondDelantera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
+
 
 
 
