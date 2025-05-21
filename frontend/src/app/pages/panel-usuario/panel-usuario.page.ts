@@ -150,6 +150,10 @@ export class PanelUsuarioPage implements OnInit {
     });
   }
 
+  openAjustes() {
+    this.navCtrl.navigateRoot(['/ajustes-aplicacion'], {});
+  }
+
   onImageChangePerfil(event: Event) {
     const input = event.target as HTMLInputElement;
     this.cargando = true;

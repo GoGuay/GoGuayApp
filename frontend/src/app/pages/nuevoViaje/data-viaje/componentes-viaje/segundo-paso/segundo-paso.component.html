@@ -4,7 +4,8 @@
   <input [(ngModel)]="origen" (input)="buscarSugerenciasOrigen($event)"
     placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control">
   <button type="button" mat-raised-button class="btn_bg"
-    (click)="getUserLocationWithLeaflet()"><mat-icon>location_on</mat-icon>Usar mi ubicación</button>
+    (click)="getUserLocationWithLeaflet()"><img src="../../../../../../assets/sistema/marcador.png" class="_icon me-3">Usar mi ubicación
+  </button>
     
   <div *ngIf="cargandoOrigen" class="spinner-container">
     <app-spinner></app-spinner>

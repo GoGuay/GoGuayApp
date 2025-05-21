@@ -6,12 +6,23 @@ ion-button {
   color: #000000 !important;
 }
 
+._icon{
+  width: 25px;
+  height: 25px;
+  margin-right: 3px;
+}
+
 .space_title {
   margin-right: -91%;
 }
 
 .borderDraw {
   border-left: 3px solid #e0a667;
+  padding: 1%;
+}
+
+.borderDrawRight {
+  border-right: 3px solid #e0a667;
   padding: 1%;
 }
 
@@ -51,6 +62,7 @@ ion-button {
   z-index: 1;
   bottom: 130px;
   left: 67px;
+  margin-top: 7%;
 }
 
 .img_arco {

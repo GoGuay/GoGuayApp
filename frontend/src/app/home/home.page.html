@@ -1,9 +1,12 @@
 <app-navbar [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
   <!-- COMPONENTE DEL JUMBOTRON -->
-  <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/banco_imagenes/img1.png'"
-    [helpText]="'JUMBOTRON.HELP'">
-  </app-jumbotron>
+  <div *ngIf="mostrarJumbotron">
+    <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/banco_imagenes/img1.png'"
+      [helpText]="'JUMBOTRON.HELP'">
+    </app-jumbotron>
+  </div>
+
 
   <!-- COMPONENTE DEL BUSCADOR DE VIAJES -->
   <div class="buscador_box">
@@ -14,13 +17,13 @@
 
   <div class="contenido_principal">
     <ion-grid>
-      <ion-row >
+      <ion-row>
         <ion-col size="12" size-md="6">
           <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
           <div id="publicar_viaje">
             <app-nuevo-viaje-general></app-nuevo-viaje-general>
           </div>
-  
+
         </ion-col>
         <ion-col size="12" size-md="6">
           <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->

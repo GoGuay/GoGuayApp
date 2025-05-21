@@ -52,7 +52,6 @@
     "DORMIR": "Sleep",
     "SILENCIO": "Silence"
   },
-
   "VEHICULOS": {
     "MIS_VEHICULOS": "My vehicles",
     "FORMULARIO_ANADIR": "Form to add a new vehicle",
@@ -77,7 +76,6 @@
     "SELECTOR_MODELO": "Model selection",
     "SELECTOR_COLOR": "Color"
   },
-
   "__ContactInfo": "Contact Modal and Page",
   "DATOS_CONTACTO": {
     "TITULO": "Contact Information",
@@ -190,6 +188,7 @@
     "ELIMINAR_CTA": "Delete My Account",
     "BUSCAR": "Search",
     "PUBLICA_TU_VIAJE_AQUI": "Publish your next trip here",
+    "BUSCA_TU_VIAJE_AQUI": "Search for your next trip here",
     "CONSULTA_AQUI": "Check here",
     "PUBLICAR_VIAJE": "Publish your trip",
     "CENTROAYUDA": "Check our help center"
@@ -210,7 +209,8 @@
     "REGISTRO": "Register",
     "SALIR": "Logout",
     "IDIOMA_ESPANIOL": "Spanish",
-    "IDIOMA_INGLES": "English"
+    "IDIOMA_INGLES": "English",
+    "AJUSTES": "Settings"
   },
   "_Footer": "Footer links",
   "FOOTER": {
@@ -437,5 +437,26 @@
     "PRECIO_ASC": "Price (Ascending)",
     "PRECIO_DESC": "Price (Descending)",
     "RESULTADOS": "Results found"
+  },
+  "_AjustesAplicacion": "/ajustes-aplicacion",
+  "AJUSTESAPP": {
+    "TITULO": "Settings",
+    "SUITTULO_1": "Space to adjust the application",
+    "OPCION_IDIOMA": {
+      "TITULO": "Language selection",
+      "SUBTITULO": "This setting allows you to change the application's language.",
+      "OPTION_DEFAULT": "Select a language",
+      "ESPAÑOL": "Spanish",
+      "INGLES": "English"
+    },
+    "OPCION_BANNER": {
+      "TITULO": "Show banner",
+      "SUBTITULO": "This setting shows or hides the banner that appears on some screens of the application."
+    },
+    "OPCION_NOTIFICACION": {
+      "TITULO": "Notifications",
+      "SUBTITULO": "This setting allows you to configure notifications."
+    },
+    "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D."
   }
 }

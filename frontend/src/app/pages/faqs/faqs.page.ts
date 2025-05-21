@@ -30,11 +30,13 @@ import { VentanaDudasComponent } from "../../components/ventana-dudas/ventana-du
 export class FaqsPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
+  mostrarJumbotron = true;
 
   constructor() {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    this.loadJumbotronSetting();
     if (
       this.userData &&
       Object.keys(this.userData).length > 0 &&
@@ -44,5 +46,10 @@ export class FaqsPage implements OnInit {
     } else {
       this.userLoggedIn = false;
     }
+  }
+
+    loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
   }
 }

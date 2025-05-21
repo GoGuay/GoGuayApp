@@ -7,49 +7,61 @@
         <form>
           <div class="contenido_formulario">
             <div class="input-container">
-              <mat-icon class="input-icon">location_on</mat-icon>
-              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_DONDE_COMIENZA' | translate }}"
-                class="input-viaje form-control" [(ngModel)]="origen" name="origen"
-                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasOrigen($event)" />
-              <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadOrigen(localidad)">
-                  {{ localidad.display_name }} - {{ localidad.city }}
+              <img src="../../../../assets/sistema/marcador.png" class="marcador-icon input-icon">
+              <input [(ngModel)]="origen" (input)="buscarSugerenciasOrigen($event)"
+                placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control" name="origen">
+              <div *ngIf="cargandoOrigen" class="spinner-container">
+                <app-spinner></app-spinner>
+              </div>
+              <ul *ngIf="!cargandoOrigen && funcionesComunes.sugerenciasOrigen.length > 0"
+                class="list-group lista_sugerencias">
+                <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen"
+                  (click)="seleccionarLocalidadOrigen(sugerencia)" [ngClass]="{'list-group-item': true}">
+                  {{ sugerencia.display_name }}
                 </li>
               </ul>
             </div>
 
             <div class="input-container">
-              <mat-icon class="input-icon">location_on</mat-icon>
-              <input type="text" placeholder="{{ 'NUEVOVIAJE.PLACE_HASTA_DONDE' | translate }}"
-                class="input-viaje form-control" [(ngModel)]="destino" name="destino"
-                [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasDestino($event)" />
-                <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
-                  (click)="seleccionarLocalidadDestino(localidad)">
-                  {{ localidad.display_name }} - {{ localidad.city }}
+              <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon">
+              <input [(ngModel)]="destino" (input)="buscarSugerenciasDestino($event)"
+                placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control" name="destino">
+              <div *ngIf="cargandoDestino" class="spinner-container">
+                <app-spinner></app-spinner>
+              </div>
+
+              <ul *ngIf="!cargandoDestino && funcionesComunes.sugerenciasDestino.length > 0"
+                class="list-group lista_sugerencias">
+                <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino"
+                  (click)="seleccionarLocalidadDestino(sugerencia)" [ngClass]="{'list-group-item': true}">
+                  {{ sugerencia.display_name }}
                 </li>
               </ul>
             </div>
-
+            
+            <div >
             <ion-select aria-label="n_personas" placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"
               class="input-viaje form-control custom-select" [(ngModel)]="plazas" name="viajeros"
-              [ngModelOptions]="{standalone: true}">
+              [ngModelOptions]="{standalone: true}" interface="popover">
               <mat-icon slot="start">
-                <span class="material-symbols-outlined"> group </span>
+                <img src="../../../../assets/sistema/usuarios-alt.png" class="input-icon">
               </mat-icon>
               <ion-select-option value="1">1</ion-select-option>
               <ion-select-option value="2">2</ion-select-option>
               <ion-select-option value="3">3</ion-select-option>
               <ion-select-option value="4">4</ion-select-option>
             </ion-select>
+            </div>
+
+
+
             <div class="alert" *ngIf="!userLoggedIn">
               <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
               <div class="d-flex justify-content-center">
                 <button type="button" class="help_btn d-flex justify-content-center"
                   title="Ayuda para iniciar sesión / registrarse"
                   (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
-                  <mat-icon>help</mat-icon>
+                  <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon">
                 </button>
               </div>
             </div>
@@ -59,7 +71,7 @@
                 <button type="button" class="help_btn d-flex justify-content-center"
                   title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
                   (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)">
-                  <mat-icon>help</mat-icon>
+                  <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon">
                 </button>
               </div>
             </div>

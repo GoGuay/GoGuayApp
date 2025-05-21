@@ -4,7 +4,7 @@
     <h1>Fija el precio por plaza</h1>
     <span class="recommend"> Precio recomendado: 5€ - 8€ </span>
     <br>
-    <span class="recommend_info"> Conseguirás pasajeros más fácilmente si no abusas del precio </span>
+    <span class="recommend_info"> Conseguirás pasajeros más fácilmente si no abusas del precio. </span>
   </div>
 
   <div class="container d-flex justify-content-center">
@@ -12,7 +12,7 @@
       <button class="precio_btn" (click)="restarCantidad()" [disabled]="precio <= 3">-</button>
       <span class="font_precio" [ngStyle]="{ color: getprecioColor() }">{{ precio }}</span> <span class="currency">€</span>
       <button class="precio_btn" (click)="sumarCantidad()" [disabled]="precio >= initialValue * 2">+</button>
-      <mat-icon class="help-icon" matTooltip="Recuerda poner un precio justo a tu viaje." matTooltipClass="custom-tooltip">question_mark</mat-icon>
+      <mat-icon class="help-icon" matTooltip="Recuerda poner un precio justo a tu viaje." matTooltipClass="custom-tooltip" (click)="ayudaPrecio()">question_mark</mat-icon>
     </div>
     <p-toast position="bottom-center"></p-toast>
   </div>
