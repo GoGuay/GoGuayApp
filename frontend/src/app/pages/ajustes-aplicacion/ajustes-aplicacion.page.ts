@@ -7,6 +7,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MatDividerModule } from '@angular/material/divider';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -14,7 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule]
 })
 export class AjustesAplicacionPage implements OnInit {
 

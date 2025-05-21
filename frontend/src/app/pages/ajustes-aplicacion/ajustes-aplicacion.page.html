@@ -4,41 +4,45 @@
   <div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
     <div class="container text-center d-flex flex-column align-items-center">
 
-      <h1 class="mb-4">Ajustes <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif"></h1>
+      <h1 class="mb-4">{{ "AJUSTESAPP.TITULO" | translate }} <img class="ajustIcon"
+          src="../../../assets/sistema/ajustes.gif"></h1>
 
-      <p>Espacio para ajustar la aplicación</p>
+      <p>{{ "AJUSTESAPP.SUITTULO_1" | translate }}</p>
       <!-- Sección de selección de idioma -->
       <div class="box-section">
-        <h3>Selección de idioma</h3>
+        <h3>{{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}</h3>
         <mat-divider></mat-divider>
-        <p class="mt-2 text-start">Este ajuste te permite modificar el idioma de la aplicación.</p>
-        <select class="form-select" aria-label="Selecciona un idioma" (change)="changeLanguage($event)">
-          <option selected disabled>Selecciona un idioma</option>
-          <option value="es">Español</option>
-          <option value="en">Inglés</option>
-        </select>
+        <p class="mt-2 text-start">{{ "AJUSTESAPP.OPCION_IDIOMA.SUBTITULO" | translate }}</p>
+        <div class="d-flex justify-content-center">
+          <select class="form-select selectIdiomas" aria-label="Selecciona un idioma" (change)="changeLanguage($event)">
+            <option selected disabled>{{ "AJUSTESAPP.OPCION_IDIOMA.OPTION_DEFAULT" | translate }}</option>
+            <option value="es">{{ "AJUSTESAPP.OPCION_IDIOMA.ESPAÑOL" | translate }}</option>
+            <option value="en">{{ "AJUSTESAPP.OPCION_IDIOMA.INGLES" | translate }}</option>
+          </select>
+        </div>
+
       </div>
 
       <!-- Sección de mostrar banner -->
       <div class="box-section">
-        <h3>Mostrar banner</h3>
+        <h3>{{ "AJUSTESAPP.OPCION_BANNER.TITULO" | translate }}</h3>
         <mat-divider></mat-divider>
-        <p class="mt-2 text-start">Este ajuste oculta o muestra el banner que aparece en algunas pantallas de la
-          aplicación.</p>
+        <p class="mt-2 text-start">{{ "AJUSTESAPP.OPCION_BANNER.SUBTITULO" | translate }}</p>
         <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="guardarAjustes()"></ion-toggle>
       </div>
 
       <!-- Sección de notificaciones -->
       <div class="box-section">
-        <h3>Notificaciones</h3>
+        <h3>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
         <mat-divider></mat-divider>
-        <p class="mt-2 text-start">Este ajuste te permite configurar las notificaciones.</p>
+        <p class="mt-2 text-start">{{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}</p>
         <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
       </div>
 
       <!-- Mensaje de confirmación de los cambios -->
       <p-toast position="bottom-center"></p-toast>
-      <p class="info-text">Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D. </p>
+      <p class="info-text">{{ "AJUSTESAPP.DERECHOS_TXT" | translate }} <img class="icon_logo"
+          src="../../../assets/logo/PRIDECAR.png"></p>
     </div>
   </div>
 </ion-content>

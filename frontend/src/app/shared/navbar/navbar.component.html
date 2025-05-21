@@ -80,7 +80,6 @@
                   data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
                   <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"
                     src="../../../assets/user/logOn.gif">
-                  <!-- <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon> -->
                   <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                     <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
                   </div>
@@ -89,17 +88,17 @@
                 </a>
 
                 <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-                  <li class="perfil nav-item dropdown">
+                  <!-- <li class="perfil nav-item dropdown">
                     <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
-                  </li>
+                  </li> -->
                   <nav class="nav nav-pills flex-column">
                     <ul>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
                       </li>
-                      <li class="perfil nav-item dropdown">
+                      <!-- <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
-                      </li>
+                      </li> -->
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                       </li>
@@ -109,6 +108,12 @@
                       </li>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                      </li>
+                      <li class="perfil nav-item dropdow">
+                        <a class="nav-link ms-3" href="/ajustes-aplicacion">
+                          <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                          {{ "NAVBAR.AJUSTES" | translate }}
+                        </a>
                       </li>
                     </ul>
                   </nav>
@@ -196,17 +201,17 @@
               </a>
 
               <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-                <li class="perfil nav-item dropdown">
+                <!-- <li class="perfil nav-item dropdown">
                   <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
-                </li>
+                </li> -->
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
-                    <li class="perfil nav-item dropdown">
+                    <!-- <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
-                    </li>
+                    </li> -->
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                     </li>
@@ -216,6 +221,12 @@
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdow">
+                      <a class="nav-link ms-3" href="/ajustes-aplicacion">
+                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                        {{ "NAVBAR.AJUSTES" | translate }}
+                      </a>
                     </li>
                   </ul>
                 </nav>
