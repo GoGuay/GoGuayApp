@@ -122,3 +122,28 @@
 
 }
 
+.img-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.edit_btn{
+  height: 15px;
+  width: 15px;
+}
+
+.boton-foto {
+  position: absolute;
+  top: 17.5%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  height: 40px;
+  width: auto;
+}

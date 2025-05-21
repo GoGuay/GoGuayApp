@@ -29,7 +29,6 @@ import { ToastModule } from 'primeng/toast';
     TranslateModule,
     MatDivider,
     NavbarComponent,
-    MatIcon,
     TablaVehiculosComponent,
     VistaAcordeonVehiculosComponent,
     ToastModule,
@@ -63,6 +62,9 @@ export class MiPerfilPage implements OnInit {
     this.fechaNacimientoEditada
   );
   lang: string = '';
+
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
+  usuario: Usuario = {} as Usuario;
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -105,6 +107,12 @@ export class MiPerfilPage implements OnInit {
     this.actualizarEdad();
   }
 
+  obtenerUsuarioPorID(id_usuario: number) {
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.usuario = resultadoUsuario;
+    });
+  }
+  
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
