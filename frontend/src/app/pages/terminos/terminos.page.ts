@@ -19,6 +19,7 @@ export class TerminosPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaActual: string = '';
+  email: string = 'gestion.prideride@gmail.com';
 
   constructor() { }
 

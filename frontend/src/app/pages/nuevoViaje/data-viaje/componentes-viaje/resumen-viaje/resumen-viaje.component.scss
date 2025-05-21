@@ -50,7 +50,7 @@ ul li {
 .box_img {
   border-radius: 15px;
   width: 100%;
-  max-width: 400px;
+  // max-width: 400px;
   height: auto;
   border: 1px solid #b3b5e6;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
@@ -66,10 +66,10 @@ ul li {
     padding: 6px 12px;
   }
 
-  .box_img {
-    width: 80%;
-    max-width: 250px;
-  }
+  // .box_img {
+  //   width: 80%;
+  //   max-width: 250px;
+  // }
 
   .box_info {
     height: auto;
@@ -102,4 +102,21 @@ input {
   border-radius: 35px;
   font-size: 1rem;
   box-sizing: border-box;
+}
+
+.btn-rounded {
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(0, 0, 0);
+  transition: background-color 0.3s;
+}
+
+/* Alinear el ícono */
+.btn-rounded mat-icon {
+  font-size: 24px;
 }

@@ -1,12 +1,12 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'newTravel'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/folder/jumbo.jpg'" [helpText]="'JUMBOTRON.HELP'">
-  </app-jumbotron>
+  <div *ngIf="mostrarJumbotron">
+    <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/folder/jumbo.jpg'"
+      [helpText]="'JUMBOTRON.HELP'">
+    </app-jumbotron>
+  </div>
+
   <div class="mt-3">
     <!-- COMPONENTE DEL BUSCADOR DE VIAJES -->
     <div class="buscador_box">

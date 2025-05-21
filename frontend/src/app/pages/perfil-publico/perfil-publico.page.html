@@ -62,8 +62,10 @@
           <div class="col-12 col-md-6">
             <div class="container ms-3">
               <label class="mb-3"><strong>Biografía: </strong></label>
-              <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
-              <p *ngIf="!usuario?.biografia">Aún no tienes biografía.</p>
+              <div class="biografia-container">
+                <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
+                <p *ngIf="!usuario?.biografia">Aún no tienes biografía.</p>
+              </div>
             </div>
           </div>
           <div class="col-12 col-md-6">

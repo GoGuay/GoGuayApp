@@ -33,16 +33,16 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 export class BusquedaViajesPage implements OnInit {
 
   userLoggedIn: boolean = false;
-  
 
+  mostrarJumbotron = true;
   /** Objeto para guardar los parámetros que vienen en la URL */
   busquedaParams: any = {};
 
-  constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes) {}
+  constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes) { }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-
+    this.loadJumbotronSetting();
     /**
      * Aquí se obtienen los datos de los parámetros de la URL.
      */
@@ -50,5 +50,10 @@ export class BusquedaViajesPage implements OnInit {
       this.busquedaParams = params;
       console.log('Parámetros recibidos:', this.busquedaParams);
     });
+  }
+
+  loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
   }
 }

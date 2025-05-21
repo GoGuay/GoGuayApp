@@ -6,12 +6,12 @@
     "fecha_salida": "2025-04-27T11:16:00",
     "precio_viaje": 4,
     "coche": {
-        "color": "rojo",
-        "id": 1,
-        "marca": "Renault",
-        "matricula": "1234SDE",
-        "modelo": "Austral",
-        "usuario_id": 1
+        "color": "verde",
+        "id": 6,
+        "marca": "Golf",
+        "matricula": "2222EEE",
+        "modelo": "Golf",
+        "usuario_id": 3
     },
     "ruta_seleccionada": {
         "routes": [

@@ -1,5 +1,6 @@
 .btn_opciones {
   width: 265px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 .delete-icon{
@@ -120,4 +121,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.help_btn{
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.icons{
+  width: 24px;
+  height: 24px;
 }

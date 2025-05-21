@@ -18,7 +18,6 @@
     "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
-
   "__MiPerfil": " OK OK OK OK OK OK Modal de Mi perfil y componente mi perfil",
   "MIPERFIL": {
     "MI_PERFIL": "Mi perfil",
@@ -53,7 +52,6 @@
     "DORMIR": "Dormir",
     "SILENCIO": "Silencio"
   },
-
   "__Vehículos": " OK OK OK OK OK OK OK Marca, modelo y colores",
   "VEHICULOS": {
     "MIS_VEHICULOS": "Mis vehículos",
@@ -79,7 +77,6 @@
     "SELECTOR_MODELO": "Selección de modelo",
     "SELECTOR_COLOR": "Color"
   },
-
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
@@ -92,7 +89,6 @@
     "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
     "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
   },
-
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil",
   "VERIF_PERFIL": {
     "TITULO": "Verificar perfil / Cambiar la contraseña",
@@ -121,7 +117,6 @@
     "ELIMINAR_CTA": "Eliminar la cuenta",
     "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente. Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
   },
-
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
   "SALDO": {
     "SALDOTRANSF": "Saldo y transferencias",
@@ -151,7 +146,6 @@
     "TRANS_CONCEPTO": "Transferencia a cuenta",
     "SALDO": "Saldo"
   },
-
   "__Pronombres": "Selectores de pronombre",
   "SELEC_PRONOMBRE": {
     "SELECCIONA": "Selecciona tu pronombre",
@@ -159,7 +153,6 @@
     "OTROS": "Otros",
     "NO_RESPONDE": "Prefiero no responder"
   },
-
   "__Género": "Selectores de género",
   "SELEC_GENERO": {
     "SELECCIONA": "Selecciona tu género",
@@ -172,7 +165,6 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
-
   "__Orientación": "Selectores de orientación",
   "ORIENTACION": {
     "SELECCIONA": "Selecciona tu orientación",
@@ -186,7 +178,6 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
-
   "__Botones": "Modal de Mi perfil y componente mi perfil",
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
@@ -204,7 +195,6 @@
     "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
-
   "NavBar Home": "Opciones del navbar que aparece en el Home",
   "NAVBAR": {
     "QUIENES": "Quienes somos",
@@ -221,15 +211,14 @@
     "REGISTRO": "Registrarse",
     "SALIR": "Salir",
     "IDIOMA_ESPANIOL": "Español",
-    "IDIOMA_INGLES": "Inglés"
+    "IDIOMA_INGLES": "Inglés",
+    "AJUSTES": "Ajustes"
   },
-
   "_Footer": "Links del footer",
   "FOOTER": {
     "TERMS": "Términos y condiciones",
     "COOKIES": "Cookies"
   },
-
   "_Home": "Por secciones",
   "HOME": {
     "JUMBO": {
@@ -252,7 +241,6 @@
     "DUDAS": "¿TIENES DUDAS?",
     "QUIERES_BUSCAR_VIAJE": "¿Quieres buscar un viaje?"
   },
-
   "_Búsqueda de viaje": "/busqueda-viajes",
   "BUSQUEDA": {
     "FILTRAR_POR": "Filtrar por...",
@@ -263,7 +251,6 @@
     "PRECIO_DESC": "Precio (Descendente)",
     "RESULTADOS": "Resultados encontrados"
   },
-
   "_NuevoViaje": "/nuevo-viaje",
   "NUEVOVIAJE": {
     "PLACE_DONDE_COMIENZA": "¿Dónde comienza el viaje?",
@@ -277,15 +264,12 @@
     "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
     "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
   },
-
   "_CentroDeAyuda": " Centro de ayuda",
   "CENTRODEAYUDA": {
     "TITULO": "Centro de ayuda",
     "SUBTITULO": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte"
   },
-
   "ANTIGUO DEBAJO": "",
-
   "NUEVO_VIAJE2": {
     "TITLE_BTN_BACK": "PrideRide",
     "ALT_LOGO": "Logotipo de PrideRide",
@@ -299,5 +283,26 @@
     "PUBLISH_TRIP_TITLE": "Botón para publicar viaje",
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
+  },
+  "_AjustesAplicacion": "/ajustes-aplicacion",
+  "AJUSTESAPP": {
+    "TITULO": "Ajustes",
+    "SUITTULO_1": "Espacio para ajustar la aplicación",
+    "OPCION_IDIOMA": {
+      "TITULO": "Selección de idioma",
+      "SUBTITULO": "Este ajuste te permite modificar el idioma de la aplicación.",
+      "OPTION_DEFAULT": "Selecciona un idioma",
+      "ESPAÑOL": "Español",
+      "INGLES": "Inglés"
+    },
+    "OPCION_BANNER": {
+      "TITULO": "Mostrar banner",
+      "SUBTITULO": "Este ajuste oculta o muestra el banner que aparece en algunas pantallas de la aplicación."
+    },
+    "OPCION_NOTIFICACION": {
+      "TITULO": "Notificaciones",
+      "SUBTITULO": "Este ajuste te permite configurar las notificaciones."
+    },
+    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
   }
 }

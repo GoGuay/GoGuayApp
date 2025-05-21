@@ -20,4 +20,8 @@ export class LanguageService {
     localStorage.setItem('language', lang);
     this.languageSubject.next(lang);
   }
+
+  getLanguage(): string {
+    return this.languageSubject.getValue();
+  }
 }

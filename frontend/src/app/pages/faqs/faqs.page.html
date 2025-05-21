@@ -1,16 +1,12 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'newTravel'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <app-jumbotron
-    [title]="'Un espacio seguro para compartir cada kilómetro.'"
-    [imageSrc]="'../../assets/folder/jumbo3.jpg'"
-    [helpText]="'JUMBOTRON.HELP'"
-  >
-  </app-jumbotron>
+  <div *ngIf="mostrarJumbotron">
+    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
+      [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'">
+    </app-jumbotron>
+  </div>
+
   <div class="container">
     <div class="d-flex justify-content-center mb3">
       <h1>FAQ´s - PREGUNTAS FRECUENTES</h1>
@@ -55,6 +51,6 @@
   <div class="container d-flex justify-content-center">
     <app-ventana-dudas></app-ventana-dudas>
   </div>
- 
+
 
 </ion-content>

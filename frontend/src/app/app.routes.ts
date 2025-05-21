@@ -141,4 +141,18 @@ export const routes: Routes = [
         (m) => m.VerificarEmailPage
       ),
   },
+  {
+    path: 'encuesta-satisfaccion',
+    loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(m => m.EncuestaSatisfaccionPage)
+  },
+  {
+    path: 'centro-contacto',
+    loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then(m => m.CentroContactoPage)
+  },  {
+    path: 'ajustes-aplicacion',
+    loadComponent: () => import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then( m => m.AjustesAplicacionPage)
+  },
+
+
+
 ];

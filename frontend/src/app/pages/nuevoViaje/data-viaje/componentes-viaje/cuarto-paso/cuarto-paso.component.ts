@@ -52,9 +52,11 @@ export class CuartoPasoComponent implements OnInit {
 
   onCuartoPasoComplete() {
     const errores: string[] = [];
-    // const viajeData = this.travelService.getViajeData();
-    const viajeData = this.viajeMock;
+    const viajeData = this.travelService.getViajeData();
+    // const viajeData = this.viajeMock;
     console.log('VIAJE MOCK: ', this.viajeMock);
+    console.log('VIAJE: ', viajeData);
+
     
     if (!viajeData) {
       errores.push('viajeData');
@@ -198,5 +200,17 @@ export class CuartoPasoComponent implements OnInit {
     } else {
       return '#e74c3c'; // rojo
     }
+  }
+
+  /**
+   * Función para mostrar un mensaje emergente de ayuda al usuario.
+   */
+  ayudaPrecio(){
+    this.messageService.add({
+      severity: 'warn',
+      summary: '¡Selección de precio por plaza!',
+      detail: `Selecciona un precio justo para la plaza libre en tu viaje. Intenta no sobrepasarte en el precio para que sea más fácil encontrar acompañantes para tu viaje.`,
+      life: 3000
+    });
   }
 }

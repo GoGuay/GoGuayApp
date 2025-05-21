@@ -9,5 +9,6 @@ class Config:
     JWT_HEADER_NAME = "Authorization"
     JWT_HEADER_TYPE = "Bearer"
     SQLALCHEMY_DATABASE_URI = 'sqlite:///prideride.db'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///backend/BBDD/prideride.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

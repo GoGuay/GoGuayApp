@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from "../../../../../components/spinner/spinner.component";
@@ -12,7 +11,7 @@ import { SpinnerComponent } from "../../../../../components/spinner/spinner.comp
 @Component({
   selector: 'app-segundo-paso',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, MatIcon, MatButtonModule, SpinnerComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, MatButtonModule, SpinnerComponent],
   templateUrl: './segundo-paso.component.html',
   styleUrls: ['./segundo-paso.component.scss'],
 })

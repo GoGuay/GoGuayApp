@@ -6,28 +6,31 @@
 
 <ion-content [fullscreen]="true">
   <div class="container">
-    <h6>Introducción</h6>
-    <p>En PrideRide, utilizamos cookies para garantizar el correcto funcionamiento de nuestro sitio web y mejorar tu
-      experiencia como usuario. Esta política explica qué son las cookies, cuáles utilizamos, y cómo puedes
-      gestionarlas.</p>
-    <h6>Qué son las cookies</h6>
-    <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Estas
-      ayudan a recordar tus preferencias, recolectar datos estadísticos y personalizar contenido.</p>
-    <h6>Tipos de Cookies que Usamos</h6>
-    <ul>
-      <li>Esenciales: Necesarias para el funcionamiento básico del sitio.</li>
-      <li>Analíticas: Para recopilar información sobre cómo usas nuestro sitio y mejorar su rendimiento.</li>
-      <li>De personalización: Permiten recordar tus preferencias, como idioma o configuración de tema.</li>
-      <li>De terceros: Utilizadas por servicios externos, como Google Analytics o redes sociales.</li>
-    </ul>
-    <h6>Gestión de Cookies</h6>
-    <p>Puedes aceptar, rechazar o modificar tus preferencias de cookies a través de nuestro panel de gestión. También
-      puedes configurarlas directamente desde tu navegador.</p>
-    <h6>Contacto</h6>
-    <p>Si tienes dudas sobre el uso de cookies en nuestro sitio, contáctanos en [correo].</p>
+    <h2>Introducción</h2>
+    <mat-divider></mat-divider>
+    <div class="container mt-2">
+      <p>En PrideRide, utilizamos cookies para garantizar el correcto funcionamiento de nuestro sitio web y mejorar tu
+        experiencia como usuario. Esta política explica qué son las cookies, cuáles utilizamos, y cómo puedes
+        gestionarlas.</p>
+      <h6>Qué son las cookies</h6>
+      <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Estas
+        ayudan a recordar tus preferencias, recolectar datos estadísticos y personalizar contenido.</p>
+      <h6>Tipos de Cookies que Usamos</h6>
+      <ul>
+        <li>Esenciales: Necesarias para el funcionamiento básico del sitio.</li>
+        <li>Analíticas: Para recopilar información sobre cómo usas nuestro sitio y mejorar su rendimiento.</li>
+        <li>De personalización: Permiten recordar tus preferencias, como idioma o configuración de tema.</li>
+        <li>De terceros: Utilizadas por servicios externos, como Google Analytics o redes sociales.</li>
+      </ul>
+      <h6>Gestión de Cookies</h6>
+      <p>Puedes aceptar, rechazar o modificar tus preferencias de cookies a través de nuestro panel de gestión. También
+        puedes configurarlas directamente desde tu navegador.</p>
+      <h6>Contacto</h6>
+      <p>Si tienes dudas sobre el uso de cookies en nuestro sitio, contáctanos en <a href="">{{ correo }}</a>.</p>
+    </div>
   </div>
 
-  <div class="cookie-panel container" *ngIf="showPanel">
+  <div class="cookie-panel container mb-3" *ngIf="showPanel">
     <h2>Configuración de Cookies</h2>
     <p>Usamos cookies para mejorar tu experiencia en nuestra aplicación. Puedes personalizar tu configuración a
       continuación:</p>
@@ -56,11 +59,15 @@
       </div>
 
       <div class="actions">
-        <button type="button" mat-raised-button class="btns btn_bg" (click)="rejectAll()">
-          Rechazar Todo
+        <button type="button" mat-raised-button class="btns" (click)="rejectAll()">
+          Rechazar todo
+        </button>
+        <button type="button" mat-raised-button class="btns btn_bg" (click)="acceptAllCookies()">
+          Aceptar todo
         </button>
         <button mat-raised-button type="submit" class="btns btn_bg">Guardar Preferencias</button>
       </div>
+      <p-toast position="bottom-center"></p-toast>
     </form>
   </div>
 

@@ -63,6 +63,7 @@ export class DataViajePage implements OnInit {
   rutaConParadasSeleccionada = false;
   isUpdatingRoute = false;
   sugerenciasParadas: any[] = [];
+  mostrarJumbotron = true;
 
   constructor(
     private navCtrl: NavController,
@@ -76,9 +77,13 @@ export class DataViajePage implements OnInit {
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+    this.loadJumbotronSetting();
   }
 
-
+    loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+  }
 
 
   /**
