@@ -84,12 +84,12 @@ export class VerificacionesPerfilPage implements OnInit {
       });
   }
 
-  enviar_sms(telefono: string) {
-    const teléfonoConPrefijo = '+93' + telefono;
-    this.userService.enviar_sms(teléfonoConPrefijo).subscribe((respuesta) => {
-      console.log('Respuesta: ', respuesta);
-    });
-  }
+  // enviar_sms(telefono: string) {
+  //   const teléfonoConPrefijo = '+93' + telefono;
+  //   this.userService.enviar_sms(teléfonoConPrefijo).subscribe((respuesta) => {
+  //     console.log('Respuesta: ', respuesta);
+  //   });
+  // }
 
   // Función para subir la foto delantera del documento de identidad
   fotoDocumentoDelantera(event: Event) {

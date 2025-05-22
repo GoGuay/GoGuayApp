@@ -295,6 +295,11 @@ def actualizar_imagen_cabecera(user_id):
     return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200
 
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#    FOTOS DE DOCUMENTOS DNI / CARNET DE CONDUCIR     #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 # Función para que el usuario suba la foto DELANTERA del documento de IDENTIDAD
 @user_blueprint.route('/subirfoto_documentodelantera/<int:user_id>', methods=['PUT'])
 def subirfoto_documentodelantera(user_id):
