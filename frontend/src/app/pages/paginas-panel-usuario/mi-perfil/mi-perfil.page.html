@@ -18,16 +18,32 @@
         <div class="container d-flex justify-content-center">
           <div class="row">
             <div class="col">
-              <div class="boton-foto">
-                <button type="button" class="btn btn_bg boton">
-                  <img class="edit_btn" src="../../../../assets/sistema/editar.png">
+              <div class="boton-foto" (click)="fileInputPerfil.click()">
+                <button type="button" class="btn btn_bg boton" matTooltip="Botón para añadir una foto de perfil">
+                  <img class="edit_btn" src="../../../../assets/sistema/agregar.png">
                 </button>
+                <input type="file" #fileInputPerfil accept="image/*" (change)="subirFotoPerfil($event)"
+                  style="display: none;">
               </div>
-
             </div>
             <div class="col">
               <div class="img-container">
-                <img class="img_profile" [src]="imagenPerfilSrc" alt="Perfil" *ngIf="!usuario?.usuario?.fotoPerfil">
+                <img class="img_profile" [src]="imagenPerfilSrc" alt="Imagen de perfil del usuario por defecto"
+                  *ngIf="!usuario?.fotoPerfil">
+                <img class="img_profile" [src]="usuario?.fotoPerfil" alt="Imagen de perfil del usuario"
+                  *ngIf="usuario?.fotoPerfil">
+                <div class="overlay" *ngIf="cargando">
+                  <app-spinner></app-spinner>
+                </div>
+                <p-toast position="bottom-center"></p-toast>
+              </div>
+            </div>
+            <div class="col">
+              <div class="boton-eliminar-foto">
+                <button type="button" class="btn btn_bg boton btn_delete"
+                  matTooltip="Botón para eliminar la foto actual de perfil" (click)="eliminarFotoPerfil()">
+                  <img class="edit_btn" src="../../../../assets/sistema/cruz.png">
+                </button>
               </div>
             </div>
           </div>

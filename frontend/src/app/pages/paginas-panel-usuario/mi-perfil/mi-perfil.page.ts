@@ -6,16 +6,15 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
-import { MatIcon } from '@angular/material/icon';
 import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 import { VistaAcordeonVehiculosComponent } from '../../../components/tabla-vehiculos/vista-acordeon-vehiculos/vista-acordeon-vehiculos.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 
 @Component({
   selector: 'app-mi-perfil',
@@ -32,6 +31,8 @@ import { ToastModule } from 'primeng/toast';
     TablaVehiculosComponent,
     VistaAcordeonVehiculosComponent,
     ToastModule,
+    MatTooltipModule,
+    SpinnerComponent
   ],
 
   providers: [MessageService],
@@ -61,10 +62,12 @@ export class MiPerfilPage implements OnInit {
   edad: number = this.funcionesUsuario.calcularEdad(
     this.fechaNacimientoEditada
   );
-  lang: string = '';
+  lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
 
-  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
-  usuario: Usuario = {} as Usuario;
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
+  usuario: any = {} as Usuario;
+  imagenPerfilUsuario: string = ''; // Variable para almacenar la imagen seleccionada por el usuario.
+  cargando = false; // Variable que se utiliza para mostrar el spinner de carga
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -88,8 +91,6 @@ export class MiPerfilPage implements OnInit {
     window.addEventListener('resize', () => this.checkScreenSize());
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-    console.log('Datos usuario: ', this.userData);
-
     this.nombreEditado = this.userData.usuario.nombre;
     this.apellidosEditados = this.userData.usuario?.apellidos;
     this.pronombreEditado = this.userData.usuario?.pronombre || '';
@@ -105,6 +106,7 @@ export class MiPerfilPage implements OnInit {
     });
 
     this.actualizarEdad();
+    this.obtenerUsuarioPorID(this.userData.usuario.id);
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
@@ -112,7 +114,7 @@ export class MiPerfilPage implements OnInit {
       this.usuario = resultadoUsuario;
     });
   }
-  
+
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
@@ -276,6 +278,37 @@ export class MiPerfilPage implements OnInit {
 
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
   }
+
+  subirFotoPerfil(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cargando = true;
+    if (input.files && input.files[0]) {
+      const formData = new FormData();
+      formData.append('imagenPerfil', input.files[0]);
+
+      const usuarioId = this.userData.usuario.id;
+
+      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
+        next: (response) => {
+          this.cargando = false;
+          if (response && response.nuevaUrl) {
+            this.imagenPerfilUsuario = response.nuevaUrl;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Datos guardados',
+              detail: 'La imagen de perfil se ha actualizado correctamente.',
+            });
+          }
+          this.obtenerUsuarioPorID(usuarioId);
+        },
+        error: (error) => {
+          console.error('Error al actualizar la imagen del perfil:', error);
+        }
+      });
+    }
+  }
+
+  eliminarFotoPerfil() { }
 
   // numeroALetras(valor: number | string, lang: string): string {
 
