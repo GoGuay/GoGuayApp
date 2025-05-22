@@ -1,5 +1,5 @@
 export interface Usuario {
-  access_token: string;
+  access_token?: string;
   usuario: {
     id: number;
     nombre: string;

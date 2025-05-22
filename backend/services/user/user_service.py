@@ -158,16 +158,15 @@ def actualizar_usuario(user_id):
     data = request.json
     print('Data recibida: ', data)
 
-    # Iterar sobre los campos posibles para actualizar
     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros']:
-        if key in data and data[key] is not None:  # Asegúrate de que el campo esté presente y no sea None
+        if key in data and data[key] is not None:  
             if key == 'fecha_nacimiento' and data[key]:
-                setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  # Para 'fecha_nacimiento', conviértelo a datetime
+                setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  
             else:
-                setattr(usuario, key, data[key])  # Para el resto de los campos, asignar directamente el valor
+                setattr(usuario, key, data[key])  
     
-    db.session.commit()  # Guardar los cambios en la base de datos
-    return jsonify(usuario.serialize()), 200  # Devolver el usuario actualizado
+    db.session.commit()  
+    return jsonify(usuario.serialize()), 200 
 
 
 # # # # # # # # # # # # # # # # # # # #
@@ -175,7 +174,9 @@ def actualizar_usuario(user_id):
 # # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
 def eliminar_usuario(id):
+    print('id ', id)
     usuario = Usuario.query.get(id)
+    print('usuario: ', usuario)
     
     if usuario is None:
         return jsonify({"error": "No se ha encontrado al usuario"}), 404

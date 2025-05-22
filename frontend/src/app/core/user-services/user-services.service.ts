@@ -70,15 +70,8 @@ export class UserServicesService {
    * @param id ID del usuario a eliminar.
    * @returns Observable con la respuesta del backend.
    */
-  eliminarUsuario(id: string): Observable<Usuario> {
-    return this.http
-      .delete<Usuario>(`${this.apiUrl}/user/eliminar_usuario/${id}`)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          console.error('Error al eliminar el usuario: ', error);
-          return throwError(error);
-        })
-      );
+  eliminarUsuario(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/user/eliminar_usuario/${id}`);
   }
 
   /**
