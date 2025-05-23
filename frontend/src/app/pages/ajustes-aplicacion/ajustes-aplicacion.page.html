@@ -82,8 +82,17 @@
                   type="password"
                   class="form-control w-10"
                   id="cActual"
+                  [(ngModel)]="passwordActual"
+                  name="passwordActual"
+                  (blur)="comprobarContrasena()"
                   aria-label="Campo para escribir la contraseña actual"
                 />
+                <div *ngIf="esValida === true" class="text-success mt-2">
+                  ✅ Contraseña actual verificada correctamente.
+                </div>
+                <div *ngIf="esValida === false" class="text-danger mt-2">
+                  ❌ La contraseña actual es incorrecta.
+                </div>
               </div>
 
               <!-- Nueva contraseña -->

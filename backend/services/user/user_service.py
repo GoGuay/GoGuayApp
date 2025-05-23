@@ -469,3 +469,44 @@ def verificar_email():
     except Exception as e:
         print(f"Error al verificar token: {e}")
         return jsonify({'error': 'Token invalido o expirado'}), 400
+    
+
+# #Verificar si la contraseña actual es la correcta
+@user_blueprint.route('/comprobarpwactual', methods=['POST'])
+def comprobarpwactual():
+    id = request.json.get('id')
+    password = request.json.get('password')
+    print(f"id: {id}")
+    print(f"Password ingresada: {password}")
+
+    usuario = Usuario.query.filter_by(id=id).first()
+
+    if usuario is None:
+        return jsonify({'error:': 'usuario no encontrado'}), 404
+    print (f"Hash de contraseña almacenada: {usuario.password}")
+
+    if check_password_hash(usuario.password, password):
+        return jsonify({'isValid': True}), 200
+    else:
+        return jsonify({'isValid': False}), 401
+    
+
+# Cambio de contraseña desde la ventana de ajustes
+@user_blueprint.route('/cambiopassword/<int:id>', methods=['PUT'])
+def cambiopassword(id):
+    usuario = Usuario.query.get(id)
+    if usuario is None:
+        return jsonify({'error': 'usuario no encontrado'})
+    
+    data = request.json
+    nueva_password = data.get('password')
+
+    if not nueva_password:
+        return jsonify({'La nueva password es requerida'}), 400
+    
+    nueva_password_hash = generate_password_hash(nueva_password)
+    usuario.password = nueva_password_hash
+
+    db.session.commit()
+
+    return jsonify({'mensaje': 'nueva contraseña actualizada con éxito'}), 200

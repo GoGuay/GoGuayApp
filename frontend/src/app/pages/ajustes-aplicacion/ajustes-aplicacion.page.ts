@@ -27,6 +27,7 @@ import { MatDialog } from '@angular/material/dialog';
     ToastModule,
     MatDividerModule,
     TranslateModule,
+    FormsModule,
   ],
 })
 export class AjustesAplicacionPage implements OnInit {
@@ -35,8 +36,12 @@ export class AjustesAplicacionPage implements OnInit {
   notificacionesActivas = true;
   theme = 'light';
   mostrarJumbotron = true;
-
+  password: string = '';
+  passwordActual: string = '';
+  email: string = '';
   userData: Usuario = {} as Usuario;
+  esValida: boolean | null = null;
+  usuarioBD: any = {} as Usuario;
 
   constructor(
     private navCtrl: NavController,
@@ -51,8 +56,16 @@ export class AjustesAplicacionPage implements OnInit {
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
     this.mostrarJumbotron = savedJumbotronSetting === 'true';
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    this.obtenerUsuario();
   }
 
+  obtenerUsuario() {
+    this.userService
+      .obtenerUsuarioPorID(this.userData.usuario.id)
+      .subscribe((respuesta) => {
+        this.usuarioBD = respuesta;
+      });
+  }
   /**
    * Función para guardar los ajustes seleccionados por el usuario
    */
@@ -124,5 +137,23 @@ export class AjustesAplicacionPage implements OnInit {
         this.eliminar_usuario();
       }
     });
+  }
+
+  comprobarContrasena() {
+    console.log('usuariobd', this.usuarioBD);
+    if (!this.passwordActual) return;
+
+    this.userService
+      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual)
+      .subscribe({
+        next: (res) => {
+          this.esValida = res.isValid;
+          console.log('¿Es correcta?', this.esValida);
+        },
+        error: () => {
+          this.esValida = false;
+          console.log('Contraseña incorrecta o error');
+        },
+      });
   }
 }

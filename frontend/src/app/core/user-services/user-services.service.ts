@@ -210,4 +210,15 @@ export class UserServicesService {
         })
       );
   }
+
+  // Verificar contraseña actual del usuario
+  verificar_pw_actual(id: number, password: string) {
+    return this.http.post<{ isValid: boolean }>(
+      `${this.apiUrl}/user/comprobarpwactual`,
+      {
+        id,
+        password,
+      }
+    );
+  }
 }
