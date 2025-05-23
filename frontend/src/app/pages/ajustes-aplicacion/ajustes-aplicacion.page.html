@@ -3,15 +3,15 @@
 <ion-content [fullscreen]="true">
   <div class="container-fluid vh-100">
     <div class="container">
-      <h1 class="mb-4">
+      <h1 class="mb-4 text-center">
         {{ "AJUSTESAPP.TITULO" | translate }}
         <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif" />
       </h1>
 
-      <p>{{ "AJUSTESAPP.SUITTULO_1" | translate }}</p>
+      <p class="text-center">{{ "AJUSTESAPP.SUITTULO_1" | translate }}</p>
       <!-- Sección de selección de idioma -->
       <ion-row>
-        <ion-col size="4">
+        <ion-col size="12" size-md="4">
           <div class="box-section">
             <h3>{{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}</h3>
             <mat-divider></mat-divider>
@@ -20,7 +20,7 @@
             </p>
             <div class="d-flex justify-content-center">
               <select
-                class="form-select selectIdiomas"
+                class="form-select w-75 selectIdiomas"
                 aria-label="Selecciona un idioma"
                 (change)="changeLanguage($event)"
               >
@@ -37,7 +37,8 @@
             </div>
           </div>
         </ion-col>
-        <ion-col size="4">
+
+        <ion-col size="12" size-md="4">
           <!-- Sección de mostrar banner -->
           <div class="box-section">
             <h3>{{ "AJUSTESAPP.OPCION_BANNER.TITULO" | translate }}</h3>
@@ -45,13 +46,15 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_BANNER.SUBTITULO" | translate }}
             </p>
-            <ion-toggle
-              [(ngModel)]="mostrarJumbotron"
-              (ionChange)="guardarAjustes()"
-            ></ion-toggle>
+            <div class="d-flex justify-content-center">
+              <ion-toggle
+                [(ngModel)]="mostrarJumbotron"
+                (ionChange)="guardarAjustes()"
+              ></ion-toggle>
+            </div>
           </div>
         </ion-col>
-        <ion-col size="4">
+        <ion-col size="12" size-md="4">
           <!-- Sección de notificaciones -->
           <div class="box-section">
             <h3>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
@@ -59,24 +62,26 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
             </p>
-            <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
+            <div class="d-flex justify-content-center">
+              <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
+            </div>
           </div>
         </ion-col>
       </ion-row>
 
       <ion-row class="container d-flex justify-content-center">
         <!-- Cambio de contraseña -->
-        <ion-col size="3">
+        <ion-col size="12" size-md="4">
           <div class="box-section-2">
             <div class="text-center mb-2">
               <p class="text-center">
-                <strong>{{ 'VERIF.CAMBIO_CONTRAS' | translate }}</strong>
+                <strong>{{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}</strong>
               </p>
 
               <!-- Contraseña Actual -->
               <div class="mb-4">
                 <label for="passwordActual" class="form-label">
-                  {{'VERIF.CONTRAS_ACTUAL' | translate}}
+                  {{'AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL' | translate}}
                 </label>
                 <input
                   type="password"
@@ -104,7 +109,7 @@
               <!-- Nueva contraseña1 -->
               <div class="mb-3">
                 <label for="nuevaPassword1" class="form-label">
-                  {{'VERIF.NUEVA_CONTRAS' | translate}}
+                  {{'AJUSTESAPP.PASSWORD.NUEVA_CONTRAS' | translate}}
                 </label>
                 <input
                   type="password"
@@ -120,7 +125,7 @@
               <!-- Confirmar nueva contraseña2 -->
               <div>
                 <label for="nuevaPassword2" class="form-label label_nuevapass">
-                  {{'VERIF.CONF_NUEVA_CONTRAS' | translate}}
+                  {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
                 </label>
                 <input
                   type="password"
@@ -159,24 +164,26 @@
           <mat-divider vertical class="mat-divider-2"></mat-divider>
         </div>
 
-        <ion-col size="3">
+        <ion-col size="12" size-md="4">
           <div class="box-section-2">
             <div class="text-center">
               <p class="text-center">
-                <strong>{{ "VERIF.ELIMINAR_CTA" | translate }}</strong>
+                <strong
+                  >{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</strong
+                >
               </p>
               <div>
                 <p
                   class="mt-4"
                   style="color: red; font-weight: bold; text-align: justify"
                 >
-                  {{ "VERIF.INFO_ELIMINAR_CTA" | translate }}
+                  {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}
                 </p>
                 <p
                   class="mt-5 mb-4"
                   style="color: red; font-weight: bold; text-align: justify"
                 >
-                  {{ "VERIF.INFO_ELIMINAR_CTA2" | translate }}
+                  {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA2" | translate }}
                 </p>
                 <div class="d-flex justify-content-center">
                   <button
