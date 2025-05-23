@@ -23,8 +23,10 @@
 }
 
 .boton_guardar {
-  margin-top: 5rem;
+  margin-top: 2rem;
 }
+
+
 
 .btn-primary {
   background-color: #007bff;
@@ -69,4 +71,17 @@
   text-align: center;
   justify-content: center;
   align-content: center;
+}
+
+@media (max-width: 768px) {
+  .box-section {
+    height: 225px;
+    padding: 20px;
+    position: relative;
+    overflow: visible;
+  }
+
+  .boton_guardar {
+    margin-top: 2rem;
+  }
 }

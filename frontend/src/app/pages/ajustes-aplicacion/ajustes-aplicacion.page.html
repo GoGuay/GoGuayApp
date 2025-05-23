@@ -18,7 +18,7 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_IDIOMA.SUBTITULO" | translate }}
             </p>
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center mt-2">
               <select
                 class="form-select w-75 selectIdiomas"
                 aria-label="Selecciona un idioma"
@@ -46,7 +46,7 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_BANNER.SUBTITULO" | translate }}
             </p>
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center mt-4">
               <ion-toggle
                 [(ngModel)]="mostrarJumbotron"
                 (ionChange)="guardarAjustes()"
@@ -62,7 +62,7 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
             </p>
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center mt-4">
               <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
             </div>
           </div>
@@ -124,7 +124,7 @@
 
               <!-- Confirmar nueva contraseña2 -->
               <div>
-                <label for="nuevaPassword2" class="form-label label_nuevapass">
+                <label for="nuevaPassword2" class="form-label mb-1">
                   {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
                 </label>
                 <input
@@ -188,7 +188,7 @@
                 <div class="d-flex justify-content-center">
                   <button
                     type="button"
-                    class="btn btn_bg mt-4"
+                    class="btn btn_bg mt-5"
                     mat-raised-button
                     (click)="modalEliminarUsuario()"
                   >
@@ -210,3 +210,5 @@
     </div>
   </div>
 </ion-content>
+
+<!--TODO: Traducción de mensajes que aparecen en el cambio de contraseña-->

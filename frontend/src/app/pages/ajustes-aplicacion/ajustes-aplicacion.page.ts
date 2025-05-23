@@ -186,7 +186,6 @@ export class AjustesAplicacionPage implements OnInit {
         },
         error: () => {
           this.isPasswordActualValida = false;
-          this.errorMensaje = '❌ Error al verificar la contraseña actual';
         },
       });
   }
