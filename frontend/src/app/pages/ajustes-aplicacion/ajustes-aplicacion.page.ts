@@ -37,11 +37,21 @@ export class AjustesAplicacionPage implements OnInit {
   theme = 'light';
   mostrarJumbotron = true;
   password: string = '';
-  passwordActual: string = '';
+
   email: string = '';
   userData: Usuario = {} as Usuario;
-  esValida: boolean | null = null;
+
   usuarioBD: any = {} as Usuario;
+
+  passwordActual: string = '';
+  esValida: boolean | null = null;
+  nuevaPassword1: string = '';
+  nuevaPassword2: string = '';
+  isPasswordActualValida: boolean | null = null;
+  isNuevaPassword1Valida: boolean = false;
+  isConfirmacionPasswordValida: boolean = false;
+  errorMensaje: string = '';
+  exitoMensaje: string = '';
 
   constructor(
     private navCtrl: NavController,
@@ -139,20 +149,98 @@ export class AjustesAplicacionPage implements OnInit {
     });
   }
 
-  comprobarContrasena() {
-    console.log('usuariobd', this.usuarioBD);
-    if (!this.passwordActual) return;
+  /**FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
+   * Si no hay contraseña actual escrita, corta la función y deja todo en deshabilitado.
+   * Si hay contraseña actual, llama al servicio para comprobar si la contraseña es la correcta del usuario.
+   * Si el backend responde correctamente , actualiza el estado de isPasswordActualValida con true o false.
+   * Si la contraseña NO es válida, muestra error y bloquea los siguientes inputs, si la contraseña SI es válida
+   * sólo limpia el mensaje de error.
+   * Borra el contenido de nuevaPassword1, nuevaPassword2 y deja isNuevaPassword1Valida en false y también isConfirmaciónPasswordValida en false.
+   * Si hay algun otro error (de red, backend...) muestra un mensaje genérico y bloquea el flujo.
+   *
+   */
+  comprobarContrasenaActual() {
+    if (!this.passwordActual) {
+      this.isPasswordActualValida = false;
+      this.errorMensaje = '';
+      return;
+    }
 
     this.userService
       .verificar_pw_actual(this.userData.usuario.id, this.passwordActual)
       .subscribe({
         next: (res) => {
-          this.esValida = res.isValid;
-          console.log('¿Es correcta?', this.esValida);
+          this.isPasswordActualValida = res.isValid;
+
+          if (res.isValid) {
+            this.errorMensaje = '';
+            console.log('✅ Contraseña actual verificada correctamente');
+          } else {
+            this.errorMensaje = '❌ Contraseña actual incorrecta';
+            console.log('❌ Contraseña actual incorrecta');
+          }
+          this.nuevaPassword1 = '';
+          this.nuevaPassword2 = '';
+          this.isNuevaPassword1Valida = false;
+          this.isConfirmacionPasswordValida = false;
         },
         error: () => {
-          this.esValida = false;
-          console.log('Contraseña incorrecta o error');
+          this.isPasswordActualValida = false;
+          this.errorMensaje = '❌ Error al verificar la contraseña actual';
+        },
+      });
+  }
+
+  /**
+   * Si hay nuevaPassword y además es diferente a la actual, habilitamos isNuevaPassword1 y reseteamos el mensaje de error.
+   * De lo contrario, dejamos de nuevoesNuevaPasswor1 en false y lanzamos mensaje de error.
+   * Resetea el campo de nuevaPassword2 para que "obligue" al usuario a escribir algo y valida de nuevo.
+   */
+  validarNuevaPassword() {
+    if (this.nuevaPassword1 && this.nuevaPassword1 !== this.passwordActual) {
+      this.isNuevaPassword1Valida = true;
+      this.errorMensaje = '';
+    } else {
+      this.isNuevaPassword1Valida = false;
+      this.errorMensaje = 'La nueva contraseña debe ser diferente a la actual';
+    }
+    this.nuevaPassword2 = '';
+    this.isConfirmacionPasswordValida = false;
+  }
+
+  /**
+   * Si hay nuevaPassword2 y además es igual que la nuevaPassword1 pone la confirmación en true
+   * DE lo contrario deja la confirmación en false y lanza un mensaje de error
+   */
+  validarConfirmacionPassword() {
+    if (this.nuevaPassword2 && this.nuevaPassword2 === this.nuevaPassword1) {
+      this.isConfirmacionPasswordValida = true;
+      this.errorMensaje = '';
+    } else {
+      this.isConfirmacionPasswordValida = false;
+      this.errorMensaje = 'Las contraseñas no coinciden';
+    }
+  }
+
+  botonCambioPassword() {
+    if (!this.isConfirmacionPasswordValida) return;
+    this.userService
+      .cambio_pw(this.userData.usuario.id, this.nuevaPassword1)
+      .subscribe({
+        next: () => {
+          this.exitoMensaje = 'Contraseña cambiada con éxito';
+          this.errorMensaje = '';
+          this.passwordActual = '';
+
+          this.nuevaPassword1 = '';
+          this.nuevaPassword2 = '';
+          this.isPasswordActualValida = null;
+          this.isNuevaPassword1Valida = false;
+          this.isConfirmacionPasswordValida = false;
+        },
+        error: (err) => {
+          this.errorMensaje = 'Error al cambiar la contraseña';
+          this.exitoMensaje = '';
         },
       });
   }

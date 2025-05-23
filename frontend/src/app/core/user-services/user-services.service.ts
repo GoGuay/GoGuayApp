@@ -221,4 +221,10 @@ export class UserServicesService {
       }
     );
   }
+
+  cambio_pw(id: number, nuevaPassword: string) {
+    return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
+      password: nuevaPassword,
+    });
+  }
 }

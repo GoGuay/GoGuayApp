@@ -75,54 +75,78 @@
 
               <!-- Contraseña Actual -->
               <div class="mb-4">
-                <label for="cActual" class="form-label">
+                <label for="passwordActual" class="form-label">
                   {{'VERIF.CONTRAS_ACTUAL' | translate}}
                 </label>
                 <input
                   type="password"
                   class="form-control w-10"
-                  id="cActual"
+                  id="passwordActual"
                   [(ngModel)]="passwordActual"
-                  name="passwordActual"
-                  (blur)="comprobarContrasena()"
+                  (blur)="comprobarContrasenaActual()"
+                  [disabled]="false"
                   aria-label="Campo para escribir la contraseña actual"
                 />
-                <div *ngIf="esValida === true" class="text-success mt-2">
+                <div
+                  *ngIf="isPasswordActualValida === true"
+                  class="text-success mt-2"
+                >
                   ✅ Contraseña actual verificada correctamente.
                 </div>
-                <div *ngIf="esValida === false" class="text-danger mt-2">
+                <div
+                  *ngIf="isPasswordActualValida === false"
+                  class="text-danger mt-2"
+                >
                   ❌ La contraseña actual es incorrecta.
                 </div>
               </div>
 
-              <!-- Nueva contraseña -->
+              <!-- Nueva contraseña1 -->
               <div class="mb-3">
-                <label for="pNueva" class="form-label">
+                <label for="nuevaPassword1" class="form-label">
                   {{'VERIF.NUEVA_CONTRAS' | translate}}
                 </label>
                 <input
                   type="password"
                   class="form-control w-10"
-                  id="pNueva"
+                  id="nuevaPassword1"
+                  [(ngModel)]="nuevaPassword1"
+                  [disabled]="!isPasswordActualValida"
+                  (input)="validarNuevaPassword()"
                   aria-label="Campo para escibir la nueva contraseña"
                 />
               </div>
 
-              <!-- Confirmar nueva contraseña -->
+              <!-- Confirmar nueva contraseña2 -->
               <div>
-                <label for="pNuevaConfirm" class="form-label label_nuevapass">
+                <label for="nuevaPassword2" class="form-label label_nuevapass">
                   {{'VERIF.CONF_NUEVA_CONTRAS' | translate}}
                 </label>
                 <input
                   type="password"
                   class="form-control w-10"
-                  id="pNuevaConfirm"
+                  id="nuevaPassword2"
+                  [(ngModel)]="nuevaPassword2"
+                  [disabled]="!isNuevaPassword1Valida"
+                  (input)="validarConfirmacionPassword()"
                   aria-label="Campo para confirmar la nueva contraseña"
                 />
               </div>
+              <div *ngIf="errorMensaje" class="text-danger mt-2">
+                ❌ {{ errorMensaje }}
+              </div>
+              <div *ngIf="exitoMensaje" class="text-success mt-2">
+                ✅ {{ exitoMensaje }}
+              </div>
 
               <ion-row class="boton_guardar d-flex justify-content-center">
-                <button type="button" class="btn btn_bg" mat-raised-button>
+                <button
+                  type="button"
+                  class="btn btn_bg"
+                  mat-raised-button
+                  [disabled]="!isConfirmacionPasswordValida"
+                  (click)="botonCambioPassword()"
+                >
                   {{ "BOTON.CAMBIAR" | translate }}
                 </button>
               </ion-row>
