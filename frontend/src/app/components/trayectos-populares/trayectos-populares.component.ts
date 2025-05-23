@@ -26,7 +26,7 @@ export class TrayectosPopularesComponent implements OnInit {
 
   userLoggedIn: boolean = false;
 
-
+  // Variables que se utilizan para realizar la traducción de los literales.
   title_help_auth: string = '';
   message_help_auth: string = '';
 
@@ -78,12 +78,13 @@ export class TrayectosPopularesComponent implements OnInit {
        */
       this.viajesService.setViajeData(viajeData);
       this.navCtrl.navigateRoot('/data-viaje');
-
     }
-
-
   }
 
+  /**
+   * Función para abrir una modal con los detalles del evento.
+   * @param evento Recibe la información del evento pulsado.
+   */
   openDetallesModal(evento: any) {
     this.dialog.open(DetalleEventosComponent, {
       width: '400px',
@@ -91,6 +92,10 @@ export class TrayectosPopularesComponent implements OnInit {
     });
   }
 
+  /**
+   * Función para mostrar una ventana modal
+   * con mensaje de ayuda.
+   */
   openHelpModal() {
     const titulo: string = 'Centro de ayuda';
     const mensaje: string = `Al crear un viaje desde aquí, se seleccionará el lugar de destino del evento que hayas seleccionado.`;
