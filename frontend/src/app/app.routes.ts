@@ -152,6 +152,10 @@ export const routes: Routes = [
     path: 'ajustes-aplicacion',
     loadComponent: () => import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then( m => m.AjustesAplicacionPage)
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+  },
 
 
 
