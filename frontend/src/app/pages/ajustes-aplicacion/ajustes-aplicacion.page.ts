@@ -7,7 +7,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MatDividerModule } from '@angular/material/divider';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
@@ -58,7 +58,8 @@ export class AjustesAplicacionPage implements OnInit {
     private languageService: LanguageService,
     private messageService: MessageService,
     private userService: UserServicesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -79,26 +80,46 @@ export class AjustesAplicacionPage implements OnInit {
   /**
    * Función para guardar los ajustes seleccionados por el usuario
    */
+  // guardarAjustes() {
+  //   localStorage.setItem(
+  //     'mostrarJumbotron',
+  //     this.mostrarJumbotron ? 'true' : 'false'
+  //   );
+  //   if (this.selectedLanguage === 'es') {
+  //     this.messageService.add({
+  //       severity: 'success',
+  //       summary: 'Ajustes del banner',
+  //       detail: 'Se han modificado los ajustes del banner correctamente.',
+  //       life: 3000,
+  //     });
+  //   } else if (this.selectedLanguage === 'en') {
+  //     this.messageService.add({
+  //       severity: 'success',
+  //       summary: 'Banner Settings',
+  //       detail: 'The banner settings have been updated successfully.',
+  //       life: 3000,
+  //     });
+  //   }
+  // }
+
   guardarAjustes() {
     localStorage.setItem(
       'mostrarJumbotron',
       this.mostrarJumbotron ? 'true' : 'false'
     );
-    if (this.selectedLanguage === 'es') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Ajustes del banner',
-        detail: 'Se han modificado los ajustes del banner correctamente.',
-        life: 3000,
+    this.translate
+      .get([
+        'AJUSTESAPP.OPCION_BANNER.ALERT_TITULO',
+        'AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE',
+      ])
+      .subscribe((translations) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: translations['AJUSTESAPP.OPCION_BANNER.ALERT_TITULO'],
+          detail: translations['AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE'],
+          life: 3000,
+        });
       });
-    } else if (this.selectedLanguage === 'en') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Banner Settings',
-        detail: 'The banner settings have been updated successfully.',
-        life: 3000,
-      });
-    }
   }
 
   changeLanguage(event: Event) {
@@ -107,23 +128,50 @@ export class AjustesAplicacionPage implements OnInit {
 
     this.languageService.setLanguage(selectedLanguage);
     this.selectedLanguage = selectedLanguage;
-    if (selectedLanguage === 'es') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Cambio de idioma',
-        detail: 'Se ha modificado el idioma correctamente.',
-        life: 3000,
+    this.translate.use(selectedLanguage);
+    this.translate
+      .get([
+        'AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO',
+        'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE',
+      ])
+      .subscribe((translations) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+          detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+          life: 3000,
+        });
       });
-    } else if (selectedLanguage === 'en') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Language Change',
-        detail: 'The language has been changed successfully.',
-        life: 3000,
-      });
-    }
   }
 
+  /**
+   * Modal que se muestra cuando se pulsa el botón de eliminar usuario.
+   */
+  modalEliminarUsuario() {
+    this.translate
+      .get([
+        'AJUSTESAPP.ELIMINARCTA.MODAL_TITULO',
+        'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE',
+      ])
+      .subscribe((translations) => {
+        const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
+        const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+
+        const dialogRef = this.dialog.open(HelpModalComponent, {
+          data: { title: titulo, message: mensaje, showAcceptButton: true },
+          disableClose: true,
+        });
+        dialogRef.afterClosed().subscribe((confirmar) => {
+          if (confirmar) {
+            this.eliminar_usuario();
+          }
+        });
+      });
+  }
+
+  /**
+   * Funcion para eliminar el usuario. Se llama en el botón de confirmación de la modal
+   */
   eliminar_usuario() {
     console.log('Elminando al usuario con id: ', this.userData.usuario.id);
 
@@ -133,20 +181,6 @@ export class AjustesAplicacionPage implements OnInit {
     );
     localStorage.removeItem('userData');
     this.navCtrl.navigateRoot(['/'], {});
-  }
-
-  modalEliminarUsuario() {
-    const titulo: string = '¡ATENCIÓN: Vas a eliminar tu usuario';
-    const mensaje: string = `¿Estás seguro que deseas eliminar usuario?`;
-    const dialogRef = this.dialog.open(HelpModalComponent, {
-      data: { title: titulo, message: mensaje, showAcceptButton: true },
-      disableClose: true,
-    });
-    dialogRef.afterClosed().subscribe((confirmar) => {
-      if (confirmar) {
-        this.eliminar_usuario();
-      }
-    });
   }
 
   /**FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
@@ -176,7 +210,11 @@ export class AjustesAplicacionPage implements OnInit {
             this.errorMensaje = '';
             console.log('✅ Contraseña actual verificada correctamente');
           } else {
-            this.errorMensaje = '❌ Contraseña actual incorrecta';
+            this.translate
+              .get('AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL_INCO')
+              .subscribe((translation) => {
+                this.errorMensaje = '❌ ' + translation;
+              });
             console.log('❌ Contraseña actual incorrecta');
           }
           this.nuevaPassword1 = '';
@@ -201,7 +239,11 @@ export class AjustesAplicacionPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isNuevaPassword1Valida = false;
-      this.errorMensaje = 'La nueva contraseña debe ser diferente a la actual';
+      this.translate
+        .get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL')
+        .subscribe((translation) => {
+          this.errorMensaje = translation;
+        });
     }
     this.nuevaPassword2 = '';
     this.isConfirmacionPasswordValida = false;
@@ -217,7 +259,11 @@ export class AjustesAplicacionPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isConfirmacionPasswordValida = false;
-      this.errorMensaje = 'Las contraseñas no coinciden';
+      this.translate
+        .get('AJUSTESAPP.PASSWORD.NO_COINCIDEN')
+        .subscribe((translation) => {
+          this.errorMensaje = translation;
+        });
     }
   }
 
@@ -227,7 +273,11 @@ export class AjustesAplicacionPage implements OnInit {
       .cambio_pw(this.userData.usuario.id, this.nuevaPassword1)
       .subscribe({
         next: () => {
-          this.exitoMensaje = 'Contraseña cambiada con éxito';
+          this.translate
+            .get('AJUSTESAPP.PASSWORD.CAMBIADA_OK')
+            .subscribe((translation) => {
+              this.exitoMensaje = translation;
+            });
           this.errorMensaje = '';
           this.passwordActual = '';
 
@@ -238,7 +288,11 @@ export class AjustesAplicacionPage implements OnInit {
           this.isConfirmacionPasswordValida = false;
         },
         error: (err) => {
-          this.errorMensaje = 'Error al cambiar la contraseña';
+          this.translate
+            .get('AJUSTESAPP.PASSWORD.NO_CAMBIADA')
+            .subscribe((translation) => {
+              this.exitoMensaje = translation;
+            });
           this.exitoMensaje = '';
         },
       });

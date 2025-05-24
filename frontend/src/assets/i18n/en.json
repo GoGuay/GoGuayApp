@@ -438,24 +438,39 @@
     "PRECIO_DESC": "Price (Descending)",
     "RESULTADOS": "Results found"
   },
-  "_AjustesAplicacion": "/ajustes-aplicacion",
+  "_AjustesAplicacion": "/application-settings ok ok ok ok ok ok ok ok ok",
   "AJUSTESAPP": {
     "TITULO": "Settings",
-    "SUITTULO_1": "Space to adjust the application",
+    "SUBTITULO_1": "Here you can configure aspects of the page and your profile",
     "OPCION_IDIOMA": {
       "TITULO": "Language selection",
-      "SUBTITULO": "This setting allows you to change the application's language.",
+      "SUBTITULO": "Modify the page to view it in Spanish or English",
       "OPTION_DEFAULT": "Select a language",
-      "ESPAÑOL": "Spanish",
+      "ESPAÑOL": "Español",
       "INGLES": "English"
     },
     "OPCION_BANNER": {
       "TITULO": "Show banner",
-      "SUBTITULO": "This setting shows or hides the banner that appears on some screens of the application."
+      "SUBTITULO": "Hide or show the banner that appears on some application screens.",
+      "ALERT_TITULO": "Banner settings",
+      "ALERT_MENSAJE": "Banner settings have been successfully modified."
     },
     "OPCION_NOTIFICACION": {
       "TITULO": "Notifications",
       "SUBTITULO": "This setting allows you to configure notifications."
+    },
+    "PASSWORD": {
+      "TITULO": "Change password:",
+      "CONTRAS_ACTUAL": "Current password:",
+      "NUEVA_CONTRAS": "New password:",
+      "CONF_NUEVA_CONTRAS": "Confirm new password:"
+    },
+    "ELIMINARCTA": {
+      "TITULO": "Delete account:",
+      "MODAL_TITULO": "WARNING: You are about to delete your user",
+      "MODAL_MENSAJE": "Are you sure you want to delete your user?",
+      "INFO_ELIMINAR_CTA": "This action will permanently delete your account, with no possibility of recovery.",
+      "INFO_ELIMINAR_CTA2": "If you have a balance, make sure to transfer it to your bank account first to avoid losing that money."
     },
     "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D."
   }

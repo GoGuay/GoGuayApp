@@ -89,7 +89,7 @@
     "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
     "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
   },
-  "__VerificacionesPerfil": "Modal y pagina verificar-perfil",
+  "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIF": {
     "TITULO": "Verificar perfil / Cambiar la contraseña",
     "TITULO_VERIF_BASICA": "Verificación básica: confirma tu correo y adjunta fotos de tu documento de identidad",
@@ -103,6 +103,52 @@
     "VERIFADICIONAL": "Verificación adicional:",
     "VERIFADICIONALINFO1": "(No es obligatorio si solo usas PrideRide como viajero)"
   },
+
+  "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
+  "AJUSTESAPP": {
+    "TITULO": "Ajustes",
+    "SUBTITULO_1": "Aquí puedes configurar aspectos propios de la página y tu perfil",
+    "OPCION_IDIOMA": {
+      "TITULO": "Selección de idioma",
+      "SUBTITULO": "Modifica la página para poder verla en español o inglés",
+      "OPTION_DEFAULT": "Selecciona un idioma",
+      "ESPAÑOL": "Español",
+      "INGLES": "English",
+      "ALERT_TITULO": "Cambio de idioma",
+      "ALERT_MENSAJE": "Se ha modificado el idioma correctamente."
+    },
+    "OPCION_BANNER": {
+      "TITULO": "Mostrar banner",
+      "SUBTITULO": "Oculta o muestra el banner que aparece en algunas pantallas de la aplicación.",
+      "ALERT_TITULO": "Ajustes del banner",
+      "ALERT_MENSAJE": "Se han modificado los ajustes del banner correctamente."
+    },
+    "OPCION_NOTIFICACION": {
+      "TITULO": "Notificaciones",
+      "SUBTITULO": "Este ajuste te permite configurar las notificaciones."
+    },
+    "PASSWORD": {
+      "TITULO": "Cambio de contraseña:",
+      "CONTRAS_ACTUAL": "Contraseña actual:",
+      "CONTRAS_ACTUAL_INCO": "Contraseña actual incorrecta",
+      "NUEVA_DIF_ACTUAL": "La nueva contraseña debe ser diferente a la actual",
+      "NO_COINCIDEN": "Las contraseñas no coinciden",
+      "CAMBIADA_OK": "La contraseña se ha cambiado correctamente",
+      "NO_CAMBIADA": "No se ha podido cambiar la contraseña",
+      "NUEVA_CONTRAS": "Nueva contraseña:",
+      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:"
+    },
+    "ELIMINARCTA": {
+      "TITULO": "Eliminar la cuenta:",
+      "MODAL_TITULO": "ATENCIÓN: Vas a eliminar tu usuario",
+      "MODAL_MENSAJE": "¿Estás seguro que deseas eliminar usuario?",
+      "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
+      "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
+    },
+
+    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
+  },
+
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
   "SALDO": {
     "SALDOTRANSF": "Saldo y transferencias",
@@ -174,6 +220,8 @@
     "ELEGIR_ARCHIVOS": "Elegir archivos",
     "CAMBIAR": "Cambiar!",
     "ELIMINAR_CTA": "Eliminar mi cuenta",
+    "ELIMINAR": "Eliminar perfil",
+    "CANCELAR:": "Cancelar",
     "BUSCAR": "Buscar",
     "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
     "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
@@ -269,38 +317,5 @@
     "PUBLISH_TRIP_TITLE": "Botón para publicar viaje",
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
-  },
-  "_AjustesAplicacion": "/ajustes-aplicacion",
-  "AJUSTESAPP": {
-    "TITULO": "Ajustes",
-    "SUITTULO_1": "Aquí puedes configurar aspectos propios de la página y tu perfil",
-    "OPCION_IDIOMA": {
-      "TITULO": "Selección de idioma",
-      "SUBTITULO": "Modifica la página para poder verla en español o inglés",
-      "OPTION_DEFAULT": "Selecciona un idioma",
-      "ESPAÑOL": "Español",
-      "INGLES": "English"
-    },
-    "OPCION_BANNER": {
-      "TITULO": "Mostrar banner",
-      "SUBTITULO": "Oculta o muestra el banner que aparece en algunas pantallas de la aplicación."
-    },
-    "OPCION_NOTIFICACION": {
-      "TITULO": "Notificaciones",
-      "SUBTITULO": "Este ajuste te permite configurar las notificaciones."
-    },
-    "PASSWORD": {
-      "TITULO": "Cambio de contraseña:",
-      "CONTRAS_ACTUAL": "Contraseña actual:",
-      "NUEVA_CONTRAS": "Nueva contraseña:",
-      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:"
-    },
-    "ELIMINARCTA": {
-      "TITULO": "Eliminar la cuenta:",
-      "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
-      "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
-    },
-
-    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
   }
 }
