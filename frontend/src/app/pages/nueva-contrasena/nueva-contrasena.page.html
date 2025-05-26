@@ -6,7 +6,15 @@
     <p class="d-flex justify-content-center">
       Recuerda que debe ser lo suficientemente segura
     </p>
-    <ion-row class="container d-flex justify-content-center">
+    <p class="d-flex justify-content-center mb-5">
+      Debe tener mínimo 6 caracteres, al menos una mayúscula y al menos un
+      número o caracter especial.
+    </p>
+
+    <ion-row
+      class="container d-flex justify-content-center"
+      [formGroup]="formulario"
+    >
       <!-- Cambio de contraseña -->
       <ion-col size="12" size-md="4">
         <div class="box-section-2">
@@ -18,9 +26,26 @@
             <input
               type="password"
               class="form-control w-10"
+              formControlName="nuevaPassword1"
               id="nuevaPassword1"
               aria-label="Campo para escibir la nueva contraseña"
             />
+            <div
+              *ngIf="formulario.get('nuevaPassword1')?.invalid && formulario.get('nuevaPassword1')?.touched"
+            >
+              <small
+                *ngIf="formulario.get('nuevaPassword1')?.errors?.['required']"
+                >Este campo es obligatorio</small
+              >
+              <small
+                *ngIf="formulario.get('nuevaPassword1')?.errors?.['minlength']"
+                >Mínimo 6 caracteres</small
+              >
+              <small
+                *ngIf="formulario.get('nuevaPassword1')?.errors?.['pattern']"
+                >Al menos una mayúscula. Al menos un número o símbolo</small
+              >
+            </div>
           </div>
 
           <!-- Confirmar nueva contraseña2 -->
@@ -32,19 +57,23 @@
               type="password"
               class="form-control w-10"
               id="nuevaPassword2"
+              formControlName="nuevaPassword2"
               aria-label="Campo para confirmar la nueva contraseña"
             />
           </div>
-          <!-- <div *ngIf="errorMensaje" class="text-danger mt-2">
-              ❌ {{ errorMensaje }}
-            </div>
-            <div *ngIf="exitoMensaje" class="text-success mt-2">
-              ✅ {{ exitoMensaje }}
-            </div> -->
-
+          <small
+            *ngIf="formulario.errors?.['noCoinciden'] && formulario.get('nuevaPassword2')?.touched"
+          >
+            Las contraseñas no coinciden.
+          </small>
           <ion-row class="boton_guardar d-flex justify-content-center mt-3">
             <div class="mb-5">
-              <button type="button" class="btn btn_bg" mat-raised-button>
+              <button
+                type="button"
+                class="btn btn_bg"
+                mat-raised-button
+                [disabled]="formulario.invalid"
+              >
                 {{ "BOTON.CAMBIAR" | translate }}
               </button>
             </div>
