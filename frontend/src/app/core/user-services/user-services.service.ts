@@ -129,7 +129,7 @@ export class UserServicesService {
   }
 
   /**
-   * Función para el envío de mail de verificación.
+   * Función para el envío de mail de verificación del correo.
    * @param email
    * @returns
    */
@@ -226,5 +226,19 @@ export class UserServicesService {
     return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
       password: nuevaPassword,
     });
+  }
+  /**
+   * Función para el envío de mail de cambio de contraseña.
+   * @param email
+   * @returns
+   */
+  enviar_email_resetpassword(email: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/user/enviar_email_resetpassword`,
+      { email: email },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 }

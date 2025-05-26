@@ -436,7 +436,7 @@ def enviar_sms():
 #      ENVIO Y VERIFICACIÓN DE EMAIL
 # # # # # # # # # # # # # # # # # # # # 
 
-#Función backend para envíar el correo de verificación al usuario
+#Función backend para envíar el correo de verificación del correo
 @user_blueprint.route('/enviar_email', methods=['POST'])
 def enviar_email():
     email = request.json['email']
@@ -445,6 +445,19 @@ def enviar_email():
     link= f"http://localhost:4200/verificar-email/{token}"
     msg = Message("Verifica tu correo", recipients=[email])
     msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
+    mail.send(msg)
+
+    return jsonify({'message': 'Correo enviado'}), 200
+
+#Función backend para envíar el correo de cambio de contraseña
+@user_blueprint.route('/enviar_email_resetpassword', methods=['POST'])
+def enviar_email_reset_password():
+    email = request.json['email']
+    salt = 'email-verify'
+    token = serializer.dumps(email, salt=salt)
+    link= f"http://localhost:4200/nueva-contrasena/{token}"
+    msg = Message("Reseteo de contraseña de inicio", recipients=[email])
+    msg.body = f"Por favor haz click en el siguiente en lace para poder cambiar tu contraseña: {link}"
     mail.send(msg)
 
     return jsonify({'message': 'Correo enviado'}), 200
@@ -469,6 +482,27 @@ def verificar_email():
     except Exception as e:
         print(f"Error al verificar token: {e}")
         return jsonify({'error': 'Token invalido o expirado'}), 400
+
+#Función backend para enviar correo de reestablecimiento de contraseña
+@user_blueprint.route('/restablecerpassword', methods=['POST'])
+def restablacerpassword():
+    token = request.json['token']
+    nueva_password = request['password']
+    salt = 'password-reset'
+
+    try:
+        email = serializer.loads(token, salt=salt, max_age=3600)
+        usuario = Usuario.query.filter_by(email=email).first
+        if usuario:
+            usuario.set_password(nueva_password)
+            db.session.commit()
+            return jsonify({"mensaje": "Contraseña reestablecida correctamente"}), 200
+        else:
+            return jsonify ({"Error": "Usuario no encontrado"}), 404
+    except Exception as e:
+        print(f"Error al reestablecer la contraseña: {e}")
+        return jsonify ({"error": "Token inválido o expirado"}), 400
+
     
 
 # #Verificar si la contraseña actual es la correcta

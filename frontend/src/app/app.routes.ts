@@ -143,20 +143,37 @@ export const routes: Routes = [
   },
   {
     path: 'encuesta-satisfaccion',
-    loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(m => m.EncuestaSatisfaccionPage)
+    loadComponent: () =>
+      import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(
+        (m) => m.EncuestaSatisfaccionPage
+      ),
   },
   {
     path: 'centro-contacto',
-    loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then(m => m.CentroContactoPage)
-  },  {
+    loadComponent: () =>
+      import('./pages/centro-contacto/centro-contacto.page').then(
+        (m) => m.CentroContactoPage
+      ),
+  },
+  {
     path: 'ajustes-aplicacion',
-    loadComponent: () => import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then( m => m.AjustesAplicacionPage)
+    loadComponent: () =>
+      import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then(
+        (m) => m.AjustesAplicacionPage
+      ),
   },
   {
     path: 'forgot-password',
-    loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+    loadComponent: () =>
+      import('./pages/forgot-password/forgot-password.page').then(
+        (m) => m.ForgotPasswordPage
+      ),
   },
-
-
-
+  {
+    path: 'nueva-contrasena/:token',
+    loadComponent: () =>
+      import('./pages/nueva-contrasena/nueva-contrasena.page').then(
+        (m) => m.NuevaContrasenaPage
+      ),
+  },
 ];

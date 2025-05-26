@@ -1,0 +1,56 @@
+<ion-content [fullscreen]="true">
+  <div class="container d-flex flex-column align-items-center">
+    <div class="d-flex justify-content-center">
+      <h2>CREA TU NUEVA CONTRSEÑA</h2>
+    </div>
+    <p class="d-flex justify-content-center">
+      Recuerda que debe ser lo suficientemente segura
+    </p>
+    <ion-row class="container d-flex justify-content-center">
+      <!-- Cambio de contraseña -->
+      <ion-col size="12" size-md="4">
+        <div class="box-section-2">
+          <!-- Nueva contraseña1 -->
+          <div class="mb-3 text-center">
+            <label for="nuevaPassword1" class="form-label">
+              {{'AJUSTESAPP.PASSWORD.NUEVA_CONTRAS' | translate}}
+            </label>
+            <input
+              type="password"
+              class="form-control w-10"
+              id="nuevaPassword1"
+              aria-label="Campo para escibir la nueva contraseña"
+            />
+          </div>
+
+          <!-- Confirmar nueva contraseña2 -->
+          <div class="text-center">
+            <label for="nuevaPassword2" class="form-label mb-1">
+              {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
+            </label>
+            <input
+              type="password"
+              class="form-control w-10"
+              id="nuevaPassword2"
+              aria-label="Campo para confirmar la nueva contraseña"
+            />
+          </div>
+          <!-- <div *ngIf="errorMensaje" class="text-danger mt-2">
+              ❌ {{ errorMensaje }}
+            </div>
+            <div *ngIf="exitoMensaje" class="text-success mt-2">
+              ✅ {{ exitoMensaje }}
+            </div> -->
+
+          <ion-row class="boton_guardar d-flex justify-content-center mt-3">
+            <div class="mb-5">
+              <button type="button" class="btn btn_bg" mat-raised-button>
+                {{ "BOTON.CAMBIAR" | translate }}
+              </button>
+            </div>
+          </ion-row>
+        </div>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>
