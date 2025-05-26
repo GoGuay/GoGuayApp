@@ -59,6 +59,9 @@ function passwordsCoincidentes(
 export class NuevaContrasenaPage implements OnInit {
   userLoggedIn: boolean = false;
   formulario: any;
+  mostrarPassword1: boolean = false;
+  mostrarPassword2: boolean = false;
+
   constructor(private fb: FormBuilder) {
     this.formulario = this.fb.group(
       {
@@ -90,5 +93,13 @@ export class NuevaContrasenaPage implements OnInit {
           pass2?.reset();
         }
       });
+  }
+
+  botonMostrarPassword_1() {
+    this.mostrarPassword1 = !this.mostrarPassword1;
+  }
+
+  botonMostrarPassword_2() {
+    this.mostrarPassword2 = !this.mostrarPassword2;
   }
 }

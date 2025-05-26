@@ -175,5 +175,9 @@ export const routes: Routes = [
       import('./pages/nueva-contrasena/nueva-contrasena.page').then(
         (m) => m.NuevaContrasenaPage
       ),
+  },  {
+    path: 'token-expirado',
+    loadComponent: () => import('./pages/token-expirado/token-expirado.page').then( m => m.TokenExpiradoPage)
   },
+
 ];

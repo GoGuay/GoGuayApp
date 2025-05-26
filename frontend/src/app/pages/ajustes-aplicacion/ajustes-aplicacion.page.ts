@@ -77,30 +77,6 @@ export class AjustesAplicacionPage implements OnInit {
         this.usuarioBD = respuesta;
       });
   }
-  /**
-   * Función para guardar los ajustes seleccionados por el usuario
-   */
-  // guardarAjustes() {
-  //   localStorage.setItem(
-  //     'mostrarJumbotron',
-  //     this.mostrarJumbotron ? 'true' : 'false'
-  //   );
-  //   if (this.selectedLanguage === 'es') {
-  //     this.messageService.add({
-  //       severity: 'success',
-  //       summary: 'Ajustes del banner',
-  //       detail: 'Se han modificado los ajustes del banner correctamente.',
-  //       life: 3000,
-  //     });
-  //   } else if (this.selectedLanguage === 'en') {
-  //     this.messageService.add({
-  //       severity: 'success',
-  //       summary: 'Banner Settings',
-  //       detail: 'The banner settings have been updated successfully.',
-  //       life: 3000,
-  //     });
-  //   }
-  // }
 
   guardarAjustes() {
     localStorage.setItem(

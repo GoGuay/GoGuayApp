@@ -23,28 +23,45 @@
             <label for="nuevaPassword1" class="form-label">
               {{'AJUSTESAPP.PASSWORD.NUEVA_CONTRAS' | translate}}
             </label>
-            <input
-              type="password"
-              class="form-control w-10"
-              formControlName="nuevaPassword1"
-              id="nuevaPassword1"
-              aria-label="Campo para escibir la nueva contraseña"
-            />
+            <div class="position-relative">
+              <input
+                [type]="mostrarPassword1 ? 'text' : 'password'"
+                class="form-control w-10"
+                formControlName="nuevaPassword1"
+                id="nuevaPassword1"
+                aria-label="Campo para escibir la nueva contraseña"
+              />
+
+              <button
+                type="button"
+                (click)="botonMostrarPassword_1()"
+                class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                tabindex="-1"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="mostrarPassword1 ? 'bi-eye-slash' : 'bi-eye'"
+                ></i>
+              </button>
+            </div>
             <div
               *ngIf="formulario.get('nuevaPassword1')?.invalid && formulario.get('nuevaPassword1')?.touched"
             >
               <small
+                class="text-danger"
                 *ngIf="formulario.get('nuevaPassword1')?.errors?.['required']"
-                >Este campo es obligatorio</small
-              >
+                >Este campo es obligatorio.
+              </small>
               <small
+                class="text-danger"
                 *ngIf="formulario.get('nuevaPassword1')?.errors?.['minlength']"
-                >Mínimo 6 caracteres</small
-              >
+                >Mínimo 6 caracteres.
+              </small>
               <small
+                class="text-danger"
                 *ngIf="formulario.get('nuevaPassword1')?.errors?.['pattern']"
-                >Al menos una mayúscula. Al menos un número o símbolo</small
-              >
+                >Al menos una mayúscula. Al menos un número o símbolo.
+              </small>
             </div>
           </div>
 
@@ -53,19 +70,33 @@
             <label for="nuevaPassword2" class="form-label mb-1">
               {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
             </label>
-            <input
-              type="password"
-              class="form-control w-10"
-              id="nuevaPassword2"
-              formControlName="nuevaPassword2"
-              aria-label="Campo para confirmar la nueva contraseña"
-            />
+            <div class="position-relative">
+              <input
+                type="password"
+                class="form-control w-10"
+                id="nuevaPassword2"
+                formControlName="nuevaPassword2"
+                aria-label="Campo para confirmar la nueva contraseña"
+              />
+              <button
+                type="button"
+                (click)="botonMostrarPassword_2()"
+                class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                tabindex="-1"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="mostrarPassword2 ? 'bi-eye-slash' : 'bi-eye'"
+                ></i>
+              </button>
+            </div>
+            <small
+              *ngIf="formulario.errors?.['noCoinciden'] && formulario.get('nuevaPassword2')?.touched"
+            >
+              Las contraseñas no coinciden.
+            </small>
           </div>
-          <small
-            *ngIf="formulario.errors?.['noCoinciden'] && formulario.get('nuevaPassword2')?.touched"
-          >
-            Las contraseñas no coinciden.
-          </small>
+
           <ion-row class="boton_guardar d-flex justify-content-center mt-3">
             <div class="mb-5">
               <button
