@@ -1,6 +1,7 @@
 import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Form } from '@angular/forms';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
@@ -69,15 +70,8 @@ export class UserServicesService {
    * @param id ID del usuario a eliminar.
    * @returns Observable con la respuesta del backend.
    */
-  eliminarUsuario(id: string): Observable<Usuario> {
-    return this.http
-      .delete<Usuario>(`${this.apiUrl}/user/eliminar_usuario/${id}`)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          console.error('Error al eliminar el usuario: ', error);
-          return throwError(error);
-        })
-      );
+  eliminarUsuario(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/user/eliminar_usuario/${id}`);
   }
 
   /**
@@ -165,5 +159,72 @@ export class UserServicesService {
 
   enviar_sms(telefono: string) {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+  }
+
+  fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/subirfoto_documentodelantera/${usuarioId}`,
+        imagen
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto delantera de documento');
+          return throwError(error);
+        })
+      );
+  }
+
+  fotoDocumentoTrasera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/subirfoto_documentotrasera/${usuarioId}`,
+        imagen
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto delantera de documento');
+          return throwError(error);
+        })
+      );
+  }
+
+  fotoCarnetDelantera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(`${this.apiUrl}/user/subirfoto_carnetdelantera/${usuarioId}`, imagen)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto delantera del carnet');
+          return throwError(error);
+        })
+      );
+  }
+
+  fotoCarnetTrasera(imagen: FormData, usuarioId: number): Observable<any> {
+    return this.http
+      .put(`${this.apiUrl}/user/subirfoto_carnettrasera/${usuarioId}`, imagen)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la foto trasera del carnet');
+          return throwError(error);
+        })
+      );
+  }
+
+  // Verificar contraseña actual del usuario
+  verificar_pw_actual(id: number, password: string) {
+    return this.http.post<{ isValid: boolean }>(
+      `${this.apiUrl}/user/comprobarpwactual`,
+      {
+        id,
+        password,
+      }
+    );
+  }
+
+  cambio_pw(id: number, nuevaPassword: string) {
+    return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
+      password: nuevaPassword,
+    });
   }
 }

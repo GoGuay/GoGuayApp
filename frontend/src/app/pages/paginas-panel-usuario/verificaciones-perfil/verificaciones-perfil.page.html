@@ -6,26 +6,31 @@
 
 <ion-content [fullscreen]="true">
   <div class="container">
-    <ion-row>
-      <ion-col class="d-flex flex-column">
-        <div>
-          <h1 class="text-center mb-5">
-            {{'VERIF_PERFIL.TITULO_VERIF_BASICA' | translate}}
-          </h1>
-          <p class="vbasica">
-            {{'VERIF_PERFIL.SUBTIT_VERIF_BASICA' | translate}}
-          </p>
-        </div>
-      </ion-col>
-    </ion-row>
+    <div class="d-flex justify-content-center">
+      <h1 class="text-center mb-5">{{'VERIF.TITULO' | translate}}</h1>
+    </div>
+
+    <div class="text-center">
+      <p class="mb-2">{{'VERIF.TITULO_VERIF_BASICA' | translate}}</p>
+    </div>
+    <div class="text-center">
+      <p class="mb-4">{{'VERIF.TITULO_VERIF_ADICIONAL' | translate}}</p>
+    </div>
 
     <ion-row class="justify-content-between fila_superior">
       <!-- Verificación de correo -->
-      <ion-col>
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="mt-2 text-center">
           <p class="mb-4">
-            <strong>{{'VERIF_PERFIL.VERIFICA_TU_CORREO' | translate}}</strong>
+            <strong>{{'VERIF.VERIFICA_TU_CORREO' | translate}}</strong>
           </p>
+          <ion-row>
+            <ion-col>
+              <p class="text-align-justify" style="font-size: 14px">
+                {{'VERIF.INFO_VERIF_CORREO' | translate}}
+              </p>
+            </ion-col>
+          </ion-row>
           <ion-col>
             <button
               type="btn"
@@ -36,19 +41,8 @@
               {{emailUsuario}}
             </button>
           </ion-col>
-          <ion-row>
-            <ion-col>
-              <p class="text-align-justify" style="font-size: 15px">
-                {{'VERIF_PERFIL.INFO_VERIF_CORREO' | translate}}
-              </p>
-            </ion-col>
-          </ion-row>
         </div>
       </ion-col>
-
-      <div class="divider-container">
-        <mat-divider vertical></mat-divider>
-      </div>
 
       <!-- Verificación de teléfono -->
       <!-- <ion-col>
@@ -85,22 +79,30 @@
           </button>
         </div>
       </ion-col> -->
+
       <div class="divider-container">
         <mat-divider vertical></mat-divider>
       </div>
 
       <!-- Verificación DNI -->
-      <ion-col>
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="mt-2 text-center">
           <p class="mb-4">
-            <strong>{{'BOTON.VERIF_TU_IDENTIDAD' | translate}}</strong>
+            <strong>{{'VERIF.VERIF_TU_IDENTIDAD' | translate}}</strong>
           </p>
-          <!-- <ion-col
-            class="d-flex justify-content-center align-items-center mb-5"
-          >
-            <div class="d-flex justify-content-center position-relative">
+          <p style="font-size: 14px">
+            {{'VERIF.INFO_VERIFIDENTIDAD' | translate}}
+          </p>
+
+          <ion-row>
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
-                <label for="docdelantera" class="upload-button floating-plus"
+                <label
+                  for="docdelantera"
+                  class="upload-button floating-plus"
+                  aria-label="Botón para subir documento delantero"
                   >+</label
                 >
                 <input
@@ -108,42 +110,133 @@
                   id="docdelantera"
                   class="file-input"
                   accept="image/*"
+                  (change)="fotoDocumentoDelantera($event)"
                 />
               </div>
-            </div>
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img
+                  [src]="sinDocumentoDelantera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoDocumentoDelantera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoDocumentoDelantera"
+                  [src]="usuario.fotoDocumentoDelantera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoDelantera">
+                <app-spinner></app-spinner>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="mb-3">
+            <ion-col>
+              <div>
+                <p style="font-size: 14px">
+                  {{'VERIF.FOTODELANTERA' | translate}}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
 
-            <div class="d-flex justify-content-center position-relative">
+          <ion-row>
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
-                <label for="doctrasera" class="upload-button floating-plus"
-                  >*</label
+                <label
+                  for="doctrasera"
+                  class="upload-button floating-plus"
+                  aria-label="Botón para subir documento trasero"
+                  >+</label
                 >
                 <input
                   type="file"
                   id="doctrasera"
                   class="file-input"
                   accept="image/*"
-                />
-              </div>
-            </div>
-          </ion-col> -->
-
-          <ion-row>
-            <ion-col class="filadocumentodelantero">
-              <div class="file-upload">
-                <label for="docdelantera" class="upload-button floating-plus"
-                  >+</label
-                >
-                <input
-                  type="file"
-                  id="docdelantera"
-                  class="file-input"
-                  accept="image/*"
+                  (change)="fotoDocumentoTrasera($event)"
                 />
               </div>
             </ion-col>
             <ion-col>
               <div class="fotoDocumento">
-                <img src="../../../../assets/user/SinFotoDelantera.png" />
+                <img
+                  [src]="sinDocumentoTrasera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoDocumentoTrasera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoDocumentoTrasera"
+                  [src]="usuario.fotoDocumentoTrasera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoTrasera">
+                <app-spinner></app-spinner>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div>
+                <p style="font-size: 14px">
+                  {{'VERIF.FOTOTRASERA' | translate}}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-col>
+      <div class="divider-container hide-on-mobile">
+        <mat-divider vertical></mat-divider>
+      </div>
+
+      <!-- Verificación adicional: CARNET DE CONDUCIR -->
+      <ion-col size="12" size-md="3">
+        <div class="mt-2 text-center">
+          <p class="mb-4">
+            <strong>{{ 'VERIF.VERIFADICIONAL' | translate }}</strong>
+          </p>
+          <p style="font-size: 14px" class="mb-3">
+            {{'VERIF.VERIFADICIONALINFO1' | translate}}
+          </p>
+
+          <ion-row>
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
+              <div class="file-upload">
+                <label for="carnetdelantera" class="upload-button floating-plus"
+                  >+</label
+                >
+                <input
+                  type="file"
+                  id="carnetdelantera"
+                  class="file-input"
+                  accept="image/*"
+                  (change)="fotoCarnetDelantera($event)"
+                />
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="fotoDocumento">
+                <img
+                  [src]="sinDocumentoDelantera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoCarnetCondDelantera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoCarnetCondDelantera"
+                  [src]="usuario?.fotoCarnetCondDelantera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoCarnetDelantera">
+                <app-spinner></app-spinner>
               </div>
             </ion-col>
           </ion-row>
@@ -151,30 +244,44 @@
             <ion-col>
               <div>
                 <p style="font-size: 13px">
-                  Pulsa en el botón para añadir una foto delantera de tu
-                  documento
+                  {{'VERIF.FOTODELANTERA' | translate}}
                 </p>
               </div>
             </ion-col>
           </ion-row>
 
           <ion-row>
-            <ion-col class="filadocumentodelantero">
+            <ion-col
+              class="filadocumentodelantero d-flex justify-content-center d-md-block"
+            >
               <div class="file-upload">
-                <label for="docdelantera" class="upload-button floating-plus"
+                <label for="carnettrasera" class="upload-button floating-plus"
                   >+</label
                 >
                 <input
                   type="file"
-                  id="docdelantera"
+                  id="carnettrasera"
                   class="file-input"
                   accept="image/*"
+                  (change)="fotoCarnetTrasera($event)"
                 />
               </div>
             </ion-col>
             <ion-col>
               <div class="fotoDocumento">
-                <img src="../../../../assets/user/SinFotoTrasera.png" />
+                <img
+                  [src]="sinDocumentoTrasera"
+                  alt="Sin foto de documento delantera"
+                  *ngIf="!usuario?.fotoCarnetCondTrasera"
+                />
+                <img
+                  class="fotoDocumento"
+                  *ngIf="usuario?.fotoCarnetCondTrasera"
+                  [src]="usuario?.fotoCarnetCondTrasera"
+                />
+              </div>
+              <div class="overlay" *ngIf="cargandoCarnetTrasera">
+                <app-spinner></app-spinner>
               </div>
             </ion-col>
           </ion-row>
@@ -182,108 +289,11 @@
             <ion-col>
               <div>
                 <p style="font-size: 13px">
-                  Pulsa en el botón para añadir una foto trasera de tu documento
+                  {{'VERIF.FOTOTRASERA' | translate}}
                 </p>
               </div>
             </ion-col>
           </ion-row>
-        </div>
-      </ion-col>
-      <div class="divider-container">
-        <mat-divider vertical></mat-divider>
-      </div>
-
-      <!-- Verificación adicional -->
-      <ion-col class="d-flex align-items-start">
-        <div class="text-center vadicional">
-          <p class="text-center fs-8 mt-2 caja">
-            <strong>{{'VERIF_PERFIL.VERIF_ADIC_CONDUCIR' | translate}}</strong>
-          </p>
-          <div class="d-flex justify-content-center position-relative">
-            <div class="file-upload mb-5">
-              <label for="identidad" class="upload-button floating-plus"
-                >+</label
-              >
-              <input
-                type="file"
-                id="identidad"
-                class="file-input"
-                accept="image/*"
-                multiple
-              />
-            </div>
-          </div>
-          <p class="texto text-align-justify" style="font-size: 14px">
-            {{'VERIF_PERFIL.INFO_VERIFCONDUCIR' | translate}}
-          </p>
-        </div>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="justify-content-between mb-5 mt-5">
-      <!-- Línea divisoria -->
-      <div class="divider-container">
-        <mat-divider vertical class="mat-divider-2"></mat-divider>
-      </div>
-
-      <!-- Cambio de contraseña -->
-      <ion-col size="3" class="d-flex align-items-center justify-content-start">
-        <div class="text-center">
-          <p class="text-center">
-            <strong>{{'VERIF_PERFIL.CAMBIO_CONTRAS' | translate}}</strong>
-          </p>
-          <ion-row class="mb-1">
-            <ion-col size="12">
-              <label for="cActual" class="form-label">
-                {{'VERIF_PERFIL.CONTRAS_ACTUAL' | translate}}
-              </label>
-              <input type="password" class="form-control" id="cActual" />
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <label for="pNueva" class="form-label">
-                {{'VERIF_PERFIL.NUEVA_CONTRAS' | translate}}
-              </label>
-              <input type="password" class="form-control" id="pNueva" />
-            </ion-col>
-            <ion-col>
-              <label for="pNuevaConfirm" class="form-label">
-                {{'VERIF_PERFIL.CONF_NUEVA_CONTRAS' | translate}}
-              </label>
-              <input type="password" class="form-control" id="pNuevaConfirm" />
-            </ion-col>
-          </ion-row>
-
-          <ion-row class="mt-2 d-flex justify-content-center">
-            <button type="button" class="btn btn_bg" mat-raised-button>
-              {{ "BOTON.CAMBIAR" | translate }}
-            </button>
-          </ion-row>
-        </div>
-      </ion-col>
-
-      <!-- Línea divisoria -->
-      <div class="divider-container">
-        <mat-divider vertical class="mat-divider-2"></mat-divider>
-      </div>
-
-      <!-- Eliminar la cuenta -->
-      <ion-col size="3">
-        <div class="text-center">
-          <p class="text-center">
-            <strong>{{ "VERIF_PERFIL.ELIMINAR_CTA" | translate }}</strong>
-          </p>
-          <div>
-            <p style="color: red; font-weight: bold; text-align: justify">
-              {{ "VERIF_PERFIL.INFO_ELIMINAR_CTA" | translate }}
-            </p>
-            <div class="d-flex justify-content-center">
-              <button type="button" class="btn btn_bg" mat-raised-button>
-                {{ "BOTON.ELIMINAR_CTA" | translate }}
-              </button>
-            </div>
-          </div>
         </div>
       </ion-col>
     </ion-row>

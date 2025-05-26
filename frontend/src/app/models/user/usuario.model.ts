@@ -1,5 +1,5 @@
 export interface Usuario {
-  access_token: string;
+  access_token?: string;
   usuario: {
     id: number;
     nombre: string;
@@ -16,6 +16,10 @@ export interface Usuario {
     fotoCabecera?: string;
     rolPerfil: 'usuario' | 'admin' | 'moderador';
     carnet_conducir_verificado?: boolean;
+    fotoDocumentoDelantera?: string;
+    fotoDocumentoTrasera?: string;
+    fotoCarnetCondDelantera?: string;
+    fotoCarnetCondTrasera?: string;
     dni_verificado?: boolean;
     numero_carnet_conducir?: string;
     preferencias?: string[];

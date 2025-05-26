@@ -158,16 +158,15 @@ def actualizar_usuario(user_id):
     data = request.json
     print('Data recibida: ', data)
 
-    # Iterar sobre los campos posibles para actualizar
     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros']:
-        if key in data and data[key] is not None:  # Asegúrate de que el campo esté presente y no sea None
+        if key in data and data[key] is not None:  
             if key == 'fecha_nacimiento' and data[key]:
-                setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  # Para 'fecha_nacimiento', conviértelo a datetime
+                setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  
             else:
-                setattr(usuario, key, data[key])  # Para el resto de los campos, asignar directamente el valor
+                setattr(usuario, key, data[key])  
     
-    db.session.commit()  # Guardar los cambios en la base de datos
-    return jsonify(usuario.serialize()), 200  # Devolver el usuario actualizado
+    db.session.commit()  
+    return jsonify(usuario.serialize()), 200 
 
 
 # # # # # # # # # # # # # # # # # # # #
@@ -175,7 +174,9 @@ def actualizar_usuario(user_id):
 # # # # # # # # # # # # # # # # # # # #
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
 def eliminar_usuario(id):
+    print('id ', id)
     usuario = Usuario.query.get(id)
+    print('usuario: ', usuario)
     
     if usuario is None:
         return jsonify({"error": "No se ha encontrado al usuario"}), 404
@@ -295,19 +296,110 @@ def actualizar_imagen_cabecera(user_id):
     return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200
 
 
-# Función para que el usuario suba fotos del documento de identidad
-@user_blueprint.route('/subirfoto_documento/<int:user_id>', methods=['PUT'])
-def subirfoto_documento(user_id):
-    fotos = request.files.getlist('files')
-    if fotos:
-        urls = []
-        for foto in fotos:
-            upload = uploader.upload(foto)
-            carpeta_usuario = f"user_{user_id}"
-            result = uploader.upload(foto, folder=carpeta_usuario)
-            urls.append(upload['secure_url'])
-        return jsonify ({"urls": urls})
-    return jsonify ({"error": "no se han subido las imágenes"})
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#    FOTOS DE DOCUMENTOS DNI / CARNET DE CONDUCIR     #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Función para que el usuario suba la foto DELANTERA del documento de IDENTIDAD
+@user_blueprint.route('/subirfoto_documentodelantera/<int:user_id>', methods=['PUT'])
+def subirfoto_documentodelantera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+
+    imagen = request.files.get('fotoDocumentoDelantera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoDocumentoDelantera:
+        public_id =  obtener_public_id(user.fotoDocumentoDelantera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoDocumentoDelantera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# Función para que el usuario suba la foto TRASERA del documento de IDENTIDAD
+@user_blueprint.route('/subirfoto_documentotrasera/<int:user_id>', methods=['PUT'])
+def subirfoto_documentotrasera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    imagen = request.files.get('fotoDocumentoTrasera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoDocumentoTrasera:
+        public_id =  obtener_public_id(user.fotoDocumentoTrasera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoDocumentoTrasera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de documento trasera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# Función para que el usuario suba la foto DELANTERA del carnet de conducir
+@user_blueprint.route('/subirfoto_carnetdelantera/<int:user_id>', methods=['PUT'])
+def subirfoto_carnetdelantera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    imagen = request.files.get('fotoCarnetCondDelantera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoCarnetCondDelantera:
+        public_id =  obtener_public_id(user.fotoCarnetCondDelantera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoCarnetCondDelantera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
+
+# Función para que el usuario suba la foto TRASERA del carnet de conducir
+@user_blueprint.route('/subirfoto_carnettrasera/<int:user_id>', methods=['PUT'])
+def subirfoto_carnettrasera(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    imagen = request.files.get('fotoCarnetCondTrasera')
+    if not imagen:
+        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
+    
+    if user.fotoCarnetCondTrasera:
+        public_id =  obtener_public_id(user.fotoCarnetCondTrasera)
+        if public_id:
+            uploader.destroy(public_id)
+    
+    imagen = reducir_imagen(imagen)
+
+    carpeta_usuario = f"user_{user_id}"
+    result = uploader.upload(imagen, folder=carpeta_usuario)
+
+    user.fotoCarnetCondTrasera = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
+
+
+
+
+
 
 
 
@@ -377,3 +469,44 @@ def verificar_email():
     except Exception as e:
         print(f"Error al verificar token: {e}")
         return jsonify({'error': 'Token invalido o expirado'}), 400
+    
+
+# #Verificar si la contraseña actual es la correcta
+@user_blueprint.route('/comprobarpwactual', methods=['POST'])
+def comprobarpwactual():
+    id = request.json.get('id')
+    password = request.json.get('password')
+    print(f"id: {id}")
+    print(f"Password ingresada: {password}")
+
+    usuario = Usuario.query.filter_by(id=id).first()
+
+    if usuario is None:
+        return jsonify({'error:': 'usuario no encontrado'}), 404
+    print (f"Hash de contraseña almacenada: {usuario.password}")
+
+    if check_password_hash(usuario.password, password):
+        return jsonify({'isValid': True}), 200
+    else:
+        return jsonify({'isValid': False}), 401
+    
+
+# Cambio de contraseña desde la ventana de ajustes
+@user_blueprint.route('/cambiopassword/<int:id>', methods=['PUT'])
+def cambiopassword(id):
+    usuario = Usuario.query.get(id)
+    if usuario is None:
+        return jsonify({'error': 'usuario no encontrado'})
+    
+    data = request.json
+    nueva_password = data.get('password')
+
+    if not nueva_password:
+        return jsonify({'La nueva password es requerida'}), 400
+    
+    nueva_password_hash = generate_password_hash(nueva_password)
+    usuario.password = nueva_password_hash
+
+    db.session.commit()
+
+    return jsonify({'mensaje': 'nueva contraseña actualizada con éxito'}), 200

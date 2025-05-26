@@ -5,7 +5,7 @@
 
 .vbasica {
   width: 950px;
-  text-align: start;
+  text-align: center;
   margin-left: 15rem;
 }
 
@@ -59,9 +59,12 @@
 }
 
 .fotoDocumento {
+  position: relative;
   height: 50px;
   width: 100px;
 }
+
+
 
 .floating-plus {
   position: absolute;
@@ -118,6 +121,13 @@
 }
 
 
+.divider-container-final {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 100px;
+  margin-left: 100px;
+}
 
 mat-divider[vertical] {
   height: 100%;
@@ -144,4 +154,11 @@ mat-divider[vertical] {
 
 .fila_superior {
   margin-bottom: 7%;
+}
+
+
+@media (max-width: 576px) {
+  .mat-divider {
+    display: none;
+  }
 }
