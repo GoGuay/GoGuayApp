@@ -97,6 +97,7 @@
             </small>
           </div>
 
+          <!-- Botón para cambiar la contraseña -->
           <ion-row class="boton_guardar d-flex justify-content-center mt-3">
             <div class="mb-5">
               <button
@@ -104,6 +105,7 @@
                 class="btn btn_bg"
                 mat-raised-button
                 [disabled]="formulario.invalid"
+                (click)="boton_cambio_pw()"
               >
                 {{ "BOTON.CAMBIAR" | translate }}
               </button>

@@ -16,10 +16,13 @@ import {
   IonToolbar,
   IonCol,
   IonRow,
+  NavController,
 } from '@ionic/angular/standalone';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDivider } from '@angular/material/divider';
+import { ActivatedRoute } from '@angular/router';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 /**
  * Valida si las 2 contraseñas introducidas son iguales
@@ -50,9 +53,7 @@ function passwordsCoincidentes(
     IonContent,
     CommonModule,
     FormsModule,
-    NavbarComponent,
     TranslateModule,
-    MatDivider,
     ReactiveFormsModule,
   ],
 })
@@ -61,8 +62,14 @@ export class NuevaContrasenaPage implements OnInit {
   formulario: any;
   mostrarPassword1: boolean = false;
   mostrarPassword2: boolean = false;
+  token!: string;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private navCtrl: NavController,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private userService: UserServicesService
+  ) {
     this.formulario = this.fb.group(
       {
         nuevaPassword1: [
@@ -82,6 +89,13 @@ export class NuevaContrasenaPage implements OnInit {
   }
 
   ngOnInit(): void {
+    /**
+     * Extraemos el token de la url
+     */
+    this.token = this.route.snapshot.paramMap.get('token') || '';
+
+    this.comprobacion_token(this.token);
+
     this.formulario
       .get('nuevaPassword1')
       ?.statusChanges.subscribe((status: string) => {
@@ -101,5 +115,38 @@ export class NuevaContrasenaPage implements OnInit {
 
   botonMostrarPassword_2() {
     this.mostrarPassword2 = !this.mostrarPassword2;
+  }
+
+  boton_cambio_pw() {
+    if (this.formulario.invalid) return;
+
+    const nuevaPassword = this.formulario.get('nuevaPassword1')?.value;
+
+    this.userService
+      .cambiar_pw_solicitado(this.token, nuevaPassword)
+      .subscribe({
+        next: (respuesta: any) => {
+          alert(respuesta.mensaje || 'Contraseña actualizada correctamente');
+          this.formulario.reset();
+        },
+        error: (err) => {
+          alert(
+            err.error.error ||
+              err.error.Error ||
+              'Error al cambiar la contraseña'
+          );
+        },
+      });
+  }
+
+  comprobacion_token(token: string) {
+    this.userService.comprobar_token(token).subscribe((respuesta) => {
+      console.log('respuesta: ', respuesta);
+      if (respuesta.error === 'Token expirado') {
+        this.navCtrl.navigateRoot(['/token-expirado']);
+      } else if (respuesta.error === 'Token ya utilizado') {
+        this.navCtrl.navigateRoot(['/']);
+      }
+    });
   }
 }

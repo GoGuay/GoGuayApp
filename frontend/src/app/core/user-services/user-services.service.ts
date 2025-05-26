@@ -222,11 +222,19 @@ export class UserServicesService {
     );
   }
 
+  /**
+   * Cambio password DESDE LA VENTANA DE AJUSTES
+   * @param id
+   * @param nuevaPassword
+   * @returns
+   */
+
   cambio_pw(id: number, nuevaPassword: string) {
     return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
       password: nuevaPassword,
     });
   }
+
   /**
    * Función para el envío de mail de cambio de contraseña.
    * @param email
@@ -240,5 +248,18 @@ export class UserServicesService {
         headers: { 'Content-Type': 'application/json' },
       }
     );
+  }
+
+  cambiar_pw_solicitado(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/user/restablecerpassword`, {
+      token,
+      password,
+    });
+  }
+
+  comprobar_token(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/comprobacion_token`, {
+      params: { token },
+    });
   }
 }

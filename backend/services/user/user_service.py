@@ -10,6 +10,7 @@ import nexmo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token
+from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from models import Usuario, Monedero, RolUsuarioEnum
@@ -461,7 +462,7 @@ def enviar_email_reset_password():
      Has solicitado un reseteo de tu contraseña para acceder a PrideRide
       
     Pulsa en el siguiente enlace para poder hacer el cambio. Sólo es válido durante 1 hora por seguridad:
-    
+
     {link}
 
     Si no has solicitado ningún cambio de contraseña, puedes ignorar este correo. 
@@ -494,10 +495,10 @@ def verificar_email():
         print(f"Error al verificar token: {e}")
         return jsonify({'error': 'Token invalido o expirado'}), 400
 
-#Función backend para enviar correo de reestablecimiento de contraseña
+#Función backend para cambiar la contraseña con el correo de reestablecimiento:
 @user_blueprint.route('/restablecerpassword', methods=['POST'])
 def restablacerpassword():
-    token = request.json('token')
+    token = request.json.get('token')
     print(f"Token recibido: {token}")
     nueva_password = request.json.get('password')
     salt = 'password-reset'
@@ -505,15 +506,23 @@ def restablacerpassword():
     if not token or not nueva_password:
         return jsonify({'error': 'Faltan datos'}), 400
 
+    if TokenUsado.query.filter_by(token=token).first():
+        return jsonify({'error': 'Token ya utilizado'}), 400
+
     try:
-        email = serializer.loads(token, salt=salt, max_age=20)
+        email = serializer.loads(token, salt=salt, max_age=1800)
         usuario = Usuario.query.filter_by(email=email).first()
         if not usuario:
             return jsonify({"Error": "Usuario no encontrado"}),404
         
-        usuario.set_password(nueva_password)
+        usuario.password = generate_password_hash(nueva_password)
         db.session.commit()
-        return jsonify({"mensaje": "Contraseña reestablecida correctamente"}), 200
+
+        token_usado = TokenUsado(token=token)
+        db.session.add(token_usado)
+        db.session.commit()
+        return jsonify({"mensaje": "Contraseña reestablecida correctamente"}), 200  
+
     
     except SignatureExpired as e:
         print(f"Token expirado: {e}") 
@@ -524,6 +533,28 @@ def restablacerpassword():
     except Exception as e:
         print(f"Error al reestablecer la contraseña: {e}")
         return jsonify ({"error": "Token inválido o expirado"}), 400
+
+
+#Función para comprobar el estado de vida del token
+@user_blueprint.route('/comprobacion_token', methods= ['GET'])
+def comprobacion_token():
+    token = request.args.get('token')
+
+
+    if not token:
+        return jsonify ({"error": "no se ha encontrado token"}),404
+    
+    if TokenUsado.query.filter_by(token=token).first():
+        return jsonify({'error': 'Token ya utilizado'}), 200
+    
+    try:
+        email = serializer.loads(token, salt='password-reset', max_age=1800)  
+        return jsonify({'mensaje': 'Token válido'}), 200
+
+    except SignatureExpired as e:
+        print(f"Token expirado: {e}") 
+        return jsonify({"error": "Token expirado"}), 200 
+
 
     
 
