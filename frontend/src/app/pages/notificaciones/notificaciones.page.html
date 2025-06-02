@@ -21,6 +21,10 @@
       <div class="text-muted small mt-1">
         {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}
       </div>
+
+      <button class="btn btn_bg mt-2" (click)="toggleLeida(n)">
+        Marcar como {{ n.leida ? 'no leída' : 'leída' }}
+      </button>
     </div>
 
   </div>

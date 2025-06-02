@@ -326,6 +326,12 @@ def marcar_notificacion_leida(notificacion_id):
     if not notificacion:
         return jsonify({"error": "Notificación no encontrada"}), 404
 
-    notificacion.leida = True
+    data = request.get_json()
+    if data is None or 'leida' not in data:
+        return jsonify({"error": "Se requiere el campo 'leida' en el cuerpo"}), 400
+
+    notificacion.leida = bool(data['leida'])
     db.session.commit()
-    return jsonify({"message": "Notificación leída"}), 200
+
+    estado = "leída" if notificacion.leida else "no leída"
+    return jsonify({"message": f"Notificación marcada como {estado}"}), 200

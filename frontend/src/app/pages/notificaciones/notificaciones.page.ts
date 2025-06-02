@@ -54,4 +54,20 @@ export class NotificacionesPage implements OnInit {
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
+
+  toggleLeida(notificacion: any): void {
+    const nuevoEstado = !notificacion.leida;
+    notificacion.leida = !notificacion.leida;
+
+    this.notificationService.toggleEstadoNotificacion(notificacion.id, nuevoEstado)
+    .subscribe({
+      next: () => {
+        notificacion.leida = nuevoEstado; // Actualiza el estado en UI
+      },
+      error: () => {
+        // Puedes mostrar un mensaje de error si falla
+        console.error('No se pudo actualizar el estado de la notificación');
+      }
+    });
+  }
 }

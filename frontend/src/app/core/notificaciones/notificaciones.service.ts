@@ -5,8 +5,9 @@ import { catchError, Observable, Subject, throwError } from 'rxjs';
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
 
 export interface ToastData {
-    message: string;
+    mensaje: string;
     type: 'success' | 'error' | 'info' | 'warning';
+    leida: false;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,11 +33,10 @@ export class NotificacionesService {
     // Método para leer la notificación
     leerNotificacion(notificaciones: any): void {
         if (this.notificacionPendiente && this.esCreadorDelViaje) {
-            console.log('NOTIF. PDTE: ', this.notificacionPendiente);
-
             this.mostrarToast({
                 type: 'info',
-                message: this.notificacionPendiente
+                mensaje: this.notificacionPendiente,
+                leida: false
             });
 
             // this.mostrarNotificaciones(notificaciones);
@@ -57,7 +57,7 @@ export class NotificacionesService {
         });
 
         dialogRef.afterClosed().subscribe(() => {
-            this.marcarNotificacionComoLeida(notificacion[0].id);
+            // this.marcarNotificacionComoLeida(notificacion[0].id);
         });
     }
 
@@ -106,7 +106,7 @@ export class NotificacionesService {
      * @param data 
      */
     mostrarToast(data: ToastData) {
-        const exists = this.toasts.some(t => t.message === data.message && t.type === data.type);
+        const exists = this.toasts.some(t => t.mensaje === data.mensaje && t.type === data.type);
         if (!exists) {
             this.toasts.push(data);
             this.toastSubject.next(this.toasts);
@@ -124,5 +124,20 @@ export class NotificacionesService {
     removeToast(toast: ToastData) {
         this.toasts = this.toasts.filter(t => t !== toast);
         this.toastSubject.next(this.toasts);
+    }
+
+
+    /**
+ * Marca una notificación como leída o no leída.
+ * @param notificacionId ID de la notificación.
+ * @param leida Estado booleano: true = leída, false = no leída.
+ */
+    toggleEstadoNotificacion(notificacionId: number, leida: boolean): Observable<any> {
+        return this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
+            catchError((error) => {
+                console.error('Error al cambiar estado de la notificación:', error);
+                return throwError(() => error);
+            })
+        );
     }
 }
