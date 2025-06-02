@@ -156,6 +156,10 @@ export const routes: Routes = [
     path: 'forgot-password',
     loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
   },
+  {
+    path: 'notificaciones',
+    loadComponent: () => import('./pages/notificaciones/notificaciones.page').then( m => m.NotificacionesPage)
+  },
 
 
 

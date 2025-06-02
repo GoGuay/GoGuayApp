@@ -1,0 +1,27 @@
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<ion-content [fullscreen]="true">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-center">
+      <h1>Centro de notificaciones</h1>
+    </div>
+
+    <div *ngIf="notificaciones.length === 0" class="text-center mt-4">
+      No tienes notificaciones.
+    </div>
+
+    <div *ngFor="let n of notificaciones" class="notificacion_container notificacion-item p-3 mb-2 rounded shadow-sm"
+      [class.notificacion-no-leida]="!n.leida">
+
+      <strong>Mensaje:</strong> {{ n.mensaje }}
+
+      <div *ngIf="!n.leida" class="badge badge-danger ml-2">
+        No leída
+      </div>
+
+      <div class="text-muted small mt-1">
+        {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+    </div>
+
+  </div>
+</ion-content>

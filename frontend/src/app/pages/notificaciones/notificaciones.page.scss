@@ -1,0 +1,27 @@
+.notificacion-no-leida {
+  background-color: #ffefef; 
+  border-left: 5px solid #ef4444;
+}
+
+.notificacion-item {
+  background-color: white;
+  border-left: 5px solid transparent;
+}
+
+.badge-danger {
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.notificacion_container {
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  max-height: 50vh;  /* 50% de la altura del viewport */
+  overflow-y: auto;
+  padding-right: 10px;
+}
