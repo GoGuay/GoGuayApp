@@ -168,7 +168,7 @@ def unirse_viaje():
     # Se notifica al creador del viaje la unión al mismo como pasajero
     creador_id = viaje.usuario_id
     if creador_id != usuario_id: 
-        mensaje = f"Aviso: El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
+        mensaje = f"El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
         notificacion = Notificacion(
             usuario_id=creador_id,
             viaje_id=viaje_id,
@@ -235,7 +235,7 @@ def eliminar_viaje(viaje_id):
     db.session.commit()
 
     # Simular el envío de notificaciones (puedes reemplazarlo con lógica real)
-    mensajes = [f"Aviso: El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado." for _ in acompanantes]
+    mensajes = [f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado." for _ in acompanantes]
 
     return jsonify({
         "mensaje": "Viaje eliminado correctamente",
@@ -281,7 +281,7 @@ def eliminar_pasajero(viaje_id, usuario_id):
 
     # Verificar que la notificación solo se envíe al creador del viaje
     if creador_id != usuario_id:  # Asegúrate de que no se envíe al pasajero eliminado
-        mensaje = f"Aviso: El pasajero {nombre_completo} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
+        mensaje = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
         notificacion = Notificacion(
             usuario_id=creador_id,
             viaje_id=viaje_id,

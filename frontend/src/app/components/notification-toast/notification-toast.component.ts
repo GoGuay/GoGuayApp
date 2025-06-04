@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { NotificacionesService, ToastData } from 'src/app/core/notificaciones/notificaciones.service';
+import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
+import { Notification } from 'src/app/models/notificaciones/notificaciones.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 
-export interface Notification {
-  title: string;
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  leida?: boolean;
-}
+
+/**
+ * Componente para mostrar notificaciones en forma de toast.
+ * Este componente se suscribe a un servicio de notificaciones y muestra las notificaciones
+ */
 
 @Component({
   selector: 'app-notification-toast',
@@ -41,20 +42,26 @@ export class NotificationToastComponent implements OnInit {
   }
 
 
+  private guardarNotificacionesCerradas(ids: number[]) {
+    localStorage.setItem('notificacionesCerradas', JSON.stringify(ids));
+  }
+
+  private obtenerNotificacionesCerradas(): number[] {
+    return JSON.parse(localStorage.getItem('notificacionesCerradas') || '[]');
+  }
+
+
   obtenerNotificaciones(usuarioId: number) {
     this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
-        // Guarda todas las notificaciones en caso de que necesites accederlas después
-        const noLeidas = notificaciones.filter((n: any) => !n.leida);
-        console.log('Notificaciones no leídas:', noLeidas);
-        
-        this.toasts = noLeidas;
+        const notificacionesCerradas = this.obtenerNotificacionesCerradas();
 
-        if (noLeidas.length > 0) {
-          this.notificationService.notificacionPendiente = noLeidas[0].mensaje;
-          this.notificationService.esCreadorDelViaje = true;
-          this.notificationService.leerNotificacion(noLeidas);
-        }
+        // Filtrar las que no están cerradas y no leídas
+        const noLeidas = notificaciones.filter((n: any) =>
+          !n.leida && !notificacionesCerradas.includes(n.id)
+        );
+
+        this.toasts = noLeidas;
       }
     });
   }
@@ -68,7 +75,32 @@ export class NotificationToastComponent implements OnInit {
 
     setTimeout(() => {
       this.cerrandoToasts.delete(toast);
-      this.notificationService.removeToast(toast);
+      this.toasts = this.toasts.filter(t => t !== toast);
+
+      // Guardar ID como cerrada
+      const cerradas = this.obtenerNotificacionesCerradas();
+      cerradas.push(toast.id); // Asegúrate que toast.id existe
+      this.guardarNotificacionesCerradas(cerradas);
+
+    }, 400);
+  }
+  
+  cerrarTodosLosToasts() {
+    this.toasts.forEach(t => this.cerrandoToasts.add(t));
+
+    setTimeout(() => {
+      const cerradas = this.obtenerNotificacionesCerradas();
+
+      this.toasts.forEach(t => {
+        if (!cerradas.includes(t.id)) {
+          cerradas.push(t.id);
+        }
+      });
+
+      this.guardarNotificacionesCerradas(cerradas);
+
+      this.cerrandoToasts.clear();
+      this.toasts = [];
     }, 400);
   }
 

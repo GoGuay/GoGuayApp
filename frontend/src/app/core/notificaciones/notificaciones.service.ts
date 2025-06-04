@@ -3,12 +3,9 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, Observable, Subject, throwError } from 'rxjs';
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
+import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
 
-export interface ToastData {
-    mensaje: string;
-    type: 'success' | 'error' | 'info' | 'warning';
-    leida: false;
-}
+
 
 @Injectable({ providedIn: 'root' })
 export class NotificacionesService {
@@ -30,16 +27,31 @@ export class NotificacionesService {
         return this.notificacionPendiente !== null && this.esCreadorDelViaje;
     }
 
-    // Método para leer la notificación
+    /**
+     * Función para leer una notificación pendiente.
+     * Esta función verifica si hay una notificación pendiente y si el usuario es el creador del viaje.
+     * @param notificaciones -> Lista de notificaciones recibidas.
+     */
     leerNotificacion(notificaciones: any): void {
         if (this.notificacionPendiente && this.esCreadorDelViaje) {
-            this.mostrarToast({
-                type: 'info',
-                mensaje: this.notificacionPendiente,
-                leida: false
-            });
+            const notificacionConId = notificaciones.find((n: any) => n.mensaje === this.notificacionPendiente);
 
-            // this.mostrarNotificaciones(notificaciones);
+            if (notificacionConId) {
+                this.mostrarToast({
+                    id: notificacionConId.id,
+                    type: 'info',
+                    mensaje: this.notificacionPendiente,
+                    leida: false
+                });
+            } else {
+                // Si no hay id disponible, asignar un id temporal o manejar el caso
+                this.mostrarToast({
+                    id: Date.now(),  // ID temporal único
+                    type: 'info',
+                    mensaje: this.notificacionPendiente,
+                    leida: false
+                });
+            }
 
             this.notificacionPendiente = null;
             this.esCreadorDelViaje = false;
