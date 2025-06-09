@@ -91,7 +91,7 @@
   },
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIF": {
-    "TITULO": "Verificar perfil / Cambiar la contraseña",
+    "TITULO": "Verificación del perfil",
     "TITULO_VERIF_BASICA": "Verificación básica: confirma tu correo y adjunta fotos de tu documento de identidad",
     "TITULO_VERIF_ADICIONAL": "Verificación adicional: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
     "VERIFICA_TU_CORREO": "Verifica tu correo:",
@@ -239,7 +239,7 @@
     "PANEL": "PANEL DE USUARIO",
     "MIPERFIL": "Mi perfil",
     "DATOSCONTACTO": "Datos de contacto",
-    "VERIFICACION": "Verificación/Password",
+    "VERIFICACION": "Verificación del perfil",
     "SALDO": "Saldo/Transferencias",
     "LOGIN": "Login",
     "REGISTRO": "Registrarse",
