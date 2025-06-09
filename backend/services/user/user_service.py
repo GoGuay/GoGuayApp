@@ -518,7 +518,7 @@ def cambiopassword(id):
 # # # # # # # # # # # # # # # # # # # # 
 #      OBTENER EL MONEDERO DEL USUARIO
 # # # # # # # # # # # # # # # # # # # # 
-@user_blueprint.route('/<int:usuario_id>', methods=['GET'])
+@user_blueprint.route('/obtener_datos_monedero/<int:usuario_id>', methods=['GET'])
 def obtener_monedero(usuario_id):
     monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
     if not monedero:

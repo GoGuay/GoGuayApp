@@ -235,12 +235,11 @@ export class UserServicesService {
   * Cargar el monedero del usuario logueado.
   * @returns Observable con los datos del monedero.
   */
-  cargarMonedero(): Observable<Monedero> {
-    const usuarioId = this.userData?.usuario?.id;
+  cargarMonedero(usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }
-    return this.http.get<Monedero>(`${this.apiUrl}/user/${usuarioId}`).pipe(
+    return this.http.get<Monedero>(`${this.apiUrl}/user/obtener_datos_monedero/${usuarioId}`).pipe(
       map((monedero) => {
         this.monedero = monedero;
         return monedero;
@@ -257,8 +256,7 @@ export class UserServicesService {
   * @param cantidad Monto a recargar.
   * @returns Observable con el monedero actualizado.
   */
-  recargarSaldo(cantidad: number): Observable<Monedero> {
-    const usuarioId = this.userData?.usuario?.id;
+  recargarSaldo(cantidad: number, usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }
@@ -286,8 +284,7 @@ export class UserServicesService {
   * @param cantidad Monto a descontar.
   * @returns Observable con el monedero actualizado.
   */
-  pagar(cantidad: number): Observable<Monedero> {
-    const usuarioId = this.userData?.usuario?.id;
+  pagar(cantidad: number, usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }
@@ -315,8 +312,7 @@ export class UserServicesService {
    * @param usuarioId ID del usuario cuyo monedero se quiere consultar.
    * @returns 
    */
-  obtenerMovimientos(): Observable<any[]> {
-    const usuarioId = this.userData?.usuario?.id;
+  obtenerMovimientos(usuarioId: number): Observable<any[]> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }

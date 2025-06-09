@@ -59,7 +59,8 @@ export class SaldoTransferenciasPage implements OnInit {
 
   cargarMonedero() {
     this.loadingSaldo = true;
-    this.userService.cargarMonedero().subscribe({
+    const usuarioId = this.userData?.usuario?.id;
+    this.userService.cargarMonedero(usuarioId).subscribe({
       next: (monedero) => {
         this.monedero = monedero;
         this.loadingSaldo = false;
@@ -74,7 +75,8 @@ export class SaldoTransferenciasPage implements OnInit {
 
   cargarMovimientos() {
     this.loadingMovimientos = true;
-    this.userService.obtenerMovimientos().subscribe({
+    const usuarioId = this.userData?.usuario?.id;
+    this.userService.obtenerMovimientos(usuarioId).subscribe({
       next: (movs) => {
         this.movimientos = movs;
         this.loadingMovimientos = false;
