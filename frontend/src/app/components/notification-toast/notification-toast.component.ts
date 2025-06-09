@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
@@ -20,6 +20,8 @@ import { Usuario } from 'src/app/models/user/usuario.model';
   styleUrls: ['./notification-toast.component.scss'],
 })
 export class NotificationToastComponent implements OnInit {
+
+  @Input() usuario!: Usuario;
 
   public _notifications = new Subject<Notification>();
   notifications$ = this._notifications.asObservable();
