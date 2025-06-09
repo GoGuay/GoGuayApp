@@ -4,23 +4,18 @@ import {
   FormBuilder,
   FormsModule,
   Validators,
-  FormGroup,
   ReactiveFormsModule,
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonCol,
   IonRow,
   NavController,
 } from '@ionic/angular/standalone';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatDivider } from '@angular/material/divider';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 import { ActivatedRoute } from '@angular/router';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
@@ -63,12 +58,19 @@ export class NuevaContrasenaPage implements OnInit {
   mostrarPassword1: boolean = false;
   mostrarPassword2: boolean = false;
   token!: string;
+  mensajeOkCambiada: boolean = false;
+  nuevaPassword1: string = '';
+  nuevaPassword2: string = '';
+  isNuevaPassword1Valida: boolean = false;
+  errorMensaje: string = '';
+  isConfirmacionPasswordValida: boolean = false;
 
   constructor(
     private navCtrl: NavController,
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private translate: TranslateService
   ) {
     this.formulario = this.fb.group(
       {
@@ -126,15 +128,14 @@ export class NuevaContrasenaPage implements OnInit {
       .cambiar_pw_solicitado(this.token, nuevaPassword)
       .subscribe({
         next: (respuesta: any) => {
-          alert(respuesta.mensaje || 'Contraseña actualizada correctamente');
           this.formulario.reset();
+          this.mensajeOkCambiada = true;
         },
         error: (err) => {
-          alert(
-            err.error.error ||
-              err.error.Error ||
-              'Error al cambiar la contraseña'
-          );
+          if (err.error.error === 'Token ya utilizado') {
+            this.navCtrl.navigateRoot(['/token-ya-usado']);
+          }
+          console.log(err);
         },
       });
   }
@@ -145,8 +146,60 @@ export class NuevaContrasenaPage implements OnInit {
       if (respuesta.error === 'Token expirado') {
         this.navCtrl.navigateRoot(['/token-expirado']);
       } else if (respuesta.error === 'Token ya utilizado') {
-        this.navCtrl.navigateRoot(['/']);
+        this.navCtrl.navigateRoot(['/token-ya-usado']);
       }
     });
+  }
+
+  redireccion_home() {
+    localStorage.removeItem('userData');
+    setTimeout(() => {
+      this.navCtrl.navigateRoot(['/']);
+    }, 250);
+  }
+
+  redireccion_con_cache() {
+    setTimeout(() => {
+      this.navCtrl.navigateRoot(['/']);
+    }, 250);
+  }
+
+  /**
+   * Si hay nuevaPassword y además es diferente a la actual, habilitamos isNuevaPassword1 y reseteamos el mensaje de error.
+   * De lo contrario, dejamos de nuevoesNuevaPasswor1 en false y lanzamos mensaje de error.
+   * Resetea el campo de nuevaPassword2 para que "obligue" al usuario a escribir algo y valida de nuevo.
+   */
+  validarNuevaPassword() {
+    if (this.nuevaPassword1 && this.nuevaPassword1) {
+      this.isNuevaPassword1Valida = true;
+      this.errorMensaje = '';
+    } else {
+      this.isNuevaPassword1Valida = false;
+      this.translate
+        .get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL')
+        .subscribe((translation) => {
+          this.errorMensaje = translation;
+        });
+    }
+    this.nuevaPassword2 = '';
+    this.isConfirmacionPasswordValida = false;
+  }
+
+  /**
+   * Si hay nuevaPassword2 y además es igual que la nuevaPassword1 pone la confirmación en true
+   * DE lo contrario deja la confirmación en false y lanza un mensaje de error
+   */
+  validarConfirmacionPassword() {
+    if (this.nuevaPassword2 && this.nuevaPassword2 === this.nuevaPassword1) {
+      this.isConfirmacionPasswordValida = true;
+      this.errorMensaje = '';
+    } else {
+      this.isConfirmacionPasswordValida = false;
+      this.translate
+        .get('AJUSTESAPP.PASSWORD.NO_COINCIDEN')
+        .subscribe((translation) => {
+          this.errorMensaje = translation;
+        });
+    }
   }
 }

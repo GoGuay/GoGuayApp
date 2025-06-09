@@ -149,6 +149,15 @@
     "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
   },
 
+  "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
+  "FORGOT_PW": {
+    "TITULO": "¿CONTRASEÑA OLVIDADA",
+    "SUBTITULO1": "Todes podemos tener un despiste. Aquí te ayudamos.",
+    "SUBTITULO2": "Confirma tu correo electrónico, te enviaremos un enlace para crear una nueva contraseña",
+    "TOAST_TITULO": "Correo enviado",
+    "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
+  },
+
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
   "SALDO": {
     "SALDOTRANSF": "Saldo y transferencias",

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TokenValidGuard } from './guards/token-valid.guard';
 
 export const routes: Routes = [
   {
@@ -175,9 +176,17 @@ export const routes: Routes = [
       import('./pages/nueva-contrasena/nueva-contrasena.page').then(
         (m) => m.NuevaContrasenaPage
       ),
-  },  {
+    canActivate: [TokenValidGuard],
+  },
+  {
     path: 'token-expirado',
-    loadComponent: () => import('./pages/token-expirado/token-expirado.page').then( m => m.TokenExpiradoPage)
+    loadComponent: () =>
+      import('./pages/token-expirado/token-expirado.page').then(
+        (m) => m.TokenExpiradoPage
+      ),
+  },  {
+    path: 'token-ya-usado',
+    loadComponent: () => import('./pages/token-ya-usado/token-ya-usado.page').then( m => m.TokenYaUsadoPage)
   },
 
 ];

@@ -29,6 +29,8 @@
                 class="form-control w-10"
                 formControlName="nuevaPassword1"
                 id="nuevaPassword1"
+                [(ngModel)]="nuevaPassword1"
+                (input)="validarNuevaPassword()"
                 aria-label="Campo para escibir la nueva contraseña"
               />
 
@@ -72,7 +74,7 @@
             </label>
             <div class="position-relative">
               <input
-                type="password"
+                [type]="mostrarPassword2 ? 'text' : 'password'"
                 class="form-control w-10"
                 id="nuevaPassword2"
                 formControlName="nuevaPassword2"
@@ -108,6 +110,20 @@
                 (click)="boton_cambio_pw()"
               >
                 {{ "BOTON.CAMBIAR" | translate }}
+              </button>
+            </div>
+            <div class="mb-5" *ngIf="mensajeOkCambiada">
+              <p>Hemos cambiado correctamente tu contraseña</p>
+            </div>
+          </ion-row>
+          <ion-row class="d-flex justify-content-center">
+            <div class="mb-5">
+              <button
+                type="button"
+                class="btn btn_bg"
+                (click)=" mensajeOkCambiada ? redireccion_home() : redireccion_con_cache()"
+              >
+                Inicio
               </button>
             </div>
           </ion-row>

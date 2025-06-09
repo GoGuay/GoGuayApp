@@ -541,15 +541,18 @@ def comprobacion_token():
     token = request.args.get('token')
 
 
-    if not token:
-        return jsonify ({"error": "no se ha encontrado token"}),404
     
-    if TokenUsado.query.filter_by(token=token).first():
-        return jsonify({'error': 'Token ya utilizado'}), 200
     
     try:
+        if not token:
+            return jsonify ({"error": "no se ha encontrado token"}),404
+    
+        if TokenUsado.query.filter_by(token=token).first():
+            return jsonify({'error': 'Token ya utilizado'}), 200
         email = serializer.loads(token, salt='password-reset', max_age=1800)  
+
         return jsonify({'mensaje': 'Token válido'}), 200
+    
 
     except SignatureExpired as e:
         print(f"Token expirado: {e}") 

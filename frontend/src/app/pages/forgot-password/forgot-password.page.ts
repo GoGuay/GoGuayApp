@@ -10,9 +10,11 @@ import {
   IonRow,
 } from '@ionic/angular/standalone';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-forgot-password',
@@ -27,14 +29,20 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
     FormsModule,
     NavbarComponent,
     TranslateModule,
+    ToastModule,
   ],
+  providers: [MessageService],
 })
 export class ForgotPasswordPage implements OnInit {
   userLoggedIn: boolean = false;
   emailUsuario: string = '';
   userData: Usuario = {} as Usuario;
 
-  constructor(private userService: UserServicesService) {}
+  constructor(
+    private userService: UserServicesService,
+    private messageService: MessageService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -48,7 +56,16 @@ export class ForgotPasswordPage implements OnInit {
     this.userService
       .enviar_email_resetpassword(email)
       .subscribe((respuesta) => {
-        console.log(respuesta);
+        this.translate
+          .get(['FORGOT_PW.TOAST_TITULO', 'FORGOT_PW.TOAST_CUERPO'])
+          .subscribe((translations) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: translations['FORGOT_PW.TOAST_TITULO'],
+              detail: translations['FORGOT_PW.TOAST_CUERPO'],
+              life: 3000,
+            });
+          });
       });
   }
 }
