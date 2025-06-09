@@ -86,7 +86,7 @@ ion-button {
   .dropdown-menu {
     position: absolute;
     top: 100%;
-    left: -215% !important;
+    left: -160% !important;
     right: 0;
     transform: translateY(0);
     z-index: 1050;
@@ -174,7 +174,7 @@ ul {
     position: absolute;
     top: 100%;
     left: auto;
-    right: 0;
+    right: -40px;
     transform: translateY(-10px);
     z-index: 1050;
     box-shadow: 0 4px 6px rgba(0 0 0 / 28%);

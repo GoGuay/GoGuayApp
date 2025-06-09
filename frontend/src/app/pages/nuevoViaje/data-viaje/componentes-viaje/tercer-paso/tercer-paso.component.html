@@ -7,7 +7,7 @@
   <div class="container">
     <ion-grid>
       <ion-row>
-        <ion-col>
+        <ion-col size="12" size-md="12" size-xl="6">
           <div class="tercer_paso_container d-flex align-items-center gap-3">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="flexRadioDefault" id="peajes" checked
@@ -103,7 +103,7 @@
         </ion-col>
 
         <!-- MAPA -->
-        <ion-col>
+        <ion-col #mapContainer id="mapContainer" size="12" size-md="12" size-xl="6">
           <div class="contenedor_mapa">
             <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="500px" width="100%">
               <map-directions-renderer *ngIf="selectedRoute" [directions]="selectedRoute"></map-directions-renderer>
