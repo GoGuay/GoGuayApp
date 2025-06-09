@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Form } from '@angular/forms';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { Monedero } from 'src/app/models/user/monedero.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +12,11 @@ export class UserServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
   userData: Usuario = {} as Usuario;
 
+  monedero: any = null;
+
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Función para obtener los usuarios registrados.
@@ -226,5 +229,103 @@ export class UserServicesService {
     return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
       password: nuevaPassword,
     });
+  }
+
+  /**
+  * Cargar el monedero del usuario logueado.
+  * @returns Observable con los datos del monedero.
+  */
+  cargarMonedero(): Observable<Monedero> {
+    const usuarioId = this.userData?.usuario?.id;
+    if (!usuarioId) {
+      return throwError(() => new Error('Usuario no definido'));
+    }
+    return this.http.get<Monedero>(`${this.apiUrl}/user/${usuarioId}`).pipe(
+      map((monedero) => {
+        this.monedero = monedero;
+        return monedero;
+      }),
+      catchError((error) => {
+        console.error('Error al cargar el monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+  * Recargar saldo al monedero del usuario logueado.
+  * @param cantidad Monto a recargar.
+  * @returns Observable con el monedero actualizado.
+  */
+  recargarSaldo(cantidad: number): Observable<Monedero> {
+    const usuarioId = this.userData?.usuario?.id;
+    if (!usuarioId) {
+      return throwError(() => new Error('Usuario no definido'));
+    }
+
+    const body = {
+      usuario_id: usuarioId,
+      cantidad,
+      concepto: 'Recarga manual',
+    };
+
+    return this.http.post<Monedero>(`${this.apiUrl}/user/recargar`, body).pipe(
+      map((monedero) => {
+        this.monedero = monedero;
+        return monedero;
+      }),
+      catchError((error) => {
+        console.error('Error al recargar saldo:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+  * Realizar un pago desde el monedero del usuario logueado.
+  * @param cantidad Monto a descontar.
+  * @returns Observable con el monedero actualizado.
+  */
+  pagar(cantidad: number): Observable<Monedero> {
+    const usuarioId = this.userData?.usuario?.id;
+    if (!usuarioId) {
+      return throwError(() => new Error('Usuario no definido'));
+    }
+
+    const body = {
+      usuario_id: usuarioId,
+      cantidad,
+      concepto: 'Pago',
+    };
+
+    return this.http.post<Monedero>(`${this.apiUrl}/user/pagar`, body).pipe(
+      map((monedero) => {
+        this.monedero = monedero;
+        return monedero;
+      }),
+      catchError((error) => {
+        console.error('Error al pagar con el monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Función para obtener los movimientos del monedero del usuario logueado.
+   * @param usuarioId ID del usuario cuyo monedero se quiere consultar.
+   * @returns 
+   */
+  obtenerMovimientos(): Observable<any[]> {
+    const usuarioId = this.userData?.usuario?.id;
+    if (!usuarioId) {
+      return throwError(() => new Error('Usuario no definido'));
+    }
+
+    return this.http.get<any[]>(`${this.apiUrl}/user/movimientos/${usuarioId}`).pipe(
+      catchError((error) => {
+        console.error('Error al obtener movimientos del monedero:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

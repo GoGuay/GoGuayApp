@@ -13,6 +13,7 @@ import {
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
   selector: 'app-saldo-transferencias',
@@ -31,12 +32,58 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
   ],
 })
 export class SaldoTransferenciasPage implements OnInit {
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
-  constructor() {}
+
+  monedero: any = null;
+  movimientos: any[] = [];
+
+  loadingSaldo = false;
+  loadingMovimientos = false;
+  errorMensaje = '';
+
+  constructor(private userService: UserServicesService) { }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
+
+    if (this.userLoggedIn) {
+      this.cargarMonedero();
+      this.cargarMovimientos();
+    }
+
+  }
+
+
+  cargarMonedero() {
+    this.loadingSaldo = true;
+    this.userService.cargarMonedero().subscribe({
+      next: (monedero) => {
+        this.monedero = monedero;
+        this.loadingSaldo = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar monedero:', error);
+        this.errorMensaje = 'No se pudo cargar el saldo';
+        this.loadingSaldo = false;
+      },
+    });
+  }
+
+  cargarMovimientos() {
+    this.loadingMovimientos = true;
+    this.userService.obtenerMovimientos().subscribe({
+      next: (movs) => {
+        this.movimientos = movs;
+        this.loadingMovimientos = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar movimientos:', error);
+        this.errorMensaje = 'No se pudo cargar el historial de movimientos';
+        this.loadingMovimientos = false;
+      },
+    });
   }
 }
