@@ -331,7 +331,7 @@ export class UserServicesService {
       })
     );
   }
-   * Función para el envío de mail de cambio de contraseña.
+   /* Función para el envío de mail de cambio de contraseña.
    * @param email
    * @returns
    */
