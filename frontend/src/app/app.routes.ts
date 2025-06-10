@@ -188,5 +188,9 @@ export const routes: Routes = [
     path: 'token-ya-usado',
     loadComponent: () => import('./pages/token-ya-usado/token-ya-usado.page').then( m => m.TokenYaUsadoPage)
   },
+  {
+    path: 'notificaciones',
+    loadComponent: () => import('./pages/notificaciones/notificaciones.page').then( m => m.NotificacionesPage)
+  },
 
 ];

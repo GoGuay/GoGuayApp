@@ -66,6 +66,7 @@ def create_app():
     # --> user_blueprint: Servicio relacionado con los usuarios
     # --> travel_blueprint: Servicio relacionado con los viajes
     # --> vehicle_blueprint: Servicio relacionado con los vehículos
+    # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     app.register_blueprint(user_blueprint, url_prefix="/user")
     app.register_blueprint(travel_blueprint, url_prefix="/travel")

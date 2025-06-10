@@ -162,6 +162,18 @@ ion-button {
   color: #000000 !important;
 }
 
+.select-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+}
+
 ion-select {
   flex-grow: 1;
   padding-left: 50px !important; 

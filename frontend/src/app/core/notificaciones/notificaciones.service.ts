@@ -1,16 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, Subject, throwError } from 'rxjs';
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
+import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
+import { API_URL } from '../../models/constantes/constantes.model';
+
 
 @Injectable({ providedIn: 'root' })
 export class NotificacionesService {
 
-    private apiUrl = 'http://127.0.0.1:5000';
+    private apiUrl = API_URL;
 
     public notificacionPendiente: string | null = null;
     public esCreadorDelViaje: boolean = false;
+
+    private toastSubject = new Subject<ToastData[]>();
+    toast$ = this.toastSubject.asObservable();
+
+    // Array interno para almacenar toasts activos
+    private toasts: ToastData[] = [];
 
     constructor(private http: HttpClient, private dialog: MatDialog) { }
 
@@ -18,11 +27,32 @@ export class NotificacionesService {
         return this.notificacionPendiente !== null && this.esCreadorDelViaje;
     }
 
-    // Método para leer la notificación
-    leerNotificacion( notificaciones: any ): void {
-        if (this.notificacionPendiente) {
-            console.log('NOTIF. PDTE: ', this.notificacionPendiente);
-            this.mostrarNotificaciones(notificaciones);
+    /**
+     * Función para leer una notificación pendiente.
+     * Esta función verifica si hay una notificación pendiente y si el usuario es el creador del viaje.
+     * @param notificaciones -> Lista de notificaciones recibidas.
+     */
+    leerNotificacion(notificaciones: any): void {
+        if (this.notificacionPendiente && this.esCreadorDelViaje) {
+            const notificacionConId = notificaciones.find((n: any) => n.mensaje === this.notificacionPendiente);
+
+            if (notificacionConId) {
+                this.mostrarToast({
+                    id: notificacionConId.id,
+                    type: 'info',
+                    mensaje: this.notificacionPendiente,
+                    leida: false
+                });
+            } else {
+                // Si no hay id disponible, asignar un id temporal o manejar el caso
+                this.mostrarToast({
+                    id: Date.now(),  // ID temporal único
+                    type: 'info',
+                    mensaje: this.notificacionPendiente,
+                    leida: false
+                });
+            }
+
             this.notificacionPendiente = null;
             this.esCreadorDelViaje = false;
         }
@@ -39,7 +69,7 @@ export class NotificacionesService {
         });
 
         dialogRef.afterClosed().subscribe(() => {
-            this.marcarNotificacionComoLeida(notificacion[0].id);
+            // this.marcarNotificacionComoLeida(notificacion[0].id);
         });
     }
 
@@ -78,6 +108,46 @@ export class NotificacionesService {
         return this.http.get(`${this.apiUrl}/travel/obtener_notificaciones_viaje/${viaje_id}`).pipe(
             catchError((error) => {
                 console.error('Error al obtener notificaciones del viaje:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Función para mostrar el mensaje emergente de notificación.
+     * @param data 
+     */
+    mostrarToast(data: ToastData) {
+        const exists = this.toasts.some(t => t.mensaje === data.mensaje && t.type === data.type);
+        if (!exists) {
+            this.toasts.push(data);
+            this.toastSubject.next(this.toasts);
+        }
+    }
+
+    /**
+     * Función para limpiar los mensajes almacenados en el array de toasts.
+     */
+    clearToasts() {
+        this.toasts = [];
+        this.toastSubject.next(this.toasts);
+    }
+
+    removeToast(toast: ToastData) {
+        this.toasts = this.toasts.filter(t => t !== toast);
+        this.toastSubject.next(this.toasts);
+    }
+
+
+    /**
+ * Marca una notificación como leída o no leída.
+ * @param notificacionId ID de la notificación.
+ * @param leida Estado booleano: true = leída, false = no leída.
+ */
+    toggleEstadoNotificacion(notificacionId: number, leida: boolean): Observable<any> {
+        return this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
+            catchError((error) => {
+                console.error('Error al cambiar estado de la notificación:', error);
                 return throwError(() => error);
             })
         );

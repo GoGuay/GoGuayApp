@@ -1,0 +1,42 @@
+.notificacion-no-leida {
+  background-color: #ffefef; 
+  border-left: 5px solid #ef4444;
+}
+
+.notificacion-item {
+  background-color: white;
+  border-left: 5px solid transparent;
+}
+
+.badge-danger {
+  border-left: 5px solid #ef4444;
+  background-color: #FFB3BA;
+  color: black;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.notificacion_container {
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.lista_notificaciones {
+  max-height: 600px; 
+  // width: 650px;
+  margin: 0 auto;
+  overflow-y: auto;
+  border-radius: 15px;
+}
+
+.notificacion-leida {
+  background-color: #f5f5f5;
+  color: #888;
+}

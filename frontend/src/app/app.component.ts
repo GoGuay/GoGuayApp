@@ -6,6 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Subscription } from 'rxjs';
 import { LanguageService } from './core/lenguajes/languaje.service';
+import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
+import { NotificacionesService } from './core/notificaciones/notificaciones.service';
+import { Usuario } from './models/user/usuario.model';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -15,23 +18,29 @@ export function HttpLoaderFactory(http: HttpClient) {
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [IonApp, IonRouterOutlet]
+  imports: [IonApp, IonRouterOutlet, NotificationToastComponent]
 })
 export class AppComponent implements OnInit {
   private consentGivenSubscription!: Subscription;
+  userData: Usuario = {} as Usuario;
+
 
   constructor(
     private ccService: NgcCookieConsentService,
     private cookieService: CookieService,
-    private languageService: LanguageService
-  ) {
-    
-
-
-  }
+    private languageService: LanguageService,
+    private notificacionesService: NotificacionesService
+  ) { }
 
   ngOnInit() {
     const consentStatus = localStorage.getItem('cookieConsentStatus');
+    this.loadUserData();
+
+    if (this.userData?.usuario?.id) {
+      this.obtenerNotificaciones(this.userData.usuario.id);
+    } else {
+      this.checkUserDataUntilAvailable();
+    }
 
     this.ccService.popupOpen$.subscribe(() => {
       console.log('El banner de cookies está visible');
@@ -48,7 +57,7 @@ export class AppComponent implements OnInit {
     if (!hasConsent) {
       console.log('No se han establecido preferencias de cookies.');
     }
-    
+
     if (consentStatus === 'allow' || consentStatus === 'deny') {
       // Si ya se ha dado consentimiento, no mostrar el banner
       this.ccService.destroy();
@@ -73,7 +82,29 @@ export class AppComponent implements OnInit {
     });
   }
 
+  checkUserDataUntilAvailable() {
+    const interval = setInterval(() => {
+      this.loadUserData();
+      if (this.userData?.usuario?.id) {
+        clearInterval(interval);
+        this.obtenerNotificaciones(this.userData.usuario.id);
+      }
+    }, 500);
+  }
 
+  obtenerNotificaciones(usuarioId: number) {
+    this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
+      if (notificaciones.length) {
+        this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
+        this.notificacionesService.esCreadorDelViaje = true;
+        this.notificacionesService.leerNotificacion(notificaciones);
+      }
+    });
+  }
+
+  loadUserData(): void {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
 
   ngOnDestroy() {
     if (this.consentGivenSubscription) {

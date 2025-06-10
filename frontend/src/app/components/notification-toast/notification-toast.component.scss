@@ -1,0 +1,102 @@
+:host {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 600px;
+}
+
+.toasts-container {
+  max-height: 600px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.bg {
+  background-color: #e9edd5;
+  border-radius: 15px;
+  border-left: 6px solid transparent;
+}
+
+.toast-success {
+  border-left-color: #baffc9;
+}
+
+.toast-error {
+  border-left-color: #ffb3ba;
+}
+
+.toast-warning {
+  border-left-color: #ffffba;
+}
+
+.toast-info {
+  border-left-color: #bae1ff;
+}
+
+.icono-cerrar {
+  height: 15px;
+  width: 15px;
+  display: block;
+}
+
+.btn_notificaciones {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-danger {
+  background-color: #ffb3ba;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.toast-slide-out {
+  animation: collapseAndFade 0.4s ease forwards;
+}
+
+@keyframes collapseAndFade {
+  0% {
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 0.5rem;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  :host {
+    width: auto;
+    right: 1rem;
+    left: auto;
+  }
+
+  .toasts-container {
+    width: 300px;
+    max-width: 90vw;
+  }
+}
