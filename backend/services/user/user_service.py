@@ -4,7 +4,7 @@
 
 from datetime import datetime
 import random
-from flask import Blueprint, jsonify, Response,  request
+from flask import Blueprint, jsonify, render_template,  request
 from itsdangerous import SignatureExpired, BadSignature
 import nexmo
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -450,7 +450,6 @@ def enviar_email():
 
     return jsonify({'message': 'Correo enviado'}), 200
 
-#Función backend para envíar el correo de cambio de contraseña
 @user_blueprint.route('/enviar_email_resetpassword', methods=['POST'])
 def enviar_email_reset_password():
     email = request.json['email']
@@ -458,19 +457,21 @@ def enviar_email_reset_password():
     token = serializer.dumps(email, salt=salt)
     link= f"http://localhost:4200/nueva-contrasena/{token}"
     msg = Message("Reseteo de contraseña PrideRide", recipients=[email])
-    msg.body = f"""Hola,
-     Has solicitado un reseteo de tu contraseña para acceder a PrideRide
-      
-    Pulsa en el siguiente enlace para poder hacer el cambio. Sólo es válido durante 1 hora por seguridad:
-
-    {link}
-
-    Si no has solicitado ningún cambio de contraseña, puedes ignorar este correo. 
-
-    Saludo,
-
-    El equipo de PrideRide."""
+    msg.html = render_template('email_reset_password.html', link=link)
     mail.send(msg)
+    # msg.body = f"""Hola,
+    #  Has solicitado un reseteo de tu contraseña para acceder a PrideRide
+      
+    # Pulsa en el siguiente enlace para poder hacer el cambio. Sólo es válido durante media hora por seguridad:
+
+    # {link}
+
+    # Si no has solicitado ningún cambio de contraseña, puedes ignorar este correo. 
+
+    # Saludo,
+
+    # El equipo de PrideRide."""
+    # mail.send(msg)
 
     return jsonify({'message': 'Correo enviado'}), 200
 
@@ -481,7 +482,7 @@ def verificar_email():
     salt = 'email-verify'
     try:
 
-        email = serializer.loads(token, salt=salt, max_age=3600)
+        email = serializer.loads(token, salt=salt, max_age=1800)
         print(f"Email extraído del token: {email}") 
         usuario = Usuario.query.filter_by(email=email).first()
         if usuario:
@@ -540,23 +541,23 @@ def restablacerpassword():
 def comprobacion_token():
     token = request.args.get('token')
 
+    if not token:
+        return jsonify({"error": "No se ha encontrado token"}), 404
+    
+    if TokenUsado.query.filter_by(token=token).first():
+        return jsonify({'error': 'Token ya utilizado'}), 200
 
-    
-    
     try:
-        if not token:
-            return jsonify ({"error": "no se ha encontrado token"}),404
-    
-        if TokenUsado.query.filter_by(token=token).first():
-            return jsonify({'error': 'Token ya utilizado'}), 200
         email = serializer.loads(token, salt='password-reset', max_age=1800)  
-
-        return jsonify({'mensaje': 'Token válido'}), 200
-    
+        return jsonify({'mensaje': 'Token válido', 'email': email}), 200
 
     except SignatureExpired as e:
         print(f"Token expirado: {e}") 
-        return jsonify({"error": "Token expirado"}), 200 
+        return jsonify({"error": "Token expirado"}), 200
+
+    except Exception as e:
+        print(f"Error validando token: {e}")
+        return jsonify({"error": "Token inválido"}), 400
 
 
     
