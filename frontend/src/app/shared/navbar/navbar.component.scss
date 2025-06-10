@@ -1,5 +1,5 @@
 .navbar-diseno {
-  background-color: #F0D7B4;
+  background-color: #f0d7b4;
 }
 
 ion-button {
@@ -19,7 +19,7 @@ ion-button {
   color: #000;
 }
 
-.idiomas{
+.idiomas {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -40,9 +40,8 @@ ion-button {
   margin-right: 4px;
 }
 
-
 .caja_imagen_perfil {
-  width: 60px; 
+  width: 60px;
   height: 60px;
   border-radius: 50%;
   overflow: hidden;
@@ -54,7 +53,7 @@ ion-button {
 .caja_imagen_perfil img {
   width: 100%;
   height: 100%;
-  object-fit: cover;  
+  object-fit: cover;
 }
 
 .flecha-animada {
@@ -64,7 +63,6 @@ ion-button {
 .flecha-animada.rotada {
   transform: rotate(180deg);
 }
-
 
 .dropdown-toggle::after {
   content: none;
@@ -88,11 +86,10 @@ ion-button {
   .dropdown-menu {
     position: absolute;
     top: 100%;
-    left: auto;
+    left: -160% !important;
     right: 0;
     transform: translateY(0);
     z-index: 1050;
-    
     box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
   }
 }
@@ -100,14 +97,14 @@ ion-button {
 .navbar .dropdown-menu li a:hover {
   padding: auto;
   border: none;
-  background-color: #F0D7B4;
+  background-color: #f0d7b4;
   border-radius: 15px;
 }
 
 .navbar .dropdown-menu .perfil a:hover {
   padding: auto;
   border: none;
-  background-color: #F0D7B4;
+  background-color: #f0d7b4;
   border-radius: 15px;
   width: 250px;
 }
@@ -115,10 +112,9 @@ ion-button {
 // Botón Salir
 .navbar .dropdown-menu .logout a:hover {
   border: none;
-  background-color: #FF5733;
+  background-color: #ff5733;
   color: white;
 }
-
 
 .navbar .dropdown-menu {
   position: absolute;
@@ -147,8 +143,8 @@ ion-button {
   transform: translateX(5px);
 }
 
-.menuusuario{
-  width: 280px
+.menuusuario {
+  // width: 280px;
 }
 
 ul {
@@ -165,7 +161,7 @@ ul {
 }
 
 .nav-link:hover {
-  color: gray; 
+  color: gray;
 }
 
 .icono_ajsutes {
@@ -173,3 +169,18 @@ ul {
   height: 24px;
 }
 
+@media (max-width: 576px) {
+  .navbar .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: auto;
+    right: -40px;
+    transform: translateY(-10px);
+    z-index: 1050;
+    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    display: block;
+  }
+}

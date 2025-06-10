@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +44,7 @@ import { MessageService } from 'primeng/api';
 })
 export class TercerPasoComponent implements OnInit {
 
-
+  @ViewChild('mapContainer') mapContainer?: ElementRef;
   mapCenter = { lat: 40.4168, lng: -3.7038 };
   zoom = 12;
   routes: google.maps.DirectionsRoute[] = [];
@@ -319,7 +319,7 @@ export class TercerPasoComponent implements OnInit {
     this.cargandoSugerencias = true;
     const geocoder = new google.maps.Geocoder();
     const ciudadesDetectadas: Set<string> = new Set();
-  
+
     puntosRuta.forEach((punto, index) => {
       setTimeout(() => {  // Aplica un retraso progresivo para evitar límites
         geocoder.geocode({ location: punto }, (results, status) => {
@@ -327,26 +327,26 @@ export class TercerPasoComponent implements OnInit {
             const ciudad = results.find((r) =>
               r.types.includes("locality") || r.types.includes("administrative_area_level_2")
             );
-  
+
             if (ciudad) {
               ciudadesDetectadas.add(ciudad.formatted_address);
             }
           }
-  
+
           // Verifica al final de todas las peticiones
           if (index === puntosRuta.length - 1) {
             this.sugerenciasParadas = Array.from(ciudadesDetectadas).map((nombre) => ({
               nombre,
               distancia: "En la ruta",
             }));
-  
+
             this.cargandoSugerencias = false;
           }
         });
       }, index * 3000);  // 🔥 Retraso de 300ms entre cada petición
     });
   }
-  
+
 
   /**
    * Función para actualizar la lista de sugerencias
@@ -464,7 +464,45 @@ export class TercerPasoComponent implements OnInit {
     localStorage.setItem('rutaSeleccionada', JSON.stringify(viajeData));
 
     // this.obtenerCiudadesEnRuta();
+
+    // Desplaza la vista al mapa después de seleccionar la ruta
+    setTimeout(() => {
+      const mapEl = document.getElementById('mapContainer');
+      if (mapEl) {
+        mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 250);
   }
+
+  /**
+   * Función para desplazar la vista al elemento HTML especificado.
+   * @param element Elemento HTML al que se quiere desplazar la vista.
+   */
+  scrollToElement(element: HTMLElement) {
+    const rect = element.getBoundingClientRect();
+    const absoluteY = window.pageYOffset + rect.top;
+    const duration = 2000; // Más lenta = más suave
+    const startY = window.scrollY;
+    const distance = absoluteY - startY;
+    const startTime = performance.now();
+
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const scroll = (currentTime: number) => {
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const ease = easeOutCubic(progress);
+
+      window.scrollTo(0, startY + distance * ease);
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(scroll);
+      }
+    };
+
+    requestAnimationFrame(scroll);
+  }
+
 
 
   /**

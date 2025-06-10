@@ -9,7 +9,7 @@
   text-align: center;
   font-size: 16px;
 }
-._icon{
+._icon {
   width: 25px;
   height: 25px;
 }
@@ -72,6 +72,36 @@
   background-color: #f0f0f0;
 }
 
-button{
+button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 576px) {
+  .lista_sugerencias {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 101px;
+    width: 50%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .lista_sugerencias_origen {
+    position: absolute;
+    top: calc(64% + 5px);
+    left: 101px;
+    width: 50%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
 }

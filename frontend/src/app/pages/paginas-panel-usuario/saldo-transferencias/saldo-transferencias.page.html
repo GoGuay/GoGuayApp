@@ -1,8 +1,4 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container">
@@ -22,11 +18,9 @@
             <div>
               <h3>TU SALDO</h3>
               <p>{{'SALDO.TU_SALDO' | translate}}</p>
-              <span
-                class="d-flex justify-content-center"
-                style="font-size: 30px; font-weight: bold"
-                >80 €</span
-              >
+              <span *ngIf="monedero" class="d-flex justify-content-center" style="font-size: 30px; font-weight: bold">
+                {{ monedero.saldo | currency: 'EUR' }}
+              </span>
             </div>
           </ion-row>
           <ion-row class="d-flex justify-content-center">
@@ -108,40 +102,17 @@
                 </button>
               </div>
               <form class="mt-2">
-                <input
-                  style="width: 200px"
-                  class="form-input"
-                  id="aliastarjeta"
-                  placeholder="{{ 'SALDO.ALIAS_TARJETA' | translate }}"
-                />
-                <input
-                  style="width: 200px"
-                  class="form-input"
-                  id="numerotarjeta"
-                  placeholder="{{ 'SALDO.NUM_TARJETA' | translate }}"
-                />
+                <input style="width: 200px" class="form-input" id="aliastarjeta"
+                  placeholder="{{ 'SALDO.ALIAS_TARJETA' | translate }}" />
+                <input style="width: 200px" class="form-input" id="numerotarjeta"
+                  placeholder="{{ 'SALDO.NUM_TARJETA' | translate }}" />
 
                 <ion-row>
-                  <input
-                    style="width: 50px"
-                    class="form-input"
-                    id="mestarjeta"
-                    placeholder="MM"
-                  />
-                  <input
-                    style="width: 50px"
-                    class="form-input"
-                    id="aniotarjeta"
-                    placeholder="AA"
-                  />
+                  <input style="width: 50px" class="form-input" id="mestarjeta" placeholder="MM" />
+                  <input style="width: 50px" class="form-input" id="aniotarjeta" placeholder="AA" />
                 </ion-row>
                 <ion-row>
-                  <input
-                    style="width: 80px"
-                    class="form-input"
-                    id="cvvtarjeta"
-                    placeholder="CVV"
-                  />
+                  <input style="width: 80px" class="form-input" id="cvvtarjeta" placeholder="CVV" />
                 </ion-row>
                 <ion-row>
                   <button type="submit" class="btn btn_bg">
@@ -160,10 +131,7 @@
           </ion-row>
           <ion-row class="d-flex justify-content-center">
             <div class="d-flex justify-content-center align-items-center mb-4">
-              <button
-                type="button"
-                class="btn btn_bg d-flex justify-content-center"
-              >
+              <button type="button" class="btn btn_bg d-flex justify-content-center">
                 {{ "SALDO.PAYPAL_BOTON" | translate }}
               </button>
             </div>
@@ -177,32 +145,36 @@
               <h3>{{ "SALDO.TRANSF_TITULO" | translate }}</h3>
             </div>
           </ion-row>
-          <ion-row class="mb-4 d-flex justify-content-center">
+          <ion-row class="d-flex justify-content-center">
             <table class="table table-striped tabla-saldos">
               <thead>
                 <tr>
-                  <th scope="col">{{ "SALDO.MOV_FECHA" | translate }}</th>
-                  <th scope="col">{{ "SALDO.MOV_CONCEPTO" | translate }}</th>
-                  <th scope="col">{{ "SALDO.SALDO" | translate }}</th>
+                  <th scope="col">{{'SALDO.MOV_FECHA' | translate}}</th>
+                  <th scope="col">{{'SALDO.MOV_CONCEPTO' | translate}}</th>
+                  <th scope="col">{{'SALDO.MOV_ABONO_GASTO' | translate}}</th>
+                  <th scope="col">{{'SALDO.MOV_SALDO_FINAL' | translate}}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">12/12/2024</th>
-                  <td>{{ "SALDO.TRANS_CONCEPTO" | translate }}</td>
-                  <td>-25 €</td>
-                </tr>
-                <tr>
-                  <th scope="row">10/12/2024</th>
-                  <td>{{ "SALDO.TRANS_CONCEPTO" | translate }}</td>
-                  <td>-25 €</td>
-                </tr>
-                <tr>
-                  <th scope="row">01/12/2024</th>
-                  <td>{{ "SALDO.TRANS_CONCEPTO" | translate }}</td>
-                  <td>-25 €</td>
-                </tr>
+                <ng-container *ngIf="movimientos && movimientos.length > 0; else noMovimientos">
+                  <tr *ngFor="let mov of movimientos">
+                    <th scope="row">{{ mov.fecha | date:'dd/MM/yyyy' }}</th>
+                    <td>{{ mov.concepto }}</td>
+                    <td [ngClass]="mov.cantidad >= 0 ? 'text-success' : 'text-danger'">
+                      {{ mov.cantidad >= 0 ? '+' : '' }}{{ mov.cantidad | currency: 'EUR' }}
+                    </td>
+                    <td>{{ mov.saldo_final | currency: 'EUR' }}</td>
+                  </tr>
+                </ng-container>
               </tbody>
+
+              <ng-template #noMovimientos>
+                <tr>
+                  <td colspan="4" class="text-center">
+                    {{ 'SALDO.NO_HAY_MOVIMIENTOS' | translate }}
+                  </td>
+                </tr>
+              </ng-template>
             </table>
           </ion-row>
         </ion-col>

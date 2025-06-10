@@ -1,0 +1,25 @@
+<div *ngIf="toasts.length > 0" class="d-flex justify-content-end mb-2">
+  <button class="btn btn-danger btn-sm d-flex align-items-center gap-1" (click)="cerrarTodosLosToasts()">
+    <img src="../../../assets/sistema/limpio.png" alt="Cerrar todos los mensajes" class="icono-cerrar"> Cerrar todo
+  </button>
+</div>
+
+<div class="toasts-container">
+  <div *ngFor="let n of toasts" class="relative bg shadow-lg p-4" [ngClass]="{
+       'toast-success': n.type === 'success',
+       'toast-error': n.type === 'error',
+       'toast-warning': n.type === 'warning',
+       'toast-info': n.type === 'info',
+       'toast-slide-out': cerrandoToasts.has(n)
+     }">
+
+    <div class="d-flex justify-content-end">
+      <button class="btn_notificaciones" (click)="cerrarToast(n)" aria-label="Cerrar notificación">
+        <img src="../../../assets/sistema/cruz.png" alt="Cerrar notificación" class="icono-cerrar">
+      </button>
+    </div>
+
+    <strong class="block capitalize">Notificación</strong>
+    <p class="text-sm">{{ n.mensaje }}</p>
+  </div>
+</div>

@@ -27,6 +27,8 @@ export class ResultadosBusquedaComponent implements OnInit {
   listado_viajes: Viaje[] = [];
   usuarioPorID: Usuario | undefined;
   filtroSeleccionado: string = 'horaSalida';
+  isLoading: boolean = false;
+
 
   constructor(
     private travelService: TravelService,
@@ -34,7 +36,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -47,6 +49,7 @@ export class ResultadosBusquedaComponent implements OnInit {
    * Función para obtener la lista de viajes completa
    */
   obtenerListaViajes() {
+    this.isLoading = true;
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
       this.listado_viajes = viajes;
 
@@ -98,8 +101,13 @@ export class ResultadosBusquedaComponent implements OnInit {
    * Función para cambiar el filtro seleccionado
    */
   cambiarFiltro(filtro: string) {
+    this.isLoading = true;
     this.filtroSeleccionado = filtro;
-    this.aplicarFiltro();
+
+    setTimeout(() => {
+      this.aplicarFiltro();
+      this.isLoading = false;
+    }, 300);
   }
 
   /**
@@ -111,29 +119,30 @@ export class ResultadosBusquedaComponent implements OnInit {
     } else if (this.filtroSeleccionado === 'precioDesc') {
       this.listado_viajes.sort((a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0));
     } else if (this.filtroSeleccionado === 'horaSalida') {
-      const horaActual = new Date(); 
+      const horaActual = new Date();
       const horaActualMilisegundos = horaActual.getTime();
-  
+
       this.listado_viajes.sort((a, b) => {
         const [horaA, minutosA] = a.hora_salida.split(':').map(Number);
         const [horaB, minutosB] = b.hora_salida.split(':').map(Number);
-  
+
         const fechaA = new Date(horaActual);
         const fechaB = new Date(horaActual);
-  
+
         fechaA.setHours(horaA, minutosA, 0, 0);
         fechaB.setHours(horaB, minutosB, 0, 0);
-  
+
         const diferenciaA = Math.abs(fechaA.getTime() - horaActualMilisegundos);
         const diferenciaB = Math.abs(fechaB.getTime() - horaActualMilisegundos);
-  
+
         return diferenciaA - diferenciaB;
       });
     } else if (this.filtroSeleccionado === 'recientes') {
       this.listado_viajes.sort((a, b) => b.id - a.id);
     }
+    this.isLoading = false;
   }
-  
-  
-  
+
+
+
 }

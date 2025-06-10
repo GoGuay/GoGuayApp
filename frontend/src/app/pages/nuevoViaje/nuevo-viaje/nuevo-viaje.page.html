@@ -38,22 +38,18 @@
                 </li>
               </ul>
             </div>
-            
-            <div >
-            <ion-select aria-label="n_personas" placeholder="{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}"
-              class="input-viaje form-control custom-select" [(ngModel)]="plazas" name="viajeros"
-              [ngModelOptions]="{standalone: true}" interface="popover">
-              <mat-icon slot="start">
-                <img src="../../../../assets/sistema/usuarios-alt.png" class="input-icon">
-              </mat-icon>
-              <ion-select-option value="1">1</ion-select-option>
-              <ion-select-option value="2">2</ion-select-option>
-              <ion-select-option value="3">3</ion-select-option>
-              <ion-select-option value="4">4</ion-select-option>
-            </ion-select>
+
+            <div class="select-icon-container">
+              <img src="../../../../assets/sistema/usuarios-alt.png" class="input-icon" alt="icono usuarios">
+              <select #plazasSelect class="form-select input-viaje form-control custom-select" aria-label="n_personas"
+                [(ngModel)]="plazas" name="viajeros" [ngModelOptions]="{standalone: true}">
+                <option value="" disabled selected>{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
             </div>
-
-
 
             <div class="alert" *ngIf="!userLoggedIn">
               <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>

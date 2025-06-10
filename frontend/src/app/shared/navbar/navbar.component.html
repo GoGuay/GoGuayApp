@@ -49,15 +49,17 @@
               </a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
+              <a class="nav-link active" aria-current="page"href="/notificaciones">
+                <img class="idiomas" src="../../../assets/sistema/campana.gif">
+              </a> 
+              <!-- <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (change)="cambioDireccionFlechaIdioma()"
                 (click)="cambioDireccionFlechaIdioma()">
-                <!-- <mat-icon>language</mat-icon> -->
                 <img class="idiomas" src="../../../assets/sistema/espanol.gif">
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isLenguageDropdownOpen">expand_more</mat-icon>
-              </a>
-              <ul class="dropdown-menu">
+              </a> -->
+              <!-- <ul class="dropdown-menu">
                 <li>
                   <a type="button" class="dropdown-item" (click)="changeLanguage('es')">
                     <img src="../../../assets/flags/espana.png" class="flag-icon" />
@@ -70,7 +72,7 @@
                     {{ "NAVBAR.IDIOMA_INGLES" | translate }}
                   </a>
                 </li>
-              </ul>
+              </ul> -->
             </li>
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNav">

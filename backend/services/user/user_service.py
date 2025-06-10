@@ -13,7 +13,7 @@ from flask_jwt_extended import create_access_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, Monedero, RolUsuarioEnum
+from models import Usuario, Monedero, MovimientoMonedero, RolUsuarioEnum
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -600,3 +600,100 @@ def cambiopassword(id):
     db.session.commit()
 
     return jsonify({'mensaje': 'nueva contraseña actualizada con éxito'}), 200
+
+
+#########  MONEDERO DEL USUARIO #########
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#      OBTENER EL MONEDERO DEL USUARIO
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/obtener_datos_monedero/<int:usuario_id>', methods=['GET'])
+def obtener_monedero(usuario_id):
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        return jsonify({"error": "Monedero del usuario no encontrado"}), 404
+    return jsonify(monedero.serialize()), 200
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#      RECARGAR EL MONEDERO DEL USUARIO
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/recargar', methods=['POST'])
+def recargar_saldo():
+    data = request.json
+    usuario_id = data.get('usuario_id')
+    cantidad = data.get('cantidad')
+    concepto = data.get('concepto', 'Recarga manual')
+
+    if not usuario_id or cantidad is None:
+        return jsonify({"error": "Datos insuficientes"}), 400
+
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        return jsonify({"error": "Monedero no encontrado"}), 404
+
+    # Sumar saldo
+    monedero.saldo += cantidad
+    db.session.add(monedero)
+
+    # Registrar movimiento
+    movimiento = MovimientoMonedero(
+        usuario_id=usuario_id,
+        cantidad=cantidad,
+        tipo='recarga',
+        concepto=concepto,
+        fecha=datetime.utcnow()
+    )
+    db.session.add(movimiento)
+    db.session.commit()
+
+    return jsonify(monedero.serialize()), 200
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#      PAGAR CON EL MONEDERO DEL USUARIO
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/pagar', methods=['POST'])
+def pagar():
+    data = request.json
+    usuario_id = data.get('usuario_id')
+    cantidad = data.get('cantidad')
+    concepto = data.get('concepto', 'Pago')
+
+    if not usuario_id or cantidad is None:
+        return jsonify({"error": "Datos insuficientes"}), 400
+
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        return jsonify({"error": "Monedero no encontrado"}), 404
+
+    if monedero.saldo < cantidad:
+        return jsonify({"error": "Saldo insuficiente"}), 400
+
+    # Restar saldo
+    monedero.saldo -= cantidad
+    db.session.add(monedero)
+
+    # Registrar movimiento
+    movimiento = MovimientoMonedero(
+        usuario_id=usuario_id,
+        cantidad=-cantidad, 
+        tipo='pago',
+        concepto=concepto,
+        fecha=datetime.utcnow()
+    )
+    db.session.add(movimiento)
+    db.session.commit()
+
+    return jsonify(monedero.serialize()), 200
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#     OBTENER MOVIMIENTOS DEL MONEDERO DEL USUARIO
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/movimientos/<int:usuario_id>', methods=['GET'])
+def obtener_movimientos(usuario_id):
+    movimientos = MovimientoMonedero.query.filter_by(usuario_id=usuario_id).order_by(MovimientoMonedero.fecha.desc()).all()
+    lista = [m.serialize() for m in movimientos]
+    return jsonify(lista), 200
