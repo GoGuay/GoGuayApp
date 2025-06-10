@@ -4,6 +4,7 @@
 @use "./animations.scss" as *;
 @import "./animations.scss";
 @import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
+@import url('https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css');
 
 html {
   @include mat.theme((color: (theme-type: light,
@@ -92,7 +93,8 @@ ion-label,
 ion-input,
 ion-select,
 textarea,
-label {
+label,
+small {
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 

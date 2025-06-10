@@ -132,7 +132,7 @@ export class UserServicesService {
   }
 
   /**
-   * Función para el envío de mail de verificación.
+   * Función para el envío de mail de verificación del correo.
    * @param email
    * @returns
    */
@@ -224,6 +224,13 @@ export class UserServicesService {
       }
     );
   }
+
+  /**
+   * Cambio password DESDE LA VENTANA DE AJUSTES
+   * @param id
+   * @param nuevaPassword
+   * @returns
+   */
 
   cambio_pw(id: number, nuevaPassword: string) {
     return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
@@ -323,5 +330,31 @@ export class UserServicesService {
         return throwError(() => error);
       })
     );
+  }
+   * Función para el envío de mail de cambio de contraseña.
+   * @param email
+   * @returns
+   */
+  enviar_email_resetpassword(email: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/user/enviar_email_resetpassword`,
+      { email: email },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  cambiar_pw_solicitado(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/user/restablecerpassword`, {
+      token,
+      password,
+    });
+  }
+
+  comprobar_token(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/comprobacion_token`, {
+      params: { token },
+    });
   }
 }

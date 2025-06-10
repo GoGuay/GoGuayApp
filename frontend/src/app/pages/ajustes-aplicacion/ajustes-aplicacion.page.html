@@ -85,13 +85,20 @@
                 </label>
                 <input
                   type="password"
-                  class="form-control w-10"
+                  class="form-control w-10 mb-1"
                   id="passwordActual"
                   [(ngModel)]="passwordActual"
                   (blur)="comprobarContrasenaActual()"
                   [disabled]="false"
                   aria-label="Campo para escribir la contraseña actual"
                 />
+                <div class="text-start mb-4">
+                  <a
+                    class="small"
+                    href="'../../../forgot-password//forgot-password.page.html"
+                    >¿No recuerdas tu contraseña actual?</a
+                  >
+                </div>
                 <div
                   *ngIf="isPasswordActualValida === true"
                   class="text-success mt-2"

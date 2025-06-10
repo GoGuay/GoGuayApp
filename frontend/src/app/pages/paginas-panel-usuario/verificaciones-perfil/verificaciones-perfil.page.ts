@@ -60,7 +60,7 @@ export class VerificacionesPerfilPage implements OnInit {
     await this.obtenerDatosUsuario(this.userData.usuario.id);
   }
 
-  verificar_email(email: string) {
+  envio_mail_verificar_correo(email: string) {
     this.userService.enviar_email_verif(email).subscribe((respuesta) => {
       console.log(respuesta);
     });
