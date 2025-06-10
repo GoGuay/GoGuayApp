@@ -158,6 +158,20 @@
     "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
   },
 
+  "TOKEN_EXPIRADO": "Pagina que se muestra cuando el token del correo ha caducado",
+  "TOKEN_EXP": {
+    "TITULO": "El enlace ha caducado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual, ha caducado.",
+    "SUBTITULO2": "Debes solicita otro enlace a través de la página de Ajustes en el menú de usuario."
+  },
+
+  "TOKEN_YA_USADO_": "Página que se muestra cuando el token del correo ya ha sido usado",
+  "TOKEN_YA_USADO": {
+    "TITULO": "El enlace ya ha sido usado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual ya se ha usado.",
+    "SUBTITULO2": "Puedes volver a cambiar tu contraseña actual a través de la página Ajustes en el menú de usuario."
+  },
+
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
   "SALDO": {
     "SALDOTRANSF": "Saldo y transferencias",
