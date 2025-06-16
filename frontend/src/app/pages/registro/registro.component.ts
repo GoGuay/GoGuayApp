@@ -5,6 +5,7 @@ import {
   FormBuilder,
   Validators,
   ReactiveFormsModule,
+  FormControl,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,7 +40,7 @@ export class RegistroComponent implements OnInit {
   formulario3: FormGroup;
   paso1: boolean = false;
   fechaNacimiento: string = '';
-
+  botonHabilitadoContacto: boolean = false;
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
@@ -47,10 +48,18 @@ export class RegistroComponent implements OnInit {
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes
   ) {
-    this.formulario1 = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      fecha_nacimiento: ['', Validators.required],
+    this.formulario1 = new FormGroup({
+      email: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      ]),
+      fecha_nacimiento: new FormControl('', Validators.required),
     });
+
+    // this.formulario1 = this.fb.group({
+    //   email: ['', [Validators.required, Validators.email]],
+    //   fecha_nacimiento: ['', Validators.required],
+    // });
 
     console.log('Fecha nacimiento: ', this.fechaNacimiento);
 
@@ -73,6 +82,10 @@ export class RegistroComponent implements OnInit {
     }
   }
 
+  // Función que se llama cuando hay un cambio en los inputs o checkboxes
+  onInputChange() {
+    this.botonHabilitadoContacto = this.formulario1.valid;
+  }
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid) {
@@ -190,7 +203,7 @@ export class RegistroComponent implements OnInit {
   validacionEdad(): boolean {
     console.log(this.fechaNacimiento);
     let esMayorEdad: boolean = false;
-    if (!this.fechaNacimiento) return false;
+    if (!this.formulario1.get('fecha_nacimiento')?.value) return false;
 
     const fechaNac = new Date(this.fechaNacimiento);
     const hoy = new Date();
@@ -225,5 +238,39 @@ export class RegistroComponent implements OnInit {
       esMayorEdad = true; // Ahora sí cambiamos a true si es mayor de edad
     }
     return esMayorEdad;
+  }
+
+  comprobarEmailRegistrado(email: string) {
+    this.userService.verificarEmailExistente(email).subscribe({
+      next: (existe: boolean) => {
+        const control = this.formulario1.get('email');
+        if (control) {
+          if (existe) {
+            control.setErrors({ ...control.errors, emailRepetido: true });
+          } else {
+            if (control.errors?.['emailRepetido']) {
+              const { emailRepetido, ...rest } = control.errors;
+              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+            }
+          }
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al verificar email:', err);
+      },
+    });
+  }
+
+  validarCampo(controlName: string) {
+    const control = this.formulario1.get(controlName);
+    if (control) {
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+
+      if (controlName === 'email' && control.valid) {
+        this.comprobarEmailRegistrado(control.value);
+      }
+    }
   }
 }

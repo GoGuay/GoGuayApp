@@ -99,6 +99,14 @@ def crear_usuario():
     }), 201
 
 
+@user_blueprint.route('/verificar-email-existente', methods=['GET'])
+def verificar_email_existente():
+    email = request.args.get('email')
+    if not email:
+        return jsonify({"Error": "Parámetro no encontrado"}), 400
+    existe = Usuario.query.filter_by(email=email).first() is not None
+    return jsonify ({"existe": existe}), 200
+
 # # # # # # # # # # # # # # # # # # # #
 #              LOGIN
 # # # # # # # # # # # # # # # # # # # #
@@ -110,6 +118,7 @@ def login():
 
     # Buscar al usuario en la base de datos
     usuario = Usuario.query.filter_by(email=email).first()
+  
 
     if usuario is None:
         return jsonify({'Error': "No se ha encontrado el correo"}), 404

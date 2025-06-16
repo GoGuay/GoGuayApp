@@ -24,7 +24,10 @@
             class="form-control form-input"
             id="email"
             formControlName="email"
+            name="email"
             aria-describedby="emailHelp"
+            (blur)="validarCampo('email')"
+            (ngModelChange)="onInputChange()"
           />
           <div
             *ngIf="
@@ -36,8 +39,11 @@
             <span *ngIf="formulario1.get('email')?.errors?.['required']">
               El correo es obligatorio.
             </span>
-            <span *ngIf="formulario1.get('email')?.errors?.['email']">
-              Introduce un correo válido.
+            <span *ngIf="formulario1.get('email')?.errors?.['pattern']">
+              El formato del correo no es correcto
+            </span>
+            <span *ngIf="formulario1.get('email')?.errors?.['emailRepetido']">
+              Este correo ya está registrado.
             </span>
           </div>
         </div>
