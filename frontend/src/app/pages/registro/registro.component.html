@@ -29,6 +29,7 @@
             (blur)="validarCampo('email')"
             (ngModelChange)="onInputChange()"
           />
+
           <div
             *ngIf="
               formulario1.get('email')?.invalid &&
@@ -55,9 +56,36 @@
             type="date"
             class="form-control"
             id="fnacimiento"
+            min="1930-01-01"
+            [max]="fechaMaxima"
             formControlName="fecha_nacimiento"
-            [(ngModel)]="fechaNacimiento"
+            (ngModelChange)="onFechaChange()"
+            (blur)="validacionEdad()"
+            [disabled]="!emailValido"
           />
+          <div
+            class="text-danger"
+            *ngIf="
+              formulario1.get('fecha_nacimiento')?.invalid &&
+              formulario1.get('fecha_nacimiento')?.touched
+            "
+          >
+            <span
+              *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['required']"
+            >
+              La fecha de nacimiento es obligatoria.
+            </span>
+            <span
+              *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['menorDeEdad']"
+            >
+              Debes tener más de 18 años para usar este servicio.
+            </span>
+            <span
+              *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechaFutura']"
+            >
+              No puedes elegir una fecha superior a la actual.
+            </span>
+          </div>
         </div>
       </form>
     </div>
@@ -218,51 +246,30 @@
   </div>
 
   <!-- Mensaje de advertencia -->
-  <div
-    *ngIf="
-      (pasoActual === 1 && !formulario1.valid) ||
-      (pasoActual === 2 && !formulario2.valid) ||
-      (pasoActual === 3 && !formulario3.valid)
-    "
-    class="alert alert-warning mt-3 text-center container"
-    role="alert"
-  >
+  <div class="alert alert-warning mt-3 text-center container" role="alert">
     Los campos marcados con asteriscos son obligatorios
   </div>
 
   <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-      <li class="page-item">
-        <button
-          *ngIf="!paso1"
-          type="button"
-          class="page-link"
-          (click)="pasoAnterior()"
-        >
-          Atrás
-        </button>
-        <button *ngIf="paso1" type="button" class="page-link disabled">
-          Atrás
-        </button>
-      </li>
-      <li class="page-item">
-        <button
-          type="button"
-          class="page-link disabled"
-          *ngIf="pasoActual === 3"
-        >
-          Siguiente
-        </button>
-        <button
-          type="button"
-          class="page-link"
-          (click)="siguientePaso()"
-          *ngIf="pasoActual != 3"
-        >
-          Siguiente
-        </button>
-      </li>
-    </ul>
+    <div class="d-flex justify-content-center">
+      <button
+        *ngIf="!paso1"
+        type="button"
+        class="btn btn_bg"
+        (click)="pasoAnterior()"
+      >
+        Atrás
+      </button>
+
+      <button
+        type="button"
+        class="btn btn_bg"
+        [disabled]="!validarEmailYFecha"
+        (click)="siguientePaso()"
+      >
+        Siguiente
+      </button>
+    </div>
   </nav>
 
   <div

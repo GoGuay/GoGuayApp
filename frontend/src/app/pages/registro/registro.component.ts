@@ -41,6 +41,10 @@ export class RegistroComponent implements OnInit {
   paso1: boolean = false;
   fechaNacimiento: string = '';
   botonHabilitadoContacto: boolean = false;
+  emailValido: boolean = false;
+  fechaValida: boolean = false;
+  hoy: string = new Date().toISOString();
+
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
@@ -48,20 +52,19 @@ export class RegistroComponent implements OnInit {
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes
   ) {
-    this.formulario1 = new FormGroup({
-      email: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      ]),
-      fecha_nacimiento: new FormControl('', Validators.required),
+    this.formulario1 = this.fb.group({
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ],
+      ],
+      fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
-
-    // this.formulario1 = this.fb.group({
-    //   email: ['', [Validators.required, Validators.email]],
-    //   fecha_nacimiento: ['', Validators.required],
-    // });
-
-    console.log('Fecha nacimiento: ', this.fechaNacimiento);
+    this.fechaNacimiento = this.formulario1.get('fecha_nacimiento')?.value;
 
     this.formulario2 = this.fb.group({
       nombre: ['', Validators.required],
@@ -82,15 +85,30 @@ export class RegistroComponent implements OnInit {
     }
   }
 
+  // Getter para la fecha actual
+  get fechaMaxima() {
+    const hoy = new Date();
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const yyyy = hoy.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  get validarEmailYFecha() {
+    const emailValido = this.formulario1.get('email')?.valid ?? false;
+    const fechaNacimientoValida =
+      this.formulario1.get('fecha_nacimiento')?.valid ?? false;
+    return emailValido && fechaNacimientoValida && this.fechaValida;
+  }
+
   // Función que se llama cuando hay un cambio en los inputs o checkboxes
   onInputChange() {
-    this.botonHabilitadoContacto = this.formulario1.valid;
+    this.botonHabilitadoContacto = this.formulario1.valid && this.fechaValida;
   }
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid) {
       const validacion = this.validacionEdad();
-      console.log('validacion: ', validacion);
 
       if (validacion) {
         this.pasoActual++;
@@ -200,65 +218,151 @@ export class RegistroComponent implements OnInit {
     this.navCtrl.navigateRoot('/home');
   }
 
+  onFechaChange() {
+    const fechaControl = this.formulario1.get('fecha_nacimiento');
+    const fechaValue = fechaControl?.value;
+
+    // Comprobar si la fecha tiene 10 caracteres (YYYY-MM-DD) y es válida
+    if (fechaValue && fechaValue.length === 10) {
+      this.validarFechaCompleta();
+    } else {
+      this.botonHabilitadoContacto = false; // Deshabilitar hasta que se complete la fecha
+    }
+  }
+
+  validarFechaCompleta() {
+    const fechaControl = this.formulario1.get('fecha_nacimiento');
+    const fechaSeleccionada = new Date(fechaControl?.value);
+
+    // Asegúrate de que la fecha sea válida
+    if (isNaN(fechaSeleccionada.getTime())) {
+      fechaControl?.setErrors({ invalidDate: true });
+      this.botonHabilitadoContacto = false;
+      return;
+    }
+
+    // Validar si el usuario tiene 18 años o más
+    const edadValida = this.validacionEdad();
+    console.log('edadValida: ', edadValida);
+    if (edadValida) {
+      // Validar también si el correo es válido
+      if (this.emailValido) {
+        this.botonHabilitadoContacto = true; // Habilitar el botón si todo está bien
+      } else {
+        this.botonHabilitadoContacto = false; // Si el correo no es válido, deshabilitar el botón
+      }
+    } else {
+      this.botonHabilitadoContacto = false; // Si la edad no es válida, deshabilitar el botón
+    }
+  }
+
+  //Función para validad la EDAD del usuario por la fecha de nacimiento
   validacionEdad(): boolean {
-    console.log(this.fechaNacimiento);
-    let esMayorEdad: boolean = false;
-    if (!this.formulario1.get('fecha_nacimiento')?.value) return false;
+    const fechaControl = this.formulario1.get('fecha_nacimiento');
+    const fechaSeleccionada = new Date(fechaControl?.value);
 
-    const fechaNac = new Date(this.fechaNacimiento);
+    // Si no hay fecha seleccionada, retornamos false
+    if (!fechaControl?.value) return false;
+
     const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+    hoy.setHours(0, 0, 0, 0); // Establecer la hora en 00:00:00 para comparar solo fechas
 
+    // Validar si la fecha seleccionada es futura
+    if (fechaSeleccionada > hoy) {
+      fechaControl?.setErrors({
+        ...fechaControl?.errors,
+        fechaFutura: true,
+      });
+
+      // Limpiar el error 'menorDeEdad' si la fecha es futura
+      if (fechaControl?.hasError('menorDeEdad')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          menorDeEdad: null,
+        });
+      }
+
+      return false; // Si la fecha es futura, no seguimos con la validación de edad
+    } else {
+      // Limpiar el error 'fechaFutura' si la fecha no es futura
+      if (fechaControl?.hasError('fechaFutura')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          fechaFutura: null,
+        });
+      }
+    }
+
+    // Calcular la edad solo si la fecha no es futura
+    let edad = hoy.getFullYear() - fechaSeleccionada.getFullYear();
     const mesActual = hoy.getMonth();
     const diaActual = hoy.getDate();
-    const mesNacimiento = fechaNac.getMonth();
-    const diaNacimiento = fechaNac.getDate();
-    const tituloModal: string = '¡Aviso!';
-    const mensajeModal: string =
-      'Debes tener más de 18 años para usar este servicio';
+    const mesNacimiento = fechaSeleccionada.getMonth();
+    const diaNacimiento = fechaSeleccionada.getDate();
+
+    // Ajustar la edad si el cumpleaños no ha pasado aún en este año
     if (
       mesNacimiento > mesActual ||
       (mesNacimiento === mesActual && diaNacimiento > diaActual)
     ) {
       edad--;
     }
-    if (edad < 18) {
-      const dialogRef = this.funcionesComunes.openErrorModal(
-        tituloModal,
-        mensajeModal
-      );
 
-      dialogRef.afterClosed().subscribe(() => {
-        this.navCtrl.navigateRoot('/home');
+    // Validar si el usuario es menor de edad
+    if (edad < 18) {
+      fechaControl?.setErrors({
+        ...fechaControl?.errors,
+        menorDeEdad: true,
       });
-      this.fechaNacimiento = '';
-      return false; // Si es menor de edad, devuelve false
+
+      return false; // Si es menor de edad, no permitimos continuar
     } else {
-      console.log(`Edad: ${edad} años`);
-      esMayorEdad = true; // Ahora sí cambiamos a true si es mayor de edad
+      // Limpiar el error 'menorDeEdad' si el usuario es mayor de edad
+      if (fechaControl?.hasError('menorDeEdad')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          menorDeEdad: null,
+        });
+      }
     }
-    return esMayorEdad;
+
+    return true;
   }
 
   comprobarEmailRegistrado(email: string) {
     this.userService.verificarEmailExistente(email).subscribe({
       next: (existe: boolean) => {
         const control = this.formulario1.get('email');
+        const fechaControl = this.formulario1.get('fecha_nacimiento');
         if (control) {
           if (existe) {
             control.setErrors({ ...control.errors, emailRepetido: true });
+            this.emailValido = false;
+            fechaControl?.disable();
           } else {
             if (control.errors?.['emailRepetido']) {
               const { emailRepetido, ...rest } = control.errors;
               control.setErrors(Object.keys(rest).length > 0 ? rest : null);
             }
+            if (!control.errors) {
+              this.emailValido = true;
+              fechaControl?.enable();
+            }
           }
+          // this.validarEmailYFecha();
         }
       },
       error: (err: any) => {
         console.error('Error al verificar email:', err);
       },
     });
+  }
+
+  /**
+   * Función para comprobar si podemos continuar en el formulario
+   */
+  actualizarEstadoBoton() {
+    this.botonHabilitadoContacto = this.emailValido && this.fechaValida;
   }
 
   validarCampo(controlName: string) {
@@ -270,6 +374,10 @@ export class RegistroComponent implements OnInit {
 
       if (controlName === 'email' && control.valid) {
         this.comprobarEmailRegistrado(control.value);
+      } else if (controlName === 'email') {
+        this.emailValido = false;
+        this.formulario1.get('fecha_nacimiento')?.disable();
+        this.botonHabilitadoContacto = false;
       }
     }
   }
