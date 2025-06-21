@@ -59,8 +59,7 @@
             min="1930-01-01"
             [max]="fechaMaxima"
             formControlName="fecha_nacimiento"
-            (ngModelChange)="onFechaChange()"
-            (blur)="validacionEdad()"
+            (change)="onFechaChange()"
             [disabled]="!emailValido"
           />
           <div
@@ -70,6 +69,11 @@
               formulario1.get('fecha_nacimiento')?.touched
             "
           >
+            <span
+              *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechalimite']"
+            >
+              La fecha introducida no es correcta
+            </span>
             <span
               *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['required']"
             >
@@ -132,6 +136,12 @@
             id="telefono"
             formControlName="telefono"
           />
+          <span
+            class="text-danger"
+            *ngIf="formulario2.get('telefono')?.errors?.['pattern']"
+          >
+            El formato no es correcto. Debe contener 9 dígitos numéricos
+          </span>
         </div>
 
         <div class="mb-3">
@@ -234,12 +244,22 @@
           <label for="password" class="form-label"
             >Contraseña <span class="dato-obligatorio"> *</span></label
           >
+          <p class="fs-6">
+            Mínimo 6 caracteres. Recuerda debe tener una letra mayúscula y un
+            número o símbolo
+          </p>
           <input
             formControlName="password"
             type="password"
             class="form-control form-input"
             id="password"
           />
+          <span
+            class="text-danger"
+            *ngIf="formulario3.get('password')?.errors?.['pattern']"
+          >
+            El formato de la contraseña no es correcto
+          </span>
         </div>
       </form>
     </div>
@@ -263,8 +283,13 @@
 
       <button
         type="button"
-        class="btn btn_bg"
-        [disabled]="!validarEmailYFecha"
+        class="btn btn_bg ms-3"
+        *ngIf="pasoActual !== 3"
+        [disabled]="
+          (pasoActual === 1 && !validarEmailYFecha) ||
+          (pasoActual === 2 && !formulario2.valid) ||
+          (pasoActual === 3 && !formulario3.valid)
+        "
         (click)="siguientePaso()"
       >
         Siguiente

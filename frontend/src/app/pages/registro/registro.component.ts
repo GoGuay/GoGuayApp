@@ -5,13 +5,11 @@ import {
   FormBuilder,
   Validators,
   ReactiveFormsModule,
-  FormControl,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { navigate } from 'ionicons/icons';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -69,13 +67,21 @@ export class RegistroComponent implements OnInit {
     this.formulario2 = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
-      telefono: ['', Validators.required],
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+
       genero: ['', Validators.required],
       orientacion: ['', Validators.required],
     });
 
     this.formulario3 = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$'),
+        ],
+      ],
     });
   }
 
@@ -108,7 +114,23 @@ export class RegistroComponent implements OnInit {
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid) {
-      const validacion = this.validacionEdad();
+      const fechaValor = this.formulario1.get('fecha_nacimiento')?.value;
+      if (!fechaValor || fechaValor.length !== 10) {
+        // No avanzar si fecha incompleta
+        return;
+      }
+
+      // Parsear fecha dd/mm/yyyy a Date
+      const partes = fechaValor.split('-');
+      if (partes.length !== 3) {
+        return; // Formato inválido
+      }
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // Enero = 0
+      const anio = parseInt(partes[2], 10);
+
+      const fechaSeleccionada = new Date(anio, mes, dia);
+      const validacion = this.validacionEdad(fechaSeleccionada);
 
       if (validacion) {
         this.pasoActual++;
@@ -219,53 +241,74 @@ export class RegistroComponent implements OnInit {
   }
 
   onFechaChange() {
-    const fechaControl = this.formulario1.get('fecha_nacimiento');
-    const fechaValue = fechaControl?.value;
-
-    // Comprobar si la fecha tiene 10 caracteres (YYYY-MM-DD) y es válida
-    if (fechaValue && fechaValue.length === 10) {
-      this.validarFechaCompleta();
-    } else {
-      this.botonHabilitadoContacto = false; // Deshabilitar hasta que se complete la fecha
-    }
+    this.validarFechaCompleta();
   }
 
   validarFechaCompleta() {
     const fechaControl = this.formulario1.get('fecha_nacimiento');
-    const fechaSeleccionada = new Date(fechaControl?.value);
+    const fechaValor = fechaControl?.value;
+    console.log('Validando fecha...', fechaValor);
 
-    // Asegúrate de que la fecha sea válida
-    if (isNaN(fechaSeleccionada.getTime())) {
+    if (!fechaValor || fechaValor.length !== 10) {
+      fechaControl?.setErrors({ incompleteDate: true });
+      this.botonHabilitadoContacto = false;
+      this.fechaValida = false;
+      return;
+    }
+    const fechaLimite = '1930-01-01';
+    if (fechaValor < fechaLimite) {
+      fechaControl?.setErrors({ fechalimite: true });
+      this.botonHabilitadoContacto = false;
+      this.fechaValida = false;
+      return;
+    }
+    // Parsear manualmente el día, mes y año
+    const partes = fechaValor.split('-');
+    if (partes.length !== 3) {
+      fechaControl?.setErrors({ invalidDateFormat: true });
+      this.botonHabilitadoContacto = false;
+      this.fechaValida = false;
+      return;
+    }
+    const anio = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const dia = parseInt(partes[2], 10);
+
+    const fechaSeleccionada = new Date(anio, mes, dia);
+
+    if (
+      fechaSeleccionada.getFullYear() !== anio ||
+      fechaSeleccionada.getMonth() !== mes ||
+      fechaSeleccionada.getDate() !== dia
+    ) {
+      console.log('fecha seleccionada...', fechaSeleccionada);
+
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
+      this.fechaValida = false;
       return;
     }
 
     // Validar si el usuario tiene 18 años o más
-    const edadValida = this.validacionEdad();
+    const edadValida = this.validacionEdad(fechaSeleccionada);
+    this.fechaValida = edadValida;
     console.log('edadValida: ', edadValida);
     if (edadValida) {
-      // Validar también si el correo es válido
-      if (this.emailValido) {
-        this.botonHabilitadoContacto = true; // Habilitar el botón si todo está bien
-      } else {
-        this.botonHabilitadoContacto = false; // Si el correo no es válido, deshabilitar el botón
-      }
+      this.botonHabilitadoContacto = this.emailValido;
     } else {
-      this.botonHabilitadoContacto = false; // Si la edad no es válida, deshabilitar el botón
+      this.botonHabilitadoContacto = false;
     }
   }
 
   //Función para validad la EDAD del usuario por la fecha de nacimiento
-  validacionEdad(): boolean {
+  validacionEdad(fechaSeleccionada: Date): boolean {
     const fechaControl = this.formulario1.get('fecha_nacimiento');
-    const fechaSeleccionada = new Date(fechaControl?.value);
 
     // Si no hay fecha seleccionada, retornamos false
     if (!fechaControl?.value) return false;
 
     const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); // Establecer la hora en 00:00:00 para comparar solo fechas
+    hoy.setHours(0, 0, 0, 0);
 
     // Validar si la fecha seleccionada es futura
     if (fechaSeleccionada > hoy) {
@@ -282,9 +325,8 @@ export class RegistroComponent implements OnInit {
         });
       }
 
-      return false; // Si la fecha es futura, no seguimos con la validación de edad
+      return false;
     } else {
-      // Limpiar el error 'fechaFutura' si la fecha no es futura
       if (fechaControl?.hasError('fechaFutura')) {
         fechaControl?.setErrors({
           ...fechaControl?.errors,
@@ -295,38 +337,26 @@ export class RegistroComponent implements OnInit {
 
     // Calcular la edad solo si la fecha no es futura
     let edad = hoy.getFullYear() - fechaSeleccionada.getFullYear();
-    const mesActual = hoy.getMonth();
-    const diaActual = hoy.getDate();
-    const mesNacimiento = fechaSeleccionada.getMonth();
-    const diaNacimiento = fechaSeleccionada.getDate();
-
-    // Ajustar la edad si el cumpleaños no ha pasado aún en este año
-    if (
-      mesNacimiento > mesActual ||
-      (mesNacimiento === mesActual && diaNacimiento > diaActual)
-    ) {
+    const mes = hoy.getMonth() - fechaSeleccionada.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaSeleccionada.getDate())) {
       edad--;
     }
 
-    // Validar si el usuario es menor de edad
     if (edad < 18) {
       fechaControl?.setErrors({
         ...fechaControl?.errors,
         menorDeEdad: true,
       });
-
-      return false; // Si es menor de edad, no permitimos continuar
+      return false;
     } else {
-      // Limpiar el error 'menorDeEdad' si el usuario es mayor de edad
       if (fechaControl?.hasError('menorDeEdad')) {
         fechaControl?.setErrors({
           ...fechaControl?.errors,
           menorDeEdad: null,
         });
       }
+      return true;
     }
-
-    return true;
   }
 
   comprobarEmailRegistrado(email: string) {
