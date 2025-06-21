@@ -2,7 +2,14 @@ import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Form } from '@angular/forms';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  throwError,
+} from 'rxjs';
 import { Monedero } from 'src/app/models/user/monedero.model';
 
 @Injectable({
@@ -12,11 +19,33 @@ export class UserServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
   userData: Usuario = {} as Usuario;
 
+  private usuarioDataSubject = new BehaviorSubject<any>(
+    JSON.parse(localStorage.getItem('usuarioData') || '{}')
+  );
+  usuarioData$ = this.usuarioDataSubject.asObservable();
+
   monedero: any = null;
 
   private usuariosCache: Usuario[] = [];
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
+   * @param data
+   */
+  setUsuarioData(data: any) {
+    this.usuarioDataSubject.next(data);
+    localStorage.setItem('usuarioData', JSON.stringify(data));
+  }
+
+  /**
+   * Obtiene los datos que haya temporales guardados en usuarioDataSubject
+   * @returns
+   */
+  getUsuarioData() {
+    return this.usuarioDataSubject.getValue();
+  }
 
   /**
    * Función para obtener los usuarios registrados.

@@ -42,6 +42,7 @@ export class RegistroComponent implements OnInit {
   emailValido: boolean = false;
   fechaValida: boolean = false;
   hoy: string = new Date().toISOString();
+  mostrarPassword1: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -107,10 +108,15 @@ export class RegistroComponent implements OnInit {
     return emailValido && fechaNacimientoValida && this.fechaValida;
   }
 
+  botonMostrarPassword_1() {
+    this.mostrarPassword1 = !this.mostrarPassword1;
+  }
+
   // Función que se llama cuando hay un cambio en los inputs o checkboxes
   onInputChange() {
     this.botonHabilitadoContacto = this.formulario1.valid && this.fechaValida;
   }
+
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid) {
@@ -135,6 +141,10 @@ export class RegistroComponent implements OnInit {
       if (validacion) {
         this.pasoActual++;
         this.paso1 = false;
+        this.guardaDatosDelUsuarioEnServicio(
+          'formulario1',
+          this.formulario1.getRawValue()
+        );
       }
     } else if (this.pasoActual === 2 && this.formulario2.valid) {
       this.pasoActual++;
@@ -142,6 +152,18 @@ export class RegistroComponent implements OnInit {
     } else if (this.pasoActual === 3 && this.formulario3.valid) {
       this.mostrarContrato();
     }
+  }
+
+  guardaDatosDelUsuarioEnServicio(clave: string, valor: any) {
+    const usuarioDataTemp = this.userService.getUsuarioData() || {};
+    console.log('clave...', clave);
+    console.log('valor...', valor);
+
+    const datosUsuario = {
+      ...usuarioDataTemp,
+      [clave]: valor,
+    };
+    this.userService.setUsuarioData(datosUsuario);
   }
 
   // Función para retroceder al formulario anterior
@@ -153,33 +175,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
-    const contratoDialog = this.dialog.open(HelpModalComponent, {
-      data: {
-        title: 'Contrato de Respeto',
-        message: `
-          <p>Al registrarte en nuestra aplicación, te comprometes a respetar a todos los usuarios, independientemente de su identidad de género, orientación sexual o cualquier otra característica personal.</p>
-
-          <ul>
-            <li>Tratar a todos los usuarios con amabilidad y empatía.</li>
-            <li>No se tolerará ningún tipo de discriminación, acoso o conducta inapropiada.</li>
-            <li>El incumplimiento de estas normas puede conllevar la suspensión de tu cuenta.</li>
-          </ul>
-
-          <p>Para conocer más detalles sobre nuestro código de conducta, haz clic en el siguiente botón:</p>
-        `,
-        showAcceptButton: true,
-        showMoreInfoButton: true,
-      },
-      panelClass: 'dialog-animate',
-    });
-
-    contratoDialog.afterClosed().subscribe((accepted: string) => {
-      if (accepted === 'registro') {
-        this.registrar();
-      } else if (accepted === 'home') {
-        this.volverAlHome();
-      }
-    });
+    this.navCtrl.navigateRoot('/registro/contrato-registro');
   }
 
   // Función para registrar al usuario

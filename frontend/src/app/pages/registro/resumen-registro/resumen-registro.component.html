@@ -1,0 +1,106 @@
+<div class="container">
+  <div class="container" id="resumen_viaje">
+    <div value="first" class="contenido">
+      <ion-item slot="header" class="white-header">
+        <mat-icon class="me-1">location_on</mat-icon>
+        <ion-label>ESTOS SON TUS DATOS</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <div class="container d-flex justify-content-center dialog-animate">
+          <div class="row w-100">
+            <!-- Columna izquierda -->
+            <div class="col-md-6 col-12">
+              <ul>
+                <li>
+                  {{ email | json }}
+                  <mat-icon>location_on</mat-icon>
+                  <strong>Email: {{ email }} </strong>
+                  <span *ngIf=""></span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-viaje form-control"
+                    name="origen"
+                    placeholder="Busca tu lugar de origen"
+                  />
+                </li>
+                <li>
+                  <mat-icon>flag</mat-icon>
+                  <strong>Fecha nacimiento: </strong>
+                  <span *ngIf=""></span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-viaje form-control"
+                    name="origen"
+                    placeholder="Busca tu lugar de destino"
+                  />
+                </li>
+                <li>
+                  <mat-icon>directions_car</mat-icon>
+                  <strong>Coche seleccionado: </strong>
+                  <span *ngIf=""> </span>
+                  <select *ngIf="" class="form-control selectCar">
+                    <option disabled selected *ngIf="">
+                      Selecciona un coche para el viaje
+                    </option>
+                  </select>
+                </li>
+              </ul>
+            </div>
+            <!-- Columna derecha -->
+            <div class="col-md-6 col-12">
+              <ul>
+                <li>
+                  <mat-icon>group</mat-icon>
+                  <strong>Plazas disponibles: </strong>
+                  <span *ngIf=""></span>
+                  <input
+                    *ngIf=""
+                    type="number"
+                    min="1"
+                    max="4"
+                    class="form-control selectPlaces"
+                  />
+                </li>
+                <li>
+                  <mat-icon>event</mat-icon>
+                  <strong>Fecha de salida: </strong>
+                  <span *ngIf=""></span>
+                  <input *ngIf="" type="date" class="form-control selectDate" />
+                </li>
+                <li>
+                  <mat-icon>schedule</mat-icon>
+                  <strong>Hora de salida: </strong>
+                  <span *ngIf=""></span>
+                  <input *ngIf="" type="time" class="form-control selecthour" />
+                </li>
+              </ul>
+            </div>
+            <div class="container d-flex justify-content-center">
+              <button *ngIf="" type="button" mat-raised-button class="btn_bg">
+                <mat-icon>border_color</mat-icon> Modificar viaje
+              </button>
+              <button
+                *ngIf=""
+                type="button"
+                mat-raised-button
+                class="btn_bg me-2"
+              >
+                Guardar
+              </button>
+              <button
+                *ngIf=""
+                type="button"
+                mat-raised-button
+                class="btn_bg_cancel"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

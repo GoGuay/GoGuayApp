@@ -248,12 +248,27 @@
             Mínimo 6 caracteres. Recuerda debe tener una letra mayúscula y un
             número o símbolo
           </p>
-          <input
-            formControlName="password"
-            type="password"
-            class="form-control form-input"
-            id="password"
-          />
+          <div class="position-relative">
+            <input
+              [type]="mostrarPassword1 ? 'text' : 'password'"
+              formControlName="password"
+              type="password"
+              class="form-control form-input"
+              id="password"
+            />
+            <button
+              type="button"
+              (click)="botonMostrarPassword_1()"
+              class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+              tabindex="-1"
+            >
+              <i
+                class="bi"
+                [ngClass]="mostrarPassword1 ? 'bi-eye-slash' : 'bi-eye'"
+              ></i>
+            </button>
+          </div>
+
           <span
             class="text-danger"
             *ngIf="formulario3.get('password')?.errors?.['pattern']"
@@ -312,7 +327,7 @@
       class="btn_bg mt-3 mb-3"
       (click)="mostrarContrato()"
     >
-      Registrar
+      Finalizar registro
     </button>
   </div>
 </div>
