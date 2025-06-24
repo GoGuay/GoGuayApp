@@ -9,92 +9,97 @@
         <div class="container d-flex justify-content-center dialog-animate">
           <div class="row w-100">
             <!-- Columna izquierda -->
-            <div class="col-md-6 col-12">
+            <div class="d-flex justify-content-center">
               <ul>
                 <li>
-                  {{ email | json }}
-                  <mat-icon>location_on</mat-icon>
-                  <strong>Email: {{ email }} </strong>
-                  <span *ngIf=""></span>
+                  <i class="fi fi-rr-at me-1"></i>
+                  <strong>Email: </strong>
+                  <span *ngIf="email">{{ email }}</span>
                   <input
                     *ngIf=""
                     type="text"
-                    class="input-viaje form-control"
-                    name="origen"
-                    placeholder="Busca tu lugar de origen"
+                    class="input-datos form-control"
+                    name="email"
                   />
                 </li>
                 <li>
-                  <mat-icon>flag</mat-icon>
+                  <i class="fi fi-rr-cake-birthday me-1"></i>
                   <strong>Fecha nacimiento: </strong>
-                  <span *ngIf=""></span>
+                  <span *ngIf="fecha_nacimiento">{{ fecha_nacimiento }}</span>
                   <input
                     *ngIf=""
                     type="text"
-                    class="input-viaje form-control"
-                    name="origen"
-                    placeholder="Busca tu lugar de destino"
+                    class="input-datos form-control"
+                    name="fecha_nacimiento"
                   />
                 </li>
                 <li>
-                  <mat-icon>directions_car</mat-icon>
-                  <strong>Coche seleccionado: </strong>
-                  <span *ngIf=""> </span>
-                  <select *ngIf="" class="form-control selectCar">
-                    <option disabled selected *ngIf="">
-                      Selecciona un coche para el viaje
-                    </option>
-                  </select>
+                  <i class="fi fi-rr-id-card me-1"></i>
+                  <strong>Nombre: </strong>
+                  <span *ngIf="fecha_nacimiento">{{ nombre }}</span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-datos form-control"
+                    name="nombre"
+                  />
+                </li>
+                <li>
+                  <i class="fi fi-rr-id-card me-1"></i>
+                  <strong>Apellidos: </strong>
+                  <span *ngIf="apellidos">{{ apellidos }}</span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-datos form-control"
+                    name="apellidos"
+                  />
+                </li>
+                <li>
+                  <i class="fi fi-rr-phone-call me-1"></i>
+                  <strong>Telefono: </strong>
+                  <span *ngIf="telefono">{{ telefono }}</span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-datos form-control"
+                    name="telefono"
+                  />
+                </li>
+                <li>
+                  <i class="fi fi-rr-venus-mars me-1"></i>
+                  <strong>Género: </strong>
+                  <span *ngIf="genero">{{ genero }}</span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-datos form-control"
+                    name="genero"
+                  />
+                </li>
+                <li>
+                  <i class="fi fi-rs-heart-half-stroke me-1"></i>
+                  <strong>Orientación: </strong>
+                  <span *ngIf="orientacion">{{ orientacion }}</span>
+                  <input
+                    *ngIf=""
+                    type="text"
+                    class="input-datos form-control"
+                    name="orientacion"
+                  />
                 </li>
               </ul>
             </div>
             <!-- Columna derecha -->
-            <div class="col-md-6 col-12">
-              <ul>
-                <li>
-                  <mat-icon>group</mat-icon>
-                  <strong>Plazas disponibles: </strong>
-                  <span *ngIf=""></span>
-                  <input
-                    *ngIf=""
-                    type="number"
-                    min="1"
-                    max="4"
-                    class="form-control selectPlaces"
-                  />
-                </li>
-                <li>
-                  <mat-icon>event</mat-icon>
-                  <strong>Fecha de salida: </strong>
-                  <span *ngIf=""></span>
-                  <input *ngIf="" type="date" class="form-control selectDate" />
-                </li>
-                <li>
-                  <mat-icon>schedule</mat-icon>
-                  <strong>Hora de salida: </strong>
-                  <span *ngIf=""></span>
-                  <input *ngIf="" type="time" class="form-control selecthour" />
-                </li>
-              </ul>
-            </div>
+
             <div class="container d-flex justify-content-center">
-              <button *ngIf="" type="button" mat-raised-button class="btn_bg">
+              <button type="button" mat-raised-button class="btn_bg">
                 <mat-icon>border_color</mat-icon> Modificar viaje
               </button>
-              <button
-                *ngIf=""
-                type="button"
-                mat-raised-button
-                class="btn_bg me-2"
-              >
+              <button type="button" mat-raised-button class="btn_bg me-2">
                 Guardar
               </button>
-              <button
-                *ngIf=""
-                type="button"
-                mat-raised-button
-                class="btn_bg_cancel"
-              >
+              <button type="button" mat-raised-button class="btn_bg_cancel">
                 Cancelar
               </button>
             </div>
