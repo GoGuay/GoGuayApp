@@ -121,7 +121,7 @@ export class NavbarComponent implements OnInit {
    */
   navigateBack() {
     if (this.backRoute) {
-    this.navCtrl.navigateRoot([this.backRoute]);
+      this.navCtrl.navigateRoot([this.backRoute]);
     }
   }
 
@@ -130,7 +130,9 @@ export class NavbarComponent implements OnInit {
    * @param id_usuario 
    */
   async obtenerDatosUsuario(id_usuario: number) {
-    this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+    if (id_usuario) {
+      this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+    }
   }
 
   /**
@@ -175,9 +177,9 @@ export class NavbarComponent implements OnInit {
     window.location.reload();
   }
 
-  openPerfilPublico(){
-    const usuario = { id:  this.userData.usuario.id }
-    
+  openPerfilPublico() {
+    const usuario = { id: this.userData.usuario.id }
+
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
