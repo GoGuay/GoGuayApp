@@ -16,7 +16,7 @@ export class UserServicesService {
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Función para obtener los usuarios registrados.
@@ -66,6 +66,19 @@ export class UserServicesService {
    */
   registrarUsuario(datos: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/user/registro`, datos);
+  }
+  /**
+   * Función para comprobar si el correo electrónico ya existe en el proceso de registro
+   * @param email
+   * @returns true / false
+   */
+  verificarEmailExistente(email: string): Observable<boolean> {
+    const url = `${
+      this.apiUrl
+    }/user/verificar-email-existente?email=${encodeURIComponent(email)}`;
+    return this.http
+      .get<{ existe: boolean }>(url)
+      .pipe(map((response) => response.existe));
   }
 
   /**
@@ -132,7 +145,7 @@ export class UserServicesService {
   }
 
   /**
-   * Función para el envío de mail de verificación.
+   * Función para el envío de mail de verificación del correo.
    * @param email
    * @returns
    */
@@ -225,6 +238,13 @@ export class UserServicesService {
     );
   }
 
+  /**
+   * Cambio password DESDE LA VENTANA DE AJUSTES
+   * @param id
+   * @param nuevaPassword
+   * @returns
+   */
+
   cambio_pw(id: number, nuevaPassword: string) {
     return this.http.put(`${this.apiUrl}/user/cambiopassword/${id}`, {
       password: nuevaPassword,
@@ -232,30 +252,59 @@ export class UserServicesService {
   }
 
   /**
-  * Cargar el monedero del usuario logueado.
-  * @returns Observable con los datos del monedero.
-  */
+   * Función para el envío de mail de cambio de contraseña.
+   * @param email
+   * @returns
+   */
+  enviar_email_resetpassword(email: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/user/enviar_email_resetpassword`,
+      { email: email },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  cambiar_pw_solicitado(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/user/restablecerpassword`, {
+      token,
+      password,
+    });
+  }
+
+  comprobar_token(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/comprobacion_token`, {
+      params: { token },
+    });
+  }
+
+  /* Cargar el monedero del usuario logueado.
+   * @returns Observable con los datos del monedero.
+   */
   cargarMonedero(usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }
-    return this.http.get<Monedero>(`${this.apiUrl}/user/obtener_datos_monedero/${usuarioId}`).pipe(
-      map((monedero) => {
-        this.monedero = monedero;
-        return monedero;
-      }),
-      catchError((error) => {
-        console.error('Error al cargar el monedero:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .get<Monedero>(`${this.apiUrl}/user/obtener_datos_monedero/${usuarioId}`)
+      .pipe(
+        map((monedero) => {
+          this.monedero = monedero;
+          return monedero;
+        }),
+        catchError((error) => {
+          console.error('Error al cargar el monedero:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   /**
-  * Recargar saldo al monedero del usuario logueado.
-  * @param cantidad Monto a recargar.
-  * @returns Observable con el monedero actualizado.
-  */
+   * Recargar saldo al monedero del usuario logueado.
+   * @param cantidad Monto a recargar.
+   * @returns Observable con el monedero actualizado.
+   */
   recargarSaldo(cantidad: number, usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
@@ -280,10 +329,10 @@ export class UserServicesService {
   }
 
   /**
-  * Realizar un pago desde el monedero del usuario logueado.
-  * @param cantidad Monto a descontar.
-  * @returns Observable con el monedero actualizado.
-  */
+   * Realizar un pago desde el monedero del usuario logueado.
+   * @param cantidad Monto a descontar.
+   * @returns Observable con el monedero actualizado.
+   */
   pagar(cantidad: number, usuarioId: number): Observable<Monedero> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
@@ -310,18 +359,20 @@ export class UserServicesService {
   /**
    * Función para obtener los movimientos del monedero del usuario logueado.
    * @param usuarioId ID del usuario cuyo monedero se quiere consultar.
-   * @returns 
+   * @returns
    */
   obtenerMovimientos(usuarioId: number): Observable<any[]> {
     if (!usuarioId) {
       return throwError(() => new Error('Usuario no definido'));
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/user/movimientos/${usuarioId}`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener movimientos del monedero:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .get<any[]>(`${this.apiUrl}/user/movimientos/${usuarioId}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al obtener movimientos del monedero:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }

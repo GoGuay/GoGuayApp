@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TokenValidGuard } from './guards/token-valid.guard';
 
 export const routes: Routes = [
   {
@@ -143,24 +144,53 @@ export const routes: Routes = [
   },
   {
     path: 'encuesta-satisfaccion',
-    loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(m => m.EncuestaSatisfaccionPage)
+    loadComponent: () =>
+      import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then(
+        (m) => m.EncuestaSatisfaccionPage
+      ),
   },
   {
     path: 'centro-contacto',
-    loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then(m => m.CentroContactoPage)
-  },  {
+    loadComponent: () =>
+      import('./pages/centro-contacto/centro-contacto.page').then(
+        (m) => m.CentroContactoPage
+      ),
+  },
+  {
     path: 'ajustes-aplicacion',
-    loadComponent: () => import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then( m => m.AjustesAplicacionPage)
+    loadComponent: () =>
+      import('./pages/ajustes-aplicacion/ajustes-aplicacion.page').then(
+        (m) => m.AjustesAplicacionPage
+      ),
   },
   {
     path: 'forgot-password',
-    loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+    loadComponent: () =>
+      import('./pages/forgot-password/forgot-password.page').then(
+        (m) => m.ForgotPasswordPage
+      ),
+  },
+  {
+    path: 'nueva-contrasena/:token',
+    loadComponent: () =>
+      import('./pages/nueva-contrasena/nueva-contrasena.page').then(
+        (m) => m.NuevaContrasenaPage
+      ),
+    canActivate: [TokenValidGuard],
+  },
+  {
+    path: 'token-expirado',
+    loadComponent: () =>
+      import('./pages/token-expirado/token-expirado.page').then(
+        (m) => m.TokenExpiradoPage
+      ),
+  },  {
+    path: 'token-ya-usado',
+    loadComponent: () => import('./pages/token-ya-usado/token-ya-usado.page').then( m => m.TokenYaUsadoPage)
   },
   {
     path: 'notificaciones',
     loadComponent: () => import('./pages/notificaciones/notificaciones.page').then( m => m.NotificacionesPage)
   },
-
-
 
 ];

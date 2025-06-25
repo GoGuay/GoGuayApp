@@ -91,7 +91,7 @@
   },
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIF": {
-    "TITULO": "Verificar perfil / Cambiar la contraseña",
+    "TITULO": "Verificación del perfil",
     "TITULO_VERIF_BASICA": "Verificación básica: confirma tu correo y adjunta fotos de tu documento de identidad",
     "TITULO_VERIF_ADICIONAL": "Verificación adicional: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
     "VERIFICA_TU_CORREO": "Verifica tu correo:",
@@ -147,6 +147,29 @@
     },
 
     "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
+  },
+
+  "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
+  "FORGOT_PW": {
+    "TITULO": "¿CONTRASEÑA OLVIDADA",
+    "SUBTITULO1": "Todes podemos tener un despiste. Aquí te ayudamos.",
+    "SUBTITULO2": "Confirma tu correo electrónico, te enviaremos un enlace para crear una nueva contraseña",
+    "TOAST_TITULO": "Correo enviado",
+    "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
+  },
+
+  "TOKEN_EXPIRADO": "Pagina que se muestra cuando el token del correo ha caducado",
+  "TOKEN_EXP": {
+    "TITULO": "El enlace ha caducado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual, ha caducado.",
+    "SUBTITULO2": "Debes solicita otro enlace a través de la página de Ajustes en el menú de usuario."
+  },
+
+  "TOKEN_YA_USADO_": "Página que se muestra cuando el token del correo ya ha sido usado",
+  "TOKEN_YA_USADO": {
+    "TITULO": "El enlace ya ha sido usado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual ya se ha usado.",
+    "SUBTITULO2": "Puedes volver a cambiar tu contraseña actual a través de la página Ajustes en el menú de usuario."
   },
 
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
@@ -239,7 +262,7 @@
     "PANEL": "PANEL DE USUARIO",
     "MIPERFIL": "Mi perfil",
     "DATOSCONTACTO": "Datos de contacto",
-    "VERIFICACION": "Verificación/Password",
+    "VERIFICACION": "Verificación del perfil",
     "SALDO": "Saldo/Transferencias",
     "LOGIN": "Login",
     "REGISTRO": "Registrarse",

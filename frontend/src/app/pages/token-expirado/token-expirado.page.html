@@ -1,0 +1,18 @@
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="!userLoggedIn"
+></app-navbar>
+<ion-content [fullscreen]="true">
+  <div class="container-fluid">
+    <div class="col-12 text-center mb-4">
+      <h1>{{ 'TOKEN_EXP.TITULO' | translate }}</h1>
+    </div>
+    <p class="d-flex justify-content-center">
+      {{'TOKEN_EXP.SUBTITULO' | translate}}
+    </p>
+    <p class="d-flex justify-content-center">
+      {{'TOKEN_EXP.SUBTITULO2' | translate}}
+    </p>
+  </div>
+</ion-content>
