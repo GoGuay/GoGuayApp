@@ -56,7 +56,9 @@ export class NavbarComponent implements OnInit {
     private languageService: LanguageService,
     private userService: UserServicesService,
     private element: ElementRef
-  ) { }
+  ) {
+    this.loadUserData();
+  }
 
   async ngOnInit() {
     /**
@@ -80,8 +82,6 @@ export class NavbarComponent implements OnInit {
     } else {
       this.validacionHomePage = false;
     }
-
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
@@ -183,5 +183,9 @@ export class NavbarComponent implements OnInit {
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
+  }
+
+  loadUserData(): void {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 }
