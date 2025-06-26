@@ -114,4 +114,8 @@ export class BuscadorComponent implements OnInit {
       this.destino = localidad.descripcion.split(',')[0].trim();
       this.sugerenciasDestino = [];
     }
+
+    limpiarBusqueda() {
+      
+    }
 }
