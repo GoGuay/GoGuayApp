@@ -133,36 +133,88 @@
 
 
 @media (max-width: 576px) {
+  /* Ajusta la tarjeta resultado-viaje */
+  .resultado-viaje {
+    width: 95% !important;
+    height: auto;
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  /* Hace que las filas internas se acomoden en columnas */
+  .resultado-viaje ion-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .fila-hora {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  /* Acomoda los textos */
+  .fila-hora p {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+
+  /* Limita la anchura de la línea entre íconos */
+  .linea {
+    width: 80px !important;
+  }
+
+  /* Imagen del usuario más pequeña */
+  .user {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Fuente ajustada del nombre del usuario */
+  .fontSize {
+    font-size: 0.8rem;
+  }
+
+  /* Ajuste del contenedor de filtro */
   .caja-ordenar {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    margin: 0 auto;
   }
 
-  .inputs-filtro {
-    flex: 1 1 45%;
-  }
-
+  /* Scroll vertical adaptado */
   .columna_scroll {
-    max-height: 35vh;
+    max-height: 40dvh;
+    overflow-y: auto;
   }
 
+  /* Layout más vertical para evitar que se deforme */
   .disposicion {
     display: flex;
     flex-direction: column;
   }
 
-  .resultado-viaje {
-    width: 400px;
+  /* Centrado del contenido y separación */
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 
-  .linea1 {
-    width: 50px;
+  /* Botones más accesibles en móviles */
+  .btn_config,
+  .btn_limpiar {
+    width: 100%;
+    margin-bottom: 8px;
   }
-  .linea2 {
-    width: 50px;
+
+  /* Reduce gifs de mapas y ubicaciones */
+  .gifs {
+    width: 24px;
+    height: 24px;
   }
 }
+
 
 .gifs{
   height: 30px;

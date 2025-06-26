@@ -19,18 +19,18 @@ import { GoogleServices } from 'src/app/core/google-services/google-services.ser
   selector: 'app-buscador',
   standalone: true,
   imports: [
-    IonicModule, 
-    MatIconModule, 
-    MatButtonModule, 
-    MatDatepickerModule, 
-    MatNativeDateModule, 
-    MatFormFieldModule, 
-    CommonModule, 
+    IonicModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    CommonModule,
     FormsModule,
     TranslateModule,
     ToastModule
   ],
-  providers:[MessageService],
+  providers: [MessageService],
   templateUrl: './buscador.component.html',
   styleUrls: ['./buscador.component.scss'],
 })
@@ -48,7 +48,7 @@ export class BuscadorComponent implements OnInit {
     addIcons({ eye, lockClosed });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   /**
    * Función para envíar a la página concreta.
@@ -75,7 +75,7 @@ export class BuscadorComponent implements OnInit {
     });
 
   }
-  
+
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
     this.googleService
@@ -84,7 +84,7 @@ export class BuscadorComponent implements OnInit {
         this.sugerenciasOrigen = respuesta;
       });
   }
-  
+
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
     this.googleService
@@ -94,28 +94,36 @@ export class BuscadorComponent implements OnInit {
       });
   }
 
-    /**
-   * Función para guardar la información de la localidad de origen seleccionada.
+  /**
+ * Función para guardar la información de la localidad de origen seleccionada.
+ * 
+ * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+ */
+  seleccionarLocalidadOrigen(localidad: any) {
+    this.origen = localidad.descripcion.split(',')[0].trim();
+    this.sugerenciasOrigen = [];
+  }
+
+
+  /**
+   * Función para guardar la información de la localidad de destino seleccionada.
    * 
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
-    seleccionarLocalidadOrigen(localidad: any) {
-      this.origen = localidad.descripcion.split(',')[0].trim();
-      this.sugerenciasOrigen = [];
-    }
-  
-  
-    /**
-     * Función para guardar la información de la localidad de destino seleccionada.
-     * 
-     * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
-     */
-    seleccionarLocalidadDestino(localidad: any) {
-      this.destino = localidad.descripcion.split(',')[0].trim();
-      this.sugerenciasDestino = [];
-    }
+  seleccionarLocalidadDestino(localidad: any) {
+    this.destino = localidad.descripcion.split(',')[0].trim();
+    this.sugerenciasDestino = [];
+  }
 
-    limpiarBusqueda() {
-      
-    }
+  /**
+   * Función para limpiar los campos de búsqueda.
+   */
+  limpiarBusqueda() {
+    this.origen = '';
+    this.destino = '';
+    this.plazas = '';
+    this.fecha_salida = '';
+    this.sugerenciasOrigen = [];
+    this.sugerenciasDestino = [];
+  }
 }
