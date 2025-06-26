@@ -176,4 +176,8 @@ export class TravelService {
   }
 
 
+  obtenerViajesFiltrados(params: any): Observable<Viaje[]> {
+  return this.http.get<Viaje[]>(`${this.apiUrl}/travel/viajes_filtrados`, { params });
+}
+
 }

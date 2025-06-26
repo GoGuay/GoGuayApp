@@ -75,9 +75,7 @@
               <app-spinner></app-spinner>
               Cargando viajes...
             </div>
-            <div *ngIf="listado_viajes.length === 0" class="d-flex justify-content-center align-content-center">
-              No hay ningún viaje creado aún.
-            </div>
+
             <div *ngFor="let resultado_del_viaje of listado_viajes">
               <div class="card resultado-viaje mb-3">
                 <ion-row>

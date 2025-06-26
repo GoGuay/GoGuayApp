@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -30,6 +30,8 @@ export class ResultadosBusquedaComponent implements OnInit {
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
 
+   @Input() paramsBusqueda: any;
+
 
   constructor(
     private travelService: TravelService,
@@ -39,6 +41,12 @@ export class ResultadosBusquedaComponent implements OnInit {
     private dialog: MatDialog
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['paramsBusqueda'] && this.paramsBusqueda) {
+      this.obtenerViajesFiltrados();
+    }
+  }
+
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -46,6 +54,23 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.funcionesComunes.getBaseUrl();
   }
 
+
+  obtenerViajesFiltrados() {
+    this.isLoading = true;
+
+    this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
+      next: (viajes) => {
+        this.listado_viajes = viajes;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener viajes:', err);
+        this.listado_viajes = [];
+        this.isLoading = false;
+      }
+    });
+  }
+  
   /**
    * Función para obtener la lista de viajes completa
    */
