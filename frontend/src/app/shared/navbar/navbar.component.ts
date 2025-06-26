@@ -103,6 +103,8 @@ export class NavbarComponent implements OnInit {
         return '/panel-usuario';
       case '/nuevo-viaje':
         return '/nuevo-viaje';
+      case '/mi-perfil':
+        return '/mi-perfil';
       default:
         return '/home';
     }

@@ -108,6 +108,7 @@ export class MiPerfilPage implements OnInit {
 
     this.actualizarEdad();
     this.obtenerUsuarioPorID(this.userData.usuario.id);
+    this.funcionesComunes.getBaseUrl();
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
