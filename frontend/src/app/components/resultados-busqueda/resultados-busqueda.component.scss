@@ -43,7 +43,8 @@
 }
 
 .resultado-viaje {
-  width: 748px;
+  width: 750px;
+  height: 150px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f3ffaf;
   border-radius: 15px;
@@ -76,6 +77,9 @@
   max-width: 100%; 
 }
 
+.title{
+  font-weight: bold;
+}
 
 .skeleton-wrapper {
   display: flex;

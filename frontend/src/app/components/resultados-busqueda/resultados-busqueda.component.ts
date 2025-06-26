@@ -12,11 +12,12 @@ import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.co
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
+  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent, MatDivider],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })
