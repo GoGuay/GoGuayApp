@@ -142,6 +142,20 @@ export class ResumenViajeComponent implements OnInit {
       .toISOString()
       .split('T')[0];
     this.currentViajeData.fecha_salida = fechaSalida;
+
+    const duracion = this.calcularDuracionViaje(
+      this.currentViajeData.fecha_salida,
+      this.currentViajeData.hora_salida,
+      this.currentViajeData.hora_llegada
+    );
+
+    if (!duracion) {
+      this.openError('Error!', 'No se pudo calcular la duración del viaje.');
+      return;
+    }
+
+    this.currentViajeData.tiempoTotal = duracion;
+    this.currentViajeData.duracion_viaje = duracion;
     console.log('Resumen viaje: ', this.currentViajeData);
 
     const mensajeConfirmación = this.openHelp(
@@ -152,7 +166,6 @@ export class ResumenViajeComponent implements OnInit {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
         (response) => {
           const dialogRef = this.openHelp(title, message);
-          console.log('Viaje guardado correctamente:', response);
           dialogRef.afterClosed().subscribe(() => {
             this.navCtrl.navigateRoot('/home');
           });
@@ -166,6 +179,39 @@ export class ResumenViajeComponent implements OnInit {
         }
       );
     });
+  }
+
+
+
+  /**
+ * Calcula la duración entre la hora de salida y llegada.
+ * @param fechaSalida Fecha del viaje en formato 'YYYY-MM-DD'
+ * @param horaSalida Hora de salida en formato 'HH:mm'
+ * @param horaLlegada Hora de llegada en formato 'HH:mm'
+ * @returns Duración del viaje en formato 'HH:mm', o null si hay error.
+ */
+  calcularDuracionViaje(fechaSalida: string, horaSalida: string, horaLlegada: string): string | null {
+    try {
+      if (!fechaSalida || !horaSalida || !horaLlegada) return null;
+
+      const salida = new Date(`${fechaSalida}T${horaSalida}`);
+      let llegada = new Date(`${fechaSalida}T${horaLlegada}`);
+
+      // Si la llegada es anterior a la salida, asumimos que es al día siguiente
+      if (llegada < salida) {
+        llegada.setDate(llegada.getDate() + 1);
+      }
+
+      const diffMs = llegada.getTime() - salida.getTime();
+      const diffMinutes = Math.floor(diffMs / 60000);
+      const hours = Math.floor(diffMinutes / 60);
+      const minutes = diffMinutes % 60;
+
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } catch (error) {
+      console.error('Error al calcular duración del viaje:', error);
+      return null;
+    }
   }
 
   /**
@@ -199,7 +245,7 @@ export class ResumenViajeComponent implements OnInit {
    */
   openHelp(title: string, message: string) {
     return this.dialog.open(HelpModalComponent, {
-      data: { title, message },
+      data: { title, message, showAcceptButton: true },
       disableClose: true,
     });
   }
@@ -264,7 +310,10 @@ export class ResumenViajeComponent implements OnInit {
       const llegadaDate = new Date(salidaDate);
       llegadaDate.setHours(llegadaDate.getHours() + horas);
       llegadaDate.setMinutes(llegadaDate.getMinutes() + minutos);
-
+      this.currentViajeData.duracion_viaje = llegadaDate.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
       return llegadaDate.toLocaleTimeString('es-ES', {
         hour: '2-digit',
         minute: '2-digit',

@@ -128,7 +128,7 @@
 .boton-foto {
   position: absolute;
   top: 17.5%;
-  left: 39.5%;
+  left: 36.5%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   display: flex;
@@ -138,6 +138,15 @@
   position: absolute;
   top: 17.5%;
   left: 60.5%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+}
+
+.boton-ver-perfil {
+  position: absolute;
+  top: 17.5%;
+  left: 80%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   display: flex;

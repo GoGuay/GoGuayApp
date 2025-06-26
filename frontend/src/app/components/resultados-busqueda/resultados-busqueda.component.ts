@@ -56,6 +56,8 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.listado_viajes.forEach((viaje) => {
         this.obtenerUsuarioPorID(viaje.usuario_id).subscribe((usuario: any) => {
           viaje.usuario = usuario;
+          console.log("DATOS DEL VIAJE: ",viaje);
+          
         });
       });
 
