@@ -46,6 +46,7 @@
   width: 748px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f3ffaf;
+  border-radius: 15px;
 }
 
 .fila-hora {
@@ -80,6 +81,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  
 }
 
 .skeleton-avatar {

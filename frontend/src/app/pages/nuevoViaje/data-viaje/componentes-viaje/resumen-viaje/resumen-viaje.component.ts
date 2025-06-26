@@ -16,8 +16,9 @@ import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
 
 
 @Component({
@@ -50,40 +51,45 @@ export class ResumenViajeComponent implements OnInit {
 
   currentViajeData: any;
   private destroy$ = new Subject<void>();
+  vehiculoSeleccionado: { marca: string; modelo: string } | null = null;
+  nombreVehiculo: string = '';
+
 
   constructor(
     private travelService: TravelService,
+    private vehiculosService: VehiculosServicesService, // Asumiendo que el servicio de vehículos es el mismo que el de viajes
     private navCtrl: NavController,
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
 
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const viajeId = params['id'];
-  
+
       this.currentViajeData = this.travelService.getViajeData();
       this.obtenerViaje(viajeId);
+
       // Si no hay viajeId y los datos no están completos, redirigir al home
       if (
         !viajeId &&
         (
           !this.currentViajeData ||
-          !this.currentViajeData.coche ||
-          !this.currentViajeData.destino ||
-          !this.currentViajeData.fecha_salida ||
-          !this.currentViajeData.hora_salida ||
-          !this.currentViajeData.origen ||
-          !this.currentViajeData.plazas
+          !this.currentViajeData?.coche ||
+          !this.currentViajeData?.destino ||
+          !this.currentViajeData?.fecha_salida ||
+          !this.currentViajeData?.hora_salida ||
+          !this.currentViajeData?.origen ||
+          !this.currentViajeData?.plazas
         )
       ) {
         this.navCtrl.navigateRoot('/home');
         return;
       }
-  
+
       // Verificación del usuario logueado
       this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (
@@ -96,9 +102,14 @@ export class ResumenViajeComponent implements OnInit {
         this.userLoggedIn = false;
       }
     });
+    if (this.currentViajeData?.vehiculo) {
+      this.obtenerVehiculo(this.currentViajeData.vehiculo).subscribe(nombre => {
+        this.nombreVehiculo = nombre;
+      });
+    }
   }
-  
-  obtenerViaje(viaje_id: number){
+
+  obtenerViaje(viaje_id: number) {
     this.travelService.getViaje(viaje_id).subscribe((resultado) => {
       console.log('Viaje a editar: ', resultado);
       this.currentViajeData = resultado;
@@ -233,23 +244,27 @@ export class ResumenViajeComponent implements OnInit {
    * @param duracion_viaje
    * @returns
    */
-  calcularHoraLlegada(
-    hora_salida: string,
-    duracion_viaje: string
-  ): string | null {
+  calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
     try {
-      let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
-      let salidaDate = new Date();
+      if (!hora_salida || !duracion_viaje) return null;
+
+      // Paso 1: Parsear hora de salida
+      const [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
+      const salidaDate = new Date();
       salidaDate.setHours(horasSalida, minutosSalida, 0);
-  
-      // Extraer minutos de duracion_viaje (asumiendo formato "2348:00")
-      const [minutosTotalesStr] = duracion_viaje.split(':');
-      const duracionEnMinutos = parseInt(minutosTotalesStr, 10);
-  
-      // Calcular nueva hora de llegada
-      let llegadaDate = new Date(salidaDate);
-      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionEnMinutos);
-  
+
+      // Paso 2: Parsear duración (ej. "1h 47 min" o "47 min")
+      const horasMatch = duracion_viaje.match(/(\d+)\s*h/);
+      const minutosMatch = duracion_viaje.match(/(\d+)\s*min/);
+
+      const horas = horasMatch ? parseInt(horasMatch[1]) : 0;
+      const minutos = minutosMatch ? parseInt(minutosMatch[1]) : 0;
+
+      // Paso 3: Sumar duración a hora de salida
+      const llegadaDate = new Date(salidaDate);
+      llegadaDate.setHours(llegadaDate.getHours() + horas);
+      llegadaDate.setMinutes(llegadaDate.getMinutes() + minutos);
+
       return llegadaDate.toLocaleTimeString('es-ES', {
         hour: '2-digit',
         minute: '2-digit',
@@ -259,7 +274,8 @@ export class ResumenViajeComponent implements OnInit {
       return null;
     }
   }
-  
+
+
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
@@ -299,5 +315,22 @@ export class ResumenViajeComponent implements OnInit {
         this.origen = this.currentViajeData?.origen || '';
         // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
       });
+  }
+
+  /**
+   * Función para obtener el vehículo seleccionado por su ID.
+   * Utiliza el servicio de vehículos para obtener los detalles del vehículo
+   * @param vehiculo_id recibe el ID del vehículo seleccionado
+   * @returns devuelve un Observable con el nombre del vehículo en formato "Marca Modelo"
+   * Si ocurre un error, devuelve un Observable con el mensaje "Vehículo no encontrado"
+   */
+  obtenerVehiculo(vehiculo_id: number): Observable<string> {
+    return this.vehiculosService.obtenerVehiculoID(vehiculo_id).pipe(
+      map(vehiculo => `${vehiculo.marca} ${vehiculo.modelo}`),
+      catchError(err => {
+        console.error('Error al obtener vehículo:', err);
+        return of('Vehículo no encontrado');
+      })
+    );
   }
 }

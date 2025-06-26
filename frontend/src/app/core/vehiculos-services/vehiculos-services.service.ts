@@ -11,7 +11,7 @@ import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 export class VehiculosServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Función para añadir un vehículo a la lista de vehículos del usuario
@@ -69,5 +69,15 @@ export class VehiculosServicesService {
           return throwError(() => error);
         })
       );
+  }
+
+  /**
+   * Función para obtener un vehículo por su ID
+   * Esta función se utiliza para obtener un vehículo específico de la base de datos
+   * @param vehiculo_id Recibe el ID del vehículo que se desea obtener
+   * @returns Devuelve un Observable con los datos del vehículo
+   */
+  obtenerVehiculoID(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/obtenerVehiculoID?id=${id}`);
   }
 }
