@@ -16,6 +16,28 @@ div[slot="content"] {
   background-color: #e9edd5 !important;
 }
 
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+  }
+
+  span {
+    display: inline-block;
+    min-width: 100px; // para mantener tamaño uniforme
+  }
+
+  .form-control-sm {
+    padding: 0.25rem;
+    font-size: 0.9rem;
+  }
+}
+
 /**
 * CONFIGURACIÓN PARA LA LISTA DE SUGERENCIAS
 */
