@@ -9,27 +9,15 @@
         <ion-grid>
           <ion-row class="contenido">
             <!-- Campo Desde -->
-            <ion-col class="columna">
+            <ion-col class="columna" size="12" size-md="3">
               <div class="input-container">
                 <mat-icon>share_location</mat-icon>
-                <ion-input
-                  class="inputs"
-                  label="{{ 'HOME.BUSCADOR.DESDE' | translate }}"
-                  labelPlacement="floating"
-                  maxlength="20"
-                  [(ngModel)]="origen"
-                  (ionInput)="obtenerSugerenciasOrigen($event)"
-                >
+                <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.DESDE' | translate }}" labelPlacement="floating"
+                  maxlength="20" [(ngModel)]="origen" (ionInput)="obtenerSugerenciasOrigen($event)">
                 </ion-input>
-                <ul
-                  *ngIf="sugerenciasOrigen.length > 0"
-                  class="list-group lista_sugerencias"
-                >
-                  <li
-                    *ngFor="let localidad of sugerenciasOrigen"
-                    class="list-group-item"
-                    (click)="seleccionarLocalidadOrigen(localidad)"
-                  >
+                <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+                  <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item"
+                    (click)="seleccionarLocalidadOrigen(localidad)">
                     {{ localidad.descripcion.split(",")[0].trim() }} -
                     {{ localidad.provincia }}
                   </li>
@@ -38,27 +26,15 @@
             </ion-col>
 
             <!-- Campo Hasta -->
-            <ion-col class="columna">
+            <ion-col class="columna" size="12" size-md="3">
               <div class="input-container">
                 <mat-icon>share_location</mat-icon>
-                <ion-input
-                  class="inputs"
-                  label="{{ 'HOME.BUSCADOR.A' | translate }}"
-                  labelPlacement="floating"
-                  maxlength="20"
-                  [(ngModel)]="destino"
-                  (ionInput)="obtenerSugerenciasDestino($event)"
-                >
+                <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.A' | translate }}" labelPlacement="floating"
+                  maxlength="20" [(ngModel)]="destino" (ionInput)="obtenerSugerenciasDestino($event)">
                 </ion-input>
-                <ul
-                  *ngIf="sugerenciasDestino.length > 0"
-                  class="list-group lista_sugerencias"
-                >
-                  <li
-                    *ngFor="let localidad of sugerenciasDestino"
-                    class="list-group-item"
-                    (click)="seleccionarLocalidadDestino(localidad)"
-                  >
+                <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+                  <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item"
+                    (click)="seleccionarLocalidadDestino(localidad)">
                     {{ localidad.descripcion.split(",")[0].trim() }} -
                     {{ localidad.provincia }}
                   </li>
@@ -67,51 +43,54 @@
             </ion-col>
 
             <!-- Campo Cuando -->
-            <ion-col class="columna">
+            <ion-col class="columna" size="12" size-md="3">
               <div class="input-container">
                 <mat-icon>schedule</mat-icon>
-                <ion-input
-                  class="inputs"
-                  label="{{ 'HOME.BUSCADOR.CUANDO' | translate }}"
-                  labelPlacement="floating"
-                  type="date"
-                  [(ngModel)]="fecha_salida"
-                >
+                <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.CUANDO' | translate }}" labelPlacement="floating"
+                  type="date" [(ngModel)]="fecha_salida">
                 </ion-input>
               </div>
             </ion-col>
 
             <!-- Campo Número de plazas -->
-            <ion-col class="selector_personas columna">
+            <ion-col class="selector_personas columna" size="12" size-md="3">
               <div class="input-container cajon_selector_personas">
                 <mat-icon>group</mat-icon>
-                <ion-select
-                  aria-label="n_plazas"
-                  interface="popover"
-                  placeholder="{{ 'HOME.BUSCADOR.NUMPASAJEROS' | translate }}"
-                  [(ngModel)]="plazas"
-                >
+                <ion-select aria-label="n_plazas" interface="popover"
+                  placeholder="{{ 'HOME.BUSCADOR.NUMPASAJEROS' | translate }}" [(ngModel)]="plazas">
                   <ion-select-option value="1">1</ion-select-option>
                   <ion-select-option value="2">2</ion-select-option>
                   <ion-select-option value="3">3</ion-select-option>
+                  <ion-select-option value="4">4</ion-select-option>
                 </ion-select>
               </div>
             </ion-col>
           </ion-row>
         </ion-grid>
 
-        <!-- Botón para buscar -->
-        <div class="caja_boton">
-          <p-toast position="bottom-center"></p-toast>
-          <button
-            mat-raised-button
-            class="btn_config btn btn_bg"
-            (click)="openSearchTravels()"
-          >
-            <mat-icon>search</mat-icon>
-            {{ "BOTON.BUSCAR" | translate }}
-          </button>
-        </div>
+        <ion-row>
+          <ion-col>
+            <!-- Botón para buscar -->
+            <div class="caja_boton">
+              <p-toast position="bottom-center"></p-toast>
+              <button mat-raised-button class="btn_config btn btn_bg" (click)="openSearchTravels()">
+                <mat-icon>search</mat-icon>
+                {{ "BOTON.BUSCAR" | translate }}
+              </button>
+            </div>
+          </ion-col>
+          <ion-col>
+            <!-- Botón para limpiar los campos -->
+            <div class="caja_boton">
+              <button mat-raised-button class="btn_limpiar btn btn_bg" (click)="limpiarBusqueda()">
+                <i class="fi fi-rs-clean"></i>
+                Limpiar búsqueda
+              </button>
+            </div>
+          </ion-col>
+        </ion-row>
+
+
       </div>
     </ion-accordion>
   </ion-accordion-group>

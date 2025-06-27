@@ -88,7 +88,7 @@ export class PerfilPublicoPage implements OnInit {
       this.obtenerViajesCreados();
     });
     this.urlPrevia = localStorage.getItem('url_anterior') || '';
-    this.urlParaVolver  = this.comprobarUrls(this.urlPrevia);
+    this.urlParaVolver = this.comprobarUrls(this.urlPrevia);
     this.comprobarNotificaciones();
     /**
      * Se comprueba cada 10 segundos si el usuario tiene notificaiones
@@ -116,6 +116,8 @@ export class PerfilPublicoPage implements OnInit {
         return '/busqueda-viajes';
       case '/panel-usuario':
         return '/panel-usuario';
+      case '/mi-perfil':
+        return '/mi-perfil';
       default:
         return '';
     }

@@ -75,14 +75,18 @@
               <app-spinner></app-spinner>
               Cargando viajes...
             </div>
-            <div *ngIf="listado_viajes.length === 0" class="d-flex justify-content-center align-content-center">
-              No hay ningún viaje creado aún.
-            </div>
+
             <div *ngFor="let resultado_del_viaje of listado_viajes">
               <div class="card resultado-viaje mb-3">
                 <ion-row>
                   <ion-col class="col-separator ion-activatable" size="9" size-md="10"
                     (click)="openDetalleViaje(resultado_del_viaje)" type="button">
+                    <ion-row class="d-flex justify-content-between px-2">
+                      <span class="title">ORIGEN</span>
+                      <span class="title">DURACIÓN</span>
+                      <span class="title">LLEGADA</span>
+                    </ion-row>
+                    <mat-divider></mat-divider>
                     <ion-ripple-effect></ion-ripple-effect>
                     <ion-row class="fila-hora">
                       <ion-col class="text-start d-flex align-items-center">

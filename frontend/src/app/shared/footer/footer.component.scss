@@ -6,6 +6,10 @@
 ion-footer {
   background-color: var(--ion-background-color);
   color: var(--ion-text-color);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
 }
 
 ::ng-deep ion-footer {

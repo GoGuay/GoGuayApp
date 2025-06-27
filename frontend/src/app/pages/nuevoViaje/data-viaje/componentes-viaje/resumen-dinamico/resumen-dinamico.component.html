@@ -3,7 +3,7 @@
     <ion-accordion-group>
       <ion-accordion value="first" class="contenido">
         <ion-item slot="header" class="white-header">
-          <mat-icon class="me-1">location_on</mat-icon>
+          <i class="fi fi-rr-marker me-1"></i>
           <ion-label>RESUMEN DEL VIAJE</ion-label>
         </ion-item>
         <div class="ion-padding" slot="content">
@@ -13,7 +13,7 @@
               <div class="col-md-6 col-12">
                 <ul>
                   <li>
-                    <mat-icon>location_on</mat-icon>
+                    <i class="fi fi-rr-spain-map me-1"></i>
                     <strong>Lugar de origen: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
                     <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="origen"
@@ -28,7 +28,7 @@
                     </ul>
                   </li>
                   <li>
-                    <mat-icon>flag</mat-icon>
+                    <i class="fi fi-rr-spain-map me-1"></i>
                     <strong>Lugar de destino: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
                     <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="destino"
@@ -43,7 +43,7 @@
                     </ul>
                   </li>
                   <li>
-                    <mat-icon>directions_car</mat-icon>
+                    <i class="fi fi-rr-car me-1"></i>
                     <strong>Coche seleccionado: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo
                       }}</span>
@@ -62,21 +62,21 @@
               <div class="col-md-6 col-12">
                 <ul>
                   <li>
-                    <mat-icon>group</mat-icon>
+                    <i class="fi fi-rs-users-alt me-1"></i>
                     <strong>Plazas disponibles: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
                     <input *ngIf="editandoViaje" type="number" min="1" max="4" [(ngModel)]="currentViajeData.plazas"
                       class="form-control selectPlaces" />
                   </li>
                   <li>
-                    <mat-icon>event</mat-icon>
+                    <i class="fi fi-rr-calendar me-1"></i>
                     <strong>Fecha de salida: </strong>
                     <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
                     <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
                       class="form-control selectDate" />
                   </li>
                   <li>
-                    <mat-icon>schedule</mat-icon>
+                    <i class="fi fi-rr-calendar-clock me-1"></i>
                     <strong>Hora de salida: </strong>
                     <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>
                     <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
@@ -87,7 +87,7 @@
               <div class="container d-flex justify-content-center">
                 <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg"
                   (click)="toggleEditarViaje()">
-                  <mat-icon>border_color</mat-icon> Modificar viaje
+                  <i class="fi fi-rr-edit me-1"></i> Modificar viaje
                 </button>
                 <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2"
                   (click)="guardarCambios()">

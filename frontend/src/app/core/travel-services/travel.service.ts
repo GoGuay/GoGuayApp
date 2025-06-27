@@ -41,7 +41,6 @@ export class TravelService {
     if (userDataString) {
       const userData = JSON.parse(userDataString);
       const usuarioId = userData.usuario.id;
-
       viajeData.usuario_id = usuarioId;
     }
 
@@ -176,5 +175,9 @@ export class TravelService {
     );
   }
 
+
+  obtenerViajesFiltrados(params: any): Observable<Viaje[]> {
+  return this.http.get<Viaje[]>(`${this.apiUrl}/travel/viajes_filtrados`, { params });
+}
 
 }
