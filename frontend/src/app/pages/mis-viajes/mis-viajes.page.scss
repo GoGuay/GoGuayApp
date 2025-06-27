@@ -1,0 +1,237 @@
+.mis-viajes-container {
+  max-height: 310px;
+  overflow-y: auto;
+  border-radius: 15px;
+  max-width: 600px;
+}
+
+.mis-viajes-container label {
+  position: sticky;
+  top: 0;
+  background-color: #e9edd5;
+  padding: 5px 0;
+  z-index: 10;
+  display: block;
+}
+
+.mi_viaje_box {
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  background-color: #f0d7b4;
+  border-radius: 15px;
+  padding: 12px;
+  width: 100%;
+}
+
+.mi_viaje_box p {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.info-viaje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.botones {
+  display: flex;
+  gap: 10px;
+}
+
+.mi_viaje_box button {
+  margin-left: 12px;
+}
+
+.mas_detalle {
+  color: #b3b5e6;
+}
+
+.eliminar_viaje {
+  color: red;
+}
+
+.viajeFinalizado {
+  color: red;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  padding: 2%;
+}
+
+.etiquetaPendiente {
+  background-color: #b7e0b4;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
+}
+
+.fontSize {
+  font-size: 0.9rem;
+  width: fit-content; /* Hace que el contenedor se ajuste al contenido */
+  max-width: 100%; /* Evita que el texto se desborde del contenedor */
+}
+
+ion-segment {
+  --background: #b3b5e6;
+  --color: #e9edd5;
+  border-radius: 15px !important;
+  margin-bottom: 1%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* Cambiar el color de texto de los botones de segment (por defecto) */
+ion-segment-button {
+  --color: #212529;
+  --color-checked: #212529;
+  --indicator-color: #212529;
+}
+
+.col-puntuar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn_bg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn_bg i {
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ayuda-explicacion {
+  background-color: #eaf4fc;
+  border-left: 4px solid #007bff;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.ayuda-explicacion-wrapper {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  max-height: 500px;
+  opacity: 1;
+  padding: 1rem;
+}
+
+.ayuda-explicacion-hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1rem;
+}
+
+.sin-viajes-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  gap: 12px;
+}
+
+.iconSinViajes {
+  height: 60px;
+  width: 60px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.mi_viaje_box span,
+.mi_viaje_box button {
+  word-break: break-word;
+}
+
+@media (max-width: 576px) {
+  .mi_viaje_box {
+    flex-direction: column !important;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .mi_viaje_box .info-contenedor {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .mi_viaje_box .estado-contenedor {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .mi_viaje_box .botones {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 0.5rem;
+  }
+
+  .info-viaje {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .botones {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .col-puntuar {
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  ion-segment-button {
+    --color: #212529;
+    --color-checked: #212529;
+    --indicator-color: #21252940;
+    font-size: 0.9rem;
+  }
+
+  .btn_bg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .btn_bg i {
+    font-size: 18px;
+  }
+
+  .sin-viajes-container {
+    padding: 1rem;
+    height: auto;
+    min-height: 50vh;
+  }
+}

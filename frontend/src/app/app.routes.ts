@@ -205,5 +205,9 @@ export const routes: Routes = [
       import(
         './pages/registro/contrato-registro-final/contrato-registro.component'
       ).then((m) => m.ContratoRegistroComponent),
+  },  {
+    path: 'mis-viajes',
+    loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then( m => m.MisViajesPage)
   },
+
 ];
