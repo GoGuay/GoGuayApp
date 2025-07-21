@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
 import vonage
-load_dotenv()  # Debe ir al principio para cargar las variables de entorno
+load_dotenv() 
 
 import os
 import secrets

@@ -335,3 +335,49 @@ def marcar_notificacion_leida(notificacion_id):
 
     estado = "leída" if notificacion.leida else "no leída"
     return jsonify({"message": f"Notificación marcada como {estado}"}), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA FILTRAR LOS VIAJES
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/viajes_filtrados', methods=['GET'])
+def buscar_viajes_filtrados():
+    origen = request.args.get('origen')
+    destino = request.args.get('destino')
+    fecha_salida = request.args.get('fecha_salida')
+    plazas = request.args.get('plazas')
+
+    # Validar al menos un parámetro
+    if not any([origen, destino, fecha_salida, plazas]):
+        return jsonify({"error": "Debes proporcionar al menos un parámetro de búsqueda."}), 400
+
+    query = db.session.query(Viaje).options(
+        joinedload(Viaje.usuario),
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+    )
+
+    if origen:
+        query = query.filter(Viaje.origen.ilike(f"%{origen}%"))
+
+    if destino:
+        query = query.filter(Viaje.destino.ilike(f"%{destino}%"))
+
+    if fecha_salida:
+        try:
+            fecha = datetime.strptime(fecha_salida, '%Y-%m-%d')
+            fecha_inicio = datetime.combine(fecha.date(), datetime.min.time())
+            fecha_fin = datetime.combine(fecha.date(), datetime.max.time())
+            query = query.filter(Viaje.fecha_salida.between(fecha_inicio, fecha_fin))
+        except ValueError:
+            return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD"}), 400
+
+    if plazas:
+        try:
+            query = query.filter(Viaje.plazas >= int(plazas))
+        except ValueError:
+            return jsonify({"error": "El campo 'plazas' debe ser un número válido."}), 400
+
+    viajes = query.order_by(Viaje.fecha_salida.asc()).all()
+
+    return jsonify([viaje.serialize() for viaje in viajes]), 200
+
+

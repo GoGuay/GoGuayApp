@@ -46,14 +46,16 @@ export class HomePage implements OnInit {
   constructor(private translate: TranslateService,
     private funcionesComunes: FuncionesComunes,
     private notificacionesService: NotificacionesService,
-    private userService: UserServicesService) { }
+    private userService: UserServicesService) {
+    this.loadUserData();
+  }
 
   ngOnInit(): void {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
-    this.loadUserData();
-    this.obtenerUsuarioPorID(this.userData.usuario.id);
-    this.obtenerNotificaciones(this.userData.usuario.id);
+
+    this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+    this.obtenerNotificaciones(this.userData?.usuario?.id);
   }
 
   changeLanguage(lang: string) {
@@ -69,7 +71,7 @@ export class HomePage implements OnInit {
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
         this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificacionesService.esCreadorDelViaje = true; 
+        this.notificacionesService.esCreadorDelViaje = true;
         this.notificacionesService.leerNotificacion(notificaciones);
       }
     });

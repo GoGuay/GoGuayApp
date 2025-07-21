@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -12,11 +12,12 @@ import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.co
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
+  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent, MatDivider],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })
@@ -29,6 +30,8 @@ export class ResultadosBusquedaComponent implements OnInit {
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
 
+   @Input() paramsBusqueda: any;
+
 
   constructor(
     private travelService: TravelService,
@@ -38,6 +41,12 @@ export class ResultadosBusquedaComponent implements OnInit {
     private dialog: MatDialog
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['paramsBusqueda'] && this.paramsBusqueda) {
+      this.obtenerViajesFiltrados();
+    }
+  }
+
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -45,6 +54,23 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.funcionesComunes.getBaseUrl();
   }
 
+
+  obtenerViajesFiltrados() {
+    this.isLoading = true;
+
+    this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
+      next: (viajes) => {
+        this.listado_viajes = viajes;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener viajes:', err);
+        this.listado_viajes = [];
+        this.isLoading = false;
+      }
+    });
+  }
+  
   /**
    * Función para obtener la lista de viajes completa
    */
@@ -56,6 +82,8 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.listado_viajes.forEach((viaje) => {
         this.obtenerUsuarioPorID(viaje.usuario_id).subscribe((usuario: any) => {
           viaje.usuario = usuario;
+          console.log("DATOS DEL VIAJE: ",viaje);
+          
         });
       });
 

@@ -17,6 +17,7 @@
         <h4 class="text-center">{{'MIPERFIL.INFO_PERSONAL' | translate}}</h4>
         <div class="container d-flex justify-content-center">
           <div class="row">
+            <!-- Botón para añadir foto de perfil -->
             <div class="col">
               <div class="boton-foto" (click)="fileInputPerfil.click()">
                 <button type="button" class="btn btn_bg boton" matTooltip="Botón para añadir una foto de perfil">
@@ -26,6 +27,7 @@
                   style="display: none;">
               </div>
             </div>
+            <!-- Imagen de perfil del usuario -->
             <div class="col">
               <div class="img-container">
                 <img class="img_profile" [src]="imagenPerfilSrc" alt="Imagen de perfil del usuario por defecto"
@@ -38,11 +40,21 @@
                 <p-toast position="bottom-center"></p-toast>
               </div>
             </div>
+            <!-- Botón para eliminar la foto de perfil -->
             <div class="col">
               <div class="boton-eliminar-foto">
                 <button type="button" class="btn btn_bg boton btn_delete"
                   matTooltip="Botón para eliminar la foto actual de perfil" (click)="eliminarFotoPerfil()">
                   <img class="edit_btn" src="../../../../assets/sistema/cruz.png">
+                </button>
+              </div>
+            </div>
+            <!-- Botón para ver perfil público -->
+            <div class="col">
+              <div class="boton-ver-perfil">
+                <button type="button" class="btn btn_bg boton" 
+                  matTooltip="Botón para ver tu perfil público" (click)="verPerfilPublico()">
+                  <i class="fi fi-rr-user"></i>
                 </button>
               </div>
             </div>

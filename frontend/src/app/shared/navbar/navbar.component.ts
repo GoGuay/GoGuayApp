@@ -56,7 +56,9 @@ export class NavbarComponent implements OnInit {
     private languageService: LanguageService,
     private userService: UserServicesService,
     private element: ElementRef
-  ) { }
+  ) {
+    this.loadUserData();
+  }
 
   async ngOnInit() {
     /**
@@ -80,8 +82,6 @@ export class NavbarComponent implements OnInit {
     } else {
       this.validacionHomePage = false;
     }
-
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
@@ -103,6 +103,8 @@ export class NavbarComponent implements OnInit {
         return '/panel-usuario';
       case '/nuevo-viaje':
         return '/nuevo-viaje';
+      case '/mi-perfil':
+        return '/mi-perfil';
       default:
         return '/home';
     }
@@ -121,7 +123,7 @@ export class NavbarComponent implements OnInit {
    */
   navigateBack() {
     if (this.backRoute) {
-    this.navCtrl.navigateRoot([this.backRoute]);
+      this.navCtrl.navigateRoot([this.backRoute]);
     }
   }
 
@@ -130,7 +132,9 @@ export class NavbarComponent implements OnInit {
    * @param id_usuario 
    */
   async obtenerDatosUsuario(id_usuario: number) {
-    this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+    if (id_usuario) {
+      this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+    }
   }
 
   /**
@@ -175,11 +179,15 @@ export class NavbarComponent implements OnInit {
     window.location.reload();
   }
 
-  openPerfilPublico(){
-    const usuario = { id:  this.userData.usuario.id }
-    
+  openPerfilPublico() {
+    const usuario = { id: this.userData.usuario.id }
+
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
+  }
+
+  loadUserData(): void {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 }
