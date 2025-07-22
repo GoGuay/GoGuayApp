@@ -141,6 +141,7 @@ export class RegistroComponent implements OnInit {
       if (validacion) {
         this.pasoActual++;
         this.paso1 = false;
+
         this.guardaDatosDelUsuarioEnServicio(
           'formulario1',
           this.formulario1.getRawValue()
