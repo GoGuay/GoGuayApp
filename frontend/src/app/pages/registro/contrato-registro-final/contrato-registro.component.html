@@ -1,5 +1,6 @@
 <app-resumen-registro />
-<div class="container">
+<div class="container box_normas">
+  <h2>NORMAS COMO USUARIO DE PRIDERIDE</h2>
   <p>
     Al registrarte en nuestra aplicación, te comprometes a respetar a todos los
     usuarios, independientemente de su identidad de género, orientación sexual o
@@ -22,4 +23,10 @@
     Para conocer más detalles sobre nuestro código de conducta, haz clic en el
     siguiente botón:
   </p>
+  <div class="text-center">
+    <button type="button" class="btn btn_bg me-3" (click)="aceptarNormas()">
+      Aceptar y registrar
+    </button>
+    <button type="button" class="btn btn_bg">Rechazar y salir</button>
+  </div>
 </div>

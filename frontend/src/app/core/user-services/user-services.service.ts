@@ -28,7 +28,12 @@ export class UserServicesService {
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const savedData = localStorage.getItem('usuarioData');
+    this.usuarioDataSubject = new BehaviorSubject<any>(
+      savedData ? JSON.parse(savedData) : {}
+    );
+  }
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro

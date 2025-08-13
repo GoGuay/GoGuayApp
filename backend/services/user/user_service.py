@@ -407,13 +407,6 @@ def subirfoto_carnettrasera(user_id):
     return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
 
 
-
-
-
-
-
-
-
 #Función para enviar sms al teléfono del usuario.
 # NO SE ESTA USANDO DE MOMENTO #
 @user_blueprint.route('/enviar_sms', methods=['POST'])

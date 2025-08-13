@@ -89,15 +89,14 @@ export class ResumenRegistroComponent implements OnInit {
 
     //Convertimos los datos obtenidos en un objeto con parse, si no hay datos se asigna un objeto vacio
     const usuario = storedData ? JSON.parse(storedData) : {};
-
     //Extraemos los campos del objeto 'usuario', uno por uno
-    this.email = usuario?.formulario1?.email ?? '';
-    this.fecha_nacimiento = usuario?.formulario1?.fecha_nacimiento ?? '';
-    this.nombre = usuario?.formulario2?.nombre ?? '';
-    this.apellidos = usuario?.formulario2?.apellidos ?? '';
-    this.telefono = usuario?.formulario2?.telefono ?? '';
-    this.genero = usuario?.formulario2?.genero ?? '';
-    this.orientacion = usuario?.formulario2?.orientacion ?? '';
+    this.email = usuario?.email ?? '';
+    this.fecha_nacimiento = usuario?.fecha_nacimiento ?? '';
+    this.nombre = usuario?.nombre ?? '';
+    this.apellidos = usuario?.apellidos ?? '';
+    this.telefono = usuario?.telefono ?? '';
+    this.genero = usuario?.genero ?? '';
+    this.orientacion = usuario?.orientacion ?? '';
 
     this.formularioResumen = this.fb.group({
       email: [
@@ -118,21 +117,17 @@ export class ResumenRegistroComponent implements OnInit {
       orientacion: ['', Validators.required],
     });
 
-    // this.datosResumen = localStorage.getItem('usuarioData') || {};
-    // this.obtenerDatos();
+    //Inicializar el FormGroup con los valores actuales
+    this.formularioResumen = this.fb.group({
+      email: [this.email],
+      fecha_nacimiento: [this.fecha_nacimiento],
+      nombre: [this.nombre],
+      apellidos: [this.apellidos],
+      telefono: [this.telefono],
+      genero: [this.genero],
+      orientacion: [this.orientacion],
+    });
   }
-
-  // obtenerDatos() {
-  //   const datoParseado = JSON.parse(this.datosResumen);
-
-  //   this.email = datoParseado?.formulario1?.email ?? '';
-  //   this.fecha_nacimiento = datoParseado?.formulario1.fecha_nacimiento ?? '';
-  //   this.nombre = datoParseado?.formulario2.nombre ?? '';
-  //   this.apellidos = datoParseado?.formulario2.apellidos ?? '';
-  //   this.telefono = datoParseado?.formulario2.telefono ?? '';
-  //   this.genero = datoParseado?.formulario2.genero ?? '';
-  //   this.orientacion = datoParseado?.formulario2.orientacion ?? '';
-  // }
 
   /**
    * Activa el modo edición para un campo específico
@@ -147,7 +142,7 @@ export class ResumenRegistroComponent implements OnInit {
    * Verifica si el valor del campo cambió desde su estado original
    */
   hayCambio(campo: string): boolean {
-    return (this as any)[campo] !== this.original[campo];
+    return this.formularioResumen.get(campo)?.value !== this.original[campo];
   }
 
   /**
@@ -163,28 +158,14 @@ export class ResumenRegistroComponent implements OnInit {
     const nuevoValor = this.formularioResumen.controls[campo].value;
     this.original[campo] = nuevoValor;
     this.editando[campo] = false;
-
-    const nombreFormulario = this.campoFormularioMap[campo];
-    if (nombreFormulario) {
-      this.guardaDatosDelUsuarioEnServicio(nombreFormulario, campo, nuevoValor);
-    } else {
-      console.warn(`No se encontró formulario para el campo: ${campo}`);
-    }
+    this.guardaDatosDelUsuarioEnServicio(campo, nuevoValor);
   }
 
-  guardaDatosDelUsuarioEnServicio(
-    nombreFormulario: string,
-    clave: string,
-    valor: any
-  ) {
+  guardaDatosDelUsuarioEnServicio(clave: string, valor: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
-    const formulario = usuarioDataTemp[nombreFormulario] || {};
-
-    formulario[clave] = valor;
-
     const datosUsuario = {
       ...usuarioDataTemp,
-      [nombreFormulario]: formulario,
+      [clave]: valor,
     };
 
     this.userService.setUsuarioData(datosUsuario);
@@ -203,7 +184,7 @@ export class ResumenRegistroComponent implements OnInit {
    * Obtiene dinámicamente el valor de un campo
    */
   getValorCampo(campo: string): any {
-    return (this as any)[campo];
+    return this.formularioResumen.get(campo)?.value ?? '';
   }
 
   /**

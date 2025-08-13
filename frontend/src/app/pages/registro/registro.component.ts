@@ -142,31 +142,25 @@ export class RegistroComponent implements OnInit {
         this.pasoActual++;
         this.paso1 = false;
 
-        this.guardaDatosDelUsuarioEnServicio(
-          'formulario1',
-          this.formulario1.getRawValue()
-        );
+        this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
       }
     } else if (this.pasoActual === 2 && this.formulario2.valid) {
       this.pasoActual++;
       this.paso1 = false;
-      this.guardaDatosDelUsuarioEnServicio(
-        'formulario2',
-        this.formulario2.getRawValue()
-      );
+      this.guardaDatosDelUsuarioEnServicio(this.formulario2.getRawValue());
     } else if (this.pasoActual === 3 && this.formulario3.valid) {
+      this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
       this.mostrarContrato();
     }
   }
 
-  guardaDatosDelUsuarioEnServicio(clave: string, valor: any) {
+  guardaDatosDelUsuarioEnServicio(datos: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
-    console.log('clave...', clave);
-    console.log('valor...', valor);
+    console.log('datos...', datos);
 
     const datosUsuario = {
       ...usuarioDataTemp,
-      [clave]: valor,
+      ...datos,
     };
     this.userService.setUsuarioData(datosUsuario);
   }
