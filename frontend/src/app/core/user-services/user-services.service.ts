@@ -19,21 +19,14 @@ export class UserServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
   userData: Usuario = {} as Usuario;
 
-  private usuarioDataSubject = new BehaviorSubject<any>(
-    JSON.parse(localStorage.getItem('usuarioData') || '{}')
-  );
+  private usuarioDataSubject = new BehaviorSubject<any>(null);
   usuarioData$ = this.usuarioDataSubject.asObservable();
 
   monedero: any = null;
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) {
-    const savedData = localStorage.getItem('usuarioData');
-    this.usuarioDataSubject = new BehaviorSubject<any>(
-      savedData ? JSON.parse(savedData) : {}
-    );
-  }
+  constructor(private http: HttpClient) {}
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -41,7 +34,6 @@ export class UserServicesService {
    */
   setUsuarioData(data: any) {
     this.usuarioDataSubject.next(data);
-    localStorage.setItem('usuarioData', JSON.stringify(data));
   }
 
   /**

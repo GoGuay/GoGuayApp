@@ -27,7 +27,6 @@ import { NavController } from '@ionic/angular';
     MatButtonModule,
     TranslateModule,
   ],
-  providers: [UserServicesService],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -156,7 +155,6 @@ export class RegistroComponent implements OnInit {
 
   guardaDatosDelUsuarioEnServicio(datos: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
-    console.log('datos...', datos);
 
     const datosUsuario = {
       ...usuarioDataTemp,
@@ -174,6 +172,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
+    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/contrato-registro');
   }
 
@@ -192,8 +191,6 @@ export class RegistroComponent implements OnInit {
 
       this.userService.registrarUsuario(datosRegistro).subscribe({
         next: (response) => {
-          console.log('Respuesta registro: ', response);
-
           const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
           const message: string = `
           <p>Tu usuario ha sido creado correctamente.</p>
@@ -242,7 +239,6 @@ export class RegistroComponent implements OnInit {
   validarFechaCompleta() {
     const fechaControl = this.formulario1.get('fecha_nacimiento');
     const fechaValor = fechaControl?.value;
-    console.log('Validando fecha...', fechaValor);
 
     if (!fechaValor || fechaValor.length !== 10) {
       fechaControl?.setErrors({ incompleteDate: true });
@@ -276,8 +272,6 @@ export class RegistroComponent implements OnInit {
       fechaSeleccionada.getMonth() !== mes ||
       fechaSeleccionada.getDate() !== dia
     ) {
-      console.log('fecha seleccionada...', fechaSeleccionada);
-
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
       this.fechaValida = false;
@@ -287,7 +281,6 @@ export class RegistroComponent implements OnInit {
     // Validar si el usuario tiene 18 años o más
     const edadValida = this.validacionEdad(fechaSeleccionada);
     this.fechaValida = edadValida;
-    console.log('edadValida: ', edadValida);
     if (edadValida) {
       this.botonHabilitadoContacto = this.emailValido;
     } else {
