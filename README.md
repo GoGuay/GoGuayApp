@@ -83,4 +83,8 @@ Recovery Code Twilio:  Q8FCGG71FFFUQ7H17DPJFCGD
 
 
 # Comando para construir build para DOCKER DESKTOP
+"Es necesario tener la aplicación "Docker Desktop" iniciada.
+Con el siguiente comando se crea una build del proyecto recogiendo los datos de backend.
+Es necesario ejecutar este comando desde la carpeta backend donde está el fichero "dockerfile""
+
 docker build -t prideride .
