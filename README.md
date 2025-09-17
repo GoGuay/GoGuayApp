@@ -47,7 +47,7 @@ En PrideRide creemos que **viajar también puede ser un acto de orgullo**. 🌈
 ---
 
 ## 📸 Preview
-*(Aquí puedes añadir capturas de pantalla de la app una vez tengáis la versión visual lista.)*  
+![Registro screenshot](image.png)  
 
 ---
 
