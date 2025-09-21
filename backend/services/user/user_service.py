@@ -20,6 +20,8 @@ from PIL import Image
 from io import BytesIO
 from flask_cors import CORS
 from flask_mail import Mail, Message
+from prelude_python_sdk import Prelude
+import os
 
 
 
@@ -33,12 +35,13 @@ mail = None
 serializer = None
 
 
+API_KEY_PRELUDE = os.getenv("API_KEY_PRELUDE")
+
+client = Prelude(
+    api_token=API_KEY_PRELUDE,
+)
 
 
-key = '54b8296c'
-secret = '9up6axu0PVauefvs'
-http_client = nexmo.Client(key=key, secret=secret)
-http_client.send_message({'from': 'Vonage', 'to': 'YOUR-PHONE-NUMBER', 'text': 'Hello world'})
 
 otp_store = {}
 
@@ -408,29 +411,57 @@ def subirfoto_carnettrasera(user_id):
 
 
 #Función para enviar sms al teléfono del usuario.
-# NO SE ESTA USANDO DE MOMENTO #
 @user_blueprint.route('/enviar_sms', methods=['POST'])
 def enviar_sms():
-        data = request.get_json()
-        telefonoAVerificar = request.json['telefono']
+    data = request.get_json()
+    telefonoAVerificar = data.get('telefono')
 
-        if not telefonoAVerificar:
-            return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+    if not telefonoAVerificar:
+        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
 
-        otp = str(random.randint(100000, 999999))    
-        otp_store[telefonoAVerificar] = otp
+    try:
+        # 1. Crear verificación con Prelude (ellos envían el código)
+        verification = client.verification.create(
+            target={
+                "type": "phone_number",
+                "value": telefonoAVerificar
+            }
+        )
 
-        message_body = f'Tu código de verificación es: {otp}'
-        responseData = http_client.send_message({
-            "from": "+34639981207",
-            "to": telefonoAVerificar,
-            "text": message_body
+        # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
+        return jsonify({
+            "success": True,
+            "message": "Código de verificación enviado correctamente",
+            "verification_id": verification.id
         })
 
-        if responseData["messages"][0]["status"] == "0":
-            return jsonify({"success": True, 'message': "código enviado correctamente"})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
+
+#Endpoint para verificar el código
+@user_blueprint.route('/verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    data = request.get_json()
+    verification_id = data.get('verification_id')
+    codigo = data.get('codigo')
+
+    if not verification_id or not codigo:
+        return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+
+    try:
+        result = client.verification.check(
+            verification_id=verification_id,
+            code=codigo
+        )
+
+        if result.status == "approved":
+            return jsonify({"success": True, "message": "Teléfono verificado ✅"})
         else:
-            return jsonify({'success': False, 'message': responseData["messages"][0]["error-text"]}), 500
+            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 
@@ -445,7 +476,8 @@ def enviar_email():
     email = request.json['email']
     salt = 'email-verify'
     token = serializer.dumps(email, salt=salt)
-    link= f"http://localhost:4200/verificar-email/{token}"
+    print('Token generado: ', token)
+    link= f"http://localhost:4200/verificaciones-perfil?token={token}"
     msg = Message("Verifica tu correo", recipients=[email])
     msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
     mail.send(msg)
@@ -477,7 +509,7 @@ def enviar_email_reset_password():
 
     return jsonify({'message': 'Correo enviado'}), 200
 
-#Función backend para verificar el correo
+#Función backend para verificar el correo desde la pantalla de verificaciones-perfil
 @user_blueprint.route('/verificar_email', methods=['POST'])
 def verificar_email():
     token = request.json['token']

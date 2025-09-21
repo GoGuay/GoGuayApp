@@ -22,11 +22,19 @@ export class UserServicesService {
   private usuarioDataSubject = new BehaviorSubject<any>(null);
   usuarioData$ = this.usuarioDataSubject.asObservable();
 
+  private usuarioSource = new BehaviorSubject<any>(null);
+  usuario$ = this.usuarioSource.asObservable();
+
   monedero: any = null;
 
   private usuariosCache: Usuario[] = [];
 
   constructor(private http: HttpClient) {}
+
+  // Actualizar usuario
+  actualizarUsuario(usuario: any) {
+    this.usuarioSource.next(usuario);
+  }
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -201,6 +209,10 @@ export class UserServicesService {
 
   enviar_sms(telefono: string) {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+  }
+
+  verificar_codigo_sms(codigo: string) {
+    return this.http.post(`${this.apiUrl}/user/verificar_codigo`, { codigo });
   }
 
   fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {

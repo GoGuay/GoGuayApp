@@ -17,6 +17,39 @@
       <p class="mb-4">{{'VERIF.TITULO_VERIF_ADICIONAL' | translate}}</p>
     </div>
 
+    <div class="mb-5 d-flex mt-5 justify-content-center">
+      <table class="verification-table">
+        <tr>
+          <td>Correo electrónico</td>
+          <td>
+            <span *ngIf="usuario.emailVerificado" class="check">✔️</span>
+            <span *ngIf="!usuario.emailVerificado" class="cross">❌</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Teléfono</td>
+          <td>
+            <span *ngIf="usuario.telefonoVerificado" class="check">✔️</span>
+            <span *ngIf="!usuario.telefonoVerificado" class="cross">❌</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Documento</td>
+          <td>
+            <span *ngIf="usuario.dni_verificado" class="check">✔️</span>
+            <span *ngIf="!usuario.dni_verificado" class="cross">❌</span>
+          </td>
+        </tr>
+      </table>
+
+      <div
+        *ngIf="usuario.emailVerificado && usuario.telefonoVerificado && usuario.dni_verificado"
+        class="verified-message"
+      >
+        Usuario completamente verificado ✅
+      </div>
+    </div>
+
     <ion-row class="justify-content-between fila_superior">
       <!-- Verificación de correo -->
       <ion-col size="12" size-md="3" class="mb-2">
@@ -37,19 +70,32 @@
               class="btn btn_bg mb-4 w-100"
               mat-raised-button
               (click)="envio_mail_verificar_correo(emailUsuario)"
+              [disabled]="botonCorreoVerificado"
             >
               {{emailUsuario}}
             </button>
+            <p-toast position="bottom-center"></p-toast>
           </ion-col>
         </div>
       </ion-col>
 
+      <div class="divider-container">
+        <mat-divider vertical></mat-divider>
+      </div>
+
       <!-- Verificación de teléfono -->
-      <!-- <ion-col>
+      <ion-col size="12" size-md="3" class="mb-2">
         <div class="mt-2 text-center">
           <p>
             <strong>{{'VERIF_PERFIL.VERIFICA_TU_TFNO' | translate}}</strong>
           </p>
+          <ion-row>
+            <ion-col>
+              <p class="text-align-justify" style="font-size: 14px">
+                {{'VERIF.INFO_VERIF_CORREO' | translate}}
+              </p>
+            </ion-col>
+          </ion-row>
           <ion-col>
             <button
               type="button"
@@ -61,24 +107,64 @@
               {{telefonoUsuario}}
             </button>
           </ion-col>
-          <ion-row class="mt-4">
-            <ion-col class="mt-3">
-              <p style="font-size: 15px">
-                {{'VERIF_PERFIL.INFO_VERIF_TFNO' | translate}}
-              </p>
-            </ion-col>
-          </ion-row>
+          <ion-row class="mt-4"> </ion-row>
           <div class="input-container d-flex justify-content-center">
-            <input type="text" maxlength="1" class="digit-input mx-1" />
-            <input type="text" maxlength="1" class="digit-input mx-1" />
-            <input type="text" maxlength="1" class="digit-input mx-1" />
-            <input type="text" maxlength="1" class="digit-input mx-1" />
+            <input
+              #d0
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 0"
+              [(ngModel)]="codigoArray[0]"
+              (input)="moveNext(d0, d1, 0)"
+              (keydown)="handleBackspace($event, 0)"
+              (focus)="focusedInput = 0"
+            />
+            <input
+              #d1
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 1"
+              [(ngModel)]="codigoArray[1]"
+              (input)="moveNext(d1, d2, 1)"
+              (keydown)="handleBackspace($event, 1)"
+              (focus)="focusedInput = 1"
+            />
+            <input
+              #d2
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 2"
+              [(ngModel)]="codigoArray[2]"
+              (input)="moveNext(d2, d3, 2)"
+              (keydown)="handleBackspace($event, 2)"
+              (focus)="focusedInput = 2"
+            />
+            <input
+              #d3
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 3"
+              [(ngModel)]="codigoArray[3]"
+              (input)="updateCodigo()"
+              (keydown)="handleBackspace($event, 3)"
+              (focus)="focusedInput = 3"
+            />
           </div>
-          <button type="button" class="btn mt-2 btn_bg" mat-raised-button>
+
+          <button
+            (click)="verificar_codigo_sms(codigo)"
+            type="button"
+            class="btn mt-2 btn_bg"
+            mat-raised-button
+          >
             {{'BOTON.CONFIRMAR_CODIGO_TFNO' | translate}}
           </button>
         </div>
-      </ion-col> -->
+      </ion-col>
 
       <div class="divider-container">
         <mat-divider vertical></mat-divider>
