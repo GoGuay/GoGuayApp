@@ -8,13 +8,12 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
-import { DialogRef } from '@angular/cdk/dialog';
 import { NavController } from '@ionic/angular';
 
 @Component({
@@ -49,7 +48,6 @@ export class RegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
-    private funcionesComunes: FuncionesComunes
   ) {
     this.formulario1 = this.fb.group({
       email: [
@@ -148,16 +146,11 @@ export class RegistroComponent implements OnInit {
       this.pasoActual++;
       this.paso1 = false;
       this.guardaDatosDelUsuarioEnServicio(this.formulario2.getRawValue());
-    } else if (this.pasoActual === 3 && this.formulario3.valid) {
-      this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
-      this.mostrarContrato();
-    }
+    } 
   }
 
   guardaDatosDelUsuarioEnServicio(datos: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
-    console.log('datos...', datos);
-
     const datosUsuario = {
       ...usuarioDataTemp,
       ...datos,
@@ -174,6 +167,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
+    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/contrato-registro');
   }
 
@@ -242,7 +236,6 @@ export class RegistroComponent implements OnInit {
   validarFechaCompleta() {
     const fechaControl = this.formulario1.get('fecha_nacimiento');
     const fechaValor = fechaControl?.value;
-    console.log('Validando fecha...', fechaValor);
 
     if (!fechaValor || fechaValor.length !== 10) {
       fechaControl?.setErrors({ incompleteDate: true });
@@ -276,8 +269,6 @@ export class RegistroComponent implements OnInit {
       fechaSeleccionada.getMonth() !== mes ||
       fechaSeleccionada.getDate() !== dia
     ) {
-      console.log('fecha seleccionada...', fechaSeleccionada);
-
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
       this.fechaValida = false;
@@ -287,7 +278,6 @@ export class RegistroComponent implements OnInit {
     // Validar si el usuario tiene 18 años o más
     const edadValida = this.validacionEdad(fechaSeleccionada);
     this.fechaValida = edadValida;
-    console.log('edadValida: ', edadValida);
     if (edadValida) {
       this.botonHabilitadoContacto = this.emailValido;
     } else {
