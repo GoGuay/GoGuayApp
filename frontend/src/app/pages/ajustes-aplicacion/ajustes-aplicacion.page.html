@@ -96,20 +96,20 @@
                   <a
                     class="small"
                     href="'../../../forgot-password//forgot-password.page.html"
-                    >¿No recuerdas tu contraseña actual?</a
+                    >{{'AJUSTESAPP.PASSWORD.FORGOT_PASSWORD' | translate}}</a
                   >
                 </div>
                 <div
                   *ngIf="isPasswordActualValida === true"
                   class="text-success mt-2"
                 >
-                  ✅ Contraseña actual verificada correctamente.
+                  {{'AJUSTESAPP.PASSWORD.PASSWORD_CONFIRM' | translate}}
                 </div>
                 <div
                   *ngIf="isPasswordActualValida === false"
                   class="text-danger mt-2"
                 >
-                  ❌ La contraseña actual es incorrecta.
+                  {{'AJUSTESAPP.PASSWORD.PASSWORD_INCORRECTA' | translate}}
                 </div>
               </div>
 
@@ -145,10 +145,10 @@
                 />
               </div>
               <div *ngIf="errorMensaje" class="text-danger mt-2">
-                ❌ {{ errorMensaje }}
+                {{ errorMensaje }}
               </div>
               <div *ngIf="exitoMensaje" class="text-success mt-2">
-                ✅ {{ exitoMensaje }}
+                {{ exitoMensaje }}
               </div>
 
               <ion-row class="boton_guardar d-flex justify-content-center">
@@ -217,5 +217,3 @@
     </div>
   </div>
 </ion-content>
-
-<!--TODO: Traducción de mensajes que aparecen en el cambio de contraseña-->

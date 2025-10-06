@@ -60,6 +60,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     this.preferencias = this.funcionesComunes.validacionPreferencias(this.data);
     this.viaje = { ...this.data.viaje };
     this.verificarSiEstaUnido();
+    this.validarSiEsConductor(this.data.viaje.usuario_id, this.data.viaje);
   }
 
   ngOnInit() {
@@ -216,7 +217,9 @@ verificarSiEstaUnido() {
   validarSiEsConductor(usuario_id: number, viaje: Viaje) {
     if(usuario_id === viaje.usuario_id) {
       this.conductor = true;
-    } else {this.conductor = false;}
+    } else {
+      this.conductor = false;
+    }
   }
 
   formatData(date: any){

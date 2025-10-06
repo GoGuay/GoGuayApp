@@ -3,12 +3,12 @@
   <ng-container *ngIf="validacionHomePage; else otherPageNav">
     <nav class="navbar navbar-expand-lg navbar-diseno">
       <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
-          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
-          <mat-icon *ngIf="menuOpen"> close </mat-icon>
-        </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
+        <mat-icon *ngIf="menuOpen"> close </mat-icon>
+      </button>
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto justify-content-between mb-2 mb-lg-0 w-100 align-items-center">
             <li class="nav-item">

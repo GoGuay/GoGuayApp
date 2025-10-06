@@ -69,13 +69,23 @@ export class MisViajesPage implements OnInit {
       this.validacionPerilLogeado(userId);
       this.obtenerViajesComoAcompanante();
       this.obtenerViajesCreados();
+      this.loadJumbotronSetting();
     });
   }
 
   /**
- * Función para obtener los datos de un usuario
- * @param id_usuario Recibe el ID del usuario que está logado
- */
+   * Función para cargar la configuración del jumbotron desde localStorage
+   * Si no hay configuración guardada, se muestra por defecto
+   */
+  loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+  }
+
+  /**
+   * Función para obtener los datos de un usuario
+   * @param id_usuario Recibe el ID del usuario que está logado
+   */
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.userData = resultadoUsuario;

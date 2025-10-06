@@ -26,7 +26,13 @@
         <li>Salir de un viaje si eres pasajero.</li>
         <li>Puntuar los viajes una vez finalizados.</li>
       </ul>
+
+      <!-- Botón flotante de cierre -->
+      <button *ngIf="mostrarAyuda" class="btn-cerrar-ayuda" (click)="toggleAyuda()" aria-label="Cerrar ayuda">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
+
 
 
     <!-- Filtro de viajes -->
@@ -84,18 +90,18 @@
               <i class="fi fi-rr-attention-detail"></i>
             </button>
 
-            <button type="button" class="btn_shadow" matTooltip="Editar viaje" (click)="editarViaje(viaje.id)"
-              *ngIf="conductor && !pasajero">
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Editar viaje"
+              (click)="editarViaje(viaje.id)" *ngIf="conductor && !pasajero">
               <mat-icon class="mas_detalle">edit</mat-icon>
             </button>
 
-            <button type="button" class="btn_shadow" matTooltip="Eliminar viaje" (click)="eliminarViaje(viaje.id)"
-              *ngIf="conductor && !pasajero">
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Eliminar viaje"
+              (click)="eliminarViaje(viaje.id)" *ngIf="conductor && !pasajero">
               <mat-icon class="eliminar_viaje">delete</mat-icon>
             </button>
 
-            <button type="button" class="btn_shadow" matTooltip="Salir del viaje" (click)="salirDeViaje(viaje.id)"
-              *ngIf="!conductor && pasajero">
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Salir del viaje"
+              (click)="salirDeViaje(viaje.id)" *ngIf="!conductor && pasajero">
               <mat-icon class="eliminar_viaje">delete</mat-icon>
             </button>
           </span>

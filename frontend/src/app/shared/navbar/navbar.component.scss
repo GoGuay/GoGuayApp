@@ -169,6 +169,18 @@ ul {
   height: 24px;
 }
 
+// Evita errores de tamaño al abrir el menú en dispositivos móviles
+.navbar-collapse.collapsing {
+  transition: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.navbar-collapse.show {
+  height: auto !important;
+  overflow: visible !important;
+}
+
 @media (max-width: 576px) {
   .navbar .dropdown-menu {
     position: absolute;
@@ -184,3 +196,4 @@ ul {
     display: block;
   }
 }
+

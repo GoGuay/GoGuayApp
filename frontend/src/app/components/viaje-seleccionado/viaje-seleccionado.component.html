@@ -6,13 +6,14 @@
     </button>
   </div>
 
-  <mat-divider></mat-divider>
+  <mat-divider class="mt-2"></mat-divider>
 
   <mat-dialog-content>
     <div class="info_viaje mb-2" *ngIf="data.viaje.plazas === 0">
       <p>Este viaje ya no dispone de plazas. 🥴​ </p>
     </div>
-    <div class="info_viaje mb-2" *ngIf="funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
+    <div class="info_viaje mb-2"
+      *ngIf="funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
       <p>Este viaje ya ha terminado. 🥴​ </p>
     </div>
     <div class="row">
@@ -35,7 +36,8 @@
               <mat-panel-title> {{ data.viaje.usuario.nombre }} </mat-panel-title>
               <mat-panel-description>
                 <mat-icon *ngIf="!data.viaje.usuario.fotoPerfil">account_circle</mat-icon>
-                <img *ngIf="data.viaje.usuario.fotoPerfil" class="imgPerfilAcordeon" [src]="data.viaje.usuario.fotoPerfil">
+                <img *ngIf="data.viaje.usuario.fotoPerfil" class="imgPerfilAcordeon"
+                  [src]="data.viaje.usuario.fotoPerfil">
               </mat-panel-description>
             </mat-expansion-panel-header>
 
@@ -72,8 +74,7 @@
               <p><strong>Preferencias:</strong> {{ preferencias }}</p>
               <p><strong>Puntuación:</strong> {{ acomp.puntuacion_promedio }}</p>
               <p>
-                <button type="button" mat-raised-button class="btn"
-                  (click)="masDetallesUsuario(acomp.id)">Más
+                <button type="button" mat-raised-button class="btn" (click)="masDetallesUsuario(acomp.id)">Más
                   información</button>
               </p>
             </mat-expansion-panel>
@@ -85,9 +86,15 @@
   <mat-dialog-actions>
     <div class="d-flex justify-content-center mt-4">
       <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)"
-        [disabled]="data.viaje.plazas === 0 || yaUnido || funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
+        [disabled]="data.viaje.plazas === 0 || yaUnido || conductor || funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
         <mat-icon>no_crash</mat-icon>
-        {{ yaUnido ? 'Ya estás unido' : 'Quiero viajar aquí' }}
+        {{
+        conductor
+        ? 'Tú has creado el viaje'
+        : yaUnido
+        ? 'Ya estás unido'
+        : 'Quiero viajar aquí'
+        }}
       </button>
       <button mat-raised-button class="btn" (click)="closeDialog()">Cerrar</button>
     </div>

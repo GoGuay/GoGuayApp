@@ -50,7 +50,7 @@
 }
 
 .mas_detalle {
-  color: #b3b5e6;
+  color: black;
 }
 
 .eliminar_viaje {
@@ -126,11 +126,35 @@ ion-segment-button {
 }
 
 .ayuda-explicacion-wrapper {
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
-  max-height: 500px;
-  opacity: 1;
-  padding: 1rem;
+  position: relative;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.btn-cerrar-ayuda {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #b7e0b4;
+  color: black;
+  border-radius: 50%;
+  border: none;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    background-color: #00997a;
+    transform: scale(1.05);
+  }
+
+  mat-icon {
+    font-size: 22px;
+  }
 }
 
 .ayuda-explicacion-hidden {
