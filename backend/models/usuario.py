@@ -20,7 +20,7 @@ class Usuario(db.Model):
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
     password = db.Column(db.String(250), nullable=False)
-    telefono = db.Column(db.String(15), nullable=False)
+    telefono = db.Column(db.String(15), unique=True, nullable=False)
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
     fotoPerfil = db.Column(db.String(250), nullable=True)

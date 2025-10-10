@@ -460,12 +460,18 @@ def verificar_codigo():
         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
 
     try:
+        telefono_formateado = "+34" + str(phone_number)
         result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
-            to=phone_number,
+            to=telefono_formateado,
             code=codigo
         )
 
         if result.status == "approved":
+            usuario = Usuario.query.filter_by(telefono=phone_number).first()
+            if usuario:
+                usuario.telefonoVerificado = True
+                db.session.commit()
+            
             return jsonify({"success": True, "message": "Teléfono verificado ✅"})
         else:
             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400

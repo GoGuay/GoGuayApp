@@ -198,7 +198,7 @@ export class VerificacionesPerfilPage implements OnInit {
    */
   verificar_codigo_sms(codigo: string) {
     this.userService
-      .verificar_codigo_sms(codigo, this.verification_id_sms)
+      .verificar_codigo_sms(codigo, this.usuario.telefono)
       .subscribe((respuesta) => {
         console.log('Respues: ', respuesta);
       });
