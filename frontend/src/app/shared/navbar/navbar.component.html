@@ -3,12 +3,12 @@
   <ng-container *ngIf="validacionHomePage; else otherPageNav">
     <nav class="navbar navbar-expand-lg navbar-diseno">
       <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
-          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
-          <mat-icon *ngIf="menuOpen"> close </mat-icon>
-        </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <mat-icon *ngIf="!menuOpen"> menu </mat-icon>
+        <mat-icon *ngIf="menuOpen"> close </mat-icon>
+      </button>
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto justify-content-between mb-2 mb-lg-0 w-100 align-items-center">
             <li class="nav-item">
@@ -49,30 +49,9 @@
               </a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link active" aria-current="page"href="/notificaciones">
+              <a class="nav-link active" aria-current="page" href="/notificaciones">
                 <img class="idiomas" src="../../../assets/sistema/campana.gif">
-              </a> 
-              <!-- <a class="nav-link active dropdown-toggle d-flex align-items-center" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" (change)="cambioDireccionFlechaIdioma()"
-                (click)="cambioDireccionFlechaIdioma()">
-                <img class="idiomas" src="../../../assets/sistema/espanol.gif">
-                <mat-icon class="flecha-icono ms-2 flecha-animada"
-                  [class.rotada]="isLenguageDropdownOpen">expand_more</mat-icon>
-              </a> -->
-              <!-- <ul class="dropdown-menu">
-                <li>
-                  <a type="button" class="dropdown-item" (click)="changeLanguage('es')">
-                    <img src="../../../assets/flags/espana.png" class="flag-icon" />
-                    {{ "NAVBAR.IDIOMA_ESPANIOL" | translate }}
-                  </a>
-                </li>
-                <li>
-                  <a type="button" class="dropdown-item" (click)="changeLanguage('en')">
-                    <img src="../../../assets/flags/reino-unido.png" class="flag-icon" />
-                    {{ "NAVBAR.IDIOMA_INGLES" | translate }}
-                  </a>
-                </li>
-              </ul> -->
+              </a>
             </li>
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNav">
@@ -90,17 +69,14 @@
                 </a>
 
                 <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-                  <!-- <li class="perfil nav-item dropdown">
-                    <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
-                  </li> -->
                   <nav class="nav nav-pills flex-column">
                     <ul>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
                       </li>
-                      <!-- <li class="perfil nav-item dropdown">
-                        <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
-                      </li> -->
+                      <li class="perfil nav-item dropdown">
+                        <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
+                      </li>
                       <li class="perfil nav-item dropdown">
                         <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                       </li>
@@ -194,7 +170,6 @@
               <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
                 <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
-                <!-- <mat-icon class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"> account_circle </mat-icon> -->
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                   <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
                 </div>
@@ -203,17 +178,14 @@
               </a>
 
               <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-                <!-- <li class="perfil nav-item dropdown">
-                  <a class="dropdown-item nav-link" href="/panel-usuario">{{ "NAVBAR.PANEL" | translate }}</a>
-                </li> -->
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
-                    <!-- <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" (click)="openPerfilPublico()">Perfil público</a>
-                    </li> -->
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
+                    </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                     </li>

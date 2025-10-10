@@ -136,7 +136,10 @@
       "CAMBIADA_OK": "La contraseña se ha cambiado correctamente",
       "NO_CAMBIADA": "No se ha podido cambiar la contraseña",
       "NUEVA_CONTRAS": "Nueva contraseña:",
-      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:"
+      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:",
+      "FORGOT_PASSWORD": "¿No recuerdas tu contraseña actual?",
+      "PASSWORD_CONFIRM": "Contraseña actual verificada correctamente.",
+      "PASSWORD_INCORRECTA": "La contraseña actual es incorrecta."
     },
     "ELIMINARCTA": {
       "TITULO": "Eliminar la cuenta:",
@@ -261,6 +264,7 @@
     "PUBLICAR_VIAJE": "Publicar viaje",
     "PANEL": "PANEL DE USUARIO",
     "MIPERFIL": "Mi perfil",
+    "MIS_VIAJES": "Mis viajes",
     "DATOSCONTACTO": "Datos de contacto",
     "VERIFICACION": "Verificación del perfil",
     "SALDO": "Saldo/Transferencias",

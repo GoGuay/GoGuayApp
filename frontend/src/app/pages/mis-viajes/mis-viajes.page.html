@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <app-navbar [origin]="urlParaVolver" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="mostrarJumbotron">
+    <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/folder/jumbo.jpg'"
+      [helpText]="'JUMBOTRON.HELP'">
+    </app-jumbotron>
+  </div>
+  <div class="container mt-4 mb-4">
+    <h1 class="mb-3">Mis viajes:</h1>
+    <div class="container">
+      <button class="btn btn_bg mb-4" (click)="toggleAyuda()" aria-label="Ayuda"><i
+          class="fi fi-rs-interrogation"></i></button>
+    </div>
+    <div [ngClass]="{
+      'ayuda-explicacion-wrapper ayuda-explicacion rounded mb-3': true,
+      'ayuda-explicacion-hidden': !mostrarAyuda
+    }">
+      <h5>¿Qué puedes hacer aquí?</h5>
+      <ul>
+        <li>Ver todos tus viajes pasados y futuros.</li>
+        <li>Filtrar por viajes como conductor o pasajero.</li>
+        <li>Editar o eliminar tus viajes si eres el conductor.</li>
+        <li>Salir de un viaje si eres pasajero.</li>
+        <li>Puntuar los viajes una vez finalizados.</li>
+      </ul>
+
+      <!-- Botón flotante de cierre -->
+      <button *ngIf="mostrarAyuda" class="btn-cerrar-ayuda" (click)="toggleAyuda()" aria-label="Cerrar ayuda">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+
+
+    <!-- Filtro de viajes -->
+    <ion-segment [(ngModel)]="filtroViajes" (ionChange)="filtrarViajes()">
+      <ion-segment-button value="todos">
+        Todo
+      </ion-segment-button>
+      <ion-segment-button value="conductor">
+        Soy conductor
+      </ion-segment-button>
+      <ion-segment-button value="pasajero">
+        Soy pasajero
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Lista de viajes -->
+    <div *ngIf="misViajes.length === 0" class="sin-viajes-container">
+      <p>Aún no tienes viajes en esta categoría.</p>
+      <img src="../../../assets/sistema/destino-de-viaje.gif" alt="Imagen de destino de viaje"
+        class="img-fluid iconSinViajes">
+    </div>
+
+    <div class="mi_viaje_box mt-3 mb-3" *ngFor="let viaje of misViajes">
+      <div class="row d-flex flex-column flex-md-row w-100">
+        <!-- Destino -->
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+          <span class="info-viaje fontSize">
+            <strong>Destino:</strong> {{ viaje.destino }}
+          </span>
+        </div>
+
+        <!-- Fecha -->
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+          <span class="info-viaje fontSize">
+            <strong>Fecha:</strong> {{ viaje.fecha_salida | date:'d-MM-yyyy' }}
+          </span>
+        </div>
+
+        <!-- Estado y puntuación -->
+        <div class="col-12 col-md-6 col-lg-3 mb-2 text-center col-puntuar">
+          <span *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
+            class="viajeFinalizado fontSize mb-1">Finalizado</span>
+          <span *ngIf="!funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
+            class="fontSize etiquetaPendiente mb-1">Pendiente</span>
+          <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize btn_shadow puntuar mb-1 d-inline-block"
+            (click)="puntuarViaje()">
+            Puntuar viaje
+          </span>
+        </div>
+
+        <!-- Botones -->
+        <div class="col-12 col-md-6 col-lg-3 text-end mb-2">
+          <span class="botones d-flex justify-content-end flex-wrap gap-2">
+            <button type="button" class="btn btn_bg" matTooltip="Más detalles" (click)="openDetalleViaje(viaje)">
+              <i class="fi fi-rr-attention-detail"></i>
+            </button>
+
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Editar viaje"
+              (click)="editarViaje(viaje.id)" *ngIf="conductor && !pasajero">
+              <mat-icon class="mas_detalle">edit</mat-icon>
+            </button>
+
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Eliminar viaje"
+              (click)="eliminarViaje(viaje.id)" *ngIf="conductor && !pasajero">
+              <mat-icon class="eliminar_viaje">delete</mat-icon>
+            </button>
+
+            <button type="button" class="btn btn_bg btn_shadow" matTooltip="Salir del viaje"
+              (click)="salirDeViaje(viaje.id)" *ngIf="!conductor && pasajero">
+              <mat-icon class="eliminar_viaje">delete</mat-icon>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

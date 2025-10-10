@@ -8,13 +8,12 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
-import { DialogRef } from '@angular/cdk/dialog';
 import { NavController } from '@ionic/angular';
 
 @Component({
@@ -172,6 +171,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
+    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/contrato-registro');
   }

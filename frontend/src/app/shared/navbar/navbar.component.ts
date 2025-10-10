@@ -175,14 +175,29 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('userData');
-    window.location.reload();
+   
+    localStorage.clear();
+    
+    this.userData = {} as Usuario;
+    this.usuario = {} as Usuario;
+    this.isLoggedIn = false;
+
+    // Navegar al home sin recargar la página
+    this.navCtrl.navigateRoot(['/home']);
   }
 
   openPerfilPublico() {
     const usuario = { id: this.userData.usuario.id }
 
     this.navCtrl.navigateRoot(['/perfil-publico'], {
+      queryParams: usuario,
+    });
+  }
+
+  irAMisViajes() {
+    const usuario = { id: this.userData.usuario.id }
+
+    this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,
     });
   }

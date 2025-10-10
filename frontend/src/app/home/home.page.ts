@@ -62,10 +62,16 @@ export class HomePage implements OnInit {
     this.translate.use(lang);
   }
 
-  loadJumbotronSetting() {
-    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+loadJumbotronSetting() {
+  const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+
+  if (jumbotronSetting === null) {
+    localStorage.setItem('mostrarJumbotron', 'true');
+    this.mostrarJumbotron = true;
+  } else {
+    this.mostrarJumbotron = jumbotronSetting === 'true';
   }
+}
 
   obtenerNotificaciones(usuarioId: number) {
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
