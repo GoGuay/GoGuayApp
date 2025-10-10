@@ -211,8 +211,11 @@ export class UserServicesService {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
   }
 
-  verificar_codigo_sms(codigo: string) {
-    return this.http.post(`${this.apiUrl}/user/verificar_codigo`, { codigo });
+  verificar_codigo_sms(codigo: string, verification_sid: string) {
+    return this.http.post(`${this.apiUrl}/user/verificar_codigo`, {
+      codigo,
+      verification_sid,
+    });
   }
 
   fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {

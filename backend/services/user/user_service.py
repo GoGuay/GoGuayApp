@@ -1,3 +1,4 @@
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DEL USUARIO  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -22,6 +23,7 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from prelude_python_sdk import Prelude
 import os
+from twilio.rest import Client
 
 
 
@@ -39,8 +41,18 @@ API_KEY_PRELUDE = os.getenv("API_KEY_PRELUDE")
 
 client = Prelude(
     api_token=API_KEY_PRELUDE,
+
+
 )
 
+
+
+##Configuración Twilio
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
 otp_store = {}
@@ -421,18 +433,16 @@ def enviar_sms():
 
     try:
         # 1. Crear verificación con Prelude (ellos envían el código)
-        verification = client.verification.create(
-            target={
-                "type": "phone_number",
-                "value": telefonoAVerificar
-            }
+        verification = client.verify.v2.services(SERVICE_SID).verifications.create(
+            to=telefonoAVerificar,
+            channel="sms"
         )
 
         # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
         return jsonify({
             "success": True,
             "message": "Código de verificación enviado correctamente",
-            "verification_id": verification.id
+            "verification_sid": verification.sid
         })
 
     except Exception as e:
@@ -443,15 +453,15 @@ def enviar_sms():
 @user_blueprint.route('/verificar_codigo', methods=['POST'])
 def verificar_codigo():
     data = request.get_json()
-    verification_id = data.get('verification_id')
+    phone_number = data.get('phone_number')
     codigo = data.get('codigo')
 
-    if not verification_id or not codigo:
+    if not phone_number  or not codigo:
         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
 
     try:
-        result = client.verification.check(
-            verification_id=verification_id,
+        result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
+            to=phone_number,
             code=codigo
         )
 

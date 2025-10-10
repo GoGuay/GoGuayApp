@@ -149,9 +149,31 @@
               class="digit-input mx-1"
               [class.active]="focusedInput === 3"
               [(ngModel)]="codigoArray[3]"
-              (input)="updateCodigo()"
+              (input)="moveNext(d3, d4, 3)"
               (keydown)="handleBackspace($event, 3)"
               (focus)="focusedInput = 3"
+            />
+            <input
+              #d4
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 4"
+              [(ngModel)]="codigoArray[4]"
+              (input)="moveNext(d4, d5, 4)"
+              (keydown)="handleBackspace($event, 4)"
+              (focus)="focusedInput = 4"
+            />
+            <input
+              #d5
+              type="text"
+              maxlength="1"
+              class="digit-input mx-1"
+              [class.active]="focusedInput === 5"
+              [(ngModel)]="codigoArray[5]"
+              (input)="updateCodigo()"
+              (keydown)="handleBackspace($event, 5)"
+              (focus)="focusedInput = 5"
             />
           </div>
 
@@ -223,54 +245,6 @@
               <div>
                 <p style="font-size: 14px">
                   {{'VERIF.FOTODELANTERA' | translate}}
-                </p>
-              </div>
-            </ion-col>
-          </ion-row>
-
-          <ion-row>
-            <ion-col
-              class="filadocumentodelantero d-flex justify-content-center d-md-block"
-            >
-              <div class="file-upload">
-                <label
-                  for="doctrasera"
-                  class="upload-button floating-plus"
-                  aria-label="Botón para subir documento trasero"
-                  >+</label
-                >
-                <input
-                  type="file"
-                  id="doctrasera"
-                  class="file-input"
-                  accept="image/*"
-                  (change)="fotoDocumentoTrasera($event)"
-                />
-              </div>
-            </ion-col>
-            <ion-col>
-              <div class="fotoDocumento">
-                <img
-                  [src]="sinDocumentoTrasera"
-                  alt="Sin foto de documento delantera"
-                  *ngIf="!usuario?.fotoDocumentoTrasera"
-                />
-                <img
-                  class="fotoDocumento"
-                  *ngIf="usuario?.fotoDocumentoTrasera"
-                  [src]="usuario.fotoDocumentoTrasera"
-                />
-              </div>
-              <div class="overlay" *ngIf="cargandoTrasera">
-                <app-spinner></app-spinner>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <div>
-                <p style="font-size: 14px">
-                  {{'VERIF.FOTOTRASERA' | translate}}
                 </p>
               </div>
             </ion-col>

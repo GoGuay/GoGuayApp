@@ -55,6 +55,7 @@ export class VerificacionesPerfilPage implements OnInit {
   codigo: string = '';
   focusedInput: number | null = null;
   botonCorreoVerificado: boolean = false;
+  verification_id_sms: string = '';
 
   constructor(
     private userService: UserServicesService,
@@ -141,9 +142,14 @@ export class VerificacionesPerfilPage implements OnInit {
 
   enviar_sms(telefono: string) {
     const teléfonoConPrefijo = '+34' + telefono;
-    this.userService.enviar_sms(teléfonoConPrefijo).subscribe((respuesta) => {
-      console.log('Respuesta: ', respuesta);
-    });
+    this.userService
+      .enviar_sms(teléfonoConPrefijo)
+      .subscribe((respuesta: any) => {
+        console.log('Respuesta: ', respuesta);
+        if (respuesta.verification_sid) {
+          this.verification_id_sms = respuesta.verification_sid;
+        }
+      });
   }
 
   // Para concatener los 4 digitos del codigo sms
@@ -186,10 +192,16 @@ export class VerificacionesPerfilPage implements OnInit {
     }
   }
 
+  /**
+   * Función para verificar el codigo que le ha llegado al cliente por sms.
+   * @param codigo
+   */
   verificar_codigo_sms(codigo: string) {
-    this.userService.verificar_codigo_sms(codigo).subscribe((respuesta) => {
-      console.log('Respues: ', respuesta);
-    });
+    this.userService
+      .verificar_codigo_sms(codigo, this.verification_id_sms)
+      .subscribe((respuesta) => {
+        console.log('Respues: ', respuesta);
+      });
   }
 
   // Función para subir la foto delantera del documento de identidad
