@@ -65,7 +65,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    console.log('DETALLES DEL VIAJE: ', this.data);
+    console.log('DETALLES DEL VIAJE: ', this.viaje);
     
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();

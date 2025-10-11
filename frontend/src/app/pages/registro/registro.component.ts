@@ -146,7 +146,10 @@ export class RegistroComponent implements OnInit {
       this.pasoActual++;
       this.paso1 = false;
       this.guardaDatosDelUsuarioEnServicio(this.formulario2.getRawValue());
-    } 
+    } else if (this.pasoActual === 3 && this.formulario3.valid) {
+      this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
+      this.mostrarContrato();
+    }
   }
 
   guardaDatosDelUsuarioEnServicio(datos: any) {

@@ -6,13 +6,15 @@ import { NotificacionesService } from 'src/app/core/notificaciones/notificacione
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from "../../shared/navbar/navbar.component";
+import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notificaciones',
   templateUrl: './notificaciones.page.html',
   styleUrls: ['./notificaciones.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, NavbarComponent]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule]
 })
 export class NotificacionesPage implements OnInit {
 
@@ -20,9 +22,11 @@ export class NotificacionesPage implements OnInit {
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
 
+  iconoAjustes: string = '../../../assets/sistema/ajustes.png';
+
   notificaciones: any[] = [];
 
-  constructor(private notificationService: NotificacionesService, private userService: UserServicesService) { }
+  constructor(private notificationService: NotificacionesService, private userService: UserServicesService, private router: Router) { }
 
   ngOnInit() {
     this.loadUserData();
@@ -69,5 +73,12 @@ export class NotificacionesPage implements OnInit {
         console.error('No se pudo actualizar el estado de la notificación');
       }
     });
+  }
+
+  /**
+   * Función para navegar a la página de ajustes en la sección de notificaciones.
+   */
+  goToSettings() {
+    this.router.navigate(['/ajustes-aplicacion'], { fragment: 'notificaciones-section' });
   }
 }
