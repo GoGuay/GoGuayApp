@@ -16,86 +16,85 @@
     <!-- Modificación de datos personales -->
     <ion-row class="d-flex justify-content-center">
       <ion-col size="12" size-md="5" class="mx-md-5">
-        <h4 class="text-center">{{'MIPERFIL.INFO_PERSONAL' | translate}}</h4>
-        <div class="container d-flex justify-content-center">
-          <div class="row">
-            <!-- Botón para añadir foto de perfil -->
-            <div class="col">
-              <div class="boton-foto" (click)="fileInputPerfil.click()">
-                <button
-                  type="button"
-                  class="btn btn_bg boton"
-                  matTooltip="Botón para añadir una foto de perfil"
-                >
-                  <img
-                    class="edit_btn"
-                    src="../../../../assets/sistema/mas.png"
-                  />
-                </button>
-                <input
-                  type="file"
-                  #fileInputPerfil
-                  accept="image/*"
-                  (change)="subirFotoPerfil($event)"
-                  style="display: none"
+        <h4 class="text-center mb-3">
+          {{'MIPERFIL.INFO_PERSONAL' | translate}}
+        </h4>
+        <div class="container text-center">
+          <!-- === Fila 1: botones + imagen centrada === -->
+          <div
+            class="row align-items-center justify-content-center mb-3 fila-foto"
+          >
+            <!-- Botón agregar foto -->
+            <div class="col-auto">
+              <button
+                type="button"
+                class="btn btn_bg boton"
+                matTooltip="Añadir o cambiar la foto de perfil"
+                (click)="fileInputPerfil.click()"
+              >
+                <img
+                  class="edit_btn"
+                  src="../../../../assets/sistema/mas.png"
+                  alt="Agregar foto"
                 />
-              </div>
+              </button>
+              <input
+                type="file"
+                #fileInputPerfil
+                accept="image/*"
+                (change)="subirFotoPerfil($event)"
+                style="display: none"
+              />
             </div>
-            <!-- Imagen de perfil del usuario -->
-            <div class="col">
+
+            <!-- Imagen centrada -->
+            <div class="col-auto">
               <div class="img_container">
                 <img
                   class="img_profile"
-                  [src]="imagenPerfilSrc"
-                  alt="Imagen de perfil del usuario por defecto"
-                  *ngIf="!usuario?.fotoPerfil"
-                />
-                <img
-                  class="img_profile"
-                  [src]="usuario?.fotoPerfil"
-                  alt="Imagen de perfil del usuario"
-                  *ngIf="usuario?.fotoPerfil"
+                  [src]="usuario?.fotoPerfil || imagenPerfilSrc"
+                  alt="Foto de perfil"
                 />
                 <div class="overlay" *ngIf="cargando">
                   <app-spinner></app-spinner>
                 </div>
-                <!-- <p-toast position="bottom-center"></p-toast> -->
               </div>
             </div>
-            <!-- Botón para eliminar la foto de perfil -->
-            <div class="col">
-              <div class="boton-eliminar-foto">
-                <button
-                  type="button"
-                  class="btn btn_bg boton btn_delete"
-                  matTooltip="Botón para eliminar la foto actual de perfil"
-                  (click)="eliminarFotoPerfil()"
-                >
-                  <img
-                    class="edit_btn"
-                    src="../../../../assets/sistema/cruz.png"
-                  />
-                </button>
-              </div>
+
+            <!-- Botón eliminar foto -->
+            <div class="col-auto">
+              <button
+                type="button"
+                class="btn btn_bg boton btn_delete"
+                matTooltip="Eliminar la foto actual de perfil"
+                (click)="eliminarFotoPerfil()"
+              >
+                <img
+                  class="edit_btn"
+                  src="../../../../assets/sistema/cruz.png"
+                  alt="Eliminar foto"
+                />
+              </button>
             </div>
-            <!-- Botón para ver perfil público -->
-            <div class="col">
-              <div class="boton-ver-perfil">
-                <button
-                  type="button"
-                  class="btn btn_bg boton"
-                  matTooltip="Botón para ver tu perfil público"
-                  (click)="verPerfilPublico()"
-                >
-                  <i class="fi fi-rr-user"></i>
-                </button>
-              </div>
+          </div>
+
+          <!-- === Fila 2: botón "Así me ven los demás" === -->
+          <div class="row justify-content-center mb-4">
+            <div class="col-auto">
+              <button
+                type="button"
+                class="btn btn_bg ver-perfil-btn"
+                matTooltip="Ver tu perfil público"
+                (click)="verPerfilPublico()"
+              >
+                Así me ven los demás
+              </button>
             </div>
           </div>
         </div>
 
         <ion-row class="fila-datos">
-          <ion-col class="col-nombre-apellidos">
+          <ion-col class="col_nombre_apellidos">
             <div class="mb-3">
               <label for="nombre" class="form-label"
                 >{{'MIPERFIL.NOMBRE' | translate}}</label
@@ -123,7 +122,9 @@
               />
             </div>
           </ion-col>
-          <!-- Selector de pronombre -->
+        </ion-row>
+        <!-- Selector de pronombre -->
+        <ion-row class="fila-selectores">
           <ion-col class="col-pronombre">
             <div class="mb-3">
               <label for="pronombre" class="form-label pronombre"
@@ -132,15 +133,32 @@
                   class="ms-2 text-primary"
                   tabindex="0"
                   role="button"
+                  (click)="presentPopover($event)"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   matTooltip="Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle."
                 >
                   <i class="bi-question-circle" aria-hidden="true"></i>
                 </span>
+                <ion-popover
+                  *ngIf="!isDesktop"
+                  #popover
+                  [isOpen]="isOpen"
+                  (didDismiss)="isOpen = false"
+                >
+                  <ng-template>
+                    <ion-content class="ion-padding"
+                      >Palabra que usamos para referirnos a una persona sin
+                      decir su nombre. Cada persona puede elegir los pronombres
+                      con los que se siente cómoda, como él, ella o
+                      elle.</ion-content
+                    >
+                  </ng-template>
+                </ion-popover>
               </label>
               <select
-                class="form-select w-150"
+                id="pronombre"
+                class="form-select col-pronombre"
                 [(ngModel)]="pronombreEditado"
                 name="pronombre"
                 (ngModelChange)="onInputChange()"
@@ -151,9 +169,7 @@
                 <option value="Ella / She / Her">Ella / She / Her</option>
                 <option value="Elle / They / Them">Elle / They / Them</option>
                 <option value="Otros">Otros</option>
-                <option value="No uso ninguno concreto">
-                  No uso ninguno concreto
-                </option>
+                <option value="No uso ninguno">No uso ninguno</option>
                 <option value="Prefiero no responder">
                   Prefiero no responder
                 </option>
@@ -163,17 +179,16 @@
               </span>
             </div>
           </ion-col>
-        </ion-row>
-        <ion-row>
+
+          <!-- Selector de género -->
           <ion-col>
-            <!-- Selector de género -->
             <div class="mb-3">
               <label for="genero" class="form-label">
                 {{'MIPERFIL.GENERO' | translate}}
                 <span
                   tabindex="0"
                   role="button"
-                  class="ms-2 text-primary"
+                  class="ms-2 text-primary col-genero"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   matTooltip="Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer."
@@ -184,7 +199,7 @@
 
               <select
                 id="genero"
-                class="form-select"
+                class="form-select col-genero"
                 [(ngModel)]="generoEditado"
                 name="genero"
                 (ngModelChange)="onInputChange()"
@@ -223,8 +238,9 @@
               </span>
             </div>
           </ion-col>
-          <ion-col>
-            <!-- Selector de orientación -->
+
+          <!-- Selector de orientación -->
+          <ion-col class="col-orientacion">
             <div class="mb-3">
               <label for="orientacion" class="form-label"
                 >{{'MIPERFIL.ORIENTACION' | translate}}
@@ -243,7 +259,7 @@
                 id="orientacion"
                 [(ngModel)]="orientacionEditada"
                 name="orientacion"
-                class="form-select"
+                class="form-select col-orientacion"
                 (ngModelChange)="onInputChange()"
                 aria-describedby="orientacionHelp"
               >
@@ -281,44 +297,46 @@
             </div>
           </ion-col>
         </ion-row>
+
         <ion-row>
           <ion-col>
             <!-- Fecha de nacimiento -->
-            <div class="mb-3">
-              <label for="fnacimiento" class="form-label"
-                >{{'MIPERFIL.FECHA_NACIMIENTO' | translate}}</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="fnacimiento"
-                [(ngModel)]="fechaNacimientoEditada"
-                name="fnacimiento"
-                (ngModelChange)="actualizarEdad()"
-                (ngModelChange)="onInputChange()"
-                aria-describedby="fechaNacimientoHelp"
-              />
-              <small id="fechaNacimientoHelp" class="visually-hidden">
-                {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
-              </small>
-            </div>
-          </ion-col>
-          <ion-col>
-            <!-- Edad -->
-            <div class="mb-3">
-              <label for="edad" class="form-label mb-3"
-                >{{'MIPERFIL.EDAD' | translate}}</label
-              >
-              <br />
+            <ion-row>
+              <ion-col class="col_fecha_edad">
+                <div class="mb-3">
+                  <label for="fnacimiento" class="form-label"
+                    >{{'MIPERFIL.FECHA_NACIMIENTO' | translate}}</label
+                  >
+                  <input
+                    type="date"
+                    class="form-control w-100"
+                    id="fnacimiento"
+                    [(ngModel)]="fechaNacimientoEditada"
+                    name="fnacimiento"
+                    (ngModelChange)="actualizarEdad()"
+                    (ngModelChange)="onInputChange()"
+                    aria-describedby="fechaNacimientoHelp"
+                  />
+                  <small id="fechaNacimientoHelp" class="visually-hidden">
+                    {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
+                  </small>
+                </div>
+                <div class="mb-3">
+                  <label for="edad" class="form-label">
+                    {{ 'MIPERFIL.EDAD' | translate }}
+                  </label>
 
-              <span id="edad" role="status" aria-live="polite">
-                {{ edad }}
-              </span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
+                  <input
+                    type="text"
+                    id="edad"
+                    class="form-control"
+                    [value]="edad"
+                    readonly
+                  />
+                </div>
+              </ion-col>
+            </ion-row>
+
             <!-- Sobre tí -->
             <div class="mb-3">
               <label for="bio" class="form-label"

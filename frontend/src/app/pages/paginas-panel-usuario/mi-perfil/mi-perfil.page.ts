@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -38,6 +38,7 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
   providers: [MessageService],
 })
 export class MiPerfilPage implements OnInit {
+  @ViewChild('popover') popover!: HTMLIonPopoverElement;
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
@@ -59,6 +60,7 @@ export class MiPerfilPage implements OnInit {
   comunComerciales: boolean = false;
   emailEditado: string = '';
   telefonoEditado: string = '';
+  isOpen = false;
   edad: number = this.funcionesUsuario.calcularEdad(
     this.fechaNacimientoEditada
   );
@@ -320,5 +322,9 @@ export class MiPerfilPage implements OnInit {
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
     });
+  }
+  presentPopover(e: Event) {
+    this.popover.event = e;
+    this.isOpen = true;
   }
 }

@@ -1,3 +1,94 @@
+/* === Fila de foto y botones === */
+.fila-foto {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  flex-wrap: nowrap;
+  text-align: center;
+  position: relative;
+}
+
+/* Asegurar que ocupe el ancho total disponible */
+.fila-foto>.col-auto {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tamaño del contenedor de imagen */
+.img_container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+
+/* Imagen redonda */
+.img_profile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+/* Botones circulares */
+.boton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* Botón de eliminar */
+.btn_delete {
+  background-color: #e0b6b6 !important;
+}
+
+.btn_delete:hover {
+  background-color: #f0d7b4 !important;
+}
+
+/* Botón "Así me ven los demás" */
+.ver-perfil-btn {
+  width: 250px;
+  font-weight: 500;
+  background-color: #a758e8;
+  color: white;
+  border-radius: 25px;
+  padding: 8px 16px;
+  transition: background-color 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.ver-perfil-btn:hover {
+  background-color: #e0a667;
+}
+
+/* ========================== */
+
+/* === Nombre, apellidos y selectores === */
+
+
+
+
+
+/* ========================== */
+
+
+
 .digit-input {
   width: 40px;
   height: 40px;
@@ -75,24 +166,38 @@
 .fila-datos {
   display: flex;
   flex-wrap: nowrap;
-  /* Evita saltos de línea en escritorio */
   gap: 10px;
   width: 100%;
 }
 
-.col-nombre-apellidos {
+.col_nombre_apellidos {
   display: flex;
   flex: 2;
-  /* Ocupará más espacio */
   gap: 10px;
+  justify-content: center;
 }
 
-.col-pronombre {
-  flex: 1;
-  /* Menos espacio que nombre y apellidos */
+.col_fecha_edad {
+  display: flex;
+  flex: 2;
+  gap: 10px;
+  justify-content: center;
+}
+
+.col_fecha_edad input,
+.col_fecha_edad span#edad {
+  height: 38px;
   display: flex;
   align-items: center;
 }
+
+.col_genero,
+.col_orientacion,
+.col_pronombre {
+  width: 195px;
+}
+
+
 
 .fila-datos .col-nombre-apellidos ion-col,
 .fila-datos .col-pronombre ion-col {
@@ -104,129 +209,14 @@
   width: 400px;
 }
 
-.img_container {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.boton-foto,
-.boton-eliminar-foto,
-.boton-ver-perfil {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 0.75rem;
-}
-
-.img_profile {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-}
-
-.edit_btn {
-  height: 24px;
-  width: 24px;
-}
-
-.boton {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  padding: 0;
-}
-
-.boton-foto {
-  position: absolute;
-  top: 17.5%;
-  left: 31%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  display: flex;
-}
 
 
 
-.boton-eliminar-foto {
-  position: absolute;
-  top: 17.5%;
-  left: 61%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  display: flex;
-}
-
-.boton-ver-perfil {
-  position: absolute;
-  top: 17.5%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  display: flex;
-}
-
-.btn_delete {
-  background-color: #e0b6b6 !important;
-}
-
-.btn_delete:hover {
-  background-color: #f0d7b4 !important;
-}
 
 /* Estilos específicos para móviles */
 @media (max-width: 576px) {
-  .fila-datos {
-    flex-wrap: wrap !important;
-  }
 
-  .col-nombre-apellidos {
-    flex: 1 1 100%;
-    /* Ocupa toda la fila */
-  }
-
-  .col-pronombre {
-    flex: 1 1 100%;
-    /* Se baja a la segunda fila */
-    justify-content: center;
-  }
-
-  .mat-divider-mobile {
-    display: none;
-  }
-
-  .boton-foto {
-    position: absolute;
-    top: 15.5%;
-    left: 20%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    display: flex;
-    height: 18px;
-  }
-
-  .boton-eliminar-foto {
-    position: absolute;
-    top: 15.5%;
-    left: 66.5%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    display: flex;
-    height: 18px;
-  }
-
+  /* === Fila de foto y botones === */
   .img_container {
     width: 80px;
     height: 80px;
@@ -252,10 +242,69 @@
     height: 24px;
   }
 
-  p.d-flex.justify-content-center.mb-4 {
-    text-align: center;
-    flex-direction: column;
+  /* Botón "Así me ven los demás" */
+  .ver-perfil-btn {
+    width: 210px;
+    font-weight: 100;
+    font-size: 14px;
+    background-color: #a758e8;
+    color: white;
+    border-radius: 25px;
+    padding: 8px 16px;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   }
+
+  /* ========================== */
+
+  /* Contenedor de los selectores */
+  .fila-selectores {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  /* Pronombre y género lado a lado ocupando ~50% del ancho */
+  .fila-selectores .col-pronombre,
+  .fila-selectores .col-genero {
+    flex: 0 0 50%;
+    max-width: 100%;
+  }
+
+  /* Orientación más pequeña y centrada */
+  .col-orientacion {
+    flex: 0 0 70%;
+    max-width: 70%;
+    margin: 10px auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Centrar el label de orientación y su tooltip */
+  .col-orientacion label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-align: center;
+  }
+
+
+  /* Select ocupando todo el ancho de su columna */
+  .fila-selectores select {
+    width: 100% !important;
+    font-size: 0.8rem !important;
+  }
+
+
+
+
+  .mat-divider-mobile {
+    display: none;
+  }
+
 
 
 }
