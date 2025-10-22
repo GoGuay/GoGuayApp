@@ -11,6 +11,13 @@ ion-button {
   border-radius: 50%;
 }
 
+.logo_mobile{
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+
 .navbar-diseno ul,
 .navbar-diseno li {
   list-style: none;
@@ -208,6 +215,20 @@ ul {
   display: none;
   color: black;
 }
+
+.mobile-navbar {
+  position: relative;
+}
+
+.centered-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
 
 @media (max-width: 767px) {
   .desktop-only {

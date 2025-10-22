@@ -45,85 +45,92 @@
           </ul>
         </div>
 
-        <!-- Botón de menú hamburguesa  -->
-        <ion-menu-button menu="mobileMenu" autoHide="false" class="mobile-only"></ion-menu-button>
-        <!-- Botón de notificaciones  -->
-        <button class="btn" type="button">
-          <a class="nav-link active" aria-current="page" href="/notificaciones">
-            <img class="idiomas" src="../../../assets/sistema/campana.gif">
-          </a>
-        </button>
+        <div class="mobile-navbar d-flex align-items-center w-100 position-relative">
+          <!-- Menú hamburguesa al inicio -->
+          <ion-menu-button menu="mobileMenu" autoHide="false" class="mobile-only"></ion-menu-button>
 
-        <!-- Menú para usuario logueado -->
-        <ng-container *ngIf="isLoggedIn; else loggedOutNav">
-          <li class="nav-item dropdown">
-            <!-- boton del menu -->
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
-              <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
-              <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
-                <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
-              </div>
-              <mat-icon class="flecha-icono ms-2 flecha-animada" [class.rotada]="isDropdownOpen">expand_more</mat-icon>
+          <!-- Logo centrado -->
+          <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_mobile mobile-only centered-logo" />
+
+          <!-- Campana al final -->
+          <button class="btn ms-auto" type="button">
+            <a class="nav-link active" href="/notificaciones">
+              <img class="idiomas" src="../../../assets/sistema/campana.gif">
             </a>
+          </button>
+          
+          <!-- Menú para usuario logueado -->
+          <ng-container *ngIf="isLoggedIn; else loggedOutNav">
+            <li class="nav-item dropdown">
+              <!-- boton del menu -->
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
+                <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
+                  <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
+                </div>
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
+              </a>
 
-            <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
-              <nav class="nav nav-pills flex-column">
-                <ul>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
-                      }}</a>
-                  </li>
-                  <li class="perfil nav-item dropdown">
-                    <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
-                  </li>
-                  <li class="perfil nav-item dropdow">
-                    <a class="nav-link ms-3" href="/ajustes-aplicacion">
-                      <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
-                      {{ "NAVBAR.AJUSTES" | translate }}
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-              <mat-divider></mat-divider>
-              <li class="logout d-flex align-items-center justify-content-center">
-                <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
-                  <mat-icon class="me-2">power_settings_new</mat-icon>
-                  {{ "NAVBAR.SALIR" | translate }}
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ng-container>
+              <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
+                <nav class="nav nav-pills flex-column">
+                  <ul>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
+                        }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdow">
+                      <a class="nav-link ms-3" href="/ajustes-aplicacion">
+                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                        {{ "NAVBAR.AJUSTES" | translate }}
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                <mat-divider></mat-divider>
+                <li class="logout d-flex align-items-center justify-content-center">
+                  <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
+                    <mat-icon class="me-2">power_settings_new</mat-icon>
+                    {{ "NAVBAR.SALIR" | translate }}
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ng-container>
 
-        <!-- Menú para login / registro  -->
-        <ng-template #loggedOutNav>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
-              <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif">
-              <mat-icon class="flecha-icono ms-2 flecha-animada" [class.rotada]="isDropdownOpen">expand_more</mat-icon>
-            </a>
-            <ul class="dropdown-menu menuusuario">
-              <li>
-                <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
-              </li>
-            </ul>
-          </li>
-        </ng-template>
-
+          <!-- Menú para login / registro  -->
+          <ng-template #loggedOutNav>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif">
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
+              </a>
+              <ul class="dropdown-menu menuusuario">
+                <li>
+                  <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
+                </li>
+              </ul>
+            </li>
+          </ng-template>
+        </div>
 
       </div>
     </nav>
