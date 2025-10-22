@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
+import {
+  NgcCookieConsentService,
+  NgcStatusChangeEvent,
+} from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -18,19 +21,18 @@ export function HttpLoaderFactory(http: HttpClient) {
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [IonApp, IonRouterOutlet, NotificationToastComponent]
+  imports: [IonApp, IonRouterOutlet, NotificationToastComponent],
 })
 export class AppComponent implements OnInit {
   private consentGivenSubscription!: Subscription;
   userData: Usuario = {} as Usuario;
-
 
   constructor(
     private ccService: NgcCookieConsentService,
     private cookieService: CookieService,
     private languageService: LanguageService,
     private notificacionesService: NotificacionesService
-  ) { }
+  ) {}
 
   ngOnInit() {
     const consentStatus = localStorage.getItem('cookieConsentStatus');
@@ -62,13 +64,15 @@ export class AppComponent implements OnInit {
       // Si ya se ha dado consentimiento, no mostrar el banner
       this.ccService.destroy();
     } else {
-      this.consentGivenSubscription = this.ccService.statusChange$.subscribe((event: NgcStatusChangeEvent) => {
-        const status = event.status;
+      this.consentGivenSubscription = this.ccService.statusChange$.subscribe(
+        (event: NgcStatusChangeEvent) => {
+          const status = event.status;
 
-        localStorage.setItem('cookieConsentStatus', status);
+          localStorage.setItem('cookieConsentStatus', status);
 
-        this.ccService.destroy();
-      });
+          this.ccService.destroy();
+        }
+      );
     }
 
     /**
@@ -93,13 +97,16 @@ export class AppComponent implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
-    this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      if (notificaciones.length) {
-        this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificacionesService.esCreadorDelViaje = true;
-        this.notificacionesService.leerNotificacion(notificaciones);
-      }
-    });
+    this.notificacionesService
+      .obtenerNotificaciones(usuarioId)
+      .subscribe((notificaciones) => {
+        if (notificaciones.length) {
+          this.notificacionesService.notificacionPendiente =
+            notificaciones[0].mensaje;
+          this.notificacionesService.esCreadorDelViaje = true;
+          this.notificacionesService.leerNotificacion(notificaciones);
+        }
+      });
   }
 
   loadUserData(): void {
@@ -111,5 +118,4 @@ export class AppComponent implements OnInit {
       this.consentGivenSubscription.unsubscribe();
     }
   }
-
 }

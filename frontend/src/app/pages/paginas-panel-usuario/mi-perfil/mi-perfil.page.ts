@@ -14,7 +14,7 @@ import { VistaAcordeonVehiculosComponent } from '../../../components/tabla-vehic
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -32,7 +32,7 @@ import { SpinnerComponent } from "../../../components/spinner/spinner.component"
     VistaAcordeonVehiculosComponent,
     ToastModule,
     MatTooltipModule,
-    SpinnerComponent
+    SpinnerComponent,
   ],
 
   providers: [MessageService],
@@ -112,9 +112,11 @@ export class MiPerfilPage implements OnInit {
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-      this.usuario = resultadoUsuario;
-    });
+    this.userService
+      .obtenerUsuarioPorID(id_usuario)
+      .subscribe((resultadoUsuario) => {
+        this.usuario = resultadoUsuario;
+      });
   }
 
   loadUserData(): void {
@@ -305,15 +307,15 @@ export class MiPerfilPage implements OnInit {
         },
         error: (error) => {
           console.error('Error al actualizar la imagen del perfil:', error);
-        }
+        },
       });
     }
   }
 
-  eliminarFotoPerfil() { }
+  eliminarFotoPerfil() {}
 
   verPerfilPublico() {
-    const usuario = { id: this.userData.usuario.id }
+    const usuario = { id: this.userData.usuario.id };
 
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
