@@ -248,4 +248,12 @@ export class MisViajesPage implements OnInit {
   toggleAyuda() {
     this.mostrarAyuda = !this.mostrarAyuda;
   }
+
+  goToBuscarViaje() {
+    this.navCtrl.navigateRoot('/busqueda-viajes');
+  }
+
+  goToNuevoViaje() {
+    this.navCtrl.navigateRoot('/nuevo-viaje');  
+  }
 }

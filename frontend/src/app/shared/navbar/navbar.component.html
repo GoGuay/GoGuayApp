@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="boxHeader">
   <!-- Se muestra sólo en el Home -->
   <ng-container *ngIf="validacionHomePage; else otherPageNav">
     <nav class="navbar navbar-expand-lg navbar-diseno">
@@ -148,7 +148,7 @@
         </ul>
         <div class="d-flex align-items-center buscar-viaje">
           <a *ngIf="searchRoute" class="nav-link active d-flex align-items-center" [routerLink]="searchRoute">
-            <span *ngIf="isDesktop">{{ dynamicTitle }}</span>
+            <span >{{ dynamicTitle }}</span>
             <mat-icon title="{{ dynamicTitle }}">{{ dynamicIcon }}</mat-icon>
           </a>
           <ul class="navbar-nav me-auto">

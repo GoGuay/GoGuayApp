@@ -1,4 +1,5 @@
-<ion-app>
+<ion-app >
+  <!-- MENU DE LA APLICACIÓN PARA DISPOSITIVOS MOVILES  -->
   <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">
     <ion-header class="ion_menu">
       <ion-toolbar color="primary">
@@ -33,9 +34,9 @@
         </div>
       </div>
     </ion-footer>
-
   </ion-menu>
 
+  <!-- CONTENIDO PRINCIPAL DE LA APLICACIÓN -->
   <ion-router-outlet id="main-content" [animated]="true"></ion-router-outlet>
 
   <app-notification-toast [usuario]="userData"></app-notification-toast>

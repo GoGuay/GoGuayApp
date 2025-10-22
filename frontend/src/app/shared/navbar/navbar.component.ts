@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom } from 'rxjs';
@@ -178,13 +178,10 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-   
     localStorage.clear();
-    
     this.userData = {} as Usuario;
     this.usuario = {} as Usuario;
     this.isLoggedIn = false;
-
     // Navegar al home sin recargar la página
     this.navCtrl.navigateRoot(['/home']);
   }
