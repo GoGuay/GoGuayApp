@@ -71,20 +71,25 @@
 .bio {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
+
 .fila-datos {
   display: flex;
-  flex-wrap: nowrap; /* Evita saltos de línea en escritorio */
+  flex-wrap: nowrap;
+  /* Evita saltos de línea en escritorio */
   gap: 10px;
   width: 100%;
 }
 
 .col-nombre-apellidos {
   display: flex;
-  flex: 2; /* Ocupará más espacio */
+  flex: 2;
+  /* Ocupará más espacio */
   gap: 10px;
 }
+
 .col-pronombre {
-  flex: 1; /* Menos espacio que nombre y apellidos */
+  flex: 1;
+  /* Menos espacio que nombre y apellidos */
   display: flex;
   align-items: center;
 }
@@ -99,14 +104,33 @@
   width: 400px;
 }
 
-.img-container {
+.img_container {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  margin: 0 auto;
+  justify-content: center;
+  display: flex;
+  align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.boton-foto,
+.boton-eliminar-foto,
+.boton-ver-perfil {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0.75rem;
+}
+
+.img_profile {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
 }
 
 .edit_btn {
@@ -128,16 +152,18 @@
 .boton-foto {
   position: absolute;
   top: 17.5%;
-  left: 36.5%;
+  left: 31%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   display: flex;
 }
 
+
+
 .boton-eliminar-foto {
   position: absolute;
   top: 17.5%;
-  left: 60.5%;
+  left: 61%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   display: flex;
@@ -165,11 +191,15 @@
   .fila-datos {
     flex-wrap: wrap !important;
   }
+
   .col-nombre-apellidos {
-    flex: 1 1 100%; /* Ocupa toda la fila */
+    flex: 1 1 100%;
+    /* Ocupa toda la fila */
   }
+
   .col-pronombre {
-    flex: 1 1 100%; /* Se baja a la segunda fila */
+    flex: 1 1 100%;
+    /* Se baja a la segunda fila */
     justify-content: center;
   }
 
@@ -180,18 +210,52 @@
   .boton-foto {
     position: absolute;
     top: 15.5%;
-    left: 29.5%;
+    left: 20%;
     transform: translate(-50%, -50%);
     z-index: 1000;
     display: flex;
+    height: 18px;
   }
 
   .boton-eliminar-foto {
     position: absolute;
     top: 15.5%;
-    left: 71.5%;
+    left: 66.5%;
     transform: translate(-50%, -50%);
     z-index: 1000;
     display: flex;
+    height: 18px;
   }
+
+  .img_container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  }
+
+  .img_profile {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+  }
+
+  .boton {
+    width: 24px;
+    height: 24px;
+  }
+
+  p.d-flex.justify-content-center.mb-4 {
+    text-align: center;
+    flex-direction: column;
+  }
+
+
 }

@@ -43,7 +43,7 @@
             </div>
             <!-- Imagen de perfil del usuario -->
             <div class="col">
-              <div class="img-container">
+              <div class="img_container">
                 <img
                   class="img_profile"
                   [src]="imagenPerfilSrc"
@@ -134,8 +134,7 @@
                   role="button"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  [attr.title]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
-                  [attr.aria-label]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
+                  matTooltip="Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle."
                 >
                   <i class="bi-question-circle" aria-hidden="true"></i>
                 </span>
@@ -177,8 +176,7 @@
                   class="ms-2 text-primary"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  [attr.title]="'MIPERFIL.GENERO_TOOLTIP' | translate"
-                  [attr.aria-label]="'MIPERFIL.GENERO_TOOLTIP' | translate"
+                  matTooltip="Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer."
                 >
                   <i class="bi-question-circle"></i>
                 </span>
@@ -236,8 +234,7 @@
                   class="ms-2 text-primary"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  [attr.title]="'MIPERFIL.ORIENTACION_TOOLTIP' | translate"
-                  [attr.aria-label]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
+                  matTooltip="Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales. Puede ser gay, lesbiana, bisexual, pansexual, asexual, entre muchas otras posibilidades."
                 >
                   <i class="bi-question-circle"></i>
                 </span>
