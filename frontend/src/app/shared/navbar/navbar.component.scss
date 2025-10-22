@@ -218,6 +218,7 @@ ul {
 
 .mobile-navbar {
   position: relative;
+  width: auto;
 }
 
 .centered-logo {
@@ -236,5 +237,8 @@ ul {
   }
   .mobile-only {
     display: flex !important;
+  }
+  .mobile-navbar {
+    width: 100%; /* solo en móvil */
   }
 }
