@@ -9,13 +9,14 @@ import { Router, RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink],
+  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
@@ -49,6 +50,8 @@ export class NavbarComponent implements OnInit {
 
   isMobileWeb: boolean = false;
   isDesktop: boolean = false;
+
+  menuType: string = 'push';
 
   constructor(
     private navCtrl: NavController,

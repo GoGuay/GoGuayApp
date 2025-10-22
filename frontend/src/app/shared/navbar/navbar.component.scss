@@ -11,6 +11,13 @@ ion-button {
   border-radius: 50%;
 }
 
+.navbar-diseno ul,
+.navbar-diseno li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .brand-title {
   margin-top: 0px;
   margin-bottom: 0px;
@@ -143,10 +150,6 @@ ion-button {
   transform: translateX(5px);
 }
 
-.menuusuario {
-  // width: 280px;
-}
-
 ul {
   list-style: none;
   padding-left: 0;
@@ -197,3 +200,20 @@ ul {
   }
 }
 
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+  color: black;
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+}

@@ -298,3 +298,38 @@ ion-content::-webkit-scrollbar-thumb:hover,
   width: 20px;
   height: 20px;
 }
+
+.ion_menu {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.menu-footer {
+  text-align: center;
+  padding: 10px 0;
+  background-color: var(--ion-color-primary);
+}
+
+.menu-footer img {
+  width: 50px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+}
+
+.hora {
+  font-size: 16px;
+  color: gray;
+}
+
+.imgLogoMenu {
+  width: 40px; margin-bottom: 6px; border-radius: 50%;
+}
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
