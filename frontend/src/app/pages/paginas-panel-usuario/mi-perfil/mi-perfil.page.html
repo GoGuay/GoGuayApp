@@ -231,11 +231,11 @@
               <label for="orientacion" class="form-label"
                 >{{'MIPERFIL.ORIENTACION' | translate}}
                 <span
+                  tabindex="0"
+                  role="button"
                   class="ms-2 text-primary"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  tabindex="0"
-                  role="button"
                   [attr.title]="'MIPERFIL.ORIENTACION_TOOLTIP' | translate"
                   [attr.aria-label]="'MIPERFIL.PRONOMBRE_TOOLTIP' | translate"
                 >
@@ -243,6 +243,7 @@
                 </span>
               </label>
               <select
+                id="orientacion"
                 [(ngModel)]="orientacionEditada"
                 name="orientacion"
                 class="form-select"
@@ -250,8 +251,8 @@
                 aria-describedby="orientacionHelp"
               >
                 >
-                <option selected>
-                  {{'ORIENTACION.SELECCIONA' | translate}}
+                <option value="" selected disabled>
+                  {{'SELEC_GENERO.SELECCIONA' | translate}}
                 </option>
                 <option value="GAY">{{'ORIENTACION.GAY' | translate}}</option>
                 <option value="LESBIANA">
