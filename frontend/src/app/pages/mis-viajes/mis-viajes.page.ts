@@ -45,6 +45,9 @@ export class MisViajesPage implements OnInit {
   cargando = false;
   mostrarAyuda: boolean = false;
 
+  imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
+  buscarViaje: string = '../../../assets/sistema/busqueda.png';
+
   /**
    * Datos del usuario
    */

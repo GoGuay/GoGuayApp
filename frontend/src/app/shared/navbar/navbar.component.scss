@@ -11,12 +11,11 @@ ion-button {
   border-radius: 50%;
 }
 
-.logo_mobile{
+.logo_mobile {
   width: 60px;
   border-radius: 50%;
   object-fit: contain;
 }
-
 
 .navbar-diseno ul,
 .navbar-diseno li {
@@ -205,6 +204,12 @@ ul {
     transition: all 0.3s ease-in-out;
     display: block;
   }
+
+  .logo {
+    width: 60px;
+    border-radius: 50%;
+  }
+
 }
 
 .desktop-only {
@@ -230,6 +235,21 @@ ul {
   object-fit: contain;
 }
 
+.btnNotificaciones {
+  width: 60px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnNotificaciones img {
+  width: 40px;
+  height: 40px;
+}
 
 @media (max-width: 767px) {
   .desktop-only {

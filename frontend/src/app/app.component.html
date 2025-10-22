@@ -1,5 +1,5 @@
 <ion-app>
-  <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push">
+  <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">
     <ion-header class="ion_menu">
       <ion-toolbar color="primary">
         <ion-title>Menú</ion-title>
@@ -8,18 +8,18 @@
 
     <ion-content color="secondary">
       <ion-list>
-        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary">{{ "NAVBAR.QUIENES" |
+        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.QUIENES" |
           translate }}</ion-item>
-        <ion-item routerLink="/faqs" routerDirection="forward" color="secondary">{{ "NAVBAR.FAQS"
+        <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"
           | translate
           }}</ion-item>
-        <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary">{{
+        <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{
           "NAVBAR.DECALOGO" |
           translate }}</ion-item>
-        <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary">{{
+        <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{
           "NAVBAR.BUSCAR_VIAJE"
           | translate }}</ion-item>
-        <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary">{{
+        <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{
           "NAVBAR.PUBLICAR_VIAJE" |
           translate }}</ion-item>
       </ion-list>
