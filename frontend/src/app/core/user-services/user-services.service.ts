@@ -19,23 +19,34 @@ export class UserServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
   userData: Usuario = {} as Usuario;
 
+  /**
+   * usuarioDataSubject --> es privado, usado para guardar temporalmente datos del usuario
+   * BehaviorSubject --> mantiene el último valor emitido y lo emite a cualquiera que esté suscrito a él.
+   */
   private usuarioDataSubject = new BehaviorSubject<any>(null);
+
+  /**
+   * Versión pública como observable, que cualquier componente puede suscribirse a para recibir cambios sin poder modificarlos directamente.
+   */
   usuarioData$ = this.usuarioDataSubject.asObservable();
 
-  // Inicializa el BehaviorSubject con los datos de localStorage si existen
+  /**
+   * usuarioSource --> es otro BehaviorSubject para almacenar el usuario logueado actual
+   * Se inicializa con los datos guardados en el localStorage bajo la clave 'userData' si existen o 'null' si no hay datos
+   */
   private usuarioSource = new BehaviorSubject<Usuario['usuario'] | null>(
     JSON.parse(localStorage.getItem('userData') || 'null')?.usuario || null
   );
+
+  /**
+   * usuario$ es la versión pública observable para suscribirse desde cualquier componente
+   */
   usuario$ = this.usuarioSource.asObservable();
 
   /**
-   * Obtiene el usuario actual del BehaviorSubject
-   * Crea un nuevo objeto "nuevoUsuario" con los datos actualizados
-   * usuarioActual.id! --> asegura que id nunca sea undefined
-   * Se actualiza el BehaviorSubject
-   * Se actualiza la copia local en userData
-   * Se sincroniza con localStorage
-   * @param usuarioActualizado
+   * usuarioActualizado --> es un objeto parcial con los cambios (puede contener solo algunos cambios)
+   * ...usuarioActual --> guarda una copia de lo que contiene para no perder los cambios
+   * this.usuarioSource.next(nuevoUsuario): --> emite el usuario actuaizado a todos los suscriptores de usuario$. Actualiza tambien userData.usuario y localStorage
    */
   actualizarEstadoUsuario(usuarioActualizado: Partial<Usuario['usuario']>) {
     const usuarioActual =
@@ -141,10 +152,10 @@ export class UserServicesService {
   }
 
   /**
-   * Función para actualizar la imagen de perfil de un usuario.
-   * @param usuarioId ID del usuario cuyo perfil se quiere actualizar.
-   * @param imagenPerfil FormData con la imagen de perfil.
-   * @returns Observable con la respuesta del backend.
+   * .put --> llama al backend para actualizar la fotoerfil
+   * Recibe una respuesta con resultado con url y publicId de la nueva imagen
+   * Llama a "actualizarEstadoUsuario" con el nuevo campo fotoPerfil. Esto actualiza usuario$ (cualquiera componente suscrito ve la nueva foto), userData.usuario (copia local) y localStorage.
+   * Devuelve el resultado del backend para usarlo en el componente (por eso el ngOnInit ya refleja la nueva foto sin recargar la pagina)
    */
   actualizarImagenPerfil(
     usuarioId: number,
@@ -175,10 +186,10 @@ export class UserServicesService {
   }
 
   /**
-   * Función para eliminar la imagen de perfil de un usuario.
-   * @param usuarioId ID del usuario cuyo perfil se quiere actualizar.
-   * @param imagenPerfil FormData con la imagen de perfil.
-   * @returns Observable con la respuesta del backend.
+   * .delete --> llama al backend para eliminar la foto
+   * Cuando termina llama a 'actualizarEstadoUsuario' con fotoPerfil: undefined y fotoPublicId: undefined
+   * Esto provoca que usuario$ emita la versión actualizada del usuario (sin foto) y que cualquer componente suscrito (como el navbar) se actualice automaticamente
+   * catchError: manejo de errores.
    */
   eliminarFotoPerfil(usuarioId: number): Observable<any> {
     return this.http

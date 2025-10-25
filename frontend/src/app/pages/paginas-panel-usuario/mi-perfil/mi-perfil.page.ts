@@ -70,7 +70,7 @@ export class MiPerfilPage implements OnInit {
   lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
 
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
-  usuario: any = {} as Usuario;
+  // usuario: any = {} as Usuario;
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
 
@@ -141,7 +141,7 @@ export class MiPerfilPage implements OnInit {
     this.userService
       .obtenerUsuarioPorID(id_usuario)
       .subscribe((resultadoUsuario) => {
-        this.usuario = resultadoUsuario;
+        this.userData.usuario = resultadoUsuario;
       });
   }
 
