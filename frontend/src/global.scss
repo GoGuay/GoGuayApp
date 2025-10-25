@@ -317,7 +317,7 @@ ion-content::-webkit-scrollbar-thumb:hover,
   padding-right: 0;
   padding-top: 8px;
   padding-bottom: 8px;
-  /* background: var(--ion-item-background, var(--ion-background-color, #fff)); */
+  background: transparent !important;
 }
 
 .menuMobile {

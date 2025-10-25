@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent,
-} from '@ionic/angular/standalone';
 import { BuscadorComponent } from '../../components/buscador/buscador.component';
 import { MatIconModule } from '@angular/material/icon';
 import { ResultadosBusquedaComponent } from 'src/app/components/resultados-busqueda/resultados-busqueda.component';
@@ -11,8 +8,7 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { Viaje } from 'src/app/models/travel/viaje.model';
+import { IonicModule, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-busqueda-viajes',
@@ -20,7 +16,7 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
   styleUrls: ['./busqueda-viajes.page.scss'],
   standalone: true,
   imports: [
-    IonContent,
+    IonicModule,
     CommonModule,
     FormsModule,
     BuscadorComponent,
@@ -38,7 +34,10 @@ export class BusquedaViajesPage implements OnInit {
   /** Objeto para guardar los parámetros que vienen en la URL */
   busquedaParams: any = {};
 
-  constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes) { }
+  irAtras: string = '../../../assets/sistema/atras.png';
+  imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
+
+  constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes, private location: Location, private navCtrl: NavController) { }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -52,8 +51,25 @@ export class BusquedaViajesPage implements OnInit {
     });
   }
 
+  /**
+   * Función para cargar la configuración del jumbotron desde el localStorage
+   */
   loadJumbotronSetting() {
     const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
     this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+  }
+
+  /**
+   * Función para ir a la página anterior
+   */
+  goBack() {
+    this.location.back();
+  }
+
+  /**
+   * Función para navegar a la página de nuevo viaje
+   */
+  goToNuevoViaje() {
+    this.navCtrl.navigateRoot('/nuevo-viaje');  
   }
 }
