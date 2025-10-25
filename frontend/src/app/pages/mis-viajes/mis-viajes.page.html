@@ -72,15 +72,19 @@
         </div>
 
         <!-- Estado y puntuación -->
-        <div class="col-12 col-md-6 col-lg-3 mb-2 text-center col-puntuar">
+        <div class="col-12 col-md-6 col-lg-3 mb-2 text-center col-puntuar gap-1">
           <span *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
             class="viajeFinalizado fontSize mb-1">Finalizado</span>
           <span *ngIf="!funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
             class="fontSize etiquetaPendiente mb-1">Pendiente</span>
-          <span *ngIf="puedePuntuar(viaje)" class="viajeApuntuar fontSize btn_shadow puntuar mb-1 d-inline-block"
-            (click)="puntuarViaje()">
+          <span type="button" *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
+            class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje()">
             Puntuar viaje
           </span>
+          <!-- <ion-button *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" fill="solid"
+            size="small" class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje()">
+            Puntuar viaje
+          </ion-button> -->
         </div>
 
         <!-- Botones -->
@@ -118,7 +122,7 @@
   </ion-fab>
 
   <!-- FAB: NUEVO VIAJE -->
-  <ion-fab  vertical="bottom" horizontal="center" slot="fixed" class="fab-ajustes">
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="fab-ajustes">
     <ion-fab-button aria-label="Nuevo viaje" (click)="goToNuevoViaje()">
       <img [src]="imgNuevoViaje" alt="Nuevo viaje" style="width: 24px; height: 24px;">
     </ion-fab-button>

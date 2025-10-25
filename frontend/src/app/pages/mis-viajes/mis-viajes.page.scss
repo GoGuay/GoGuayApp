@@ -58,8 +58,11 @@
 }
 
 .viajeFinalizado {
+  background-color: #ffb3ba;
+  border: 1px solid #b3b5e6;
   color: red;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   border-radius: 15px;
   padding: 2%;
 }
@@ -70,6 +73,23 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   border-radius: 15px;
   padding: 2%;
+}
+
+.viajeApuntuar {
+  background-color: #b7e0b4;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.viajeApuntuar:hover {
+  background-color: #00997a;
+  color: white;
+  cursor: pointer;
 }
 
 .fontSize {
@@ -95,9 +115,9 @@ ion-segment-button {
 
 .col-puntuar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
 }
 
 .btn_bg {

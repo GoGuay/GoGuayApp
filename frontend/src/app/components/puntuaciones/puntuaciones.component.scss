@@ -1,4 +1,4 @@
-@import '../../../animations.scss';
+@import "../../../animations.scss";
 
 .container {
   perspective: 500px;
@@ -10,8 +10,9 @@
 }
 
 .btnStar:hover {
-  -webkit-animation: expandir_anim 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-          animation: expandir_anim 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  -webkit-animation: expandir_anim 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    both;
+  animation: expandir_anim 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .main {
@@ -21,7 +22,7 @@
   height: 450px;
 }
 
-.stars{
+.stars {
   width: 40px;
   height: 40px;
   border-radius: 15px;
@@ -38,6 +39,15 @@
   align-items: center;
   border-radius: 15px;
   width: fit-content;
-  margin: 0 auto; 
+  margin: 0 auto;
   padding: 10px;
+}
+
+@media (max-width: 576px) {
+  .main {
+  display: flex;
+  flex-direction: column;
+  width: 396px;
+  height: 504px;
+  }
 }
