@@ -13,6 +13,7 @@ export interface Usuario {
     biografia?: string;
     fecha_nacimiento?: string;
     fotoPerfil?: string;
+    fotoPublicId?: string;
     fotoCabecera?: string;
     rolPerfil: 'usuario' | 'admin' | 'moderador';
     carnet_conducir_verificado?: boolean;

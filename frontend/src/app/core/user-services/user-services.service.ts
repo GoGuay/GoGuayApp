@@ -22,19 +22,32 @@ export class UserServicesService {
   private usuarioDataSubject = new BehaviorSubject<any>(null);
   usuarioData$ = this.usuarioDataSubject.asObservable();
 
-  private usuarioSource = new BehaviorSubject<any>(null);
+  // Inicializa el BehaviorSubject con los datos de localStorage si existen
+  private usuarioSource = new BehaviorSubject<Usuario['usuario'] | null>(
+    JSON.parse(localStorage.getItem('userData') || 'null')?.usuario || null
+  );
   usuario$ = this.usuarioSource.asObservable();
+
+  actualizarEstadoUsuario(usuarioActualizado: Partial<Usuario['usuario']>) {
+    const usuarioActual = this.usuarioSource.getValue();
+
+    if (usuarioActual) {
+      // si ya hay datos previos, actualizamos
+      this.usuarioSource.next({
+        ...usuarioActual,
+        ...usuarioActualizado,
+      });
+    } else {
+      // si no hay datos previos, simplemente usamos el objeto que nos pasan
+      this.usuarioSource.next(usuarioActualizado as Usuario['usuario']);
+    }
+  }
 
   monedero: any = null;
 
   private usuariosCache: Usuario[] = [];
 
   constructor(private http: HttpClient) {}
-
-  // Actualizar usuario
-  actualizarUsuario(usuario: any) {
-    this.usuarioSource.next(usuario);
-  }
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -140,11 +153,34 @@ export class UserServicesService {
         imagenPerfil
       )
       .pipe(
+        map((resultado: any) => {
+          // Actualiza el BehaviorSubject con la nueva foto
+          const usuarioActualizado: Partial<Usuario['usuario']> = {
+            ...this.userData.usuario, // solo el objeto interno
+            fotoPerfil: resultado.url,
+            fotoPublicId: resultado.publicId,
+          };
+
+          this.actualizarEstadoUsuario(usuarioActualizado);
+          return resultado;
+        }),
         catchError((error: HttpErrorResponse) => {
           console.error('Error al actualizar la imagen de perfil: ', error);
-          return throwError(error);
+          return throwError(() => error);
         })
       );
+  }
+
+  /**
+   * Función para eliminar la imagen de perfil de un usuario.
+   * @param usuarioId ID del usuario cuyo perfil se quiere actualizar.
+   * @param imagenPerfil FormData con la imagen de perfil.
+   * @returns Observable con la respuesta del backend.
+   */
+  eliminarImagenPerfil(usuarioId: number) {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`
+    );
   }
 
   /**

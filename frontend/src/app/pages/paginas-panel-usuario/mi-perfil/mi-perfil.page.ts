@@ -15,6 +15,8 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -68,7 +70,7 @@ export class MiPerfilPage implements OnInit {
 
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
   usuario: any = {} as Usuario;
-  imagenPerfilUsuario: string = ''; // Variable para almacenar la imagen seleccionada por el usuario.
+  imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
 
   constructor(
@@ -79,7 +81,8 @@ export class MiPerfilPage implements OnInit {
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     public translate: TranslateService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private dialog: MatDialog
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
@@ -314,7 +317,72 @@ export class MiPerfilPage implements OnInit {
     }
   }
 
-  eliminarFotoPerfil() {}
+  eliminarFotoPerfil(usuario: any): any {
+    this.userService.eliminarImagenPerfil(usuario.id).subscribe(
+      (resultado) => {
+        this.imagenPerfilUsuario = null;
+        this.cdr.detectChanges();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Imagen eliminada',
+          detail: resultado.mensaje,
+        });
+        console.log('Resultado: ', resultado);
+      },
+      (error) => {
+        console.error('Error al eliminar la foto del perfil:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar la imagen del perfil.',
+        });
+      }
+    );
+  }
+
+  modalEliminarFotoPerfil(usuario: any) {
+    const titulo: string = '¡ATENCIÓN: Vas a eliminar tu foto de perfil!';
+    const mensaje: string =
+      '¿Estás seguro que deseas eliminar tu foto de perfil?';
+
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.eliminarFotoPerfil(usuario);
+      }
+    });
+  }
+
+  // eliminarFotoPerfil() {
+  //   const usuarioId = this.userData.usuario.id;
+
+  //   if (!confirm('¿Seguro que deseas eliminar tu foto de perfil?')) return;
+  //   this.cargando = true;
+  //   this.userService.eliminarImagenPerfil(usuarioId).subscribe({
+  //     next: (response) => {
+  //       this.cargando = false;
+  //       this.imagenPerfilUsuario = null;
+  //       this.messageService.add({
+  //         severity: 'success',
+  //         summary: 'Imagen eliminada',
+  //         detail: response.mensaje,
+  //       });
+  //     },
+  //     error: (error) => {
+  //       this.cargando = false;
+  //       console.error('Error al eliminar la foto del perfil:', error);
+  //       this.messageService.add({
+  //         severity: 'error',
+  //         summary: 'Error',
+  //         detail: 'No se pudo eliminar la imagen del perfil.',
+  //       });
+  //     },
+  //   });
+  // }
 
   verPerfilPublico() {
     const usuario = { id: this.userData.usuario.id };

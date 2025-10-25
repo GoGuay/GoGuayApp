@@ -24,6 +24,7 @@ class Usuario(db.Model):
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
     fotoPerfil = db.Column(db.String(250), nullable=True)
+    fotoPublicId = db.Column(db.String(255), nullable=True) 
     fotoCabecera = db.Column(db.String(250), nullable=True)
     preferencias = db.Column(JSON, nullable=False, default=lambda: [PreferenciasViajeEnum.silencio.value]) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)

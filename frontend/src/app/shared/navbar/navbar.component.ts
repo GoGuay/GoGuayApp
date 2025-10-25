@@ -1,4 +1,10 @@
-import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { IonicModule, NavController, Platform } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -8,23 +14,28 @@ import { MatDivider } from '@angular/material/divider';
 import { Router, RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { lastValueFrom } from 'rxjs';
-
-
+import { lastValueFrom, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink],
+  imports: [
+    IonicModule,
+    MatIconModule,
+    TranslateModule,
+    CommonModule,
+    MatDivider,
+    RouterLink,
+  ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-
   /**
    * Variables que van a recibir información de otros componentes
    * mediante la anotación "Input()"
    */
+  private usuarioSub!: Subscription;
   @Input() backRoute: string | null = null;
   @Input() searchRoute: string | null = '/home';
   @Input() isLoggedIn: boolean = false;
@@ -33,7 +44,7 @@ export class NavbarComponent implements OnInit {
 
   logo: string = '../../../assets/logo/PRIDECAR.png';
   userData: Usuario = {} as Usuario;
-  usuario: any = {} as Usuario;
+  usuario: Usuario['usuario'] | null = null;
 
   /**
    * Variables para el título y el icono dinámicos.
@@ -61,6 +72,19 @@ export class NavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    // Suscribirse a cambios en el usuario
+    this.usuarioSub = this.userService.usuario$.subscribe(
+      (usuarioActualizado) => {
+        if (usuarioActualizado) {
+          this.usuario = usuarioActualizado; // objeto interno directamente
+          this.isLoggedIn = true;
+        } else {
+          this.usuario = null;
+          this.isLoggedIn = false;
+        }
+      }
+    );
+
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
      */
@@ -86,15 +110,19 @@ export class NavbarComponent implements OnInit {
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
+  // Desuscribirse al destruir el componente (para evitar fugas de memoria):
+  ngOnDestroy() {
+    this.usuarioSub?.unsubscribe();
+  }
+
   /**
    * Función para obtener la ruta desde donde
    * estaba el usuario posicionado anteriormente.
-   * 
+   *
    * @returns Devuelve la ruta a la que va de regreso.
    */
   getBackRoute(): string {
     switch (this.origin) {
-
       case 'home':
         return '/home';
       case '/busqueda-viajes':
@@ -129,11 +157,13 @@ export class NavbarComponent implements OnInit {
 
   /**
    * Función para obtener los datos del usuario que está logado.
-   * @param id_usuario 
+   * @param id_usuario
    */
   async obtenerDatosUsuario(id_usuario: number) {
     if (id_usuario) {
-      this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+      this.usuario = await lastValueFrom(
+        this.userService.obtenerUsuarioPorID(id_usuario)
+      );
     }
   }
 
@@ -141,7 +171,7 @@ export class NavbarComponent implements OnInit {
    * Función para realizar el cambio de idiomas de la aplicación.
    * Al seleccionar un idioma, guarda la selección en la caché del navegador
    * para poder así mantener el idioma seleccionado durante la navegación.
-   * 
+   *
    * @param lang Recibe el idioma seleccionado en el selector de idiomas.
    */
   changeLanguage(lang: string) {
@@ -175,11 +205,10 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-   
     localStorage.clear();
-    
+
     this.userData = {} as Usuario;
-    this.usuario = {} as Usuario;
+    this.usuario = null;
     this.isLoggedIn = false;
 
     // Navegar al home sin recargar la página
@@ -187,7 +216,7 @@ export class NavbarComponent implements OnInit {
   }
 
   openPerfilPublico() {
-    const usuario = { id: this.userData.usuario.id }
+    const usuario = { id: this.userData.usuario.id };
 
     this.navCtrl.navigateRoot(['/perfil-publico'], {
       queryParams: usuario,
@@ -195,7 +224,7 @@ export class NavbarComponent implements OnInit {
   }
 
   irAMisViajes() {
-    const usuario = { id: this.userData.usuario.id }
+    const usuario = { id: this.userData.usuario.id };
 
     this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,

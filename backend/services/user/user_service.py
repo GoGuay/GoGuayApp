@@ -274,23 +274,42 @@ def actualizar_imagen_perfil(user_id):
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Eliminar imagen anterior si existe
-    if user.fotoPerfil:
-        public_id = obtener_public_id(user.fotoPerfil)
-        if public_id:
-            uploader.destroy(public_id)
+    if user.fotoPublicId:
+        uploader.destroy(user.fotoPublicId)
 
-    imagen = reducir_imagen(imagen) # Reduce el tamaño de la imagen llamando a la función.
-
-    # Subir la nueva imagen a Cloudinary
+    imagen = reducir_imagen(imagen) 
+  
     carpeta_usuario = f"user_{user_id}"
     result = uploader.upload(imagen, folder=carpeta_usuario)
 
-    # Actualizar la información en la base de datos
     user.fotoPerfil = result['secure_url']
+    user.fotoPublicId = result['public_id']
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de perfil actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#       ELIMINAR IMAGEN DE PERFIL
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/eliminar_imagen_perfil/<int:user_id>', methods=['DELETE'])
+def eliminar_imagen_perfil(user_id):
+    user = Usuario.query.get_or_404(user_id)
+
+    if not user.fotoPublicId:
+        return jsonify({"error": "El usuario no tiene una imagen de perfil."}), 404
+    
+    try:
+        uploader.destroy(user.fotoPublicId)
+
+        user.fotoPerfil = None
+        user.fotoPublicId = None
+        db.session.commit()
+
+        return jsonify({"mensaje": "Imagen de perfil eliminada correctamente."}), 200
+    except Exception as e:
+        print("Error al eliminar la imagen:", e)
+        return jsonify({"error": "No se pudo eliminar la imagen."}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # 
