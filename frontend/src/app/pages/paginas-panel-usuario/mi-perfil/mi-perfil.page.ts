@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -93,18 +94,38 @@ export class MiPerfilPage implements OnInit {
   }
 
   ngOnInit() {
+    /**
+     * usuario$ -->es un BehaviorSubject declarado en UserServicesService (usuario$ emite el último valor almacenado)
+     * .subscribe((usuario) => { ... }) --> se suscribe a los cambios del observable, es decir, cada vez que usuario$ emite un valor se ejecuta la función que hay dentro del subscribe
+     * if (usuario) --> verifica que el usuario no sea null o undefined
+     * this.userData.usuario = usuario --> actualiza la variable local userData.usuario con los datos más recientes del observable (tendrá siempre info actualizada)
+     * this.nombreEditado = usuario.nombre ... --> copia los datos del usuario a variables locales para usar en los formulario de edición.
+     * this.actualizarFotoPerfil(usuario); --> llama a la función que asigna la imagen correcta a la variable imagenPerfilUsuario
+     * this.userLoggedIn = !!usuario.email; --> Determina si hay un usuario logueado (true o false)
+     * this.cdr.detectChanges() --> Fuerza a Angular a actualizar la vista inmediatamente.
+     */
+    this.userService.usuario$.subscribe((usuario) => {
+      if (usuario) {
+        this.userData.usuario = usuario;
+
+        this.nombreEditado = usuario.nombre;
+        this.apellidosEditados = usuario.apellidos || '';
+        this.pronombreEditado = usuario.pronombre || '';
+        this.generoEditado = usuario.genero || '';
+        this.orientacionEditada = usuario.orientacion || '';
+        this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
+        this.bioEditada = usuario.biografia || '';
+        this.preferenciasSeleccionadas = usuario.preferencias || [];
+        this.actualizarFotoPerfil(usuario);
+
+        this.userLoggedIn = !!usuario.email;
+
+        this.cdr.detectChanges();
+      }
+    });
+
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-    this.nombreEditado = this.userData.usuario.nombre;
-    this.apellidosEditados = this.userData.usuario?.apellidos;
-    this.pronombreEditado = this.userData.usuario?.pronombre || '';
-    this.generoEditado = this.userData.usuario.genero || '';
-    this.orientacionEditada = this.userData.usuario.orientacion || '';
-    this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
-    this.bioEditada = this.userData.usuario.biografia || '';
-    this.preferenciasSeleccionadas = this.userData.usuario.preferencias || [];
 
     //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
@@ -317,27 +338,51 @@ export class MiPerfilPage implements OnInit {
     }
   }
 
-  eliminarFotoPerfil(usuario: any): any {
-    this.userService.eliminarImagenPerfil(usuario.id).subscribe(
-      (resultado) => {
-        this.imagenPerfilUsuario = null;
-        this.cdr.detectChanges();
+  /**
+   *
+   * if (!this.userData?.usuario?.id) return --> Si no existe usuario logueado o no tiene id no hace nada
+   * this.cargando = true --> muestra spinner de carga mientras se elimina la foto
+   * this.userService.eliminarFotoPerfil ... --> Envía una solicitud para eliminar la foto del usuario
+   * next: () => { ... } --> Se ejecuta si la petición fue exitosa --> Desactiva el spinner de carga -- No actualiza imagenPerfilUsuario porque lo hará la suscripción a usuario$
+   * error: (err) => { ... } --> se ejecuta si hubiese algun error en la eliminación de la foto
+   */
+  eliminarFotoPerfil(): void {
+    if (!this.userData?.usuario?.id) return;
+
+    this.cargando = true;
+
+    this.userService.eliminarFotoPerfil(this.userData.usuario.id).subscribe({
+      next: () => {
+        this.cargando = false;
+
         this.messageService.add({
           severity: 'success',
-          summary: 'Imagen eliminada',
-          detail: resultado.mensaje,
+          summary: 'Foto eliminada',
+          detail: 'La foto de perfil se ha eliminado correctamente.',
         });
-        console.log('Resultado: ', resultado);
       },
-      (error) => {
-        console.error('Error al eliminar la foto del perfil:', error);
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error al eliminar la foto de perfil:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo eliminar la imagen del perfil.',
         });
-      }
-    );
+      },
+    });
+  }
+
+  /**
+   *
+   * Recibe el objeto "usuario" actualizado
+   * usuario?.fotoPerfil --> verifica si el usuario tiene alguna foto de perfil, si existe se asigna a this.imagenPerfilUsuario
+   * : ../../assets/user... --> asigna la imagen de perfil genérica
+   */
+  private actualizarFotoPerfil(usuario: Usuario['usuario'] | null) {
+    this.imagenPerfilUsuario = usuario?.fotoPerfil
+      ? usuario.fotoPerfil
+      : '../../../assets/user/logOn.gif';
   }
 
   modalEliminarFotoPerfil(usuario: any) {
@@ -352,37 +397,10 @@ export class MiPerfilPage implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmar) => {
       if (confirmar) {
-        this.eliminarFotoPerfil(usuario);
+        this.eliminarFotoPerfil();
       }
     });
   }
-
-  // eliminarFotoPerfil() {
-  //   const usuarioId = this.userData.usuario.id;
-
-  //   if (!confirm('¿Seguro que deseas eliminar tu foto de perfil?')) return;
-  //   this.cargando = true;
-  //   this.userService.eliminarImagenPerfil(usuarioId).subscribe({
-  //     next: (response) => {
-  //       this.cargando = false;
-  //       this.imagenPerfilUsuario = null;
-  //       this.messageService.add({
-  //         severity: 'success',
-  //         summary: 'Imagen eliminada',
-  //         detail: response.mensaje,
-  //       });
-  //     },
-  //     error: (error) => {
-  //       this.cargando = false;
-  //       console.error('Error al eliminar la foto del perfil:', error);
-  //       this.messageService.add({
-  //         severity: 'error',
-  //         summary: 'Error',
-  //         detail: 'No se pudo eliminar la imagen del perfil.',
-  //       });
-  //     },
-  //   });
-  // }
 
   verPerfilPublico() {
     const usuario = { id: this.userData.usuario.id };

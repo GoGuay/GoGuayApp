@@ -52,7 +52,7 @@
               <div class="img_container">
                 <img
                   class="img_profile"
-                  [src]="usuario?.fotoPerfil || imagenPerfilSrc"
+                  [src]="imagenPerfilUsuario"
                   alt="Foto de perfil"
                 />
                 <div class="overlay" *ngIf="cargando">
@@ -67,7 +67,7 @@
                 type="button"
                 class="btn btn_bg boton btn_delete"
                 matTooltip="Eliminar la foto actual de perfil"
-                (click)="modalEliminarFotoPerfil(usuario)"
+                (click)="modalEliminarFotoPerfil(userData.usuario)"
               >
                 <img
                   class="edit_btn"

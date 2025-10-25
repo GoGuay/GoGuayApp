@@ -28,19 +28,22 @@ export class UserServicesService {
   );
   usuario$ = this.usuarioSource.asObservable();
 
+  /**
+   * Obtiene el usuario actual del BehaviorSubject
+   * Crea un nuevo objeto "nuevoUsuario" con los datos actualizados
+   * usuarioActual.id! --> asegura que id nunca sea undefined
+   * Se actualiza el BehaviorSubject
+   * Se actualiza la copia local en userData
+   * Se sincroniza con localStorage
+   * @param usuarioActualizado
+   */
   actualizarEstadoUsuario(usuarioActualizado: Partial<Usuario['usuario']>) {
-    const usuarioActual = this.usuarioSource.getValue();
-
-    if (usuarioActual) {
-      // si ya hay datos previos, actualizamos
-      this.usuarioSource.next({
-        ...usuarioActual,
-        ...usuarioActualizado,
-      });
-    } else {
-      // si no hay datos previos, simplemente usamos el objeto que nos pasan
-      this.usuarioSource.next(usuarioActualizado as Usuario['usuario']);
-    }
+    const usuarioActual =
+      this.usuarioSource.getValue() || ({} as Usuario['usuario']);
+    const nuevoUsuario = { ...usuarioActual, ...usuarioActualizado };
+    this.usuarioSource.next(nuevoUsuario); // <--- aquí se emite un nuevo objeto
+    this.userData.usuario = nuevoUsuario; // actualizar localStorage también
+    localStorage.setItem('userData', JSON.stringify(this.userData));
   }
 
   monedero: any = null;
@@ -177,10 +180,22 @@ export class UserServicesService {
    * @param imagenPerfil FormData con la imagen de perfil.
    * @returns Observable con la respuesta del backend.
    */
-  eliminarImagenPerfil(usuarioId: number) {
-    return this.http.delete<{ mensaje: string }>(
-      `${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`
-    );
+  eliminarFotoPerfil(usuarioId: number): Observable<any> {
+    return this.http
+      .delete(`${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`)
+      .pipe(
+        map(() => {
+          // Actualiza fotoPerfil y fotoPublicId a undefineduser
+          this.actualizarEstadoUsuario({
+            fotoPerfil: undefined,
+            fotoPublicId: undefined,
+          });
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al eliminar la foto de perfil: ', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   /**
