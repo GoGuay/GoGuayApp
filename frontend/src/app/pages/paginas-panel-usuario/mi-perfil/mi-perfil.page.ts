@@ -23,7 +23,18 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './mi-perfil.page.html',
   styleUrls: ['./mi-perfil.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, TranslateModule, MatDivider, NavbarComponent, TablaVehiculosComponent, ToastModule, MatTooltipModule, SpinnerComponent],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    MatDivider,
+    NavbarComponent,
+    TablaVehiculosComponent,
+    ToastModule,
+    MatTooltipModule,
+    SpinnerComponent,
+  ],
 
   providers: [MessageService],
 })
@@ -157,7 +168,14 @@ export class MiPerfilPage implements OnInit {
 
     //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
-      nombreChanged || apellidosChanged || pronombreChanged || generoChanged || orientacionChanged || fechaNacimientoChanged || bioChanged || preferenciasChanged;
+      nombreChanged ||
+      apellidosChanged ||
+      pronombreChanged ||
+      generoChanged ||
+      orientacionChanged ||
+      fechaNacimientoChanged ||
+      bioChanged ||
+      preferenciasChanged;
   }
 
   // Llamar a esta función cuando haya un cambio en los inputs o checkboxes
@@ -166,29 +184,26 @@ export class MiPerfilPage implements OnInit {
   }
 
   //Para detectar cambios en los checkbox de preferencias
-  onCheckboxChange(preferencia: string, event: Event) {
+  onCheckboxChange(clave: string, event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input) {
-      const isChecked = input.checked;
-      const selectedPreferences = [...this.preferenciasSeleccionadas];
+    if (!input) return;
 
-      if (isChecked) {
-        // Añadir la preferencia si no está ya incluida
-        if (!selectedPreferences.includes(preferencia)) {
-          selectedPreferences.push(preferencia);
-        }
-      } else {
-        // Eliminar la preferencia si está incluida
-        const index = selectedPreferences.indexOf(preferencia);
-        if (index !== -1) {
-          selectedPreferences.splice(index, 1);
-        }
-        this.cdr.detectChanges();
+    const prefs = [...this.preferenciasSeleccionadas];
+
+    if (input.checked) {
+      if (!prefs.includes(clave)) {
+        prefs.push(clave);
       }
-      this.preferenciasSeleccionadas = selectedPreferences;
-      this.checkForChanges(); // Verificar si hay cambios
-      this.cdr.detectChanges(); // Forzar la detección de cambios en Angular
+    } else {
+      const index = prefs.indexOf(clave);
+      if (index !== -1) {
+        prefs.splice(index, 1);
+      }
     }
+
+    this.preferenciasSeleccionadas = prefs;
+    this.checkForChanges();
+    this.cdr.detectChanges();
   }
 
   /**
