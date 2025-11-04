@@ -18,7 +18,7 @@
     "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
-  "__MiPerfil": "Componente MI PERFIL - /mi-perfil",
+  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
     "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
@@ -109,37 +109,13 @@
       "OPC_SILENCIO": "Ir en silencio"
     }
   },
-  "__Vehículos": " OK OK OK OK OK OK OK Marca, modelo y colores",
-  "VEHICULOS": {
-    "MIS_VEHICULOS": "Mis vehículos",
-    "FORMULARIO_ANADIR": "Formulario para añadir un nuevo vehículo",
-    "IMAGEN": "Muestra el dibujo de un coche con el color seleccionado",
-    "EDITAR_TOOLTIP": "",
-    "GUARDAR_TOOLTIP": "",
-    "GUARDAR_FILA": "Guarda los cambios realizados en este vehículo",
-    "EDITAR_FILA": "Editar datos del vehículo de esta fila",
-    "ADVERTENCIA": " ",
-    "ELIMINAR": "",
-    "COLOR_VEHICULO": "Color del vehículo: {{color}}",
-    "MARCA": "Marca",
-    "MODELO": "Modelo",
-    "TITULO_GUARDANDOALEDITAR": "Datos guardados",
-    "GUARDANDOALEDITAR": "Se han modificado correctamente los datos del vehículo",
-    "GUARDANDONUEVO": "Se han guardado los datos del nuevo vehículo",
-    "MATRICULA": "Matrícula",
-    "OPCIONES": "Opciones",
-
-    "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).",
-    "SELECTOR_MARCA": "Selección de marca",
-    "SELECTOR_MODELO": "Selección de modelo",
-    "SELECTOR_COLOR": "Color"
-  },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
     "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
     "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
     "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
+
     "MI_CORREO": "Mi correo electrónico",
     "MI_TFNO": "Mi teléfono",
     "COM_COMERCIALES": "Comunicaciones comerciales",
@@ -147,18 +123,37 @@
     "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
   },
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
-  "VERIF": {
+  "VERIFICACION": {
     "TITULO": "Verificación del perfil",
-    "TITULO_VERIF_BASICA": "Verificación básica: confirma tu correo y adjunta fotos de tu documento de identidad",
-    "TITULO_VERIF_ADICIONAL": "Verificación adicional: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
-    "VERIFICA_TU_CORREO": "Verifica tu correo:",
-    "INFO_VERIF_CORREO": "Se enviará un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
-    "VERIF_TU_IDENTIDAD": "Verifica tu identidad:",
-    "INFO_VERIFIDENTIDAD": "Puedes subir una foto de tu DNI, NIE o pasaporte. Recuerda actualizarlo si cambia tu tipo de documento.",
-    "FOTODELANTERA": "Pulsa en el botón para añadir una foto DELANTERA de tu documento.",
-    "FOTOTRASERA": "Pulsa en el botón para añadir una foto TRASERA de tu documento.",
-    "VERIFADICIONAL": "Verificación adicional:",
-    "VERIFADICIONALINFO1": "(No es obligatorio si solo usas PrideRide como viajero)"
+    "SUBT_VERIF_BASICA": "Verificación básica: confirma tu correo, teléfono y número de documento de identidad",
+    "SUBT_VERIF_AVANZADA": "Verificación avanzada: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
+    "TABLA_VBASICA": {
+      "TITULO": "Verificación básica",
+      "COL_CORREO": "Correo electrónico",
+      "COL_TELÉFONO": "Teléfono",
+      "COL_DOCUMENTO": "Documento de identidad"
+    },
+    "TABLA_VAVANZADA": {
+      "TITULO": "Verificación avanzada",
+      "COL_CARNETCONDUCIR": "Carnet de conducir"
+    },
+    "VERIFICA_CORREO": "Verifica tu correo:",
+    "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
+    "VERIFICA_TELEFONO": "Verifica tu teléfono:",
+    "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
+    "BOTÓN_VERIFICAR_TELEFONO": "Confirmar código",
+    "VERIF_IDENTIDAD": "Verifica tu identidad:",
+    "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
+    "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
+    "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
+    "NUMERO_DOCUMENTO": "Número de documento sin espacios",
+    "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
+    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirmar documento",
+
+    "VAVANZADA": {
+      "TITULO": "Verificación avanzada",
+      "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
+    }
   },
 
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
