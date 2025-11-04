@@ -218,7 +218,7 @@ export class MiPerfilPage implements OnInit {
    * @returns
    */
   editarDatos() {
-    console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
+    console.log('userData:', this.userData);
 
     if (
       !this.userData.usuario.nombre ||
