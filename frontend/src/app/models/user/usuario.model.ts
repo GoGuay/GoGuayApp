@@ -21,6 +21,7 @@ export interface Usuario {
     fotoDocumentoTrasera?: string;
     fotoCarnetCondDelantera?: string;
     fotoCarnetCondTrasera?: string;
+    numero_documento?: string;
     dni_verificado?: boolean;
     numero_carnet_conducir?: string;
     preferencias?: string[];

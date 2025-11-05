@@ -94,9 +94,7 @@ def crear_usuario():
         carnet_conducir_verificado=data.get('carnet_conducir_verificado', False),
         numero_carnet_conducir=data.get('numero_carnet_conducir'),
         fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
-        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None
-        
-        
+        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None       
     )
 
     db.session.add(nuevo_usuario)
@@ -466,6 +464,26 @@ def enviar_sms():
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+#Función para verificar el documento del usuario.
+@user_blueprint.route('/verificar_documento/<int:user_id>', methods=['POST'])
+def verificar_documento(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    data = request.get_json()
+    documento = data.get('numero_documento')
+
+    if not documento:
+        return jsonify({'success': False, 'message': 'Falta el documento'}), 400
+    
+    try:
+        user.numero_documento = documento
+        user.dni_verificado = True
+        db.session.commit()
+        return jsonify({'status': True, "mensaje": "Documento guardado correctamente"}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
     
 
 #Endpoint para verificar el código
@@ -484,14 +502,16 @@ def verificar_codigo():
             to=telefono_formateado,
             code=codigo
         )
-
+        print('Resultado: ', result)
+        print('Phone number: ', phone_number)
         if result.status == "approved":
             usuario = Usuario.query.filter_by(telefono=phone_number).first()
             if usuario:
                 usuario.telefonoVerificado = True
                 db.session.commit()
+                db.session.refresh(usuario)
             
-            return jsonify({"success": True, "message": "Teléfono verificado ✅"})
+            return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
         else:
             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
 
@@ -627,6 +647,10 @@ def comprobacion_token():
     except Exception as e:
         print(f"Error validando token: {e}")
         return jsonify({"error": "Token inválido"}), 400
+    
+
+
+
 
 
     
