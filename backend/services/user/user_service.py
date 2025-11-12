@@ -112,6 +112,7 @@ def crear_usuario():
     }), 201
 
 
+# Función para comprobar si el correo electrónico ya existe en el proceso de registro
 @user_blueprint.route('/verificar-email-existente', methods=['GET'])
 def verificar_email_existente():
     email = request.args.get('email')
@@ -119,6 +120,16 @@ def verificar_email_existente():
         return jsonify({"Error": "Parámetro no encontrado"}), 400
     existe = Usuario.query.filter_by(email=email).first() is not None
     return jsonify ({"existe": existe}), 200
+
+# Función para comprobar si el teléfono ya existe en el proceso de registro
+@user_blueprint.route('/verificar-telefono-existente', methods=['GET'])
+def verificar_telefono_existente():
+    telefono = request.args.get('telefono')
+    if not telefono:
+        return jsonify({"Error": "Parámetro no encontrado"}), 400
+    existe = Usuario.query.filter_by(telefono=telefono).first() is not None
+    return jsonify ({"existe": existe}), 200
+
 
 # # # # # # # # # # # # # # # # # # # #
 #              LOGIN

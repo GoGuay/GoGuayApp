@@ -125,6 +125,16 @@ export class UserServicesService {
   }
 
   /**
+   * Función para comprobar si el telefono ya existe en el proceso de registro
+   * @param telefono
+   * @returns
+   */
+  verificarTelefonoExistente(telefono: string): Observable<boolean> {
+    const url = `${this.apiUrl}/user/verificar-telefono-existente?telefono=${encodeURIComponent(telefono)}`;
+    return this.http.get<{ existe: boolean }>(url).pipe(map((response) => response.existe));
+  }
+
+  /**
    * Función para eliminar un usuario.
    * @param id ID del usuario a eliminar.
    * @returns Observable con la respuesta del backend.

@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -19,13 +14,7 @@ import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    MatButtonModule,
-    TranslateModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -37,7 +26,9 @@ export class RegistroComponent implements OnInit {
   paso1: boolean = false;
   fechaNacimiento: string = '';
   botonHabilitadoContacto: boolean = false;
+  botonHabilitadoTelefono: boolean = false;
   emailValido: boolean = false;
+  telefonoValido: boolean = false;
   fechaValida: boolean = false;
   hoy: string = new Date().toISOString();
   mostrarPassword1: boolean = false;
@@ -47,40 +38,24 @@ export class RegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
-    private funcionesComunes: FuncionesComunes
+    private funcionesComunes: FuncionesComunes,
   ) {
     this.formulario1 = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-          ),
-        ],
-      ],
+      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
     this.fechaNacimiento = this.formulario1.get('fecha_nacimiento')?.value;
 
     this.formulario2 = this.fb.group({
-      nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-
-      genero: ['', Validators.required],
-      orientacion: ['', Validators.required],
+      nombre: ['', [Validators.required]],
+      apellidos: [{ value: '', disabled: true }, [Validators.required]],
+      telefono: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+      genero: [{ value: '', disabled: true }, [Validators.required]],
+      orientacion: [{ value: '', disabled: true }, [Validators.required]],
     });
 
     this.formulario3 = this.fb.group({
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$'),
-        ],
-      ],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
     });
   }
 
@@ -101,8 +76,7 @@ export class RegistroComponent implements OnInit {
 
   get validarEmailYFecha() {
     const emailValido = this.formulario1.get('email')?.valid ?? false;
-    const fechaNacimientoValida =
-      this.formulario1.get('fecha_nacimiento')?.valid ?? false;
+    const fechaNacimientoValida = this.formulario1.get('fecha_nacimiento')?.valid ?? false;
     return emailValido && fechaNacimientoValida && this.fechaValida;
   }
 
@@ -178,11 +152,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para registrar al usuario
   registrar() {
-    if (
-      this.formulario1.valid &&
-      this.formulario2.valid &&
-      this.formulario3.valid
-    ) {
+    if (this.formulario1.valid && this.formulario2.valid && this.formulario3.valid) {
       const datosRegistro = {
         ...this.formulario1.value,
         ...this.formulario2.value,
@@ -267,11 +237,7 @@ export class RegistroComponent implements OnInit {
 
     const fechaSeleccionada = new Date(anio, mes, dia);
 
-    if (
-      fechaSeleccionada.getFullYear() !== anio ||
-      fechaSeleccionada.getMonth() !== mes ||
-      fechaSeleccionada.getDate() !== dia
-    ) {
+    if (fechaSeleccionada.getFullYear() !== anio || fechaSeleccionada.getMonth() !== mes || fechaSeleccionada.getDate() !== dia) {
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
       this.fechaValida = false;
@@ -347,6 +313,10 @@ export class RegistroComponent implements OnInit {
     }
   }
 
+  /**
+   * Función para comprobar si un email ya se encuentra registrado previamente
+   * @param email
+   */
   comprobarEmailRegistrado(email: string) {
     this.userService.verificarEmailExistente(email).subscribe({
       next: (existe: boolean) => {
@@ -367,7 +337,7 @@ export class RegistroComponent implements OnInit {
               fechaControl?.enable();
             }
           }
-          // this.validarEmailYFecha();
+          this.actualizarEstadoBoton();
         }
       },
       error: (err: any) => {
@@ -377,25 +347,94 @@ export class RegistroComponent implements OnInit {
   }
 
   /**
+   * Función para comprobar si un telefono ya se encuentra registrado previamente
+   * @param telefono
+   */
+  comprobarTelefonoRegistrado(telefono: string) {
+    this.userService.verificarTelefonoExistente(telefono).subscribe({
+      next: (existe: boolean) => {
+        const control = this.formulario2.get('telefono');
+        if (control) {
+          if (existe) {
+            control.setErrors({ ...control.errors, telefonoRepetido: true });
+            this.telefonoValido = false;
+          } else {
+            if (control.errors?.['telefonoRepetido']) {
+              const { telefonoRepetido, ...rest } = control.errors;
+              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+            }
+            if (!control.errors) {
+              this.telefonoValido = true;
+              this.escucharCambiosFormulario2('telefono');
+            }
+          }
+          this.actualizarEstadoBoton();
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al verificar el teléfono:', err);
+      },
+    });
+  }
+
+  /**
    * Función para comprobar si podemos continuar en el formulario
    */
   actualizarEstadoBoton() {
     this.botonHabilitadoContacto = this.emailValido && this.fechaValida;
+    this.botonHabilitadoTelefono = this.telefonoValido;
   }
 
-  validarCampo(controlName: string) {
-    const control = this.formulario1.get(controlName);
+  validarCampo(controlName: string, formulario: FormGroup) {
+    const control = formulario.get(controlName);
     if (control) {
       control.markAsTouched();
       control.markAsDirty();
       control.updateValueAndValidity();
 
-      if (controlName === 'email' && control.valid) {
+      if (controlName === 'email') {
         this.comprobarEmailRegistrado(control.value);
-      } else if (controlName === 'email') {
+      } else {
         this.emailValido = false;
         this.formulario1.get('fecha_nacimiento')?.disable();
         this.botonHabilitadoContacto = false;
+      }
+
+      if (controlName === 'telefono') {
+        this.comprobarTelefonoRegistrado(control.value);
+      } else {
+        this.telefonoValido = false;
+        this.botonHabilitadoTelefono = false;
+      }
+    }
+  }
+
+  escucharCambiosFormulario2(controlName: string) {
+    if (controlName === 'nombre') {
+      const controlNombre = this.formulario2.get('nombre');
+      if (controlNombre?.valid) {
+        this.formulario2.get('apellidos')?.enable();
+      }
+    }
+
+    if (controlName === 'apellidos') {
+      const controlApellidos = this.formulario2.get('apellidos');
+      if (controlApellidos?.valid) {
+        this.formulario2.get('telefono')?.enable();
+      }
+    }
+
+    if (controlName === 'telefono') {
+      const controlTelefono = this.formulario2.get('telefono');
+      if (controlTelefono?.valid) {
+        this.formulario2.get('genero')?.enable();
+      }
+    }
+
+    if (controlName === 'genero') {
+      const controlGenero = this.formulario2.get('genero');
+      if (controlGenero?.valid) {
+        this.formulario2.get('orientacion')?.enable();
       }
     }
   }
