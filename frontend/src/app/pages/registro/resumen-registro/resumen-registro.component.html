@@ -8,7 +8,7 @@
       <div class="ion-padding" slot="content">
         <div class="container d-flex justify-content-center dialog-animate">
           <div class="row w-100">
-            <!-- Columna izquierda -->
+            <!-- Columna central con resumen de datos guardados -->
             <form [formGroup]="formularioResumen" class="formulario">
               <div class="d-flex justify-content-center">
                 <ul>
@@ -47,6 +47,10 @@
                         {{
                           campo === "genero"
                             ? validacionGenero(getValorCampo(campo))
+                            : campo === "fecha_nacimiento"
+                            ? (getValorCampo(campo) | date : "dd/MM/yyyy")
+                            : campo === "orientacion"
+                            ? validacionOrientacion(getValorCampo(campo))
                             : getValorCampo(campo)
                         }}
                       </span>

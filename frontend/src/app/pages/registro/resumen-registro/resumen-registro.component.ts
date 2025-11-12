@@ -85,18 +85,16 @@ export class ResumenRegistroComponent implements OnInit {
 
   ngOnInit() {
     //Obtenemos los datos del usuario guardados en caché
-    const storedData = localStorage.getItem('usuarioData');
+    const storedData = this.userService.getUsuarioData();
 
-    //Convertimos los datos obtenidos en un objeto con parse, si no hay datos se asigna un objeto vacio
-    const usuario = storedData ? JSON.parse(storedData) : {};
     //Extraemos los campos del objeto 'usuario', uno por uno
-    this.email = usuario?.email ?? '';
-    this.fecha_nacimiento = usuario?.fecha_nacimiento ?? '';
-    this.nombre = usuario?.nombre ?? '';
-    this.apellidos = usuario?.apellidos ?? '';
-    this.telefono = usuario?.telefono ?? '';
-    this.genero = usuario?.genero ?? '';
-    this.orientacion = usuario?.orientacion ?? '';
+    this.email = storedData?.email ?? '';
+    this.fecha_nacimiento = storedData?.fecha_nacimiento ?? '';
+    this.nombre = storedData?.nombre ?? '';
+    this.apellidos = storedData?.apellidos ?? '';
+    this.telefono = storedData?.telefono ?? '';
+    this.genero = storedData?.genero ?? '';
+    this.orientacion = storedData?.orientacion ?? '';
 
     this.formularioResumen = this.fb.group({
       email: [
@@ -134,8 +132,16 @@ export class ResumenRegistroComponent implements OnInit {
    * Guarda el valor original para poder comparar cambios
    */
   activarEdicion(campo: string) {
+    Object.keys(this.editando).forEach((key) => {
+      if (this.editando[key]) {
+        this.formularioResumen.get(key)?.setValue(this.original[key]);
+      }
+      this.editando[key] = false;
+    });
+    // Guardar el valor original por si se cancela
+    this.original[campo] = this.formularioResumen.get(campo)?.value;
+
     this.editando[campo] = true;
-    this.original[campo] = (this as any)[campo];
   }
 
   /**
@@ -176,8 +182,8 @@ export class ResumenRegistroComponent implements OnInit {
    * Restauramos el valor original si lo deseas
    */
   desactivarEdicion(campo: string) {
+    this.formularioResumen.get(campo)?.setValue(this.original[campo]);
     this.editando[campo] = false;
-    (this as any)[campo] = this.original[campo];
   }
 
   /**

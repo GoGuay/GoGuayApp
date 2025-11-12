@@ -11,7 +11,7 @@ from sqlalchemy import JSON
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(120), nullable=False)
     apellidos = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
@@ -20,10 +20,11 @@ class Usuario(db.Model):
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
     password = db.Column(db.String(250), nullable=False)
-    telefono = db.Column(db.String(15), nullable=False)
+    telefono = db.Column(db.String(15), unique=True, nullable=False)
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
     fotoPerfil = db.Column(db.String(250), nullable=True)
+    fotoPublicId = db.Column(db.String(255), nullable=True) 
     fotoCabecera = db.Column(db.String(250), nullable=True)
     preferencias = db.Column(JSON, nullable=False, default=lambda: [PreferenciasViajeEnum.silencio.value]) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)

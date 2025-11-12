@@ -91,13 +91,15 @@ export class AppComponent implements OnInit {
       // Si ya se ha dado consentimiento, no mostrar el banner
       this.ccService.destroy();
     } else {
-      this.consentGivenSubscription = this.ccService.statusChange$.subscribe((event: NgcStatusChangeEvent) => {
-        const status = event.status;
+      this.consentGivenSubscription = this.ccService.statusChange$.subscribe(
+        (event: NgcStatusChangeEvent) => {
+          const status = event.status;
 
-        localStorage.setItem('cookieConsentStatus', status);
+          localStorage.setItem('cookieConsentStatus', status);
 
-        this.ccService.destroy();
-      });
+          this.ccService.destroy();
+        }
+      );
     }
 
     /**
@@ -131,13 +133,16 @@ export class AppComponent implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
-    this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      if (notificaciones.length) {
-        this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificacionesService.esCreadorDelViaje = true;
-        this.notificacionesService.leerNotificacion(notificaciones);
-      }
-    });
+    this.notificacionesService
+      .obtenerNotificaciones(usuarioId)
+      .subscribe((notificaciones) => {
+        if (notificaciones.length) {
+          this.notificacionesService.notificacionPendiente =
+            notificaciones[0].mensaje;
+          this.notificacionesService.esCreadorDelViaje = true;
+          this.notificacionesService.leerNotificacion(notificaciones);
+        }
+      });
   }
 
   loadUserData(): void {
@@ -149,5 +154,4 @@ export class AppComponent implements OnInit {
       this.consentGivenSubscription.unsubscribe();
     }
   }
-
 }

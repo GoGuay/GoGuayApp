@@ -1,3 +1,4 @@
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DEL USUARIO  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -20,6 +21,9 @@ from PIL import Image
 from io import BytesIO
 from flask_cors import CORS
 from flask_mail import Mail, Message
+from prelude_python_sdk import Prelude
+import os
+from twilio.rest import Client
 
 
 
@@ -33,12 +37,23 @@ mail = None
 serializer = None
 
 
+API_KEY_PRELUDE = os.getenv("API_KEY_PRELUDE")
+
+client = Prelude(
+    api_token=API_KEY_PRELUDE,
 
 
-key = '54b8296c'
-secret = '9up6axu0PVauefvs'
-http_client = nexmo.Client(key=key, secret=secret)
-http_client.send_message({'from': 'Vonage', 'to': 'YOUR-PHONE-NUMBER', 'text': 'Hello world'})
+)
+
+
+
+##Configuración Twilio
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
 
 otp_store = {}
 
@@ -259,23 +274,42 @@ def actualizar_imagen_perfil(user_id):
     if not imagen:
         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
 
-    # Eliminar imagen anterior si existe
-    if user.fotoPerfil:
-        public_id = obtener_public_id(user.fotoPerfil)
-        if public_id:
-            uploader.destroy(public_id)
+    if user.fotoPublicId:
+        uploader.destroy(user.fotoPublicId)
 
-    imagen = reducir_imagen(imagen) # Reduce el tamaño de la imagen llamando a la función.
-
-    # Subir la nueva imagen a Cloudinary
+    imagen = reducir_imagen(imagen) 
+  
     carpeta_usuario = f"user_{user_id}"
     result = uploader.upload(imagen, folder=carpeta_usuario)
 
-    # Actualizar la información en la base de datos
     user.fotoPerfil = result['secure_url']
+    user.fotoPublicId = result['public_id']
     db.session.commit()
 
     return jsonify({"mensaje": "Imagen de perfil actualizada correctamente", "url": result['secure_url']}), 200
+
+
+# # # # # # # # # # # # # # # # # # # # 
+#       ELIMINAR IMAGEN DE PERFIL
+# # # # # # # # # # # # # # # # # # # # 
+@user_blueprint.route('/eliminar_imagen_perfil/<int:user_id>', methods=['DELETE'])
+def eliminar_imagen_perfil(user_id):
+    user = Usuario.query.get_or_404(user_id)
+
+    if not user.fotoPublicId:
+        return jsonify({"error": "El usuario no tiene una imagen de perfil."}), 404
+    
+    try:
+        uploader.destroy(user.fotoPublicId)
+
+        user.fotoPerfil = None
+        user.fotoPublicId = None
+        db.session.commit()
+
+        return jsonify({"mensaje": "Imagen de perfil eliminada correctamente."}), 200
+    except Exception as e:
+        print("Error al eliminar la imagen:", e)
+        return jsonify({"error": "No se pudo eliminar la imagen."}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # 
@@ -408,29 +442,61 @@ def subirfoto_carnettrasera(user_id):
 
 
 #Función para enviar sms al teléfono del usuario.
-# NO SE ESTA USANDO DE MOMENTO #
 @user_blueprint.route('/enviar_sms', methods=['POST'])
 def enviar_sms():
-        data = request.get_json()
-        telefonoAVerificar = request.json['telefono']
+    data = request.get_json()
+    telefonoAVerificar = data.get('telefono')
 
-        if not telefonoAVerificar:
-            return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+    if not telefonoAVerificar:
+        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
 
-        otp = str(random.randint(100000, 999999))    
-        otp_store[telefonoAVerificar] = otp
+    try:
+        # 1. Crear verificación con Prelude (ellos envían el código)
+        verification = client.verify.v2.services(SERVICE_SID).verifications.create(
+            to=telefonoAVerificar,
+            channel="sms"
+        )
 
-        message_body = f'Tu código de verificación es: {otp}'
-        responseData = http_client.send_message({
-            "from": "+34639981207",
-            "to": telefonoAVerificar,
-            "text": message_body
+        # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
+        return jsonify({
+            "success": True,
+            "message": "Código de verificación enviado correctamente",
+            "verification_sid": verification.sid
         })
 
-        if responseData["messages"][0]["status"] == "0":
-            return jsonify({"success": True, 'message': "código enviado correctamente"})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
+
+#Endpoint para verificar el código
+@user_blueprint.route('/verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    data = request.get_json()
+    phone_number = data.get('phone_number')
+    codigo = data.get('codigo')
+
+    if not phone_number  or not codigo:
+        return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+
+    try:
+        telefono_formateado = "+34" + str(phone_number)
+        result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
+            to=telefono_formateado,
+            code=codigo
+        )
+
+        if result.status == "approved":
+            usuario = Usuario.query.filter_by(telefono=phone_number).first()
+            if usuario:
+                usuario.telefonoVerificado = True
+                db.session.commit()
+            
+            return jsonify({"success": True, "message": "Teléfono verificado ✅"})
         else:
-            return jsonify({'success': False, 'message': responseData["messages"][0]["error-text"]}), 500
+            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 
@@ -445,7 +511,8 @@ def enviar_email():
     email = request.json['email']
     salt = 'email-verify'
     token = serializer.dumps(email, salt=salt)
-    link= f"http://localhost:4200/verificar-email/{token}"
+    print('Token generado: ', token)
+    link= f"http://localhost:4200/verificaciones-perfil?token={token}"
     msg = Message("Verifica tu correo", recipients=[email])
     msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
     mail.send(msg)
@@ -477,7 +544,7 @@ def enviar_email_reset_password():
 
     return jsonify({'message': 'Correo enviado'}), 200
 
-#Función backend para verificar el correo
+#Función backend para verificar el correo desde la pantalla de verificaciones-perfil
 @user_blueprint.route('/verificar_email', methods=['POST'])
 def verificar_email():
     token = request.json['token']

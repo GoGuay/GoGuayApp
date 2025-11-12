@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ResumenRegistroComponent } from '../resumen-registro/resumen-registro.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { NavController } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-contrato-registro',
-  imports: [ResumenRegistroComponent],
+  imports: [ResumenRegistroComponent, RouterModule],
   templateUrl: './contrato-registro.component.html',
   styleUrl: './contrato-registro.component.scss',
 })
@@ -15,20 +16,20 @@ export class ContratoRegistroComponent implements OnInit {
     private navCtrl: NavController
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const datosRegistro = this.userService.getUsuarioData();
+    if (datosRegistro === null) {
+      this.navCtrl.navigateRoot('/registro');
+    }
+  }
   aceptarNormas() {
     const datosRegistro = this.userService.getUsuarioData();
-    console.log('Datos del registro: ', datosRegistro);
 
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
-        console.log('Respuesta registro: ', response);
-
         this.navCtrl.navigateRoot('/home');
       },
       error: (err) => {
-        const title = 'Error!';
-        const message = err.error.error;
         this.navCtrl.navigateRoot('/home');
       },
     });

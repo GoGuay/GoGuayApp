@@ -20,6 +20,44 @@
 
 }
 
+/* Tablas */
+.verification-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.verification-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.verif-col {
+  min-width: 240px;
+  max-width: 320px;
+  flex: 0 1 300px;
+}
+
+
+
+.check {
+  color: rgba(219, 148, 14, 0.82);
+  font-weight: bold;
+}
+
+.cross {
+  color: red;
+  font-weight: bold;
+}
+
+.verified-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 .digit-input {
   width: 40px;
   height: 40px;
@@ -30,6 +68,11 @@
   outline: none;
   background-color: #fff;
   transition: border-color 0.3s;
+}
+
+.digit-input.active {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .file-upload {
@@ -146,10 +189,6 @@ mat-divider[vertical] {
   max-width: 500px;
   /* Ajusta el ancho según lo necesites */
   text-align: center;
-}
-
-.d-flex {
-  display: flex;
 }
 
 .fila_superior {

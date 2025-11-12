@@ -277,7 +277,7 @@ export const CARS: any[] = [
     ],
   },
   {
-    marca: 'Mercedes-Benz',
+    marca: 'Mercedes',
     modelos: [
       'A-Class',
       'B-Class',

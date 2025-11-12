@@ -19,21 +19,49 @@ export class UserServicesService {
   private apiUrl = 'http://127.0.0.1:5000';
   userData: Usuario = {} as Usuario;
 
-  private usuarioDataSubject = new BehaviorSubject<any>(
-    JSON.parse(localStorage.getItem('usuarioData') || '{}')
-  );
+  /**
+   * usuarioDataSubject --> es privado, usado para guardar temporalmente datos del usuario
+   * BehaviorSubject --> mantiene el último valor emitido y lo emite a cualquiera que esté suscrito a él.
+   */
+  private usuarioDataSubject = new BehaviorSubject<any>(null);
+
+  /**
+   * Versión pública como observable, que cualquier componente puede suscribirse a para recibir cambios sin poder modificarlos directamente.
+   */
   usuarioData$ = this.usuarioDataSubject.asObservable();
+
+  /**
+   * usuarioSource --> es otro BehaviorSubject para almacenar el usuario logueado actual
+   * Se inicializa con los datos guardados en el localStorage bajo la clave 'userData' si existen o 'null' si no hay datos
+   */
+  private usuarioSource = new BehaviorSubject<Usuario['usuario'] | null>(
+    JSON.parse(localStorage.getItem('userData') || 'null')?.usuario || null
+  );
+
+  /**
+   * usuario$ es la versión pública observable para suscribirse desde cualquier componente
+   */
+  usuario$ = this.usuarioSource.asObservable();
+
+  /**
+   * usuarioActualizado --> es un objeto parcial con los cambios (puede contener solo algunos cambios)
+   * ...usuarioActual --> guarda una copia de lo que contiene para no perder los cambios
+   * this.usuarioSource.next(nuevoUsuario): --> emite el usuario actuaizado a todos los suscriptores de usuario$. Actualiza tambien userData.usuario y localStorage
+   */
+  actualizarEstadoUsuario(usuarioActualizado: Partial<Usuario['usuario']>) {
+    const usuarioActual =
+      this.usuarioSource.getValue() || ({} as Usuario['usuario']);
+    const nuevoUsuario = { ...usuarioActual, ...usuarioActualizado };
+    this.usuarioSource.next(nuevoUsuario); // <--- aquí se emite un nuevo objeto
+    this.userData.usuario = nuevoUsuario; // actualizar localStorage también
+    localStorage.setItem('userData', JSON.stringify(this.userData));
+  }
 
   monedero: any = null;
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) {
-    const savedData = localStorage.getItem('usuarioData');
-    this.usuarioDataSubject = new BehaviorSubject<any>(
-      savedData ? JSON.parse(savedData) : {}
-    );
-  }
+  constructor(private http: HttpClient) {}
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -41,7 +69,6 @@ export class UserServicesService {
    */
   setUsuarioData(data: any) {
     this.usuarioDataSubject.next(data);
-    localStorage.setItem('usuarioData', JSON.stringify(data));
   }
 
   /**
@@ -125,10 +152,10 @@ export class UserServicesService {
   }
 
   /**
-   * Función para actualizar la imagen de perfil de un usuario.
-   * @param usuarioId ID del usuario cuyo perfil se quiere actualizar.
-   * @param imagenPerfil FormData con la imagen de perfil.
-   * @returns Observable con la respuesta del backend.
+   * .put --> llama al backend para actualizar la fotoerfil
+   * Recibe una respuesta con resultado con url y publicId de la nueva imagen
+   * Llama a "actualizarEstadoUsuario" con el nuevo campo fotoPerfil. Esto actualiza usuario$ (cualquiera componente suscrito ve la nueva foto), userData.usuario (copia local) y localStorage.
+   * Devuelve el resultado del backend para usarlo en el componente (por eso el ngOnInit ya refleja la nueva foto sin recargar la pagina)
    */
   actualizarImagenPerfil(
     usuarioId: number,
@@ -140,9 +167,44 @@ export class UserServicesService {
         imagenPerfil
       )
       .pipe(
+        map((resultado: any) => {
+          // Actualiza el BehaviorSubject con la nueva foto
+          const usuarioActualizado: Partial<Usuario['usuario']> = {
+            ...this.userData.usuario, // solo el objeto interno
+            fotoPerfil: resultado.url,
+            fotoPublicId: resultado.publicId,
+          };
+
+          this.actualizarEstadoUsuario(usuarioActualizado);
+          return resultado;
+        }),
         catchError((error: HttpErrorResponse) => {
           console.error('Error al actualizar la imagen de perfil: ', error);
-          return throwError(error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  /**
+   * .delete --> llama al backend para eliminar la foto
+   * Cuando termina llama a 'actualizarEstadoUsuario' con fotoPerfil: undefined y fotoPublicId: undefined
+   * Esto provoca que usuario$ emita la versión actualizada del usuario (sin foto) y que cualquer componente suscrito (como el navbar) se actualice automaticamente
+   * catchError: manejo de errores.
+   */
+  eliminarFotoPerfil(usuarioId: number): Observable<any> {
+    return this.http
+      .delete(`${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`)
+      .pipe(
+        map(() => {
+          // Actualiza fotoPerfil y fotoPublicId a undefineduser
+          this.actualizarEstadoUsuario({
+            fotoPerfil: undefined,
+            fotoPublicId: undefined,
+          });
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al eliminar la foto de perfil: ', error);
+          return throwError(() => error);
         })
       );
   }
@@ -209,6 +271,13 @@ export class UserServicesService {
 
   enviar_sms(telefono: string) {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+  }
+
+  verificar_codigo_sms(codigo: string, phone_number: string) {
+    return this.http.post(`${this.apiUrl}/user/verificar_codigo`, {
+      codigo,
+      phone_number,
+    });
   }
 
   fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {

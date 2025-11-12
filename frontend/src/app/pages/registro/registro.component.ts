@@ -26,7 +26,6 @@ import { NavController } from '@ionic/angular';
     MatButtonModule,
     TranslateModule,
   ],
-  providers: [UserServicesService],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -48,6 +47,7 @@ export class RegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
+    private funcionesComunes: FuncionesComunes
   ) {
     this.formulario1 = this.fb.group({
       email: [
@@ -154,6 +154,7 @@ export class RegistroComponent implements OnInit {
 
   guardaDatosDelUsuarioEnServicio(datos: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
+
     const datosUsuario = {
       ...usuarioDataTemp,
       ...datos,
@@ -170,6 +171,7 @@ export class RegistroComponent implements OnInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
+    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/contrato-registro');
   }
@@ -189,8 +191,6 @@ export class RegistroComponent implements OnInit {
 
       this.userService.registrarUsuario(datosRegistro).subscribe({
         next: (response) => {
-          console.log('Respuesta registro: ', response);
-
           const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
           const message: string = `
           <p>Tu usuario ha sido creado correctamente.</p>
