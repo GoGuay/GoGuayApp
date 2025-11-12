@@ -64,7 +64,7 @@
           </ul>
         </div>
 
-        <div class="mobile-navbar d-flex align-items-center w-100 position-relative mobile-only">
+        <div class="mobile-navbar d-flex align-items-center w-100 position-relative mobile-only" >
           <!-- Menú hamburguesa al inicio -->
           <ion-menu-button menu="mobileMenu" autoHide="false" class="mobile-only"></ion-menu-button>
 
@@ -72,7 +72,7 @@
           <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_mobile mobile-only centered-logo" />
 
           <!-- Campana al final -->
-          <button class="btn btnNotificaciones ms-auto" type="button">
+          <button class="btn btnNotificaciones ms-auto" type="button" *ngIf="isLoggedIn">
             <a class="nav-link active" href="/notificaciones">
               <img class="idiomas" href="/notificaciones" src="../../../assets/sistema/campana.gif">
             </a>
@@ -86,7 +86,7 @@
                 data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
                 <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
-                  <img [src]="usuario.fotoPerfil" alt="Foto de perfil">
+                  <img [src]="usuario?.fotoPerfil" alt="Foto de perfil">
                 </div>
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isDropdownOpen">expand_more</mat-icon>

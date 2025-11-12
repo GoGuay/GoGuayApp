@@ -14,7 +14,7 @@ import { MatDivider } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 
