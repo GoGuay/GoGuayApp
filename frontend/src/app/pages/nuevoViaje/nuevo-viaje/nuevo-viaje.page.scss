@@ -169,9 +169,31 @@ ion-button {
 }
 
 .input-icon {
-  margin-right: 8px;
+  // margin-right: 8px;
   width: 24px;
   height: 24px;
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.select-container select {
+  padding-left: 40px; /* espacio para el icono */
+  width: 100%;
+}
+
+.select-container .select-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  pointer-events: none; /* clic pasa al select */
 }
 
 ion-select {

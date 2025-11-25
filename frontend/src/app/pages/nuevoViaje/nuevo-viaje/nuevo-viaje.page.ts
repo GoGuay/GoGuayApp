@@ -8,7 +8,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
