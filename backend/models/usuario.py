@@ -29,10 +29,6 @@ class Usuario(db.Model):
     preferencias = db.Column(JSON, nullable=False, default=lambda: [PreferenciasViajeEnum.silencio.value]) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
     dni_verificado = db.Column(db.Boolean, default=False, nullable=True)
-    fotoDocumentoDelantera= db.Column(db.String(250), nullable=True)
-    fotoDocumentoTrasera = db.Column(db.String(250), nullable=True)
-    fotoCarnetCondDelantera = db.Column(db.String(250), nullable=True)
-    fotoCarnetCondTrasera = db.Column(db.String(250), nullable=True)
     carnet_conducir_verificado = db.Column(db.Boolean, default=False, nullable=True)
     numero_carnet_conducir = db.Column(db.String(50), nullable=True)
     fecha_vencimiento_carnet = db.Column(db.Date) 
@@ -96,9 +92,5 @@ class Usuario(db.Model):
             "monedero": self.monedero.serialize() if self.monedero else None,
             "puntuacion_promedio": self.puntuacion_promedio,
             "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
-            "fotoDocumentoDelantera": self.fotoDocumentoDelantera,
-            "fotoDocumentoTrasera": self.fotoDocumentoTrasera,
-            "fotoCarnetCondDelantera": self.fotoCarnetCondDelantera,
-            "fotoCarnetCondTrasera": self.fotoCarnetCondTrasera,
+            "updated_at": self.updated_at.isoformat()
         }
