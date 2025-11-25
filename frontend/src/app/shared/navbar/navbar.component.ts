@@ -202,14 +202,36 @@ export class NavbarComponent implements OnInit {
     this.isLenguageDropdownOpen = !this.isLenguageDropdownOpen;
   }
 
-  logout() {
+  /**
+   * Función para cerrar la sesión del usuario.
+   * 1º Guarda los datos en caso de que haya seleccionado "Recordarme"
+   * 2º Limpia el localStorage
+   * 3º Vacia la variable userData
+   * 4º Redirige al usuario a la página de inicio.
+   */
+logout() {
+  const rememberMe = localStorage.getItem('remember_me') === 'true';
+
+  if (rememberMe) {
+    const email = localStorage.getItem('email') || '';
+    const password = localStorage.getItem('password') || '';
+    
     localStorage.clear();
-    this.userData = {} as Usuario;
-    this.usuario = null;
-    this.isLoggedIn = false;
-    // Navegar al home sin recargar la página
-    this.navCtrl.navigateRoot(['/home']);
+
+    localStorage.setItem('remember_me', 'true');
+    localStorage.setItem('email', email);
+    localStorage.setItem('password', password);
+  } else {
+    localStorage.clear();
   }
+
+  this.userData = {} as Usuario;
+  this.usuario = null;
+  this.isLoggedIn = false;
+  this.navCtrl.navigateRoot(['/home']);
+}
+
+
 
   openPerfilPublico() {
     const usuario = { id: this.userData.usuario.id };
