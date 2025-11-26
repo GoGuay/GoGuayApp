@@ -35,15 +35,65 @@ export class CuartoPasoComponent implements OnInit {
 
   tercer_paso: boolean = false;
   cuarto_paso: boolean = false;
+
   initialValue = 5;
   precio = this.initialValue;
+  min: number = 0;
   max = this.initialValue * 2;
+
+  precioMinRecomendado = 0;
+  precioMaxRecomendado = 0;
 
   viajeMock: any = viajeMock;
 
   constructor(private travelService: TravelService, private messageService: MessageService, private navCtrl: NavController) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    const viajeData = this.travelService.getViajeData();
+
+    const distanciaKm = viajeData.ruta_seleccionada.routes[0].legs[0].distance.value / 1000;
+
+    this.calcularLimites(distanciaKm);
+    this.initialValue = this.calcularPrecioRecomendado(distanciaKm);
+    this.precio = this.initialValue;
+    this.max = this.initialValue * 2;
+
+    // Rango recomendado para mostrar al usuario
+    this.precioMinRecomendado = Math.round(distanciaKm * 0.03);
+    this.precioMaxRecomendado = Math.round(distanciaKm * 0.12);
+  }
+
+
+  calcularPrecioRecomendado(
+    distanciaKm: number,
+    consumo: number = 6,
+    precioGasolina: number = 1.55,
+    plazas: number = 3
+  ) {
+    // 1. Coste total del viaje
+    const costeViaje = (distanciaKm / 100) * consumo * precioGasolina;
+
+    // 2. Coste por pasajero
+    let precio = costeViaje / plazas;
+
+    // 3. Margen tipo BlaBlaCar
+    precio *= 1.15;
+
+    // 4. Límites basados en distancia
+    const minimo = distanciaKm * 0.03;
+    const maximo = distanciaKm * 0.12;
+
+    // 5. Clamp
+    precio = Math.max(minimo, Math.min(maximo, precio));
+
+    // 6. Redondeo
+    return Math.round(precio);
+  }
+
+  calcularLimites(distanciaKm: number) {
+    this.min = distanciaKm * 0.03;
+    this.max = distanciaKm * 0.12;
+  }
 
   onCuartoPasoBack() {
     this.tercer_paso = true;
@@ -53,11 +103,7 @@ export class CuartoPasoComponent implements OnInit {
   onCuartoPasoComplete() {
     const errores: string[] = [];
     const viajeData = this.travelService.getViajeData();
-    // const viajeData = this.viajeMock;
-    console.log('VIAJE MOCK: ', this.viajeMock);
-    console.log('VIAJE: ', viajeData);
 
-    
     if (!viajeData) {
       errores.push('viajeData');
     } else {
@@ -76,22 +122,11 @@ export class CuartoPasoComponent implements OnInit {
         detail: `Faltan los siguientes datos del viaje: ${errores.join(', ')}`,
         life: 3000
       });
-      console.error('Error: Campos incompletos en viajeData →', errores, viajeData);
       return;
     }
 
     let horaEnRutaSeleccionada = viajeData.ruta_seleccionada?.routes?.[0].legs?.[0]?.duration?.text
     let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, horaEnRutaSeleccionada);
-
-    if (!hora_llegada) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error al calcular la hora de llegada',
-        detail: 'Por favor, revisa la hora de salida y la duración del viaje.',
-        life: 3000
-      });
-      return;
-    }
 
     const viajeDataFinal = {
       ...viajeData,
@@ -102,21 +137,10 @@ export class CuartoPasoComponent implements OnInit {
     this.travelService.setViajeData(viajeDataFinal);
 
     localStorage.setItem('viajeData', JSON.stringify(viajeDataFinal));
-    this.navCtrl.navigateRoot(['/resumen-viaje']).then(success => {
-      if (!success) {
-        console.error('Error en la navegación a /resumen-viaje');
-      }
-    });
-
-    this.tercer_paso = false;
+    this.navCtrl.navigateRoot(['/resumen-viaje']);
   }
 
-  /**
-   * Función para calcular la hora de llegada
-   * @param hora_salida string en formato "HH:mm"
-   * @param duracion_viaje string en formato "Xh Ym"
-   * @returns string en formato "HH:mm"
-   */
+
   calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
     try {
       let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
@@ -141,75 +165,53 @@ export class CuartoPasoComponent implements OnInit {
         minute: '2-digit',
       });
     } catch (error) {
-      console.error('Error al calcular hora de llegada:', error);
       return null;
     }
   }
 
-  /**
-   * Función para sumar a la cantidad del precio de la plaza del viaje.
-   * 
-   */
+
   sumarCantidad() {
     if (this.precio < this.max) {
       this.precio++;
-    } 
-    
-    if (this.precio >= this.initialValue * 2){
+    }
+
+    if (this.precio >= this.max) {
       this.messageService.add({
         severity: 'error',
-        summary: '¡Algo anda mal!',
-        detail: `Por favor, intenta no abusar del precio.`,
+        summary: 'Precio demasiado alto',
+        detail: `El precio máximo razonable para este viaje es de ${Math.round(this.max)}€.`,
         life: 3000
       });
     }
   }
 
-  /**
-   * Función para restar a la cantidad del precio de la plaza. 
-   * 
-   */
   restarCantidad() {
-    if (this.precio > 3) {
+    if (this.precio > this.min) {
       this.precio--;
     }
 
-    if(this.precio <= 3){
+    if (this.precio <= this.min) {
       this.messageService.add({
         severity: 'error',
-        summary: '¡Algo anda mal!',
-        detail: `Por favor, intenta ajustar el precio de la plaza.`,
+        summary: 'Precio demasiado bajo',
+        detail: `El precio mínimo recomendado para este viaje es de ${Math.round(this.min)}€.`,
         life: 3000
       });
     }
   }
-
-  /**
-   * Función para obtener el precio de la plaza
-   * Esta función modifica el color que se muestra en el precio.
-   * 
-   * @returns Devuelve el color que corresponde.
-   */
   getprecioColor(): string {
     const ratio = this.precio / this.max;
 
-    if (ratio <= 0.33) {
-      return '#3498db'; // azul
-    } else if (ratio <= 0.66) {
-      return '#AAD1A7'; // verde
-    } else {
-      return '#e74c3c'; // rojo
-    }
+    if (ratio <= 0.33) return '#3498db';
+    if (ratio <= 0.66) return '#AAD1A7';
+    return '#e74c3c';
   }
 
-  /**
-   * Función para mostrar un mensaje emergente de ayuda al usuario.
-   */
-  ayudaPrecio(){
+  ayudaPrecio() {
     this.messageService.add({
       severity: 'warn',
-      summary: '¡Selección de precio por plaza!',
-      detail: `Selecciona un precio justo para la plaza libre en tu viaje. Intenta no sobrepasarte en el precio para que sea más fácil encontrar acompañantes para tu viaje.`,
+      summary: 'Precio por plaza',
+      detail: `Selecciona un precio justo para tu viaje. Los precios razonables atraen más pasajeros.`,
       life: 3000
     });
   }

@@ -8,12 +8,13 @@
       [helpText]="'JUMBOTRON.HELP'">
     </app-jumbotron>
   </div>
+  <div class="mis-viajes-header mt-2 ms-2 me-2">
+    <h1>Mis viajes:</h1>
+    <button class="btn btn_bg" (click)="toggleAyuda()" aria-label="Ayuda">
+      <i class="fi fi-rs-interrogation"></i>
+    </button>
+  </div>
   <div class="container mt-4 mb-5">
-    <h1 class="mb-3">Mis viajes:</h1>
-    <div class="container">
-      <button class="btn btn_bg mb-4" (click)="toggleAyuda()" aria-label="Ayuda"><i
-          class="fi fi-rs-interrogation"></i></button>
-    </div>
     <div [ngClass]="{
       'ayuda-explicacion-wrapper ayuda-explicacion rounded mb-3': true,
       'ayuda-explicacion-hidden': !mostrarAyuda
@@ -49,13 +50,19 @@
     </ion-segment>
 
     <!-- Lista de viajes -->
-    <div *ngIf="misViajes.length === 0" class="sin-viajes-container">
+    <div *ngIf="!cargandoViajes && misViajes.length === 0" class="sin-viajes-container">
       <p>Aún no tienes viajes en esta categoría.</p>
       <img src="../../../assets/sistema/destino-de-viaje.gif" alt="Imagen de destino de viaje"
         class="img-fluid iconSinViajes">
     </div>
 
+    <!-- Spinner de carga -->
+    <div *ngIf="cargandoViajes" class="spinner-overlay">
+      <app-spinner></app-spinner>
+    </div>
+
     <div class="mi_viaje_box mt-3 mb-3" *ngFor="let viaje of misViajes">
+
       <div class="row d-flex flex-column flex-md-row">
         <!-- Destino -->
         <div class="col-12 col-md-6 col-lg-3 mb-2">

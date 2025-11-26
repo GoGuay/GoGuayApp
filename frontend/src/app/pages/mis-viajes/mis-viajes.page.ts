@@ -8,7 +8,7 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PuntuacionesComponent } from 'src/app/components/puntuaciones/puntuaciones.component';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ViajeSeleccionadoComponent } from 'src/app/components/viaje-seleccionado/viaje-seleccionado.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,13 +16,14 @@ import { MatIcon } from '@angular/material/icon';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { ActivatedRoute } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent]
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent]
 })
 export class MisViajesPage implements OnInit {
 
@@ -48,6 +49,8 @@ export class MisViajesPage implements OnInit {
   imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
   buscarViaje: string = '../../../assets/sistema/busqueda.png';
 
+  cargandoViajes: boolean = true;
+  
   /**
    * Datos del usuario
    */
@@ -56,23 +59,49 @@ export class MisViajesPage implements OnInit {
 
   mostrarJumbotron = true;
 
-  private _bottomSheet = inject(MatBottomSheet);
+  // private _bottomSheet = inject(MatBottomSheet);
 
   constructor(public funcionesComunes: FuncionesComunes,
     private navCtrl: NavController, private userService: UserServicesService,
     private dialog: MatDialog, private travelService: TravelService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
-
     this.route.queryParams.subscribe((params) => {
       this.usuarioParams = params;
       const userId = parseInt(this.usuarioParams.id, 10);
+
       this.obtenerUsuarioPorID(userId);
       this.validacionPerilLogeado(userId);
-      this.obtenerViajesComoAcompanante();
-      this.obtenerViajesCreados();
       this.loadJumbotronSetting();
+      this.cargarTodosLosViajes(userId);
+    });
+  }
+
+  /**
+   * Función para cargar todos los viajes del usuario (creados y como acompañante)
+   * @param userId Recibe el ID del usuario
+   */
+  cargarTodosLosViajes(userId: number) {
+    this.cargandoViajes = true;
+
+    forkJoin({
+      acompanante: this.travelService.getViajesComoAcompañante(userId),
+      creados: this.travelService.getViajesUsuario(userId)
+    }).subscribe(({ acompanante, creados }) => {
+
+      this.misViajesAcompanante = acompanante;
+      this.misViajesCreados = creados.viajes;
+
+      // cargar datos del usuario creador en cada viaje
+      this.misViajesCreados.forEach((viaje) => {
+        this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
+          viaje.usuario = usuario;
+        });
+      });
+
+      this.filtrarViajes();
+      this.cargandoViajes = false;
     });
   }
 
@@ -134,9 +163,11 @@ export class MisViajesPage implements OnInit {
  * Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
  */
   obtenerViajesComoAcompanante() {
+    this.cargandoViajes = true;
     this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesAcompanante = result;
+        this.cargandoViajes = false;
         this.filtrarViajes();
       });
   }
@@ -245,15 +276,24 @@ export class MisViajesPage implements OnInit {
     });
   }
 
+  /**
+   * Función para mostrar/ocultar la ayuda
+   */
   toggleAyuda() {
     this.mostrarAyuda = !this.mostrarAyuda;
   }
 
+  /**
+   * Funciones de navegación
+   */
   goToBuscarViaje() {
     this.navCtrl.navigateRoot('/busqueda-viajes');
   }
 
+  /**
+   * Función para navegar a la página de nuevo viaje
+   */
   goToNuevoViaje() {
-    this.navCtrl.navigateRoot('/nuevo-viaje');  
+    this.navCtrl.navigateRoot('/nuevo-viaje');
   }
 }

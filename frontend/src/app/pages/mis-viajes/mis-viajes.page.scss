@@ -5,6 +5,27 @@
   max-width: 600px;
 }
 
+.mis-viajes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  margin-bottom: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .btn-ayuda {
+    background: var(--ion-color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 1.2rem;
+  }
+}
+
 .mis-viajes-container label {
   position: sticky;
   top: 0;
@@ -15,12 +36,14 @@
 }
 
 .mi_viaje_box {
+  position: relative;
   border: 1px solid #f0f0f0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f0d7b4;
   border-radius: 15px;
   padding: 12px;
   width: 100%;
+  z-index: 1;
 }
 
 .mi_viaje_box p {
@@ -76,6 +99,7 @@
 }
 
 .viajeApuntuar {
+  position: relative;
   background-color: #b7e0b4;
   border: 1px solid #b3b5e6;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
@@ -84,6 +108,7 @@
   cursor: pointer;
   pointer-events: auto;
   user-select: none;
+  z-index: 10;
 }
 
 .viajeApuntuar:hover {
@@ -206,6 +231,25 @@ ion-segment-button {
 .mi_viaje_box span,
 .mi_viaje_box button {
   word-break: break-word;
+}
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.65);
+  z-index: 9999;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 576px) {

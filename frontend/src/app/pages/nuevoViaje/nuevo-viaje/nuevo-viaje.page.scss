@@ -169,7 +169,6 @@ ion-button {
 }
 
 .input-icon {
-  // margin-right: 8px;
   width: 24px;
   height: 24px;
 }
@@ -182,7 +181,7 @@ ion-button {
 }
 
 .select-container select {
-  padding-left: 40px; /* espacio para el icono */
+  padding-left: 40px;
   width: 100%;
 }
 
@@ -193,7 +192,7 @@ ion-button {
   transform: translateY(-50%);
   width: 24px;
   height: 24px;
-  pointer-events: none; /* clic pasa al select */
+  pointer-events: none;
 }
 
 ion-select {
