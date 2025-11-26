@@ -16,6 +16,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 
 
 
@@ -59,11 +60,15 @@ export class NavbarComponent implements OnInit {
 
   menuType: string = 'push';
 
+  numNotificaciones: number = 0;
+  notificaciones: any[] = [];
+
   constructor(
     private navCtrl: NavController,
     private platform: Platform,
     private languageService: LanguageService,
     private userService: UserServicesService,
+    private notificationService: NotificacionesService,
     private element: ElementRef
   ) {
     this.loadUserData();
@@ -73,14 +78,16 @@ export class NavbarComponent implements OnInit {
     // Suscribirse a cambios en el usuario
     this.usuarioSub = this.userService.usuario$.subscribe(
       (usuarioActualizado) => {
+        this.obtenerNotificaciones(this.userData.usuario.id);
         if (usuarioActualizado) {
-          this.usuario = usuarioActualizado; // objeto interno directamente
+          this.usuario = usuarioActualizado;
           this.isLoggedIn = true;
         } else {
           this.usuario = null;
           this.isLoggedIn = false;
         }
       }
+
     );
 
     /**
@@ -107,6 +114,31 @@ export class NavbarComponent implements OnInit {
     await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
+
+  /**
+   * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.ç
+   * 1º Actualiza el número de notificaciones no leídas.
+   * 2º Si hay notificaciones no leídas, actualiza el mensaje de la notificación pendiente.
+   * @param usuarioId Recibe el ID del usuario que está logueado.
+   */
+  obtenerNotificaciones(usuarioId: number) {
+    this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
+      if (notificaciones.length) {
+        this.notificaciones = notificaciones;
+
+        this.numNotificaciones = notificaciones.filter((n: any) => !n.leida).length;
+
+        if (this.numNotificaciones > 0) {
+          this.notificationService.notificacionPendiente = notificaciones.find((n: any) => !n.leida)?.mensaje;
+          this.notificationService.esCreadorDelViaje = true;
+        }
+
+      } else {
+        this.numNotificaciones = 0;
+      }
+    });
+  }
+
 
   // Desuscribirse al destruir el componente (para evitar fugas de memoria):
   ngOnDestroy() {
@@ -209,36 +241,26 @@ export class NavbarComponent implements OnInit {
    * 3º Vacia la variable userData
    * 4º Redirige al usuario a la página de inicio.
    */
-logout() {
-  const rememberMe = localStorage.getItem('remember_me') === 'true';
+  logout() {
+    const rememberMe = localStorage.getItem('remember_me') === 'true';
 
-  if (rememberMe) {
-    const email = localStorage.getItem('email') || '';
-    const password = localStorage.getItem('password') || '';
-    
-    localStorage.clear();
+    if (rememberMe) {
+      const email = localStorage.getItem('email') || '';
+      const password = localStorage.getItem('password') || '';
 
-    localStorage.setItem('remember_me', 'true');
-    localStorage.setItem('email', email);
-    localStorage.setItem('password', password);
-  } else {
-    localStorage.clear();
-  }
+      localStorage.clear();
 
-  this.userData = {} as Usuario;
-  this.usuario = null;
-  this.isLoggedIn = false;
-  this.navCtrl.navigateRoot(['/home']);
-}
+      localStorage.setItem('remember_me', 'true');
+      localStorage.setItem('email', email);
+      localStorage.setItem('password', password);
+    } else {
+      localStorage.clear();
+    }
 
-
-
-  openPerfilPublico() {
-    const usuario = { id: this.userData.usuario.id };
-
-    this.navCtrl.navigateRoot(['/perfil-publico'], {
-      queryParams: usuario,
-    });
+    this.userData = {} as Usuario;
+    this.usuario = null;
+    this.isLoggedIn = false;
+    this.navCtrl.navigateRoot(['/home']);
   }
 
   irAMisViajes() {

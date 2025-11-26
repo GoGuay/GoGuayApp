@@ -21,9 +21,7 @@ export class NotificacionesPage implements OnInit {
   usuario: any;
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
-
   iconoAjustes: string = '../../../assets/sistema/ajustes.png';
-
   notificaciones: any[] = [];
 
   constructor(private notificationService: NotificacionesService, private userService: UserServicesService, private router: Router) { }
@@ -66,10 +64,9 @@ export class NotificacionesPage implements OnInit {
     this.notificationService.toggleEstadoNotificacion(notificacion.id, nuevoEstado)
     .subscribe({
       next: () => {
-        notificacion.leida = nuevoEstado; // Actualiza el estado en UI
+        notificacion.leida = nuevoEstado;
       },
       error: () => {
-        // Puedes mostrar un mensaje de error si falla
         console.error('No se pudo actualizar el estado de la notificación');
       }
     });
