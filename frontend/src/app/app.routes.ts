@@ -205,9 +205,18 @@ export const routes: Routes = [
       import(
         './pages/registro/contrato-registro-final/contrato-registro.component'
       ).then((m) => m.ContratoRegistroComponent),
-  },  {
+  },
+  {
     path: 'mis-viajes',
-    loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then( m => m.MisViajesPage)
+    loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then(m => m.MisViajesPage)
+  },
+  {
+    path: 'messaging-center',
+    loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.page').then(m => m.CentroMensajesPage)
+  },
+  {
+    path: 'chat/:id',
+    loadComponent: () => import('./pages/centro-mensajes/chat/chat.page').then(m => m.ChatPage)
   },
 
 ];

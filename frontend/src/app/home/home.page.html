@@ -49,6 +49,14 @@
       <app-ventana-dudas></app-ventana-dudas>
     </div>
   </div>
+
+  <!-- FAB: BUSCAR VIAJE -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-chat" title="Ir al centro de mensajes">
+    <ion-fab-button aria-label="Buscar viaje" (click)="irAmensajes()">
+      <img [src]="messaging" alt="Buscar viaje" style="width: 24px; height: 24px;">
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>
 
 <ion-footer>

@@ -1,0 +1,30 @@
+<ion-header>
+    <app-navbar [isLoggedIn]="userLoggedIn"></app-navbar>
+</ion-header>
+
+<ion-content fullscreen>
+    <div class="d-flex justify-content-center">
+        <h1>Centro de mensajes</h1>
+    </div>
+
+    <!-- Centro de chats -->
+    <div class="mt-3 centroMensajes">
+        <ion-list>
+            <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
+                <ion-item lines="none" detail="false">
+                    <ion-label>
+                        <h2>{{ c.nombre }}</h2>
+                        <p>{{ c.ultimoMensaje }}</p>
+                    </ion-label>
+                </ion-item>
+            </ion-card>
+        </ion-list>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-buscar" title="Volver atrás">
+        <ion-fab-button aria-label="Buscar viaje" (click)="goBack()">
+            <img [src]="irAtrasImg" alt="Buscar viaje" style="width: 24px; height: 24px;">
+        </ion-fab-button>
+    </ion-fab>
+
+</ion-content>

@@ -9,7 +9,7 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { BuscaUnViajePrincipalComponent } from "../components/busca-un-viaje-principal/busca-un-viaje-principal.component";
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
@@ -42,11 +42,12 @@ export class HomePage implements OnInit {
   mostrarJumbotron = true;
   usuario: any;
   userData: Usuario = {} as Usuario;
+  messaging: string = '../../assets/sistema/messaging.png';
 
   constructor(private translate: TranslateService,
     private funcionesComunes: FuncionesComunes,
     private notificacionesService: NotificacionesService,
-    private userService: UserServicesService) {
+    private userService: UserServicesService, private navCtrl: NavController) {
     this.loadUserData();
   }
 
@@ -91,5 +92,9 @@ loadJumbotronSetting() {
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+  irAmensajes(){
+    this.navCtrl.navigateRoot(['/messaging-center']);
   }
 }
