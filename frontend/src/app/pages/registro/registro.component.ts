@@ -147,7 +147,7 @@ export class RegistroComponent implements OnInit {
   mostrarContrato() {
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
-    this.navCtrl.navigateRoot('/registro/contrato-registro');
+    this.navCtrl.navigateRoot('/registro/resumen-registro');
   }
 
   // Función para registrar al usuario
@@ -318,7 +318,8 @@ export class RegistroComponent implements OnInit {
    * @param email
    */
   comprobarEmailRegistrado(email: string) {
-    this.userService.verificarEmailExistente(email).subscribe({
+    const emailNormalizado = email.toLowerCase();
+    this.userService.verificarEmailExistente(emailNormalizado).subscribe({
       next: (existe: boolean) => {
         const control = this.formulario1.get('email');
         const fechaControl = this.formulario1.get('fecha_nacimiento');
@@ -437,5 +438,16 @@ export class RegistroComponent implements OnInit {
         this.formulario2.get('orientacion')?.enable();
       }
     }
+  }
+
+  /**
+   * Función para avanzar entre los inputs con la tecla "Tab"
+   * @param event
+   * @param idSiguiente
+   */
+  enfocarSiguiente(event: any, idSiguiente: string) {
+    event.preventDefault(); // detiene el tab por defecto
+    const siguiente = document.getElementById(idSiguiente);
+    if (siguiente) siguiente.focus();
   }
 }

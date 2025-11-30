@@ -1,27 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { construct } from 'ionicons/icons';
 import { UserServicesService } from '../../../core/user-services/user-services.service';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-resumen-registro',
-  imports: [
-    ReactiveFormsModule,
-    IonicModule,
-    MatIconModule,
-    CommonModule,
-    FormsModule,
-  ],
+  imports: [ReactiveFormsModule, IonicModule, MatIconModule, CommonModule, FormsModule],
   templateUrl: './resumen-registro.component.html',
   styleUrl: './resumen-registro.component.scss',
 })
@@ -55,32 +43,14 @@ export class ResumenRegistroComponent implements OnInit {
     password: 'formulario3',
   };
 
-  generos: string[] = [
-    'HOMBRE_CIS',
-    'MUJER_CIS',
-    'TRANSEXUAL',
-    'NO_BINARIO',
-    'INTERGENERO',
-    'NO_FLUIDO',
-    'OTRO',
-    'NO_RESPONDE',
-  ];
+  generos: string[] = ['HOMBRE_CIS', 'MUJER_CIS', 'TRANSEXUAL', 'NO_BINARIO', 'INTERGENERO', 'NO_FLUIDO', 'OTRO', 'NO_RESPONDE'];
 
-  orientaciones: string[] = [
-    'GAY',
-    'LESBIANA',
-    'BISEXUAL',
-    'PANSEXUAL',
-    'ASEXUAL',
-    'DEMISEXUAL',
-    'QUEER',
-    'OTRO',
-    'NO_RESPONDE',
-  ];
+  orientaciones: string[] = ['GAY', 'LESBIANA', 'BISEXUAL', 'PANSEXUAL', 'ASEXUAL', 'DEMISEXUAL', 'QUEER', 'OTRO', 'NO_RESPONDE'];
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private navCtrl: NavController,
   ) {}
 
   ngOnInit() {
@@ -97,15 +67,7 @@ export class ResumenRegistroComponent implements OnInit {
     this.orientacion = storedData?.orientacion ?? '';
 
     this.formularioResumen = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-          ),
-        ],
-      ],
+      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
@@ -125,6 +87,11 @@ export class ResumenRegistroComponent implements OnInit {
       genero: [this.genero],
       orientacion: [this.orientacion],
     });
+
+    const datosRegistro = this.userService.getUsuarioData();
+    if (datosRegistro === null) {
+      this.navCtrl.navigateRoot('/registro');
+    }
   }
 
   /**
@@ -233,5 +200,18 @@ export class ResumenRegistroComponent implements OnInit {
       NO_RESPONDE: 'Prefiero no responder',
     };
     return map[orientacion] ?? '';
+  }
+
+  aceptarNormas() {
+    const datosRegistro = this.userService.getUsuarioData();
+
+    this.userService.registrarUsuario(datosRegistro).subscribe({
+      next: (response) => {
+        this.navCtrl.navigateRoot('/home');
+      },
+      error: (err) => {
+        this.navCtrl.navigateRoot('/home');
+      },
+    });
   }
 }

@@ -24,6 +24,7 @@ from flask_mail import Mail, Message
 from prelude_python_sdk import Prelude
 import os
 from twilio.rest import Client
+from sqlalchemy import func
 
 
 
@@ -71,20 +72,27 @@ otp_store = {}
 def crear_usuario():
     data = request.json
 
+    # Campos obligatorios
     campos_obligatorios = ['nombre', 'apellidos', 'email', 'password']
     for campo in campos_obligatorios:
         if campo not in data:
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
 
-    
-    if Usuario.query.filter_by(email=data['email']).first():
+    # Normalizar email a minúsculas
+    email_normalizado = data['email'].lower()
+
+    # Verificar si el email ya existe (case-insensitive)
+    if Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first():
         return jsonify({"error": "El correo electrónico ya existe"}), 400
 
+    # Codificar password
     codificar_password = generate_password_hash(data['password'])
-    nuevo_usuario = Usuario (
+
+    # Crear nuevo usuario
+    nuevo_usuario = Usuario(
         nombre=data['nombre'],
         apellidos=data['apellidos'],
-        email=data['email'],
+        email=email_normalizado,  # Guardar en minúsculas
         password=codificar_password,
         telefono=data.get('telefono'),
         orientacion=data.get('orientacion'),
@@ -94,15 +102,17 @@ def crear_usuario():
         carnet_conducir_verificado=data.get('carnet_conducir_verificado', False),
         numero_carnet_conducir=data.get('numero_carnet_conducir'),
         fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
-        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None       
+        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None
     )
 
     db.session.add(nuevo_usuario)
     db.session.commit()
 
+    # Crear monedero para el usuario
     nuevo_usuario.monedero = Monedero()
     db.session.commit()
 
+    # Generar token de acceso
     access_token = create_access_token(identity=nuevo_usuario.id)
 
     return jsonify({
@@ -118,7 +128,8 @@ def verificar_email_existente():
     email = request.args.get('email')
     if not email:
         return jsonify({"Error": "Parámetro no encontrado"}), 400
-    existe = Usuario.query.filter_by(email=email).first() is not None
+    email_normalizado = email.lower()
+    existe = Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first() is not None
     return jsonify ({"existe": existe}), 200
 
 # Función para comprobar si el teléfono ya existe en el proceso de registro

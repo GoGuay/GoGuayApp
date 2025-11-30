@@ -35,8 +35,8 @@ class Usuario(db.Model):
     fotoCarnetCondDelantera = db.Column(db.String(250), nullable=True)
     # fotoCarnetCondTrasera = db.Column(db.String(250), nullable=True)
     carnet_conducir_verificado = db.Column(db.Boolean, default=False, nullable=True)
-    # numero_carnet_conducir = db.Column(db.String(50), nullable=True)
-    # fecha_vencimiento_carnet = db.Column(db.Date) 
+    numero_carnet_conducir = db.Column(db.String(50), nullable=True)
+    fecha_vencimiento_carnet = db.Column(db.Date) 
     fecha_nacimiento = db.Column(db.Date)
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
@@ -89,8 +89,8 @@ class Usuario(db.Model):
             "dni_verificado": self.dni_verificado,
             "numero_documento": self.numero_documento,
             "carnet_conducir_verificado": self.carnet_conducir_verificado,
-            #"numero_carnet_conducir": self.numero_carnet_conducir,
-            #"fecha_vencimiento_carnet": self.fecha_vencimiento_carnet.isoformat() if self.fecha_vencimiento_carnet else None,
+            "numero_carnet_conducir": self.numero_carnet_conducir,
+            "fecha_vencimiento_carnet": self.fecha_vencimiento_carnet.isoformat() if self.fecha_vencimiento_carnet else None,
             "fecha_nacimiento": self.fecha_nacimiento.isoformat() if self.fecha_nacimiento else None,
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,

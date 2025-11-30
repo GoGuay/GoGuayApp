@@ -109,6 +109,27 @@
       "OPC_SILENCIO": "Ir en silencio"
     }
   },
+  "__Registro": "Componentes que conforman el Registro del usuario",
+  "REGISTRO": {
+    "FORM1": {
+      "BIENVENIDE": "BIENVENIDE",
+      "SUBTITULO": "Aquí puedes empezar a registrarte",
+      "LABEL_CORREO": "Correo electrónico",
+      "AYUDA_CORREO": "Campo para introducir tu correo electrónico. Debe incluir el símbolo arroba; y un dominio válido.",
+      "LABEL_FNACIMIENTO": "Fecha de nacimiento",
+      "AYUDA_FNACIMIENTO": "Campo para introducir tu fecha de nacimiento",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "ERROR": {
+        "CORREO_OBLIGATORIO": "El correo es obligatorio.",
+        "CORREO_FORMATO": "El formato del correo no es correcto.",
+        "CORREO_YAEXISTE": "Este correo ya está registrado.",
+        "FECHA_INCORRECTA": "La fecha introducida no es correcta.",
+        "FECHA_OBLIGATORIA": "La fecha de nacimiento es obligatoria.",
+        "FECHA_MAYOREDAD": "Debes tener más de 18 años para usar este servicio.",
+        "FECHA_SUPERIORACTUAL": "No puedes elegir una fecha superior a la actual."
+      }
+    }
+  },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",

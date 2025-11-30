@@ -5,14 +5,19 @@
 
   <!-- Formulario pantalla 1 -->
   <div *ngIf="pasoActual === 1">
-    <div class="d-flex justify-content-center">
-      <h1>AQUÍ PUEDES COMENZAR A REGISTRARTE</h1>
+    <div class="d-flex flex-column justify-content-center text-md-start text-center align-items-center">
+      <h1>
+        <strong>{{ 'REGISTRO.FORM1.BIENVENIDE' | translate }}</strong>
+      </h1>
+      <h2>{{ 'REGISTRO.FORM1.SUBTITULO' | translate }}</h2>
     </div>
+    <!-- Mensaje de advertencia -->
+    <div class="alert alert-warning mt-3 text-center container" role="alert">{{ 'REGISTRO.FORM1.AVISO_CAMPOSOBLIGATORIOS' | translate }}</div>
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario1" class="formulario">
         <div class="mb-3">
           <label for="email" class="form-label">
-            Correo electrónico
+            {{ 'REGISTRO.FORM1.LABEL_CORREO' | translate }}
             <span class="dato-obligatorio">*</span>
           </label>
           <input
@@ -22,34 +27,47 @@
             inputmode="email"
             formControlName="email"
             name="email"
+            placeholder="email@ejemplo.com"
             aria-describedby="emailHelp"
             (blur)="validarCampo('email', formulario1)"
+            (keydown.tab)="enfocarSiguiente($event, 'fnacimiento')"
             (ngModelChange)="onInputChange()" />
+          <!-- Mensaje de ayuda accesible -->
+          <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.AYUDA_CORREO' | translate }}</span>
 
           <div *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched" class="text-danger">
-            <span *ngIf="formulario1.get('email')?.errors?.['required']">El correo es obligatorio.</span>
-            <span *ngIf="formulario1.get('email')?.errors?.['pattern']">El formato del correo no es correcto</span>
-            <span *ngIf="formulario1.get('email')?.errors?.['emailRepetido']">Este correo ya está registrado.</span>
+            <span *ngIf="formulario1.get('email')?.errors?.['required']">{{ 'REGISTRO.FORM1.ERROR.CORREO_OBLIGATORIO' | translate }}</span>
+            <span *ngIf="formulario1.get('email')?.errors?.['pattern']">{{ 'REGISTRO.FORM1.ERROR.CORREO_FORMATO' | translate }}</span>
+            <span *ngIf="formulario1.get('email')?.errors?.['emailRepetido']">{{ 'REGISTRO.FORM1.ERROR.CORREO_YAEXISTE' | translate }}</span>
           </div>
         </div>
         <div class="mb-3">
           <label for="fnacimiento" class="form-label">
-            Fecha de nacimiento
+            {{ 'REGISTRO.FORM1.LABEL_FNACIMIENTO' | translate }}
             <span class="dato-obligatorio">*</span>
           </label>
           <input
             type="date"
             class="form-control"
             id="fnacimiento"
+            inputmode=""
             min="1930-01-01"
             [max]="fechaMaxima"
+            aria-describedby="fnacimientoHelp"
             formControlName="fecha_nacimiento"
-            (change)="onFechaChange()" />
+            (change)="onFechaChange()"
+            (keydown.tab)="enfocarSiguiente($event, 'btnSiguiente')" />
+          <!-- Mensaje de ayuda accesible -->
+          <span id="fnacimientoHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.AYUDA_FNACIMIENTO' | translate }}</span>
           <div class="text-danger" *ngIf="formulario1.get('fecha_nacimiento')?.invalid && formulario1.get('fecha_nacimiento')?.touched">
-            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechalimite']">La fecha introducida no es correcta</span>
-            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['required']">La fecha de nacimiento es obligatoria.</span>
-            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['menorDeEdad']">Debes tener más de 18 años para usar este servicio.</span>
-            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechaFutura']">No puedes elegir una fecha superior a la actual.</span>
+            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechalimite']">
+              {{ 'REGISTRO.FORM1.ERROR.FECHA_INCORRECTA' | translate }}
+            </span>
+            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['required']">{{ 'REGISTRO.FORM1.ERROR.FECHA_OBLIGATORIA' | translate }}</span>
+            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['menorDeEdad']">{{ 'REGISTRO.FORM1.ERROR.FECHA_MAYOREDAD' | translate }}</span>
+            <span *ngIf="formulario1.get('fecha_nacimiento')?.errors?.['fechaFutura']">
+              {{ 'REGISTRO.FORM1.ERROR.FECHA_SUPERIORACTUAL' | translate }}
+            </span>
           </div>
         </div>
       </form>
@@ -58,7 +76,7 @@
 
   <!-- Formulario pantalla 2 -->
   <div *ngIf="pasoActual === 2">
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center text-md-start text-center">
       <h1>¿NOS CONOCEMOS UN POCO MÁS?</h1>
     </div>
     <div class="container d-flex justify-content-center">
@@ -110,7 +128,7 @@
           <span class="ms-2 text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Más detalles">
             <i class="bi-question-circle"></i>
           </span>
-          <select class="form-select" id="genero" formControlName="genero" (input)="escucharCambiosFormulario2('genero')">
+          <select class="form-select" id="genero" formControlName="genero" (change)="escucharCambiosFormulario2('genero')">
             <option selected disabled>
               {{ 'SELEC_GENERO.SELECCIONA' | translate }}
             </option>
@@ -147,8 +165,13 @@
               <i class="bi-question-circle"></i>
             </span>
           </label>
-          <select class="form-select" aria-label="Selección de orientación" formControlName="orientacion">
-            <option value="" disabled selected>
+          <select
+            class="form-select"
+            aria-label="Selección de orientación"
+            formControlName="orientacion"
+            id="orientacion"
+            (input)="escucharCambiosFormulario2('orientacion')">
+            <option selected disabled>
               {{ 'ORIENTACION.SELECCIONA' | translate }}
             </option>
             <option value="GAY">{{ 'ORIENTACION.GAY' | translate }}</option>
@@ -180,8 +203,12 @@
 
   <!-- Formulario pantalla 3 -->
   <div *ngIf="pasoActual === 3">
-    <div class="d-flex justify-content-center">
-      <h1>ALGO IMPORTANTE: TU CONTRASEÑA</h1>
+    <div class="d-flex justify-content-center text-md-start text-center">
+      <h1>
+        ALGO IMPORTANTE:
+        <br />
+        TU CONTRASEÑA
+      </h1>
     </div>
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario3" class="formulario">
@@ -213,12 +240,9 @@
     </div>
   </div>
 
-  <!-- Mensaje de advertencia -->
-  <div class="alert alert-warning mt-3 text-center container" role="alert">Los campos marcados con asteriscos son obligatorios</div>
-
   <nav aria-label="Page navigation example">
     <div class="d-flex justify-content-center">
-      <button *ngIf="!paso1" type="button" class="btn btn_bg" (click)="pasoAnterior()">Atrás</button>
+      <button id="btnSiguiente" *ngIf="!paso1" type="button" class="btn btn_bg" (click)="pasoAnterior()">Atrás</button>
 
       <button
         type="button"
@@ -232,6 +256,6 @@
   </nav>
 
   <div *ngIf="pasoActual === 3 && formulario1.valid && formulario2.valid && formulario3.valid" class="d-flex justify-content-center">
-    <button type="button" mat-raised-button class="btn_bg mt-3 mb-3" (click)="siguientePaso()">Finalizar registro</button>
+    <button type="button" class="btn_bg btn mt-3 mb-3" (click)="siguientePaso()">Finalizar registro</button>
   </div>
 </div>
