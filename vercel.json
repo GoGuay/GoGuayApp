@@ -1,11 +1,17 @@
 {
-  "functions": {
-    "api/**.py": {
-      "runtime": "python3.11"
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/angular.json",
+      "use": "@vercel/angular"
+    },
+    {
+      "src": "backend/app.py",
+      "use": "@vercel/python"
     }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/app.py" },
-    { "source": "/(.*)", "destination": "/frontend/$1" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/backend/app.py" },
+    { "src": "/(.*)", "dest": "/frontend/dist/frontend/$1" }
   ]
 }
