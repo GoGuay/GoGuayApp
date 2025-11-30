@@ -19,7 +19,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist/frontend/browser"
+              "base": "frontend/dist/frontend/browser"
             },
             "index": "src/index.html",
             "polyfills": ["src/polyfills.ts"],
