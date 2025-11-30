@@ -57,11 +57,11 @@
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
                 },
-                   {
-             "type": "scss",
-  "maximumWarning": "15kb",
-  "maximumError": "20kb"
-                },
+                {
+                  "type": "all",
+                  "maximumWarning": "15kb",
+                  "maximumError": "20kb"
+                }
               ],
               "fileReplacements": [
                 {
