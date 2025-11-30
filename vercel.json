@@ -1,4 +1,8 @@
 {
-  "public": "frontend/dist/frontend/browser",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/dist/frontend/browser/$1"
+    }
+  ]
 }
