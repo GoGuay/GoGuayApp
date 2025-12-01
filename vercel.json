@@ -1,8 +1,15 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/((?!assets|favicon.ico|.*\\.css|.*\\.js).*)",
-      "destination": "/index.html"
+      "src": "package.json",
+      "use": "@vercel/static-build"
     }
-  ]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "outputDirectory": "dist/app"
 }
