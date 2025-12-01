@@ -1,15 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json", 
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "npm run build",
-        "distDir": "dist/browser"
-      }
-    }
-  ],
   "routes": [
     {
       "src": "/(.*\\.(?:js|css|map|ico|ttf|woff2|png|jpg|jpeg|gif|svg|webp))",
