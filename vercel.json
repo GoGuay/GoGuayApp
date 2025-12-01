@@ -4,21 +4,28 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build"
-    }
-  ],
-  "outputDirectory": "dist/browser",
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
     },
     {
-      "src": "/(.*\\.css|.*\\.js|.*\\.map)",
-      "dest": "/$1"
+      "src": "backend/*.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)", 
+      "dest": "backend/index.py"
+    },
+    {
+      "src": "/(.*\\.(?:js|css|map|ico|png|jpg|jpeg|gif|svg|webp))",
+      "dest": "dist/browser/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "dist/browser/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "dist/browser/index.html"
     }
   ]
 }
