@@ -65,11 +65,11 @@ export class AppComponent implements OnInit {
     const consentStatus = localStorage.getItem('cookieConsentStatus');
     this.loadUserData();
 
-    if (this.userData?.usuario?.id) {
-      this.obtenerNotificaciones(this.userData.usuario.id);
-    } else {
-      this.checkUserDataUntilAvailable();
-    }
+    // if (this.userData?.usuario?.id) {
+    //   this.obtenerNotificaciones(this.userData.usuario.id);
+    // } else {
+    //   this.checkUserDataUntilAvailable();
+    // }
 
     this.ccService.popupOpen$.subscribe(() => {
       console.log('El banner de cookies está visible');
@@ -152,8 +152,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.consentGivenSubscription) {
-      this.consentGivenSubscription.unsubscribe();
-    }
+    this.consentGivenSubscription?.unsubscribe();
   }
 }
