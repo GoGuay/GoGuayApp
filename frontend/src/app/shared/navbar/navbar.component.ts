@@ -76,19 +76,19 @@ export class NavbarComponent implements OnInit {
 
   async ngOnInit() {
     // Suscribirse a cambios en el usuario
-    this.usuarioSub = this.userService.usuario$.subscribe(
-      (usuarioActualizado) => {
-        this.obtenerNotificaciones(this.userData.usuario.id);
-        if (usuarioActualizado) {
-          this.usuario = usuarioActualizado;
-          this.isLoggedIn = true;
-        } else {
-          this.usuario = null;
-          this.isLoggedIn = false;
-        }
-      }
+    // this.usuarioSub = this.userService.usuario$.subscribe(
+    //   (usuarioActualizado) => {
+    //     this.obtenerNotificaciones(this.userData.usuario.id);
+    //     if (usuarioActualizado) {
+    //       this.usuario = usuarioActualizado;
+    //       this.isLoggedIn = true;
+    //     } else {
+    //       this.usuario = null;
+    //       this.isLoggedIn = false;
+    //     }
+    //   }
 
-    );
+    // );
 
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
@@ -111,7 +111,7 @@ export class NavbarComponent implements OnInit {
     } else {
       this.validacionHomePage = false;
     }
-    await this.obtenerDatosUsuario(this.userData?.usuario?.id);
+    // await this.obtenerDatosUsuario(this.userData?.usuario?.id);
     this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
