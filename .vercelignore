@@ -1,0 +1,11 @@
+# .vercelignore
+# Ignorar carpetas comunes de Python
+**/.git
+**/__pycache__
+**/node_modules
+**/.venv
+
+# Si tienes archivos de testing, cache, o datos grandes en el backend:
+backend/tests/
+backend/cache/
+backend/large_data_file.db
