@@ -8,19 +8,11 @@
         "buildCommand": "npm run build",
         "distDir": "dist/browser"
       }
-    },
-    {
-      "src": "backend/*.py", 
-      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)", 
-      "dest": "backend/index.py"
-    },
-    {
-      "src": "/(.*\\.(?:js|css|map|ico|ttf|woff2))",
+      "src": "/(.*\\.(?:js|css|map|ico|ttf|woff2|png|jpg|jpeg|gif|svg|webp))",
       "dest": "frontend/dist/browser/$1"
     },
     {
