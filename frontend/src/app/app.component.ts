@@ -125,6 +125,7 @@ export class AppComponent implements OnInit {
   checkUserDataUntilAvailable() {
     const interval = setInterval(() => {
       this.loadUserData();
+      console.log('Comprobando datos de usuario...', this.userData);
       if (this.userData?.usuario?.id) {
         clearInterval(interval);
         this.obtenerNotificaciones(this.userData.usuario.id);
@@ -133,6 +134,7 @@ export class AppComponent implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
+    console.log('Obteniendo notificaciones para el usuario ID:', usuarioId);
     this.notificacionesService
       .obtenerNotificaciones(usuarioId)
       .subscribe((notificaciones) => {
