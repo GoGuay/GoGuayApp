@@ -78,7 +78,7 @@ export class NavbarComponent implements OnInit {
     // Suscribirse a cambios en el usuario
     // this.usuarioSub = this.userService.usuario$.subscribe(
     //   (usuarioActualizado) => {
-    //     this.obtenerNotificaciones(this.userData.usuario.id);
+    //     this.obtenerNotificaciones(this.userData?.usuario?.id);
     //     if (usuarioActualizado) {
     //       this.usuario = usuarioActualizado;
     //       this.isLoggedIn = true;

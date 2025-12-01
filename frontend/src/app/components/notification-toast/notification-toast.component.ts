@@ -25,7 +25,7 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadUserData();
-    this.cargarNotificacionesIniciales();
+    // this.cargarNotificacionesIniciales();
 
     // Suscribirse a nuevas notificaciones del servicio
     this.toastSub = this.notificationService.toast$.subscribe((nuevasToasts) => {
