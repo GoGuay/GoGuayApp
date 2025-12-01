@@ -2,14 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "npm run build",
-        "distDir": "dist/browser"        
-      }
-    },
-    {
       "src": "backend/*.py", 
       "use": "@vercel/python"
     }
@@ -21,15 +13,15 @@
     },
     {
       "src": "/(.*\\.(?:js|css|map|ico|png|jpg|jpeg|gif|svg|webp))",
-      "dest": "frontend/dist/browser/$1"
+      "dest": "dist/browser/$1"
     },
     {
       "src": "/assets/(.*)",
-      "dest": "frontend/dist/browser/assets/$1"
+      "dest": "dist/browser/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/dist/browser/index.html"
+      "dest": "dist/browser/index.html"
     }
   ]
 }
