@@ -54,13 +54,13 @@ export class AppComponent implements OnInit {
     /**
      * Cierra el menú al navegar a una nueva ruta.
      */
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        if (this.menu) {
-          this.menu.close();
-        }
-      });
+    // this.router.events
+    //   .pipe(filter(event => event instanceof NavigationEnd))
+    //   .subscribe(() => {
+    //     if (this.menu) {
+    //       this.menu.close();
+    //     }
+    //   });
 
     const consentStatus = localStorage.getItem('cookieConsentStatus');
     this.loadUserData();
