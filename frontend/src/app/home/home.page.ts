@@ -54,7 +54,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+    // this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
 
     // this.obtenerUsuarioPorID(this.userData?.usuario?.id);

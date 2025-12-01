@@ -112,7 +112,7 @@ export class NavbarComponent implements OnInit {
       this.validacionHomePage = false;
     }
     // await this.obtenerDatosUsuario(this.userData?.usuario?.id);
-    this.isLoggedIn = this.userData?.usuario?.email ? true : false;
+    // this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
   /**
