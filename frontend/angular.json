@@ -70,8 +70,7 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/",
-              "deployUrl": "/"
+              "baseHref": "/"
             },
             "development": {
               "optimization": false,
