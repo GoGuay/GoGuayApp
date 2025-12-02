@@ -22,7 +22,6 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.user import user_service
 
 
-
 def create_app():
     app = Flask(__name__)
 
@@ -34,10 +33,6 @@ def create_app():
     app.config['MAIL_PASSWORD'] = 'wzpl kaqw gtgd tnbr'
     app.config['MAIL_USE_TLS'] = True
     mail = Mail(app)
-
-
-
-
 
     app.config.from_object(Config)
     JWTManager(app)
@@ -71,13 +66,12 @@ def create_app():
     app.register_blueprint(travel_blueprint, url_prefix="/travel")
     app.register_blueprint(vehicle_blueprint, url_prefix="/vehicle")
     app.register_blueprint(apigoogle_blueprint, url_prefix="/apigoogle")
-
  
     user_service.mail = mail
     user_service.serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
     return app
 
-# if __name__ == '__main__':
-#     app = create_app()
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
