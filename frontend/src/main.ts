@@ -56,12 +56,12 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)), provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: Aura
-      }
-    }),
-    provideAnimations(),
+    // providePrimeNG({
+    //   theme: {
+    //     preset: Aura
+    //   }
+    // }),
+    // provideAnimations(),
     importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig), HttpClientModule, TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
