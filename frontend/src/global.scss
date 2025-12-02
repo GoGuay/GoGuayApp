@@ -1,10 +1,39 @@
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
-@use "./animations.scss" as *;
-@import "./animations.scss";
-@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
+// ===================================
+// IMPORTS EXTERNOS Y DE LIBRERÍAS
+// ===================================
+
+// Estilos base de Ionic (Esenciales para que los componentes se vean)
+@import "~@ionic/angular/css/core.css";
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+// Utilidades de Ionic
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+@import "~@ionic/angular/css/display.css";
+
+// Estilos de TERCEROS desde node_modules
+@import "~cookieconsent/build/cookieconsent.min.css";
+@import "~ngx-spinner/animations/ball-scale-multiple.css";
+@import "~leaflet/dist/leaflet.css"; // Solo una vez
+@import "~leaflet-routing-machine/dist/leaflet-routing-machine.css"; // (Si lo necesitas)
+
+// Estilos externos (online)
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
+
+
+// ===================================
+// TEMAS LOCALES Y CUSTOMIZACIÓN
+// ===================================
+
+// Custom Theming for Angular Material (Si estás usando Material)
+@use "@angular/material" as mat;
+
+@import "./animations.scss"; // Estilos de animación local
+@import "./theme/variables.scss"; // Variables de Ionic y colores
 
 html {
   @include mat.theme(
