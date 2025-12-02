@@ -1,39 +1,53 @@
 // ===================================
-// IMPORTS EXTERNOS Y DE LIBRERÍAS
+// 1. REGLAS @use (DEBE IR AL INICIO ABSOLUTO)
 // ===================================
 
-// Estilos base de Ionic (Esenciales para que los componentes se vean)
+@use "@angular/material" as mat; // Mueve esto a la primera línea ejecutable
+
+// ===================================
+// 2. REGLAS @import (DEPENDENCIAS DE NODE_MODULES)
+// ===================================
+
+// Importa tus variables y animaciones locales PRIMERO
+@import "./theme/variables.scss"; 
+@import "./animations.scss"; 
+
+// Importaciones de Ionic desde node_modules (SOLO UNA VEZ)
 @import "~@ionic/angular/css/core.css";
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
-// Utilidades de Ionic
+@import "~@ionic/angular/css/display.css";
 @import "~@ionic/angular/css/padding.css";
 @import "~@ionic/angular/css/float-elements.css";
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
-@import "~@ionic/angular/css/display.css";
 
-// Estilos de TERCEROS desde node_modules
+// Importaciones de librerías de terceros
 @import "~cookieconsent/build/cookieconsent.min.css";
 @import "~ngx-spinner/animations/ball-scale-multiple.css";
-@import "~leaflet/dist/leaflet.css"; // Solo una vez
-@import "~leaflet-routing-machine/dist/leaflet-routing-machine.css"; // (Si lo necesitas)
+@import "~leaflet/dist/leaflet.css";
+@import "~leaflet-routing-machine/dist/leaflet-routing-machine.css";
+// Si quieres el modo oscuro por defecto:
+@import "@ionic/angular/css/palettes/dark.system.css"; 
 
-// Estilos externos (online)
+
+// ===================================
+// 3. REGLAS EXTERNAS Y DECLARACIONES CSS GLOBALES
+// ===================================
+
+@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"); // Si mantienes esta CDN
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
 
 
-// ===================================
-// TEMAS LOCALES Y CUSTOMIZACIÓN
-// ===================================
-
-// Custom Theming for Angular Material (Si estás usando Material)
-@use "@angular/material" as mat;
-
-@import "./animations.scss"; // Estilos de animación local
-@import "./theme/variables.scss"; // Variables de Ionic y colores
+// Definición de la fuente local (Debe ir después de las importaciones)
+@font-face {
+  font-family: "Offside";
+  src: url("./assets/fonts/Offside-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 
 html {
   @include mat.theme(
@@ -48,51 +62,6 @@ html {
     )
   );
 }
-
-@font-face {
-  font-family: "Offside";
-  src: url("./assets/fonts/Offside-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
-@import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
 
 html,
 body {
