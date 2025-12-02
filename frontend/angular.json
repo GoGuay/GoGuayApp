@@ -45,9 +45,6 @@
               }
             ],
             "styles": [
-              "src/global.scss",
-              "src/animations.scss",
-              "src/theme/variables.scss",
               "node_modules/@ionic/angular/css/core.css",
               "node_modules/@ionic/angular/css/normalize.css",
               "node_modules/@ionic/angular/css/structure.css",
@@ -62,7 +59,10 @@
               "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+              "node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css",
+              "src/theme/variables.scss",
+              "src/animations.scss",
+              "src/global.scss"
             ],
             "scripts": [
               "node_modules/cookieconsent/build/cookieconsent.min.js",
