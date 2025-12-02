@@ -8,27 +8,17 @@
 @import "./theme/variables.scss"; 
 @import "./animations.scss"; 
 
-// Importaciones de Ionic desde node_modules (SOLO UNA VEZ)
+// 1. Estilos esenciales de Ionic (La base)
 @import "~@ionic/angular/css/core.css";
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
-@import "~@ionic/angular/css/display.css";
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
 
-// Si quieres el modo oscuro por defecto:
+// 2. Modo oscuro (Si es necesario)
 @import "@ionic/angular/css/palettes/dark.system.css"; 
 
-// ===================================
-// 3. REGLAS EXTERNAS Y DECLARACIONES CSS GLOBALES
-// ===================================
-
-@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
-@import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
+// 3. Estilos de terceros (Solo los que no van en angular.json, ¡como los que fallaron antes!)
+@import "~cookieconsent/build/cookieconsent.min.css";
 
 // Definición de la fuente local (Debe ir después de las importaciones)
 @font-face {
