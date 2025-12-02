@@ -1,13 +1,5 @@
 @use "@angular/material" as mat;
 
-// ===================================
-// 2. REGLAS @import (DEPENDENCIAS DE NODE_MODULES)
-// ===================================
-
-// Importa tus variables y animaciones locales PRIMERO
-@import "./theme/variables.scss"; 
-@import "./animations.scss"; 
-
 // Definición de la fuente local (Debe ir después de las importaciones)
 @font-face {
   font-family: "Offside";
