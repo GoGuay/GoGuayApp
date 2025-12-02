@@ -4,7 +4,8 @@
       <ion-item slot="header" class="white-header">
         <div class="titulo-icono">
           <mat-icon class="me-1">person_celebrate</mat-icon>
-          <p class="m-0">Estos son tus datos:</p>
+          <h4 class="m-0">{{ 'REGISTRO.RESUMEN_REGISTRO.TUS_DATOS' | translate }}</h4>
+          <p>{{ 'REGISTRO.RESUMEN_REGISTRO.INFO' | translate }}</p>
         </div>
       </ion-item>
       <div class="ion-padding" slot="content">
@@ -15,26 +16,26 @@
               <div class="d-flex justify-content-center">
                 <ul>
                   <li
-                    *ngFor="let campo of ['email', 'fecha_nacimiento', 'nombre', 'apellidos', 'telefono', 'genero', 'orientacion']"
+                    *ngFor="let campo of ['email', 'fecha_de_nacimiento', 'nombre', 'apellidos', 'telefono', 'genero', 'orientacion']"
                     class="d-flex align-items-center mb-2">
                     <i
                       [ngClass]="{
                         'fi fi-rr-at': campo === 'email',
-                        'fi fi-rr-cake-birthday': campo === 'fecha_nacimiento',
+                        'fi fi-rr-cake-birthday': campo === 'fecha_de_nacimiento',
                         'fi fi-rr-id-card': campo === 'nombre' || campo === 'apellidos',
                         'fi fi-rr-phone-call': campo === 'telefono',
                         'fi fi-rr-venus-mars': campo === 'genero',
                         'fi fi-rs-heart-half-stroke': campo === 'orientacion',
                       }"
                       class="me-1"></i>
-                    <strong class="me-1 text-capitalize">{{ campo.replace('_', ' ') }}:</strong>
+                    <strong class="me-1">{{ transformToTitleCase(campo) }}:</strong>
 
                     <div class="flex-grow-1">
                       <span *ngIf="!editando[campo]">
                         {{
                           campo === 'genero'
                             ? validacionGenero(getValorCampo(campo))
-                            : campo === 'fecha_nacimiento'
+                            : campo === 'fecha_de_nacimiento'
                               ? (getValorCampo(campo) | date: 'dd/MM/yyyy')
                               : campo === 'orientacion'
                                 ? validacionOrientacion(getValorCampo(campo))
@@ -47,14 +48,14 @@
                           class="form-control form-control-sm"
                           [formControlName]="campo"
                           [ngModel]="getValorCampo(campo)">
-                          <option value="">Seleccione una opción</option>
+                          <option value="" selected disabled hidden>{{ 'REGISTRO.RESUMEN_REGISTRO.SELECCIONA' | translate }}</option>
                           <option *ngFor="let opcion of campo === 'genero' ? generos : orientaciones" [value]="opcion">
                             {{ campo === 'genero' ? validacionGenero(opcion) : validacionOrientacion(opcion) }}
                           </option>
                         </select>
                         <!-- Input tipo date para fecha_nacimiento -->
                         <input
-                          *ngIf="campo === 'fecha_nacimiento'"
+                          *ngIf="campo === 'fecha_de_nacimiento'"
                           type="date"
                           class="form-control form-control-sm"
                           [formControlName]="campo"
@@ -67,7 +68,7 @@
                           [formControlName]="campo"
                           [ngModel]="getValorCampo(campo)" />
                         <input
-                          *ngIf="campo !== 'genero' && campo !== 'orientacion' && campo !== 'fecha_nacimiento' && campo !== 'email'"
+                          *ngIf="campo !== 'genero' && campo !== 'orientacion' && campo !== 'fecha_de_nacimiento' && campo !== 'email'"
                           type="text"
                           class="form-control form-control-sm"
                           [formControlName]="campo"
