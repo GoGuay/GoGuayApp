@@ -1,5 +1,14 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/browser"
+      }
+    }
+  ],
   "routes": [
     {
       "src": "/(.*\\.(?:js|css|map|ico|ttf|woff2|png|jpg|jpeg|gif|svg|webp))",
