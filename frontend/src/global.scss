@@ -1,4 +1,3 @@
-@use "@angular/material" as mat;
 
 // Definición de la fuente local (Debe ir después de las importaciones)
 @font-face {
@@ -8,19 +7,6 @@
   font-style: normal;
 }
 
-html {
-  @include mat.theme(
-    (
-      color: (
-        theme-type: light,
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
-}
 
 html,
 body {
