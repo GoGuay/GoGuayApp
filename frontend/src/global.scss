@@ -8,18 +8,6 @@
 @import "./theme/variables.scss"; 
 @import "./animations.scss"; 
 
-// 1. Estilos esenciales de Ionic (La base)
-@import "~@ionic/angular/css/core.css";
-@import "~@ionic/angular/css/normalize.css";
-@import "~@ionic/angular/css/structure.css";
-@import "~@ionic/angular/css/typography.css";
-
-// 2. Modo oscuro (Si es necesario)
-@import "@ionic/angular/css/palettes/dark.system.css"; 
-
-// 3. Estilos de terceros (Solo los que no van en angular.json, ¡como los que fallaron antes!)
-@import "~cookieconsent/build/cookieconsent.min.css";
-
 // Definición de la fuente local (Debe ir después de las importaciones)
 @font-face {
   font-family: "Offside";
