@@ -5,6 +5,7 @@
       "src": "/(.*\\.(?:js|css|map|ico))",
       "dest": "dist/browser/$1" 
     },
+    { "src": "/assets/(.*)", "dest": "dist/browser/assets/$1" },
     {
       "src": "/(.*\\.(?:ttf|woff2|png|jpg|jpeg|gif|svg|webp))",
       "dest": "dist/browser/$1"
