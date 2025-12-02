@@ -48,10 +48,10 @@
               "src/global.scss",
               "src/animations.scss",
               "src/theme/variables.scss",
-              "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+              "node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css",
+              "node_modules/cookieconsent/build/cookieconsent.min.css"
             ],
             "scripts": [
               "node_modules/cookieconsent/build/cookieconsent.min.js",
