@@ -1,8 +1,4 @@
-// ===================================
-// 1. REGLAS @use (DEBE IR AL INICIO ABSOLUTO)
-// ===================================
-
-@use "@angular/material" as mat; // Mueve esto a la primera línea ejecutable
+@use "@angular/material" as mat;
 
 // ===================================
 // 2. REGLAS @import (DEPENDENCIAS DE NODE_MODULES)
@@ -26,20 +22,15 @@
 
 // Importaciones de librerías de terceros
 @import "~cookieconsent/build/cookieconsent.min.css";
-@import "~ngx-spinner/animations/ball-scale-multiple.css";
-@import "~leaflet/dist/leaflet.css";
-@import "~leaflet-routing-machine/dist/leaflet-routing-machine.css";
 // Si quieres el modo oscuro por defecto:
 @import "@ionic/angular/css/palettes/dark.system.css"; 
-
 
 // ===================================
 // 3. REGLAS EXTERNAS Y DECLARACIONES CSS GLOBALES
 // ===================================
 
-@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"); // Si mantienes esta CDN
+@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
-
 
 // Definición de la fuente local (Debe ir después de las importaciones)
 @font-face {
