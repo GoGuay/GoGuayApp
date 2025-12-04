@@ -1,0 +1,9 @@
+{
+  "$schema": "https://www.angular.dev/schemas/appconfig/v1",
+  "apps": [
+    {
+      "name": "app",
+      "root": "src" 
+    }
+  ]
+}
