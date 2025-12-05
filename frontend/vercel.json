@@ -11,5 +11,7 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  ],
+  "installCommand": "npm install", 
+  "buildCommand": "ng build prideride --configuration production"
 }
