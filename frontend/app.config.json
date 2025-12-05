@@ -1,9 +1,3 @@
 {
-  "$schema": "https://www.angular.dev/schemas/appconfig/v1",
-  "apps": [
-    {
-      "name": "app",
-      "root": "src" 
-    }
-  ]
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json"
 }
