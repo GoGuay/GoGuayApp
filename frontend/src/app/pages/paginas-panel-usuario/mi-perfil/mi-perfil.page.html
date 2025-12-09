@@ -148,15 +148,15 @@
                 name="genero"
                 (ngModelChange)="onInputChange()"
                 aria-describedby="generoAyuda">
-                <option value="" selected disabled>{{'MIPERFIL.INFO_PERSONAL.GENERO.ESCOGE_OPCION' | translate}}</option>
-                <option value="HOMBRE_CIS">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_HOMBRECIS' | translate}}</option>
-                <option value="MUJER_CIS">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_MUJERCIS' | translate}}</option>
-                <option value="TRANSEXUAL">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_TRANSEXUAL' | translate}}</option>
-                <option value="NO_BINARIO">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_NOBINARIO' | translate}}</option>
-                <option value="INTERGENERO">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_INTERGENERO' | translate}}</option>
-                <option value="NO_FLUIDO">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_NOFLUIDO' | translate}}</option>
-                <option value="OTRO">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_OTROS' | translate}}</option>
-                <option value="NO_RESPONDE">{{'MIPERFIL.INFO_PERSONAL.GENERO.OPC_NORESPONDO' | translate}}</option>
+                <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}</option>
+                <option value="HOMBRE_CIS">{{ 'SELECTOR_GENERO.H_CIS' | translate }}</option>
+                <option value="MUJER_CIS">{{ 'SELECTOR_GENERO.M_CIS' | translate }}</option>
+                <option value="TRANSEXUAL">{{ 'SELECTOR_GENERO.TRANS' | translate }}</option>
+                <option value="NO_BINARIO">{{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}</option>
+                <option value="INTERGENERO">{{ 'SELECTOR_GENERO.INTER' | translate }}</option>
+                <option value="NO_FLUIDO">{{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}</option>
+                <option value="OTRO">{{ 'SELECTOR_GENERO.OTRO' | translate }}</option>
+                <option value="NO_RESPONDE">{{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}</option>
               </select>
               <span id="generoAyuda" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.GENERO.AYUDA' | translate }}</span>
             </div>
@@ -189,16 +189,17 @@
                 (ngModelChange)="onInputChange()"
                 aria-describedby="orientacionAyuda">
                 >
-                <option value="" selected disabled>{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.ESCOGE_OPCION' | translate}}</option>
-                <option value="GAY">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_GAY'| translate}}</option>
-                <option value="LESBIANA">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_LESBIANA' | translate}}</option>
-                <option value="BISEXUAL">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_BISEXUAL' | translate}}</option>
-                <option value="PANSEXUAL">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_PANSEXUAL' | translate}}</option>
-                <option value="ASEXUAL">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_ASEXUAL'| translate}}</option>
-                <option value="DEMISEXUAL">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_DEMISEXUAL' | translate}}</option>
-                <option value="QUEER">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_QUEER' | translate}}</option>
-                <option value="OTRO">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_OTROS'| translate}}</option>
-                <option value="NO_RESPONDE">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.OPC_NORESPONDO' | translate}}</option>
+                <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}</option>
+                <option value="GAY">{{ 'SELECTOR_ORIENTACION.GAY' | translate }}</option>
+                <option value="LESBIANA">{{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}</option>
+                <option value="BISEXUAL">{{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}</option>
+                <option value="PANSEXUAL">{{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}</option>
+                <option value="ASEXUAL">{{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}</option>
+                <option value="DEMISEXUAL">{{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}</option>
+                <option value="QUEER">{{ 'SELECTOR_ORIENTACION.QUEER' | translate }}</option>
+                <option value="HETEROSEXUAL">{{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}</option>
+                <option value="OTRO">{{ 'SELECTOR_ORIENTACION.OTRO' | translate }}</option>
+                <option value="NO_RESPONDE">{{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}</option>
               </select>
               <span id="orientacionAyuda" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.ORIENTACION.AYUDA' | translate }}</span>
             </div>

@@ -46,8 +46,14 @@ li {
     padding: 0.25rem;
     font-size: 0.9rem;
   }
+}
 
-
+.posicion_error {
+  top: 40%;
+  bottom: 0;
+  z-index: 9999;
+  left: 75%;
+  position: absolute;
 }
 
 .boton_rechazo {

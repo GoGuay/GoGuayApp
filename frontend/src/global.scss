@@ -298,3 +298,31 @@ ion-content::-webkit-scrollbar-thumb:hover,
   width: 20px;
   height: 20px;
 }
+
+/* 1. Asegura que los botones y inputs enfocados muestren el contorno */
+.btn:focus,
+.btn:focus-visible {
+  /* Utiliza el outline por defecto del navegador para accesibilidad */
+  outline: auto;
+
+  /* Opcional: Define un contorno explícito para mayor visibilidad (buena práctica de accesibilidad) */
+  outline: 3px solid #0d6efd;
+  /* Color azul de Bootstrap o de tu marca */
+  outline-offset: 1px;
+
+  /* Si estás usando Bootstrap, puedes querer redefinir la sombra para el foco */
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 2. Asegúrate de que tu clase específica 'btn_bg' también respeta el foco si está sobreescribiendo el estilo */
+.btn_bg:focus {
+  outline: 3px solid #0d6efd !important;
+}
+
+/* 3. También es importante asegurar que la fecha de nacimiento y otros inputs muestren el foco */
+.form-control:focus {
+  /* Puedes usar una regla similar a la de Bootstrap por defecto */
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: 0;
+}

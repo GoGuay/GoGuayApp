@@ -2,10 +2,13 @@
   <div class="container" id="resumen_datos_registro">
     <div value="first" class="contenido">
       <ion-item slot="header" class="white-header">
-        <div class="titulo-icono">
-          <mat-icon class="me-1">person_celebrate</mat-icon>
-          <h4 class="m-0">{{ 'REGISTRO.RESUMEN_REGISTRO.TUS_DATOS' | translate }}</h4>
-          <p>{{ 'REGISTRO.RESUMEN_REGISTRO.INFO' | translate }}</p>
+        <div class="d-flex flex-column w-100">
+          <div class="titulo-icono">
+            <mat-icon class="me-1">person_celebrate</mat-icon>
+            <h4 class="m-0">{{ 'REGISTRO.RESUMEN_REGISTRO.TUS_DATOS' | translate }}</h4>
+          </div>
+
+          <p class="d-flex justify-content-center mt-2">{{ 'REGISTRO.RESUMEN_REGISTRO.INFO' | translate }}</p>
         </div>
       </ion-item>
       <div class="ion-padding" slot="content">
@@ -59,29 +62,72 @@
                           type="date"
                           class="form-control form-control-sm"
                           [formControlName]="campo"
+                          min="1930-01-01"
+                          aria-describedby="fnacimientoHelp"
+                          [max]="fechaMaxima"
+                          required
+                          (change)="onFechaChange()"
                           [ngModel]="getValorCampo(campo)" />
+                        <span id="fnacimientoHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.FNACIMIENTO.AYUDA' | translate }}</span>
+                        <div
+                          class="text-danger posicion_error"
+                          *ngIf="formularioResumen.get('fecha_de_nacimiento')?.invalid && formularioResumen.get('fecha_de_nacimiento')?.touched">
+                          <span *ngIf="formularioResumen.get('fecha_de_nacimiento')?.errors?.['fechalimite']">
+                            {{ 'REGISTRO.FORM1.FNACIMIENTO.INCORRECTA' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('fecha_de_nacimiento')?.errors?.['required']">
+                            {{ 'REGISTRO.FORM1.FNACIMIENTO.OBLIGATORIA' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('fecha_de_nacimiento')?.errors?.['menorDeEdad']">
+                            {{ 'REGISTRO.FORM1.FNACIMIENTO.MENOR_EDAD' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('fecha_de_nacimiento')?.errors?.['fechaFutura']">
+                            {{ 'REGISTRO.FORM1.FNACIMIENTO.SUPERIORACTUAL' | translate }}
+                          </span>
+                        </div>
                         <!-- Input tipo email -->
                         <input
                           *ngIf="campo === 'email'"
                           type="email"
+                          required
+                          inputmode="email"
+                          id="email"
+                          name="email"
+                          aria-describedby="emailHelp"
+                          autocomplete="email"
                           class="form-control form-control-sm"
                           [formControlName]="campo"
-                          [ngModel]="getValorCampo(campo)" />
+                          (input)="validarCampo('email', formularioResumen)" />
+                        <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}</span>
+
+                        <div
+                          *ngIf="formularioResumen.get('email')?.invalid && formularioResumen.get('email')?.touched"
+                          class="text-danger posicion_error">
+                          <span *ngIf="formularioResumen.get('email')?.errors?.['required']">
+                            {{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('email')?.errors?.['pattern']">{{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}</span>
+                          <span *ngIf="formularioResumen.get('email')?.errors?.['emailRepetido']">
+                            {{ 'REGISTRO.FORM1.CORREO.YAEXISTE' | translate }}
+                          </span>
+                        </div>
+                        <!-- Input teléfono -->
                         <input
                           *ngIf="campo !== 'genero' && campo !== 'orientacion' && campo !== 'fecha_de_nacimiento' && campo !== 'email'"
                           type="text"
+                          required
                           class="form-control form-control-sm"
-                          [formControlName]="campo"
-                          [ngModel]="getValorCampo(campo)" />
-                        <div
-                          *ngIf="
-                            formularioResumen.controls[campo] &&
-                            formularioResumen.controls[campo].invalid &&
-                            (formularioResumen.controls[campo].dirty || formularioResumen.controls[campo].touched)
-                          "
-                          class="text-danger small mt-2">
-                          <span *ngIf="formularioResumen.controls[campo].errors?.['required']">Este campo es obligatorio</span>
-                          <span *ngIf="formularioResumen.controls[campo].errors?.['pattern']">Formato inválido (9 dígitos)</span>
+                          [formControlName]="campo" />
+                        <div *ngIf="formularioResumen.get('telefono')?.invalid && formularioResumen.get('telefono')?.touched" class="text-danger">
+                          <span class="text-danger posicion_error" *ngIf="formularioResumen.get('telefono')?.errors?.['required']">
+                            {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('telefono')?.errors?.['pattern']">
+                            {{ 'REGISTRO.FORM2.TELEFONO.FORMATO' | translate }}
+                          </span>
+                          <span *ngIf="formularioResumen.get('telefono')?.errors?.['telefonoRepetido']">
+                            {{ 'REGISTRO.FORM2.TELEFONO.YAEXISTE' | translate }}
+                          </span>
                         </div>
                       </ng-container>
                     </div>

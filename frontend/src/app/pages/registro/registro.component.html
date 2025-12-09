@@ -32,11 +32,9 @@
             aria-describedby="emailHelp"
             autocomplete="email"
             (blur)="validarCampo('email', formulario1)"
-            (keydown.tab)="enfocarSiguiente($event, 'fnacimiento')"
             (ngModelChange)="onInputChange()" />
           <!-- Mensaje de ayuda accesible -->
           <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}</span>
-
           <div *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched" class="text-danger">
             <span *ngIf="formulario1.get('email')?.errors?.['required']">{{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}</span>
             <span *ngIf="formulario1.get('email')?.errors?.['pattern']">{{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}</span>
@@ -135,6 +133,9 @@
           <span class="text-danger" *ngIf="formulario2.get('telefono')?.errors?.['pattern']">
             {{ 'REGISTRO.FORM2.TELEFONO.FORMATO' | translate }}
           </span>
+          <span class="text-danger" *ngIf="formulario2.get('telefono')?.errors?.['required']">
+            {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
+          </span>
           <span class="text-danger" *ngIf="formulario2.get('telefono')?.errors?.['telefonoRepetido']">
             {{ 'REGISTRO.FORM2.TELEFONO.YAEXISTE' | translate }}
           </span>
@@ -204,7 +205,6 @@
             aria-describedby="info_orientacion"
             (input)="escucharCambiosFormulario2('orientacion')">
             <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}</option>
-
             <option value="GAY">{{ 'SELECTOR_ORIENTACION.GAY' | translate }}</option>
             <option value="LESBIANA">
               {{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}
@@ -222,6 +222,7 @@
               {{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}
             </option>
             <option value="QUEER">{{ 'SELECTOR_ORIENTACION.QUEER' | translate }}</option>
+            <option value="HETEROSEXUAL">{{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}</option>
             <option value="OTRO">{{ 'SELECTOR_ORIENTACION.OTRO' | translate }}</option>
             <option value="NO_RESPONDE">
               {{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}
@@ -286,12 +287,13 @@
 
   <nav aria-label="Page navigation example">
     <div class="d-flex justify-content-center">
-      <button id="btnSiguiente" *ngIf="!paso1" type="button" class="btn btn_bg" (click)="pasoAnterior()">
+      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg" (click)="pasoAnterior()">
         {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
       </button>
 
       <button
         type="button"
+        id="btnSiguiente"
         class="btn btn_bg ms-3"
         *ngIf="pasoActual !== 3"
         [disabled]="(pasoActual === 1 && !validarEmailYFecha) || (pasoActual === 2 && !formulario2.valid) || (pasoActual === 3 && !formulario3.valid)"

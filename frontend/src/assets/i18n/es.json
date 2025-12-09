@@ -37,6 +37,7 @@
     "ASEXUAL": "Asexual",
     "DEMISEXUAL": "Demisexual",
     "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
@@ -162,6 +163,7 @@
       "LABEL_APELLIDOS": "Apellidos",
       "TELEFONO": {
         "LABEL": "Teléfono",
+        "OBLIGATORIO": "El número de teléfono es obligatorio",
         "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
         "YAEXISTE": "Este teléfono ya nos consta registrado."
       },

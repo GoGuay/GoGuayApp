@@ -32,6 +32,8 @@ export class RegistroComponent implements OnInit {
   fechaValida: boolean = false;
   hoy: string = new Date().toISOString();
   mostrarPassword1: boolean = false;
+  EMAIL_REGEX =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   constructor(
     private fb: FormBuilder,
@@ -41,7 +43,7 @@ export class RegistroComponent implements OnInit {
     private funcionesComunes: FuncionesComunes,
   ) {
     this.formulario1 = this.fb.group({
-      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
+      email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
     this.fechaNacimiento = this.formulario1.get('fecha_nacimiento')?.value;
