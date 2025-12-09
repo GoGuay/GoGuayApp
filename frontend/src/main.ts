@@ -11,26 +11,25 @@ import { importProvidersFrom } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 
-
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
-    domain: ''
+    domain: '',
   },
   position: 'bottom',
   theme: 'block',
   palette: {
     popup: {
       background: '#000',
-      text: '#fff'
+      text: '#fff',
     },
     button: {
       background: '#f1d600',
-      text: '#000'
-    }
+      text: '#000',
+    },
   },
   type: 'opt-in',
   content: {
@@ -39,7 +38,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     deny: 'Rechazar',
     link: 'Cookies.',
     href: '/cookies',
-    policy: 'Política de cookies.'
+    policy: 'Política de cookies.',
   },
   elements: {
     messagelink: `
@@ -47,27 +46,33 @@ const cookieConfig: NgcCookieConsentConfig = {
       {{message}}
       <a aria-label="Leer mas sobre los términos del servicio" tabindex="2" class="cc-link" href="{{href}}" target="_blank" rel="noopener">{{link}}</a>
     </span>
-    `
-  }
+    `,
+  },
 };
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
-    provideRouter(routes, withPreloading(PreloadAllModules)), provideAnimationsAsync(),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideAnimationsAsync(),
+    MessageService,
     providePrimeNG({
       theme: {
-        preset: Aura
-      }
+        preset: Aura,
+      },
     }),
     provideAnimations(),
-    importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig), HttpClientModule, TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      },
-    }))
+    importProvidersFrom(
+      NgcCookieConsentModule.forRoot(cookieConfig),
+      HttpClientModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      }),
+    ),
   ],
 });

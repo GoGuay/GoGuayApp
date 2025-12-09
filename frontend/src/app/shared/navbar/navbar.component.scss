@@ -11,19 +11,39 @@ ion-button {
   border-radius: 50%;
 }
 
-.brand-title {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  font-size: 30px;
-  font-weight: bold;
-  color: #000;
-}
+
 
 .idiomas {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   mix-blend-mode: multiply; // elimina el fondo blanco del gif
+}
+
+.icon-idioma {
+  width: 32px;
+  /* Define un ancho fijo para las banderas */
+  height: auto;
+  /* Mantiene la proporción */
+  cursor: pointer;
+  border: 1px solid #ccc;
+  /* Opcional: borde para mejor visualización */
+  border-radius: 4px;
+  /* Opcional: bordes redondeados */
+  transition: filter 0.3s ease, transform 0.2s ease;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+  /* Pequeño efecto al pasar el ratón */
+}
+
+/* Estilo para el idioma no seleccionado (Blanco y negro) */
+.grayscale-filter {
+  filter: grayscale(100%);
+  /* Convierte la imagen a blanco y negro */
+  opacity: 0.7;
+  /* Reduce ligeramente la opacidad del inactivo */
 }
 
 .caja-icono {
@@ -73,11 +93,7 @@ ion-button {
   color: black;
 }
 
-.flag-icon {
-  width: 20%;
-  border-radius: 8px;
-  margin-right: 8%;
-}
+
 
 .navbar {
   position: relative;
@@ -135,6 +151,7 @@ ion-button {
   visibility: visible;
   transform: translateY(0);
 }
+
 .navbar .dropdown-menu li {
   transition: transform 0.2s ease-in-out;
 }
@@ -195,5 +212,28 @@ ul {
     transition: all 0.3s ease-in-out;
     display: block;
   }
-}
 
+  .logo-mobile-small {
+    width: 50px;
+    /* Puedes ajustar este valor */
+    height: auto;
+  }
+
+  /* Asegura que el navbar-brand (que contiene el logo) no tenga margen extra */
+  .navbar-brand {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  /* Asegura que el toggler se alinee a la derecha de ese bloque */
+  .navbar-toggler {
+    /* ms-auto ya debería funcionar en el HTML, pero este CSS es una seguridad */
+    margin-left: auto !important;
+  }
+
+  /* Oculta los elementos de escritorio que no se ocultaron con d-none */
+  /* Aunque ya se corrigió con las clases, puede ser útil para elementos específicos */
+  .d-lg-block {
+    display: none !important;
+  }
+}

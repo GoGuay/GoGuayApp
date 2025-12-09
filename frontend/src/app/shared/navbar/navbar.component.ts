@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { IonicModule, NavController, Platform } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,22 +9,17 @@ import { Router, RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom, Subscription } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    IonicModule,
-    MatIconModule,
-    TranslateModule,
-    CommonModule,
-    MatDivider,
-    RouterLink,
-  ],
+  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
+  selectedLanguage: string = this.languageService.getLanguage() || 'es';
   /**
    * Variables que van a recibir información de otros componentes
    * mediante la anotación "Input()"
@@ -66,24 +55,24 @@ export class NavbarComponent implements OnInit {
     private platform: Platform,
     private languageService: LanguageService,
     private userService: UserServicesService,
-    private element: ElementRef
+    private element: ElementRef,
+    private translate: TranslateService,
+    private messageService: MessageService,
   ) {
     this.loadUserData();
   }
 
   async ngOnInit() {
     // Suscribirse a cambios en el usuario
-    this.usuarioSub = this.userService.usuario$.subscribe(
-      (usuarioActualizado) => {
-        if (usuarioActualizado) {
-          this.usuario = usuarioActualizado; // objeto interno directamente
-          this.isLoggedIn = true;
-        } else {
-          this.usuario = null;
-          this.isLoggedIn = false;
-        }
+    this.usuarioSub = this.userService.usuario$.subscribe((usuarioActualizado) => {
+      if (usuarioActualizado) {
+        this.usuario = usuarioActualizado; // objeto interno directamente
+        this.isLoggedIn = true;
+      } else {
+        this.usuario = null;
+        this.isLoggedIn = false;
       }
-    );
+    });
 
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
@@ -161,9 +150,7 @@ export class NavbarComponent implements OnInit {
    */
   async obtenerDatosUsuario(id_usuario: number) {
     if (id_usuario) {
-      this.usuario = await lastValueFrom(
-        this.userService.obtenerUsuarioPorID(id_usuario)
-      );
+      this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
     }
   }
 
@@ -174,9 +161,9 @@ export class NavbarComponent implements OnInit {
    *
    * @param lang Recibe el idioma seleccionado en el selector de idiomas.
    */
-  changeLanguage(lang: string) {
-    this.languageService.setLanguage(lang);
-  }
+  // changeLanguage(lang: string) {
+  //   this.languageService.setLanguage(lang);
+  // }
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
@@ -233,5 +220,37 @@ export class NavbarComponent implements OnInit {
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+  /**
+   * Recibe el idioma directamente por parámetro de entrada
+   * Comprueba si ya es el idioma seleccionado para evitar recargas.
+   * this.selectedLanguage = selectedLanguage; -->  Actualiza el estado para el [ngClass]
+   * @param selectedLanguage
+   * @returns
+   */
+  changeLanguage(selectedLanguage: string) {
+    // Recibe el idioma directamente
+    // Comprobar si ya es el idioma seleccionado para evitar recargas innecesarias
+    if (this.selectedLanguage === selectedLanguage) {
+      return;
+    }
+
+    // Ya no necesitas (event.target as HTMLSelectElement).value;
+    console.log(selectedLanguage);
+
+    this.languageService.setLanguage(selectedLanguage);
+    this.selectedLanguage = selectedLanguage;
+    this.translate.use(selectedLanguage);
+
+    //Lanza la notificación
+    this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+        life: 3000,
+      });
+    });
   }
 }
