@@ -9,7 +9,17 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import { IonicModule, NavController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonContent,
+  IonFooter,
+  IonFab,
+  IonFabButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  NavController,
+} from '@ionic/angular/standalone';
 import { BuscaUnViajePrincipalComponent } from '../components/busca-un-viaje-principal/busca-un-viaje-principal.component';
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
@@ -24,7 +34,6 @@ import { Usuario } from '../models/user/usuario.model';
   imports: [
     FooterComponent,
     JumbotronComponent,
-    IonicModule,
     NuevoViajeGeneralComponent,
     MatDividerModule,
     TrayectosPopularesComponent,
@@ -33,7 +42,15 @@ import { Usuario } from '../models/user/usuario.model';
     AnimateOnScrollModule,
     NavbarComponent,
     BuscaUnViajePrincipalComponent,
-    CommonModule,
+    CommonModule, 
+    IonHeader,
+    IonContent,
+    IonFooter,
+    IonFab,
+    IonFabButton,
+    IonGrid,
+    IonRow,
+    IonCol
   ],
 })
 export class HomePage implements OnInit {

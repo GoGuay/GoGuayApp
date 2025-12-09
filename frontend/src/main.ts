@@ -10,9 +10,6 @@ import { importProvidersFrom } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import {  TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
-import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
-
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
