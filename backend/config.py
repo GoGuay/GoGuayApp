@@ -9,6 +9,8 @@ class Config:
     JWT_TOKEN_LOCATION = ["headers"]
     JWT_HEADER_NAME = "Authorization"
     JWT_HEADER_TYPE = "Bearer"
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'BBDD', 'prideride.db')
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'BBDD', 'prideride.db')
+
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

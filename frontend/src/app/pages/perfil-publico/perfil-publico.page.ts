@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, NavController } from '@ionic/angular';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { MatDivider } from '@angular/material/divider';
-import { MatIcon } from '@angular/material/icon';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { ViajeSeleccionadoComponent } from 'src/app/components/viaje-seleccionado/viaje-seleccionado.component';
 import { Viaje } from 'src/app/models/travel/viaje.model';
@@ -26,7 +24,7 @@ import { Observable } from 'rxjs';
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, MatIcon, MatTooltipModule, SpinnerComponent],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatTooltipModule, SpinnerComponent],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
@@ -88,7 +86,7 @@ export class PerfilPublicoPage implements OnInit {
       this.obtenerViajesCreados();
     });
     this.urlPrevia = localStorage.getItem('url_anterior') || '';
-    this.urlParaVolver  = this.comprobarUrls(this.urlPrevia);
+    this.urlParaVolver = this.comprobarUrls(this.urlPrevia);
     this.comprobarNotificaciones();
     /**
      * Se comprueba cada 10 segundos si el usuario tiene notificaiones
@@ -116,6 +114,8 @@ export class PerfilPublicoPage implements OnInit {
         return '/busqueda-viajes';
       case '/panel-usuario':
         return '/panel-usuario';
+      case '/mi-perfil':
+        return '/mi-perfil';
       default:
         return '';
     }
@@ -167,7 +167,7 @@ export class PerfilPublicoPage implements OnInit {
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
-      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario);
+      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario.preferencias);
     });
   }
 

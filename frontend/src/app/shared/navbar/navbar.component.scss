@@ -2,6 +2,10 @@
   background-color: #f0d7b4;
 }
 
+.boxHeader {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
 ion-button {
   color: #000000 !important;
 }
@@ -11,12 +15,22 @@ ion-button {
   border-radius: 50%;
 }
 
-.brand-title {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  font-size: 30px;
-  font-weight: bold;
-  color: #000;
+.logo_mobile {
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.navbar-diseno ul,
+.navbar-diseno li {
+  list-style: none;
+}
+
+.opciones li {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 
 .idiomas {
@@ -106,7 +120,7 @@ ion-button {
   border: none;
   background-color: #f0d7b4;
   border-radius: 15px;
-  width: 250px;
+  width: auto;
 }
 
 // Botón Salir
@@ -143,10 +157,6 @@ ion-button {
   transform: translateX(5px);
 }
 
-.menuusuario {
-  // width: 280px;
-}
-
 ul {
   list-style: none;
   padding-left: 0;
@@ -169,6 +179,18 @@ ul {
   height: 24px;
 }
 
+// Evita errores de tamaño al abrir el menú en dispositivos móviles
+.navbar-collapse.collapsing {
+  transition: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.navbar-collapse.show {
+  height: auto !important;
+  overflow: visible !important;
+}
+
 @media (max-width: 576px) {
   .navbar .dropdown-menu {
     position: absolute;
@@ -182,5 +204,84 @@ ul {
     visibility: hidden;
     transition: all 0.3s ease-in-out;
     display: block;
+  }
+
+  .logo {
+    width: 60px;
+    border-radius: 50%;
+  }
+  .btnNotificaciones img {
+    width: 45px;
+    height: 40px;
+  }
+}
+
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+  color: black;
+}
+
+.mobile-navbar {
+  position: relative;
+  width: auto;
+}
+
+.centered-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.btnNotificaciones {
+  width: 84px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnNotificaciones img {
+  width: 45px;
+  height: 40px;
+}
+
+.badge-notificaciones {
+  position: absolute;
+  bottom: 20px;
+  right: 128px;
+  transform: translate(50%, 50%);
+  background-color: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+  .mobile-navbar {
+    width: 100%; /* solo en móvil */
   }
 }

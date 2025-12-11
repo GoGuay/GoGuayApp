@@ -14,10 +14,12 @@
             <div class="container d-flex align-items-center">
               <div class="container">
                 <ion-grid>
+
+                  <!-- ORIGEN -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>location_on</mat-icon> <strong>Origen:</strong>
-                      <span *ngIf="!editMode.origen">{{ currentViajeData.origen }}</span>
+                      <span class="ms-2" *ngIf="!editMode.origen">{{ currentViajeData?.origen }}</span>
                       <input *ngIf="editMode.origen" [(ngModel)]="origen"
                         (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
                         placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control">
@@ -37,10 +39,11 @@
                     </ion-col>
                   </ion-row>
 
+                  <!-- DESTINO -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>flag</mat-icon> <strong>Destino: </strong>
-                      <span *ngIf="!editMode.destino">{{ currentViajeData.destino }}</span>
+                      <span class="ms-2" *ngIf="!editMode.destino">{{ currentViajeData?.destino }}</span>
                       <input *ngIf="editMode.destino" [(ngModel)]="destino"
                         (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
                         placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control">
@@ -59,12 +62,13 @@
                     </ion-col>
                   </ion-row>
 
+                  <!-- COCHE SELECCIONADO -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>directions_car</mat-icon> <strong>Coche seleccionado:</strong>
 
-                      <span *ngIf="!editMode.coche">
-                        {{ currentViajeData.coche.marca }} {{ currentViajeData.coche.modelo }}
+                      <span class="ms-2" *ngIf="!editMode.coche">
+                        {{ nombreVehiculo }}
                       </span>
                       <select *ngIf="editMode.coche" class="form-select" [(ngModel)]="editableFields.coche"
                         [ngModelOptions]="{ standalone: true }" aria-label="Selección de coche">
@@ -83,11 +87,12 @@
                     </ion-col>
                   </ion-row>
 
+                  <!-- HORA DE SALIDA -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>schedule</mat-icon> <strong>Hora de salida:</strong>
                       <input type="time" [(ngModel)]="editableFields.hora_salida" *ngIf="editMode.hora_salida">
-                      <span *ngIf="!editMode.hora_salida">{{ currentViajeData.hora_salida }}</span>
+                      <span class="ms-2" *ngIf="!editMode.hora_salida">{{ currentViajeData?.hora_salida }}</span>
 
                     </ion-col>
                     <ion-col size="12" size-md="3">
@@ -97,21 +102,23 @@
                     </ion-col>
                   </ion-row>
 
+                  <!-- HORA DE LLEGADA -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>schedule</mat-icon> <strong>Hora de llegada:</strong>
-                      <span>{{ calcularHoraLlegada(currentViajeData.hora_salida,
-                        currentViajeData.tiempoTotal) }}</span>
+                      <span class="ms-2">{{ calcularHoraLlegada(currentViajeData?.hora_salida,
+                        currentViajeData?.ruta_seleccionada?.routes[0]?.legs[0]?.duration?.text) }}</span>
                     </ion-col>
                     <ion-col>
                       <br>
                     </ion-col>
                   </ion-row>
 
+                  <!-- PLAZAS DISPONIBLES -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>group</mat-icon> <strong>Número de plazas disponibles:</strong>
-                      <span *ngIf="!editMode.plazas">{{ currentViajeData.plazas }}</span>
+                      <span class="ms-2" *ngIf="!editMode.plazas">{{ currentViajeData?.plazas }}</span>
                       <input *ngIf="editMode.plazas" type="number" [(ngModel)]="editableFields.plazas" />
 
                     </ion-col>
@@ -122,12 +129,13 @@
                     </ion-col>
                   </ion-row>
 
+                  <!-- PRECIO -->
                   <ion-row>
                     <ion-col size="12" size-md="9">
                       <mat-icon>attach_money</mat-icon> <strong>Precio:</strong>
-                      <span *ngIf="!editMode.precio_viaje">{{ currentViajeData.precio_viaje }} €</span>
-                      <input *ngIf="editMode.precio_viaje" type="number" [(ngModel)]="editableFields.precio_viaje"
-                        class="currencyInput" />
+                      <span class="ms-2" *ngIf="!editMode.precio_viaje">{{ currentViajeData?.precio_viaje }} €</span>
+                      <input class="ms-2" *ngIf="editMode.precio_viaje" type="number"
+                        [(ngModel)]="editableFields.precio_viaje" class="currencyInput" />
 
                     </ion-col>
                     <ion-col size="12" size-md="3">

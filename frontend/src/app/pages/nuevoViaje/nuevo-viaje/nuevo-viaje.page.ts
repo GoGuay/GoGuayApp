@@ -4,16 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -53,13 +53,15 @@ export class NuevoViajePage implements OnInit {
   cargandoOrigen: boolean = false;
   cargandoDestino: boolean = false;
 
+  irAtrasImg: string = '../../../assets/sistema/atras.png';
+
   constructor(
     private navCtrl: NavController,
     private viajesService: TravelService,
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private location: Location
   ) {
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
@@ -209,6 +211,10 @@ export class NuevoViajePage implements OnInit {
     };
     this.viajesService.setViajeData(viajeData);
     this.funcionesComunes.sugerenciasDestino = [];
+  }
+
+  goBack() {
+    this.location.back();
   }
   
 }

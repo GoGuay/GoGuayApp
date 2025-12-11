@@ -1,0 +1,164 @@
+<div class="container">
+  <div class="container" id="resumen_viaje">
+    <div value="first" class="contenido">
+      <ion-item slot="header" class="white-header">
+        <mat-icon class="me-1">location_on</mat-icon>
+        <ion-label>ESTOS SON TUS DATOS</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <div class="container d-flex justify-content-center dialog-animate">
+          <div class="row w-100">
+            <!-- Columna central con resumen de datos guardados -->
+            <form [formGroup]="formularioResumen" class="formulario">
+              <div class="d-flex justify-content-center">
+                <ul>
+                  <li
+                    *ngFor="
+                      let campo of [
+                        'email',
+                        'fecha_nacimiento',
+                        'nombre',
+                        'apellidos',
+                        'telefono',
+                        'genero',
+                        'orientacion'
+                      ]
+                    "
+                    class="d-flex align-items-center mb-2"
+                  >
+                    <i
+                      [ngClass]="{
+                        'fi fi-rr-at': campo === 'email',
+                        'fi fi-rr-cake-birthday': campo === 'fecha_nacimiento',
+                        'fi fi-rr-id-card':
+                          campo === 'nombre' || campo === 'apellidos',
+                        'fi fi-rr-phone-call': campo === 'telefono',
+                        'fi fi-rr-venus-mars': campo === 'genero',
+                        'fi fi-rs-heart-half-stroke': campo === 'orientacion'
+                      }"
+                      class="me-1"
+                    ></i>
+                    <strong class="me-1 text-capitalize"
+                      >{{ campo.replace("_", " ") }}:</strong
+                    >
+
+                    <div class="flex-grow-1">
+                      <span *ngIf="!editando[campo]">
+                        {{
+                          campo === "genero"
+                            ? validacionGenero(getValorCampo(campo))
+                            : campo === "fecha_nacimiento"
+                            ? (getValorCampo(campo) | date : "dd/MM/yyyy")
+                            : campo === "orientacion"
+                            ? validacionOrientacion(getValorCampo(campo))
+                            : getValorCampo(campo)
+                        }}
+                      </span>
+                      <ng-container *ngIf="editando[campo]">
+                        <select
+                          *ngIf="campo === 'genero' || campo === 'orientacion'"
+                          class="form-control form-control-sm"
+                          [formControlName]="campo"
+                          [ngModel]="getValorCampo(campo)"
+                        >
+                          <option value="">Seleccione una opción</option>
+                          <option
+                            *ngFor="
+                              let opcion of campo === 'genero'
+                                ? generos
+                                : orientaciones
+                            "
+                            [value]="opcion"
+                          >
+                            {{
+                              campo === "genero"
+                                ? validacionGenero(opcion)
+                                : validacionOrientacion(opcion)
+                            }}
+                          </option>
+                        </select>
+                        <!-- Input tipo date para fecha_nacimiento -->
+                        <input
+                          *ngIf="campo === 'fecha_nacimiento'"
+                          type="date"
+                          class="form-control form-control-sm"
+                          [formControlName]="campo"
+                          [ngModel]="getValorCampo(campo)"
+                        />
+                        <!-- Input tipo email -->
+                        <input
+                          *ngIf="campo === 'email'"
+                          type="email"
+                          class="form-control form-control-sm"
+                          [formControlName]="campo"
+                          [ngModel]="getValorCampo(campo)"
+                        />
+                        <input
+                          *ngIf="
+                            campo !== 'genero' &&
+                            campo !== 'orientacion' &&
+                            campo !== 'fecha_nacimiento' &&
+                            campo !== 'email'
+                          "
+                          type="text"
+                          class="form-control form-control-sm"
+                          [formControlName]="campo"
+                          [ngModel]="getValorCampo(campo)"
+                        />
+                        <div
+                          *ngIf="
+                            formularioResumen.controls[campo] &&
+                            formularioResumen.controls[campo].invalid &&
+                            (formularioResumen.controls[campo].dirty ||
+                              formularioResumen.controls[campo].touched)
+                          "
+                          class="text-danger small mt-2"
+                        >
+                          <span
+                            *ngIf="
+                            formularioResumen.controls[campo].errors?.['required']
+                          "
+                          >
+                            Este campo es obligatorio
+                          </span>
+                          <span
+                            *ngIf="
+                            formularioResumen.controls[campo].errors?.['pattern']
+                          "
+                          >
+                            Formato inválido (9 dígitos)
+                          </span>
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <!-- Íconos -->
+                    <i
+                      *ngIf="!editando[campo]"
+                      class="fi fi-rr-pencil ms-2"
+                      style="cursor: pointer"
+                      (click)="activarEdicion(campo)"
+                    ></i>
+
+                    <button
+                      *ngIf="editando[campo] && hayCambio(campo)"
+                      (click)="guardar(campo)"
+                    >
+                      <i class="fi fi-rs-disk"></i>
+                    </button>
+                    <button
+                      *ngIf="editando[campo]"
+                      (click)="desactivarEdicion(campo)"
+                    >
+                      <i class="fi fi-rr-circle-xmark"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

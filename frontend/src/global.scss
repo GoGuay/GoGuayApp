@@ -4,16 +4,20 @@
 @use "./animations.scss" as *;
 @import "./animations.scss";
 @import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
-@import url('https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css');
+@import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
 
 html {
-  @include mat.theme((color: (theme-type: light,
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
-    ));
+    )
+  );
 }
 
 @font-face {
@@ -77,7 +81,6 @@ body {
   scroll-behavior: smooth;
 }
 
-
 h1,
 h2,
 h3,
@@ -92,6 +95,7 @@ ion-title,
 ion-label,
 ion-input,
 ion-select,
+ion-item,
 textarea,
 label,
 small {
@@ -197,32 +201,31 @@ html.cdk-global-scrollblock {
 
 /* Parte que puedes arrastrar */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #b3e6b3,
-      #99ccff,
-      #d1b3ff,
-      #ffb3d1);
+  background: linear-gradient(
+    180deg,
+    #ffb3b3,
+    #ffcc99,
+    #b3e6b3,
+    #99ccff,
+    #d1b3ff,
+    #ffb3d1
+  );
   border-radius: 10px;
   border: 2px solid #f5f5f5;
 }
 
 /* Cuando la barra de desplazamiento se encuentra en hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #99d699,
-      #66b2ff,
-      #c299ff,
-      #ff99c2);
+  background: linear-gradient(
+    180deg,
+    #ff9999,
+    #ffb366,
+    #99d699,
+    #66b2ff,
+    #c299ff,
+    #ff99c2
+  );
 }
-
-
-
-
-
 
 /*
  *    BARRA DE SCROLL GENERAL PERSONALIZADA
@@ -249,38 +252,43 @@ ion-content::-webkit-scrollbar-track,
 
 ion-content::-webkit-scrollbar-thumb,
 ::part(scroll)::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #99e699,
-      #99ccff,
-      #c299ff,
-      #ff99cc);
+  background: linear-gradient(
+    180deg,
+    #ffb3b3,
+    #ffcc99,
+    #99e699,
+    #99ccff,
+    #c299ff,
+    #ff99cc
+  );
   border-radius: 10px;
   border: 2px solid #f0f0f0;
 }
 
 ion-content::-webkit-scrollbar-thumb:hover,
 ::part(scroll)::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #85d685,
-      #66b3ff,
-      #b366ff,
-      #ff66b3);
+  background: linear-gradient(
+    180deg,
+    #ff9999,
+    #ffb366,
+    #85d685,
+    #66b3ff,
+    #b366ff,
+    #ff66b3
+  );
 }
-
 
 /* AJUSTES PARA EL TOOLTIP */
 .custom-tooltip {
-  background: linear-gradient(45deg,
-      #FFB3BA,
-      #FFDFBA,
-      #FFFFBA,
-      #BAFFC9,
-      #BAE1FF,
-      #E0BAFF) !important;
+  background: linear-gradient(
+    45deg,
+    #ffb3ba,
+    #ffdfba,
+    #ffffba,
+    #baffc9,
+    #bae1ff,
+    #e0baff
+  ) !important;
   color: #333 !important;
   font-size: 14px !important;
   padding: 8px 12px !important;
@@ -291,10 +299,87 @@ ion-content::-webkit-scrollbar-thumb:hover,
 }
 
 .custom-tooltip::before {
-  border-top-color: #FFB3BA !important;
+  border-top-color: #ffb3ba !important;
 }
 
 .icon {
   width: 20px;
   height: 20px;
+}
+// AJUSTES PARA EL MENU LATERAL
+
+.list-md {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background: transparent !important;
+}
+
+.menuMobile {
+  overflow: hidden !important;
+}
+
+.menuMobile ion-content {
+  --overflow: hidden !important;
+  overflow: hidden !important;
+  height: 100%;
+}
+
+.menuMobile ion-list {
+  overflow: hidden !important;
+}
+
+.ion_menu {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.menu-footer {
+  text-align: center;
+  padding: 10px 0;
+  background-color: var(--ion-color-primary);
+}
+
+.menu-footer img {
+  width: 50px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+}
+
+.hora {
+  font-size: 16px;
+  color: gray;
+}
+
+.imgLogoMenu {
+  width: 40px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+}
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+ion-fab-button {
+  --background: #b3b5e6;
+  --background-activated: #f0d7b4;
+  --background-hover: #f0d7b4;
+  --border-radius: 50%;
+  --box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --color: black;
+}
+
+.boxContent {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }

@@ -56,11 +56,21 @@
         </ion-col>
         <ion-col size="12" size-md="4">
           <!-- Sección de notificaciones -->
-          <div class="box-section">
+          <div class="box-section" id="notificaciones-section">
             <h3>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
             <mat-divider></mat-divider>
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
+            </p>
+            <div class="d-flex justify-content-center mt-4">
+              <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
+            </div>
+            <div class="d-flex justify-content-center">
+              <mat-divider class="mt-2" style="width: 150px;"></mat-divider>
+            </div>
+            
+             <p class="mt-2 text-start">
+              Mostrar notificaciones leídas
             </p>
             <div class="d-flex justify-content-center mt-4">
               <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
@@ -96,20 +106,20 @@
                   <a
                     class="small"
                     href="'../../../forgot-password//forgot-password.page.html"
-                    >¿No recuerdas tu contraseña actual?</a
+                    >{{'AJUSTESAPP.PASSWORD.FORGOT_PASSWORD' | translate}}</a
                   >
                 </div>
                 <div
                   *ngIf="isPasswordActualValida === true"
                   class="text-success mt-2"
                 >
-                  ✅ Contraseña actual verificada correctamente.
+                  {{'AJUSTESAPP.PASSWORD.PASSWORD_CONFIRM' | translate}}
                 </div>
                 <div
                   *ngIf="isPasswordActualValida === false"
                   class="text-danger mt-2"
                 >
-                  ❌ La contraseña actual es incorrecta.
+                  {{'AJUSTESAPP.PASSWORD.PASSWORD_INCORRECTA' | translate}}
                 </div>
               </div>
 
@@ -145,10 +155,10 @@
                 />
               </div>
               <div *ngIf="errorMensaje" class="text-danger mt-2">
-                ❌ {{ errorMensaje }}
+                {{ errorMensaje }}
               </div>
               <div *ngIf="exitoMensaje" class="text-success mt-2">
-                ✅ {{ exitoMensaje }}
+                {{ exitoMensaje }}
               </div>
 
               <ion-row class="boton_guardar d-flex justify-content-center">
@@ -217,5 +227,3 @@
     </div>
   </div>
 </ion-content>
-
-<!--TODO: Traducción de mensajes que aparecen en el cambio de contraseña-->

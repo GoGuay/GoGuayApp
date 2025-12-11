@@ -1,36 +1,24 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
     <div class="col-12 text-center">
       <h1>{{ 'DATOS_CONTACTO.TITULO' | translate }}</h1>
     </div>
-    <p class="d-flex justify-content-center">
-      {{'DATOS_CONTACTO.DESCRIPCION_SECCION' | translate}}
-    </p>
-    <p class="d-flex justify-content-center descripcion">
-      {{'DATOS_CONTACTO.DESCRIPCION_SECCION_2' | translate}}
-    </p>
+    <p class="d-flex justify-content-center">{{'DATOS_CONTACTO.DESCRIPCION_SECCION' | translate}}</p>
+    <p class="d-flex justify-content-center descripcion">{{'DATOS_CONTACTO.DESCRIPCION_SECCION_2' | translate}}</p>
 
     <ion-grid>
       <ion-row class="mobile">
         <ion-col size="6" class="correotelefono">
-          <h4 class="text-center mb-4">
-            {{'DATOS_CONTACTO.MODIF_CORREO_TFNO' | translate}}
-          </h4>
+          <h4 class="text-center mb-4">{{'DATOS_CONTACTO.MODIF_CORREO_TFNO' | translate}}</h4>
           <div class="d-flex justify-content-center formulario">
             <form [formGroup]="formEmailTfno">
               <!-- Input correo electrónico  -->
               <div class="mb-3">
                 <div>
                   <div>
-                    <label for="email" class="form-label"
-                      >{{'DATOS_CONTACTO.MI_CORREO' | translate}}</label
-                    >
+                    <label for="emailControl" class="form-label">{{'DATOS_CONTACTO.MI_CORREO' | translate}}</label>
                   </div>
                 </div>
                 <input
@@ -41,32 +29,17 @@
                   [(ngModel)]="emailEditado"
                   formControlName="emailControl"
                   name="emailControl"
-                  (ngModelChange)="onInputChange()"
-                />
-                <div
-                  *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched"
-                  style="color: red"
-                >
-                  <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['required']"
-                    >El correo es obligatorio</span
-                  >
-                  <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['pattern']"
-                    >Formato incorrecto</span
-                  >
-                  <span
-                    *ngIf="formEmailTfno.get('emailControl')?.errors?.['email']"
-                    >El formato no es válido</span
-                  >
+                  (ngModelChange)="onInputChange()" />
+                <div *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched" style="color: red">
+                  <span *ngIf="formEmailTfno.get('emailControl')?.errors?.['required']">El correo es obligatorio</span>
+                  <span *ngIf="formEmailTfno.get('emailControl')?.errors?.['pattern']">Formato incorrecto</span>
+                  <span *ngIf="formEmailTfno.get('emailControl')?.errors?.['email']">El formato no es válido</span>
                 </div>
               </div>
               <!-- Input teléfono  -->
               <div class="mb-3">
                 <div>
-                  <label for="telefono" class="form-label"
-                    >{{'DATOS_CONTACTO.MI_TFNO' | translate}}</label
-                  >
+                  <label for="telefono" class="form-label">{{'DATOS_CONTACTO.MI_TFNO' | translate}}</label>
                 </div>
                 <input
                   type="text"
@@ -76,20 +49,10 @@
                   [(ngModel)]="telefonoEditado"
                   name="telefonoControl"
                   formControlName="telefonoControl"
-                  (ngModelChange)="onInputChange()"
-                />
-                <div
-                  *ngIf="formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched"
-                  style="color: red"
-                >
-                  <span
-                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']"
-                    >El teléfono es obligatorio</span
-                  >
-                  <span
-                    *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
-                    >Formato incorrecto: debe tener 9 dígitos numéricos</span
-                  >
+                  (ngModelChange)="onInputChange()" />
+                <div *ngIf="formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched" style="color: red">
+                  <span *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']">El teléfono es obligatorio</span>
+                  <span *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']">Formato incorrecto: debe tener 9 dígitos numéricos</span>
                 </div>
               </div>
             </form>
@@ -99,9 +62,7 @@
         <mat-divider vertical=""></mat-divider>
 
         <ion-col>
-          <h4 class="text-center mb-4">
-            {{'DATOS_CONTACTO.COM_COMERCIALES' | translate}}
-          </h4>
+          <h4 class="text-center mb-4">{{'DATOS_CONTACTO.COM_COMERCIALES' | translate}}</h4>
           <div class="checks">
             <div class="form-check mb-3">
               <input
@@ -111,11 +72,8 @@
                 id="comunComerciales"
                 (change)="preferenciasComunicacion()"
                 [(ngModel)]="comunComerciales"
-                (change)="onInputChange()"
-              />
-              <label class="form-check-label" for="flexCheckDefault">
-                {{ "DATOS_CONTACTO.CHECK_POR_EMAIL" | translate }}
-              </label>
+                (change)="onInputChange()" />
+              <label class="form-check-label" for="flexCheckDefault">{{ "DATOS_CONTACTO.CHECK_POR_EMAIL" | translate }}</label>
             </div>
 
             <div class="form-check">
@@ -126,24 +84,21 @@
                 id="comunTerceros"
                 (change)="preferenciasComunicacion()"
                 [(ngModel)]="comunTerceros"
-                (change)="onInputChange()"
-              />
-              <label class="form-check-label" for="flexCheckChecked">
-                {{ "DATOS_CONTACTO.CHECK_TERCEROS" | translate }}
-              </label>
+                (change)="onInputChange()" />
+              <label class="form-check-label" for="flexCheckChecked">{{ "DATOS_CONTACTO.CHECK_TERCEROS" | translate }}</label>
             </div>
           </div>
         </ion-col>
       </ion-row>
       <ion-row class="d-flex justify-content-center mt-5">
         <div>
+          <p-toast position="bottom-center"></p-toast>
           <button
             type="button"
             class="btn btn_bg boton-mobile"
             mat-raised-button
             (click)="editarCorreoTelefono()"
-            [disabled]="!botonHabilitadoContacto"
-          >
+            [disabled]="!botonHabilitadoContacto">
             {{'BOTON.GUARDAR' | translate}}
           </button>
         </div>

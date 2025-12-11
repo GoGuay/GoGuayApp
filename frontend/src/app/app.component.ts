@@ -1,14 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NavController } from '@ionic/angular/standalone';
 import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
+import { IonicModule, IonMenu } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { MenuController } from '@ionic/angular';
+import { Router, NavigationEnd } from '@angular/router';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -18,21 +23,45 @@ export function HttpLoaderFactory(http: HttpClient) {
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [IonApp, IonRouterOutlet, NotificationToastComponent]
+  imports: [NotificationToastComponent, IonicModule, TranslateModule, RouterModule],
+  providers: [MenuController]
 })
 export class AppComponent implements OnInit {
+  @ViewChild(IonMenu) menu!: IonMenu;
   private consentGivenSubscription!: Subscription;
   userData: Usuario = {} as Usuario;
+  currentTime: string = '';
 
+  hours: string = '';
+  minutes: string = '';
 
   constructor(
     private ccService: NgcCookieConsentService,
     private cookieService: CookieService,
     private languageService: LanguageService,
-    private notificacionesService: NotificacionesService
+    private notificacionesService: NotificacionesService,
+    private menuCtrl: MenuController,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    /**
+     * Comprueba y actualiza la hora actual cada minuto.
+     */
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
+
+    /**
+     * Cierra el menú al navegar a una nueva ruta.
+     */
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.menu) {
+          this.menu.close();
+        }
+      });
+
     const consentStatus = localStorage.getItem('cookieConsentStatus');
     this.loadUserData();
 
@@ -62,13 +91,15 @@ export class AppComponent implements OnInit {
       // Si ya se ha dado consentimiento, no mostrar el banner
       this.ccService.destroy();
     } else {
-      this.consentGivenSubscription = this.ccService.statusChange$.subscribe((event: NgcStatusChangeEvent) => {
-        const status = event.status;
+      this.consentGivenSubscription = this.ccService.statusChange$.subscribe(
+        (event: NgcStatusChangeEvent) => {
+          const status = event.status;
 
-        localStorage.setItem('cookieConsentStatus', status);
+          localStorage.setItem('cookieConsentStatus', status);
 
-        this.ccService.destroy();
-      });
+          this.ccService.destroy();
+        }
+      );
     }
 
     /**
@@ -82,6 +113,15 @@ export class AppComponent implements OnInit {
     });
   }
 
+  /**
+   * Función para actualizar la hora actual cada minuto.
+   */
+  updateTime() {
+    const now = new Date();
+    this.hours = now.getHours().toString().padStart(2, '0');
+    this.minutes = now.getMinutes().toString().padStart(2, '0');
+  }
+
   checkUserDataUntilAvailable() {
     const interval = setInterval(() => {
       this.loadUserData();
@@ -93,13 +133,16 @@ export class AppComponent implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
-    this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      if (notificaciones.length) {
-        this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificacionesService.esCreadorDelViaje = true;
-        this.notificacionesService.leerNotificacion(notificaciones);
-      }
-    });
+    this.notificacionesService
+      .obtenerNotificaciones(usuarioId)
+      .subscribe((notificaciones) => {
+        if (notificaciones.length) {
+          this.notificacionesService.notificacionPendiente =
+            notificaciones[0].mensaje;
+          this.notificacionesService.esCreadorDelViaje = true;
+          this.notificacionesService.leerNotificacion(notificaciones);
+        }
+      });
   }
 
   loadUserData(): void {
@@ -111,5 +154,4 @@ export class AppComponent implements OnInit {
       this.consentGivenSubscription.unsubscribe();
     }
   }
-
 }

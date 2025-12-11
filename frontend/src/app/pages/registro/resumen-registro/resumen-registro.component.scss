@@ -1,0 +1,115 @@
+#resumen_viaje {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.white-header {
+  background-color: #e9edd5 !important;
+  color: black !important;
+  --background: #e9edd5;
+  --ion-text-color: black !important;
+}
+
+div[slot="content"] {
+  background-color: #e9edd5 !important;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+  }
+
+  span {
+    display: inline-block;
+    min-width: 100px; // para mantener tamaño uniforme
+  }
+
+  .form-control-sm {
+    padding: 0.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+/**
+* CONFIGURACIÓN PARA LA LISTA DE SUGERENCIAS
+*/
+.container {
+  position: relative;
+}
+
+.lista_sugerencias {
+  position: absolute;
+  left: 60px;
+  width: 44%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  z-index: 9999;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.lista_sugerencias li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lista_sugerencias li:hover {
+  background-color: #f0f0f0;
+}
+
+button {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+input,
+select {
+  margin-bottom: 1%;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+}
+
+.btn_bg_cancel {
+  background-color: #e0b6b6 !important;
+  color: black !important;
+}
+
+.input-datos {
+  display: block;
+  width: 60%;
+  padding: 10px 10px 10px 30px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.selectCar {
+  margin-bottom: 1%;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  width: 50%;
+}
+
+.selecthour {
+  width: 20%;
+}
+
+.selectDate {
+  width: 30%;
+}
+
+.selectPlaces {
+  width: 20%;
+}

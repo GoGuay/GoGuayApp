@@ -72,6 +72,13 @@ div[slot='content'] {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
+.btn_limpiar {
+  background-color: #E0B6B6 !important;
+}
+.btn_limpiar:hover {
+  background-color: #b3b5e6 !important;
+}
+
 .input-container mat-icon {
   margin-right: 6px;
 }

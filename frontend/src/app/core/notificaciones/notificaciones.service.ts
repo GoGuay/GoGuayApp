@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, Observable, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, Subject, throwError } from 'rxjs';
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
 import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
 import { API_URL } from '../../models/constantes/constantes.model';
@@ -15,7 +15,7 @@ export class NotificacionesService {
     public notificacionPendiente: string | null = null;
     public esCreadorDelViaje: boolean = false;
 
-    private toastSubject = new Subject<ToastData[]>();
+    private toastSubject = new BehaviorSubject<ToastData[]>([]);
     toast$ = this.toastSubject.asObservable();
 
     // Array interno para almacenar toasts activos
@@ -35,7 +35,6 @@ export class NotificacionesService {
     leerNotificacion(notificaciones: any): void {
         if (this.notificacionPendiente && this.esCreadorDelViaje) {
             const notificacionConId = notificaciones.find((n: any) => n.mensaje === this.notificacionPendiente);
-
             if (notificacionConId) {
                 this.mostrarToast({
                     id: notificacionConId.id,
@@ -46,7 +45,7 @@ export class NotificacionesService {
             } else {
                 // Si no hay id disponible, asignar un id temporal o manejar el caso
                 this.mostrarToast({
-                    id: Date.now(),  // ID temporal único
+                    id: Date.now(),
                     type: 'info',
                     mensaje: this.notificacionPendiente,
                     leida: false
@@ -121,7 +120,7 @@ export class NotificacionesService {
         const exists = this.toasts.some(t => t.mensaje === data.mensaje && t.type === data.type);
         if (!exists) {
             this.toasts.push(data);
-            this.toastSubject.next(this.toasts);
+            this.toastSubject.next([...this.toasts]);
         }
     }
 
@@ -130,12 +129,12 @@ export class NotificacionesService {
      */
     clearToasts() {
         this.toasts = [];
-        this.toastSubject.next(this.toasts);
+        this.toastSubject.next([...this.toasts]);
     }
 
     removeToast(toast: ToastData) {
         this.toasts = this.toasts.filter(t => t !== toast);
-        this.toastSubject.next(this.toasts);
+        this.toastSubject.next([...this.toasts]);
     }
 
 

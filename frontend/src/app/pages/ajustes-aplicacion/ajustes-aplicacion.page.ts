@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonContent, IonicModule, NavController } from '@ionic/angular';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -12,6 +12,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -53,14 +54,17 @@ export class AjustesAplicacionPage implements OnInit {
   errorMensaje: string = '';
   exitoMensaje: string = '';
 
+  @ViewChild(IonContent) content!: IonContent;
+
   constructor(
     private navCtrl: NavController,
     private languageService: LanguageService,
     private messageService: MessageService,
     private userService: UserServicesService,
     private dialog: MatDialog,
-    private translate: TranslateService
-  ) {}
+    private translate: TranslateService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.selectedLanguage = this.languageService.getLanguage();
@@ -68,6 +72,21 @@ export class AjustesAplicacionPage implements OnInit {
     this.mostrarJumbotron = savedJumbotronSetting === 'true';
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.obtenerUsuario();
+  }
+
+
+  ngAfterViewInit() {
+    this.route.fragment.subscribe(fragment => {
+      if (fragment) {
+        setTimeout(() => {
+          const element = document.getElementById(fragment);
+          if (element) {
+            const yOffset = element.offsetTop;
+            this.content.scrollToPoint(0, yOffset, 600);
+          }
+        }, 600);
+      }
+    });
   }
 
   obtenerUsuario() {

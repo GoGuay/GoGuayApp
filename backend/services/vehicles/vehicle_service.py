@@ -81,6 +81,21 @@ def obtenerVehiculos_usuario():
     }), 200
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER UN VEHICULO POR ID
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@vehicle_blueprint.route('/obtenerVehiculoID', methods=['GET'])
+def obtenerVehiculoID():
+    vehiculo_id = request.args.get('id', type=int)
+    if not vehiculo_id:
+        return jsonify({"error": "Falta el campo 'id'"}), 400
+
+    vehiculo = Vehiculo.query.filter_by(id=vehiculo_id).first()
+    if not vehiculo:
+        return jsonify({"error": "Vehículo no encontrado"}), 404
+
+    return jsonify(vehiculo.serialize()), 200
+
 #Función para editar un vehículo ya añadido
 @vehicle_blueprint.route('/editarVehiculo/<int:vehiculo_id>', methods=['PUT'])
 def editarVehiculo(vehiculo_id):

@@ -202,6 +202,7 @@
     "PUBLICAR_VIAJE": "Publish Trip",
     "PANEL": "USER PANEL",
     "MIPERFIL": "My Profile",
+    "MIS_VIAJES": "My trips",
     "DATOSCONTACTO": "Contact Information",
     "VERIFICACION": "Verification/Password",
     "SALDO": "Balance/Transfers",
@@ -463,7 +464,10 @@
       "TITULO": "Change password:",
       "CONTRAS_ACTUAL": "Current password:",
       "NUEVA_CONTRAS": "New password:",
-      "CONF_NUEVA_CONTRAS": "Confirm new password:"
+      "CONF_NUEVA_CONTRAS": "Confirm new password:",
+      "FORGOT_PASSWORD": "Forgot your current password?",
+      "PASSWORD_CONFIRM": "Current password verified successfully.",
+      "PASSWORD_INCORRECTA": "The current password is incorrect."
     },
     "ELIMINARCTA": {
       "TITULO": "Delete account:",

@@ -9,7 +9,7 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { BuscaUnViajePrincipalComponent } from "../components/busca-un-viaje-principal/busca-un-viaje-principal.component";
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
@@ -42,34 +42,43 @@ export class HomePage implements OnInit {
   mostrarJumbotron = true;
   usuario: any;
   userData: Usuario = {} as Usuario;
+  messaging: string = '../../assets/sistema/messaging.png';
 
   constructor(private translate: TranslateService,
     private funcionesComunes: FuncionesComunes,
     private notificacionesService: NotificacionesService,
-    private userService: UserServicesService) { }
+    private userService: UserServicesService, private navCtrl: NavController) {
+    this.loadUserData();
+  }
 
   ngOnInit(): void {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
-    this.loadUserData();
-    this.obtenerUsuarioPorID(this.userData.usuario.id);
-    this.obtenerNotificaciones(this.userData.usuario.id);
+
+    this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+    this.obtenerNotificaciones(this.userData?.usuario?.id);
   }
 
   changeLanguage(lang: string) {
     this.translate.use(lang);
   }
 
-  loadJumbotronSetting() {
-    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
+loadJumbotronSetting() {
+  const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+
+  if (jumbotronSetting === null) {
+    localStorage.setItem('mostrarJumbotron', 'true');
+    this.mostrarJumbotron = true;
+  } else {
+    this.mostrarJumbotron = jumbotronSetting === 'true';
   }
+}
 
   obtenerNotificaciones(usuarioId: number) {
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
         this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificacionesService.esCreadorDelViaje = true; 
+        this.notificacionesService.esCreadorDelViaje = true;
         this.notificacionesService.leerNotificacion(notificaciones);
       }
     });
@@ -83,5 +92,9 @@ export class HomePage implements OnInit {
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+  irAmensajes(){
+    this.navCtrl.navigateRoot(['/messaging-center']);
   }
 }

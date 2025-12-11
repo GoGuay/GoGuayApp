@@ -1,6 +1,7 @@
 .contenido_principal {
   text-align: center;
   padding: 10px;
+  min-height: 90vh;
 }
 
 /**
@@ -19,4 +20,13 @@
 .seeker {
   width: 100%;
   margin: 0 auto;
+}
+
+@media (max-width: 576px) {
+  ion-fab.fab-chat {
+    position: fixed !important;
+    top: 815px !important;
+    left: 355px !important;
+    z-index: 9999;
+  }
 }

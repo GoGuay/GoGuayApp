@@ -184,13 +184,39 @@ export const routes: Routes = [
       import('./pages/token-expirado/token-expirado.page').then(
         (m) => m.TokenExpiradoPage
       ),
-  },  {
+  },
+  {
     path: 'token-ya-usado',
-    loadComponent: () => import('./pages/token-ya-usado/token-ya-usado.page').then( m => m.TokenYaUsadoPage)
+    loadComponent: () =>
+      import('./pages/token-ya-usado/token-ya-usado.page').then(
+        (m) => m.TokenYaUsadoPage
+      ),
   },
   {
     path: 'notificaciones',
-    loadComponent: () => import('./pages/notificaciones/notificaciones.page').then( m => m.NotificacionesPage)
+    loadComponent: () =>
+      import('./pages/notificaciones/notificaciones.page').then(
+        (m) => m.NotificacionesPage
+      ),
+  },
+  {
+    path: 'registro/contrato-registro',
+    loadComponent: () =>
+      import(
+        './pages/registro/contrato-registro-final/contrato-registro.component'
+      ).then((m) => m.ContratoRegistroComponent),
+  },
+  {
+    path: 'mis-viajes',
+    loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then(m => m.MisViajesPage)
+  },
+  {
+    path: 'messaging-center',
+    loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.page').then(m => m.CentroMensajesPage)
+  },
+  {
+    path: 'chat/:id',
+    loadComponent: () => import('./pages/centro-mensajes/chat/chat.page').then(m => m.ChatPage)
   },
 
 ];

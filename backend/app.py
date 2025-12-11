@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
-import vonage
-load_dotenv()  # Debe ir al principio para cargar las variables de entorno
+load_dotenv() 
 
 import os
 import secrets
@@ -32,7 +31,7 @@ def create_app():
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USERNAME'] = 'gestion.prideride@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'yipf iibf txew sgsm'
+    app.config['MAIL_PASSWORD'] = 'wzpl kaqw gtgd tnbr'
     app.config['MAIL_USE_TLS'] = True
     mail = Mail(app)
 

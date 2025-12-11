@@ -1,4 +1,43 @@
-<ion-app>
-  <ion-router-outlet [animated]="true"></ion-router-outlet>
+<ion-app >
+  <!-- MENU DE LA APLICACIÓN PARA DISPOSITIVOS MOVILES  -->
+  <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">
+    <ion-header class="ion_menu">
+      <ion-toolbar color="primary">
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content color="secondary">
+      <ion-list>
+        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.QUIENES" |
+          translate }}</ion-item>
+        <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"
+          | translate
+          }}</ion-item>
+        <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{
+          "NAVBAR.DECALOGO" |
+          translate }}</ion-item>
+        <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{
+          "NAVBAR.BUSCAR_VIAJE"
+          | translate }}</ion-item>
+        <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{
+          "NAVBAR.PUBLICAR_VIAJE" |
+          translate }}</ion-item>
+      </ion-list>
+    </ion-content>
+
+    <ion-footer>
+      <div style="text-align: center; width: 100%; padding: 10px; background-color: var(--ion-color-primary)">
+        <img class="imgLogoMenu" src="../assets/logo/PRIDECAR.png" alt="Logo" />
+        <div class="hora">
+          <span>{{ hours }}</span><span class="blink">:</span><span>{{ minutes }}</span>
+        </div>
+      </div>
+    </ion-footer>
+  </ion-menu>
+
+  <!-- CONTENIDO PRINCIPAL DE LA APLICACIÓN -->
+  <ion-router-outlet id="main-content" [animated]="true"></ion-router-outlet>
+
   <app-notification-toast [usuario]="userData"></app-notification-toast>
 </ion-app>

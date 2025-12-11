@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonicModule, NavController, Platform } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -10,11 +10,13 @@ import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comu
 import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
-import { VistaAcordeonVehiculosComponent } from '../../../components/tabla-vehiculos/vista-acordeon-vehiculos/vista-acordeon-vehiculos.component';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -29,15 +31,15 @@ import { SpinnerComponent } from "../../../components/spinner/spinner.component"
     MatDivider,
     NavbarComponent,
     TablaVehiculosComponent,
-    VistaAcordeonVehiculosComponent,
     ToastModule,
     MatTooltipModule,
-    SpinnerComponent
+    SpinnerComponent,
   ],
 
   providers: [MessageService],
 })
 export class MiPerfilPage implements OnInit {
+  @ViewChild('popover') popover!: HTMLIonPopoverElement;
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaNacimiento: string = '';
@@ -59,14 +61,13 @@ export class MiPerfilPage implements OnInit {
   comunComerciales: boolean = false;
   emailEditado: string = '';
   telefonoEditado: string = '';
-  edad: number = this.funcionesUsuario.calcularEdad(
-    this.fechaNacimientoEditada
-  );
+  isOpen = false;
+  edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
   lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
 
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
-  usuario: any = {} as Usuario;
-  imagenPerfilUsuario: string = ''; // Variable para almacenar la imagen seleccionada por el usuario.
+  // usuario: any = {} as Usuario;
+  imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
 
   constructor(
@@ -76,7 +77,9 @@ export class MiPerfilPage implements OnInit {
     private platform: Platform,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private navCtrl: NavController,
+    private dialog: MatDialog,
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
@@ -87,18 +90,38 @@ export class MiPerfilPage implements OnInit {
   }
 
   ngOnInit() {
+    /**
+     * usuario$ -->es un BehaviorSubject declarado en UserServicesService (usuario$ emite el último valor almacenado)
+     * .subscribe((usuario) => { ... }) --> se suscribe a los cambios del observable, es decir, cada vez que usuario$ emite un valor se ejecuta la función que hay dentro del subscribe
+     * if (usuario) --> verifica que el usuario no sea null o undefined
+     * this.userData.usuario = usuario --> actualiza la variable local userData.usuario con los datos más recientes del observable (tendrá siempre info actualizada)
+     * this.nombreEditado = usuario.nombre ... --> copia los datos del usuario a variables locales para usar en los formulario de edición.
+     * this.actualizarFotoPerfil(usuario); --> llama a la función que asigna la imagen correcta a la variable imagenPerfilUsuario
+     * this.userLoggedIn = !!usuario.email; --> Determina si hay un usuario logueado (true o false)
+     * this.cdr.detectChanges() --> Fuerza a Angular a actualizar la vista inmediatamente.
+     */
+    this.userService.usuario$.subscribe((usuario) => {
+      if (usuario) {
+        this.userData.usuario = usuario;
+
+        this.nombreEditado = usuario.nombre;
+        this.apellidosEditados = usuario.apellidos || '';
+        this.pronombreEditado = usuario.pronombre || '';
+        this.generoEditado = usuario.genero || '';
+        this.orientacionEditada = usuario.orientacion || '';
+        this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
+        this.bioEditada = usuario.biografia || '';
+        this.preferenciasSeleccionadas = usuario.preferencias || [];
+        this.actualizarFotoPerfil(usuario);
+
+        this.userLoggedIn = !!usuario.email;
+
+        this.cdr.detectChanges();
+      }
+    });
+
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-    this.nombreEditado = this.userData.usuario.nombre;
-    this.apellidosEditados = this.userData.usuario?.apellidos;
-    this.pronombreEditado = this.userData.usuario?.pronombre || '';
-    this.generoEditado = this.userData.usuario.genero || '';
-    this.orientacionEditada = this.userData.usuario.orientacion || '';
-    this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
-    this.bioEditada = this.userData.usuario.biografia || '';
-    this.preferenciasSeleccionadas = this.userData.usuario.preferencias || [];
 
     //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
@@ -107,11 +130,12 @@ export class MiPerfilPage implements OnInit {
 
     this.actualizarEdad();
     this.obtenerUsuarioPorID(this.userData.usuario.id);
+    this.funcionesComunes.getBaseUrl();
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-      this.usuario = resultadoUsuario;
+      this.userData.usuario = resultadoUsuario;
     });
   }
 
@@ -121,12 +145,7 @@ export class MiPerfilPage implements OnInit {
 
   checkScreenSize() {
     this.isDesktop = window.innerWidth > 576;
-    console.log(
-      'Tamaño detectado:',
-      window.innerWidth,
-      'isDesktop:',
-      this.isDesktop
-    );
+    console.log('Tamaño detectado:', window.innerWidth, 'isDesktop:', this.isDesktop);
     this.cdr.detectChanges();
   }
 
@@ -139,19 +158,13 @@ export class MiPerfilPage implements OnInit {
 
     // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
-    const apellidosChanged =
-      this.apellidosEditados !== this.userData.usuario?.apellidos;
-    const pronombreChanged =
-      this.pronombreEditado !== this.userData.usuario?.pronombre;
+    const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
+    const pronombreChanged = this.pronombreEditado !== this.userData.usuario?.pronombre;
     const generoChanged = this.generoEditado !== this.userData.usuario.genero;
-    const orientacionChanged =
-      this.orientacionEditada !== this.userData.usuario.orientacion;
-    const fechaNacimientoChanged =
-      this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
+    const orientacionChanged = this.orientacionEditada !== this.userData.usuario.orientacion;
+    const fechaNacimientoChanged = this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
-    const preferenciasChanged =
-      JSON.stringify(this.preferenciasSeleccionadas) !==
-      JSON.stringify(this.userData.usuario.preferencias);
+    const preferenciasChanged = JSON.stringify(this.preferenciasSeleccionadas) !== JSON.stringify(this.userData.usuario.preferencias);
 
     //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
@@ -171,29 +184,26 @@ export class MiPerfilPage implements OnInit {
   }
 
   //Para detectar cambios en los checkbox de preferencias
-  onCheckboxChange(preferencia: string, event: Event) {
+  onCheckboxChange(clave: string, event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input) {
-      const isChecked = input.checked;
-      const selectedPreferences = [...this.preferenciasSeleccionadas];
+    if (!input) return;
 
-      if (isChecked) {
-        // Añadir la preferencia si no está ya incluida
-        if (!selectedPreferences.includes(preferencia)) {
-          selectedPreferences.push(preferencia);
-        }
-      } else {
-        // Eliminar la preferencia si está incluida
-        const index = selectedPreferences.indexOf(preferencia);
-        if (index !== -1) {
-          selectedPreferences.splice(index, 1);
-        }
-        this.cdr.detectChanges();
+    const prefs = [...this.preferenciasSeleccionadas];
+
+    if (input.checked) {
+      if (!prefs.includes(clave)) {
+        prefs.push(clave);
       }
-      this.preferenciasSeleccionadas = selectedPreferences;
-      this.checkForChanges(); // Verificar si hay cambios
-      this.cdr.detectChanges(); // Forzar la detección de cambios en Angular
+    } else {
+      const index = prefs.indexOf(clave);
+      if (index !== -1) {
+        prefs.splice(index, 1);
+      }
     }
+
+    this.preferenciasSeleccionadas = prefs;
+    this.checkForChanges();
+    this.cdr.detectChanges();
   }
 
   /**
@@ -208,7 +218,7 @@ export class MiPerfilPage implements OnInit {
    * @returns
    */
   editarDatos() {
-    console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
+    console.log('userData:', this.userData);
 
     if (
       !this.userData.usuario.nombre ||
@@ -235,25 +245,23 @@ export class MiPerfilPage implements OnInit {
     };
     console.log('Objeto modificado: ', nuevoUsuario);
 
-    this.userService
-      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
-      .subscribe(
-        (response) => {
-          console.log('Datos actualizado con exito', response);
-          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          this.funcionesUsuario.obtenerUsuario();
-          this.botonHabilitado = false;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Datos guardados',
-            detail: 'Se han guardado correctamente los datos',
-          });
-        },
-        (error) => {
-          console.error('Error al actualizar los datos', error);
-        }
-      );
+    this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe(
+      (response) => {
+        console.log('Datos actualizado con exito', response);
+        this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
+        localStorage.setItem('userData', JSON.stringify(this.userData));
+        this.funcionesUsuario.obtenerUsuario();
+        this.botonHabilitado = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Datos guardados',
+          detail: 'Se han guardado correctamente los datos',
+        });
+      },
+      (error) => {
+        console.error('Error al actualizar los datos', error);
+      },
+    );
   }
 
   /**
@@ -271,9 +279,7 @@ export class MiPerfilPage implements OnInit {
         this.preferenciasSeleccionadas.push(valor);
       }
     } else {
-      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
-        (pref) => pref !== valor
-      );
+      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter((pref) => pref !== valor);
     }
 
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
@@ -303,154 +309,81 @@ export class MiPerfilPage implements OnInit {
         },
         error: (error) => {
           console.error('Error al actualizar la imagen del perfil:', error);
-        }
+        },
       });
     }
   }
 
-  eliminarFotoPerfil() { }
+  /**
+   *
+   * if (!this.userData?.usuario?.id) return --> Si no existe usuario logueado o no tiene id no hace nada
+   * this.cargando = true --> muestra spinner de carga mientras se elimina la foto
+   * this.userService.eliminarFotoPerfil ... --> Envía una solicitud para eliminar la foto del usuario
+   * next: () => { ... } --> Se ejecuta si la petición fue exitosa --> Desactiva el spinner de carga -- No actualiza imagenPerfilUsuario porque lo hará la suscripción a usuario$
+   * error: (err) => { ... } --> se ejecuta si hubiese algun error en la eliminación de la foto
+   */
+  eliminarFotoPerfil(): void {
+    if (!this.userData?.usuario?.id) return;
 
-  // numeroALetras(valor: number | string, lang: string): string {
+    this.cargando = true;
 
-  //   const unidadesEsp = [
-  //     '',
-  //     'uno',
-  //     'dos',
-  //     'tres',
-  //     'cuatro',
-  //     'cinco',
-  //     'seis',
-  //     'siete',
-  //     'ocho',
-  //     'nueve',
-  //   ];
-  //   const especialesEsp = [
-  //     'diez',
-  //     'once',
-  //     'doce',
-  //     'trece',
-  //     'catorce',
-  //     'quince',
-  //     'dieciséis',
-  //     'diecisiete',
-  //     'dieciocho',
-  //     'diecinueve',
-  //   ];
-  //   const decenasEsp = [
-  //     '',
-  //     '',
-  //     'veinte',
-  //     'treinta',
-  //     'cuarenta',
-  //     'cincuenta',
-  //     'sesenta',
-  //     'setenta',
-  //     'ochenta',
-  //     'noventa',
-  //   ];
-  //   const centenasEsp = [
-  //     '',
-  //     'ciento',
-  //     'doscientos',
-  //     'trescientos',
-  //     'cuatrocientos',
-  //     'quinientos',
-  //     'seiscientos',
-  //     'setecientos',
-  //     'ochocientos',
-  //     'novecientos',
-  //   ];
+    this.userService.eliminarFotoPerfil(this.userData.usuario.id).subscribe({
+      next: () => {
+        this.cargando = false;
 
-  //   const unidadesEng = [
-  //     '',
-  //     'one',
-  //     'two',
-  //     'three',
-  //     'four',
-  //     'five',
-  //     'six',
-  //     'seven',
-  //     'eight',
-  //     'nine',
-  //   ];
-  //   const especialesEng = [
-  //     'ten',
-  //     'eleven',
-  //     'twelve',
-  //     'thirteen',
-  //     'fourteen',
-  //     'fifteen',
-  //     'sixteen',
-  //     'seventeen',
-  //     'eighteen',
-  //     'nineteen',
-  //   ];
-  //   const decenasEng = [
-  //     '',
-  //     '',
-  //     'twenty',
-  //     'thirty',
-  //     'forty',
-  //     'fifty',
-  //     'sixty',
-  //     'seventy',
-  //     'eighty',
-  //     'ninety',
-  //   ];
-  //   const centenasEng = [
-  //     '',
-  //     'one hundred',
-  //     'two hundred',
-  //     'three hundred',
-  //     'four hundred',
-  //     'five hundred',
-  //     'six hundred',
-  //     'seven hundred',
-  //     'eight hundred',
-  //     'nine hundred',
-  //   ];
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Foto eliminada',
+          detail: 'La foto de perfil se ha eliminado correctamente.',
+        });
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error al eliminar la foto de perfil:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar la imagen del perfil.',
+        });
+      },
+    });
+  }
 
-  //   let num = parseInt(valor.toString(), 10);
+  /**
+   *
+   * Recibe el objeto "usuario" actualizado
+   * usuario?.fotoPerfil --> verifica si el usuario tiene alguna foto de perfil, si existe se asigna a this.imagenPerfilUsuario
+   * : ../../assets/user... --> asigna la imagen de perfil genérica
+   */
+  private actualizarFotoPerfil(usuario: Usuario['usuario'] | null) {
+    this.imagenPerfilUsuario = usuario?.fotoPerfil ? usuario.fotoPerfil : '../../../assets/user/logOn.gif';
+  }
 
-  //   if (isNaN(num) || num <= 0 || num > 2100) {
-  //     return lang === 'es' ? 'Número fuera de rango' : 'Number out of range';
-  //   }
+  modalEliminarFotoPerfil(usuario: any) {
+    const titulo: string = '¡ATENCIÓN: Vas a eliminar tu foto de perfil!';
+    const mensaje: string = '¿Estás seguro que deseas eliminar tu foto de perfil?';
 
-  //   let texto = '';
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
 
-  //   if (num >= 2000) {
-  //     texto += lang === 'es' ? 'dos mil ' : 'two thousand ';
-  //     num -= 2000;
-  //   } else if (num >= 1000) {
-  //     texto += lang === 'es' ? 'mil ' : 'one thousand ';
-  //     num -= 1000;
-  //   }
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.eliminarFotoPerfil();
+      }
+    });
+  }
 
-  //   if (num >= 100) {
-  //     const c = Math.floor(num / 100);
-  //     texto += lang === 'es' ? `${centenasEsp[c]} ` : `${centenasEng[c]} `;
-  //     num = num % 100;
-  //   }
+  verPerfilPublico() {
+    const usuario = { id: this.userData.usuario.id };
 
-  //   if (num >= 10 && num < 20) {
-  //     texto +=
-  //       lang === 'es'
-  //         ? `${especialesEsp[num - 10]}`
-  //         : `${especialesEng[num - 10]}`;
-  //     return texto.trim();
-  //   }
-
-  //   if (num >= 20) {
-  //     const d = Math.floor(num / 10);
-  //     const u = num % 10;
-  //     texto += lang === 'es' ? `${decenasEsp[d]}` : `${decenasEng[d]}`;
-  //     if (u !== 0) {
-  //       texto += lang === 'es' ? ` y ${unidadesEsp[u]}` : ` ${unidadesEng[u]}`;
-  //     }
-  //   } else if (num > 0) {
-  //     texto += lang === 'es' ? unidadesEsp[num] : unidadesEng[num];
-  //   }
-
-  //   return texto.trim();
-  // }
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
+      queryParams: usuario,
+    });
+  }
+  presentPopover(e: Event) {
+    this.popover.event = e;
+    this.isOpen = true;
+  }
 }

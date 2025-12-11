@@ -18,64 +18,96 @@
     "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
-  "__MiPerfil": " OK OK OK OK OK OK Modal de Mi perfil y componente mi perfil",
+  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
-    "MI_PERFIL": "Mi perfil",
-    "DESCRIPCION_MIPERFIL": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
-    "INFO_PERSONAL": "Información personal",
-    "NOMBRE": "Nombre",
-    "NOMBRE_AYUDA": "Campo para escribir tu nombre",
-    "APELLIDOS": "Apellidos",
-    "APELLIDOS_AYUDA": "Campo para escribir tus apellidos",
-    "PRONOMBRE": "Pronombre",
-    "PRONOMBRE_TOOLTIP": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle",
-    "PRONOMBRE_SELECCIONA": "Escoge tu pronombre",
-    "PRONOMBRE_AYUDA": "Selector de opciones para elegir tu pronombre",
-    "GENERO": "Género",
-    "GENERO_TOOLTIP": "Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer",
-    "GENERO_SELECCIONA": "Escoge tu género",
-    "GENERO_AYUDA": "Selector de opciones para elegir tu género",
-    "ORIENTACION": "Orientación",
-    "ORIENTACION_TOOLTIP": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales. Puede ser gay, lesbiana, bisexual, pansexual, asexual, entre muchas otras posibilidades",
-    "ORIENTACION_SELECCIONA": "Escoge tu orientación",
-    "ORIENTACION_AYUDA": "Selector de opciones para elegir tu orientación",
-    "FECHA_NACIMIENTO": "Fecha de nacimiento",
-    "FECHA_NACIMIENTO_AYUDA": "Formato requerido: dia (2 digitos), mes (2 digitos), año (4 dígitos).",
-    "EDAD": "Edad",
-    "EDAD_CALCULADA": "Tu edad es:",
-    "SOBRE_TI": "Sobre ti",
-    "CUENTANOS": "¡Aquí puedes contarnos lo que quieras sobre ti!",
-    "PREF_VIAJE": "Preferencias de viaje",
-    "CUANDO_VIAJO_PREFIERO": "Cuando viajo prefiero...",
-    "HABLAR": "Hablar",
-    "ESCUCHAR_MUSICA": "Escuchar música",
-    "DORMIR": "Dormir",
-    "SILENCIO": "Silencio"
-  },
-  "__Vehículos": " OK OK OK OK OK OK OK Marca, modelo y colores",
-  "VEHICULOS": {
-    "MIS_VEHICULOS": "Mis vehículos",
-    "FORMULARIO_ANADIR": "Formulario para añadir un nuevo vehículo",
-    "IMAGEN": "Muestra el dibujo de un coche con el color seleccionado",
-    "EDITAR_TOOLTIP": "Edita los datos de tu vehículo si están erróneos",
-    "GUARDAR_TOOLTIP": "Guarda los nuevos datos del vehículo",
-    "GUARDAR_FILA": "Guarda los cambios realizados en este vehículo",
-    "EDITAR_FILA": "Editar datos del vehículo de esta fila",
-    "ADVERTENCIA": " Recuerda que si cambiar la marca, debes modificar también el modelo",
-    "ELIMINAR": "Elimina el vehículo marcado",
-    "COLOR_VEHICULO": "Color del vehículo: {{color}}",
-    "MARCA": "Marca",
-    "MODELO": "Modelo",
-    "TITULO_GUARDANDOALEDITAR": "Datos guardados",
-    "GUARDANDOALEDITAR": "Se han modificado correctamente los datos del vehículo",
-    "GUARDANDONUEVO": "Se han guardado los datos del nuevo vehículo",
-    "MATRICULA": "Matrícula",
-    "OPCIONES": "Opciones",
-    "SIN_VEHICULOS": "No tienes vehículos añadidos",
-    "MAT_NO_VALIDA": "Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).",
-    "SELECTOR_MARCA": "Selección de marca",
-    "SELECTOR_MODELO": "Selección de modelo",
-    "SELECTOR_COLOR": "Color"
+    "TITULO": "Mi perfil",
+    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+    "BTN_GUARDAR": "Guardar",
+    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
+    "INFO_PERSONAL": {
+      "TITULO": "Información personal",
+      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
+      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
+      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
+      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
+      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
+      "LABEL_NOMBRE": "Nombre",
+      "LABEL_APELLIDOS": "Apellidos",
+      "PRONOMBRE": {
+        "LABEL": "Pronombre",
+        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
+        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
+        "ESCOGE_OPCION": "Escoge tu pronombre",
+        "OPC_OTROS": "Otros",
+        "OPC_NOUSO": "No uso ninguno",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "GENERO": {
+        "LABEL": "Género",
+        "INFO": "Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer.",
+        "AYUDA": "Se muestran las opciones para elegir tu género",
+        "ESCOGE_OPCION": "Escoge tu género",
+        "OPC_HOMBRECIS": "Hombre CIS",
+        "OPC_MUJERCIS": "Mujer CIS",
+        "OPC_TRANSEXUAL": "Transexual",
+        "OPC_NOBINARIO": "No Binario",
+        "OPC_INTERGENERO": "Intergénero",
+        "OPC_NOFLUIDO": "No fluido",
+        "OPC_OTROS": "Otros",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "ORIENTACION": {
+        "LABEL": "Orientación",
+        "INFO": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales.",
+        "AYUDA": "Se muestran las opciones para elegir tu orientación",
+        "ESCOGE_OPCION": "Escoge tu orientación",
+        "OPC_GAY": "Gay",
+        "OPC_LESBIANA": "Lesbiana",
+        "OPC_BISEXUAL": "Bisexual",
+        "OPC_PANSEXUAL": "Pansexual",
+        "OPC_ASEXUAL": "Asexual",
+        "OPC_DEMISEXUAL": "Demisexual",
+        "OPC_QUEER": "Queer",
+        "OPC_OTROS": "Otros",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
+      "LABEL_EDAD": "Edad",
+      "LABEL_SOBRETI": "Sobre ti",
+      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
+      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre"
+    },
+    "MIS_VEHICULOS": {
+      "TITULO": "Mis vehículos",
+      "SIN_VEHICULOS": "No tienes vehículos añadidos",
+      "BTN_ANADIR_VEHICULO": "Añadir vehículo",
+      "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
+      "ADVERTENCIA_MODIFICACION": "Recuerda que si cambiar la marca, debes modificar también el modelo",
+      "SELECTOR": {
+        "MARCA": "Marca",
+        "AYUDA_MARCA": "Selector de marca del vehículo",
+        "MODELO": "Modelo",
+        "AYUDA_MODELO": "Selector de modelo del vehículo",
+        "COLOR": "Color"
+      },
+      "TABLA": {
+        "COL_MARCA": "Marca",
+        "COL_MODELO": "Marca",
+        "COL_COLOR": "Marca",
+        "COL_OPCIONES": "Marca",
+        "BTN_EDITAR_TOOLTIP": "Edita los datos de tu vehículo si están erróneos",
+        "BTN_ELIMINAR_TOOLTIP": "Elimina este vehículo",
+        "BTN_GUARDAR_TOOLTIP": "Guarda los nuevos datos del vehículo"
+      }
+    },
+    "PREF_VIAJE": {
+      "LABEL": "Mis preferencias de viaje",
+      "SUBTITULO": "Cuando viajo prefiero...",
+      "OPC_HABLAR": "Hablar",
+      "OPC_MUSICA": "Escuchar música",
+      "OPC_DORMIR": "Dormir",
+      "OPC_SILENCIO": "Ir en silencio"
+    }
   },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
@@ -83,6 +115,7 @@
     "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
     "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
     "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
+
     "MI_CORREO": "Mi correo electrónico",
     "MI_TFNO": "Mi teléfono",
     "COM_COMERCIALES": "Comunicaciones comerciales",
@@ -90,18 +123,37 @@
     "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
   },
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
-  "VERIF": {
+  "VERIFICACION": {
     "TITULO": "Verificación del perfil",
-    "TITULO_VERIF_BASICA": "Verificación básica: confirma tu correo y adjunta fotos de tu documento de identidad",
-    "TITULO_VERIF_ADICIONAL": "Verificación adicional: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
-    "VERIFICA_TU_CORREO": "Verifica tu correo:",
-    "INFO_VERIF_CORREO": "Se enviará un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
-    "VERIF_TU_IDENTIDAD": "Verifica tu identidad:",
-    "INFO_VERIFIDENTIDAD": "Puedes subir una foto de tu DNI, NIE o pasaporte. Recuerda actualizarlo si cambia tu tipo de documento.",
-    "FOTODELANTERA": "Pulsa en el botón para añadir una foto DELANTERA de tu documento.",
-    "FOTOTRASERA": "Pulsa en el botón para añadir una foto TRASERA de tu documento.",
-    "VERIFADICIONAL": "Verificación adicional:",
-    "VERIFADICIONALINFO1": "(No es obligatorio si solo usas PrideRide como viajero)"
+    "SUBT_VERIF_BASICA": "Verificación básica: confirma tu correo, teléfono y número de documento de identidad",
+    "SUBT_VERIF_AVANZADA": "Verificación avanzada: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
+    "TABLA_VBASICA": {
+      "TITULO": "Verificación básica",
+      "COL_CORREO": "Correo electrónico",
+      "COL_TELÉFONO": "Teléfono",
+      "COL_DOCUMENTO": "Documento de identidad"
+    },
+    "TABLA_VAVANZADA": {
+      "TITULO": "Verificación avanzada",
+      "COL_CARNETCONDUCIR": "Carnet de conducir"
+    },
+    "VERIFICA_CORREO": "Verifica tu correo:",
+    "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
+    "VERIFICA_TELEFONO": "Verifica tu teléfono:",
+    "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
+    "BOTÓN_VERIFICAR_TELEFONO": "Confirmar código",
+    "VERIF_IDENTIDAD": "Verifica tu identidad:",
+    "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
+    "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
+    "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
+    "NUMERO_DOCUMENTO": "Número de documento sin espacios",
+    "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
+    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirmar documento",
+
+    "VAVANZADA": {
+      "TITULO": "Verificación avanzada",
+      "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
+    }
   },
 
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
@@ -136,7 +188,10 @@
       "CAMBIADA_OK": "La contraseña se ha cambiado correctamente",
       "NO_CAMBIADA": "No se ha podido cambiar la contraseña",
       "NUEVA_CONTRAS": "Nueva contraseña:",
-      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:"
+      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:",
+      "FORGOT_PASSWORD": "¿No recuerdas tu contraseña actual?",
+      "PASSWORD_CONFIRM": "Contraseña actual verificada correctamente.",
+      "PASSWORD_INCORRECTA": "La contraseña actual es incorrecta."
     },
     "ELIMINARCTA": {
       "TITULO": "Eliminar la cuenta:",
@@ -156,6 +211,20 @@
     "SUBTITULO2": "Confirma tu correo electrónico, te enviaremos un enlace para crear una nueva contraseña",
     "TOAST_TITULO": "Correo enviado",
     "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
+  },
+
+  "TOKEN_EXPIRADO": "Pagina que se muestra cuando el token del correo ha caducado",
+  "TOKEN_EXP": {
+    "TITULO": "El enlace ha caducado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual, ha caducado.",
+    "SUBTITULO2": "Debes solicita otro enlace a través de la página de Ajustes en el menú de usuario."
+  },
+
+  "TOKEN_YA_USADO_": "Página que se muestra cuando el token del correo ya ha sido usado",
+  "TOKEN_YA_USADO": {
+    "TITULO": "El enlace ya ha sido usado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual ya se ha usado.",
+    "SUBTITULO2": "Puedes volver a cambiar tu contraseña actual a través de la página Ajustes en el menú de usuario."
   },
 
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
@@ -190,7 +259,7 @@
   "__Pronombres": "Selectores de pronombre",
   "SELEC_PRONOMBRE": {
     "SELECCIONA": "Selecciona tu pronombre",
-    "NINGUNO": "No uso ninguno en concreto",
+    "NINGUNO": "No uso ninguno",
     "OTROS": "Otros",
     "NO_RESPONDE": "Prefiero no responder"
   },
@@ -247,6 +316,7 @@
     "PUBLICAR_VIAJE": "Publicar viaje",
     "PANEL": "PANEL DE USUARIO",
     "MIPERFIL": "Mi perfil",
+    "MIS_VIAJES": "Mis viajes",
     "DATOSCONTACTO": "Datos de contacto",
     "VERIFICACION": "Verificación del perfil",
     "SALDO": "Saldo/Transferencias",

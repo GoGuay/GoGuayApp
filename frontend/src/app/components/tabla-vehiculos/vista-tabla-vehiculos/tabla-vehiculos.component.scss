@@ -1,6 +1,7 @@
 .colorCoche {
-  height: 30px;
-  width: 35px;
+  height: 26px;
+  width: 30px;
+  border-radius: 4px;
 }
 
 .pronombre {
@@ -13,19 +14,28 @@
 
 }
 
-.table td {
-  min-width: 150px;
+.table td,
+.table th {
+  height: 48px;
+  vertical-align: middle;
 }
 
-.table th {
-  text-align: start;
-  vertical-align: middle;
+td.acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.table td select.form-select {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.35rem;
+  height: 32px;
 }
 
 .table th:nth-child(3),
 .table td:nth-child(3) {
   width: 122px;
-  /* Ajusta el tamaño según lo que necesites */
   min-width: 90px;
   max-width: 130px;
   text-align: center;
@@ -56,8 +66,9 @@
 
 
 .table {
-  --bs-table-hover-bg: #F0D7B4;
-  table-layout: auto;
+  --bs-table-hover-bg: #f7e9d3;
+  table-layout: fixed;
+  width: 100%;
 }
 
 .botones_tabla {
@@ -69,6 +80,22 @@
 .boton_anadir {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
+
+/* Cards para móvil */
+.cards-vehiculos .card {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+/* Ajuste de selectores dentro de la card */
+.cards-vehiculos select.form-select {
+  width: 100%;
+  margin-top: 4px;
+}
+
 
 
 .table {
@@ -100,4 +127,53 @@
 
 .inputs_selectores {
   width: 200px;
+}
+
+.cards-vehiculos .card-body select.form-select {
+  font-size: 0.8rem;
+  /* Ajusta según lo necesites */
+  padding: 0.25rem 0.3rem;
+  height: 32px;
+  /* Mantiene altura uniforme */
+}
+
+
+
+/* Hacer que tabla se adapte a pantallas pequeñas */
+@media (max-width: 767px) {
+  .tabla-vehiculos table {
+    width: 100%;
+    font-size: 0.85rem;
+  }
+
+  .tabla-vehiculos th,
+  .tabla-vehiculos td {
+    padding: 6px 8px;
+  }
+
+  .acciones button {
+    padding: 4px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+
+  .cards-vehiculos .card-body select.form-select {
+    font-size: 0.8rem;
+    /* tamaño de todas las opciones */
+    line-height: 1.2;
+    padding: 0.25rem 0.3rem;
+    height: 32px;
+    transform: scale(0.9);
+    /* reduce tamaño de todo el select */
+    -webkit-appearance: none;
+    /* elimina el estilo nativo en Safari/Chrome */
+    -moz-appearance: none;
+    /* Firefox */
+    appearance: none;
+  }
+
+  /* Algunas veces los navegadores requieren explícitamente que las opciones tengan el mismo tamaño */
+  .cards-vehiculos .card-body select.form-select option {
+    font-size: 0.8rem;
+  }
 }

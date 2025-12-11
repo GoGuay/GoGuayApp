@@ -28,5 +28,12 @@
         </button>
       </div>
     </div>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes">
+      <ion-fab-button (click)="goToSettings()" aria-label="Ajustes">
+         <img [src]="iconoAjustes" alt="Ajustes" style="width: 24px; height: 24px;">
+      </ion-fab-button>
+    </ion-fab>
+    
   </div>
 </ion-content>
