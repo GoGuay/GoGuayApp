@@ -62,6 +62,7 @@ export class NavbarComponent implements OnInit {
 
   numNotificaciones: number = 0;
   notificaciones: any[] = [];
+  selectedLanguage: string = this.languageService.getLanguage() || 'es';
 
   constructor(
     private navCtrl: NavController,

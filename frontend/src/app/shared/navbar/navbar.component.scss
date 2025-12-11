@@ -191,6 +191,28 @@ ul {
   overflow: visible !important;
 }
 
+.icon-idioma {
+  width: 32px;
+  height: auto;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: filter 0.3s ease, transform 0.2s ease;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+  /* Pequeño efecto al pasar el ratón */
+}
+
+/* Estilo para el idioma no seleccionado (Blanco y negro) */
+.grayscale-filter {
+  filter: grayscale(100%);
+  /* Convierte la imagen a blanco y negro */
+  opacity: 0.7;
+  /* Reduce ligeramente la opacidad del inactivo */
+}
+
 @media (max-width: 576px) {
   .navbar .dropdown-menu {
     position: absolute;
