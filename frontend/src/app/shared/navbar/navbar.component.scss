@@ -11,8 +11,6 @@ ion-button {
   border-radius: 50%;
 }
 
-
-
 .idiomas {
   width: 40px;
   height: 40px;
@@ -92,8 +90,6 @@ ion-button {
   font-size: 50px !important;
   color: black;
 }
-
-
 
 .navbar {
   position: relative;
@@ -199,6 +195,12 @@ ul {
 }
 
 @media (max-width: 576px) {
+  // Esta clase ajusta el diseño del navbar para pantallas pequeñas (móviles)
+  // Evita que los iconos aparezcan desalineados
+  .cajon_principal {
+    width: 125px !important;
+  }
+
   .navbar .dropdown-menu {
     position: absolute;
     top: 100%;
