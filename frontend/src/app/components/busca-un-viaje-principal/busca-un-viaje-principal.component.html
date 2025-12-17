@@ -3,28 +3,23 @@
     <ion-row>
       <ion-col>
         <div class="container">
-          <img
-            title="imagen publicación de viaje"
-            src="../../../assets/banco_imagenes/travel1.jpg"
-            class="img_travel"
-          />
+          <img title="imagen publicación de viaje" src="../../../assets/banco_imagenes/travel1.jpg" class="img_travel" />
         </div>
       </ion-col>
       <ion-col>
         <div class="container">
-          <h2>{{ "HOME.QUIERES_BUSCAR_VIAJE" | translate }}</h2>
+          <h2>{{ 'HOME.SECCION_PUBLICAR.TITULO' | translate }}</h2>
           <div class="d-flex justify-content-center">
             <button
               type="button"
               mat-raised-button
-              class="me-2 btns btn_bg travel-btn"
+              class="me-2 btn_bg travel-btn"
               (click)="openSearch()"
-            >
+              [attr.aria-label]="'HOME.SECCION_PUBLICAR.AYUDA' | translate"
+              [title]="'HOME.SECCION_PUBLICAR.AYUDA' | translate">
               <!-- <mat-icon class="travel-icon">search</mat-icon> -->
-              <img src="../../../assets/sistema/busqueda.png" class="travel-icon">
-              <span class="travel-text">{{
-                "BOTON.BUSCA_TU_VIAJE_AQUI" | translate
-              }}</span>
+              <img src="../../../assets/sistema/busqueda.png" class="travel-icon" />
+              <span class="travel-text">{{ 'BOTON.BUSCA_TU_VIAJE_AQUI' | translate }}</span>
             </button>
           </div>
         </div>

@@ -157,13 +157,13 @@
             aria-describedby="info_genero"
             (change)="escucharCambiosFormulario2('genero')">
             <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}</option>
-            <option value="HOMBRE_CIS">
+            <option value="H_CIS">
               {{ 'SELECTOR_GENERO.H_CIS' | translate }}
             </option>
-            <option value="MUJER_CIS">
+            <option value="M_CIS">
               {{ 'SELECTOR_GENERO.M_CIS' | translate }}
             </option>
-            <option value="TRANSEXUAL">
+            <option value="TRANS">
               {{ 'SELECTOR_GENERO.TRANS' | translate }}
             </option>
             <option value="NO_BINARIO">
@@ -287,7 +287,7 @@
 
   <nav aria-label="Page navigation example">
     <div class="d-flex justify-content-center">
-      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg" (click)="pasoAnterior()">
+      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg_secondary" (click)="pasoAnterior()">
         {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
       </button>
 

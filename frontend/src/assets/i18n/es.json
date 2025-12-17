@@ -19,6 +19,56 @@
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
 
+  "NavBar Home": "Opciones del navbar que aparece en el Home",
+  "NAVBAR": {
+    "QUIENES": "Quienes somos",
+    "FAQS": "FAQs",
+    "DECALOGO": "Decálogo",
+    "BUSCAR_VIAJE": "Buscar viaje",
+    "PUBLICAR_VIAJE": "Publicar viaje",
+    "NOTIFICACIONES": "Notificaciones",
+    "IDIOMA_ES": "Seleccionar idioma español",
+    "IDIOMA_EN": "Seleccionar idioma inglés",
+    "MENUUSUARIO": {
+      "LOGIN": "Login",
+      "REGISTRO": "Registrarse",
+      "MI_PERFIL": "Mi perfil",
+      "MIS_VIAJES": "Mis viajes",
+      "DATOS_CONTACTO": "Datos de contacto",
+      "VERIFICACION": "Verificación del perfil",
+      "SALDO": "Saldo/Transferencias",
+      "AJUSTES": "Ajustes",
+      "SALIR": "Salir"
+    }
+  },
+
+  "_Home": "Por secciones",
+  "HOME": {
+    "JUMBO": {
+      "SLOGAN": "Seas como seas, viajamos contigo"
+    },
+    "SECCION_PUBLICAR": {
+      "TITULO": "¿Quieres compartir tu próximo viaje?",
+      "AYUDA": "Publica tu próximo viaje aquí."
+    },
+    "SECCION_BUSCAR": {
+      "TITULO": "¿Quieres buscar un viaje?",
+      "AYUDA": "Busca un viaje aquí."
+    },
+    "SECCION_EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "DESPLEGABLE": "Pulsa aquí para ver los próximos eventos",
+      "CIUDAD": "Ciudad",
+      "FECHA": "Fechas",
+      "DETALLES": "Detalles",
+      "LEER_MAS": "Leer más",
+      "AVISO": "*Nota: La información de los eventos ha sido extraída de sus respectivas fuentes el 2025. (Dicha información podría no estar actualizada debidamente)"
+    },
+    "SECCION_DUDAS": {
+      "TITULO": "¿TIENES DUDAS?"
+    }
+  },
+
   "SELECTOR_GENERO": {
     "H_CIS": "Hombre Cis",
     "M_CIS": "Mujer Cis",
@@ -383,53 +433,13 @@
     "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
-  "NavBar Home": "Opciones del navbar que aparece en el Home",
-  "NAVBAR": {
-    "QUIENES": "Quienes somos",
-    "FAQS": "FAQs",
-    "DECALOGO": "Decálogo",
-    "BUSCAR_VIAJE": "Buscar viaje",
-    "PUBLICAR_VIAJE": "Publicar viaje",
-    "PANEL": "PANEL DE USUARIO",
-    "MIPERFIL": "Mi perfil",
-    "MIS_VIAJES": "Mis viajes",
-    "DATOSCONTACTO": "Datos de contacto",
-    "VERIFICACION": "Verificación del perfil",
-    "SALDO": "Saldo/Transferencias",
-    "LOGIN": "Login",
-    "REGISTRO": "Registrarse",
-    "SALIR": "Salir",
-    "IDIOMA_ESPANIOL": "Español",
-    "IDIOMA_INGLES": "Inglés",
-    "AJUSTES": "Ajustes"
-  },
+
   "_Footer": "Links del footer",
   "FOOTER": {
     "TERMS": "Términos y condiciones",
     "COOKIES": "Cookies"
   },
-  "_Home": "Por secciones",
-  "HOME": {
-    "JUMBO": {
-      "SLOGAN": "Seas como seas, viajamos contigo"
-    },
-    "BUSCADOR": {
-      "BUSCARVIAJE": "Buscar viaje",
-      "DESDE": "Desde",
-      "A": "a",
-      "CUANDO": "Cuando",
-      "NUMPASAJEROS": "Número de pasajeros"
-    },
-    "INFO": {
-      "TEXTO_1": "Explora nuevas aventuras y destinos increíbles. Encuentra compañeros de viaje que compartan tu pasión por descubrir el mundo.",
-      "TEXTO_2": "Planea tu próximo viaje con facilidad. Conéctate con personas que van en la misma dirección.",
-      "TEXTO_3": "Comparte tus experiencias y crea recuerdos inolvidables con viajeros como tú."
-    },
-    "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje?",
-    "TRAYECTOS_POPULARES": "¿Hay un evento cercano?",
-    "DUDAS": "¿TIENES DUDAS?",
-    "QUIERES_BUSCAR_VIAJE": "¿Quieres buscar un viaje?"
-  },
+
   "_Búsqueda de viaje": "/busqueda-viajes",
   "BUSQUEDA": {
     "FILTRAR_POR": "Filtrar por...",

@@ -1,176 +1,39 @@
-:root {
-  --ion-background-color: #ffffff !important;
-  --ion-color-custom-white: #ffffff;
-  --ion-color-custom-white-rgb: 255, 255, 255;
-  --ion-color-custom-white-contrast: #000000;
-  --ion-color-custom-white-contrast-rgb: 0, 0, 0;
-  --ion-color-custom-white-shade: #ffffff;
-  --ion-color-custom-white-tint: #f2f2f2;
-  --highlight-color-valid: var(#000000, #000000);
-
-}
-
-:host{
-  --mdc-filled-text-field-container-color: white;
-  --mat-sys-surface-variant: white;
-  --mat-sys-primary: #b3b5e6;
-  // Color componentes de ionic
-  --ion-color-success:#e0a667;
-  --ion-color-success-shade:#e0a667;
-  --ion-color-success-tint: #e0a667;
-}
-
-.buttons {
-  margin-top: 20px;
-  border-radius: 50%;
-  height: 100px;
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: none;
-  font-size: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.trayecto {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.origen,
-.destino {
-  font-size: 10px;
-}
-
-.flecha {
-  font-size: 16px;
-  margin: 2px 0;
-}
-
-.table-wrapper {
+ion-accordion {
   border-radius: 15px;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
-  
+  border: 1px solid black;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  color: black;
+  background-color: #f4f5f8;
 }
 
-table {
-  background-color: transparent !important;
+/* Aseguramos que el contenedor tenga un ancho máximo y esté centrado */
+.container {
   width: 100%;
-  min-width: 600px; /* para que no colapsen las columnas en móviles */
-  border-collapse: collapse;
+  max-width: 600px;
+  /* Ajusta este valor al ancho que desees para ambos */
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
-.dudasViaje {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  background-color: #b3b5e6;
-  padding: 0;
-  border: none;
-  cursor: pointer;
+/* Forzamos al SELECT a ocupar siempre el 100% de su contenedor */
+.form-select {
+  width: 100% !important;
+  box-sizing: border-box;
 }
 
-mat-icon {
-  font-size: 16px;
-  line-height: 1;
+/* Evitamos que el acordeón cambie de tamaño al abrirse */
+.acordeon_evento {
+  width: 50%;
+  display: block;
+  /* Evita comportamientos extraños de flex en el contenedor */
+  overflow: hidden;
+  /* Asegura que el contenido no desborde */
 }
 
-.viaje-texto {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.spanInformativo{
-  font-size: 13px;
-}
-
-/**
-  CONFIGURACIÓN PARA EL ACORDEÓN
-*/
-.white-header {
-  background-color: #F4F5F8 !important;
-  color: black !important;
-  --background: #F4F5F8;
-  --ion-text-color: black !important;
-  
-}
-
-/* Fondo blanco para el contenido del acordeón */
-// div[slot='content'] {
-//   background-color: #F4F5F8 !important;
-//   background-image: url('../../../assets/imagenesSinUsar/iStock-1395810615.jpg');
-//   background-repeat: no-repeat;
-//   background-size: cover;
-//   background-position: center;
-//   background-attachment: fixed;
-// }
-
-div[slot='content'] {
-  position: relative;
-  z-index: 1;
-}
-
-/* Capa desenfocada del fondo */
-div[slot='content']::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-image: url('../../../assets/imagenesSinUsar/iStock-1607961386.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(10px);
-  z-index: -1;
-  opacity: 0.8; 
-}
-
-.leer-mas {
-  color: white;
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(0, 0, 0, 0.6);
-}
-
-
-@media (max-width: 576px) {
-  .table-wrapper {
-    border-radius: 0;
-    box-shadow: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
-    width: 385px;
-  }
-
-  .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .spanInformativo {
-    font-size: 12px;
-    padding: 0 10px;
-    display: block;
-    text-align: center;
-  }
-
-  .leer-mas {
-    font-size: 12px;
-  }
-}
-
-.calendario{
-  width: 20px;
-  height: 20px;
+/* Muy importante: Ionic a veces añade padding automático al abrir. Lo fijamos: */
+ion-accordion-group {
+  width: 100%;
+  display: block;
 }
