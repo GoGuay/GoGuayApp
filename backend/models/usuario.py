@@ -20,7 +20,7 @@ class Usuario(db.Model):
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
     password = db.Column(db.String(250), nullable=False)
-    telefono = db.Column(db.String(15), unique=True, nullable=False)
+    telefono = db.Column(db.String(15), unique=True, nullable=True)
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
     fotoPerfil = db.Column(db.String(250), nullable=True)
@@ -28,7 +28,12 @@ class Usuario(db.Model):
     fotoCabecera = db.Column(db.String(250), nullable=True)
     preferencias = db.Column(JSON, nullable=False, default=lambda: [PreferenciasViajeEnum.silencio.value]) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
+    numero_documento = db.Column(db.String(9),  unique=True, nullable=True)
     dni_verificado = db.Column(db.Boolean, default=False, nullable=True)
+    # fotoDocumentoDelantera= db.Column(db.String(250), nullable=True)
+    # fotoDocumentoTrasera = db.Column(db.String(250), nullable=True)
+    fotoCarnetCondDelantera = db.Column(db.String(250), nullable=True)
+    # fotoCarnetCondTrasera = db.Column(db.String(250), nullable=True)
     carnet_conducir_verificado = db.Column(db.Boolean, default=False, nullable=True)
     numero_carnet_conducir = db.Column(db.String(50), nullable=True)
     fecha_vencimiento_carnet = db.Column(db.Date) 
@@ -73,7 +78,7 @@ class Usuario(db.Model):
             "genero": self.genero,
             "orientacion": self.orientacion,
             "pronombre": self.pronombre,  
-            "password": self.password,          
+            "password": "********",          
             "telefono": self.telefono,
             "telefonoVerificado": self.telefonoVerificado,
             "biografia": self.biografia,
@@ -82,6 +87,7 @@ class Usuario(db.Model):
             "preferencias": preferencias,
             "rolPerfil": self.rolPerfil,
             "dni_verificado": self.dni_verificado,
+            "numero_documento": self.numero_documento,
             "carnet_conducir_verificado": self.carnet_conducir_verificado,
             "numero_carnet_conducir": self.numero_carnet_conducir,
             "fecha_vencimiento_carnet": self.fecha_vencimiento_carnet.isoformat() if self.fecha_vencimiento_carnet else None,
@@ -92,5 +98,9 @@ class Usuario(db.Model):
             "monedero": self.monedero.serialize() if self.monedero else None,
             "puntuacion_promedio": self.puntuacion_promedio,
             "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat()
+            "updated_at": self.updated_at.isoformat(),
+            # "fotoDocumentoDelantera": self.fotoDocumentoDelantera,
+            # "fotoDocumentoTrasera": self.fotoDocumentoTrasera,
+            "fotoCarnetCondDelantera": self.fotoCarnetCondDelantera,
+            # "fotoCarnetCondTrasera": self.fotoCarnetCondTrasera,
         }
