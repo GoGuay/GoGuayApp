@@ -273,8 +273,8 @@ ul {
 }
 
 .btnMensajes {
-  width: 71px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   background: none;
   border: none;
@@ -289,14 +289,15 @@ ul {
 }
 
 .btnMensajes img {
-  width: 28px;
-  height: 30px;
+  max-width: 84%;
+  max-height: 0%;
+  object-fit: contain;
 }
 
 .badge-notificaciones {
   position: absolute;
   bottom: 20px;
-  right: 180px;
+  right: 118px;
   transform: translate(50%, 50%);
   background-color: red;
   color: white;

@@ -52,15 +52,15 @@
           <div class="col-2 d-flex justify-content-start align-items-center ms-2" (click)="goBack()">
             <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_mobile mobile-only" />
           </div>
-          <div class="col-4 position-relative d-flex justify-content-end align-items-start">
+          <div class="col-5 position-relative d-flex justify-content-end align-items-start">
             <!-- Contenedor para idiomas-->
             <div class="idiomas-container d-flex flex-column align-items-center"
               style="position: absolute; top: 0; right: 0; z-index: 1000;">
               <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma mb-1"
-                style="width: 30px; cursor: pointer; display: block;"
+                style="width: 23px; cursor: pointer; display: block;"
                 [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }" (click)="changeLanguage('es')" />
               <img src="../../../assets/sistema/bandera_uk.svg" class="icon-idioma mt-1"
-                style="width: 30px; cursor: pointer; display: block;"
+                style="width: 23px; cursor: pointer; display: block;"
                 [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }" (click)="changeLanguage('en')" />
             </div>
 
@@ -73,7 +73,7 @@
                 <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
               </button>
 
-              <button class="btnMensajes" type="button" *ngIf="isLoggedIn">
+              <button class="btnMensajes me-3" type="button" *ngIf="isLoggedIn">
                 <a class="nav-link active" href="/messaging-center">
                   <img class="idiomas" src="../../../assets/sistema/messaging.png">
                 </a>
