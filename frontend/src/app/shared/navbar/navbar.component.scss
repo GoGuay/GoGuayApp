@@ -313,6 +313,25 @@ ul {
   z-index: 10;
 }
 
+.badge-notificaciones_mensajes {
+  position: absolute;
+  bottom: 20px;
+  right: 38px;
+  transform: translate(50%, 50%);
+  background-color: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
 @media (max-width: 767px) {
   .desktop-only {
     display: none !important;

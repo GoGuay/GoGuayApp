@@ -11,19 +11,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
-import { RouterLink } from '@angular/router';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { MessageService } from 'primeng/api';
 
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, RouterLink, FormsModule],
+  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule],
+  providers: [MessageService],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
@@ -61,7 +62,9 @@ export class NavbarComponent implements OnInit {
   menuType: string = 'push';
 
   numNotificaciones: number = 0;
+  numNotificacionesMensajes: number = 3;
   notificaciones: any[] = [];
+  notificaciones_mensajes: any[] = [];
   selectedLanguage: string = this.languageService.getLanguage() || 'es';
 
   constructor(
@@ -70,7 +73,9 @@ export class NavbarComponent implements OnInit {
     private languageService: LanguageService,
     private userService: UserServicesService,
     private notificationService: NotificacionesService,
-    private element: ElementRef
+    private element: ElementRef,
+    private translate: TranslateService,
+    private messageService: MessageService
   ) {
     this.loadUserData();
   }
@@ -205,8 +210,29 @@ export class NavbarComponent implements OnInit {
    *
    * @param lang Recibe el idioma seleccionado en el selector de idiomas.
    */
-  changeLanguage(lang: string) {
-    this.languageService.setLanguage(lang);
+  changeLanguage(selectedLanguage: string) {
+    // Recibe el idioma directamente
+    // Comprobar si ya es el idioma seleccionado para evitar recargas innecesarias
+    if (this.selectedLanguage === selectedLanguage) {
+      return;
+    }
+
+    // Ya no necesitas (event.target as HTMLSelectElement).value;
+    console.log(selectedLanguage);
+
+    this.languageService.setLanguage(selectedLanguage);
+    this.selectedLanguage = selectedLanguage;
+    this.translate.use(selectedLanguage);
+
+    //Lanza la notificación
+    this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+        life: 3000,
+      });
+    });
   }
 
   @HostListener('document:click', ['$event'])
