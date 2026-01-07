@@ -1,43 +1,50 @@
 <h1>{{ 'HOME.SECCION_EVENTOS.TITULO' | translate }}</h1>
 <div class="container">
-  <div>
-    <select class="form-select" id="ciudad_evento" required formControlName="ciudad_evento" aria-describedby="info_genero">
-      <option value="" selected disabled hidden>Selecciona una ciudad:</option>
-      <option value="Benidorm">Benidorm</option>
-      <option value="Madrid">Madrid</option>
-      <option value="Barcelona">Barcelona</option>
+  <div class="d-flex justify-content-center">
+    <select class="form-select" #ciudadRef (change)="(0)" id="ciudad_evento" aria-describedby="info_genero">
+      <option value="" selected disabled>Selecciona una ciudad:</option>
+      <option [value]="ciudad" *ngFor="let ciudad of ciudadesUnicas">{{ ciudad }}</option>
     </select>
   </div>
 </div>
-<div class="container">
-  <h3>Resultados de "ciudad"</h3>
+<div *ngIf="ciudadRef.value != ''">
+  <h3>Próximos eventos en {{ ciudadRef.value }}</h3>
 
-  <ion-accordion-group class="mb-3">
-    <ion-accordion class="mb-3 acordeon_evento">
-      <ion-item slot="header" class="white-header">
-        <ion-label class="cabecera">
-          <h2 style="margin: 0; font-weight: bold">Titulo Evento</h2>
-          <p style="margin: 4px 0 0 0">(f-inicio) - (f-fin)</p>
-        </ion-label>
-      </ion-item>
-      <div slot="content">
-        <div>Descripcionnnnnnnn iasidaisdiasidiadiasidiaidaisdiaidiasidaid jejjfjjfsf</div>
-        <div>
-          <img />
-        </div>
-        <div>
-          <a>Enlace</a>
-        </div>
-        <div>
-          <button (click)="crearViaje('madrid')">Un boton</button>
-          <button>Otro boton</button>
-        </div>
-      </div>
-    </ion-accordion>
-  </ion-accordion-group>
+  <ion-grid [fixed]="true">
+    <ion-row>
+      <ion-col *ngFor="let evento of lista_eventos" size="4">
+        <ion-accordion-group class="mb-3" [multiple]="true">
+          <ion-accordion class="mb-3 acordeon_evento">
+            <ion-item slot="header" class="white-header">
+              <ion-label class="text-start">
+                <h2 class="titulo-evento">{{ evento.nombre_evento }}</h2>
+                <h3 style="margin-top: 3%; font-weight: bold">{{ evento.ciudad }}</h3>
+                <p style="margin-top: 3%">{{ evento.fecha_inicio }} - {{ evento.fecha_fin }}</p>
+              </ion-label>
+            </ion-item>
+            <div slot="content" class="contenido-estatico">
+              <div class="mb-3">{{ evento.descripcion }}</div>
+              <div class="mb-3 contenedor_imagen">
+                <img class="rounded imagen_evento" src="{{ evento.imagen }}" />
+              </div>
+              <div class="mb-3">
+                <a href="{{ evento.enlace_info }}">+Info</a>
+              </div>
+              <div class="contenedor-botones">
+                <button class="btn btn_bg" (click)="crearViaje('madrid')">Crear viaje</button>
+                <button class="btn btn_bg">Buscar viaje</button>
+              </div>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </div>
 
-<span class="spanInformativo">
-  <strong>*Nota:</strong>
-  La información de los eventos ha sido extraída de sus respectivas fuentes el 2025. (Dicha información podría no estar actualizada debidamente)
-</span>
+<div class="mt-3">
+  <span>
+    <strong>*Nota:</strong>
+    La información de los eventos ha sido extraída de sus respectivas fuentes el 2025. (Dicha información podría no estar actualizada debidamente)
+  </span>
+</div>

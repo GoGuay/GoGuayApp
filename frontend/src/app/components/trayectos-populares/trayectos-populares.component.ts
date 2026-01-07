@@ -1,30 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { Evento, Eventos } from '../../models/eventos/eventos';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DetalleEventosComponent } from '../detalle-eventos/detalle-eventos.component';
-import { MatIcon } from '@angular/material/icon';
-import { HelpModalComponent } from '../help-modal/help-modal.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, MatButton, TranslateModule, CommonModule, MatTableModule, MatIcon],
+  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule],
   templateUrl: './trayectos-populares.component.html',
   styleUrls: ['./trayectos-populares.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
   displayedColumns: string[] = ['ciudad', 'fecha', 'detalles', 'viaje'];
-  dataSource: Evento[] = [];
+  lista_eventos: Evento[] = Eventos;
   expandedRows: { [key: number]: boolean } = {};
 
   userLoggedIn: boolean = false;
+
+  ciudadesUnicas: string[] = [];
 
   // Variables que se utilizan para realizar la traducción de los literales.
   title_help_auth: string = '';
@@ -47,7 +45,9 @@ export class TrayectosPopularesComponent implements OnInit {
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-    this.dataSource = Eventos;
+    this.lista_eventos = Eventos;
+    this.ciudadesUnicas = [...new Set(this.lista_eventos.map((evento) => evento.ciudad))];
+    this.ciudadesUnicas.sort();
   }
 
   /**
@@ -67,5 +67,15 @@ export class TrayectosPopularesComponent implements OnInit {
       this.viajesService.setViajeData(viajeData);
       this.navCtrl.navigateRoot('/data-viaje');
     }
+  }
+
+  obtener_ciudades_eventos() {
+    let ciudadEncontrada;
+    this.lista_eventos.forEach((evento) => {
+      console.log(evento.ciudad);
+      ciudadEncontrada = evento.ciudad;
+      if (ciudadEncontrada.includes(ciudadEncontrada)) {
+      }
+    });
   }
 }
