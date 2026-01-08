@@ -191,26 +191,28 @@ ul {
   overflow: visible !important;
 }
 
+.idiomas-container {
+  position: relative !important; 
+  top: 0 !important;
+  right: 0 !important;
+  min-width: 30px;
+}
+
 .icon-idioma {
-  width: 32px;
+  width: 20px !important; 
   height: auto;
   cursor: pointer;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: filter 0.3s ease, transform 0.2s ease;
+  transition: filter 0.3s;
 }
 
 .icon-idioma:hover {
   transform: scale(1.05);
-  /* Pequeño efecto al pasar el ratón */
 }
 
 /* Estilo para el idioma no seleccionado (Blanco y negro) */
 .grayscale-filter {
   filter: grayscale(100%);
-  /* Convierte la imagen a blanco y negro */
   opacity: 0.7;
-  /* Reduce ligeramente la opacidad del inactivo */
 }
 
 @media (max-width: 576px) {
@@ -332,6 +334,15 @@ ul {
   z-index: 10;
 }
 
+.tamano-icono,
+.caja-icono {
+  width: 40px; 
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%; 
+  mix-blend-mode: multiply;
+}
+
 @media (max-width: 767px) {
   .desktop-only {
     display: none !important;
@@ -340,6 +351,6 @@ ul {
     display: flex !important;
   }
   .mobile-navbar {
-    width: 100%; /* solo en móvil */
+    width: 100%; 
   }
 }

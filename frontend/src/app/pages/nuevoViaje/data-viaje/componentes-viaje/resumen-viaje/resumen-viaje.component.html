@@ -1,6 +1,6 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
-  <div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
+  <div class="container-fluid vh-100 d-flex justify-content-center align-items-md-center align-items-start">
     <div class="container dialog-animate">
       <ion-grid>
         <ion-row>
@@ -75,7 +75,8 @@
                         <option value="" disabled selected>
                           {{ "VEHICULOS.MODELO" | translate }}
                         </option>
-                        <option *ngFor="let coche of userData.usuario.vehiculos" [ngValue]="coche">
+                        <option *ngFor="let coche of vehiculosUsuario" [ngValue]="coche">
+                          {{coche | json}}
                           {{ coche.marca }} {{ coche.modelo }}
                         </option>
                       </select>

@@ -52,7 +52,6 @@ export class TablaVehiculosComponent implements OnInit {
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
   listColours: string[] = COLOURS;
-  matricula: string = '';
   matriculaNoValida: boolean = false;
 
   constructor(
@@ -88,7 +87,6 @@ export class TablaVehiculosComponent implements OnInit {
       marca: this.marcaSeleccionada,
       modelo: this.modeloSeleccionado,
       color: this.colorSeleccionado,
-      matricula: this.matricula,
     };
     nuevoCoche.usuario_id = this.userData.usuario.id;
 
@@ -127,7 +125,6 @@ export class TablaVehiculosComponent implements OnInit {
             this.marcaSeleccionada = '';
             this.modeloSeleccionado = '';
             this.colorSeleccionado = '';
-            this.matricula = '';
 
             this.mostrarSelectorVehiculo = false;
 
@@ -161,7 +158,6 @@ export class TablaVehiculosComponent implements OnInit {
       this.marcaSeleccionada = vehiculo.marca;
       this.modeloSeleccionado = vehiculo.modelo;
       this.colorSeleccionado = vehiculo.color;
-      this.matricula = vehiculo.matricula;
       this.filtrarModelos();
     }
   }
@@ -204,7 +200,6 @@ export class TablaVehiculosComponent implements OnInit {
     this.marcaSeleccionada = '';
     this.modeloSeleccionado = '';
     this.colorSeleccionado = '';
-    this.matricula = '';
     this.mostrarSelectorVehiculo = false;
   }
 
@@ -301,21 +296,21 @@ export class TablaVehiculosComponent implements OnInit {
   /**
    * Función para validar que la matrícula tenga el formato 0000ABC
    */
-  validarMatricula(): void {
-    const regex = /^[0-9]{4}[A-Z]{3}$/;
+  // validarMatricula(): void {
+  //   const regex = /^[0-9]{4}[A-Z]{3}$/;
 
-    // Convertir a mayúsculas automáticamente
-    this.matricula = this.matricula.toUpperCase();
+  //   // Convertir a mayúsculas automáticamente
+  //   this.matricula = this.matricula.toUpperCase();
 
-    if (!regex.test(this.matricula)) {
-      console.log(
-        'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
-      );
-      this.matriculaNoValida = true;
-    } else {
-      this.matriculaNoValida = false;
-    }
-  }
+  //   if (!regex.test(this.matricula)) {
+  //     console.log(
+  //       'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
+  //     );
+  //     this.matriculaNoValida = true;
+  //   } else {
+  //     this.matriculaNoValida = false;
+  //   }
+  // }
 
   /**
    * Función para filtrar los modelos de los coches
