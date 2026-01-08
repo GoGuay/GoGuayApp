@@ -95,6 +95,6 @@ loadJumbotronSetting() {
   }
 
   irAmensajes(){
-    this.navCtrl.navigateRoot(['/messaging-center']);
+    this.navCtrl.navigateRoot(['/messaging-center'], {animated: false});
   }
 }

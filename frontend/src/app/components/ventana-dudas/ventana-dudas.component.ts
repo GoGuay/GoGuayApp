@@ -19,6 +19,6 @@ export class VentanaDudasComponent  implements OnInit {
 
   ngOnInit() {}
   navigateToCentroAyuda() {
-    this.navController.navigateForward('/centro-ayuda');
+    this.navController.navigateForward(['/centro-ayuda'], { animated: false  });
   }
 }

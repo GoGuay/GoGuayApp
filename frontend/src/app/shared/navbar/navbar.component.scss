@@ -192,14 +192,14 @@ ul {
 }
 
 .idiomas-container {
-  position: relative !important; 
+  position: relative !important;
   top: 0 !important;
   right: 0 !important;
   min-width: 30px;
 }
 
 .icon-idioma {
-  width: 20px !important; 
+  width: 20px !important;
   height: auto;
   cursor: pointer;
   transition: filter 0.3s;
@@ -336,10 +336,10 @@ ul {
 
 .tamano-icono,
 .caja-icono {
-  width: 40px; 
+  width: 40px;
   height: 40px;
   object-fit: contain;
-  border-radius: 50%; 
+  border-radius: 50%;
   mix-blend-mode: multiply;
 }
 
@@ -351,6 +351,12 @@ ul {
     display: flex !important;
   }
   .mobile-navbar {
-    width: 100%; 
+    width: 100%;
+  }
+  .idiomas-container {
+    position: relative !important;
+    top: 0 !important;
+    right: -10px !important;
+    min-width: 30px;
   }
 }

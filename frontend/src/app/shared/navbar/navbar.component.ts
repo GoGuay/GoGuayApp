@@ -287,7 +287,7 @@ export class NavbarComponent implements OnInit {
     this.userData = {} as Usuario;
     this.usuario = null;
     this.isLoggedIn = false;
-    this.navCtrl.navigateRoot(['/home']);
+    this.navCtrl.navigateRoot(['/home'], {animated: false });
   }
 
   irAMisViajes() {
@@ -295,6 +295,7 @@ export class NavbarComponent implements OnInit {
 
     this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,
+      animated: false 
     });
   }
 
