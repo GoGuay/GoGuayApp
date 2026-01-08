@@ -22,26 +22,6 @@ ion-accordion [slot="content"] {
   padding: 10px !important;
 }
 
-.row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: flex-start !important;
-  /* Alinea arriba */
-  justify-content: flex-start !important;
-}
-
-
-
-.col-4 {
-  flex: 0 0 33.3333% !important;
-  max-width: 33.3333% !important;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-
-
-
 /* Aseguramos que el contenedor tenga un ancho máximo y esté centrado */
 .container {
   width: 100%;
@@ -69,10 +49,7 @@ ion-accordion [slot="content"] {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   background-color: #f4f5f8;
   overflow: hidden;
-  /* Evita que contenido interno sobresalga */
 }
-
-
 
 .contenedor_imagen {
   width: 270px !important;
@@ -95,7 +72,6 @@ ion-accordion-group {
   width: 100% !important;
   display: block;
   margin: 0 auto;
-
 }
 
 
@@ -103,5 +79,8 @@ ion-accordion-group {
   display: flex;
   gap: 15px;
   justify-content: center;
+}
 
+.form-select:focus {
+  box-shadow: none;
 }

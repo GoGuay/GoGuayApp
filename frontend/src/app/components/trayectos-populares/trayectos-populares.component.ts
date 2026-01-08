@@ -28,6 +28,9 @@ export class TrayectosPopularesComponent implements OnInit {
   title_help_auth: string = '';
   message_help_auth: string = '';
 
+  ciudadSeleccionada: string = '';
+  eventosFiltradosPorCiudad: Evento[] = [];
+
   constructor(
     private viajesService: TravelService,
     private navCtrl: NavController,
@@ -70,12 +73,32 @@ export class TrayectosPopularesComponent implements OnInit {
   }
 
   obtener_ciudades_eventos() {
-    let ciudadEncontrada;
-    this.lista_eventos.forEach((evento) => {
-      console.log(evento.ciudad);
-      ciudadEncontrada = evento.ciudad;
-      if (ciudadEncontrada.includes(ciudadEncontrada)) {
-      }
+    // Extraemos solo los nombres de las ciudades
+    const todasLasCiudades = this.lista_eventos.map((evento) => evento.ciudad);
+
+    // 'Set' elimina automáticamente los nombres repetidos
+    this.ciudadesUnicas = [...new Set(todasLasCiudades)];
+  }
+
+  actualizarCiudadSeleccionada(valor: string) {
+    this.ciudadSeleccionada = valor;
+
+    const filtrados = this.lista_eventos.filter((evento) => evento.ciudad === valor);
+    this.eventosFiltradosPorCiudad = filtrados.sort((a, b) => {
+      const fechaInicio = this.convertirFecha(a.fecha_inicio);
+      const fechaFin = this.convertirFecha(b.fecha_fin);
+      return fechaInicio.getTime() - fechaFin.getTime();
     });
+  }
+
+  /**
+   * Transdorma el string "DD/MM/AAAA" en un objeto Date comparable
+   * En JavaScript los meses empiezan en 0 (enero), por eso restamos 1 al mes.
+   * @param FechaStr
+   * @returns
+   */
+  convertirFecha(FechaStr: string): Date {
+    const [dia, mes, anio] = FechaStr.split('/');
+    return new Date(Number(anio), Number(mes) - 1, Number(dia));
   }
 }
