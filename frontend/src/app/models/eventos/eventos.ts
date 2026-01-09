@@ -14,7 +14,7 @@ export const Eventos: Evento[] = [
     id: 1,
     nombre_evento: 'Mado',
     ciudad: 'Madrid',
-    fecha_inicio: '28/06/2026',
+    fecha_inicio: '01/06/2026',
     fecha_fin: '01/07/2026',
     descripcion: 'MADO 2025 celebra el 20º aniversario del matrimonio igualitario en España. Incluye desfiles, conciertos y eventos culturales.',
     imagen: 'https://pridechueca.com/wp-content/uploads/2025/12/fauna-chueca.webp',
@@ -24,7 +24,7 @@ export const Eventos: Evento[] = [
     id: 2,
     nombre_evento: 'Bearbie Madrid',
     ciudad: 'Madrid',
-    fecha_inicio: '15/05/2026',
+    fecha_inicio: '28/06/2026',
     fecha_fin: '18/05/2026',
     descripcion:
       'Un evento enfocado en la comunidad bear con fiestas temáticas, sesiones de DJ internacionales y actividades culturales en el centro de Madrid.',

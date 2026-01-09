@@ -16,20 +16,15 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
   styleUrls: ['./trayectos-populares.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
-  displayedColumns: string[] = ['ciudad', 'fecha', 'detalles', 'viaje'];
+  //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
   lista_eventos: Evento[] = Eventos;
-  expandedRows: { [key: number]: boolean } = {};
 
   userLoggedIn: boolean = false;
-
   ciudadesUnicas: string[] = [];
-
-  // Variables que se utilizan para realizar la traducción de los literales.
   title_help_auth: string = '';
   message_help_auth: string = '';
-
   ciudadSeleccionada: string = '';
-  eventosFiltradosPorCiudad: Evento[] = [];
+  filtradosPorCiudad: Evento[] = [];
 
   constructor(
     private viajesService: TravelService,
@@ -46,6 +41,7 @@ export class TrayectosPopularesComponent implements OnInit {
     });
   }
 
+  //Lo que se usa nada más iniciar el componente.
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.lista_eventos = Eventos;
@@ -58,6 +54,8 @@ export class TrayectosPopularesComponent implements OnInit {
    * @param element
    */
   crearViaje(element: any) {
+    console.log('element', element);
+
     const viajeData = {
       destino: element.ciudad,
     };
@@ -72,33 +70,53 @@ export class TrayectosPopularesComponent implements OnInit {
     }
   }
 
-  obtener_ciudades_eventos() {
-    // Extraemos solo los nombres de las ciudades
-    const todasLasCiudades = this.lista_eventos.map((evento) => evento.ciudad);
+  /***************************************************
+   * FUNCIONES PARA SELECCIONAR LA CIUDAD EN EL HOME *
+   ****************************************************
+   */
 
-    // 'Set' elimina automáticamente los nombres repetidos
+  /**
+   * Recorremos la lista de eventos, extrayendo la ciudad de cada evento y las guardamos en todasLasCiudades (array de strings) (guarda todas, incluso aunque se repitan).
+   * Con new Set eliminamos los valores que se repitan del array de todasLasCiudades, y guardamos ese nuevo array en ciudadesUnicas
+   *
+   */
+  obtener_ciudades_eventos() {
+    const todasLasCiudades = this.lista_eventos.map((evento) => evento.ciudad);
     this.ciudadesUnicas = [...new Set(todasLasCiudades)];
   }
 
-  actualizarCiudadSeleccionada(valor: string) {
-    this.ciudadSeleccionada = valor;
-
-    const filtrados = this.lista_eventos.filter((evento) => evento.ciudad === valor);
-    this.eventosFiltradosPorCiudad = filtrados.sort((a, b) => {
-      const fechaInicio = this.convertirFecha(a.fecha_inicio);
-      const fechaFin = this.convertirFecha(b.fecha_fin);
-      return fechaInicio.getTime() - fechaFin.getTime();
-    });
-  }
-
   /**
-   * Transdorma el string "DD/MM/AAAA" en un objeto Date comparable
-   * En JavaScript los meses empiezan en 0 (enero), por eso restamos 1 al mes.
+   * Para guardar en formato DATE una fecha que está guardada como string.
+   * Le pasamos como parámetro la fecha en formato string. La función va a devolver un dato de tipo DATE.
+   * Declaramos un array de string (dia,mes,anio). La función split separa el string cuando encuentra el símbolo /.
+   * @return: Pasa cada uno de los strings numeros a formato número y guarda cada uno de esos números en formato DATE.
    * @param FechaStr
-   * @returns
    */
   convertirFecha(FechaStr: string): Date {
     const [dia, mes, anio] = FechaStr.split('/');
     return new Date(Number(anio), Number(mes) - 1, Number(dia));
+  }
+
+  /**
+   *
+   * @param valor --> ciudad que selecciona el usuario.
+   * Declaro filtrados: va a recorrer la lista_eventos, va a recorrer con el filter cada uno de los eventos (cadaEvento) y va sacar la ciudad. Cuando esa ciudad
+   * coincida con valor, lo va a guardar en filtrados --> filtrados se convierte en un array de tipo Evento, guarda todos los eventos que contengan la misma ciudad (valor),
+   * guarda el evento COMPLETO.
+   * filtradosPorCiudad --> array de tipo Evento inicializado vacio arriba.
+   * Con la función sort vamos a ordenar los eventos por fecha de inicio. Le pasamos 2 parámetros para que pueda comparar.
+   * Declaramos fechaInicioA y le vamos a pasar lo que devuelva la función convertirFecha que a su vez recibe la fecha de inicio de inicioEventoA y lo mismo para fechaInicioB
+   * Por tanto fechaInicioA y fechaInicioB tienen formato ANY para que luego se pueda hacer la comparación (resta)
+   * Se resta el valor de fechaInicioA - fechaINicioB, si el resultado es negativo pone fechaInicioA primero.
+   *
+   *
+   */
+  actualizarCiudadSeleccionada(valor: string) {
+    const filtrados = this.lista_eventos.filter((cadaEvento) => cadaEvento.ciudad === valor);
+    this.filtradosPorCiudad = filtrados.sort((inicioEventoA, inicioEventoB) => {
+      const fechaInicioA: any = this.convertirFecha(inicioEventoA.fecha_inicio);
+      const fechaInicioB: any = this.convertirFecha(inicioEventoB.fecha_inicio);
+      return fechaInicioA - fechaInicioB;
+    });
   }
 }

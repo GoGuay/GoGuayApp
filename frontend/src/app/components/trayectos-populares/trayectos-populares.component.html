@@ -2,7 +2,7 @@
 <div class="container">
   <div class="d-flex justify-content-center">
     <select class="form-select" #ciudadRef (change)="actualizarCiudadSeleccionada(ciudadRef.value)" id="ciudad_evento" aria-describedby="info_genero">
-      <option value="" selected disabled>Selecciona una ciudad:</option>
+      <option value="" selected disabled>Consulta los eventos de estas ciudades:</option>
       <option [value]="ciudad" *ngFor="let ciudad of ciudadesUnicas">{{ ciudad }}</option>
     </select>
   </div>
@@ -12,7 +12,7 @@
 
   <ion-grid [fixed]="true">
     <ion-row>
-      <ion-col *ngFor="let evento of eventosFiltradosPorCiudad" size="4">
+      <ion-col *ngFor="let evento of filtradosPorCiudad" size="4">
         <ion-accordion-group class="mb-3" [multiple]="true">
           <ion-accordion class="mb-3 acordeon_evento">
             <ion-item slot="header" class="white-header">
@@ -31,7 +31,7 @@
                 <a href="{{ evento.enlace_info }}">+Info</a>
               </div>
               <div class="contenedor-botones">
-                <button class="btn btn_bg" (click)="crearViaje('madrid')">Crear viaje</button>
+                <button class="btn btn_bg" (click)="crearViaje(evento.ciudad)">Crear viaje</button>
                 <button class="btn btn_bg">Buscar viaje</button>
               </div>
             </div>
