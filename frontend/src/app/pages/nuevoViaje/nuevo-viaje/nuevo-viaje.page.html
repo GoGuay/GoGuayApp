@@ -26,6 +26,7 @@
               <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon">
               <input [(ngModel)]="destino" (input)="buscarSugerenciasDestino($event)"
                 placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control" name="destino">
+              <!-- Spinner de carga -->
               <div *ngIf="cargandoDestino" class="spinner-container">
                 <app-spinner></app-spinner>
               </div>
@@ -39,8 +40,8 @@
               </ul>
             </div>
 
-            <div class="select-icon-container">
-              <img src="../../../../assets/sistema/usuarios-alt.png" class="input-icon" alt="icono usuarios">
+            <div class="select-container">
+              <img src="../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios">
               <select #plazasSelect class="form-select input-viaje form-control custom-select" aria-label="n_personas"
                 [(ngModel)]="plazas" name="viajeros" [ngModelOptions]="{standalone: true}">
                 <option value="" disabled selected>{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}</option>
@@ -93,4 +94,9 @@
       </div>
     </div>
   </ion-row>
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-ajustes fab-buscar">
+    <ion-fab-button aria-label="Ir atrás" (click)="goBack()">
+      <img [src]="irAtrasImg" alt="Ir atrás" style="width: 24px; height: 24px;">
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

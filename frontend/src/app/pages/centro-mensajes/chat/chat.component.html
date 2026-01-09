@@ -1,0 +1,37 @@
+<ion-header>
+  <app-navbar [backRoute]="'/messaging-center'"></app-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-atras" title="Volver atrás">
+    <ion-fab-button (click)="goBack()">
+      <img [src]="irAtrasImg" alt="Volver" style="width: 24px; height: 24px;">
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="chat-container p-3">
+    <div *ngFor="let m of mensajes" 
+         [class.mio]="m.emisor == userId" 
+         class="mensaje">
+      {{ m.contenido }}
+    </div>
+    
+    <div *ngIf="mensajes.length === 0" class="text-center mt-5">
+      <p>No hay mensajes en esta conversación.</p>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <div class="input-wrapper d-flex align-items-center p-2 bg-light">
+    <ion-textarea
+      [(ngModel)]="texto"
+      placeholder="Escribe un mensaje..."
+      autoGrow="true"
+      class="chat-textarea me-2"
+    ></ion-textarea>
+    <ion-button (click)="enviar()" [disabled]="!texto.trim()">
+      Enviar
+    </ion-button>
+  </div>
+</ion-footer>

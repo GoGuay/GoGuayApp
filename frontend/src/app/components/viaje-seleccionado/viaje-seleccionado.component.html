@@ -54,14 +54,14 @@
         </mat-accordion>
 
         <!-- LISTA DE ACOMPAÑANTES EN EL VIAJE -->
-        <div class="mt-3 mb-3" *ngIf="data.viaje.acompanantes.length === 0">
+        <div class="mt-3 mb-3" *ngIf="viaje.acompanantes.length === 0">
           <span> Este viaje aún no tiene acompañantes </span>
         </div>
         <div>
           <h2>Acompañantes <mat-icon>groups</mat-icon></h2>
           <mat-divider class="mb-2"></mat-divider>
         </div>
-        <div class="mt-3 mb-3" *ngFor="let acomp of data.viaje.acompanantes">
+        <div class="mt-3 mb-3" *ngFor="let acomp of viaje.acompanantes">
           <mat-accordion class="headers-align" multi>
             <mat-expansion-panel>
               <mat-expansion-panel-header>

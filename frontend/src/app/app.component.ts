@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import {
-  NgcCookieConsentService,
-  NgcStatusChangeEvent,
-} from 'ngx-cookieconsent';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NavController } from '@ionic/angular/standalone';
+import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
+import { IonicModule, IonMenu } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { MenuController } from '@ionic/angular';
+import { Router, NavigationEnd } from '@angular/router';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -21,20 +23,45 @@ export function HttpLoaderFactory(http: HttpClient) {
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [IonApp, IonRouterOutlet, NotificationToastComponent],
+  imports: [NotificationToastComponent, IonicModule, TranslateModule, RouterModule],
+  providers: [MenuController]
 })
 export class AppComponent implements OnInit {
+  @ViewChild(IonMenu) menu!: IonMenu;
   private consentGivenSubscription!: Subscription;
   userData: Usuario = {} as Usuario;
+  currentTime: string = '';
+
+  hours: string = '';
+  minutes: string = '';
 
   constructor(
     private ccService: NgcCookieConsentService,
     private cookieService: CookieService,
     private languageService: LanguageService,
-    private notificacionesService: NotificacionesService
-  ) {}
+    private notificacionesService: NotificacionesService,
+    private menuCtrl: MenuController,
+    private router: Router
+  ) { }
 
   ngOnInit() {
+    /**
+     * Comprueba y actualiza la hora actual cada minuto.
+     */
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
+
+    /**
+     * Cierra el menú al navegar a una nueva ruta.
+     */
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.menu) {
+          this.menu.close();
+        }
+      });
+
     const consentStatus = localStorage.getItem('cookieConsentStatus');
     this.loadUserData();
 
@@ -84,6 +111,15 @@ export class AppComponent implements OnInit {
     this.languageService.language$.subscribe((lang) => {
       console.log(`Idioma cambiado a: ${lang}`);
     });
+  }
+
+  /**
+   * Función para actualizar la hora actual cada minuto.
+   */
+  updateTime() {
+    const now = new Date();
+    this.hours = now.getHours().toString().padStart(2, '0');
+    this.minutes = now.getMinutes().toString().padStart(2, '0');
   }
 
   checkUserDataUntilAvailable() {

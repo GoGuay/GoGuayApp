@@ -120,3 +120,21 @@ input {
 .btn-rounded mat-icon {
   font-size: 24px;
 }
+
+@media (max-width: 768px) {
+  .lista_sugerencias,
+  .lista_sugerencias_origen {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .btn-banner {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

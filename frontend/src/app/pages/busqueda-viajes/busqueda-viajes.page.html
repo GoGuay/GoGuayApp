@@ -16,5 +16,19 @@
     </div>
 
     <app-resultados-busqueda [paramsBusqueda]="busquedaParams"></app-resultados-busqueda>
+
+    <!-- FAB: IR ATRAS -->
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-ajustes fab-buscar">
+      <ion-fab-button aria-label="Ir atrás" (click)="goBack()">
+        <img [src]="irAtras" alt="Ir atrás" style="width: 24px; height: 24px;">
+      </ion-fab-button>
+    </ion-fab>
+
+    <!-- FAB: NUEVO VIAJE -->
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="fab-ajustes">
+      <ion-fab-button aria-label="Nuevo viaje" (click)="goToNuevoViaje()">
+        <img [src]="imgNuevoViaje" alt="Nuevo viaje" style="width: 24px; height: 24px;">
+      </ion-fab-button>
+    </ion-fab>
   </div>
 </ion-content>

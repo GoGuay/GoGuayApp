@@ -56,11 +56,21 @@
         </ion-col>
         <ion-col size="12" size-md="4">
           <!-- Sección de notificaciones -->
-          <div class="box-section">
+          <div class="box-section" id="notificaciones-section">
             <h3>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
             <mat-divider></mat-divider>
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
+            </p>
+            <div class="d-flex justify-content-center mt-4">
+              <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
+            </div>
+            <div class="d-flex justify-content-center">
+              <mat-divider class="mt-2" style="width: 150px;"></mat-divider>
+            </div>
+            
+             <p class="mt-2 text-start">
+              Mostrar notificaciones leídas
             </p>
             <div class="d-flex justify-content-center mt-4">
               <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>

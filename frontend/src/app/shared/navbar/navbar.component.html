@@ -1,134 +1,122 @@
-<ion-header>
-  <ng-container *ngIf="validacionHomePage; else otherPageNav">
+<ion-header class="boxHeader">
+  <!-- Se muestra sólo en el Home -->
+  <ng-container>
     <nav class="navbar navbar-expand-lg navbar-diseno">
-      <div class="container">
-        <div class="d-flex align-items-center d-lg-none w-100 cajon_principal">
-          <a class="navbar-brand p-0" href="#">
-            <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo logo-mobile-small" />
-            <h1 class="m-0 text-center d-none">{{ 'TITLE' | translate }}</h1>
-          </a>
-
-          <button
-            class="navbar-toggler me-2"
-            type="button"
-            data-bs-toggle="collapse"
-            (click)="toggleMenu()"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <mat-icon *ngIf="!menuOpen">menu</mat-icon>
-            <mat-icon *ngIf="menuOpen">close</mat-icon>
-          </button>
-        </div>
-
+      <div class="container d-flex justify-content-between align-items-center">
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
-          <ul class="navbar-nav w-100 align-items-center justify-content-center flex-row">
-            <div class="d-flex align-items-center me-auto flex-column flex-lg-row">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/sobre-nosotros">
-                  {{ 'NAVBAR.QUIENES' | translate }}
-                </a>
-              </li>
-              <li class="nav-item ion-activatable ripple-parent circle">
-                <a class="nav-link active" aria-current="page" href="/faqs">
-                  {{ 'NAVBAR.FAQS' | translate }}
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/decalogo">
-                  {{ 'NAVBAR.DECALOGO' | translate }}
-                </a>
-              </li>
-            </div>
+          <ul class="navbar-nav d-flex justify-content-center mb-2 mb-lg-0 align-items-center opciones">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/sobre-nosotros">
+                {{ "NAVBAR.QUIENES" | translate }}
+              </a>
+            </li>
 
-            <li class="nav-item d-none d-lg-flex flex-column align-items-center mx-auto logo-principal">
+            <li class="nav-item ion-activatable ripple-parent circle">
+              <a class="nav-link active" aria-current="page" href="/faqs">
+                {{ "NAVBAR.FAQS" | translate }}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/decalogo">
+                {{ "NAVBAR.DECALOGO" | translate }}
+              </a>
+            </li>
+
+            <li class="nav-item d-flex flex-column align-items-center">
               <a class="" href="#">
                 <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo" />
               </a>
-              <h1 class="m-0 text-center">{{ 'TITLE' | translate }}</h1>
+              <h1 class="m-0 text-center">{{ "TITLE" | translate }}</h1>
             </li>
 
-            <div class="d-flex ms-auto d-none d-lg-block"></div>
+            <li class="nav-item">
+              <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
+                {{ "NAVBAR.BUSCAR_VIAJE" | translate }}
+                <img src="../../../assets/sistema/busqueda.png" class="search-icon" />
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link active" href="/nuevo-viaje" aria-current="page">
+                {{ "NAVBAR.PUBLICAR_VIAJE" | translate }}
+              </a>
+            </li>
           </ul>
         </div>
 
-        <div class="d-flex align-items-center ms-auto">
-          <li class="nav-item list-unstyled">
-            <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
-              <span class="d-none d-lg-block">{{ 'NAVBAR.BUSCAR_VIAJE' | translate }}</span>
-              <img src="../../../assets/sistema/busqueda.png" class="search-icon" />
-            </a>
-          </li>
+        <div class="mobile-navbar d-flex align-items-center w-100 position-relative mobile-only">
+          <div class="col-1 d-flex align-items-center">
+            <ion-menu-button menu="mobileMenu" autoHide="false" class="mobile-only"></ion-menu-button>
+          </div>
+          <div class="col-2 d-flex justify-content-start align-items-center ms-2" (click)="goBack()">
+            <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_mobile mobile-only" />
+          </div>
+          <div class="col-5 position-relative d-flex justify-content-end align-items-start">
+            <!-- Contenedor para idiomas-->
+<div class="idiomas-container d-flex flex-column align-items-center justify-content-center">
+      <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma"
+        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }" (click)="changeLanguage('es')" />
+      <img src="../../../assets/sistema/bandera_uk.svg" class="icon-idioma mt-1"
+        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }" (click)="changeLanguage('en')" />
+    </div>
 
-          <li class="nav-item list-unstyled">
-            <a class="nav-link active d-flex align-items-center" href="/nuevo-viaje" aria-current="page">
-              <span class="d-none d-lg-block">{{ 'NAVBAR.PUBLICAR_VIAJE' | translate }}</span>
-              <mat-icon class="d-lg-none d-block">add_circle_outline</mat-icon>
-            </a>
-          </li>
+            <!-- Botones notificaciones y mensajes -->
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btnNotificaciones" type="button" *ngIf="isLoggedIn">
+                <a class="nav-link active" href="/notificaciones">
+                  <img class="idiomas" src="../../../assets/sistema/campana.gif">
+                </a>
+                <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
+              </button>
 
-          <li class="nav-item dropdown list-unstyled d-none d-sm-block">
-            <a class="nav-link active" aria-current="page" href="/notificaciones">
-              <img class="idiomas" src="../../../assets/sistema/campana.gif" />
-            </a>
-          </li>
-
-          <div class="d-flex justify-content-center align-items-center ms-3 me-3">
-            <img
-              src="../../../assets/idiomas/bandera_es.svg"
-              class="icon-idioma me-2"
-              [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }"
-              (click)="changeLanguage('es')"
-              alt="Seleccionar idioma español"
-              role="button" />
-            <img
-              src="../../../assets/idiomas/bandera_uk.svg"
-              class="icon-idioma"
-              [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }"
-              (click)="changeLanguage('en')"
-              alt="Select English language"
-              role="button" />
+              <button class="btnMensajes me-3" type="button" *ngIf="isLoggedIn">
+                <a class="nav-link active" href="/messaging-center">
+                  <img class="idiomas" src="../../../assets/sistema/messaging.png">
+                </a>
+                <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{
+                  numNotificacionesMensajes }}</span>
+              </button>
+            </div>
           </div>
 
+          <!-- Menú para usuario logueado -->
           <ng-container *ngIf="isLoggedIn; else loggedOutNav">
-            <li class="nav-item dropdown list-unstyled">
-              <a
-                class="nav-link dropdown-toggle d-flex align-items-center"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                (click)="cambioDireccionFlecha()">
-                <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif" />
+            <li class="nav-item dropdown ms-4">
+              <!-- boton del menu -->
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
-                  <img [src]="usuario?.fotoPerfil" alt="Foto de perfil" />
+                  <img [src]="usuario?.fotoPerfil" alt="Foto de perfil">
                 </div>
-                <mat-icon class="flecha-icono ms-0 flecha-animada" [class.rotada]="isDropdownOpen">expand_more</mat-icon>
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
 
               <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/mi-perfil">{{ 'NAVBAR.MIPERFIL' | translate }}</a>
+                      <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ 'NAVBAR.MIS_VIAJES' | translate }}</a>
+                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/datos-contacto">{{ 'NAVBAR.DATOSCONTACTO' | translate }}</a>
+                      <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/verificaciones-perfil">{{ 'NAVBAR.VERIFICACION' | translate }}</a>
+                      <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
+                        }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/saldo-transferencias">{{ 'NAVBAR.SALDO' | translate }}</a>
+                      <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdow">
                       <a class="nav-link ms-3" href="/ajustes-aplicacion">
-                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png" />
-                        {{ 'NAVBAR.AJUSTES' | translate }}
+                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                        {{ "NAVBAR.AJUSTES" | translate }}
                       </a>
                     </li>
                   </ul>
@@ -137,25 +125,29 @@
                 <li class="logout d-flex align-items-center justify-content-center">
                   <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
                     <mat-icon class="me-2">power_settings_new</mat-icon>
-                    {{ 'NAVBAR.SALIR' | translate }}
+                    {{ "NAVBAR.SALIR" | translate }}
                   </a>
                 </li>
               </ul>
             </li>
           </ng-container>
 
+          <!-- Menú para login / registro  -->
           <ng-template #loggedOutNav>
-            <li class="nav-item dropdown list-unstyled">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="caja-icono tamano-icono" src="../../../assets/user/logOff.gif" />
-                <mat-icon class="flecha-icono ms-0 flecha-animada" [class.rotada]="isDropdownOpen">expand_more</mat-icon>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                <div class="caja_imagen_perfil"> <img class="tamano-icono" src="../../../assets/user/logOff.gif">
+                </div>
+                <mat-icon class="flecha-icono ms-2 flecha-animada"
+                  [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
               <ul class="dropdown-menu menuusuario">
                 <li>
-                  <a class="dropdown-item" href="/login">{{ 'NAVBAR.LOGIN' | translate }}</a>
+                  <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/registro">{{ 'NAVBAR.REGISTRO' | translate }}</a>
+                  <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
                 </li>
               </ul>
             </li>
@@ -165,47 +157,5 @@
     </nav>
   </ng-container>
 
-  <ng-template #otherPageNav>
-    <nav class="navbar navbar-expand-lg navbar-diseno">
-      <div class="container">
-        <ul class="menuusuario">
-          <li class="nav-item d-flex flex-column align-items-center">
-            <ion-button fill="clear" (click)="goBack()">
-              <mat-icon class="back-icon">arrow_back</mat-icon>
-              <img src="{{ logo }}" alt="Logo" class="logo" />
-              PrideRide
-            </ion-button>
-          </li>
-        </ul>
-        <div class="d-flex align-items-center buscar-viaje">
-          <a *ngIf="searchRoute" class="nav-link active d-flex align-items-center" [routerLink]="searchRoute">
-            <span *ngIf="isDesktop">{{ dynamicTitle }}</span>
-            <mat-icon title="{{ dynamicTitle }}">{{ dynamicIcon }}</mat-icon>
-          </a>
 
-          <div class="d-flex justify-content-center align-items-center ms-3 me-3">
-            <img
-              src="../../../assets/idiomas/bandera_es.svg"
-              class="icon-idioma me-2"
-              [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }"
-              (click)="changeLanguage('es')"
-              alt="Seleccionar idioma español"
-              role="button" />
-            <img
-              src="../../../assets/idiomas/bandera_uk.svg"
-              class="icon-idioma"
-              [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }"
-              (click)="changeLanguage('en')"
-              alt="Select English language"
-              role="button" />
-          </div>
-
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown" *ngIf="!isLoggedIn"></li>
-            <li class="nav-item dropdown" *ngIf="isLoggedIn"></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </ng-template>
 </ion-header>

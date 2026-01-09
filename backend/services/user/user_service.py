@@ -26,27 +26,17 @@ import os
 from twilio.rest import Client
 from sqlalchemy import func
 
-
-
-
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
 
-
-
 mail = None
 serializer = None
-
 
 API_KEY_PRELUDE = os.getenv("API_KEY_PRELUDE")
 
 client = Prelude(
     api_token=API_KEY_PRELUDE,
-
-
 )
-
-
 
 ##Configuración Twilio
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -55,15 +45,7 @@ SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-
 otp_store = {}
-
-
-
-
-
-
-
 
 # # # # # # # # # # # # # # # # # # # #
 #       REGISTRAR USUARIO NUEVO

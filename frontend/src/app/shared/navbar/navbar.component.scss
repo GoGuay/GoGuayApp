@@ -2,6 +2,10 @@
   background-color: #f0d7b4;
 }
 
+.boxHeader {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
 ion-button {
   color: #000000 !important;
 }
@@ -11,37 +15,29 @@ ion-button {
   border-radius: 50%;
 }
 
+.logo_mobile {
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.navbar-diseno ul,
+.navbar-diseno li {
+  list-style: none;
+}
+
+.opciones li {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
 .idiomas {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   mix-blend-mode: multiply; // elimina el fondo blanco del gif
-}
-
-.icon-idioma {
-  width: 32px;
-  /* Define un ancho fijo para las banderas */
-  height: auto;
-  /* Mantiene la proporción */
-  cursor: pointer;
-  border: 1px solid #ccc;
-  /* Opcional: borde para mejor visualización */
-  border-radius: 4px;
-  /* Opcional: bordes redondeados */
-  transition: filter 0.3s ease, transform 0.2s ease;
-}
-
-.icon-idioma:hover {
-  transform: scale(1.05);
-  /* Pequeño efecto al pasar el ratón */
-}
-
-/* Estilo para el idioma no seleccionado (Blanco y negro) */
-.grayscale-filter {
-  filter: grayscale(100%);
-  /* Convierte la imagen a blanco y negro */
-  opacity: 0.7;
-  /* Reduce ligeramente la opacidad del inactivo */
 }
 
 .caja-icono {
@@ -91,6 +87,12 @@ ion-button {
   color: black;
 }
 
+.flag-icon {
+  width: 20%;
+  border-radius: 8px;
+  margin-right: 8%;
+}
+
 .navbar {
   position: relative;
   z-index: 10;
@@ -118,7 +120,7 @@ ion-button {
   border: none;
   background-color: #f0d7b4;
   border-radius: 15px;
-  width: 250px;
+  width: auto;
 }
 
 // Botón Salir
@@ -147,17 +149,12 @@ ion-button {
   visibility: visible;
   transform: translateY(0);
 }
-
 .navbar .dropdown-menu li {
   transition: transform 0.2s ease-in-out;
 }
 
 .navbar .dropdown-menu li:hover {
   transform: translateX(5px);
-}
-
-.menuusuario {
-  // width: 280px;
 }
 
 ul {
@@ -194,13 +191,31 @@ ul {
   overflow: visible !important;
 }
 
-@media (max-width: 576px) {
-  // Esta clase ajusta el diseño del navbar para pantallas pequeñas (móviles)
-  // Evita que los iconos aparezcan desalineados
-  .cajon_principal {
-    width: 125px !important;
-  }
+.idiomas-container {
+  position: relative !important;
+  top: 0 !important;
+  right: 0 !important;
+  min-width: 30px;
+}
 
+.icon-idioma {
+  width: 20px !important;
+  height: auto;
+  cursor: pointer;
+  transition: filter 0.3s;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+}
+
+/* Estilo para el idioma no seleccionado (Blanco y negro) */
+.grayscale-filter {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
+@media (max-width: 576px) {
   .navbar .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -215,27 +230,133 @@ ul {
     display: block;
   }
 
-  .logo-mobile-small {
-    width: 50px;
-    /* Puedes ajustar este valor */
-    height: auto;
+  .logo {
+    width: 60px;
+    border-radius: 50%;
   }
-
-  /* Asegura que el navbar-brand (que contiene el logo) no tenga margen extra */
-  .navbar-brand {
-    margin-left: 0 !important;
-    padding-left: 0 !important;
+  .btnNotificaciones img {
+    width: 45px;
+    height: 40px;
   }
+}
 
-  /* Asegura que el toggler se alinee a la derecha de ese bloque */
-  .navbar-toggler {
-    /* ms-auto ya debería funcionar en el HTML, pero este CSS es una seguridad */
-    margin-left: auto !important;
-  }
+.desktop-only {
+  display: flex;
+}
 
-  /* Oculta los elementos de escritorio que no se ocultaron con d-none */
-  /* Aunque ya se corrigió con las clases, puede ser útil para elementos específicos */
-  .d-lg-block {
+.mobile-only {
+  display: none;
+  color: black;
+}
+
+.mobile-navbar {
+  position: relative;
+  width: auto;
+}
+
+.centered-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.btnNotificaciones {
+  width: 84px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnMensajes {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnNotificaciones img {
+  width: 45px;
+  height: 40px;
+}
+
+.btnMensajes img {
+  max-width: 84%;
+  max-height: 0%;
+  object-fit: contain;
+}
+
+.badge-notificaciones {
+  position: absolute;
+  bottom: 20px;
+  right: 118px;
+  transform: translate(50%, 50%);
+  background-color: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.badge-notificaciones_mensajes {
+  position: absolute;
+  bottom: 20px;
+  right: 38px;
+  transform: translate(50%, 50%);
+  background-color: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tamano-icono,
+.caja-icono {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
     display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+  .mobile-navbar {
+    width: 100%;
+  }
+  .idiomas-container {
+    position: relative !important;
+    top: 0 !important;
+    right: -10px !important;
+    min-width: 30px;
   }
 }

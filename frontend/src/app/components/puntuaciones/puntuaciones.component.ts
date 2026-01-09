@@ -45,13 +45,16 @@ export class PuntuacionesComponent implements OnInit {
       this.calificacionSeleccionada = valor;
       this.puntuacionForm.patchValue({ recomendacion: valor });
     }
-    console.log('Calificación seleccionada:', this.calificacionSeleccionada);
   }
 
-    verificarEncuesta() {
-      console.log('Datos de la encuesta:', this.puntuacionForm.value);
-      const titulo: string = 'Encuesta realizada correctamente';
-      const mensaje: string = 'Muchas gracias por realizar nuestra encuesta de satisfacción.';
-      
-    }
+  verificarEncuesta() {
+    console.log('Datos de la encuesta:', this.puntuacionForm.value);
+    const titulo: string = 'Encuesta realizada correctamente';
+    const mensaje: string = 'Muchas gracias por realizar nuestra encuesta de satisfacción.';
+
+  }
+
+  puntuarViaje(){
+    console.log('Vas a puntuar con: '+ this.calificacionSeleccionada + ' estrellas.');
+  }
 }
