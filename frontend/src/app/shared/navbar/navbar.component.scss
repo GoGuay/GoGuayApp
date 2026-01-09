@@ -191,6 +191,30 @@ ul {
   overflow: visible !important;
 }
 
+.idiomas-container {
+  position: relative !important;
+  top: 0 !important;
+  right: 0 !important;
+  min-width: 30px;
+}
+
+.icon-idioma {
+  width: 20px !important;
+  height: auto;
+  cursor: pointer;
+  transition: filter 0.3s;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+}
+
+/* Estilo para el idioma no seleccionado (Blanco y negro) */
+.grayscale-filter {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
 @media (max-width: 576px) {
   .navbar .dropdown-menu {
     position: absolute;
@@ -250,15 +274,32 @@ ul {
   justify-content: center;
 }
 
+.btnMensajes {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .btnNotificaciones img {
   width: 45px;
   height: 40px;
 }
 
+.btnMensajes img {
+  max-width: 84%;
+  max-height: 0%;
+  object-fit: contain;
+}
+
 .badge-notificaciones {
   position: absolute;
   bottom: 20px;
-  right: 128px;
+  right: 118px;
   transform: translate(50%, 50%);
   background-color: red;
   color: white;
@@ -274,6 +315,34 @@ ul {
   z-index: 10;
 }
 
+.badge-notificaciones_mensajes {
+  position: absolute;
+  bottom: 20px;
+  right: 38px;
+  transform: translate(50%, 50%);
+  background-color: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tamano-icono,
+.caja-icono {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+
 @media (max-width: 767px) {
   .desktop-only {
     display: none !important;
@@ -282,6 +351,12 @@ ul {
     display: flex !important;
   }
   .mobile-navbar {
-    width: 100%; /* solo en móvil */
+    width: 100%;
+  }
+  .idiomas-container {
+    position: relative !important;
+    top: 0 !important;
+    right: -10px !important;
+    min-width: 30px;
   }
 }

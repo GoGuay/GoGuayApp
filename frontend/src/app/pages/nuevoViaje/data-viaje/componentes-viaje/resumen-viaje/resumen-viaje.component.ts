@@ -53,6 +53,7 @@ export class ResumenViajeComponent implements OnInit {
   private destroy$ = new Subject<void>();
   vehiculoSeleccionado: { marca: string; modelo: string } | null = null;
   nombreVehiculo: string = '';
+  vehiculosUsuario: any[] = [];
 
 
   constructor(
@@ -67,6 +68,14 @@ export class ResumenViajeComponent implements OnInit {
 
 
   ngOnInit() {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (this.userData?.usuario?.email) {
+      this.userLoggedIn = true;
+      this.obtenerVehiculosUsuario(this.userData.usuario.id);
+    } else {
+      this.userLoggedIn = false;
+    }
+
     this.route.queryParams.subscribe(params => {
       const viajeId = params['id'];
 
@@ -89,23 +98,12 @@ export class ResumenViajeComponent implements OnInit {
         this.navCtrl.navigateRoot('/home');
         return;
       }
-
-      // Verificación del usuario logueado
-      this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      if (
-        this.userData &&
-        Object.keys(this.userData).length > 0 &&
-        this.userData.usuario.email
-      ) {
-        this.userLoggedIn = true;
-      } else {
-        this.userLoggedIn = false;
-      }
     });
-    if (this.currentViajeData?.vehiculo) {
-      this.obtenerVehiculo(this.currentViajeData.vehiculo).subscribe(nombre => {
-        this.nombreVehiculo = nombre;
-      });
+
+    if (this.currentViajeData?.coche) {
+      const coche = this.currentViajeData.coche;
+      this.nombreVehiculo = `${coche.marca} ${coche.modelo}`;
+      this.editableFields.coche = coche;
     }
   }
 
@@ -381,5 +379,11 @@ export class ResumenViajeComponent implements OnInit {
         return of('Vehículo no encontrado');
       })
     );
+  }
+
+  obtenerVehiculosUsuario(usuario_id: number) {
+    return this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(vehiculos => {
+      this.vehiculosUsuario = vehiculos;
+    });
   }
 }

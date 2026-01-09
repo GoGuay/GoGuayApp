@@ -17,6 +17,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { ActivatedRoute } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-mis-viajes',
@@ -50,7 +51,7 @@ export class MisViajesPage implements OnInit {
   buscarViaje: string = '../../../assets/sistema/busqueda.png';
 
   cargandoViajes: boolean = true;
-  
+
   /**
    * Datos del usuario
    */
@@ -86,22 +87,34 @@ export class MisViajesPage implements OnInit {
     this.cargandoViajes = true;
 
     forkJoin({
-      acompanante: this.travelService.getViajesComoAcompañante(userId),
-      creados: this.travelService.getViajesUsuario(userId)
+      // Si el usuario no tiene viajes, el servidor podría devolver error. 
+      // Usamos 'of([])' para devolver un array vacío y que forkJoin continúe.
+      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(
+        catchError(() => of([]))
+      ),
+      creados: this.travelService.getViajesUsuario(userId).pipe(
+        catchError(() => of({ viajes: [] }))
+      )
     }).subscribe(({ acompanante, creados }) => {
+      // Ahora 'acompanante' tendrá datos aunque 'creados' haya fallado
+      this.misViajesAcompanante = acompanante || [];
+      this.misViajesCreados = creados?.viajes || [];
 
-      this.misViajesAcompanante = acompanante;
-      this.misViajesCreados = creados.viajes;
-
-      // cargar datos del usuario creador en cada viaje
-      this.misViajesCreados.forEach((viaje) => {
-        this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-          viaje.usuario = usuario;
+      // Solo recorremos si hay viajes creados
+      if (this.misViajesCreados.length > 0) {
+        this.misViajesCreados.forEach((viaje) => {
+          this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
+            viaje.usuario = usuario;
+          });
         });
-      });
+      }
 
       this.filtrarViajes();
       this.cargandoViajes = false;
+    }, (error) => {
+      // Este bloque solo se ejecutará si algo falla catastróficamente
+      this.cargandoViajes = false;
+      console.error("Error crítico en la carga de viajes", error);
     });
   }
 
@@ -190,18 +203,31 @@ export class MisViajesPage implements OnInit {
  * Función para filtrar los viajes según el filtro seleccionado
  */
   filtrarViajes() {
-    if (this.filtroViajes === 'todos') {
-      this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
-      this.conductor = false;
-      this.pasajero = false;
-    } else if (this.filtroViajes === 'conductor') {
-      this.misViajes = [...this.misViajesCreados];
-      this.conductor = true;  // El usuario es conductor
-      this.pasajero = false;
-    } else if (this.filtroViajes === 'pasajero') {
-      this.misViajes = [...this.misViajesAcompanante];
-      this.conductor = false; // El usuario es pasajero
-      this.pasajero = true;
+    const acompañante = this.misViajesAcompanante || [];
+    const creados = this.misViajesCreados || [];
+
+    switch (this.filtroViajes) {
+      case 'todos':
+        this.misViajes = [...acompañante, ...creados];
+        this.conductor = false;
+        this.pasajero = false;
+        break;
+
+      case 'conductor':
+        this.misViajes = [...creados];
+        this.conductor = true;
+        this.pasajero = false;
+        break;
+
+      case 'pasajero':
+        this.misViajes = [...acompañante];
+        this.conductor = false;
+        this.pasajero = true;
+        break;
+
+      default:
+        this.misViajes = [];
+        break;
     }
   }
 
