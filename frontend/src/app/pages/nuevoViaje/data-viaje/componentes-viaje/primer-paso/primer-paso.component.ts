@@ -18,7 +18,6 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 
-
 registerLocaleData(localeEs);
 
 @Component({
@@ -34,7 +33,7 @@ registerLocaleData(localeEs);
     MatFormFieldModule,
     MatInputModule,
     CommonModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -46,8 +45,7 @@ registerLocaleData(localeEs);
 export class PrimerPasoComponent implements OnInit {
   userData: Usuario = {} as Usuario;
 
-  private readonly _adapter =
-    inject<DateAdapter<unknown, unknown>>(DateAdapter);
+  private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
 
@@ -69,7 +67,7 @@ export class PrimerPasoComponent implements OnInit {
     private travelService: TravelService,
     private platform: Platform,
     private vehiculosServicesService: VehiculosServicesService,
-    private router: Router
+    private router: Router,
   ) {
     this._adapter.setLocale('es-ES');
     this.obtenerVehiculos();
@@ -82,7 +80,7 @@ export class PrimerPasoComponent implements OnInit {
 
     console.log('MOBILE: ', this.isMobileWeb);
     console.log('DESKTOP: ', this.isDesktop);
-    
+
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
     this.hora_seleccionada = date.toLocaleTimeString([], {
@@ -99,8 +97,7 @@ export class PrimerPasoComponent implements OnInit {
     const viajeData = this.travelService.getViajeData();
 
     if (viajeData) {
-      this.fecha_seleccionada =
-        viajeData.fecha_salida || this.fecha_seleccionada;
+      this.sumarUnDiaAFecha(viajeData.fecha_salida);
       this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
       this.viajeros = viajeData.viajeros || '0';
       this.plazas = viajeData.plazas || '';
@@ -112,16 +109,28 @@ export class PrimerPasoComponent implements OnInit {
   }
 
   /**
+   * @param fechaDate --> string
+   * Le pasamos a fechaOriginal la fechaDATE convertida en tipo DATE gracias al new Date
+   * DE fechaOiriginal sacamos todo el tiempo en milisegundos con getTime y le sumamos los milisegundos que tendría un día. ESto lo seguimos
+   * manteniendo en formato fecha con new Date para el siguiente paso, y le pasamos el valor a fechaMasUnDia (toISOStrging resta un día al seleccionado.)
+   * @return fecha_seleccionada está como variable global y recibe el valor de fechaMasUnDia en formato string, y cortado hasta la T debido al formato
+   * DATE.
+   */
+  sumarUnDiaAFecha(fechaDATE: string): string {
+    const fechaOriginal = new Date(fechaDATE);
+    const fechaMasUnDia = new Date(fechaOriginal.getTime() + 86400000);
+    return (this.fecha_seleccionada = fechaMasUnDia.toISOString().split('T')[0]);
+  }
+
+  /**
    * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
     const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.vehiculosServicesService
-      .obtenerVehiculosUsuario(usuario.usuario.id)
-      .subscribe((resultado) => {
-        console.log('Vehículos: ', resultado.vehiculos);
-        this.userData.usuario.vehiculos = resultado.vehiculos;
-      });
+    this.vehiculosServicesService.obtenerVehiculosUsuario(usuario.usuario.id).subscribe((resultado) => {
+      console.log('Vehículos: ', resultado.vehiculos);
+      this.userData.usuario.vehiculos = resultado.vehiculos;
+    });
   }
 
   /**
@@ -168,9 +177,7 @@ export class PrimerPasoComponent implements OnInit {
    * @returns Devuelve la hora seleccionada.
    */
   getTime(): string {
-    return this.hora_seleccionada
-      ? this.hora_seleccionada
-      : 'Ninguna hora seleccionada.';
+    return this.hora_seleccionada ? this.hora_seleccionada : 'Ninguna hora seleccionada.';
   }
 
   onDateChange(event: any) {
@@ -259,9 +266,8 @@ export class PrimerPasoComponent implements OnInit {
     this.cocheSeleccionado = coche;
     this.guardaDatosDelViajeEnServicio('coche', coche);
   }
-  
+
   irARegistrarVehiculo() {
     this.router.navigate(['/mi-perfil']);
   }
-  
 }

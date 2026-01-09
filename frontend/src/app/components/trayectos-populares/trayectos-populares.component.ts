@@ -54,7 +54,9 @@ export class TrayectosPopularesComponent implements OnInit {
    * Creamos el objeto viajeData con los parámetros necesarios para crear el viaje (la fecha de inicio del evento y el destino)
    * Con las propiedades del viaje (destino y fecha_salida) le pasamos la propiedad del objeto de tipo Evento, que son la ciudad del evento y la fecha de inicio
    * del evento.
-   *
+   * If: si el usuario no está logueado, llama a la función openConfirmModal que muestra los mensajes para que se registre o se loguee.
+   * Si por el contrario, el usuario esta logueado, con setViajeData le estamos pasando los datos (destino y fecha_salida) al viaje que se va a crear.
+   * Navega a la ventana de crear viaje con los datos que le hemos pasado previamente.
    * @param element
    */
   crearViaje(eventoSeleccionado: Evento) {
@@ -65,9 +67,6 @@ export class TrayectosPopularesComponent implements OnInit {
     if (!this.usuarioNoLogueado) {
       this.funcionesComunes.openConfirmModal(this.title_help_auth, this.message_help_auth);
     } else {
-      /**
-       * Se almacena temporalmente los datos del viaje.
-       */
       this.viajesService.setViajeData(viajeData);
       this.navCtrl.navigateRoot('/data-viaje');
     }

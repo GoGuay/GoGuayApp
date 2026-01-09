@@ -5,7 +5,12 @@
       <h1 class="d-flex justify-content-center">ELIGE LA FECHA DEL VIAJE</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
-          <ion-datetime presentation="date" [min]="hoy" [(ngModel)]="fecha_seleccionada" (ionChange)="onDateChange($event)"></ion-datetime>
+          <ion-datetime
+            presentation="date"
+            locale="es-ES"
+            [min]="hoy"
+            [(ngModel)]="fecha_seleccionada"
+            (ionChange)="onDateChange($event)"></ion-datetime>
         </div>
         <p class="mt-2">Fecha seleccionada: {{ getFormattedDate() }}</p>
       </div>
