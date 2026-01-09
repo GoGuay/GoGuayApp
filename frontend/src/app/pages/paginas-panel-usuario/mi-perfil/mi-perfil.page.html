@@ -35,7 +35,7 @@
               </div>
             </div>
             <!-- Botón eliminar foto -->
-            <div class="col-auto">
+            <div class="col-auto" *ngIf="!perfilSinFoto">
               <button
                 type="button"
                 class="btn btn_bg boton btn_delete"
@@ -313,8 +313,8 @@
                   class="form-check-input"
                   type="checkbox"
                   [value]=" 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate "
-                  (change)="onCheckboxChange('silence', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('silence')"
+                  (change)="onCheckboxChange('Silencio', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('Silencio')"
                   id="pref-silence" />
                 <label class="form-check-label" for="pref-silence">{{ 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate }}</label>
               </div>
