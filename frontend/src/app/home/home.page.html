@@ -4,9 +4,7 @@
 <ion-content fullscreen>
   <!-- COMPONENTE DEL JUMBOTRON -->
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'JUMBOTRON.TITLE'" [imageSrc]="'../../assets/banco_imagenes/img1.png'"
-      [helpText]="'JUMBOTRON.HELP'">
-    </app-jumbotron>
+    <app-jumbotron [imageSrc]="'../../assets/banco_imagenes/img1.png'"></app-jumbotron>
   </div>
   <!-- COMPONENTE DEL BUSCADOR DE VIAJES -->
   <div class="buscador_box">
@@ -22,8 +20,8 @@
           <div id="publicar_viaje">
             <app-nuevo-viaje-general></app-nuevo-viaje-general>
           </div>
-
         </ion-col>
+
         <ion-col size="12" size-md="6">
           <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
           <div id="publicar_viaje">
@@ -32,7 +30,6 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-
 
     <!-- COMPONENTE QUE MUESTRA INFORMACIÓN GENERAL DE LA APLICACIÓN -->
     <div id="contenedor_texto" class="p-2">

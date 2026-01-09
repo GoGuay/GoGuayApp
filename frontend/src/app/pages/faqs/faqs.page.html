@@ -2,9 +2,10 @@
 
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
-      [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'">
-    </app-jumbotron>
+    <app-jumbotron
+      [title]="'Un espacio seguro para compartir cada kilómetro.'"
+      [imageSrc]="'../../assets/folder/jumbo3.jpg'"
+      [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
   </div>
 
   <div class="container">
@@ -15,33 +16,24 @@
     <ion-accordion-group class="mb-3">
       <ion-accordion value="registro" class="mb-3">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera"> ¿Cómo puedo registrarme? </ion-label>
+          <ion-label class="cabecera">¿Cómo puedo registrarme?</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Para registrarte, haz clic en "Crear cuenta", introduce tu información
-          personal y verifica tu email para completar el registro.
+          Para registrarte, haz clic en "Crear cuenta", introduce tu información personal y verifica tu email para completar el registro.
         </div>
       </ion-accordion>
       <ion-accordion value="editarPerfil" class="mb-3">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            ¿Cómo puedo editar mi perfil?
-          </ion-label>
+          <ion-label class="cabecera">¿Cómo puedo editar mi perfil?</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Ve a la sección de "Perfil" en el menú, realiza los cambios que desees
-          y guarda la configuración.
-        </div>
+        <div slot="content" class="p-3">Ve a la sección de "Perfil" en el menú, realiza los cambios que desees y guarda la configuración.</div>
       </ion-accordion>
       <ion-accordion value="seguridadDatos" class="mb-3">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            ¿Qué medidas de seguridad se aplican a los datos personales?
-          </ion-label>
+          <ion-label class="cabecera">¿Qué medidas de seguridad se aplican a los datos personales?</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Implementamos estándares avanzados de cifrado para proteger tu
-          información personal. Tus datos nunca serán compartidos sin tu
+          Implementamos estándares avanzados de cifrado para proteger tu información personal. Tus datos nunca serán compartidos sin tu
           consentimiento.
         </div>
       </ion-accordion>
@@ -51,6 +43,4 @@
   <div class="container d-flex justify-content-center">
     <app-ventana-dudas></app-ventana-dudas>
   </div>
-
-
 </ion-content>

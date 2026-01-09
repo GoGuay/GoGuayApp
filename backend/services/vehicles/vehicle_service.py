@@ -47,7 +47,6 @@ def anadir_vehiculo():
         marca = data['marca'],
         modelo = data['modelo'],
         color = data['color'],
-        matricula = data['matricula'],
         usuario_id = data['usuario_id']
     )
     db.session.add(nuevoVehiculo)
@@ -110,8 +109,7 @@ def editarVehiculo(vehiculo_id):
             vehiculo.modelo = data['modelo']
         if 'color' in data:
             vehiculo.color = data['color']
-        if 'matricula' in data:
-            vehiculo.matricula = data['matricula']
+        
 
         db.session.commit()
         return jsonify(vehiculo.serialize()), 200

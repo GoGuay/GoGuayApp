@@ -18,6 +18,80 @@
     "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
+
+  "NavBar Home": "Opciones del navbar que aparece en el Home",
+  "NAVBAR": {
+    "QUIENES": "Quienes somos",
+    "FAQS": "FAQs",
+    "DECALOGO": "Decálogo",
+    "BUSCAR_VIAJE": "Buscar viaje",
+    "PUBLICAR_VIAJE": "Publicar viaje",
+    "NOTIFICACIONES": "Notificaciones",
+    "IDIOMA_ES": "Seleccionar idioma español",
+    "IDIOMA_EN": "Seleccionar idioma inglés",
+    "MENUUSUARIO": {
+      "LOGIN": "Login",
+      "REGISTRO": "Registrarse",
+      "MI_PERFIL": "Mi perfil",
+      "MIS_VIAJES": "Mis viajes",
+      "DATOS_CONTACTO": "Datos de contacto",
+      "VERIFICACION": "Verificación del perfil",
+      "SALDO": "Saldo/Transferencias",
+      "AJUSTES": "Ajustes",
+      "SALIR": "Salir"
+    }
+  },
+
+  "_Home": "Por secciones",
+  "HOME": {
+    "JUMBO": {
+      "SLOGAN": "Seas como seas, viajamos contigo"
+    },
+    "SECCION_PUBLICAR": {
+      "TITULO": "¿Quieres compartir tu próximo viaje?",
+      "AYUDA": "Publica tu próximo viaje aquí."
+    },
+    "SECCION_BUSCAR": {
+      "TITULO": "¿Quieres buscar un viaje?",
+      "AYUDA": "Busca un viaje aquí."
+    },
+    "SECCION_EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "DESPLEGABLE": "Pulsa aquí para ver los próximos eventos",
+      "CIUDAD": "Ciudad",
+      "FECHA": "Fechas",
+      "DETALLES": "Detalles",
+      "LEER_MAS": "Leer más",
+      "AVISO": "*Nota: La información de los eventos ha sido extraída de sus respectivas fuentes el 2025. (Dicha información podría no estar actualizada debidamente)"
+    },
+    "SECCION_DUDAS": {
+      "TITULO": "¿TIENES DUDAS?"
+    }
+  },
+
+  "SELECTOR_GENERO": {
+    "H_CIS": "Hombre Cis",
+    "M_CIS": "Mujer Cis",
+    "TRANS": "Transexual",
+    "NO_BINARIO": "No binario",
+    "INTER": "Intergénero",
+    "NO_FLUIDO": "No Fluido",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+  "SELECTOR_ORIENTACION": {
+    "GAY": "Gay",
+    "LESBIANA": "Lesbiana",
+    "BISEXUAL": "Bisexual",
+    "PANSEXUAL": "Pansexual",
+    "ASEXUAL": "Asexual",
+    "DEMISEXUAL": "Demisexual",
+    "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -109,6 +183,89 @@
       "OPC_SILENCIO": "Ir en silencio"
     }
   },
+  "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
+  "REGISTRO": {
+    "FORM1": {
+      "BIENVENIDE": "BIENVENIDE",
+      "SUBTITULO": "Aquí puedes empezar a registrarte",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "CORREO": {
+        "LABEL": "Correo electrónico",
+        "PLACEHOLDER": "email@ejemplo.com",
+        "AYUDA": "Campo para introducir tu correo electrónico. Debe incluir el símbolo '@' y un dominio válido.",
+        "OBLIGATORIO": "El correo es obligatorio.",
+        "FORMATO": "El formato del correo no es correcto.",
+        "YAEXISTE": "Este correo ya está registrado."
+      },
+      "FNACIMIENTO": {
+        "LABEL": "Fecha de nacimiento",
+        "AYUDA": "Campo para introducir tu fecha de nacimiento",
+        "INCORRECTA": "La fecha introducida no es correcta.",
+        "OBLIGATORIA": "La fecha de nacimiento es obligatoria.",
+        "MENOR_EDAD": "Debes tener más de 18 años para usar este servicio.",
+        "SUPERIORACTUAL": "No puedes elegir una fecha superior a la actual."
+      }
+    },
+    "FORM2": {
+      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "LABEL_NOMBRE": "Nombre",
+      "LABEL_APELLIDOS": "Apellidos",
+      "TELEFONO": {
+        "LABEL": "Teléfono",
+        "OBLIGATORIO": "El número de teléfono es obligatorio",
+        "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
+        "YAEXISTE": "Este teléfono ya nos consta registrado."
+      },
+      "GÉNERO": {
+        "LABEL": "Género con el que te identificas",
+        "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
+        "SELECCIONA": "Selecciona tu género"
+      },
+      "ORIENTACION": {
+        "LABEL": "¿Cuál es tu orientación sexual?",
+        "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
+        "SELECCIONA": "Selecciona tu orientación"
+      }
+    },
+    "FORM3": {
+      "TITULO": "ALGO IMPORTANTE: TU CONTRASEÑA",
+      "REQUISITOS": {
+        "TITULO": "Requisitos para una contraseña segura:",
+        "MIN_CARACTERES": "Tener un mínimo de 6 caracteres.",
+        "NUMERO_MAYÚSCULA_SIMBOLO": "Tener, al menos, un número o una mayúscula o un símbolo."
+      },
+      "CONTRASEÑA": {
+        "LABEL": "Contraseña:",
+        "FORMATO": "El formato de la contraseña no es correcto."
+      }
+    },
+    "RESUMEN_REGISTRO": {
+      "TUS_DATOS": "Estos son los datos que nos has facilitado.",
+      "INFO": "No te preocupes si alguno es incorrecto: puedes modificarlo pulsando el icono del lápiz",
+      "TABLA": {
+        "CORREO": "Email",
+        "FNACIMIENTO": "Fecha de nacimiento",
+        "NOMBRE": "Nombre",
+        "APELLIDOS": "Apellidos",
+        "TELEFONO": "Teléfono",
+        "GENERO": "Género",
+        "ORIENTACION": "Orientación"
+      },
+      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado nuestras Normas y condiciones del Servicio.",
+      "BOTONES": {
+        "ACEPTAR": "Aceptar y registrar",
+        "RECHAZAR": "Rechazar y salir"
+      },
+      "SELECCIONA": "Selecciona una opción"
+    },
+    "BOTONES": {
+      "ATRAS": "Atrás",
+      "SIGUIENTE": "Siguiente",
+      "FINALIZAR_REGISTRO": "Finalizar registro"
+    }
+  },
+
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
@@ -256,38 +413,7 @@
     "TRANS_CONCEPTO": "Transferencia a cuenta",
     "SALDO": "Saldo"
   },
-  "__Pronombres": "Selectores de pronombre",
-  "SELEC_PRONOMBRE": {
-    "SELECCIONA": "Selecciona tu pronombre",
-    "NINGUNO": "No uso ninguno",
-    "OTROS": "Otros",
-    "NO_RESPONDE": "Prefiero no responder"
-  },
-  "__Género": "Selectores de género",
-  "SELEC_GENERO": {
-    "SELECCIONA": "Selecciona tu género",
-    "HOMBRE_CIS": "Hombre Cis",
-    "MUJER_CIS": "Mujer Cis",
-    "TRANSEXUAL": "Transexual",
-    "NO_BINARIO": "No binario",
-    "INTERGENERO": "Intergénero",
-    "NO_FLUIDO": "No fluido",
-    "OTRO": "Otro",
-    "NO_RESPONDE": "Prefiero no responder"
-  },
-  "__Orientación": "Selectores de orientación",
-  "ORIENTACION": {
-    "SELECCIONA": "Selecciona tu orientación",
-    "GAY": "Gay",
-    "LESBIANA": "Lesbiana",
-    "BISEXUAL": "Bisexual",
-    "PANSEXUAL": "Pansexual",
-    "ASEXUAL": "Asexual",
-    "DEMISEXUAL": "Demisexual",
-    "QUEER": "Queer",
-    "OTRO": "Otro",
-    "NO_RESPONDE": "Prefiero no responder"
-  },
+
   "__Botones": "Modal de Mi perfil y componente mi perfil",
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
@@ -307,53 +433,13 @@
     "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
-  "NavBar Home": "Opciones del navbar que aparece en el Home",
-  "NAVBAR": {
-    "QUIENES": "Quienes somos",
-    "FAQS": "FAQs",
-    "DECALOGO": "Decálogo",
-    "BUSCAR_VIAJE": "Buscar viaje",
-    "PUBLICAR_VIAJE": "Publicar viaje",
-    "PANEL": "PANEL DE USUARIO",
-    "MIPERFIL": "Mi perfil",
-    "MIS_VIAJES": "Mis viajes",
-    "DATOSCONTACTO": "Datos de contacto",
-    "VERIFICACION": "Verificación del perfil",
-    "SALDO": "Saldo/Transferencias",
-    "LOGIN": "Login",
-    "REGISTRO": "Registrarse",
-    "SALIR": "Salir",
-    "IDIOMA_ESPANIOL": "Español",
-    "IDIOMA_INGLES": "Inglés",
-    "AJUSTES": "Ajustes"
-  },
+
   "_Footer": "Links del footer",
   "FOOTER": {
     "TERMS": "Términos y condiciones",
     "COOKIES": "Cookies"
   },
-  "_Home": "Por secciones",
-  "HOME": {
-    "JUMBO": {
-      "SLOGAN": "Seas como seas, viajamos contigo"
-    },
-    "BUSCADOR": {
-      "BUSCARVIAJE": "Buscar viaje",
-      "DESDE": "Desde",
-      "A": "a",
-      "CUANDO": "Cuando",
-      "NUMPASAJEROS": "Número de pasajeros"
-    },
-    "INFO": {
-      "TEXTO_1": "Explora nuevas aventuras y destinos increíbles. Encuentra compañeros de viaje que compartan tu pasión por descubrir el mundo.",
-      "TEXTO_2": "Planea tu próximo viaje con facilidad. Conéctate con personas que van en la misma dirección.",
-      "TEXTO_3": "Comparte tus experiencias y crea recuerdos inolvidables con viajeros como tú."
-    },
-    "QUIERES_PUBLICAR_VIAJE": "¿Quieres compartir tu próximo viaje?",
-    "TRAYECTOS_POPULARES": "¿Hay un evento cercano?",
-    "DUDAS": "¿TIENES DUDAS?",
-    "QUIERES_BUSCAR_VIAJE": "¿Quieres buscar un viaje?"
-  },
+
   "_Búsqueda de viaje": "/busqueda-viajes",
   "BUSQUEDA": {
     "FILTRAR_POR": "Filtrar por...",

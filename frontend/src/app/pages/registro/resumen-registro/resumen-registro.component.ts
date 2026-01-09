@@ -1,34 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { construct } from 'ionicons/icons';
+import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from '../../../core/user-services/user-services.service';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-resumen-registro',
-  imports: [
-    ReactiveFormsModule,
-    IonicModule,
-    MatIconModule,
-    CommonModule,
-    FormsModule,
-  ],
+  imports: [ReactiveFormsModule, IonicModule, MatIconModule, CommonModule, FormsModule, TranslateModule],
   templateUrl: './resumen-registro.component.html',
   styleUrl: './resumen-registro.component.scss',
 })
 export class ResumenRegistroComponent implements OnInit {
   //Variables para almacenar los datos del usuario
   email: string = '';
-  fecha_nacimiento: string = '';
+  fecha_de_nacimiento: string = '';
   nombre: string = '';
   apellidos: string = '';
   telefono: string = '';
@@ -36,6 +26,9 @@ export class ResumenRegistroComponent implements OnInit {
   orientacion: string = '';
   datosResumen: any;
   formularioResumen!: FormGroup;
+  emailValido: boolean = false;
+  telefonoValido: boolean = false;
+  fechaValida: boolean = false;
 
   //Se crea un objeto para guardar los valores originales de cada campo antes de editar
   original: { [campo: string]: boolean } = {};
@@ -45,8 +38,8 @@ export class ResumenRegistroComponent implements OnInit {
 
   // Se crea un objeto para identificar a qué formulario pertecene cada atributo.
   campoFormularioMap: { [key: string]: string } = {
-    email: 'formulario1',
-    fecha_nacimiento: 'formulario1',
+    email: 'formularioResumen',
+    fecha_de_nacimiento: 'formularioResumen',
     nombre: 'formulario2',
     apellidos: 'formulario2',
     telefono: 'formulario2',
@@ -55,32 +48,15 @@ export class ResumenRegistroComponent implements OnInit {
     password: 'formulario3',
   };
 
-  generos: string[] = [
-    'HOMBRE_CIS',
-    'MUJER_CIS',
-    'TRANSEXUAL',
-    'NO_BINARIO',
-    'INTERGENERO',
-    'NO_FLUIDO',
-    'OTRO',
-    'NO_RESPONDE',
-  ];
+  generos: string[] = ['H_CIS', 'M_CIS', 'TRANS', 'NO_BINARIO', 'INTER', 'NO_FLUIDO', 'OTRO', 'NO_RESPONDE'];
 
-  orientaciones: string[] = [
-    'GAY',
-    'LESBIANA',
-    'BISEXUAL',
-    'PANSEXUAL',
-    'ASEXUAL',
-    'DEMISEXUAL',
-    'QUEER',
-    'OTRO',
-    'NO_RESPONDE',
-  ];
+  orientaciones: string[] = ['GAY', 'LESBIANA', 'BISEXUAL', 'PANSEXUAL', 'ASEXUAL', 'DEMISEXUAL', 'QUEER', 'HETEROSEXUAL', 'OTRO', 'NO_RESPONDE'];
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private navCtrl: NavController,
+    private translateService: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -89,42 +65,31 @@ export class ResumenRegistroComponent implements OnInit {
 
     //Extraemos los campos del objeto 'usuario', uno por uno
     this.email = storedData?.email ?? '';
-    this.fecha_nacimiento = storedData?.fecha_nacimiento ?? '';
+    this.fecha_de_nacimiento = storedData?.fecha_nacimiento ?? '';
     this.nombre = storedData?.nombre ?? '';
     this.apellidos = storedData?.apellidos ?? '';
     this.telefono = storedData?.telefono ?? '';
     this.genero = storedData?.genero ?? '';
     this.orientacion = storedData?.orientacion ?? '';
+    const EMAIL_REGEX =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.formularioResumen = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-          ),
-        ],
-      ],
-      fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
-      nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-
-      genero: ['', Validators.required],
-      orientacion: ['', Validators.required],
+      // Valor inicial + Validadores
+      email: [this.email, [Validators.required, Validators.pattern(EMAIL_REGEX)]],
+      // Asegúrate de incluir los validadores para el resto de campos
+      fecha_de_nacimiento: [this.fecha_de_nacimiento, Validators.required],
+      nombre: [this.nombre, Validators.required],
+      apellidos: [this.apellidos, Validators.required],
+      telefono: [this.telefono, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+      genero: [this.genero, Validators.required],
+      orientacion: [this.orientacion, Validators.required],
     });
 
-    //Inicializar el FormGroup con los valores actuales
-    this.formularioResumen = this.fb.group({
-      email: [this.email],
-      fecha_nacimiento: [this.fecha_nacimiento],
-      nombre: [this.nombre],
-      apellidos: [this.apellidos],
-      telefono: [this.telefono],
-      genero: [this.genero],
-      orientacion: [this.orientacion],
-    });
+    const datosRegistro = this.userService.getUsuarioData();
+    if (datosRegistro === null) {
+      this.navCtrl.navigateRoot('/registro');
+    }
   }
 
   /**
@@ -144,10 +109,111 @@ export class ResumenRegistroComponent implements OnInit {
     this.editando[campo] = true;
   }
 
+  validarCampo(controlName: string, formulario: FormGroup) {
+    const control = formulario.get(controlName);
+    if (control) {
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+
+      if (control.valid) {
+        if (controlName === 'email') {
+          this.comprobarEmailRegistrado(control.value);
+        } else if (controlName === 'telefono') {
+          this.comprobarTelefonoRegistrado(control.value);
+        }
+      } else {
+        // Si la validación síncrona (formato) falla:
+        // Aseguramos que el error asíncrono (repetido) se borre para que solo se muestre el error de formato.
+        if (controlName === 'email' && control.errors?.['emailRepetido']) {
+          const { emailRepetido, ...rest } = control.errors;
+          control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+        }
+        if (controlName === 'telefono' && control.errors?.['telefonoRepetido']) {
+          const { telefonoRepetido, ...rest } = control.errors;
+          control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+        }
+      }
+    }
+  }
+
+  /**
+   * Función para comprobar si un email ya se encuentra registrado previamente
+   * @param email
+   */
+  comprobarEmailRegistrado(email: string) {
+    const emailNormalizado = email.toLowerCase();
+    this.userService.verificarEmailExistente(emailNormalizado).subscribe({
+      next: (existe: boolean) => {
+        const control = this.formularioResumen.get('email');
+        const fechaControl = this.formularioResumen.get('fecha_de_nacimiento');
+        if (control) {
+          if (existe) {
+            control.setErrors({ ...control.errors, emailRepetido: true });
+            this.emailValido = false;
+            fechaControl?.disable();
+          } else {
+            if (control.errors?.['emailRepetido']) {
+              const { emailRepetido, ...rest } = control.errors;
+              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+            }
+            if (!control.errors) {
+              this.emailValido = true;
+              fechaControl?.enable();
+            }
+          }
+          // this.actualizarEstadoBoton();
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al verificar email:', err);
+      },
+    });
+  }
+
+  /**
+   * Función para comprobar si un telefono ya se encuentra registrado previamente
+   * @param telefono
+   */
+  comprobarTelefonoRegistrado(telefono: string) {
+    this.userService.verificarTelefonoExistente(telefono).subscribe({
+      next: (existe: boolean) => {
+        const control = this.formularioResumen.get('telefono');
+        if (control) {
+          if (existe) {
+            control.setErrors({ ...control.errors, telefonoRepetido: true });
+            this.telefonoValido = false;
+          } else {
+            if (control.errors?.['telefonoRepetido']) {
+              const { telefonoRepetido, ...rest } = control.errors;
+              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+            }
+            if (!control.errors) {
+              this.telefonoValido = true;
+              // this.escucharCambiosFormulario2('telefono');
+            }
+          }
+          // this.actualizarEstadoBoton();
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al verificar el teléfono:', err);
+      },
+    });
+  }
+
   /**
    * Verifica si el valor del campo cambió desde su estado original
    */
   hayCambio(campo: string): boolean {
+    const control = this.formularioResumen.get(campo);
+    if (!control) return false;
+    // Condición base: el valor debe haber cambiado
+    const haCambiado = control.value !== this.original[campo];
+    if (campo === 'email') {
+      if (haCambiado) {
+      }
+    }
     return this.formularioResumen.get(campo)?.value !== this.original[campo];
   }
 
@@ -201,37 +267,176 @@ export class ResumenRegistroComponent implements OnInit {
   }
 
   /**
-   *
-   * Crea un objeto map, donde la clave es el texto en mayúscula y el valor es el texto que se debe mostrar.
-   * Busca en ese mapa si existe una traducción para el valor recibido en genero
-   * Si existe -> la devuelve. Si no existe -> devuelve el valor en mayúsculas
+   * Traduce el valor de la clave de género usando el servicio de traducción.
+   * @param genero La clave de género (ej: 'HOMBRE_CIS').
    */
   validacionGenero(genero: string): string {
-    const map: { [key: string]: string } = {
-      HOMBRE_CIS: 'Hombre CIS',
-      MUJER_CIS: 'Mujer CIS',
-      TRANSEXUAL: 'Transexual',
-      NO_BINARIO: 'No binario',
-      INTERGENERO: 'Intergénero',
-      NO_FLUIDO: 'No fluido',
-      OTRO: 'Otro',
-      NO_RESPONDE: 'Prefiero no responder',
-    };
-    return map[genero] ?? '';
+    if (!genero) return '';
+
+    // 1. Construir la clave de traducción: 'VALORES.GENERO.HOMBRE_CIS'
+    const clave = `SELECTOR_GENERO.${genero.toUpperCase()}`;
+
+    // 2. Usar el servicio para obtener la traducción de forma instantánea.
+    return this.translateService.instant(clave);
   }
 
+  /**
+   * Traduce el valor de la clave de orientación usando el servicio de traducción.
+   * @param orientacion La clave de orientación (ej: 'GAY').
+   */
   validacionOrientacion(orientacion: string): string {
-    const map: { [key: string]: string } = {
-      GAY: 'Gay',
-      LESBIANA: 'Lesbiana',
-      BISEXUAL: 'Bisexual',
-      PANSEXUAL: 'Pansexual',
-      ASEXUAL: 'Asexual',
-      DEMISEXUAL: 'Demisexual',
-      QUEER: 'Queer',
-      OTRO: 'Otro',
-      NO_RESPONDE: 'Prefiero no responder',
-    };
-    return map[orientacion] ?? '';
+    if (!orientacion) return '';
+
+    // 1. Construir la clave de traducción: 'VALORES.ORIENTACION.GAY'
+    const clave = `SELECTOR_ORIENTACION.${orientacion.toUpperCase()}`;
+
+    // 2. Usar el servicio para obtener la traducción.
+    return this.translateService.instant(clave);
+  }
+
+  aceptarNormas() {
+    const datosRegistro = this.userService.getUsuarioData();
+
+    this.userService.registrarUsuario(datosRegistro).subscribe({
+      next: (response) => {
+        this.navCtrl.navigateRoot('/home');
+      },
+      error: (err) => {
+        this.navCtrl.navigateRoot('/home');
+      },
+    });
+  }
+
+  /**
+   * Convierte una cadena de formato 'kebab_case' a 'Título de caso'.
+   * @param value La cadena de entrada.
+   */
+  transformToTitleCase(value: string): string {
+    if (!value) return '';
+
+    // Reemplazar guiones bajos globalmente con un espacio
+    let result = value.replace(/_/g, ' ');
+
+    // Capitalizar la primera letra y asegurar que el resto esté en minúsculas
+    result = result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
+
+    return result;
+  }
+
+  // Getter para la fecha actual
+  get fechaMaxima() {
+    const hoy = new Date();
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const yyyy = hoy.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  onFechaChange() {
+    this.validarFechaCompleta();
+  }
+
+  validarFechaCompleta() {
+    const fechaControl = this.formularioResumen.get('fecha_de_nacimiento');
+    const fechaValor = fechaControl?.value;
+
+    if (!fechaValor || fechaValor.length !== 10) {
+      fechaControl?.setErrors({ incompleteDate: true });
+
+      this.fechaValida = false;
+      return;
+    }
+    const fechaLimite = '1930-01-01';
+    if (fechaValor < fechaLimite) {
+      fechaControl?.setErrors({ fechalimite: true });
+
+      this.fechaValida = false;
+      return;
+    }
+    // Parsear manualmente el día, mes y año
+    const partes = fechaValor.split('-');
+    if (partes.length !== 3) {
+      fechaControl?.setErrors({ invalidDateFormat: true });
+
+      this.fechaValida = false;
+      return;
+    }
+    const anio = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const dia = parseInt(partes[2], 10);
+
+    const fechaSeleccionada = new Date(anio, mes, dia);
+
+    if (fechaSeleccionada.getFullYear() !== anio || fechaSeleccionada.getMonth() !== mes || fechaSeleccionada.getDate() !== dia) {
+      fechaControl?.setErrors({ invalidDate: true });
+
+      this.fechaValida = false;
+      return;
+    }
+
+    // Validar si el usuario tiene 18 años o más
+    const edadValida = this.validacionEdad(fechaSeleccionada);
+    this.fechaValida = edadValida;
+    {
+    }
+  }
+
+  //Función para validad la EDAD del usuario por la fecha de nacimiento
+  validacionEdad(fechaSeleccionada: Date): boolean {
+    const fechaControl = this.formularioResumen.get('fecha_de_nacimiento');
+
+    // Si no hay fecha seleccionada, retornamos false
+    if (!fechaControl?.value) return false;
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    // Validar si la fecha seleccionada es futura
+    if (fechaSeleccionada > hoy) {
+      fechaControl?.setErrors({
+        ...fechaControl?.errors,
+        fechaFutura: true,
+      });
+
+      // Limpiar el error 'menorDeEdad' si la fecha es futura
+      if (fechaControl?.hasError('menorDeEdad')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          menorDeEdad: null,
+        });
+      }
+
+      return false;
+    } else {
+      if (fechaControl?.hasError('fechaFutura')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          fechaFutura: null,
+        });
+      }
+    }
+
+    // Calcular la edad solo si la fecha no es futura
+    let edad = hoy.getFullYear() - fechaSeleccionada.getFullYear();
+    const mes = hoy.getMonth() - fechaSeleccionada.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaSeleccionada.getDate())) {
+      edad--;
+    }
+
+    if (edad < 18) {
+      fechaControl?.setErrors({
+        ...fechaControl?.errors,
+        menorDeEdad: true,
+      });
+      return false;
+    } else {
+      if (fechaControl?.hasError('menorDeEdad')) {
+        fechaControl?.setErrors({
+          ...fechaControl?.errors,
+          menorDeEdad: null,
+        });
+      }
+      return true;
+    }
   }
 }

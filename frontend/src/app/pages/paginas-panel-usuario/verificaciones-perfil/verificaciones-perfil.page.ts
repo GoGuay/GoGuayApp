@@ -52,6 +52,8 @@ export class VerificacionesPerfilPage implements OnInit {
   mensajeErrorDocumento: string = '';
   codigoCompleto: boolean = false;
   inputsHabilitados: boolean = false;
+  sms_enviado: boolean = false;
+  codigo_erroneo: boolean = false;
 
   constructor(
     private userService: UserServicesService,
@@ -60,6 +62,11 @@ export class VerificacionesPerfilPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    /**
+     * Función para calcular cuando se ha clicado el botón de envío de sms por ultima y cuanto falta para que se vuelva a habilitar
+     */
+    this.tiempo_restante_sms();
+
     const token = this.route.snapshot.queryParamMap.get('token');
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (this.userData?.usuario) {
@@ -139,6 +146,17 @@ export class VerificacionesPerfilPage implements OnInit {
       if (respuesta.verification_sid) {
         this.verification_id_sms = respuesta.verification_sid;
         this.inputsHabilitados = true;
+        this.sms_enviado = true;
+        // Guardar el timestamp del envío en localStorage
+        const ahora = Date.now();
+        localStorage.setItem('sms_enviado_timestamp', ahora.toString());
+        setTimeout(() => {
+          this.sms_enviado = false;
+          /*
+          Borra la hora a la que se ha enviado el sms de la caché
+          */
+          localStorage.removeItem('sms_enviado_timestamp');
+        }, 600000);
       }
     });
   }
@@ -185,64 +203,89 @@ export class VerificacionesPerfilPage implements OnInit {
    * @param codigo
    */
   verificar_codigo_sms(codigo: string) {
-    this.userService.verificar_codigo_sms(codigo, this.usuario.telefono).subscribe((respuesta) => {
-      console.log('Respues: ', respuesta);
+    try {
+      this.userService.verificar_codigo_sms(codigo, this.usuario.telefono).subscribe((respuesta: any) => {
+        console.log('Respuesta: ', respuesta);
+        if (respuesta.success) {
+          this.codigo_erroneo = false;
+          this.usuario.telefonoVerificado = true;
+          this.codigoArray = [];
+        }
+      });
+    } catch (e) {
+      this.codigo_erroneo = true;
+    }
+  }
+
+  /**
+   * Función para verificar el documento del usuario.
+   * @param id
+   * @param documento
+   */
+  verificar_documento(documento: string) {
+    const id = this.userData.usuario.id;
+    this.userService.verificar_documento(id, documento).subscribe((respuesta: any) => {
+      console.log('Respuesta: ', respuesta);
+      if (respuesta.status) {
+        this.usuario.dni_verificado = true;
+        this.numeroDocumento = '';
+      }
     });
   }
 
   // Función para subir la foto delantera del documento de identidad
-  fotoDocumentoDelantera(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.cargandoDelantera = true;
-    if (input.files && input.files[0]) {
-      const formData = new FormData();
-      formData.append('fotoDocumentoDelantera', input.files[0]);
+  // fotoDocumentoDelantera(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   this.cargandoDelantera = true;
+  //   if (input.files && input.files[0]) {
+  //     const formData = new FormData();
+  //     formData.append('fotoDocumentoDelantera', input.files[0]);
 
-      const usuarioId = this.userData.usuario.id;
+  //     const usuarioId = this.userData.usuario.id;
 
-      this.userService.fotoDocumentoDelantera(formData, usuarioId).subscribe({
-        next: (response) => {
-          this.cargandoDelantera = false;
-          if (response && response.url) {
-            this.documentoDelantera = response.url;
-            console.log('fotodocumentodelantera:', this.documentoDelantera);
-            console.log('response :', response.url);
-          }
-          this.obtenerUsuarioPorID(usuarioId);
-        },
-        error: (error) => {
-          console.error('Error al subir la imagen delantera del documento:', error);
-        },
-      });
-    }
-  }
+  //     this.userService.fotoDocumentoDelantera(formData, usuarioId).subscribe({
+  //       next: (response) => {
+  //         this.cargandoDelantera = false;
+  //         if (response && response.url) {
+  //           this.documentoDelantera = response.url;
+  //           console.log('fotodocumentodelantera:', this.documentoDelantera);
+  //           console.log('response :', response.url);
+  //         }
+  //         this.obtenerUsuarioPorID(usuarioId);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error al subir la imagen delantera del documento:', error);
+  //       },
+  //     });
+  //   }
+  // }
 
   // Función para subir la foto trasera del documento de identidad
-  fotoDocumentoTrasera(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.cargandoTrasera = true;
-    if (input.files && input.files[0]) {
-      const formData = new FormData();
-      formData.append('fotoDocumentoTrasera', input.files[0]);
+  // fotoDocumentoTrasera(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   this.cargandoTrasera = true;
+  //   if (input.files && input.files[0]) {
+  //     const formData = new FormData();
+  //     formData.append('fotoDocumentoTrasera', input.files[0]);
 
-      const usuarioId = this.userData.usuario.id;
+  //     const usuarioId = this.userData.usuario.id;
 
-      this.userService.fotoDocumentoTrasera(formData, usuarioId).subscribe({
-        next: (response) => {
-          this.cargandoTrasera = false;
-          if (response && response.url) {
-            this.documentoTrasera = response.url;
-            console.log('fotoDocumentoTrasera:', this.documentoTrasera);
-            console.log('response :', response.url);
-          }
-          this.obtenerUsuarioPorID(usuarioId);
-        },
-        error: (error) => {
-          console.error('Error al subir la imagen delantera del documento:', error);
-        },
-      });
-    }
-  }
+  //     this.userService.fotoDocumentoTrasera(formData, usuarioId).subscribe({
+  //       next: (response) => {
+  //         this.cargandoTrasera = false;
+  //         if (response && response.url) {
+  //           this.documentoTrasera = response.url;
+  //           console.log('fotoDocumentoTrasera:', this.documentoTrasera);
+  //           console.log('response :', response.url);
+  //         }
+  //         this.obtenerUsuarioPorID(usuarioId);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error al subir la imagen delantera del documento:', error);
+  //       },
+  //     });
+  //   }
+  // }
 
   // Función para cargar la foto delantera del carnet de conducir
   fotoCarnetDelantera(event: Event) {
@@ -272,59 +315,51 @@ export class VerificacionesPerfilPage implements OnInit {
   }
 
   // Función para cargar la foto trasera del carnet de conducir
-  fotoCarnetTrasera(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.cargandoCarnetTrasera = true;
-    if (input.files && input.files[0]) {
-      const formData = new FormData();
-      formData.append('fotoCarnetCondTrasera', input.files[0]);
+  // fotoCarnetTrasera(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   this.cargandoCarnetTrasera = true;
+  //   if (input.files && input.files[0]) {
+  //     const formData = new FormData();
+  //     formData.append('fotoCarnetCondTrasera', input.files[0]);
 
-      const usuarioId = this.userData.usuario.id;
+  //     const usuarioId = this.userData.usuario.id;
 
-      this.userService.fotoCarnetTrasera(formData, usuarioId).subscribe({
-        next: (response) => {
-          this.cargandoCarnetTrasera = false;
-          if (response && response.url) {
-            this.carnetTrasera = response.url;
-            console.log('carnet Trasera:', this.carnetTrasera);
-            console.log('response :', response.url);
-          }
-          this.obtenerUsuarioPorID(usuarioId);
-        },
-        error: (error) => {
-          console.error('Error al subir la imagen trasera del carnet:', error);
-        },
-      });
-    }
-  }
+  //     this.userService.fotoCarnetTrasera(formData, usuarioId).subscribe({
+  //       next: (response) => {
+  //         this.cargandoCarnetTrasera = false;
+  //         if (response && response.url) {
+  //           this.carnetTrasera = response.url;
+  //           console.log('carnet Trasera:', this.carnetTrasera);
+  //           console.log('response :', response.url);
+  //         }
+  //         this.obtenerUsuarioPorID(usuarioId);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error al subir la imagen trasera del carnet:', error);
+  //       },
+  //     });
+  //   }
+  // }
 
   /**
    * Valida el número de documento según el tipo seleccionado
    */
-  validarDocumento(): void {
-    const doc = this.numeroDocumento?.toUpperCase() || '';
+  validarDocumentoEnTiempoReal(): void {
+    const doc = (this.numeroDocumento || '').toUpperCase();
 
-    if (!this.tipoDocumentoSeleccionado || !doc) {
-      this.documentoValido = false;
-      return;
-    }
-
-    if (this.tipoDocumentoSeleccionado === 'DNI') {
-      // DNI: 8 dígitos + letra A-Z
-      const dniRegex = /^[0-9]{8}[A-Z]$/;
-      this.documentoValido = dniRegex.test(doc);
-    } else if (this.tipoDocumentoSeleccionado === 'NIE') {
-      // NIE: X/Y/Z + 7 dígitos + letra A-Z
-      const nieRegex = /^[XYZ][0-9]{7}[A-Z]$/;
-      this.documentoValido = nieRegex.test(doc);
+    // Solo validar cuando haya 9 caracteres
+    if (doc.length === 9) {
+      this.validarDocumento(doc);
     } else {
+      // Mientras escribe menos de 9 caracteres, limpia los mensajes
+      this.mensajeErrorDocumento = '';
       this.documentoValido = false;
     }
   }
 
-  validarDocumentoBlur(): void {
+  validarDocumento(doc: string): void {
     // Convertir a mayúscula para consistencia
-    const doc = (this.numeroDocumento || '').toUpperCase();
+    // const doc = (this.numeroDocumento || '').toUpperCase();
     this.documentoValido = false;
     this.mensajeErrorDocumento = '';
 
@@ -420,6 +455,32 @@ export class VerificacionesPerfilPage implements OnInit {
     if (firstEmptyIndex !== -1) {
       const input = document.querySelectorAll<HTMLInputElement>('.digit-input')[firstEmptyIndex];
       input?.focus();
+    }
+  }
+
+  /**
+   * Función para calcular cuando se ha clicado el botón de envío de sms por ultima y cuanto falta para que se vuelva a habilitar
+   * Recoge el valor de sms_enviado_timestamp de la caché. Si hay dato resta
+   */
+  tiempo_restante_sms() {
+    const timestamp = localStorage.getItem('sms_enviado_timestamp');
+    if (timestamp) {
+      const tiempoPasado = Date.now() - parseInt(timestamp, 10);
+      const diezMinutos = 600000; // 10 minutos en ms
+
+      if (tiempoPasado < diezMinutos) {
+        this.sms_enviado = true;
+
+        // Calcular cuánto falta para reactivar el botón
+        const tiempoRestante = diezMinutos - tiempoPasado;
+        setTimeout(() => {
+          this.sms_enviado = false;
+          localStorage.removeItem('sms_enviado_timestamp');
+        }, tiempoRestante);
+      } else {
+        this.sms_enviado = false;
+        localStorage.removeItem('sms_enviado_timestamp');
+      }
     }
   }
 }

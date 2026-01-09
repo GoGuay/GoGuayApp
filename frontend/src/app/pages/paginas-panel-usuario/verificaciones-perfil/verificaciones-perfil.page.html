@@ -76,7 +76,7 @@
               class="btn btn_bg mb-4 w-100"
               mat-raised-button
               (click)="envio_mail_verificar_correo(emailUsuario)"
-              [disabled]="botonCorreoVerificado">
+              [disabled]="usuario.emailVerificado || botonCorreoVerificado">
               {{emailUsuario}}
             </button>
             <p-toast position="bottom-center"></p-toast>
@@ -100,10 +100,12 @@
             </ion-col>
           </ion-row>
           <ion-col>
-            <button type="button" class="btn btn_bg" mat-raised-button type="btn" (click)="enviar_sms(telefonoUsuario)">{{telefonoUsuario}}</button>
+            <button type="button" [disabled]="sms_enviado" class="btn btn_bg" mat-raised-button type="btn" (click)="enviar_sms(telefonoUsuario)">
+              {{telefonoUsuario}}
+            </button>
           </ion-col>
           <ion-row class="mt-4"></ion-row>
-          <div class="input-container d-flex justify-content-center mb-3">
+          <div class="input-container d-flex justify-content-center mb-3" *ngIf="!usuario.telefonoVerificado">
             <input
               #d0
               type="text"
@@ -172,8 +174,15 @@
               (focus)="focusedInput = 5"
               [disabled]="!inputsHabilitados" />
           </div>
+          <span *ngIf="codigo_erroneo">Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos</span>
 
-          <button (click)="verificar_codigo_sms(codigo)" type="button" class="btn mt-2 btn_bg" mat-raised-button [disabled]="!codigoCompleto">
+          <button
+            (click)="verificar_codigo_sms(codigo)"
+            *ngIf="!usuario.telefonoVerificado"
+            type="button"
+            class="btn mt-2 btn_bg"
+            mat-raised-button
+            [disabled]="!codigoCompleto">
             {{'VERIFICACION.BOTÓN_VERIFICAR_TELEFONO' | translate}}
           </button>
         </div>
@@ -199,6 +208,7 @@
         <div>
           <label for="tipoDocumento" class="form-label">{{'VERIFICACION.TIPO_DOCUMENTO' | translate}}</label>
           <select
+            [disabled]="usuario.dni_verificado"
             id="tipoDocumento"
             class="form-select"
             name="tipoDocumento"
@@ -210,7 +220,7 @@
           </select>
         </div>
         <!-- Input visible solo cuando hay selección -->
-        <div *ngIf="tipoDocumentoSeleccionado" class="mt-3">
+        <div *ngIf="tipoDocumentoSeleccionado && !usuario.dni_verificado" class="mt-3">
           <label for="numeroDocumento" class="form-label pronombre">{{ 'VERIFICACION.NUMERO_DOCUMENTO' | translate }}</label>
           <input
             type="text"
@@ -219,14 +229,14 @@
             class="form-control"
             name="numeroDocumento"
             [(ngModel)]="numeroDocumento"
-            (blur)="validarDocumentoBlur()"
+            (input)="validarDocumentoEnTiempoReal()"
             placeholder="{{ 'VERIFICACION.PLACEHOLDER_DOCUMENTO' | translate }}" />
           <div *ngIf="mensajeErrorDocumento" class="text-danger mt-1">{{ mensajeErrorDocumento }}</div>
         </div>
         <div class="d-flex justify-content-center mt-3">
           <button
-            *ngIf="tipoDocumentoSeleccionado"
-            (click)="verificar_codigo_sms(numeroDocumento)"
+            *ngIf="tipoDocumentoSeleccionado && !usuario.dni_verificado"
+            (click)="verificar_documento(numeroDocumento)"
             type="button"
             class="btn mt-2 btn_bg"
             mat-raised-button
