@@ -19,7 +19,7 @@ export class TrayectosPopularesComponent implements OnInit {
   //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
   lista_eventos: Evento[] = Eventos;
 
-  userLoggedIn: boolean = false;
+  usuarioNoLogueado: boolean = false;
   ciudadesUnicas: string[] = [];
   title_help_auth: string = '';
   message_help_auth: string = '';
@@ -43,23 +43,26 @@ export class TrayectosPopularesComponent implements OnInit {
 
   //Lo que se usa nada más iniciar el componente.
   ngOnInit() {
-    this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+    this.usuarioNoLogueado = this.funcionesComunes.isUserLoggedIn();
     this.lista_eventos = Eventos;
     this.ciudadesUnicas = [...new Set(this.lista_eventos.map((evento) => evento.ciudad))];
     this.ciudadesUnicas.sort();
   }
 
   /**
-   * Función para crear un viaje a en función del evento seleccionado.
+   * Función para crear un viaje desde el evento que se ha seleccionado (botón en el evento)
+   * Creamos el objeto viajeData con los parámetros necesarios para crear el viaje (la fecha de inicio del evento y el destino)
+   * Con las propiedades del viaje (destino y fecha_salida) le pasamos la propiedad del objeto de tipo Evento, que son la ciudad del evento y la fecha de inicio
+   * del evento.
+   *
    * @param element
    */
-  crearViaje(element: any) {
-    console.log('element', element);
-
+  crearViaje(eventoSeleccionado: Evento) {
     const viajeData = {
-      destino: element.ciudad,
+      destino: eventoSeleccionado.ciudad,
+      fecha_salida: this.convertirFecha(eventoSeleccionado.fecha_inicio),
     };
-    if (!this.userLoggedIn) {
+    if (!this.usuarioNoLogueado) {
       this.funcionesComunes.openConfirmModal(this.title_help_auth, this.message_help_auth);
     } else {
       /**
