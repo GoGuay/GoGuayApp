@@ -126,4 +126,5 @@ export class BuscadorComponent implements OnInit {
     this.sugerenciasOrigen = [];
     this.sugerenciasDestino = [];
   }
+  
 }
