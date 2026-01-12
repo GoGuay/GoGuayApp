@@ -1,3 +1,17 @@
+.form-select {
+  /* En lugar de 50% o 90px, usamos el ancho del contenido más largo */
+  width: 100% !important;
+  max-width: 380px !important;
+  /* El ancho aproximado de tu frase larga + flecha */
+  min-width: 300px;
+  /* Evita que se encoja demasiado */
+
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+  /* Lo centra si el padre es un bloque */
+}
+
 ion-accordion {
   border-radius: 15px;
   border: 1px solid black;
@@ -32,12 +46,6 @@ ion-accordion [slot="content"] {
   overflow: hidden;
 }
 
-/* Forzamos al SELECT a ocupar siempre el 100% de su contenedor */
-.form-select {
-  width: 50% !important;
-  box-sizing: border-box;
-
-}
 
 /* Evitamos que el acordeón cambie de tamaño al abrirse */
 .acordeon_evento {
@@ -54,7 +62,7 @@ ion-accordion [slot="content"] {
 .contenedor_imagen {
   width: 270px !important;
   height: 270px !important;
-  margin: 10px auto !important;
+  margin: -33px !important;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -83,4 +91,17 @@ ion-accordion-group {
 
 .form-select:focus {
   box-shadow: none;
+}
+
+@media (max-width: 576px) {
+  .form-select {
+    min-width: 90%;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    white-space: nowrap;
+    letter-spacing: -0.5px;
+  }
 }

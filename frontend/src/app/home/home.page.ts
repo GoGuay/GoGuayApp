@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { FooterComponent } from '../shared/footer/footer.component';
-import { JumbotronComponent } from "../pages/jumbotron/jumbotron.component";
-import { NuevoViajeGeneralComponent } from "../components/nuevo-viaje-general/nuevo-viaje-general.component";
-import { TrayectosPopularesComponent } from '../components/trayectos-populares/trayectos-populares.component';
+import { JumbotronComponent } from '../pages/jumbotron/jumbotron.component';
+import { NuevoViajeGeneralComponent } from '../components/nuevo-viaje-general/nuevo-viaje-general.component';
+import { TrayectosPopularesComponent } from '../components/eventos/eventos.component';
 import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, NavController } from '@ionic/angular';
-import { BuscaUnViajePrincipalComponent } from "../components/busca-un-viaje-principal/busca-un-viaje-principal.component";
+import { BuscaUnViajePrincipalComponent } from '../components/busca-un-viaje-principal/busca-un-viaje-principal.component';
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
@@ -33,21 +33,23 @@ import { Usuario } from '../models/user/usuario.model';
     AnimateOnScrollModule,
     NavbarComponent,
     BuscaUnViajePrincipalComponent,
-    CommonModule
-  ]
+    CommonModule,
+  ],
 })
 export class HomePage implements OnInit {
-
   userLoggedIn: boolean = false;
   mostrarJumbotron = true;
   usuario: any;
   userData: Usuario = {} as Usuario;
   messaging: string = '../../assets/sistema/messaging.png';
 
-  constructor(private translate: TranslateService,
+  constructor(
+    private translate: TranslateService,
     private funcionesComunes: FuncionesComunes,
     private notificacionesService: NotificacionesService,
-    private userService: UserServicesService, private navCtrl: NavController) {
+    private userService: UserServicesService,
+    private navCtrl: NavController,
+  ) {
     this.loadUserData();
   }
 
@@ -63,16 +65,16 @@ export class HomePage implements OnInit {
     this.translate.use(lang);
   }
 
-loadJumbotronSetting() {
-  const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+  loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
 
-  if (jumbotronSetting === null) {
-    localStorage.setItem('mostrarJumbotron', 'true');
-    this.mostrarJumbotron = true;
-  } else {
-    this.mostrarJumbotron = jumbotronSetting === 'true';
+    if (jumbotronSetting === null) {
+      localStorage.setItem('mostrarJumbotron', 'true');
+      this.mostrarJumbotron = true;
+    } else {
+      this.mostrarJumbotron = jumbotronSetting === 'true';
+    }
   }
-}
 
   obtenerNotificaciones(usuarioId: number) {
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
@@ -94,7 +96,7 @@ loadJumbotronSetting() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
-  irAmensajes(){
-    this.navCtrl.navigateRoot(['/messaging-center'], {animated: false});
+  irAmensajes() {
+    this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
   }
 }

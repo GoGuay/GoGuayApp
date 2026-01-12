@@ -12,8 +12,8 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
   selector: 'app-trayectos-populares',
   standalone: true,
   imports: [IonicModule, TranslateModule, CommonModule, MatTableModule],
-  templateUrl: './trayectos-populares.component.html',
-  styleUrls: ['./trayectos-populares.component.scss'],
+  templateUrl: './eventos.component.html',
+  styleUrls: ['./eventos.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
   //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
