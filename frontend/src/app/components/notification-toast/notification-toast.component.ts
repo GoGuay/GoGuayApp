@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 
@@ -19,24 +20,66 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
   toasts: ToastData[] = [];
   cerrandoToasts = new Set<ToastData>();
   private toastSub!: Subscription;
-  userData: Usuario = {} as Usuario;
+  userData: Usuario | null = null;
 
-  constructor(private notificationService: NotificacionesService, private cdr: ChangeDetectorRef) { }
+  constructor(private notificationService: NotificacionesService, private cdr: ChangeDetectorRef, private userService: UserServicesService) { }
 
   ngOnInit() {
-    this.loadUserData();
-    this.cargarNotificacionesIniciales();
+    this.userService.usuario$.subscribe(user => {
+      if (user) {
+        this.checkLogin();
+      }
+    });
+  }
 
-    // Suscribirse a nuevas notificaciones del servicio
+  private checkLogin() {
+    const datosDelUsuario = localStorage.getItem('userData');
+
+    if (!datosDelUsuario) {
+      console.log('NotificationToast: No hay sesión activa.');
+      return; // Si no hay datos, no hacemos nada
+    }
+
+    try {
+      this.userData = JSON.parse(datosDelUsuario);
+
+      // Validamos que la estructura interna exista antes de proceder
+      if (this.userData && this.userData.usuario && this.userData.usuario.id) {
+        this.cargarNotificacionesIniciales(this.userData.usuario.id);
+        this.suscribirANuevasNotificaciones();
+      }
+    } catch (e) {
+      console.error('Error al parsear userData', e);
+    }
+  }
+
+
+  private suscribirANuevasNotificaciones() {
     this.toastSub = this.notificationService.toast$.subscribe((nuevasToasts) => {
       const cerradas = this.obtenerNotificacionesCerradas();
-      // Solo añadir las que no estén cerradas ya
       nuevasToasts.forEach(toast => {
         if (!cerradas.includes(toast.id) && !this.toasts.find(t => t.id === toast.id)) {
           this.toasts.push(toast);
         }
       });
       this.cdr.detectChanges();
+    });
+  }
+
+  private cargarNotificacionesIniciales(userId: number) {
+    this.notificationService.obtenerNotificaciones(userId).subscribe({
+      next: (notificaciones) => {
+        const cerradas = this.obtenerNotificacionesCerradas();
+        const noLeidas = notificaciones.filter((n: any) => !n.leida && !cerradas.includes(n.id));
+
+        noLeidas.forEach((n: any) => this.notificationService.mostrarToast({
+          id: n.id,
+          type: 'info',
+          mensaje: n.mensaje,
+          leida: false
+        }));
+      },
+      error: (err) => console.error('Error al cargar notificaciones iniciales:', err)
     });
   }
 
@@ -54,27 +97,6 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
 
   private obtenerNotificacionesCerradas(): number[] {
     return JSON.parse(localStorage.getItem('notificacionesCerradas') || '[]');
-  }
-
-  private cargarNotificacionesIniciales() {
-    const userId = this.userData?.usuario.id;
-    if (!userId) return;
-
-    this.notificationService.obtenerNotificaciones(userId).subscribe({
-      next: (notificaciones) => {
-        console.log('Notificaciones iniciales:', notificaciones);
-        const cerradas = this.obtenerNotificacionesCerradas();
-        const noLeidas = notificaciones.filter((n: any) => !n.leida && !cerradas.includes(n.id));
-
-        noLeidas.forEach((n: any) => this.notificationService.mostrarToast({
-          id: n.id,
-          type: 'info',
-          mensaje: n.mensaje,
-          leida: false
-        }));
-      },
-      error: (err) => console.error('Error al cargar notificaciones iniciales:', err)
-    });
   }
 
   cerrarToast(toast: ToastData) {

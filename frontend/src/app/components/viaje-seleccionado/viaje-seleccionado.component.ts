@@ -40,7 +40,7 @@ import { NavController } from '@ionic/angular';
 })
 export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   yaUnido: boolean = false;
-  preferencias: string = '';
+  preferencias: string[] = [];
   userID!: number;
   viaje!: Viaje;
   viajesSubscription: Subscription = new Subscription(); 
@@ -57,7 +57,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private cdRef: ChangeDetectorRef
   ) {
-    this.preferencias = this.funcionesComunes.validacionPreferencias(this.data);
+    this.preferencias = this.funcionesComunes.validacionPreferencias(this.data.viaje.preferencias ?? []);
     this.viaje = { ...this.data.viaje };
     this.verificarSiEstaUnido();
     this.validarSiEsConductor(this.data.viaje.usuario_id, this.data.viaje);

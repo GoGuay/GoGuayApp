@@ -45,7 +45,7 @@ export class PerfilPublicoPage implements OnInit {
   usuario: any;
   editar_perfil: boolean = false;
   userData: Usuario = {} as Usuario;
-  preferenciasViaje: string = '';
+  preferenciasViaje: string[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
   misViajes: Viaje[] = [];

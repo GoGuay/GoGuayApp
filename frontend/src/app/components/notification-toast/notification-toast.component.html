@@ -5,7 +5,7 @@
 </div>
 
 <div class="toasts-container">
-  <div *ngFor="let n of toasts" class="relative bg shadow-lg p-4" [ngClass]="{
+  <div *ngFor="let n of toasts" class="relative bg p-4" [ngClass]="{
        'toast-success': n.type === 'success',
        'toast-error': n.type === 'error',
        'toast-warning': n.type === 'warning',

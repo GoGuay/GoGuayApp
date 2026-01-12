@@ -55,26 +55,30 @@ export class HomePage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
 
-    this.obtenerUsuarioPorID(this.userData?.usuario?.id);
-    this.obtenerNotificaciones(this.userData?.usuario?.id);
+    if (this.userLoggedIn) {
+      this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+      this.obtenerNotificaciones(this.userData?.usuario?.id);
+    }
+
   }
 
   changeLanguage(lang: string) {
     this.translate.use(lang);
   }
 
-loadJumbotronSetting() {
-  const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
+  loadJumbotronSetting() {
+    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
 
-  if (jumbotronSetting === null) {
-    localStorage.setItem('mostrarJumbotron', 'true');
-    this.mostrarJumbotron = true;
-  } else {
-    this.mostrarJumbotron = jumbotronSetting === 'true';
+    if (jumbotronSetting === null) {
+      localStorage.setItem('mostrarJumbotron', 'true');
+      this.mostrarJumbotron = true;
+    } else {
+      this.mostrarJumbotron = jumbotronSetting === 'true';
+    }
   }
-}
 
   obtenerNotificaciones(usuarioId: number) {
+    if (!usuarioId) return;
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
         this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
@@ -85,6 +89,7 @@ loadJumbotronSetting() {
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
+    if (!id_usuario) return;
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
     });
@@ -94,7 +99,7 @@ loadJumbotronSetting() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
-  irAmensajes(){
-    this.navCtrl.navigateRoot(['/messaging-center'], {animated: false});
+  irAmensajes() {
+    this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
   }
 }

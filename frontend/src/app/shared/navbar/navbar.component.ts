@@ -77,24 +77,54 @@ export class NavbarComponent implements OnInit {
     private translate: TranslateService,
     private messageService: MessageService
   ) {
-    this.loadUserData();
+
   }
 
   async ngOnInit() {
-    // Suscribirse a cambios en el usuario
+    this.loadUserData();
+
+    // 2. Comprobar si hay sesión para inicializar datos
+    if (this.userData && this.userData.usuario && this.userData.usuario.id) {
+      this.isLoggedIn = true;
+      await this.obtenerDatosUsuario(this.userData.usuario.id);
+      this.obtenerNotificaciones(this.userData.usuario.id);
+    } else {
+      this.isLoggedIn = false;
+    }
+
+    // 3. Suscribirse a cambios futuros del usuario
     this.usuarioSub = this.userService.usuario$.subscribe(
       (usuarioActualizado) => {
-        this.obtenerNotificaciones(this.userData.usuario.id);
         if (usuarioActualizado) {
           this.usuario = usuarioActualizado;
           this.isLoggedIn = true;
+          // Solo intentamos obtener notificaciones si tenemos el ID
+          if (this.userData?.usuario?.id) {
+            this.obtenerNotificaciones(this.userData.usuario.id);
+          }
         } else {
           this.usuario = null;
           this.isLoggedIn = false;
+          this.numNotificaciones = 0;
         }
       }
-
     );
+
+    // Configuración de rutas y plataforma
+    this.isMobileWeb = this.platform.is('mobileweb');
+    this.isDesktop = this.platform.is('desktop');
+
+    if (this.searchRoute === 'search') {
+      this.searchRoute = '/busqueda-viajes';
+      this.dynamicTitle = 'Buscar viaje';
+      this.dynamicIcon = 'search';
+    } else if (this.searchRoute === 'newTravel') {
+      this.searchRoute = '/nuevo-viaje';
+      this.dynamicTitle = 'Publicar viaje';
+      this.dynamicIcon = 'add';
+    }
+
+    this.validacionHomePage = this.searchRoute === '/home';
 
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
@@ -117,8 +147,6 @@ export class NavbarComponent implements OnInit {
     } else {
       this.validacionHomePage = false;
     }
-    await this.obtenerDatosUsuario(this.userData?.usuario?.id);
-    this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
   /**
@@ -128,18 +156,24 @@ export class NavbarComponent implements OnInit {
    * @param usuarioId Recibe el ID del usuario que está logueado.
    */
   obtenerNotificaciones(usuarioId: number) {
-    this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      if (notificaciones.length) {
-        this.notificaciones = notificaciones;
+    if (!usuarioId) return; // Validación de seguridad
 
-        this.numNotificaciones = notificaciones.filter((n: any) => !n.leida).length;
+    this.notificationService.obtenerNotificaciones(usuarioId).subscribe({
+      next: (notificaciones) => {
+        if (notificaciones && notificaciones.length) {
+          this.notificaciones = notificaciones;
+          this.numNotificaciones = notificaciones.filter((n: any) => !n.leida).length;
 
-        if (this.numNotificaciones > 0) {
-          this.notificationService.notificacionPendiente = notificaciones.find((n: any) => !n.leida)?.mensaje;
-          this.notificationService.esCreadorDelViaje = true;
+          if (this.numNotificaciones > 0) {
+            this.notificationService.notificacionPendiente = notificaciones.find((n: any) => !n.leida)?.mensaje;
+            this.notificationService.esCreadorDelViaje = true;
+          }
+        } else {
+          this.numNotificaciones = 0;
         }
-
-      } else {
+      },
+      error: (err) => {
+        console.warn('No se pudieron obtener notificaciones:', err);
         this.numNotificaciones = 0;
       }
     });
@@ -287,7 +321,7 @@ export class NavbarComponent implements OnInit {
     this.userData = {} as Usuario;
     this.usuario = null;
     this.isLoggedIn = false;
-    this.navCtrl.navigateRoot(['/home'], {animated: false });
+    this.navCtrl.navigateRoot(['/home'], { animated: false });
   }
 
   irAMisViajes() {
@@ -295,7 +329,7 @@ export class NavbarComponent implements OnInit {
 
     this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,
-      animated: false 
+      animated: false
     });
   }
 

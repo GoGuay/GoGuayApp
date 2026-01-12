@@ -30,7 +30,7 @@ export class ResultadosBusquedaComponent implements OnInit {
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
 
-   @Input() paramsBusqueda: any;
+  @Input() paramsBusqueda: any;
 
 
   constructor(
@@ -55,9 +55,21 @@ export class ResultadosBusquedaComponent implements OnInit {
   }
 
 
+  /**
+   * Función para obtener la lista de viajes filtrados según los parámetros de búsqueda.
+   * @returns Devuelve la lista de viajes filtrados
+   */
   obtenerViajesFiltrados() {
     this.isLoading = true;
-
+    /**
+     * Validación para evitar llamadas innecesarias al backend
+     * cuando no hay filtros seleccionados.
+     */
+    if (!this.paramsBusqueda || Object.keys(this.paramsBusqueda).length === 0) {
+      this.listado_viajes = [];
+      this.isLoading = false;
+      return;
+    }
     this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
       next: (viajes) => {
         this.listado_viajes = viajes;
@@ -70,7 +82,7 @@ export class ResultadosBusquedaComponent implements OnInit {
       }
     });
   }
-  
+
   /**
    * Función para obtener la lista de viajes completa
    */
@@ -78,15 +90,11 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.isLoading = true;
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
       this.listado_viajes = viajes;
-
       this.listado_viajes.forEach((viaje) => {
-        this.obtenerUsuarioPorID(viaje.usuario_id).subscribe((usuario: any) => {
+        this.obtenerUsuarioPorID(viaje?.usuario_id).subscribe((usuario: any) => {
           viaje.usuario = usuario;
-          console.log("DATOS DEL VIAJE: ",viaje);
-          
         });
       });
-
       // Aplica el filtro inicial
       this.aplicarFiltro();
     });

@@ -42,7 +42,7 @@ export class MisViajesPage implements OnInit {
   pasajero: boolean = false;
   conductor: boolean = false;
 
-  preferenciasViaje: string = '';
+  preferenciasViaje: string[] = [];
 
   cargando = false;
   mostrarAyuda: boolean = false;

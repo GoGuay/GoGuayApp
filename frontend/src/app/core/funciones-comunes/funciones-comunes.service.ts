@@ -82,26 +82,25 @@ export class FuncionesComunes {
    * @param viaje Recibe los datos del viaje seleccionado.
    * @returns
    */
-  validacionPreferencias(preferencias: any): any {
-    let preferencia: any;
+  validacionPreferencias(preferencias: any[]): string[] {
+    console.log('preferencias: ', preferencias);
+    if (!preferencias || !Array.isArray(preferencias)) return [];
 
-    preferencias.map((preferencia: any) => {
-      console.log('preferencia: ', preferencia);
-      switch (preferencia) {
-        case 'Silencio':
-          return 'Prefiere viajar en silencio';
+    return preferencias.map((pref: any) => {
+      switch (pref.toString().toLowerCase()) {
+        case 'silencio':
         case 'silence':
           return 'Prefiere viajar en silencio';
-        case 'Dormir':
+        case 'dormir':
           return 'Prefiere ir durmiendo';
-        case 'Escuchar música':
+        case 'escuchar música':
           return 'Prefiere ir escuchando música';
-        case 'Hablar':
+        case 'hablar':
           return 'Prefiere ir hablando';
         default:
-          return '';
+          return pref; // Si no coincide, devuelve el valor original
       }
-    });
+    }).filter(p => p !== ''); // Elimina elementos vacíos si los hubiera
   }
 
   /**
