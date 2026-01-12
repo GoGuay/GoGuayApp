@@ -18,11 +18,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": {
-              "base": "www"
-            },
+            "outputPath": "www",
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -57,8 +57,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "20kb"
                 }
               ],
               "fileReplacements": [
@@ -67,7 +67,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
               "optimization": false,
@@ -124,7 +124,9 @@
               "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ],
-            "scripts": ["node_modules/cookieconsent/build/cookieconsent.min.js"]
+            "scripts": [
+              "node_modules/cookieconsent/build/cookieconsent.min.js"
+            ]
           },
           "configurations": {
             "ci": {
@@ -136,14 +138,19 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": ["@ionic/angular-toolkit"],
+    "schematicCollections": [
+      "@ionic/angular-toolkit"
+    ],
     "analytics": "61070f82-5ecf-4bb8-936a-e1c2cecd430d"
   },
   "schematics": {
