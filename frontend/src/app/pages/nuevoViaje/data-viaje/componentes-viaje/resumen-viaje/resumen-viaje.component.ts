@@ -123,7 +123,7 @@ export class ResumenViajeComponent implements OnInit {
    */
   confirmarViaje() {
     const title: string = 'Confirmación de Viaje';
-    const message: string = 'El viaje ha sido confirmado con éxito.';
+    const message: string = '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
     this.currentViajeData.usuario = this.userData.usuario; // <- Se añaden todos los datos del usuario que ha creado el viaje.
     this.currentViajeData.usuario_id = this.userData.usuario.id; // <- Se añade el ID del usuario que ha creado el viaje.
@@ -158,15 +158,14 @@ export class ResumenViajeComponent implements OnInit {
 
     const mensajeConfirmación = this.openHelp(
       'Confirmar viaje',
-      'Si continuas se va a confirmar el viaje.'
+      'Si continuas se va a confirmar el viaje.',
+      true, false, false
     );
     mensajeConfirmación.afterClosed().subscribe(() => {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
         (response) => {
-          const dialogRef = this.openHelp(title, message);
-          dialogRef.afterClosed().subscribe(() => {
-            this.navCtrl.navigateRoot('/home');
-          });
+          console.log('Viaje guardado con éxito:', response);
+          this.openHelp(title, message, true, false, true);
         },
         (error) => {
           this.openError(
@@ -241,9 +240,9 @@ export class ResumenViajeComponent implements OnInit {
    * @param title Título que se va a mostrar en la ventana
    * @param message Mensaje que se va a mostrar en la ventana
    */
-  openHelp(title: string, message: string) {
+  openHelp(title: string, message: string, showAcceptButton: boolean, showMoreInfoButton: boolean, showReturnTripButton: boolean) {
     return this.dialog.open(HelpModalComponent, {
-      data: { title, message, showAcceptButton: true },
+      data: { title, message, showAcceptButton, showMoreInfoButton, showReturnTripButton },
       disableClose: true,
     });
   }

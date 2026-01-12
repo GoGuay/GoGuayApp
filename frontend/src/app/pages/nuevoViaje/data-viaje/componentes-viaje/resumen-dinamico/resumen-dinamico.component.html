@@ -1,107 +1,102 @@
 <div class="container">
   <div class="container" id="resumen_viaje">
-    <ion-accordion-group>
-      <ion-accordion value="first" class="contenido">
-        <ion-item slot="header" class="white-header">
-          <i class="fi fi-rr-marker me-1"></i>
-          <ion-label>RESUMEN DEL VIAJE</ion-label>
-        </ion-item>
-        <div class="ion-padding" slot="content">
-          <div class="container d-flex justify-content-center dialog-animate">
-            <div class="row w-100">
-              <!-- Columna izquierda -->
-              <div class="col-md-6 col-12">
-                <ul>
-                  <li>
-                    <i class="fi fi-rr-spain-map me-1"></i>
-                    <strong>Lugar de origen: </strong>
-                    <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
-                    <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="origen"
-                      name="origen" [ngModelOptions]="{ standalone: true }"
-                      (input)="obtenerSugerenciasOrigen($event)" placeholder="Busca tu lugar de origen"/>
 
-                    <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                      <li *ngFor="let localidad of sugerenciasOrigen; let i = index"
-                        [ngClass]="{'list-group-item': true}" (click)="seleccionarLocalidadOrigen(localidad)">
-                        {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <i class="fi fi-rr-spain-map me-1"></i>
-                    <strong>Lugar de destino: </strong>
-                    <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
-                    <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="destino"
-                      name="origen" [ngModelOptions]="{ standalone: true }"
-                      (input)="obtenerSugerenciasDestino($event)" placeholder="Busca tu lugar de destino"/>
+    <i class="fi fi-rr-marker me-1"></i>
+    <ion-label>RESUMEN DEL VIAJE</ion-label>
 
-                    <ul *ngIf="sugerenciasDestino.length > 2" class="list-group lista_sugerencias">
-                      <li *ngFor="let localidad of sugerenciasDestino; let i = index"
-                        [ngClass]="{'list-group-item': true}" (click)="seleccionarLocalidadDestino(localidad)">
-                        {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <i class="fi fi-rr-car me-1"></i>
-                    <strong>Coche seleccionado: </strong>
-                    <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo
-                      }}</span>
-                    <select *ngIf="editandoViaje" class="form-control selectCar" [(ngModel)]="currentViajeData.coche">
-                      <option [ngValue]="null" disabled selected *ngIf="!currentViajeData?.coche">
-                        Selecciona un coche para el viaje
-                      </option>
-                      <option *ngFor="let coche of userData?.usuario?.vehiculos" [ngValue]="coche">
-                        {{ coche.marca }} {{ coche.modelo }}
-                      </option>
-                    </select>
+    <div class="ion-padding" slot="content">
+      <div class="container d-flex justify-content-center dialog-animate">
+        <div class="row w-100">
+          <!-- Columna izquierda -->
+          <div class="col-md-6 col-12">
+            <ul>
+              <li>
+                <i class="fi fi-rr-spain-map me-1"></i>
+                <strong>Lugar de origen: </strong>
+                <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
+                <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="origen"
+                  name="origen" [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasOrigen($event)"
+                  placeholder="Busca tu lugar de origen" />
+
+                <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
+                  <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
+                    (click)="seleccionarLocalidadOrigen(localidad)">
+                    {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
                   </li>
                 </ul>
-              </div>
-              <!-- Columna derecha -->
-              <div class="col-md-6 col-12">
-                <ul>
-                  <li>
-                    <i class="fi fi-rs-users-alt me-1"></i>
-                    <strong>Plazas disponibles: </strong>
-                    <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
-                    <input *ngIf="editandoViaje" type="number" min="1" max="4" [(ngModel)]="currentViajeData.plazas"
-                      class="form-control selectPlaces" />
-                  </li>
-                  <li>
-                    <i class="fi fi-rr-calendar me-1"></i>
-                    <strong>Fecha de salida: </strong>
-                    <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
-                    <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
-                      class="form-control selectDate" />
-                  </li>
-                  <li>
-                    <i class="fi fi-rr-calendar-clock me-1"></i>
-                    <strong>Hora de salida: </strong>
-                    <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>
-                    <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
-                      class="form-control selecthour" />
+              </li>
+              <li>
+                <i class="fi fi-rr-spain-map me-1"></i>
+                <strong>Lugar de destino: </strong>
+                <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
+                <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="destino"
+                  name="origen" [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasDestino($event)"
+                  placeholder="Busca tu lugar de destino" />
+
+                <ul *ngIf="sugerenciasDestino.length > 2" class="list-group lista_sugerencias">
+                  <li *ngFor="let localidad of sugerenciasDestino; let i = index" [ngClass]="{'list-group-item': true}"
+                    (click)="seleccionarLocalidadDestino(localidad)">
+                    {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
                   </li>
                 </ul>
-              </div>
-              <div class="container d-flex justify-content-center">
-                <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg"
-                  (click)="toggleEditarViaje()">
-                  <i class="fi fi-rr-edit me-1"></i> Modificar viaje
-                </button>
-                <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2"
-                  (click)="guardarCambios()">
-                  Guardar
-                </button>
-                <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg_cancel"
-                  (click)="cancelarEdicion()">
-                  Cancelar
-                </button>
-              </div>
-            </div>
+              </li>
+              <li>
+                <i class="fi fi-rr-car me-1"></i>
+                <strong>Coche seleccionado: </strong>
+                <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo
+                  }}</span>
+                <select *ngIf="editandoViaje" class="form-control selectCar" [(ngModel)]="currentViajeData.coche">
+                  <option [ngValue]="null" disabled selected *ngIf="!currentViajeData?.coche">
+                    Selecciona un coche para el viaje
+                  </option>
+                  <option *ngFor="let coche of userData?.usuario?.vehiculos" [ngValue]="coche">
+                    {{ coche.marca }} {{ coche.modelo }}
+                  </option>
+                </select>
+              </li>
+            </ul>
+          </div>
+          <!-- Columna derecha -->
+          <div class="col-md-6 col-12">
+            <ul>
+              <li>
+                <i class="fi fi-rs-users-alt me-1"></i>
+                <strong>Plazas disponibles: </strong>
+                <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
+                <input *ngIf="editandoViaje" type="number" min="1" max="4" [(ngModel)]="currentViajeData.plazas"
+                  class="form-control selectPlaces" />
+              </li>
+              <li>
+                <i class="fi fi-rr-calendar me-1"></i>
+                <strong>Fecha de salida: </strong>
+                <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
+                <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
+                  class="form-control selectDate" />
+              </li>
+              <li>
+                <i class="fi fi-rr-calendar-clock me-1"></i>
+                <strong>Hora de salida: </strong>
+                <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>
+                <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
+                  class="form-control selecthour" />
+              </li>
+            </ul>
+          </div>
+          <div class="container d-flex justify-content-center">
+            <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg" (click)="toggleEditarViaje()">
+              <i class="fi fi-rr-edit me-1"></i> Modificar viaje
+            </button>
+            <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2"
+              (click)="guardarCambios()">
+              Guardar
+            </button>
+            <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg_cancel"
+              (click)="cancelarEdicion()">
+              Cancelar
+            </button>
           </div>
         </div>
-      </ion-accordion>
-    </ion-accordion-group>
+      </div>
+    </div>
   </div>
 </div>
