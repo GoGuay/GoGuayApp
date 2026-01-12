@@ -1,11 +1,15 @@
 <ion-grid>
   <ion-row>
-    <!-- Columna izquierda: Fecha y plazas -->
+    <!-- Columna izquierda: Fecha y hora -->
     <ion-col class="line" size="12" size-xl="6">
       <h1 class="d-flex justify-content-center">ELIGE LA FECHA DEL VIAJE</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
-          <ion-datetime presentation="date" [min]="hoy" [(ngModel)]="fecha_seleccionada"
+          <ion-datetime
+            presentation="date"
+            locale="es-ES"
+            [min]="hoy"
+            [(ngModel)]="fecha_seleccionada"
             (ionChange)="onDateChange($event)"></ion-datetime>
         </div>
         <p class="mt-2">Fecha seleccionada: {{ getFormattedDate() }}</p>
@@ -18,8 +22,7 @@
           <div *ngIf="isDesktop">
             <mat-form-field>
               <mat-label>Selecciona la hora</mat-label>
-              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
-                (ngModelChange)="onTimeChange($event)">
+              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker" (ngModelChange)="onTimeChange($event)" />
               <mat-timepicker-toggle matIconSuffix [for]="minutesPicker" />
               <mat-timepicker interval="1min" #minutesPicker />
             </mat-form-field>
@@ -27,20 +30,17 @@
             <p *ngIf="invalid_date" class="error-text">Formato de hora inválido</p>
           </div>
 
-
           <!-- Selector de hora para móvil -->
           <div *ngIf="!isDesktop">
             <ion-item lines="none">
               <ion-datetime-button datetime="timePicker"></ion-datetime-button>
               <ion-modal [keepContentsMounted]="true">
                 <ng-template>
-                  <ion-datetime id="timePicker" presentation="time" (ionChange)="onTimeChange($event)"
-                    class="custom-datetime"></ion-datetime>
+                  <ion-datetime id="timePicker" presentation="time" (ionChange)="onTimeChange($event)" class="custom-datetime"></ion-datetime>
                 </ng-template>
               </ion-modal>
             </ion-item>
           </div>
-
         </div>
         <p class="d-flex justify-content-center">Hora seleccionada: {{ getTime() }}</p>
       </div>
@@ -50,10 +50,15 @@
     <ion-col size="12" size-xl="6">
       <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
       <div class="contenedor_inputs">
-        <ion-select class="form-control" aria-label="n_personas" interface="popover" placeholder="Número de plazas"
-          [(ngModel)]="plazas" (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas);">
+        <ion-select
+          class="form-control"
+          aria-label="n_personas"
+          interface="popover"
+          placeholder="Número de plazas"
+          [(ngModel)]="plazas"
+          (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas)">
           <mat-icon slot="start">
-            <img src="../../../../../../assets/sistema/usuarios-alt.png" class="marcador-icon input-icon">
+            <img src="../../../../../../assets/sistema/usuarios-alt.png" class="marcador-icon input-icon" />
           </mat-icon>
           <ion-select-option value="1">1</ion-select-option>
           <ion-select-option value="2">2</ion-select-option>
@@ -61,7 +66,6 @@
           <ion-select-option value="4">4</ion-select-option>
         </ion-select>
       </div>
-
 
       <div class="contenedor_seccion">
         <h1 class="d-flex justify-content-center">COCHE PARA VIAJAR</h1>
@@ -80,17 +84,12 @@
             </ion-list>
           </ng-container>
 
-
           <ng-template #sinVehiculos>
             <div class="mensaje-sin-vehiculos">
               <p>No tienes vehículos registrados, por favor, registra tu vehículo para poder publicar el viaje.</p>
-              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">
-                Añadir vehículo
-              </button>
+              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">Añadir vehículo</button>
             </div>
           </ng-template>
-
-
         </div>
       </div>
     </ion-col>

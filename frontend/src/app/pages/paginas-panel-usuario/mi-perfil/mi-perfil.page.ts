@@ -69,6 +69,8 @@ export class MiPerfilPage implements OnInit {
   // usuario: any = {} as Usuario;
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
+  perfilSinFoto: boolean = false;
+  variableEjemplo: boolean = false;
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -285,8 +287,25 @@ export class MiPerfilPage implements OnInit {
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
   }
 
+  /**
+   *
+   * @param event --> tipo Event es propio de HTML (la foto subida, un archivo, etc.)
+   * input recibe lo que viene de la propiedad target del event que será de un tipo Input de HTML (as HTMLInputElement)
+   * this.cargando = true --> activa el spinner para hacer mientras por debajo todo lo que viene después (llamada al servicio)
+   * Si la propiedad files del event.target tiene contenido y en la posición [0] tiene contenido, entonces:
+   * crea un objeto con el new FormData, y con el .append le añadimos 'imagenPerfil' (que tiene que coincidir con lo que espera el backend, se tiene que llamar igual) y lo que haya en el input.files[0] --> crea un key-value. Key=fotoSubida, value lo que haya en el input.files[0]
+   * usuarioID --> accede al usuario y saca su id
+   * Llama a la función actualizarImagenPerfil de userService y le pasa el id del usuario y el formData con los datos del input.
+   * Cuando recibe la respuesta: pone el cargando (spinner) en false, lo deja de mostar, pone perfilSinfoto en false porque ya va a tener una imagen
+   * y si hay respuesta y la respuesta tiene la propiedad url con datos entonces:
+   * le pasa esa url a imagenPerfilUusario y llama al messageServie para que muestre el mensaje en pantalla.
+   * Por ultimo this.obtenerUsuarioPorID(usuarioId) --> actualiza todos los datos del usuario cuando todo ha terminado.
+   *
+   *
+   */
   subirFotoPerfil(event: Event) {
     const input = event.target as HTMLInputElement;
+
     this.cargando = true;
     if (input.files && input.files[0]) {
       const formData = new FormData();
@@ -297,8 +316,9 @@ export class MiPerfilPage implements OnInit {
       this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
         next: (response) => {
           this.cargando = false;
-          if (response && response.nuevaUrl) {
-            this.imagenPerfilUsuario = response.nuevaUrl;
+          this.perfilSinFoto = false;
+          if (response && response.url) {
+            this.imagenPerfilUsuario = response.url;
             this.messageService.add({
               severity: 'success',
               summary: 'Datos guardados',
@@ -330,6 +350,7 @@ export class MiPerfilPage implements OnInit {
     this.userService.eliminarFotoPerfil(this.userData.usuario.id).subscribe({
       next: () => {
         this.cargando = false;
+        this.perfilSinFoto = true;
 
         this.messageService.add({
           severity: 'success',
