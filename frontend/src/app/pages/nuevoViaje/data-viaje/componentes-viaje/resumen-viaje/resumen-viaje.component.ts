@@ -41,6 +41,10 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
 })
 export class ResumenViajeComponent implements OnInit {
 
+  /**
+   * Referencia al elemento del mapa en el resumen del viaje
+   * @type {ElementRef}
+   */
   @ViewChild('mapResumen') mapElement!: ElementRef;
   map: any;
   directionsRenderer: any;
@@ -113,25 +117,34 @@ export class ResumenViajeComponent implements OnInit {
     }
   }
 
+  /**
+   * Función que se ejecuta después de que la vista haya sido inicializada
+   * Aquí inicializamos el mapa si hay una ruta seleccionada
+   */
   ngAfterViewInit() {
-    // Esperamos a que la vista cargue para inicializar el mapa si hay ruta
     if (this.currentViajeData?.ruta_seleccionada) {
       this.inicializarMapaResumen();
     }
   }
 
+  /**
+   * Función para inicializar el mapa en el resumen del viaje
+   * @param mapOptions --> Contiene la configuración del mapa
+   * 
+   * 
+   */
   inicializarMapaResumen() {
     const mapOptions = {
-      disableDefaultUI: true, // Mapa limpio para el resumen
-      zoomControl: true
+      disableDefaultUI: true,
+      zoomControl: false,
+      scrollwheel: false,
+      gestureHandling: 'none'
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
     this.directionsRenderer = new google.maps.DirectionsRenderer();
     this.directionsRenderer.setMap(this.map);
 
-    // Renderizamos la ruta que ya tenemos en memoria
-    // Importante: ruta_seleccionada debe ser el objeto que devuelve google.maps.DirectionsService
     this.directionsRenderer.setDirections(this.currentViajeData.ruta_seleccionada);
   }
 
@@ -381,6 +394,10 @@ export class ResumenViajeComponent implements OnInit {
     this.funcionesComunes.sugerenciasDestino = [];
   }
 
+  /**
+   * Función para actualizar la información del viaje desde el servicio.
+   * Se suscribe a los cambios en los datos del viaje y actualiza las variables locales.
+   */
   actualizarInformacion() {
     this.travelService.viajeData$
       .pipe(takeUntil(this.destroy$))
@@ -408,6 +425,11 @@ export class ResumenViajeComponent implements OnInit {
     );
   }
 
+  /**
+   * Función para obtener los vehículos del usuario logado.
+   * @param usuario_id --> ID del usuario logado
+   * @returns --> Devuelve la lista de vehículos del usuario
+   */
   obtenerVehiculosUsuario(usuario_id: number) {
     return this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(vehiculos => {
       this.vehiculosUsuario = vehiculos;
