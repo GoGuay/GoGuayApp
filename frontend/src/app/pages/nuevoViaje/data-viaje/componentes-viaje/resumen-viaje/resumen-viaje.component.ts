@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -40,6 +40,12 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
   styleUrls: ['./resumen-viaje.component.scss'],
 })
 export class ResumenViajeComponent implements OnInit {
+
+  @ViewChild('mapResumen') mapElement!: ElementRef;
+  map: any;
+  directionsRenderer: any;
+
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
 
@@ -58,7 +64,7 @@ export class ResumenViajeComponent implements OnInit {
 
   constructor(
     private travelService: TravelService,
-    private vehiculosService: VehiculosServicesService, // Asumiendo que el servicio de vehículos es el mismo que el de viajes
+    private vehiculosService: VehiculosServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
@@ -105,6 +111,28 @@ export class ResumenViajeComponent implements OnInit {
       this.nombreVehiculo = `${coche.marca} ${coche.modelo}`;
       this.editableFields.coche = coche;
     }
+  }
+
+  ngAfterViewInit() {
+    // Esperamos a que la vista cargue para inicializar el mapa si hay ruta
+    if (this.currentViajeData?.ruta_seleccionada) {
+      this.inicializarMapaResumen();
+    }
+  }
+
+  inicializarMapaResumen() {
+    const mapOptions = {
+      disableDefaultUI: true, // Mapa limpio para el resumen
+      zoomControl: true
+    };
+
+    this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+    this.directionsRenderer = new google.maps.DirectionsRenderer();
+    this.directionsRenderer.setMap(this.map);
+
+    // Renderizamos la ruta que ya tenemos en memoria
+    // Importante: ruta_seleccionada debe ser el objeto que devuelve google.maps.DirectionsService
+    this.directionsRenderer.setDirections(this.currentViajeData.ruta_seleccionada);
   }
 
   obtenerViaje(viaje_id: number) {
