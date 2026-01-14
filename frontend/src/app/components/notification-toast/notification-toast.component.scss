@@ -73,6 +73,15 @@
   animation: collapseAndFade 0.4s ease forwards;
 }
 
+.mensaje{
+  cursor: pointer;
+}
+
+.nota{
+  font-size: 0.7rem;
+  margin-right: 0.5rem;
+}
+
 @keyframes collapseAndFade {
   0% {
     opacity: 1;

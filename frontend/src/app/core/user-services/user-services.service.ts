@@ -72,6 +72,12 @@ export class UserServicesService {
    */
   setUsuarioData(data: any) {
     this.usuarioDataSubject.next(data);
+    if (data === null) {
+      this.usuarioSource.next(null);
+      this.userData = {} as Usuario;
+    } else if (data.usuario) {
+      this.usuarioSource.next(data.usuario);
+    }
   }
 
   /**

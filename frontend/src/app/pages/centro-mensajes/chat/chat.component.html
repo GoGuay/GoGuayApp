@@ -10,26 +10,27 @@
   </ion-fab>
 
   <div class="chat-container p-3">
-    <div *ngFor="let m of mensajes" 
-         [class.mio]="m.emisor == userId" 
-         class="mensaje">
-      {{ m.contenido }}
+    <div *ngFor="let m of mensajes"
+      [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
+      class="mensaje-wrapper">
+
+      <div class="mensaje-burbuja">
+        {{ m.texto }}
+        <div class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</div>
+      </div>
+
     </div>
-    
+
     <div *ngIf="mensajes.length === 0" class="text-center mt-5">
-      <p>No hay mensajes en esta conversación.</p>
+      <p>No hay mensajes en esta conversación. ¡Saluda! 👋</p>
     </div>
   </div>
 </ion-content>
 
 <ion-footer>
   <div class="input-wrapper d-flex align-items-center p-2 bg-light">
-    <ion-textarea
-      [(ngModel)]="texto"
-      placeholder="Escribe un mensaje..."
-      autoGrow="true"
-      class="chat-textarea me-2"
-    ></ion-textarea>
+    <ion-textarea [(ngModel)]="texto" placeholder="Escribe un mensaje..." autoGrow="true"
+      class="chat-textarea me-2"></ion-textarea>
     <ion-button (click)="enviar()" [disabled]="!texto.trim()">
       Enviar
     </ion-button>

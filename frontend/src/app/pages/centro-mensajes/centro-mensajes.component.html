@@ -7,13 +7,22 @@
         <h1>Centro de mensajes</h1>
     </div>
 
+    <div *ngIf="conversaciones.length === 0" class="empty-state-container">
+        <ion-icon name="chatbubbles-outline" class="empty-icon"></ion-icon>
+        <h3>Tu buzón está vacío</h3>
+        <p>Aquí aparecerán tus chats cuando contactes con otros conductores o pasajeros.</p>
+        <button class="btn btn_bg" (click)="irABuscar()">
+            Buscar un viaje
+        </button>
+    </div>
+    
     <!-- Centro de chats -->
     <div class="mt-3 centroMensajes">
         <ion-list>
             <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
                 <ion-item lines="none" detail="false">
                     <ion-label>
-                        <h2>{{ c.nombre }}</h2>
+                        <h2>{{ c.otro_usuario_nombre }}</h2>
                         <p>{{ c.ultimoMensaje }}</p>
                     </ion-label>
                 </ion-item>

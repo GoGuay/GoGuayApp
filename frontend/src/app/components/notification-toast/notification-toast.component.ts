@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -22,7 +23,11 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
   private toastSub!: Subscription;
   userData: Usuario | null = null;
 
-  constructor(private notificationService: NotificacionesService, private cdr: ChangeDetectorRef, private userService: UserServicesService) { }
+  constructor(
+    private notificationService: NotificacionesService,
+    private cdr: ChangeDetectorRef,
+    private userService: UserServicesService,
+    private router: Router) { }
 
   ngOnInit() {
     this.userService.usuario$.subscribe(user => {
@@ -32,6 +37,10 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Función para verificar si hay sesión activa y cargar las notificaciones.
+   * @returns 
+   */
   private checkLogin() {
     const datosDelUsuario = localStorage.getItem('userData');
 
@@ -66,6 +75,10 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Función para cargar las notificaciones iniciales al iniciar sesión.
+   * @param userId 
+   */
   private cargarNotificacionesIniciales(userId: number) {
     this.notificationService.obtenerNotificaciones(userId).subscribe({
       next: (notificaciones) => {
@@ -83,23 +96,43 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Función que se ejecuta al destruir el componente.
+   */
   ngOnDestroy() {
     this.toastSub?.unsubscribe();
   }
 
+  /**
+   * Función para cargar los datos del usuario desde el localStorage.
+   */
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
+  /**
+   * Función para guardar en el localStorage las notificaciones cerradas.
+   * @param ids 
+   */
   private guardarNotificacionesCerradas(ids: number[]) {
     localStorage.setItem('notificacionesCerradas', JSON.stringify(ids));
   }
 
+  /**
+   * Función para obtener del localStorage las notificaciones cerradas.
+   * @returns 
+   */
   private obtenerNotificacionesCerradas(): number[] {
     return JSON.parse(localStorage.getItem('notificacionesCerradas') || '[]');
   }
 
-  cerrarToast(toast: ToastData) {
+  /**
+   * Función para cerrar un toast específico.
+   * @param toast --> Datos de la notificación toast a cerrar
+   * @param desdeRedireccion --> Indica si el cierre es debido a una redirección
+   */
+  cerrarToast(toast: ToastData, desdeRedireccion?: boolean) {
+
     this.cerrandoToasts.add(toast);
     setTimeout(() => {
       this.cerrandoToasts.delete(toast);
@@ -108,8 +141,9 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
       const cerradas = this.obtenerNotificacionesCerradas();
       cerradas.push(toast.id);
       this.guardarNotificacionesCerradas(cerradas);
-      this.notificationService.marcarNotificacionComoLeida(toast.id);
-
+      if (!desdeRedireccion) {
+        this.notificationService.marcarNotificacionComoLeida(toast.id);
+      }
     }, 400);
   }
 
@@ -126,5 +160,17 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
       this.cerrandoToasts.clear();
       this.toasts = [];
     }, 400);
+  }
+
+  /**
+   * Función para redirigir a la página de notificaciones al hacer clic en el toast.
+   * @param n --> ID de la notificación
+   */
+  redirigirANotificacion(n: any) {
+    const redireccion: boolean = true;
+    this.notificationService.idNotificacionResaltada = n.id;
+    this.cerrarToast(n, redireccion);
+    this.cerrarTodosLosToasts()
+    this.router.navigate(['/notificaciones']);
   }
 }

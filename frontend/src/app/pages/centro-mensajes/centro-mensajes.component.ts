@@ -10,6 +10,7 @@ import { NavbarComponent } from "src/app/shared/navbar/navbar.component";
 import { IonicModule } from "@ionic/angular";
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
 
 @Component({
     selector: 'app-centro-mensajes',
@@ -33,16 +34,17 @@ export class CentroMensajesPage implements OnInit {
 
     userLoggedIn: boolean = false;
     irAtrasImg: string = '../../../assets/sistema/atras.png';
+    conversaciones: any[] = [];
+    userData: any;
 
-    conversaciones = [
-        { id: 1, nombre: 'Usuario Ejemplo', ultimoMensaje: 'Hola!' },
-        { id: 2, nombre: 'Juan Pedro', ultimoMensaje: 'Buenas tardes!' }
+    constructor(private messagingService: MessagingService, private navCtrl: NavController) { }
 
-    ];
-
-    constructor(private location: Location, private navCtrl: NavController) { }
-
-    ngOnInit() { }
+    ngOnInit() {
+        this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (this.userData?.usuario?.id) {
+            this.cargarConversaciones();
+        }
+     }
 
     abrirChat(conv: any) {
         this.navCtrl.navigateForward(['/chat', conv.id], {
@@ -50,10 +52,21 @@ export class CentroMensajesPage implements OnInit {
         });
     }
 
+    cargarConversaciones() {
+        this.messagingService.getConversaciones(this.userData.usuario.id).subscribe(data => {
+            this.conversaciones = data;
+            console.log('Conversaciones cargadas:', this.conversaciones);
+        });
+    }
+
     goBack() {
         this.navCtrl.navigateBack('/home', {
         animated: false // -> Elimina las animaciones de navegación de Ionic
         });
+    }
+
+    irABuscar() {
+        this.navCtrl.navigateForward('/busqueda-viajes');
     }
 
 }

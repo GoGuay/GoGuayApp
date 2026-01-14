@@ -23,3 +23,30 @@ ion-list {
 ion-item.chat_box {
   margin: 10px;
 }
+
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60%; 
+    text-align: center;
+    padding: 20px;
+    color: #666;
+
+    .empty-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        color: #ccc;
+    }
+
+    h3 {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    p {
+        margin-bottom: 20px;
+        max-width: 250px;
+    }
+}

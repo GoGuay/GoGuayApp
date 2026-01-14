@@ -6,12 +6,14 @@
     </div>
 
     <div class="lista_notificaciones">
-      <div *ngIf="notificaciones.length === 0" class="text-center mt-4">
+      <div *ngIf="mostrarSpinner" class="text-center p-3">
+        <app-spinner></app-spinner>
+      </div>
+      <div *ngIf="notificaciones.length === 0 && !mostrarSpinner" class="text-center mt-4">
         No tienes notificaciones.
       </div>
-
-      <div *ngFor="let n of notificaciones" class="notificacion_container notificacion-item p-3 mb-2"
-        [class.notificacion-no-leida]="!n.leida" [class.notificacion-leida]="n.leida">
+      <div *ngFor="let n of notificaciones" class="notificacion_container notificacion-item p-3 mb-2 mt-3"
+        [class.resaltado]="n.id === idResaltado" [class.notificacion-no-leida]="!n.leida">
 
         <strong>Mensaje:</strong> {{ n.mensaje }}
 
@@ -28,12 +30,11 @@
         </button>
       </div>
     </div>
-
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes">
-      <ion-fab-button (click)="goToSettings()" aria-label="Ajustes">
-         <img [src]="iconoAjustes" alt="Ajustes" style="width: 24px; height: 24px;">
-      </ion-fab-button>
-    </ion-fab>
-    
   </div>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes">
+  <ion-fab-button (click)="goToSettings()" aria-label="Ajustes">
+    <img [src]="iconoAjustes" alt="Ajustes" style="width: 24px; height: 24px;">
+  </ion-fab-button>
+</ion-fab>

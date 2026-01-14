@@ -17,6 +17,7 @@ import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { MessageService } from 'primeng/api';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 
@@ -75,7 +76,8 @@ export class NavbarComponent implements OnInit {
     private notificationService: NotificacionesService,
     private element: ElementRef,
     private translate: TranslateService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {
 
   }
@@ -89,23 +91,29 @@ export class NavbarComponent implements OnInit {
       await this.obtenerDatosUsuario(this.userData.usuario.id);
       this.obtenerNotificaciones(this.userData.usuario.id);
     } else {
+      this.usuario = null;
       this.isLoggedIn = false;
+      this.cdr.detectChanges();
     }
 
     // 3. Suscribirse a cambios futuros del usuario
     this.usuarioSub = this.userService.usuario$.subscribe(
       (usuarioActualizado) => {
+        console.log('Cambio detectado en el servicio:', usuarioActualizado);
+
         if (usuarioActualizado) {
           this.usuario = usuarioActualizado;
           this.isLoggedIn = true;
-          // Solo intentamos obtener notificaciones si tenemos el ID
-          if (this.userData?.usuario?.id) {
-            this.obtenerNotificaciones(this.userData.usuario.id);
+          if (usuarioActualizado.id) {
+            this.obtenerNotificaciones(usuarioActualizado.id);
           }
         } else {
           this.usuario = null;
+          this.userData = {} as Usuario;
           this.isLoggedIn = false;
           this.numNotificaciones = 0;
+
+          this.cdr.detectChanges();
         }
       }
     );
@@ -304,24 +312,27 @@ export class NavbarComponent implements OnInit {
    */
   logout() {
     const rememberMe = localStorage.getItem('remember_me') === 'true';
+    const email = localStorage.getItem('email') || '';
+    const password = localStorage.getItem('password') || '';
+
+    localStorage.clear();
 
     if (rememberMe) {
-      const email = localStorage.getItem('email') || '';
-      const password = localStorage.getItem('password') || '';
-
-      localStorage.clear();
-
       localStorage.setItem('remember_me', 'true');
       localStorage.setItem('email', email);
       localStorage.setItem('password', password);
-    } else {
-      localStorage.clear();
     }
+
+    this.userService.setUsuarioData(null);
 
     this.userData = {} as Usuario;
     this.usuario = null;
     this.isLoggedIn = false;
-    this.navCtrl.navigateRoot(['/home'], { animated: false });
+    this.numNotificaciones = 0;
+
+    this.cdr.detectChanges();
+
+    this.navCtrl.navigateRoot(['/home'], { animated: true });
   }
 
   irAMisViajes() {
