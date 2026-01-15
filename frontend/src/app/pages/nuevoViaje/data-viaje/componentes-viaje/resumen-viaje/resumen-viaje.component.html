@@ -17,7 +17,7 @@
 
                   <!-- ORIGEN -->
                   <ion-row class="ion-align-items-center"> <ion-col size="9" size-md="9">
-                      <mat-icon>location_on</mat-icon> <strong>Origen:</strong>
+                      <i class="fi fi-rr-plane-departure me-2"></i> <strong>Origen:</strong>
                       <span class="ms-2" *ngIf="!editMode.origen">{{ currentViajeData?.origen }}</span>
                       <input *ngIf="editMode.origen" [(ngModel)]="origen"
                         (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
@@ -43,7 +43,7 @@
 
                   <!-- DESTINO -->
                   <ion-row class="ion-align-items-center"> <ion-col size="9" size-md="9">
-                      <mat-icon>flag</mat-icon> <strong>Destino: </strong>
+                      <i class="fi fi-rr-user-roadmap me-2"></i> <strong>Destino: </strong>
                       <span class="ms-2" *ngIf="!editMode.destino">{{ currentViajeData?.destino }}</span>
                       <input *ngIf="editMode.destino" [(ngModel)]="destino"
                         (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
@@ -67,7 +67,7 @@
                   <!-- COCHE SELECCIONADO -->
                   <ion-row class="ion-align-items-center">
                     <ion-col size="9" size-md="9">
-                      <mat-icon>directions_car</mat-icon> <strong>Coche seleccionado:</strong>
+                      <i class="fi fi-rr-car-rear me-2"></i> <strong>Coche seleccionado:</strong>
 
                       <span class="ms-2" *ngIf="!editMode.coche">
                         {{ nombreVehiculo }}
@@ -95,7 +95,7 @@
                   <!-- HORA DE SALIDA -->
                   <ion-row class="ion-align-items-center mb-2">
                     <ion-col size="9" size-md="9">
-                      <mat-icon>schedule</mat-icon> <strong>Hora de salida:</strong>
+                      <i class="fi fi-rr-clock-ten me-2"></i> <strong>Hora de salida:</strong>
                       <input type="time" [(ngModel)]="editableFields.hora_salida" *ngIf="editMode.hora_salida">
                       <span class="ms-2" *ngIf="!editMode.hora_salida">{{ currentViajeData?.hora_salida }}</span>
 
@@ -112,7 +112,7 @@
                   <!-- HORA DE LLEGADA -->
                   <ion-row class="ion-align-items-center">
                     <ion-col size="12" size-md="12">
-                      <mat-icon>schedule</mat-icon> <strong>Hora de llegada:</strong>
+                      <i class="fi fi-rr-clock-ten me-2"></i> <strong>Hora de llegada:</strong>
                       <span class="ms-2">{{ calcularHoraLlegada(currentViajeData?.hora_salida,
                         currentViajeData?.ruta_seleccionada?.routes[0]?.legs[0]?.duration?.text) }}</span>
                       <p class="mt-2"><strong>*Nota: </strong>La hora de llegada se calcula automáticamente según la
@@ -125,7 +125,7 @@
                   <!-- PLAZAS DISPONIBLES -->
                   <ion-row class="ion-align-items-center">
                     <ion-col size="9" size-md="9">
-                      <mat-icon>group</mat-icon> <strong>Número de plazas disponibles:</strong>
+                      <i class="fi fi-rs-users me-2"></i> <strong>Número de plazas disponibles:</strong>
                       <span class="ms-2" *ngIf="!editMode.plazas">{{ currentViajeData?.plazas }}</span>
                       <input *ngIf="editMode.plazas" type="number" [(ngModel)]="editableFields.plazas" />
 
@@ -142,7 +142,7 @@
                   <!-- PRECIO -->
                   <ion-row class="ion-align-items-center">
                     <ion-col size="9" size-md="9">
-                      <mat-icon>attach_money</mat-icon> <strong>Precio:</strong>
+                      <i class="fi fi-rr-coin-up-arrow me-2"></i> <strong>Precio:</strong>
                       <span class="ms-2" *ngIf="!editMode.precio_viaje">{{ currentViajeData?.precio_viaje }} €</span>
                       <input class="ms-2" *ngIf="editMode.precio_viaje" type="number"
                         [(ngModel)]="editableFields.precio_viaje" class="currencyInput" />

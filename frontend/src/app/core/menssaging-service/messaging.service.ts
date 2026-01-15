@@ -42,4 +42,23 @@ export class MessagingService {
     marcarComoLeido(conversacionId: number, usuarioId: number): Observable<any> {
         return this.http.patch(`${this.apiUrl}/chat/leer/${conversacionId}/${usuarioId}`, {});
     }
+
+    /**
+     * Cambia el estado de lectura de todos los mensajes de una conversación
+     * @param conversacionId ID del chat
+     * @param usuarioId ID del usuario que realiza la acción
+     * @param marcarComoLeido booleano (true para leer, false para no leído)
+     */
+    cambiarEstadoLectura(conversacionId: number, usuarioId: number, marcarComoLeido: boolean): Observable<any> {
+        const estado = marcarComoLeido ? 'leer' : 'no-leer';
+        return this.http.patch(`${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`, {});
+    }
+
+    /**
+     * Elimina una conversación completa y todos sus mensajes
+     * @param conversacionId ID del chat a borrar
+     */
+    eliminarConversacion(conversacionId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/chat/conversacion/${conversacionId}`);
+    }
 }

@@ -21,16 +21,20 @@
         <ion-list>
             <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
                 <ion-item lines="none" detail="false">
-                    <ion-avatar slot="start" *ngIf="c.otro_usuario_foto">
-                        <img [src]="c.otro_usuario_foto" alt="Perfil">
-                    </ion-avatar>
-
                     <ion-label>
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 [class.font-weight-bold]="c.no_leidos > 0">{{ c.otro_usuario_nombre }}</h2>
-                            <ion-badge color="danger" *ngIf="c.no_leidos > 0">
-                                {{ c.no_leidos }}
-                            </ion-badge>
+
+                            <div class="d-flex align-items-center">
+                                <ion-badge color="danger" *ngIf="c.no_leidos > 0" class="me-2">
+                                    {{ c.no_leidos }}
+                                </ion-badge>
+
+                                <ion-button fill="clear" color="dark" (click)="abrirOpciones($event, c)"
+                                    class="btn-opciones">
+                                    <i class="fi fi-rs-circle-ellipsis-vertical iconoAjustes"></i>
+                                </ion-button>
+                            </div>
                         </div>
                         <p [class.mensaje-nuevo]="c.no_leidos > 0">{{ c.ultimoMensaje }}</p>
                     </ion-label>

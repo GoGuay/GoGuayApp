@@ -22,6 +22,17 @@
     border-radius: 50%;
     font-size: 0.8rem;
   }
+
+  ion-item {
+    --inner-padding-end: 8px; // Espacio sutil al final
+    display: flex;
+    align-items: center; // Centra todo el contenido del item verticalmente
+  }
+
+  .iconoAjustes {
+    font-size: 24px;
+    color: #666;
+  }
 }
 
 ion-item {
@@ -63,4 +74,15 @@ ion-item.chat_box {
     margin-bottom: 20px;
     max-width: 250px;
   }
+}
+
+ion-button[fill="clear"] {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  margin: 0;
+  height: 24px;
+}
+
+.chat_card ion-item {
+  --inner-padding-end: 0;
 }

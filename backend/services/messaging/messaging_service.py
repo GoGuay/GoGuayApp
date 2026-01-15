@@ -84,3 +84,31 @@ def marcar_leido(conv_id, user_id):
     
     db.session.commit()
     return jsonify({"status": "Leído"}), 200
+
+#
+# Función para marcar los mensajes como no leídos
+#
+@chat_blueprint.route('/no-leer/<int:conv_id>/<int:user_id>', methods=['PATCH'])
+def marcar_no_leido(conv_id, user_id):
+    try:
+        # 1. Buscamos el último mensaje recibido por este usuario en la conversación
+        ultimo_msj = Mensaje.query.filter_by(
+            conversacion_id=conv_id, 
+            receptor_id=user_id
+        ).order_by(Mensaje.fecha.desc()).first()
+
+        if not ultimo_msj:
+            return jsonify({"error": "No se encontraron mensajes recibidos para marcar"}), 404
+
+        # 2. Cambiamos el estado a False (No leído)
+        ultimo_msj.leido = False
+        db.session.commit()
+
+        return jsonify({
+            "message": "Conversación marcada como no leída",
+            "conversacion_id": conv_id
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
