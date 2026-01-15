@@ -1,13 +1,27 @@
-.centroMensajes{
-    padding: 2%
+.centroMensajes {
+  padding: 2%
 }
 
 .chat_card {
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   margin-bottom: 16px;
-  overflow: hidden; 
+  overflow: hidden;
   cursor: pointer;
+
+  .mensaje-nuevo {
+    font-weight: 600;
+    color: #000;
+  }
+
+  ion-badge {
+    --padding-top: 5px;
+    --padding-bottom: 5px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+  }
 }
 
 ion-item {
@@ -25,28 +39,28 @@ ion-item.chat_box {
 }
 
 .empty-state-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 60%; 
-    text-align: center;
-    padding: 20px;
-    color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  text-align: center;
+  padding: 20px;
+  color: #666;
 
-    .empty-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-        color: #ccc;
-    }
+  .empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    color: #ccc;
+  }
 
-    h3 {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+  h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-    p {
-        margin-bottom: 20px;
-        max-width: 250px;
-    }
+  p {
+    margin-bottom: 20px;
+    max-width: 250px;
+  }
 }

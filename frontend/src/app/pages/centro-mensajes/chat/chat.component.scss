@@ -27,7 +27,7 @@
   --padding-end: 8px;
   font-size: 16px;
   border-radius: 10px;
-  background: transparent; 
+  background: transparent;
 }
 
 ion-fab.fab-atras {
@@ -52,18 +52,20 @@ ion-fab.fab-atras {
 
   &.mio {
     justify-content: flex-end;
+
     .mensaje-burbuja {
-      background-color: #dcf8c6; 
+      background-color: #dcf8c6;
       border-radius: 15px 15px 0 15px;
     }
   }
 
   &.otro {
     justify-content: flex-start;
+
     .mensaje-burbuja {
       background-color: #ffffff;
       border-radius: 15px 15px 15px 0;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
   }
 }
@@ -73,7 +75,7 @@ ion-fab.fab-atras {
   padding: 8px 12px;
   position: relative;
   font-size: 16px;
-  
+
   .mensaje-fecha {
     font-size: 10px;
     color: #888;
@@ -82,18 +84,35 @@ ion-fab.fab-atras {
   }
 }
 
-@media (max-width: 576px){
-  .input-wrapper {
-  background: #fff;
+.info-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 8px 10px;
-  border-radius: 15px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  margin-bottom: 3%;
-  margin-top: 2%;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 2px;
 }
+
+.read-icon {
+  font-size: 14px;
+}
+
+.mensaje-fecha {
+  font-size: 10px;
+  color: #777;
+}
+
+@media (max-width: 576px) {
+  .input-wrapper {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 8px 10px;
+    border-radius: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 3%;
+    margin-top: 2%;
+  }
 }

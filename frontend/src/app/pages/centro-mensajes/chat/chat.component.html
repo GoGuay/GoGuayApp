@@ -16,13 +16,14 @@
 
       <div class="mensaje-burbuja">
         {{ m.texto }}
-        <div class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</div>
+        <div class="info-meta">
+          <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
+
+          <ion-icon *ngIf="m.emisor_id === usuarioLogueadoId" [name]="m.leido ? 'checkmark-done' : 'checkmark'"
+            [color]="m.leido ? 'primary' : 'medium'" class="read-icon">
+          </ion-icon>
+        </div>
       </div>
-
-    </div>
-
-    <div *ngIf="mensajes.length === 0" class="text-center mt-5">
-      <p>No hay mensajes en esta conversación. ¡Saluda! 👋</p>
     </div>
   </div>
 </ion-content>

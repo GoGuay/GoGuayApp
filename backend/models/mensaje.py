@@ -5,31 +5,34 @@ class Conversacion(db.Model):
     __tablename__ = 'conversaciones'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # Participantes de la conversación
+   
     usuario1_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     usuario2_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+ 
 
-    # Relaciones
     mensajes = db.relationship('Mensaje', backref='conversacion', cascade='all, delete-orphan', lazy=True)
-    
-    # Definimos las relaciones con Usuario explícitamente para acceder a nombres/fotos
     usuario1 = db.relationship('Usuario', foreign_keys=[usuario1_id])
     usuario2 = db.relationship('Usuario', foreign_keys=[usuario2_id])
 
     def serialize(self, current_user_id):
-        # Determinamos quién es el "otro" usuario para mostrar su nombre y foto
         otro = self.usuario2 if self.usuario1_id == current_user_id else self.usuario1
         
-        # Obtenemos el último mensaje para la previsualización en la lista
         ultimo_msj = Mensaje.query.filter_by(conversacion_id=self.id).order_by(Mensaje.fecha.desc()).first()
+
+        no_leidos = Mensaje.query.filter_by(
+            conversacion_id=self.id, 
+            receptor_id=current_user_id, 
+            leido=False
+        ).count()
 
         return {
             "id": self.id,
             "otro_usuario_nombre": f"{otro.nombre} {otro.apellidos}",
             "otro_usuario_foto": otro.fotoPerfil,
             "ultimoMensaje": ultimo_msj.texto if ultimo_msj else "No hay mensajes aún",
-            "fecha_ultimo": ultimo_msj.fecha.isoformat() if ultimo_msj else self.created_at.isoformat()
+            "fecha_ultimo": ultimo_msj.fecha.isoformat() if ultimo_msj else self.created_at.isoformat(),
+            "no_leidos": no_leidos
         }
 
 class Mensaje(db.Model):

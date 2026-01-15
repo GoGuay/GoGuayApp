@@ -8,7 +8,7 @@ import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
     providedIn: 'root'
 })
 export class MessagingService {
-    private apiUrl = 'http://127.0.0.1:5000'; 
+    private apiUrl = 'http://127.0.0.1:5000';
 
     constructor(private http: HttpClient) { }
 
@@ -32,5 +32,14 @@ export class MessagingService {
             `${this.apiUrl}/chat/iniciar/${emisorId}/${receptorId}`,
             {}
         );
+    }
+
+    /**
+     * Marca como leídos todos los mensajes recibidos en una conversación
+     * @param conversacionId ID del chat
+     * @param usuarioId ID del usuario que está leyendo (el receptor)
+     */
+    marcarComoLeido(conversacionId: number, usuarioId: number): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/chat/leer/${conversacionId}/${usuarioId}`, {});
     }
 }

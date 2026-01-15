@@ -15,15 +15,24 @@
             Buscar un viaje
         </button>
     </div>
-    
+
     <!-- Centro de chats -->
     <div class="mt-3 centroMensajes">
         <ion-list>
             <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
                 <ion-item lines="none" detail="false">
+                    <ion-avatar slot="start" *ngIf="c.otro_usuario_foto">
+                        <img [src]="c.otro_usuario_foto" alt="Perfil">
+                    </ion-avatar>
+
                     <ion-label>
-                        <h2>{{ c.otro_usuario_nombre }}</h2>
-                        <p>{{ c.ultimoMensaje }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 [class.font-weight-bold]="c.no_leidos > 0">{{ c.otro_usuario_nombre }}</h2>
+                            <ion-badge color="danger" *ngIf="c.no_leidos > 0">
+                                {{ c.no_leidos }}
+                            </ion-badge>
+                        </div>
+                        <p [class.mensaje-nuevo]="c.no_leidos > 0">{{ c.ultimoMensaje }}</p>
                     </ion-label>
                 </ion-item>
             </ion-card>

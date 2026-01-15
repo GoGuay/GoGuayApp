@@ -44,7 +44,16 @@ export class CentroMensajesPage implements OnInit {
         if (this.userData?.usuario?.id) {
             this.cargarConversaciones();
         }
-     }
+    }
+
+    /**
+     * Carga las conversaciones al entrar a la página
+     */
+    ionViewWillEnter() {
+        if (this.userData?.usuario?.id) {
+            this.cargarConversaciones();
+        }
+    }
 
     abrirChat(conv: any) {
         this.navCtrl.navigateForward(['/chat', conv.id], {
@@ -61,7 +70,7 @@ export class CentroMensajesPage implements OnInit {
 
     goBack() {
         this.navCtrl.navigateBack('/home', {
-        animated: false // -> Elimina las animaciones de navegación de Ionic
+            animated: false // -> Elimina las animaciones de navegación de Ionic
         });
     }
 

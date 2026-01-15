@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef } from '@angular/core';
+import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
 
 
 
@@ -63,10 +64,12 @@ export class NavbarComponent implements OnInit {
   menuType: string = 'push';
 
   numNotificaciones: number = 0;
-  numNotificacionesMensajes: number = 3;
+  numNotificacionesMensajes: number = 0;
   notificaciones: any[] = [];
   notificaciones_mensajes: any[] = [];
   selectedLanguage: string = this.languageService.getLanguage() || 'es';
+
+  private pollingSub!: any;
 
   constructor(
     private navCtrl: NavController,
@@ -74,6 +77,7 @@ export class NavbarComponent implements OnInit {
     private languageService: LanguageService,
     private userService: UserServicesService,
     private notificationService: NotificacionesService,
+    private messagingService: MessagingService,
     private element: ElementRef,
     private translate: TranslateService,
     private messageService: MessageService,
@@ -90,6 +94,8 @@ export class NavbarComponent implements OnInit {
       this.isLoggedIn = true;
       await this.obtenerDatosUsuario(this.userData.usuario.id);
       this.obtenerNotificaciones(this.userData.usuario.id);
+      this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+      this.iniciarPolling();
     } else {
       this.usuario = null;
       this.isLoggedIn = false;
@@ -106,6 +112,7 @@ export class NavbarComponent implements OnInit {
           this.isLoggedIn = true;
           if (usuarioActualizado.id) {
             this.obtenerNotificaciones(usuarioActualizado.id);
+            this.obtenerNotificacionesMensajes(usuarioActualizado.id);
           }
         } else {
           this.usuario = null;
@@ -157,6 +164,15 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  iniciarPolling() {
+    if (this.pollingSub) clearInterval(this.pollingSub);
+    this.pollingSub = setInterval(() => {
+      if (this.isLoggedIn && this.userData?.usuario?.id) {
+        this.obtenerNotificaciones(this.userData.usuario.id);
+        this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+      }
+    }, 10000);
+  }
   /**
    * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.ç
    * 1º Actualiza el número de notificaciones no leídas.
@@ -191,6 +207,10 @@ export class NavbarComponent implements OnInit {
   // Desuscribirse al destruir el componente (para evitar fugas de memoria):
   ngOnDestroy() {
     this.usuarioSub?.unsubscribe();
+
+    if (this.pollingSub) {
+      clearInterval(this.pollingSub);
+    }
   }
 
   /**
@@ -315,6 +335,7 @@ export class NavbarComponent implements OnInit {
     const email = localStorage.getItem('email') || '';
     const password = localStorage.getItem('password') || '';
 
+    if (this.pollingSub) clearInterval(this.pollingSub);
     localStorage.clear();
 
     if (rememberMe) {
@@ -346,5 +367,23 @@ export class NavbarComponent implements OnInit {
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+  obtenerNotificacionesMensajes(usuarioId: number) {
+    if (!usuarioId) return;
+
+    this.messagingService.getConversaciones(usuarioId).subscribe({
+      next: (conversaciones) => {
+
+        this.numNotificacionesMensajes = conversaciones.reduce(
+          (total, conv) => total + (conv.no_leidos || 0), 0
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.warn('Error al obtener notificaciones de mensajes:', err);
+        this.numNotificacionesMensajes = 0;
+      }
+    });
   }
 }
