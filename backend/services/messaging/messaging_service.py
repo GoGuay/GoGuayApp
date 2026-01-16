@@ -112,3 +112,27 @@ def marcar_no_leido(conv_id, user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+#
+# Función para eliminar una conversación
+#
+@chat_blueprint.route('/conversacion/<int:conv_id>', methods=['DELETE'])
+def eliminar_conversacion(conv_id):
+    try:
+       
+        conv = Conversacion.query.get(conv_id)
+        
+        if not conv:
+            return jsonify({"error": "Conversación no encontrada"}), 404
+
+        db.session.delete(conv)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Conversación y mensajes eliminados correctamente",
+            "conversacion_id": conv_id
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

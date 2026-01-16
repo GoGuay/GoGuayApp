@@ -19,146 +19,82 @@
 
 <ng-template #contenidoReal>
   <div class="container">
-    <ion-grid>
-      <ion-row>
-        <ion-col size-sm="12" size-xl="3">
-          <ion-row class="d-flex justify-content-start">
-            <p>{{ 'BUSQUEDA.FILTRAR_POR' | translate }}</p>
+    <p>{{ 'BUSQUEDA.RESULTADOS' | translate }}</p>
+    <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
+      <app-spinner></app-spinner>
+      Cargando viajes...
+    </div>
+
+    <div class="columna_scroll">
+      <div *ngFor="let resultado_del_viaje of listado_viajes">
+        <div class="card resultado-viaje mb-3">
+          <ion-row>
+            <ion-col class="col-separator ion-activatable" size="9" size-md="10"
+              (click)="openDetalleViaje(resultado_del_viaje)" type="button">
+              <ion-row class="d-flex justify-content-between px-2">
+                <span class="title">ORIGEN</span>
+                <span class="title">DURACIÓN</span>
+                <span class="title">LLEGADA</span>
+              </ion-row>
+              <mat-divider></mat-divider>
+              <ion-ripple-effect></ion-ripple-effect>
+              <ion-row class="fila-hora">
+                <ion-col class="text-start d-flex align-items-center">
+                  <p>{{ resultado_del_viaje.hora_salida }}</p>
+                </ion-col>
+                <ion-col class="text-end">
+                  <p>{{ resultado_del_viaje.hora_llegada }}</p>
+                </ion-col>
+              </ion-row>
+              <ion-row class="d-flex align-items-center justify-content-center">
+                <img class="gifs me-1" src="../../../assets/travel/ubicacion.gif" />
+                <div class="me-2 linea">
+                  <app-load-travel-line></app-load-travel-line>
+                </div>
+                <div>
+                  <label>{{ resultado_del_viaje?.duracion_viaje }}</label>
+                </div>
+                <div class="ms-2 linea">
+                  <app-load-travel-line></app-load-travel-line>
+                </div>
+                <img class="gifs me-1" src="../../../assets/travel/mapa.gif" />
+              </ion-row>
+              <ion-row class="fila-hora">
+                <ion-col class="text-start">
+                  <p>{{ resultado_del_viaje.origen }}</p>
+                </ion-col>
+                <ion-col>
+                  <p *ngIf="resultado_del_viaje.precio_viaje" class="text-center"
+                    style="font-size: 30px; font-weight: bold">
+                    {{ resultado_del_viaje.precio_viaje }} €
+                  </p>
+                  <p *ngIf="!resultado_del_viaje.precio_viaje" class="text-center" style="font-weight: bold">Sin
+                    precio asignado</p>
+                </ion-col>
+
+                <ion-col class="text-end">
+                  <p>{{ resultado_del_viaje.destino }}</p>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)" type="button">
+              <ion-row class="d-flex justify-content-center">
+                <p class="fontSize">{{ resultado_del_viaje.usuario?.nombre }}</p>
+              </ion-row>
+              <ion-row class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
+                  <img class="user" *ngIf="resultado_del_viaje.usuario?.fotoPerfil"
+                    [src]="resultado_del_viaje.usuario?.fotoPerfil" />
+                  <img class="user" *ngIf="!resultado_del_viaje.usuario?.fotoPerfil"
+                    src="../../../assets/user/logOn.gif" />
+                </div>
+              </ion-row>
+              <ion-row class="d-flex justify-content-center">Puntuación</ion-row>
+            </ion-col>
           </ion-row>
+        </div>
+      </div>
+    </div>
 
-          <ion-row class="text-center col-separator d-flex align-content-center">
-            <div class="caja-ordenar">
-              <div class="form-check inputs-filtro">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="horaSalida"
-                  (change)="cambiarFiltro('horaSalida')"
-                  [checked]="filtroSeleccionado === 'horaSalida'" />
-                <label class="form-check-label" for="horaSalida">
-                  {{ 'BUSQUEDA.HORA_SALIDA' | translate }}
-                </label>
-              </div>
-
-              <div class="form-check inputs-filtro">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="recientes"
-                  (change)="cambiarFiltro('recientes')"
-                  [checked]="filtroSeleccionado === 'recientes'" />
-                <label class="form-check-label" for="recientes">
-                  {{ 'BUSQUEDA.NUEVO' | translate }}
-                </label>
-              </div>
-
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="precioAsc"
-                  (change)="cambiarFiltro('precioAsc')"
-                  [checked]="filtroSeleccionado === 'precioAsc'" />
-                <label class="form-check-label" for="precioAsc">
-                  {{ 'BUSQUEDA.PRECIO_ASC' | translate }}
-                </label>
-              </div>
-
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="precioDesc"
-                  (change)="cambiarFiltro('precioDesc')"
-                  [checked]="filtroSeleccionado === 'precioDesc'" />
-                <label class="form-check-label" for="precioDesc">
-                  {{ 'BUSQUEDA.PRECIO_DESC' | translate }}
-                </label>
-              </div>
-            </div>
-          </ion-row>
-        </ion-col>
-
-        <ion-col>
-          <ion-row class="d-flex justify-content-center">
-            <p>{{ 'BUSQUEDA.RESULTADOS' | translate }}</p>
-          </ion-row>
-          <ion-row class="d-flex justify-content-center p-4 columna_scroll">
-            <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
-              <app-spinner></app-spinner>
-              Cargando viajes...
-            </div>
-
-            <div *ngFor="let resultado_del_viaje of listado_viajes">
-              <div class="card resultado-viaje mb-3">
-                <ion-row>
-                  <ion-col class="col-separator ion-activatable" size="9" size-md="10" (click)="openDetalleViaje(resultado_del_viaje)" type="button">
-                    <ion-row class="d-flex justify-content-between px-2">
-                      <span class="title">ORIGEN</span>
-                      <span class="title">DURACIÓN</span>
-                      <span class="title">LLEGADA</span>
-                    </ion-row>
-                    <mat-divider></mat-divider>
-                    <ion-ripple-effect></ion-ripple-effect>
-                    <ion-row class="fila-hora">
-                      <ion-col class="text-start d-flex align-items-center">
-                        <p>{{ resultado_del_viaje.hora_salida }}</p>
-                      </ion-col>
-                      <ion-col class="text-end">
-                        <p>{{ resultado_del_viaje.hora_llegada }}</p>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row class="d-flex align-items-center justify-content-center">
-                      <img class="gifs me-1" src="../../../assets/travel/ubicacion.gif" />
-                      <div class="me-2 linea">
-                        <app-load-travel-line></app-load-travel-line>
-                      </div>
-                      <div>
-                        <label>{{ resultado_del_viaje?.duracion_viaje }}</label>
-                      </div>
-                      <div class="ms-2 linea">
-                        <app-load-travel-line></app-load-travel-line>
-                      </div>
-                      <img class="gifs me-1" src="../../../assets/travel/mapa.gif" />
-                    </ion-row>
-                    <ion-row class="fila-hora">
-                      <ion-col class="text-start">
-                        <p>{{ resultado_del_viaje.origen }}</p>
-                      </ion-col>
-                      <ion-col>
-                        <p *ngIf="resultado_del_viaje.precio_viaje" class="text-center" style="font-size: 30px; font-weight: bold">
-                          {{ resultado_del_viaje.precio_viaje }} €
-                        </p>
-                        <p *ngIf="!resultado_del_viaje.precio_viaje" class="text-center" style="font-weight: bold">Sin precio asignado</p>
-                      </ion-col>
-
-                      <ion-col class="text-end">
-                        <p>{{ resultado_del_viaje.destino }}</p>
-                      </ion-col>
-                    </ion-row>
-                  </ion-col>
-                  <ion-col (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)" type="button">
-                    <ion-row class="d-flex justify-content-center">
-                      <p class="fontSize">{{ resultado_del_viaje.usuario?.nombre }}</p>
-                    </ion-row>
-                    <ion-row class="d-flex justify-content-center">
-                      <div class="d-flex justify-content-center">
-                        <img class="user" *ngIf="resultado_del_viaje.usuario?.fotoPerfil" [src]="resultado_del_viaje.usuario?.fotoPerfil" />
-                        <img class="user" *ngIf="!resultado_del_viaje.usuario?.fotoPerfil" src="../../../assets/user/logOn.gif" />
-                      </div>
-                    </ion-row>
-                    <ion-row class="d-flex justify-content-center">Puntuación</ion-row>
-                  </ion-col>
-                </ion-row>
-              </div>
-            </div>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
   </div>
 </ng-template>

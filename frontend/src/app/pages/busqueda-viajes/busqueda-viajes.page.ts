@@ -9,6 +9,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, NavController } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { Viaje } from 'src/app/models/travel/viaje.model';
 
 @Component({
   selector: 'app-busqueda-viajes',
@@ -23,7 +25,8 @@ import { IonicModule, NavController } from '@ionic/angular';
     MatIconModule,
     ResultadosBusquedaComponent,
     JumbotronComponent,
-    NavbarComponent
+    NavbarComponent,
+    TranslateModule
   ],
 })
 export class BusquedaViajesPage implements OnInit {
@@ -37,6 +40,10 @@ export class BusquedaViajesPage implements OnInit {
   irAtras: string = '../../../assets/sistema/atras.png';
   imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
 
+  filtroSeleccionado: string = 'horaSalida';
+  isLoading: boolean = false;
+  listado_viajes: Viaje[] = [];
+
   constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes, private location: Location, private navCtrl: NavController) { }
 
   ngOnInit() {
@@ -47,7 +54,6 @@ export class BusquedaViajesPage implements OnInit {
      */
     this.route.queryParams.subscribe((params) => {
       this.busquedaParams = params;
-      console.log('Parámetros recibidos:', this.busquedaParams);
     });
   }
 
@@ -70,6 +76,15 @@ export class BusquedaViajesPage implements OnInit {
    * Función para navegar a la página de nuevo viaje
    */
   goToNuevoViaje() {
-    this.navCtrl.navigateRoot('/nuevo-viaje');  
+    this.navCtrl.navigateRoot('/nuevo-viaje');
+  }
+
+  /**
+   * Función para cambiar el filtro seleccionado
+   */
+  onFiltroChange(event: any, popover: any) {
+    const valor = event.detail.value;
+    this.filtroSeleccionado = valor;
+    popover.dismiss();
   }
 }

@@ -30,7 +30,12 @@ export class ResultadosBusquedaComponent implements OnInit {
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
 
+
+  /**
+   * Variables de entrada para el filtro
+   */
   @Input() paramsBusqueda: any;
+  @Input() filtroOrden: string = 'horaSalida';
 
 
   constructor(
@@ -41,9 +46,19 @@ export class ResultadosBusquedaComponent implements OnInit {
     private dialog: MatDialog
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['paramsBusqueda'] && this.paramsBusqueda) {
-      this.obtenerViajesFiltrados();
+  /**
+   * Función que se ejecuta cuando hay cambios en las variables de entrada
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['filtroOrden']) {
+      this.filtroSeleccionado = changes['filtroOrden'].currentValue;
+      if (!changes['filtroOrden'].firstChange) {
+        this.aplicarFiltro();
+      }
+    }
+
+    if (changes['paramsBusqueda']) {
+      this.obtenerListaViajes();
     }
   }
 
@@ -133,18 +148,6 @@ export class ResultadosBusquedaComponent implements OnInit {
     });
   }
 
-  /**
-   * Función para cambiar el filtro seleccionado
-   */
-  cambiarFiltro(filtro: string) {
-    this.isLoading = true;
-    this.filtroSeleccionado = filtro;
-
-    setTimeout(() => {
-      this.aplicarFiltro();
-      this.isLoading = false;
-    }, 300);
-  }
 
   /**
    * Función para aplicar el filtro a la lista de viajes
