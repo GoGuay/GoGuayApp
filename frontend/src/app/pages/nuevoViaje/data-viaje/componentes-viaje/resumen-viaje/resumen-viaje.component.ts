@@ -137,8 +137,7 @@ export class ResumenViajeComponent implements OnInit {
     const mapOptions = {
       disableDefaultUI: true,
       zoomControl: false,
-      scrollwheel: false,
-      gestureHandling: 'none'
+      scrollwheel: false
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);

@@ -99,24 +99,31 @@
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                      <a class="nav-link" href="/mi-perfil"> <i class="fi fi-rr-user icono_ajsutes me-1"></i>{{
+                        "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
+                      <a class="nav-link" (click)="irAMisViajes()"> <i class="fi fi-rr-cars icono_ajsutes me-1"></i>{{
+                        "NAVBAR.MIS_VIAJES" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
-                    </li>
-                    <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
+                      <a class="nav-link" href="/datos-contacto"> <i
+                          class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>{{ "NAVBAR.DATOSCONTACTO" | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                      <a class="nav-link" href="/verificaciones-perfil"> <i
+                          class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i>{{
+                        "NAVBAR.VERIFICACION" | translate
+                        }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link" href="/saldo-transferencias"> <i
+                          class="fi fi-rr-wallet icono_ajsutes me-1"></i>{{ "NAVBAR.SALDO" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdow">
-                      <a class="nav-link ms-3" href="/ajustes-aplicacion">
-                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                      <a class="nav-link" href="/ajustes-aplicacion">
+                        <i class="fi fi-rr-settings icono_ajsutes me-1"></i>
                         {{ "NAVBAR.AJUSTES" | translate }}
                       </a>
                     </li>
