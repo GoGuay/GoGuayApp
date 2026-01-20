@@ -6,6 +6,9 @@ from flask import Blueprint, jsonify, Response,  request
 import requests
 import os
 from dotenv import load_dotenv
+from google.cloud import translate
+
+
 
 
 
@@ -68,3 +71,25 @@ def detalle_localidad(place_id):
         else:
             print (f"Error: {respuesta.status_code}")
             return None
+
+
+def translate_text(text, idioma_destino, idioma_origen):
+
+    client = translate.TranslationServiceClient()
+    location = "global"
+    project_id="prideride"
+    parent = f"projects/{project_id}/locations/{location}"
+    response = client.translate_text(
+        request={
+            "parent": parent,
+            "contents": [text],
+            "mime_type": "text/plain",
+            "source_language_code": idioma_origen,
+            "target_language_code": idioma_destino,
+        }
+    )
+
+    for translation in response.translations:
+        print("Translated text: {}".format(translation.translated_text))
+
+
