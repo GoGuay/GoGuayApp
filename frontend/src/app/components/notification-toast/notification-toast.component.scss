@@ -17,13 +17,13 @@
   gap: 0.5rem;
   width: 600px;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 .bg {
   background-color: #e9edd5;
   border-radius: 15px;
   border-left: 6px solid transparent;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 .toast-success {
@@ -71,6 +71,15 @@
 
 .toast-slide-out {
   animation: collapseAndFade 0.4s ease forwards;
+}
+
+.mensaje{
+  cursor: pointer;
+}
+
+.nota{
+  font-size: 0.7rem;
+  margin-right: 0.5rem;
 }
 
 @keyframes collapseAndFade {

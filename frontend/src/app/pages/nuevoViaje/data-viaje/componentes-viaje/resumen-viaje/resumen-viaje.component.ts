@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -40,6 +40,16 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
   styleUrls: ['./resumen-viaje.component.scss'],
 })
 export class ResumenViajeComponent implements OnInit {
+
+  /**
+   * Referencia al elemento del mapa en el resumen del viaje
+   * @type {ElementRef}
+   */
+  @ViewChild('mapResumen') mapElement!: ElementRef;
+  map: any;
+  directionsRenderer: any;
+
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
 
@@ -58,7 +68,7 @@ export class ResumenViajeComponent implements OnInit {
 
   constructor(
     private travelService: TravelService,
-    private vehiculosService: VehiculosServicesService, // Asumiendo que el servicio de vehículos es el mismo que el de viajes
+    private vehiculosService: VehiculosServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
@@ -107,6 +117,36 @@ export class ResumenViajeComponent implements OnInit {
     }
   }
 
+  /**
+   * Función que se ejecuta después de que la vista haya sido inicializada
+   * Aquí inicializamos el mapa si hay una ruta seleccionada
+   */
+  ngAfterViewInit() {
+    if (this.currentViajeData?.ruta_seleccionada) {
+      this.inicializarMapaResumen();
+    }
+  }
+
+  /**
+   * Función para inicializar el mapa en el resumen del viaje
+   * @param mapOptions --> Contiene la configuración del mapa
+   * 
+   * 
+   */
+  inicializarMapaResumen() {
+    const mapOptions = {
+      disableDefaultUI: true,
+      zoomControl: false,
+      scrollwheel: false
+    };
+
+    this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+    this.directionsRenderer = new google.maps.DirectionsRenderer();
+    this.directionsRenderer.setMap(this.map);
+
+    this.directionsRenderer.setDirections(this.currentViajeData.ruta_seleccionada);
+  }
+
   obtenerViaje(viaje_id: number) {
     this.travelService.getViaje(viaje_id).subscribe((resultado) => {
       console.log('Viaje a editar: ', resultado);
@@ -123,7 +163,7 @@ export class ResumenViajeComponent implements OnInit {
    */
   confirmarViaje() {
     const title: string = 'Confirmación de Viaje';
-    const message: string = 'El viaje ha sido confirmado con éxito.';
+    const message: string = '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
     this.currentViajeData.usuario = this.userData.usuario; // <- Se añaden todos los datos del usuario que ha creado el viaje.
     this.currentViajeData.usuario_id = this.userData.usuario.id; // <- Se añade el ID del usuario que ha creado el viaje.
@@ -158,15 +198,14 @@ export class ResumenViajeComponent implements OnInit {
 
     const mensajeConfirmación = this.openHelp(
       'Confirmar viaje',
-      'Si continuas se va a confirmar el viaje.'
+      'Si continuas se va a confirmar el viaje.',
+      true, false, false
     );
     mensajeConfirmación.afterClosed().subscribe(() => {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
         (response) => {
-          const dialogRef = this.openHelp(title, message);
-          dialogRef.afterClosed().subscribe(() => {
-            this.navCtrl.navigateRoot('/home');
-          });
+          console.log('Viaje guardado con éxito:', response);
+          this.openHelp(title, message, true, false, true);
         },
         (error) => {
           this.openError(
@@ -241,9 +280,9 @@ export class ResumenViajeComponent implements OnInit {
    * @param title Título que se va a mostrar en la ventana
    * @param message Mensaje que se va a mostrar en la ventana
    */
-  openHelp(title: string, message: string) {
+  openHelp(title: string, message: string, showAcceptButton: boolean, showMoreInfoButton: boolean, showReturnTripButton: boolean) {
     return this.dialog.open(HelpModalComponent, {
-      data: { title, message, showAcceptButton: true },
+      data: { title, message, showAcceptButton, showMoreInfoButton, showReturnTripButton },
       disableClose: true,
     });
   }
@@ -354,6 +393,10 @@ export class ResumenViajeComponent implements OnInit {
     this.funcionesComunes.sugerenciasDestino = [];
   }
 
+  /**
+   * Función para actualizar la información del viaje desde el servicio.
+   * Se suscribe a los cambios en los datos del viaje y actualiza las variables locales.
+   */
   actualizarInformacion() {
     this.travelService.viajeData$
       .pipe(takeUntil(this.destroy$))
@@ -381,6 +424,11 @@ export class ResumenViajeComponent implements OnInit {
     );
   }
 
+  /**
+   * Función para obtener los vehículos del usuario logado.
+   * @param usuario_id --> ID del usuario logado
+   * @returns --> Devuelve la lista de vehículos del usuario
+   */
   obtenerVehiculosUsuario(usuario_id: number) {
     return this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(vehiculos => {
       this.vehiculosUsuario = vehiculos;

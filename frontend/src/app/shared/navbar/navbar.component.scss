@@ -11,8 +11,10 @@ ion-button {
 }
 
 .logo {
-  width: 75px;
-  border-radius: 50%;
+  max-width: 75px;
+  width: 100%; /* Se adapta al contenedor */
+  height: auto;
+  flex-shrink: 1;
 }
 
 .logo_mobile {
@@ -26,11 +28,21 @@ ion-button {
   list-style: none;
 }
 
+.opciones {
+  display: flex;
+  flex-wrap: nowrap !important; 
+  width: 100%;
+  justify-content: space-evenly;
+}
+
 .opciones li {
-  width: 200px;
+  width: auto;
+  min-width: fit-content;
+  flex: 0 1 auto;
   display: flex;
   justify-content: center;
   text-align: center;
+  padding: 0 10px;
 }
 
 .idiomas {
@@ -168,6 +180,8 @@ ul {
   color: black;
   text-decoration: none;
   transition: none !important;
+  white-space: nowrap;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
 }
 
 .nav-link:hover {
@@ -179,7 +193,6 @@ ul {
   height: 24px;
 }
 
-// Evita errores de tamaño al abrir el menú en dispositivos móviles
 .navbar-collapse.collapsing {
   transition: none !important;
   height: auto !important;
@@ -213,6 +226,63 @@ ul {
 .grayscale-filter {
   filter: grayscale(100%);
   opacity: 0.7;
+}
+
+.navbar-diseno .container {
+  max-width: 1200px;
+}
+
+.opciones .nav-item {
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .opciones li {
+    padding: 0 8px;
+  }
+
+  .opciones .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .logo {
+    width: 50px;
+  }
+
+  .navbar-collapse {
+    justify-content: space-between !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .opciones-lado .nav-link {
+    font-size: 0.85rem;
+  }
+  .logo {
+    width: 60px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .opciones li {
+    padding: 0 5px; /* Menos espacio entre botones */
+  }
+  
+  .logo {
+    width: 50px; /* Logo más pequeño */
+  }
+
+  .caja_imagen_perfil {
+    width: 45px; /* Avatar más pequeño */
+    height: 45px;
+  }
+  
+  /* Ocultamos el texto "Buscar viaje" y dejamos solo la lupa si es necesario */
+  /* O simplemente reducimos el gap */
+  .navbar-nav {
+    gap: 2px;
+  }
 }
 
 @media (max-width: 576px) {

@@ -117,6 +117,9 @@ export class PrimerPasoComponent implements OnInit {
    * DATE.
    */
   sumarUnDiaAFecha(fechaDATE: string): string {
+    if(!fechaDATE) {
+      return '';
+    }
     const fechaOriginal = new Date(fechaDATE);
     const fechaMasUnDia = new Date(fechaOriginal.getTime() + 86400000);
     return (this.fecha_seleccionada = fechaMasUnDia.toISOString().split('T')[0]);

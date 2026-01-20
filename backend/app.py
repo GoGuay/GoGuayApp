@@ -19,6 +19,7 @@ from services.user.user_service import user_blueprint
 from services.travel.travel_service import travel_blueprint
 from services.vehicles.vehicle_service import vehicle_blueprint
 from services.apigoogle.apigoogle_service import apigoogle_blueprint
+from services.messaging.messaging_service import chat_blueprint
 from services.user import user_service
 
 
@@ -71,6 +72,7 @@ def create_app():
     app.register_blueprint(travel_blueprint, url_prefix="/travel")
     app.register_blueprint(vehicle_blueprint, url_prefix="/vehicle")
     app.register_blueprint(apigoogle_blueprint, url_prefix="/apigoogle")
+    app.register_blueprint(chat_blueprint, url_prefix="/chat")
 
  
     user_service.mail = mail

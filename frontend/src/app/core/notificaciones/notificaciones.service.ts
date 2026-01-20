@@ -14,6 +14,7 @@ export class NotificacionesService {
 
     public notificacionPendiente: string | null = null;
     public esCreadorDelViaje: boolean = false;
+    public idNotificacionResaltada: number | null = null;
 
     private toastSubject = new BehaviorSubject<ToastData[]>([]);
     toast$ = this.toastSubject.asObservable();

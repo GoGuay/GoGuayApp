@@ -1,5 +1,7 @@
 .main_container {
-  width: 75%;
+  width: 95%; 
+  max-width: 1200px; 
+  margin: 0 auto;
 }
 
 .encuesta_box {
@@ -14,7 +16,7 @@
 }
 
 .encuesta_box::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   right: 0;
@@ -30,10 +32,13 @@
 
 .textArea {
   height: 150px;
-  width: 900px;
-  border-radius: 35px;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 25px;
   box-shadow: -9px 5px 9px rgba(0, 0, 0, 0.28);
-  padding: 1%;
+  padding: 15px;
+  margin: 0 auto;
+  display: block;
 }
 
 .tabla {
@@ -80,7 +85,7 @@
   white-space: nowrap;
 }
 
-.stars{
+.stars {
   width: 40px;
   height: 40px;
   border-radius: 15px;
@@ -96,6 +101,12 @@
   align-items: center;
   border-radius: 15px;
   width: fit-content;
-  margin: 0 auto; 
+  margin: 0 auto;
   padding: 10px;
+}
+
+@media (min-width: 992px) {
+  .main_container {
+    width: 75%;
+  }
 }

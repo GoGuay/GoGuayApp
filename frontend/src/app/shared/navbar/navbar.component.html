@@ -4,7 +4,8 @@
     <nav class="navbar navbar-expand-lg navbar-diseno">
       <div class="container d-flex justify-content-between align-items-center">
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
-          <ul class="navbar-nav d-flex justify-content-center mb-2 mb-lg-0 align-items-center opciones">
+          <ul class="navbar-nav d-flex justify-content-around w-100 mb-2 mb-lg-0 align-items-center opciones">
+
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/sobre-nosotros">
                 {{ "NAVBAR.QUIENES" | translate }}
@@ -33,7 +34,7 @@
             <li class="nav-item">
               <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
                 {{ "NAVBAR.BUSCAR_VIAJE" | translate }}
-                <img src="../../../assets/sistema/busqueda.png" class="search-icon" />
+                <!-- <img src="../../../assets/sistema/busqueda.png" class="search-icon" /> -->
               </a>
             </li>
 
@@ -54,12 +55,12 @@
           </div>
           <div class="col-5 position-relative d-flex justify-content-end align-items-start">
             <!-- Contenedor para idiomas-->
-<div class="idiomas-container d-flex flex-column align-items-center justify-content-center">
-      <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma"
-        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }" (click)="changeLanguage('es')" />
-      <img src="../../../assets/sistema/bandera_uk.svg" class="icon-idioma mt-1"
-        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }" (click)="changeLanguage('en')" />
-    </div>
+            <div class="idiomas-container d-flex flex-column align-items-center justify-content-center">
+              <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma"
+                [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }" (click)="changeLanguage('es')" />
+              <img src="../../../assets/sistema/bandera_uk.svg" class="icon-idioma mt-1"
+                [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }" (click)="changeLanguage('en')" />
+            </div>
 
             <!-- Botones notificaciones y mensajes -->
             <div class="d-flex align-items-center gap-2">
@@ -98,24 +99,31 @@
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/mi-perfil">{{ "NAVBAR.MIPERFIL" | translate }}</a>
+                      <a class="nav-link" href="/mi-perfil"> <i class="fi fi-rr-user icono_ajsutes me-1"></i>{{
+                        "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" (click)="irAMisViajes()">{{ "NAVBAR.MIS_VIAJES" | translate }}</a>
+                      <a class="nav-link" (click)="irAMisViajes()"> <i class="fi fi-rr-cars icono_ajsutes me-1"></i>{{
+                        "NAVBAR.MIS_VIAJES" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/datos-contacto">{{ "NAVBAR.DATOSCONTACTO" | translate }}</a>
-                    </li>
-                    <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/verificaciones-perfil">{{ "NAVBAR.VERIFICACION" | translate
+                      <a class="nav-link" href="/datos-contacto"> <i
+                          class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>{{ "NAVBAR.DATOSCONTACTO" | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link ms-3" href="/saldo-transferencias">{{ "NAVBAR.SALDO" | translate }}</a>
+                      <a class="nav-link" href="/verificaciones-perfil"> <i
+                          class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i>{{
+                        "NAVBAR.VERIFICACION" | translate
+                        }}</a>
+                    </li>
+                    <li class="perfil nav-item dropdown">
+                      <a class="nav-link" href="/saldo-transferencias"> <i
+                          class="fi fi-rr-wallet icono_ajsutes me-1"></i>{{ "NAVBAR.SALDO" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdow">
-                      <a class="nav-link ms-3" href="/ajustes-aplicacion">
-                        <img class="icono_ajsutes" src="../../../assets/sistema/ajustes.png">
+                      <a class="nav-link" href="/ajustes-aplicacion">
+                        <i class="fi fi-rr-settings icono_ajsutes me-1"></i>
                         {{ "NAVBAR.AJUSTES" | translate }}
                       </a>
                     </li>

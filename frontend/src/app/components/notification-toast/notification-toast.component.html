@@ -5,7 +5,7 @@
 </div>
 
 <div class="toasts-container">
-  <div *ngFor="let n of toasts" class="relative bg shadow-lg p-4" [ngClass]="{
+  <div *ngFor="let n of toasts" class="relative bg p-4 mensaje mb-2" (click)="redirigirANotificacion(n)" [ngClass]="{
        'toast-success': n.type === 'success',
        'toast-error': n.type === 'error',
        'toast-warning': n.type === 'warning',
@@ -21,5 +21,8 @@
 
     <strong class="block capitalize">Notificación</strong>
     <p class="text-sm">{{ n.mensaje }}</p>
+  </div>
+  <div *ngIf="toasts.length > 0">
+    <span class="d-flex justify-content-end nota">Pulsa sobre la notificación para ver más detalles.</span>
   </div>
 </div>

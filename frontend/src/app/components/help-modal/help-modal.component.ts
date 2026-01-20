@@ -37,7 +37,13 @@ export class HelpModalComponent implements OnInit {
   message: SafeHtml;
   title: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; showAcceptButton: boolean; showMoreInfoButton: boolean },
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string; message: string;
+      showAcceptButton: boolean;
+      showMoreInfoButton: boolean,
+      showReturnTripButton?: boolean;
+    },
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<HelpModalComponent>,
     private navCtrl: NavController) {
@@ -63,5 +69,10 @@ export class HelpModalComponent implements OnInit {
 
   cerrarParaMasInfo(accepted: string) {
     this.dialogRef.close(accepted);
+  }
+
+  crearVuelta(){
+    this.dialogRef.close();
+    this.navCtrl.navigateRoot('/data-viaje');
   }
 }

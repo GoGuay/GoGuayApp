@@ -17,6 +17,8 @@ import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { MessageService } from 'primeng/api';
+import { ChangeDetectorRef } from '@angular/core';
+import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
 
 
 
@@ -62,10 +64,12 @@ export class NavbarComponent implements OnInit {
   menuType: string = 'push';
 
   numNotificaciones: number = 0;
-  numNotificacionesMensajes: number = 3;
+  numNotificacionesMensajes: number = 0;
   notificaciones: any[] = [];
   notificaciones_mensajes: any[] = [];
   selectedLanguage: string = this.languageService.getLanguage() || 'es';
+
+  private pollingSub!: any;
 
   constructor(
     private navCtrl: NavController,
@@ -73,28 +77,69 @@ export class NavbarComponent implements OnInit {
     private languageService: LanguageService,
     private userService: UserServicesService,
     private notificationService: NotificacionesService,
+    private messagingService: MessagingService,
     private element: ElementRef,
     private translate: TranslateService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {
-    this.loadUserData();
+
   }
 
   async ngOnInit() {
-    // Suscribirse a cambios en el usuario
+    this.loadUserData();
+
+    // 2. Comprobar si hay sesión para inicializar datos
+    if (this.userData && this.userData.usuario && this.userData.usuario.id) {
+      this.isLoggedIn = true;
+      await this.obtenerDatosUsuario(this.userData.usuario.id);
+      this.obtenerNotificaciones(this.userData.usuario.id);
+      this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+      this.iniciarPolling();
+    } else {
+      this.usuario = null;
+      this.isLoggedIn = false;
+      this.cdr.detectChanges();
+    }
+
+    // 3. Suscribirse a cambios futuros del usuario
     this.usuarioSub = this.userService.usuario$.subscribe(
       (usuarioActualizado) => {
-        this.obtenerNotificaciones(this.userData.usuario.id);
+        console.log('Cambio detectado en el servicio:', usuarioActualizado);
+
         if (usuarioActualizado) {
           this.usuario = usuarioActualizado;
           this.isLoggedIn = true;
+          if (usuarioActualizado.id) {
+            this.obtenerNotificaciones(usuarioActualizado.id);
+            this.obtenerNotificacionesMensajes(usuarioActualizado.id);
+          }
         } else {
           this.usuario = null;
+          this.userData = {} as Usuario;
           this.isLoggedIn = false;
+          this.numNotificaciones = 0;
+
+          this.cdr.detectChanges();
         }
       }
-
     );
+
+    // Configuración de rutas y plataforma
+    this.isMobileWeb = this.platform.is('mobileweb');
+    this.isDesktop = this.platform.is('desktop');
+
+    if (this.searchRoute === 'search') {
+      this.searchRoute = '/busqueda-viajes';
+      this.dynamicTitle = 'Buscar viaje';
+      this.dynamicIcon = 'search';
+    } else if (this.searchRoute === 'newTravel') {
+      this.searchRoute = '/nuevo-viaje';
+      this.dynamicTitle = 'Publicar viaje';
+      this.dynamicIcon = 'add';
+    }
+
+    this.validacionHomePage = this.searchRoute === '/home';
 
     /**
      * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
@@ -117,10 +162,17 @@ export class NavbarComponent implements OnInit {
     } else {
       this.validacionHomePage = false;
     }
-    await this.obtenerDatosUsuario(this.userData?.usuario?.id);
-    this.isLoggedIn = this.userData?.usuario?.email ? true : false;
   }
 
+  iniciarPolling() {
+    if (this.pollingSub) clearInterval(this.pollingSub);
+    this.pollingSub = setInterval(() => {
+      if (this.isLoggedIn && this.userData?.usuario?.id) {
+        this.obtenerNotificaciones(this.userData.usuario.id);
+        this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+      }
+    }, 10000);
+  }
   /**
    * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.ç
    * 1º Actualiza el número de notificaciones no leídas.
@@ -128,18 +180,24 @@ export class NavbarComponent implements OnInit {
    * @param usuarioId Recibe el ID del usuario que está logueado.
    */
   obtenerNotificaciones(usuarioId: number) {
-    this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      if (notificaciones.length) {
-        this.notificaciones = notificaciones;
+    if (!usuarioId) return; // Validación de seguridad
 
-        this.numNotificaciones = notificaciones.filter((n: any) => !n.leida).length;
+    this.notificationService.obtenerNotificaciones(usuarioId).subscribe({
+      next: (notificaciones) => {
+        if (notificaciones && notificaciones.length) {
+          this.notificaciones = notificaciones;
+          this.numNotificaciones = notificaciones.filter((n: any) => !n.leida).length;
 
-        if (this.numNotificaciones > 0) {
-          this.notificationService.notificacionPendiente = notificaciones.find((n: any) => !n.leida)?.mensaje;
-          this.notificationService.esCreadorDelViaje = true;
+          if (this.numNotificaciones > 0) {
+            this.notificationService.notificacionPendiente = notificaciones.find((n: any) => !n.leida)?.mensaje;
+            this.notificationService.esCreadorDelViaje = true;
+          }
+        } else {
+          this.numNotificaciones = 0;
         }
-
-      } else {
+      },
+      error: (err) => {
+        console.warn('No se pudieron obtener notificaciones:', err);
         this.numNotificaciones = 0;
       }
     });
@@ -149,6 +207,10 @@ export class NavbarComponent implements OnInit {
   // Desuscribirse al destruir el componente (para evitar fugas de memoria):
   ngOnDestroy() {
     this.usuarioSub?.unsubscribe();
+
+    if (this.pollingSub) {
+      clearInterval(this.pollingSub);
+    }
   }
 
   /**
@@ -270,24 +332,28 @@ export class NavbarComponent implements OnInit {
    */
   logout() {
     const rememberMe = localStorage.getItem('remember_me') === 'true';
+    const email = localStorage.getItem('email') || '';
+    const password = localStorage.getItem('password') || '';
+
+    if (this.pollingSub) clearInterval(this.pollingSub);
+    localStorage.clear();
 
     if (rememberMe) {
-      const email = localStorage.getItem('email') || '';
-      const password = localStorage.getItem('password') || '';
-
-      localStorage.clear();
-
       localStorage.setItem('remember_me', 'true');
       localStorage.setItem('email', email);
       localStorage.setItem('password', password);
-    } else {
-      localStorage.clear();
     }
+
+    this.userService.setUsuarioData(null);
 
     this.userData = {} as Usuario;
     this.usuario = null;
     this.isLoggedIn = false;
-    this.navCtrl.navigateRoot(['/home'], {animated: false });
+    this.numNotificaciones = 0;
+
+    this.cdr.detectChanges();
+
+    this.navCtrl.navigateRoot(['/home'], { animated: true });
   }
 
   irAMisViajes() {
@@ -295,11 +361,29 @@ export class NavbarComponent implements OnInit {
 
     this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,
-      animated: false 
+      animated: false
     });
   }
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  }
+
+  obtenerNotificacionesMensajes(usuarioId: number) {
+    if (!usuarioId) return;
+
+    this.messagingService.getConversaciones(usuarioId).subscribe({
+      next: (conversaciones) => {
+
+        this.numNotificacionesMensajes = conversaciones.reduce(
+          (total, conv) => total + (conv.no_leidos || 0), 0
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.warn('Error al obtener notificaciones de mensajes:', err);
+        this.numNotificacionesMensajes = 0;
+      }
+    });
   }
 }

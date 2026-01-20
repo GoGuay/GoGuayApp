@@ -8,7 +8,7 @@
   </div>
 
   <!-- Selector de precio -->
-  <div class="container d-flex justify-content-center">
+  <div class="container d-flex justify-content-center ms-3">
     <div class="input-container">
       <button class="precio_btn" (click)="restarCantidad()" [disabled]="precio <= min">-</button>
       <span class="font_precio" [ngStyle]="{ color: getprecioColor() }">{{ precio }}</span> <span class="currency">€</span>

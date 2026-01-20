@@ -57,8 +57,11 @@ export class HomePage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
 
-    this.obtenerUsuarioPorID(this.userData?.usuario?.id);
-    this.obtenerNotificaciones(this.userData?.usuario?.id);
+    if (this.userLoggedIn) {
+      this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+      this.obtenerNotificaciones(this.userData?.usuario?.id);
+    }
+
   }
 
   changeLanguage(lang: string) {
@@ -77,6 +80,7 @@ export class HomePage implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
+    if (!usuarioId) return;
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
         this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
@@ -87,6 +91,7 @@ export class HomePage implements OnInit {
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
+    if (!id_usuario) return;
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
     });
