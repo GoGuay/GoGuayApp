@@ -55,18 +55,26 @@
       "TITULO": "¿Quieres buscar un viaje?",
       "AYUDA": "Busca un viaje aquí."
     },
-    "SECCION_EVENTOS": {
-      "TITULO": "¿Quieres ir a algún evento?",
-      "DESPLEGABLE": "Pulsa aquí para ver los próximos eventos",
-      "CIUDAD": "Ciudad",
-      "FECHA": "Fechas",
-      "DETALLES": "Detalles",
-      "LEER_MAS": "Leer más",
-      "AVISO": "*Nota: La información de los eventos ha sido extraída de sus respectivas fuentes el 2025. (Dicha información podría no estar actualizada debidamente)"
-    },
     "SECCION_DUDAS": {
       "TITULO": "¿TIENES DUDAS?"
     }
+  },
+
+  "__Eventos": "Sección Eventos del Home",
+  "EVENTOS": {
+    "TITULO": "¿Quieres ir a algún evento?",
+    "INFO_SELECTOR": "Consulta eventos de diferentes ciudades para crear o unirte a un viaje compartido",
+    "SELECTOR": "Consulta los eventos de estas ciudades",
+    "FINICIO": "Fecha de inicio",
+    "FFIN": "Fecha de fin",
+    "IMAGEN": "Imagen del evento",
+    "ENLACE": "Más información del evento",
+    "BOTONES": {
+      "CREAR_VIAJE": "Crear viaje",
+      "PARA": "para",
+      "BUSCAR_VIAJE": "Buscar viaje"
+    },
+    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: PrideRide no se responsabiliza de cualquier modificación realizada por la organización del evento."
   },
 
   "SELECTOR_GENERO": {
