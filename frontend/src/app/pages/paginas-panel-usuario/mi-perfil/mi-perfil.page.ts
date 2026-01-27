@@ -17,6 +17,8 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
 import { firstValueFrom } from 'rxjs';
+import { GoogleServices } from 'src/app/core/google-services/google-services.service';
+import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -63,8 +65,7 @@ export class MiPerfilPage implements OnInit {
   telefonoEditado: string = '';
   isOpen = false;
   edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
-  lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
-
+  lang: string = this.languageService.getLanguage() || 'es'; // Variable para almacenar el lenguaje seleccionado.
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
@@ -73,7 +74,9 @@ export class MiPerfilPage implements OnInit {
 
   constructor(
     public funcionesComunes: FuncionesComunes,
+    private languageService: LanguageService,
     private userService: UserServicesService,
+    private googleService: GoogleServices,
     public funcionesUsuario: FuncionesUsuario,
     private platform: Platform,
     private cdr: ChangeDetectorRef,
@@ -117,6 +120,13 @@ export class MiPerfilPage implements OnInit {
 
         this.userLoggedIn = !!usuario.email;
 
+        //Llama una función propia del translate de Angular, y le pasa a la variable "lang" el nuevo idioma seleccionado.
+        this.translate.onLangChange.subscribe((idiomaCambiado) => {
+          this.lang = idiomaCambiado.lang;
+          console.log('El idioma ha cambiado a:', this.lang);
+          //LLama a la función que detecta y traduce lo que tenga la variable local "bioEditada", que el texto del usuario
+          this.detectarIdioma_traducirTexto(this.bioEditada);
+        });
         this.cdr.detectChanges();
       }
     });
@@ -132,6 +142,31 @@ export class MiPerfilPage implements OnInit {
     this.actualizarEdad();
     this.obtenerUsuarioPorID(this.userData.usuario.id);
     this.funcionesComunes.getBaseUrl();
+  }
+
+  /**
+   * Función que detecta el idioma de un texto y lo traduce al idioma contrario (depende del que tenga la aplicación: es <--> en)   *
+   * @param textoATraducir: es el texto a traducir
+   * this.googleService.... --> llama primero a la función para detectar el idioma del texto ('detectarIdiomaTexto'), con el subscribe se queda pendiente
+   * de los cambios que pueda haber para obtener un resultado.
+   * if --> si el idioma de la app es diferente al atributo idioma del resultado (que será 'es' o 'en') entonces llama a la función para traducir el texto.
+   * La función traducirIdiomaTexto necesita 3 parametros de entrada:
+   *    - textoATraducir --> lo coge del parametro de entrada de la función.
+   *    -this.lang --> el idioma en el que está la app actualmente.
+   *    -resultado.idioma --> el resultado de detectarIdiomaTexto, que nos devuelve 'es' o 'en'.
+   * Con el subscribe está pendiente de nuevo a los cambios, y recibo del backend un objeto que se llama resultadoTraducción, que tiene un atributo
+   * que se llama texto_traducido que contiene la traducción del texto como tal y es lo que le paso a this.bioEditada.
+   */
+  detectarIdioma_traducirTexto(textoATraducir: string) {
+    this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
+      console.log('resultado: ', resultado);
+      if (this.lang !== resultado.idioma) {
+        this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
+          console.log('resultadoTraduccion: ', resultadoTraduccion);
+          this.bioEditada = resultadoTraduccion.texto_traducido;
+        });
+      }
+    });
   }
 
   obtenerUsuarioPorID(id_usuario: number) {

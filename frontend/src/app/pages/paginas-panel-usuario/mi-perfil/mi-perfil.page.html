@@ -247,7 +247,6 @@
                 (ngModelChange)="onInputChange()"></textarea>
 
               <div
-                class="contador-caracteres"
                 [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
                 style="text-align: right; font-size: 0.8rem; margin-top: 5px">
                 {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
