@@ -157,7 +157,8 @@
       "LABEL_EDAD": "Edad",
       "LABEL_SOBRETI": "Sobre ti",
       "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
-      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre"
+      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
+      "CARACTERES": "Caracteres usados"
     },
     "MIS_VEHICULOS": {
       "TITULO": "Mis vehículos",

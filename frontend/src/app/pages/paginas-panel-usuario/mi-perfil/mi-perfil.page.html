@@ -239,11 +239,20 @@
                 class="form-control bio"
                 id="bio"
                 rows="5"
+                maxlength="250"
                 placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}"
                 [(ngModel)]="bioEditada"
                 name="bio"
                 aria-describedby="bioHelp"
                 (ngModelChange)="onInputChange()"></textarea>
+
+              <div
+                class="contador-caracteres"
+                [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
+                style="text-align: right; font-size: 0.8rem; margin-top: 5px">
+                {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
+              </div>
+
               <span id="bioHelp" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.AYUDA_SOBRETI' | translate }}</span>
             </div>
           </ion-col>

@@ -66,7 +66,6 @@ export class MiPerfilPage implements OnInit {
   lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
 
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
-  // usuario: any = {} as Usuario;
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
   perfilSinFoto: boolean = false;
