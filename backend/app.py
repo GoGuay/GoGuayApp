@@ -68,11 +68,11 @@ def create_app():
     # --> vehicle_blueprint: Servicio relacionado con los vehículos
     # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    app.register_blueprint(user_blueprint, url_prefix="/user")
-    app.register_blueprint(travel_blueprint, url_prefix="/travel")
-    app.register_blueprint(vehicle_blueprint, url_prefix="/vehicle")
-    app.register_blueprint(apigoogle_blueprint, url_prefix="/apigoogle")
-    app.register_blueprint(chat_blueprint, url_prefix="/chat")
+    app.register_blueprint(user_blueprint, url_prefix="/api/user")
+    app.register_blueprint(travel_blueprint, url_prefix="/api/travel")
+    app.register_blueprint(vehicle_blueprint, url_prefix="/api/vehicle")
+    app.register_blueprint(apigoogle_blueprint, url_prefix="/api/apigoogle")
+    app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
 
  
     user_service.mail = mail
