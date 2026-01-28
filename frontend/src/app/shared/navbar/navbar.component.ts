@@ -21,13 +21,14 @@ import { NotificacionesService } from 'src/app/core/notificaciones/notificacione
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef } from '@angular/core';
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
+import { RouterModule } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule, IonMenuButton, IonHeader],
+  imports: [MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule, IonMenuButton, IonHeader, RouterModule],
   providers: [MessageService],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
