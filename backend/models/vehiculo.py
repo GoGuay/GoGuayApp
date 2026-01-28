@@ -7,8 +7,7 @@ class Vehiculo(db.Model):
     marca = db.Column(db.String(100), nullable=False)
     modelo = db.Column(db.String(100), nullable=False)
     color = db.Column(db.String(100), nullable=False)
-    matricula = db.Column(db.String(10), unique=True, nullable=False)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), name="fk_vehiculo_usuario")
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'),nullable=False)
 
 
     def serialize(self):
@@ -17,6 +16,5 @@ class Vehiculo(db.Model):
             "marca": self.marca,
             "modelo": self.modelo,
             "color": self.color,
-            "matricula": self.matricula,
             "usuario_id": self.usuario_id
         }

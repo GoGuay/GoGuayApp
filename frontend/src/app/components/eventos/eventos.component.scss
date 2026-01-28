@@ -1,0 +1,109 @@
+.form-select {
+  /* En lugar de 50% o 90px, usamos el ancho del contenido más largo */
+  width: 100% !important;
+  max-width: 380px !important;
+  /* El ancho aproximado de tu frase larga + flecha */
+  min-width: 300px;
+  /* Evita que se encoja demasiado */
+
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+  /* Lo centra si el padre es un bloque */
+}
+
+ion-accordion {
+  border-radius: 15px;
+  border: 1px solid black;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  color: black;
+  background-color: #f4f5f8;
+  width: 100%;
+  /* Obliga a ocupar todo el ancho de la col-4 */
+  display: block;
+  /* Asegura que se comporte como un bloque sólido */
+  box-sizing: border-box;
+  /* El borde y padding no suman ancho extra */
+  margin: 0 0 16px 0;
+}
+
+ion-accordion [slot="content"] {
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 10px !important;
+}
+
+/* Aseguramos que el contenedor tenga un ancho máximo y esté centrado */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  overflow: hidden;
+}
+
+
+/* Evitamos que el acordeón cambie de tamaño al abrirse */
+.acordeon_evento {
+  width: 100% !important;
+  max-width: 300px !important;
+  box-sizing: border-box;
+  border-radius: 15px;
+  border: 1px solid black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  background-color: #f4f5f8;
+  overflow: hidden;
+}
+
+.contenedor_imagen {
+  width: 270px !important;
+  height: 270px !important;
+  margin: -33px !important;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imagen_evento {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+}
+
+/* Muy importante: Ionic a veces añade padding automático al abrir. Lo fijamos: */
+ion-accordion-group {
+  width: 100% !important;
+  display: block;
+  margin: 0 auto;
+}
+
+
+.contenedor-botones {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.form-select:focus {
+  box-shadow: none;
+}
+
+
+
+@media (max-width: 576px) {
+  .form-select {
+    min-width: 90%;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    white-space: nowrap;
+    letter-spacing: -0.5px;
+  }
+}

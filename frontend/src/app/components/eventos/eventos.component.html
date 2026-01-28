@@ -1,0 +1,76 @@
+<h1>{{ 'EVENTOS.TITULO' | translate }}</h1>
+<div class="container">
+  <div class="d-flex justify-content-center">
+    <label for="ciudad_evento" class="visually-hidden">{{ 'EVENTOS.INFO_SELECTOR' | translate }}</label>
+    <select class="form-select" #ciudadRef (change)="actualizarCiudadSeleccionada(ciudadRef.value)" id="ciudad_evento">
+      <option value="" selected disabled>{{ 'EVENTOS.SELECTOR' | translate }}</option>
+      <option [value]="ciudad" *ngFor="let ciudad of ciudadesUnicas">{{ ciudad }}</option>
+    </select>
+  </div>
+</div>
+<div *ngIf="ciudadRef.value != ''" aria-live="polite">
+  <h2>Próximos eventos en {{ ciudadRef.value }}</h2>
+
+  <ion-grid [fixed]="true">
+    <ion-row>
+      <ion-col *ngFor="let evento of filtradosPorCiudad" size="12" size-md="4">
+        <ion-accordion-group class="mb-3 d-flex justify-content-center" [multiple]="true">
+          <ion-accordion class="mb-3 acordeon_evento">
+            <ion-item slot="header" class="white-header">
+              <ion-label class="text-start">
+                <h2 class="titulo-evento">{{ evento.nombre_evento }}</h2>
+                <h3 style="margin-top: 3%; font-weight: bold">{{ evento.ciudad }}</h3>
+                <p
+                  style="margin-top: 3%"
+                  [attr.aria-label]="
+                    ('EVENTOS.FECHA_INICIO' | translate) +
+                    ': ' +
+                    evento.fecha_inicio +
+                    '. ' +
+                    ('EVENTOS.FECHA_FIN' | translate) +
+                    ': ' +
+                    evento.fecha_fin
+                  ">
+                  {{ evento.fecha_inicio }} - {{ evento.fecha_fin }}
+                </p>
+              </ion-label>
+            </ion-item>
+            <div slot="content" class="contenido-estatico">
+              <div class="mb-3">{{ evento.descripcion }}</div>
+              <div class="mb-3 contenedor_imagen">
+                <img class="rounded imagen_evento" src="{{ evento.imagen }}" [alt]="('EVENTOS.IMAGEN' | translate) + ': ' + evento.nombre_evento" />
+              </div>
+              <div class="mb-3">
+                <a href="{{ evento.enlace_info }}" [attr.aria-label]="('EVENTOS.ENLACE' | translate) + ' ' + evento.nombre_evento">>+Info</a>
+              </div>
+              <div class="contenedor-botones">
+                <button
+                  class="btn btn_bg"
+                  type="button"
+                  tabindex="0"
+                  (click)="crearViaje(evento)"
+                  [attr.aria-label]="('EVENTOS.BOTONES.CREAR_VIAJE' | translate) + ' ' + ('EVENTOS.PARA' | translate) + ' ' + evento.nombre_evento">
+                  {{ 'EVENTOS.BOTONES.CREAR_VIAJE' | translate }}
+                </button>
+
+                <button
+                  class="btn btn_bg"
+                  type="button"
+                  tabindex="0"
+                  [attr.aria-label]="('EVENTOS.BOTONES.BUSCAR_VIAJE' | translate) + ' ' + ('EVENTOS.PARA' | translate) + ' ' + evento.nombre_evento">
+                  {{ 'EVENTOS.BOTONES.BUSCAR_VIAJE' | translate }}
+                </button>
+              </div>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+<div class="mt-3">
+  <span>
+    <strong>{{ 'EVENTOS.AVISO' | translate }}</strong>
+  </span>
+</div>

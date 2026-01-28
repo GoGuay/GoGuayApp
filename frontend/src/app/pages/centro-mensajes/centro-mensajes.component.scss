@@ -1,0 +1,88 @@
+.centroMensajes {
+  padding: 2%
+}
+
+.chat_card {
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  margin-bottom: 16px;
+  overflow: hidden;
+  cursor: pointer;
+
+  .mensaje-nuevo {
+    font-weight: 600;
+    color: #000;
+  }
+
+  ion-badge {
+    --padding-top: 5px;
+    --padding-bottom: 5px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+  }
+
+  ion-item {
+    --inner-padding-end: 8px; // Espacio sutil al final
+    display: flex;
+    align-items: center; // Centra todo el contenido del item verticalmente
+  }
+
+  .iconoAjustes {
+    font-size: 24px;
+    color: #666;
+  }
+}
+
+ion-item {
+  --background: #fff;
+  --border-radius: 15px;
+}
+
+ion-list {
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+ion-item.chat_box {
+  margin: 10px;
+}
+
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  text-align: center;
+  padding: 20px;
+  color: #666;
+
+  .empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    color: #ccc;
+  }
+
+  h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 20px;
+    max-width: 250px;
+  }
+}
+
+ion-button[fill="clear"] {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  margin: 0;
+  height: 24px;
+}
+
+.chat_card ion-item {
+  --inner-padding-end: 0;
+}

@@ -17,6 +17,8 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
 import { firstValueFrom } from 'rxjs';
+import { GoogleServices } from 'src/app/core/google-services/google-services.service';
+import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -63,16 +65,18 @@ export class MiPerfilPage implements OnInit {
   telefonoEditado: string = '';
   isOpen = false;
   edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
-  lang: string = ''; // Variable para almacenar el lenguaje seleccionado.
-
+  lang: string = this.languageService.getLanguage() || 'es'; // Variable para almacenar el lenguaje seleccionado.
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
-  // usuario: any = {} as Usuario;
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
+  perfilSinFoto: boolean = false;
+  variableEjemplo: boolean = false;
 
   constructor(
     public funcionesComunes: FuncionesComunes,
+    private languageService: LanguageService,
     private userService: UserServicesService,
+    private googleService: GoogleServices,
     public funcionesUsuario: FuncionesUsuario,
     private platform: Platform,
     private cdr: ChangeDetectorRef,
@@ -116,6 +120,13 @@ export class MiPerfilPage implements OnInit {
 
         this.userLoggedIn = !!usuario.email;
 
+        //Llama una función propia del translate de Angular, y le pasa a la variable "lang" el nuevo idioma seleccionado.
+        this.translate.onLangChange.subscribe((idiomaCambiado) => {
+          this.lang = idiomaCambiado.lang;
+          console.log('El idioma ha cambiado a:', this.lang);
+          //LLama a la función que detecta y traduce lo que tenga la variable local "bioEditada", que el texto del usuario
+          this.detectarIdioma_traducirTexto(this.bioEditada);
+        });
         this.cdr.detectChanges();
       }
     });
@@ -131,6 +142,31 @@ export class MiPerfilPage implements OnInit {
     this.actualizarEdad();
     this.obtenerUsuarioPorID(this.userData.usuario.id);
     this.funcionesComunes.getBaseUrl();
+  }
+
+  /**
+   * Función que detecta el idioma de un texto y lo traduce al idioma contrario (depende del que tenga la aplicación: es <--> en)   *
+   * @param textoATraducir: es el texto a traducir
+   * this.googleService.... --> llama primero a la función para detectar el idioma del texto ('detectarIdiomaTexto'), con el subscribe se queda pendiente
+   * de los cambios que pueda haber para obtener un resultado.
+   * if --> si el idioma de la app es diferente al atributo idioma del resultado (que será 'es' o 'en') entonces llama a la función para traducir el texto.
+   * La función traducirIdiomaTexto necesita 3 parametros de entrada:
+   *    - textoATraducir --> lo coge del parametro de entrada de la función.
+   *    -this.lang --> el idioma en el que está la app actualmente.
+   *    -resultado.idioma --> el resultado de detectarIdiomaTexto, que nos devuelve 'es' o 'en'.
+   * Con el subscribe está pendiente de nuevo a los cambios, y recibo del backend un objeto que se llama resultadoTraducción, que tiene un atributo
+   * que se llama texto_traducido que contiene la traducción del texto como tal y es lo que le paso a this.bioEditada.
+   */
+  detectarIdioma_traducirTexto(textoATraducir: string) {
+    this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
+      console.log('resultado: ', resultado);
+      if (this.lang !== resultado.idioma) {
+        this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
+          console.log('resultadoTraduccion: ', resultadoTraduccion);
+          this.bioEditada = resultadoTraduccion.texto_traducido;
+        });
+      }
+    });
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
@@ -285,8 +321,25 @@ export class MiPerfilPage implements OnInit {
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
   }
 
+  /**
+   *
+   * @param event --> tipo Event es propio de HTML (la foto subida, un archivo, etc.)
+   * input recibe lo que viene de la propiedad target del event que será de un tipo Input de HTML (as HTMLInputElement)
+   * this.cargando = true --> activa el spinner para hacer mientras por debajo todo lo que viene después (llamada al servicio)
+   * Si la propiedad files del event.target tiene contenido y en la posición [0] tiene contenido, entonces:
+   * crea un objeto con el new FormData, y con el .append le añadimos 'imagenPerfil' (que tiene que coincidir con lo que espera el backend, se tiene que llamar igual) y lo que haya en el input.files[0] --> crea un key-value. Key=fotoSubida, value lo que haya en el input.files[0]
+   * usuarioID --> accede al usuario y saca su id
+   * Llama a la función actualizarImagenPerfil de userService y le pasa el id del usuario y el formData con los datos del input.
+   * Cuando recibe la respuesta: pone el cargando (spinner) en false, lo deja de mostar, pone perfilSinfoto en false porque ya va a tener una imagen
+   * y si hay respuesta y la respuesta tiene la propiedad url con datos entonces:
+   * le pasa esa url a imagenPerfilUusario y llama al messageServie para que muestre el mensaje en pantalla.
+   * Por ultimo this.obtenerUsuarioPorID(usuarioId) --> actualiza todos los datos del usuario cuando todo ha terminado.
+   *
+   *
+   */
   subirFotoPerfil(event: Event) {
     const input = event.target as HTMLInputElement;
+
     this.cargando = true;
     if (input.files && input.files[0]) {
       const formData = new FormData();
@@ -297,8 +350,9 @@ export class MiPerfilPage implements OnInit {
       this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
         next: (response) => {
           this.cargando = false;
-          if (response && response.nuevaUrl) {
-            this.imagenPerfilUsuario = response.nuevaUrl;
+          this.perfilSinFoto = false;
+          if (response && response.url) {
+            this.imagenPerfilUsuario = response.url;
             this.messageService.add({
               severity: 'success',
               summary: 'Datos guardados',
@@ -330,6 +384,7 @@ export class MiPerfilPage implements OnInit {
     this.userService.eliminarFotoPerfil(this.userData.usuario.id).subscribe({
       next: () => {
         this.cargando = false;
+        this.perfilSinFoto = true;
 
         this.messageService.add({
           severity: 'success',

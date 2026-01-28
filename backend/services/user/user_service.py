@@ -24,28 +24,19 @@ from flask_mail import Mail, Message
 from prelude_python_sdk import Prelude
 import os
 from twilio.rest import Client
-
-
-
+from sqlalchemy import func
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
 
-
-
 mail = None
 serializer = None
-
 
 API_KEY_PRELUDE = os.getenv("API_KEY_PRELUDE")
 
 client = Prelude(
     api_token=API_KEY_PRELUDE,
-
-
 )
-
-
 
 ##Configuración Twilio
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -54,15 +45,7 @@ SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-
 otp_store = {}
-
-
-
-
-
-
-
 
 # # # # # # # # # # # # # # # # # # # #
 #       REGISTRAR USUARIO NUEVO
@@ -71,20 +54,27 @@ otp_store = {}
 def crear_usuario():
     data = request.json
 
+    # Campos obligatorios
     campos_obligatorios = ['nombre', 'apellidos', 'email', 'password']
     for campo in campos_obligatorios:
         if campo not in data:
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
 
-    
-    if Usuario.query.filter_by(email=data['email']).first():
+    # Normalizar email a minúsculas
+    email_normalizado = data['email'].lower()
+
+    # Verificar si el email ya existe (case-insensitive)
+    if Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first():
         return jsonify({"error": "El correo electrónico ya existe"}), 400
 
+    # Codificar password
     codificar_password = generate_password_hash(data['password'])
-    nuevo_usuario = Usuario (
+
+    # Crear nuevo usuario
+    nuevo_usuario = Usuario(
         nombre=data['nombre'],
         apellidos=data['apellidos'],
-        email=data['email'],
+        email=email_normalizado,  # Guardar en minúsculas
         password=codificar_password,
         telefono=data.get('telefono'),
         orientacion=data.get('orientacion'),
@@ -95,16 +85,16 @@ def crear_usuario():
         numero_carnet_conducir=data.get('numero_carnet_conducir'),
         fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
         fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None
-        
-        
     )
 
     db.session.add(nuevo_usuario)
     db.session.commit()
 
+    # Crear monedero para el usuario
     nuevo_usuario.monedero = Monedero()
     db.session.commit()
 
+    # Generar token de acceso
     access_token = create_access_token(identity=nuevo_usuario.id)
 
     return jsonify({
@@ -114,13 +104,25 @@ def crear_usuario():
     }), 201
 
 
+# Función para comprobar si el correo electrónico ya existe en el proceso de registro
 @user_blueprint.route('/verificar-email-existente', methods=['GET'])
 def verificar_email_existente():
     email = request.args.get('email')
     if not email:
         return jsonify({"Error": "Parámetro no encontrado"}), 400
-    existe = Usuario.query.filter_by(email=email).first() is not None
+    email_normalizado = email.lower()
+    existe = Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first() is not None
     return jsonify ({"existe": existe}), 200
+
+# Función para comprobar si el teléfono ya existe en el proceso de registro
+@user_blueprint.route('/verificar-telefono-existente', methods=['GET'])
+def verificar_telefono_existente():
+    telefono = request.args.get('telefono')
+    if not telefono:
+        return jsonify({"Error": "Parámetro no encontrado"}), 400
+    existe = Usuario.query.filter_by(telefono=telefono).first() is not None
+    return jsonify ({"existe": existe}), 200
+
 
 # # # # # # # # # # # # # # # # # # # #
 #              LOGIN
@@ -466,6 +468,26 @@ def enviar_sms():
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+#Función para verificar el documento del usuario.
+@user_blueprint.route('/verificar_documento/<int:user_id>', methods=['POST'])
+def verificar_documento(user_id):
+    user = Usuario.query.get_or_404(user_id)
+    data = request.get_json()
+    documento = data.get('numero_documento')
+
+    if not documento:
+        return jsonify({'success': False, 'message': 'Falta el documento'}), 400
+    
+    try:
+        user.numero_documento = documento
+        user.dni_verificado = True
+        db.session.commit()
+        return jsonify({'status': True, "mensaje": "Documento guardado correctamente"}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
     
 
 #Endpoint para verificar el código
@@ -484,14 +506,16 @@ def verificar_codigo():
             to=telefono_formateado,
             code=codigo
         )
-
+        print('Resultado: ', result)
+        print('Phone number: ', phone_number)
         if result.status == "approved":
             usuario = Usuario.query.filter_by(telefono=phone_number).first()
             if usuario:
                 usuario.telefonoVerificado = True
                 db.session.commit()
+                db.session.refresh(usuario)
             
-            return jsonify({"success": True, "message": "Teléfono verificado ✅"})
+            return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
         else:
             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
 
@@ -627,6 +651,10 @@ def comprobacion_token():
     except Exception as e:
         print(f"Error validando token: {e}")
         return jsonify({"error": "Token inválido"}), 400
+    
+
+
+
 
 
     

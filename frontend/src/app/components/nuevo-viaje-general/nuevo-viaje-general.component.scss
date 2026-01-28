@@ -9,12 +9,34 @@
 }
 
 .travel-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; 
-  padding: 8px 12px;
+  gap: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  user-select: none;
 }
+
+
+
+/* Estado: Clic presionado (Active) */
+.travel-btn:active {
+  filter: brightness(90%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estado: Navegación por teclado (Focus) */
+/* Es vital para usuarios que no usan ratón */
+.travel-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px black;
+}
+
+
 
 .travel-icon {
   font-size: 20px;
@@ -30,7 +52,7 @@
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 576px) {
   // .img_travel {
-  //   max-width: 250px; 
+  //   max-width: 250px;
   // }
 
   .travel-btn {

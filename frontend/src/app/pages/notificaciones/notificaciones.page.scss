@@ -45,3 +45,22 @@
   --ion-color-primary: #F0D7B4;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
+
+.toast-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.notificacion-item {
+  transition: all 0.6s ease;
+  
+  &.resaltado {
+    background-color: #fff3cd !important; // Un tono amarillento/dorado
+    border: 2px solid #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+    transform: translateY(-2px);
+  }
+}

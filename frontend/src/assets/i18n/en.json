@@ -1,57 +1,456 @@
 {
   "TITLE": "PrideRide",
-  "User Panel": "User Panel Page",
+  "Panel de usuario": "User Panel Page",
   "PANELUSUARIO": {
     "PANELUSUARIO": "User Panel",
     "INFOPERSONAL": "PERSONAL INFORMATION",
-    "ANADIR_EDITAR_FOTO": "Add/Edit Photo",
+    "ANADIR_EDITAR_FOTO": "Add/Edit photo",
     "MIPERFIL": "My Profile",
     "MIPERFIL_TOOL_TITULO": "My Profile Content",
-    "MIPERFIL_TOOL_MODAL": "In this section, you can view and edit your personal information, as well as add your vehicles and travel preferences.",
-    "DATOSCONTACTO": "Contact Information",
-    "DATOSCONT_TOOL_TITULO": "Contact Information Content",
-    "DATOSCONT_TOOL_MODAL": "You can update your phone number and email, as well as set your communication preferences.",
+    "MIPERFIL_TOOL_MODAL": "In this section you can view and modify your personal information, as well as add your vehicles and trip preferences",
+    "DATOSCONTACTO": "Contact Details",
+    "DATOSCONT_TOOL_TITULO": "Contact Details Content",
+    "DATOSCONT_TOOL_MODAL": "You can modify your phone and email, as well as preferences for communicating with you.",
     "VERIFPERFIL": "Verify Profile / Password",
-    "VERIFPERFIL_TOOL_TITULO": "Content on profile verification and password change",
-    "VERIFPERFIL_TOOL_MODAL": "You can become a verified user, upload a photo of your driver's license to post trips, and change your access password.",
-    "SALDO_TRANSF": "Balance and Transfers",
-    "SALDO_TOOL_TITULO": "Content on Balance and Transfers",
-    "SALDO_TOOL_MODAL": "You can check your available balance, top-up methods, recent transactions, and transfer available balance to your bank account."
+    "VERIFPERFIL_TOOL_TITULO": "Content about profile verification and password change",
+    "VERIFPERFIL_TOOL_MODAL": "You can become a verified user, upload a photo of your driving license to publish trips, and change your access password.",
+    "SALDO_TRANSF": "Balance and transfers",
+    "SALDO_TOOL_TITULO": "Content about Balance and transfers",
+    "SALDO_TOOL_MODAL": "You can check your available balance, top-up methods, latest movements, and transfer available balance to your bank account"
   },
-  "__MyProfile": "My Profile Modal and Component",
+
+  "NavBar Home": "Opciones del navbar que aparece en el Home",
+  "NAVBAR": {
+    "QUIENES": "About us",
+    "FAQS": "Faqs",
+    "DECALOGO": "Decalogue",
+    "BUSCAR_VIAJE": "Search trip",
+    "PUBLICAR_VIAJE": "Publish trip",
+    "NOTIFICACIONES": "Notifications",
+    "IDIOMA_ES": "Select spanish language",
+    "IDIOMA_EN": "Select english language",
+    "MENUUSUARIO": {
+      "LOGIN": "Login",
+      "REGISTRO": "Sign up",
+      "MI_PERFIL": "My profile",
+      "MIS_VIAJES": "My trips",
+      "DATOS_CONTACTO": "Contact details",
+      "VERIFICACION": "Profile verification",
+      "SALDO": "Balance/Transfers",
+      "AJUSTES": "Settings",
+      "SALIR": "Logout"
+    }
+  },
+
+  "HOME": {
+    "JUMBO": {
+      "SLOGAN": "Whoever you are, we travel with you"
+    },
+    "SECCION_PUBLICAR": {
+      "TITULO": "Do you want to share your next trip?"
+    },
+    "SECCION_BUSCAR": {
+      "TITULO": "Do you want to search for a trip?"
+    },
+    "SECCION_EVENTOS": {
+      "TITULO": "Is there an event nearby?",
+      "DESPLEGABLE": "Click here to see upcoming events",
+      "AVISO": "*Note: Event information was extracted from their respective sources in 2025. (This information may not be properly updated)"
+    },
+    "SECCION_DUDAS": {
+      "TITULO": "DO YOU HAVE ANY QUESTIONS?",
+      "BOTON": "Check here"
+    }
+  },
+
+  "SELECTOR_GENERO": {
+    "H_CIS": "Cis Man",
+    "M_CIS": "Cis Woman",
+    "TRANS": "Transsexual",
+    "NO_BINARIO": "Non-binary",
+    "INTER": "Intergender",
+    "NO_FLUIDO": "Non-fluid",
+    "OTRO": "Other",
+    "NO_RESPONDE": "Prefer not to say"
+  },
+  "SELECTOR_ORIENTACION": {
+    "GAY": "Gay",
+    "LESBIANA": "Lesbian",
+    "BISEXUAL": "Bisexual",
+    "PANSEXUAL": "Pansexual",
+    "ASEXUAL": "Asexual",
+    "DEMISEXUAL": "Demisexual",
+    "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
+    "OTRO": "Other",
+    "NO_RESPONDE": "Prefer not to say"
+  },
+  "__MiPerfil": "My Profile Component - /mi-perfil --------- FINISHED OCTOBER 2025",
   "MIPERFIL": {
-    "MI_PERFIL": "My Profile",
-    "DESCRIPCION_MIPERFIL": "In this section you can view and update your personal information, as well as add your vehicles and travel preferences",
-    "INFO_PERSONAL": "Personal Information",
-    "NOMBRE": "First Name",
-    "NOMBRE_AYUDA": "Field to enter your first name",
-    "APELLIDOS": "Last Name",
-    "APELLIDOS_AYUDA": "Field to enter your last name",
-    "PRONOMBRE": "Pronoun",
-    "PRONOMBRE_TOOLTIP": "A word we use to refer to someone without using their name. Everyone can choose the pronouns they feel comfortable with, such as he, she, or they",
-    "PRONOMBRE_SELECCIONA": "Choose your pronoun",
-    "PRONOMBRE_AYUDA": "Dropdown selector to choose your pronoun",
-    "GENERO": "Gender",
-    "GENERO_TOOLTIP": "This is the identity a person feels aligned with. It can be male, female, non-binary, among others. It doesn’t always match the sex assigned at birth",
-    "GENERO_SELECCIONA": "Choose your gender",
-    "GENERO_AYUDA": "Dropdown selector to choose your gender",
-    "ORIENTACION": "Orientation",
-    "ORIENTACION_TOOLTIP": "About who you're attracted to or who you want to form emotional or sexual connections with. It can be gay, lesbian, bisexual, pansexual, asexual, and many other possibilities",
-    "ORIENTACION_SELECCIONA": "Choose your orientation",
-    "ORIENTACION_AYUDA": "Dropdown selector to choose your orientation",
-    "FECHA_NACIMIENTO": "Date of Birth",
-    "FECHA_NACIMIENTO_AYUDA": "Required format: day (2 digits), month (2 digits), year (4 digits).",
-    "EDAD": "Age",
-    "EDAD_CALCULADA": "Your age is:",
-    "SOBRE_TI": "About You",
-    "CUENTANOS": "Feel free to tell us anything you want about yourself here!",
-    "PREF_VIAJE": "Travel Preferences",
-    "CUANDO_VIAJO_PREFIERO": "When I travel I prefer to...",
-    "HABLAR": "Talk",
-    "ESCUCHAR_MUSICA": "Listen to music",
-    "DORMIR": "Sleep",
-    "SILENCIO": "Silence"
+    "TITULO": "My Profile",
+    "DESCRIPCION": "In this section you can view and modify your personal information, as well as add your vehicles and trip preferences",
+    "BTN_GUARDAR": "Save",
+    "BTN_GUARDAR_HELP": "Save any modifications made to your profile",
+    "INFO_PERSONAL": {
+      "TITULO": "Personal Information",
+      "BTN_ANADIR_FOTO": "Add or change profile photo",
+      "ALT_IMG_PERFIL": "Your profile image is shown here",
+      "BTN_ELIMINAR_FOTO": "Delete profile photo",
+      "BTN_PERFIL_PUBLICO": "Here you can view your public profile",
+      "BTN_PERFIL_PUBLICO_TEXTO": "How others see me",
+      "LABEL_NOMBRE": "Name",
+      "LABEL_APELLIDOS": "Last Name",
+      "PRONOMBRE": {
+        "LABEL": "Pronoun",
+        "INFO": "Word we use to refer to a person without saying their name. Everyone can choose the pronouns they feel comfortable with, such as he, she, or they.",
+        "AYUDA": "Options are shown to choose your pronoun",
+        "ESCOGE_OPCION": "Choose your pronoun",
+        "OPC_OTROS": "Others",
+        "OPC_NOUSO": "I don't use any",
+        "OPC_NORESPONDO": "Prefer not to say"
+      },
+      "GENERO": {
+        "LABEL": "Gender",
+        "INFO": "It is the identity by which a person feels recognized. It can be male, female, non-binary, among others. It does not always have to match the sex assigned at birth.",
+        "AYUDA": "Options are shown to choose your gender",
+        "ESCOGE_OPCION": "Choose your gender",
+        "OPC_HOMBRECIS": "Cis Man",
+        "OPC_MUJERCIS": "Cis Woman",
+        "OPC_TRANSEXUAL": "Transsexual",
+        "OPC_NOBINARIO": "Non-Binary",
+        "OPC_INTERGENERO": "Intergender",
+        "OPC_NOFLUIDO": "Non-fluid",
+        "OPC_OTROS": "Others",
+        "OPC_NORESPONDO": "Prefer not to say"
+      },
+      "ORIENTACION": {
+        "LABEL": "Orientation",
+        "INFO": "About who you are attracted to or with whom you want to form affective or sexual bonds.",
+        "AYUDA": "Options are shown to choose your orientation",
+        "ESCOGE_OPCION": "Choose your orientation",
+        "OPC_GAY": "Gay",
+        "OPC_LESBIANA": "Lesbian",
+        "OPC_BISEXUAL": "Bisexual",
+        "OPC_PANSEXUAL": "Pansexual",
+        "OPC_ASEXUAL": "Asexual",
+        "OPC_DEMISEXUAL": "Demisexual",
+        "OPC_QUEER": "Queer",
+        "OPC_OTROS": "Others",
+        "OPC_NORESPONDO": "Prefer not to say"
+      },
+      "LABEL_FECHANACIMIENTO": "Date of birth",
+      "LABEL_EDAD": "Age",
+      "LABEL_SOBRETI": "About you",
+      "PLACEHOLDER_SOBRETI": "Here you can tell us whatever you want about yourself!",
+      "AYUDA_SOBRETI": "Area where you can write free text"
+    },
+    "MIS_VEHICULOS": {
+      "TITULO": "My vehicles",
+      "SIN_VEHICULOS": "You have no vehicles added",
+      "BTN_ANADIR_VEHICULO": "Add vehicle",
+      "BTN_AYUDA_ANADIR_VEHICULO": "To add a new vehicle",
+      "ADVERTENCIA_MODIFICACION": "Remember that if you change the brand, you must also modify the model",
+      "SELECTOR": {
+        "MARCA": "Brand",
+        "AYUDA_MARCA": "Vehicle brand selector",
+        "MODELO": "Model",
+        "AYUDA_MODELO": "Vehicle model selector",
+        "COLOR": "Color"
+      },
+      "TABLA": {
+        "COL_MARCA": "Brand",
+        "COL_MODELO": "Brand",
+        "COL_COLOR": "Brand",
+        "COL_OPCIONES": "Brand",
+        "BTN_EDITAR_TOOLTIP": "Edit your vehicle data if they are incorrect",
+        "BTN_ELIMINAR_TOOLTIP": "Delete this vehicle",
+        "BTN_GUARDAR_TOOLTIP": "Save new vehicle data"
+      }
+    },
+    "PREF_VIAJE": {
+      "LABEL": "My trip preferences",
+      "SUBTITULO": "When traveling I prefer...",
+      "OPC_HABLAR": "Talking",
+      "OPC_MUSICA": "Listening to music",
+      "OPC_DORMIR": "Sleeping",
+      "OPC_SILENCIO": "Going in silence"
+    }
   },
+  "__Registro": "Components that make up user Registration ----- FINISHED NOVEMBER 2025",
+  "REGISTRO": {
+    "FORM1": {
+      "BIENVENIDE": "WELCOME",
+      "SUBTITULO": "Here you can start registering",
+      "AVISO_CAMPOSOBLIGATORIOS": "Fields marked with an asterisk are mandatory",
+      "CORREO": {
+        "LABEL": "Email address",
+        "PLACEHOLDER": "email@example.com",
+        "AYUDA": "Field to enter your email address. Must include the '@' symbol and a valid domain.",
+        "OBLIGATORIO": "Email is mandatory.",
+        "FORMATO": "The email format is incorrect.",
+        "YAEXISTE": "This email is already registered."
+      },
+      "FNACIMIENTO": {
+        "LABEL": "Date of birth",
+        "AYUDA": "Field to enter your date of birth",
+        "INCORRECTA": "The date entered is incorrect.",
+        "OBLIGATORIA": "Date of birth is mandatory.",
+        "MENOR_EDAD": "You must be over 18 to use this service.",
+        "SUPERIORACTUAL": "You cannot choose a date later than today."
+      }
+    },
+    "FORM2": {
+      "TITULO": "SHOULD WE GET TO KNOW EACH OTHER A LITTLE BETTER?",
+      "AVISO_CAMPOSOBLIGATORIOS": "Fields marked with an asterisk are mandatory",
+      "LABEL_NOMBRE": "Name",
+      "LABEL_APELLIDOS": "Last Name",
+      "TELEFONO": {
+        "LABEL": "Phone number",
+        "OBLIGATORIO": "The phone number is mandatory",
+        "FORMATO": "The format is incorrect. It must contain 9 numeric digits.",
+        "YAEXISTE": "This phone number is already registered with us."
+      },
+      "GÉNERO": {
+        "LABEL": "Gender you identify with",
+        "INFO": "It is a person's internal and individual experience, expressed through identity, clothing, or behavior. It is not related to the sex assigned at birth and is not limited only to male or female.",
+        "SELECCIONA": "Select your gender"
+      },
+      "ORIENTACION": {
+        "LABEL": "What is your sexual orientation?",
+        "INFO": "It is the emotional, romantic and/or sexual attraction felt towards other people.",
+        "SELECCIONA": "Select your orientation"
+      }
+    },
+    "FORM3": {
+      "TITULO": "SOMETHING IMPORTANT: YOUR PASSWORD",
+      "REQUISITOS": {
+        "TITULO": "Requirements for a secure password:",
+        "MIN_CARACTERES": "Have a minimum of 6 characters.",
+        "NUMERO_MAYÚSCULA_SIMBOLO": "Have at least one number or one uppercase letter or one symbol."
+      },
+      "CONTRASEÑA": {
+        "LABEL": "Password:",
+        "FORMATO": "The password format is incorrect."
+      }
+    },
+    "RESUMEN_REGISTRO": {
+      "TUS_DATOS": "This is the data you have provided.",
+      "INFO": "Don't worry if any information is incorrect: you can modify it by clicking the pencil icon",
+      "TABLA": {
+        "CORREO": "Email",
+        "FNACIMIENTO": "Date of birth",
+        "NOMBRE": "Name",
+        "APELLIDOS": "Last Name",
+        "TELEFONO": "Phone",
+        "GENERO": "Gender",
+        "ORIENTACION": "Orientation"
+      },
+      "ACEPTAR_CONDICIONES_TEXTO": "By registering, you acknowledge having read, understood, and accepted our Service Rules and Conditions.",
+      "BOTONES": {
+        "ACEPTAR": "Accept and register",
+        "RECHAZAR": "Reject and exit"
+      },
+      "SELECCIONA": "Select an option"
+    },
+    "BOTONES": {
+      "ATRAS": "Back",
+      "SIGUIENTE": "Next",
+      "FINALIZAR_REGISTRO": "Complete registration"
+    }
+  },
+  "__DatosContacto": "OK OK OK OK OK OK OK , contact page",
+  "DATOS_CONTACTO": {
+    "TITULO": "Contact Details",
+    "DESCRIPCION_SECCION": "From this section you can modify your email and contact phone number (Remember these are important details for making a trip).",
+    "DESCRIPCION_SECCION_2": "Remember that if you want to be a verified profile, you must do so in the Verification section.",
+    "MODIF_CORREO_TFNO": "Modification of email and phone",
+    "MI_CORREO": "My email address",
+    "MI_TFNO": "My phone number",
+    "COM_COMERCIALES": "Commercial communications",
+    "CHECK_POR_EMAIL": "I agree to receive commercial communications by email",
+    "CHECK_TERCEROS": "I agree that my data may be used for commercial purposes by third parties"
+  },
+  "__VerificacionesPerfil": "Modal and verify-profile page ok ok ok ok ok ok ok ok ok ok",
+  "VERIFICACION": {
+    "TITULO": "Profile Verification",
+    "SUBT_VERIF_BASICA": "Basic verification: confirm your email, phone, and identity document number",
+    "SUBT_VERIF_AVANZADA": "Advanced verification: if you will be the driver at any time, you must attach a photo of your driving license/permit",
+    "TABLA_VBASICA": {
+      "TITULO": "Basic verification",
+      "COL_CORREO": "Email address",
+      "COL_TELÉFONO": "Phone",
+      "COL_DOCUMENTO": "Identity document"
+    },
+    "TABLA_VAVANZADA": {
+      "TITULO": "Advanced verification",
+      "COL_CARNETCONDUCIR": "Driving license"
+    },
+    "VERIFICA_CORREO": "Verify your email:",
+    "INFO_VERIF_CORREO": "We will send a link to your email, you just have to click on the link that will appear.",
+    "VERIFICA_TELEFONO": "Verify your phone:",
+    "INFO_VERIF_TELEFONO": "We will send a 6-digit code. You must enter it in the boxes below.",
+    "BOTÓN_VERIFICAR_TELEFONO": "Confirm code",
+    "VERIF_IDENTIDAD": "Verify your identity:",
+    "INFO_VERIF_IDENTIDAD": "Choose the type of document and indicate your number. Don't forget to modify it if necessary",
+    "TIPO_DOCUMENTO": "Select the type of document",
+    "ESCOGE_TIPO_DOCUMENTO": "Choose your document type",
+    "NUMERO_DOCUMENTO": "Document number without spaces",
+    "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
+    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirm document",
+    "VAVANZADA": {
+      "TITULO": "Advanced verification",
+      "INFO": "This verification is mandatory only if you are going to publish a trip as a driver"
+    }
+  },
+  "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
+  "AJUSTESAPP": {
+    "TITULO": "Settings",
+    "SUBTITULO_1": "Here you can configure specific aspects of the page and your profile",
+    "OPCION_IDIOMA": {
+      "TITULO": "Language selection",
+      "SUBTITULO": "Modify the page to view it in Spanish or English",
+      "OPTION_DEFAULT": "Select a language",
+      "ESPAÑOL": "Spanish",
+      "INGLES": "English",
+      "ALERT_TITULO": "Language change",
+      "ALERT_MENSAJE": "The language has been successfully modified."
+    },
+    "OPCION_BANNER": {
+      "TITULO": "Show banner",
+      "SUBTITULO": "Hide or show the banner that appears on some application screens.",
+      "ALERT_TITULO": "Banner settings",
+      "ALERT_MENSAJE": "Banner settings have been successfully modified."
+    },
+    "OPCION_NOTIFICACION": {
+      "TITULO": "Notifications",
+      "SUBTITULO": "This setting allows you to configure notifications."
+    },
+    "PASSWORD": {
+      "TITULO": "Change password:",
+      "CONTRAS_ACTUAL": "Current password:",
+      "CONTRAS_ACTUAL_INCO": "Current password incorrect",
+      "NUEVA_DIF_ACTUAL": "The new password must be different from the current one",
+      "NO_COINCIDEN": "Passwords do not match",
+      "CAMBIADA_OK": "Password has been successfully changed",
+      "NO_CAMBIADA": "The password could not be changed",
+      "NUEVA_CONTRAS": "New password:",
+      "CONF_NUEVA_CONTRAS": "Confirm new password:",
+      "FORGOT_PASSWORD": "Don't remember your current password?",
+      "PASSWORD_CONFIRM": "Current password verified successfully.",
+      "PASSWORD_INCORRECTA": "The current password is incorrect."
+    },
+    "ELIMINARCTA": {
+      "TITULO": "Delete account:",
+      "MODAL_TITULO": "ATTENTION: You are about to delete your user",
+      "MODAL_MENSAJE": "Are you sure you want to delete user?",
+      "INFO_ELIMINAR_CTA": "This action will permanently delete your account, with no possibility of recovery in the future.",
+      "INFO_ELIMINAR_CTA2": "If you have a balance, remember to transfer it to your bank account first so as not to lose that money."
+    },
+    "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D."
+  },
+  "Forgot_Password": "Page to send password reset email",
+  "FORGOT_PW": {
+    "TITULO": "FORGOT PASSWORD",
+    "SUBTITULO1": "We all have slips. We're here to help.",
+    "SUBTITULO2": "Confirm your email address, we will send you a link to create a new password",
+    "TOAST_TITULO": "Email sent",
+    "TOAST_CUERPO": "We have sent an email to reset your password. Don't forget to check your spam folder"
+  },
+  "TOKEN_EXPIRADO": "Page shown when the email token has expired",
+  "TOKEN_EXP": {
+    "TITULO": "The link has expired",
+    "SUBTITULO": "The link we sent you to change your current password has expired.",
+    "SUBTITULO2": "You must request another link through the Settings page in the user menu."
+  },
+  "TOKEN_YA_USADO_": "Page shown when the email token has already been used",
+  "TOKEN_YA_USADO": {
+    "TITULO": "The link has already been used",
+    "SUBTITULO": "The link we sent you to change your current password has already been used.",
+    "SUBTITULO2": "You can change your current password again through the Settings page in the user menu."
+  },
+  "SaldoYTransferencias": "Balance and transfers modal and page",
+  "SALDO": {
+    "SALDOTRANSF": "Balance and transfers",
+    "TITULO": "Balance and transfers",
+    "SUBTITULO1": "In this section you can check your available balance, view the latest movements, set your top-up methods and make top-ups",
+    "SUBTITULO2": "If you have a balance, you can transfer it to your bank account.",
+    "TU_SALDO": "Your balance",
+    "SALDO_TITULO": "Current balance:",
+    "MOV_TITULO": "Latest movements:",
+    "MOV_FECHA": "Date",
+    "MOV_CONCEPTO": "Concept",
+    "MOV_ABONO_GASTO": "Credit/Debit",
+    "MOV_SALDO_FINAL": "Final balance",
+    "CONCEPTO_VIAJE": "Trip",
+    "CONCEPTO_RECARGA": "Top-up",
+    "CONCEPTO_PASAJERO": "Passenger",
+    "METODOS_TITULO": "Your top-up methods:",
+    "MIS_TARJETAS": "My linked cards",
+    "TARJETA": "Card",
+    "ANADIRTARJETA_BOTON": "Add credit card",
+    "ALIAS_TARJETA": "Card alias",
+    "NUM_TARJETA": "Card number",
+    "PAGO_PAYPAL": "Payment by Paypal",
+    "PAYPAL_BOTON": "Let's go to Paypal!",
+    "TRANSF_TITULO": "Transfers to your bank account:",
+    "TRANSF_IMPORTE": "Transferred amount",
+    "TRANS_CONCEPTO": "Transfer to account",
+    "SALDO": "Balance"
+  },
+  "__Botones": "My profile modal and my profile component",
+  "BOTON": {
+    "ANADIR_VEHICULO": "Add vehicle",
+    "GUARDAR": "Save",
+    "VERIF_TU_IDENTIDAD": "Verify your identity",
+    "GUARDAR_VEHICULO": "Save vehicle",
+    "CONFIRMAR_CODIGO_TFNO": "Confirm code",
+    "ELEGIR_ARCHIVOS": "Choose files",
+    "CAMBIAR": "Change!",
+    "ELIMINAR_CTA": "Delete my account",
+    "ELIMINAR": "Delete profile",
+    "CANCELAR:": "Cancel",
+    "BUSCAR": "Search",
+    "PUBLICA_TU_VIAJE_AQUI": "Publish your next trip here",
+    "BUSCA_TU_VIAJE_AQUI": "Search for your next trip here",
+    "CONSULTA_AQUI": "Check here",
+    "PUBLICAR_VIAJE": "Publish your trip",
+    "CENTROAYUDA": "Consult our help center"
+  },
+
+  "_NuevoViaje": "/nuevo-viaje",
+  "NUEVOVIAJE": {
+    "PLACE_DONDE_COMIENZA": "Where does the trip start?",
+    "PLACE_HASTA_DONDE": "How far is the trip?",
+    "PLACE_NUM_PLAZAS": "Number of seats",
+    "NO_REGISTRADO_LOGIN": "You must register or log in to publish a trip",
+    "CARNET_NO_REGISTRADO": "You have not yet registered your driving license to publish a trip",
+    "AYUDA_TOOLTIP": "Help for publishing a trip",
+    "BOTON_PUBLICAR_TOOLTIP": "You can access the menu to publish a new trip without needing to fill in the previous fields.",
+    "TITULO_MODAL_AYUDA": "Help",
+    "MENSAJE_AYUDA_CARNET": "You need to register your driving license in your profile settings to publish a trip.",
+    "MENSAJE_AYUDA_LOGIN_REG": "<p>You need to <a href=\"/login\">log in</a> or <a href=\"/registro\">register</a> before you can publish a trip.</p>"
+  },
+  "_CentroDeAyuda": " Help center",
+  "CENTRODEAYUDA": {
+    "TITULO": "Help Center",
+    "SUBTITULO": "Do you have questions about your trips? We are here to help you"
+  },
+  "ANTIGUO DEBAJO": "",
+  "NUEVO_VIAJE2": {
+    "TITLE_BTN_BACK": "PrideRide",
+    "ALT_LOGO": "PrideRide Logo",
+    "SEARCH_TRAVEL": "Search trip",
+    "FROM": "Where does the trip start?",
+    "TO": "How far is the trip?",
+    "TRAVELERS": "Number of seats",
+    "NO_REGISTER_ALERT": "You are not yet registered to publish a trip",
+    "NO_CARNET_ALERT": "You have not yet registered your driving license to publish a trip",
+    "PUBLISH_TRIP": "Publish trip",
+    "PUBLISH_TRIP_TITLE": "Button to publish trip",
+    "HELP_CENTER_TITLE": "Help Center",
+    "HELP_CENTER_BTN": "Consult our Help Center"
+  },
+
   "VEHICULOS": {
     "MIS_VEHICULOS": "My vehicles",
     "FORMULARIO_ANADIR": "Form to add a new vehicle",
@@ -152,67 +551,7 @@
     "OTROS": "Others",
     "NO_RESPONDE": "I prefer not to answer"
   },
-  "__Género": "Gender Selectors",
-  "SELEC_GENERO": {
-    "SELECCIONA": "Select your gender",
-    "HOMBRE_CIS": "Cisgender Man",
-    "MUJER_CIS": "Cisgender Woman",
-    "TRANSEXUAL": "Transgender",
-    "NO_BINARIO": "Non-binary",
-    "INTERGENERO": "Intergender",
-    "NO_FLUIDO": "Genderfluid",
-    "OTRO": "Other",
-    "NO_RESPONDE": "I prefer not to answer"
-  },
-  "__Orientación": "Orientation Selectors",
-  "ORIENTACION": {
-    "SELECCIONA": "Select your orientation",
-    "GAY": "Gay",
-    "LESBIANA": "Lesbian",
-    "BISEXUAL": "Bisexual",
-    "PANSEXUAL": "Pansexual",
-    "ASEXUAL": "Asexual",
-    "DEMISEXUAL": "Demisexual",
-    "QUEER": "Queer",
-    "OTRO": "Other",
-    "NO_RESPONDE": "I prefer not to answer"
-  },
-  "__Botones": "My Profile Modal and My Profile Component",
-  "BOTON": {
-    "ANADIR_VEHICULO": "Add Vehicle",
-    "GUARDAR": "Save",
-    "GUARDAR_VEHICULO": "Save vehicle",
-    "CONFIRMAR_CODIGO_TFNO": "Confirm Code",
-    "ELEGIR_ARCHIVOS": "Choose Files",
-    "CAMBIAR": "Change!",
-    "ELIMINAR_CTA": "Delete My Account",
-    "BUSCAR": "Search",
-    "PUBLICA_TU_VIAJE_AQUI": "Publish your next trip here",
-    "BUSCA_TU_VIAJE_AQUI": "Search for your next trip here",
-    "CONSULTA_AQUI": "Check here",
-    "PUBLICAR_VIAJE": "Publish your trip",
-    "CENTROAYUDA": "Check our help center"
-  },
-  "NavBar Home": "Navbar options displayed on the Home page",
-  "NAVBAR": {
-    "QUIENES": "Who We Are",
-    "FAQS": "FAQs",
-    "DECALOGO": "Decalogue",
-    "BUSCAR_VIAJE": "Search Trip",
-    "PUBLICAR_VIAJE": "Publish Trip",
-    "PANEL": "USER PANEL",
-    "MIPERFIL": "My Profile",
-    "MIS_VIAJES": "My trips",
-    "DATOSCONTACTO": "Contact Information",
-    "VERIFICACION": "Verification/Password",
-    "SALDO": "Balance/Transfers",
-    "LOGIN": "Login",
-    "REGISTRO": "Register",
-    "SALIR": "Logout",
-    "IDIOMA_ESPANIOL": "Spanish",
-    "IDIOMA_INGLES": "English",
-    "AJUSTES": "Settings"
-  },
+
   "_Footer": "Footer links",
   "FOOTER": {
     "TERMS": "Terms and Conditions",
@@ -220,31 +559,7 @@
   },
   "antiguo": "debajo",
   "GUARDAR": "Save",
-  "HOME": {
-    "NEW_TRAVEL_TITLE": "Do you want to share your next trip?",
-    "NEW_TRAVEL_BUTTON": "Post your next trip here",
-    "MOST_POPULAR_TRAVELS_TITLE": "MOST POPULAR TRIPS",
-    "QUESTIONS_TITLE": "DO YOU HAVE QUESTIONS?",
-    "CHECK_HERE": "Check here",
-    "JUMBO": {
-      "SLOGAN": "Whoever you are, we travel with you"
-    },
-    "BUSCADOR": {
-      "BUSCARVIAJE": "Search for a trip",
-      "DESDE": "From",
-      "A": "to",
-      "CUANDO": "When",
-      "NUMPASAJEROS": "Number of passengers"
-    },
-    "INFO": {
-      "TEXTO_1": "Explore new adventures and incredible destinations. Find travel companions who share your passion for discovering the world.",
-      "TEXTO_2": "Plan your next trip with ease. Connect with people going in the same direction.",
-      "TEXTO_3": "Share your experiences and create unforgettable memories with fellow travelers like you."
-    },
-    "QUIERES_PUBLICAR_VIAJE": "Do you want to share your next trip?",
-    "TRAYECTOS_POPULARES": "Most popular routes",
-    "DUDAS": "DO YOU HAVE QUESTIONS?"
-  },
+
   "HEADER": {
     "ABOUT": "About us",
     "FAQS": "FAQs",
@@ -254,10 +569,6 @@
     "LOGIN": "Log in",
     "REGISTER": "Sign up",
     "CHANGE_LANGUAGE": "Change language"
-  },
-  "JUMBOTRON": {
-    "TITLE": "Whoever you are, we travel with you",
-    "HELP": "Header image"
   },
   "INFO": {
     "TEXT_ONE": "Explore new adventures and incredible destinations. Find travel companions who share your passion for discovering the world.",

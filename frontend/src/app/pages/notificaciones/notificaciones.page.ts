@@ -8,13 +8,14 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from "../../shared/navbar/navbar.component";
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 @Component({
   selector: 'app-notificaciones',
   templateUrl: './notificaciones.page.html',
   styleUrls: ['./notificaciones.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent]
 })
 export class NotificacionesPage implements OnInit {
 
@@ -24,13 +25,24 @@ export class NotificacionesPage implements OnInit {
   iconoAjustes: string = '../../../assets/sistema/ajustes.png';
   notificaciones: any[] = [];
 
+  mostrarSpinner: boolean = false;
+
+  idResaltado: number | null = null;
+
   constructor(private notificationService: NotificacionesService, private userService: UserServicesService, private router: Router) { }
 
   ngOnInit() {
+    this.idResaltado = this.notificationService.idNotificacionResaltada;
     this.loadUserData();
     this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
     this.obtenerNotificaciones(this.userData.usuario.id);
     this.notificationService.clearToasts();
+    if (this.idResaltado) {
+      setTimeout(() => {
+        this.idResaltado = null;
+        this.notificationService.idNotificacionResaltada = null;
+      }, 3000);
+    }
   }
 
 
@@ -40,7 +52,9 @@ export class NotificacionesPage implements OnInit {
    * @param usuarioId 
    */
   obtenerNotificaciones(usuarioId: number) {
+    this.mostrarSpinner = true;
     this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
+      this.mostrarSpinner = false;
       if (notificaciones.length) {
         this.notificaciones = notificaciones;
         this.notificationService.notificacionPendiente = notificaciones[0].mensaje;
@@ -62,14 +76,14 @@ export class NotificacionesPage implements OnInit {
     notificacion.leida = !notificacion.leida;
 
     this.notificationService.toggleEstadoNotificacion(notificacion.id, nuevoEstado)
-    .subscribe({
-      next: () => {
-        notificacion.leida = nuevoEstado;
-      },
-      error: () => {
-        console.error('No se pudo actualizar el estado de la notificación');
-      }
-    });
+      .subscribe({
+        next: () => {
+          notificacion.leida = nuevoEstado;
+        },
+        error: () => {
+          console.error('No se pudo actualizar el estado de la notificación');
+        }
+      });
   }
 
   /**

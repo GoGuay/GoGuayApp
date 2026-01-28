@@ -8,3 +8,4 @@ from .pasajeroViaje import PasajeroViaje
 from .notificaciones import Notificacion
 from .movimientos_monedero import MovimientoMonedero
 from .tokensusados import TokenUsado
+from .mensaje import Conversacion, Mensaje

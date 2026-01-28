@@ -4,7 +4,7 @@ from datetime import datetime
 class Monedero(db.Model):
     __tablename__ = 'monederos'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     saldo = db.Column(db.Numeric(10, 2), default=0.0)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), unique=True)
     estado = db.Column(db.String(20), default='activo')

@@ -16,11 +16,9 @@
         <div class="container mb-3 row">
           <h3>1. ¿Con qué probabilidad recomendarías PrideRide para realizar viajes a un familiar o amigo?</h3>
           <div class="d-flex justify-content-center starsContainer">
-            <img *ngFor="let estrella of estrellas; let i = index" 
-                 src="{{ i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif' }}" 
-                 class="stars" 
-                 type="button" 
-                 (click)="seleccionarCalificacion(i + 1)">
+            <img *ngFor="let estrella of estrellas; let i = index"
+              src="{{ i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif' }}"
+              class="stars" type="button" (click)="seleccionarCalificacion(i + 1)">
           </div>
         </div>
 
@@ -55,7 +53,7 @@
         <div class="container mb-3 row">
           <h3>3. Nos ayudaría mucho si nos compartes cómo crees que podemos mejorar la aplicación.</h3>
           <div class="ms-3">
-            <textarea class="textArea form-control" formControlName="sugerencias"></textarea>
+            <textarea class="textArea form-control" maxlength="500" formControlName="sugerencias"></textarea>
           </div>
         </div>
 

@@ -1,5 +1,26 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+@use "./animations.scss" as *;
+@import "./animations.scss";
+@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
+@import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
 
-// Definición de la fuente local (Debe ir después de las importaciones)
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+
+html {
+  @include mat.theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+}
+
 @font-face {
   font-family: "Offside";
   src: url("./assets/fonts/Offside-Regular.ttf") format("truetype");
@@ -7,6 +28,43 @@
   font-style: normal;
 }
 
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import "@ionic/angular/css/palettes/dark.system.css";
 
 html,
 body {
@@ -69,6 +127,11 @@ ion-content {
   background-color: #b3b5e6 !important;
   color: black !important;
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.btn_bg:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
 }
 
 .logo {
@@ -144,30 +207,26 @@ html.cdk-global-scrollblock {
 
 /* Parte que puedes arrastrar */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    #ffb3b3,
-    #ffcc99,
-    #b3e6b3,
-    #99ccff,
-    #d1b3ff,
-    #ffb3d1
-  );
+  background: linear-gradient(180deg,
+      #ffb3b3,
+      #ffcc99,
+      #b3e6b3,
+      #99ccff,
+      #d1b3ff,
+      #ffb3d1);
   border-radius: 10px;
   border: 2px solid #f5f5f5;
 }
 
 /* Cuando la barra de desplazamiento se encuentra en hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    #ff9999,
-    #ffb366,
-    #99d699,
-    #66b2ff,
-    #c299ff,
-    #ff99c2
-  );
+  background: linear-gradient(180deg,
+      #ff9999,
+      #ffb366,
+      #99d699,
+      #66b2ff,
+      #c299ff,
+      #ff99c2);
 }
 
 /*
@@ -195,43 +254,37 @@ ion-content::-webkit-scrollbar-track,
 
 ion-content::-webkit-scrollbar-thumb,
 ::part(scroll)::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    #ffb3b3,
-    #ffcc99,
-    #99e699,
-    #99ccff,
-    #c299ff,
-    #ff99cc
-  );
+  background: linear-gradient(180deg,
+      #ffb3b3,
+      #ffcc99,
+      #99e699,
+      #99ccff,
+      #c299ff,
+      #ff99cc);
   border-radius: 10px;
   border: 2px solid #f0f0f0;
 }
 
 ion-content::-webkit-scrollbar-thumb:hover,
 ::part(scroll)::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    #ff9999,
-    #ffb366,
-    #85d685,
-    #66b3ff,
-    #b366ff,
-    #ff66b3
-  );
+  background: linear-gradient(180deg,
+      #ff9999,
+      #ffb366,
+      #85d685,
+      #66b3ff,
+      #b366ff,
+      #ff66b3);
 }
 
 /* AJUSTES PARA EL TOOLTIP */
 .custom-tooltip {
-  background: linear-gradient(
-    45deg,
-    #ffb3ba,
-    #ffdfba,
-    #ffffba,
-    #baffc9,
-    #bae1ff,
-    #e0baff
-  ) !important;
+  background: linear-gradient(45deg,
+      #ffb3ba,
+      #ffdfba,
+      #ffffba,
+      #baffc9,
+      #bae1ff,
+      #e0baff) !important;
   color: #333 !important;
   font-size: 14px !important;
   padding: 8px 12px !important;
@@ -249,6 +302,7 @@ ion-content::-webkit-scrollbar-thumb:hover,
   width: 20px;
   height: 20px;
 }
+
 // AJUSTES PARA EL MENU LATERAL
 
 .list-md {
@@ -325,4 +379,70 @@ ion-fab-button {
 
 .boxContent {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* En src/global.scss */
+.custom-alert-chat {
+  --background: #ffffff; // Fondo blanco del alert
+
+  .alert-wrapper {
+    border-radius: 20px !important; // Bordes muy redondeados
+    overflow: hidden;
+  }
+
+  .alert-title {
+    color: #000000 !important; // Título en negro
+    font-weight: bold !important;
+  }
+
+  /* Forzar que todos los botones sean negros */
+  .alert-button {
+    color: #000000 !important;
+    font-weight: 600 !important;
+
+    /* El texto dentro de los botones a veces necesita este selector extra */
+    .alert-button-inner {
+      color: #000000 !important;
+      justify-content: center !important;
+    }
+
+    /* Excepto el botón de eliminar, que suele ir en rojo */
+    &.alert-button-role-destructive {
+      .alert-button-inner {
+        color: #eb445a !important;
+      }
+    }
+
+    /* El botón de cancelar suele ser gris oscuro */
+    &.alert-button-role-cancel {
+      .alert-button-inner {
+        color: #666666 !important;
+      }
+    }
+  }
+
+  .alert-button:hover {
+    border-radius: 15px !important;
+  }
+}
+
+.custom-alert-delete-chat {
+  .alert-button-inner {
+    color: #000000 !important;
+    justify-content: center !important;
+  }
+
+  /* Excepto el botón de eliminar, que suele ir en rojo */
+  &.alert-button-role-destructive {
+    .alert-button-inner {
+      color: #eb445a !important;
+    }
+  }
+
+  /* El botón de cancelar suele ser gris oscuro */
+  &.alert-button-role-cancel {
+    .alert-button-inner {
+      color: #666666 !important;
+    }
+  }
 }

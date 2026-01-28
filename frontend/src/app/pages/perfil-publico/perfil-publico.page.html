@@ -1,60 +1,26 @@
-<app-navbar
-  [origin]="urlParaVolver"
-  [searchRoute]="'newTravel'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [origin]="urlParaVolver" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container mt-4 mb-4">
     <div class="caja_perfil">
       <!-- Imagen de cabecera dinámica -->
       <div class="espacio_cabecera">
-        <img
-          class="img-cabecera"
-          [src]="imagenCabeceraSrc"
-          alt="Cabecera"
-          *ngIf="!usuario?.fotoCabecera"
-        />
-        <img
-          class="img-cabecera"
-          [src]="usuario?.fotoCabecera"
-          alt="Cabecera"
-          *ngIf="usuario?.fotoCabecera"
-        />
+        <img class="img-cabecera" [src]="imagenCabeceraSrc" alt="Cabecera" *ngIf="!usuario?.fotoCabecera" />
+        <img class="img-cabecera" [src]="usuario?.fotoCabecera" alt="Cabecera" *ngIf="usuario?.fotoCabecera" />
       </div>
 
       <!-- Imagen de perfil dinámica -->
       <div class="imagen-perfil">
-        <img
-          class="perfil-img"
-          [src]="imagenPerfilSrc"
-          alt="Perfil"
-          *ngIf="!usuario?.fotoPerfil"
-        />
-        <img
-          class="perfil-img"
-          [src]="usuario?.fotoPerfil"
-          alt="Perfil"
-          *ngIf="usuario?.fotoPerfil"
-        />
+        <img class="perfil-img" [src]="imagenPerfilSrc" alt="Perfil" *ngIf="!usuario?.fotoPerfil" />
+        <img class="perfil-img" [src]="usuario?.fotoPerfil" alt="Perfil" *ngIf="usuario?.fotoPerfil" />
       </div>
 
-      <div
-        class="botonEditarImgCabecera"
-        *ngIf="editar_perfil"
-        (click)="fileInputCabecera.click()"
-      >
+      <div class="botonEditarImgCabecera" *ngIf="editar_perfil" (click)="fileInputCabecera.click()">
         <button type="button">
           <img src="../../../assets/sistema/editar.png" class="edit-icon" />
         </button>
         <!-- Input oculto -->
-        <input
-          type="file"
-          #fileInputCabecera
-          accept="image/*"
-          (change)="onImageChange($event)"
-          style="display: none"
-        />
+        <input type="file" #fileInputCabecera accept="image/*" (change)="onImageChange($event)" style="display: none" />
       </div>
 
       <!-- Información del usuario -->
@@ -62,27 +28,16 @@
         <div class="row">
           <div class="col">
             <div class="container text-end">
-              <span class="info-item"
-                ><strong>Nombre: </strong>{{usuario?.nombre}}</span
-              >
-              <span class="info-item"
-                ><strong>Apellidos: </strong>{{usuario?.apellidos}}</span
-              >
+              <span class="info-item"><strong>Nombre: </strong>{{usuario?.nombre}}</span>
+              <span class="info-item"><strong>Apellidos: </strong>{{usuario?.apellidos}}</span>
             </div>
           </div>
           <div class="col">
             <div class="container">
-              <span class="info-item"
-                ><strong>Preferencias de viaje: </strong>{{
-                preferenciasViaje}}</span
-              >
-              <span class="info-item"
-                ><strong>Usuario verificado: </strong>✅</span
-              >
-              <span class="info-item"
-                ><strong>Puntuación: </strong
-                >{{usuario?.puntuacion_promedio}}</span
-              >
+              <span class="info-item"><strong>Preferencias de viaje: </strong>{{
+                preferenciasViaje}}</span>
+              <span class="info-item"><strong>Usuario verificado: </strong>✅</span>
+              <span class="info-item"><strong>Puntuación: </strong>{{usuario?.puntuacion_promedio}}</span>
             </div>
           </div>
         </div>
@@ -90,6 +45,10 @@
           <div class="">
             <div class="container d-flex justify-content-center">
               <label class="mb-3 me-3"><strong>Biografía: </strong></label>
+              <br>
+            </div>
+
+            <div class="container d-flex justify-content-center">
               <div class="biografia-container">
                 <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
                 <p *ngIf="!usuario?.biografia">Aún no tienes biografía.</p>
@@ -100,7 +59,7 @@
       </div>
       <hr />
     </div>
-    
+
     <!-- Spinner de carga -->
     <div class="overlay" *ngIf="cargando">
       <app-spinner></app-spinner>

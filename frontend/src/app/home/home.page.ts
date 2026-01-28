@@ -4,22 +4,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FooterComponent } from '../shared/footer/footer.component';
 import { JumbotronComponent } from '../pages/jumbotron/jumbotron.component';
 import { NuevoViajeGeneralComponent } from '../components/nuevo-viaje-general/nuevo-viaje-general.component';
-import { TrayectosPopularesComponent } from '../components/trayectos-populares/trayectos-populares.component';
+import { TrayectosPopularesComponent } from '../components/eventos/eventos.component';
 import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import {
-  IonHeader,
-  IonContent,
-  IonFooter,
-  IonFab,
-  IonFabButton,
-  IonGrid,
-  IonRow,
-  IonCol,
-  NavController,
-} from '@ionic/angular/standalone';
+import { IonicModule, NavController } from '@ionic/angular';
 import { BuscaUnViajePrincipalComponent } from '../components/busca-un-viaje-principal/busca-un-viaje-principal.component';
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
@@ -34,6 +24,7 @@ import { Usuario } from '../models/user/usuario.model';
   imports: [
     FooterComponent,
     JumbotronComponent,
+    IonicModule,
     NuevoViajeGeneralComponent,
     MatDividerModule,
     TrayectosPopularesComponent,
@@ -42,15 +33,7 @@ import { Usuario } from '../models/user/usuario.model';
     AnimateOnScrollModule,
     NavbarComponent,
     BuscaUnViajePrincipalComponent,
-    CommonModule, 
-    IonHeader,
-    IonContent,
-    IonFooter,
-    IonFab,
-    IonFabButton,
-    IonGrid,
-    IonRow,
-    IonCol
+    CommonModule,
   ],
 })
 export class HomePage implements OnInit {
@@ -71,11 +54,14 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+    this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
 
-    // this.obtenerUsuarioPorID(this.userData?.usuario?.id);
-    // this.obtenerNotificaciones(this.userData?.usuario?.id);
+    if (this.userLoggedIn) {
+      this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+      this.obtenerNotificaciones(this.userData?.usuario?.id);
+    }
+
   }
 
   changeLanguage(lang: string) {
@@ -94,6 +80,7 @@ export class HomePage implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
+    if (!usuarioId) return;
     this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
       if (notificaciones.length) {
         this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
@@ -104,6 +91,7 @@ export class HomePage implements OnInit {
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
+    if (!id_usuario) return;
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
     });
@@ -114,6 +102,6 @@ export class HomePage implements OnInit {
   }
 
   irAmensajes() {
-    this.navCtrl.navigateRoot(['/messaging-center']);
+    this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
   }
 }

@@ -212,11 +212,11 @@ export const routes: Routes = [
   },
   {
     path: 'messaging-center',
-    loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.page').then(m => m.CentroMensajesPage)
+    loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.component').then(m => m.CentroMensajesPage)
   },
   {
     path: 'chat/:id',
-    loadComponent: () => import('./pages/centro-mensajes/chat/chat.page').then(m => m.ChatPage)
+    loadComponent: () => import('./pages/centro-mensajes/chat/chat.component').then(m => m.ChatPage)
   },
 
 ];

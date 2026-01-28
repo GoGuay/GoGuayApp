@@ -1,4 +1,4 @@
-<ion-app >
+<ion-app>
   <!-- MENU DE LA APLICACIÓN PARA DISPOSITIVOS MOVILES  -->
   <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">
     <ion-header class="ion_menu">
@@ -9,7 +9,8 @@
 
     <ion-content color="secondary">
       <ion-list>
-        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.QUIENES" |
+        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{
+          "NAVBAR.QUIENES" |
           translate }}</ion-item>
         <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"
           | translate
@@ -37,7 +38,9 @@
   </ion-menu>
 
   <!-- CONTENIDO PRINCIPAL DE LA APLICACIÓN -->
-  <ion-router-outlet id="main-content" [animated]="true"></ion-router-outlet>
+  <div class="ion-page" id="main-content">
+    <ion-router-outlet [animated]="false"></ion-router-outlet>
+  </div>
 
   <app-notification-toast [usuario]="userData"></app-notification-toast>
 </ion-app>

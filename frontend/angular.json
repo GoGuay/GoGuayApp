@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "prideride": {
+    "app": {
       "projectType": "application",
       "schematics": {
         "@ionic/angular-toolkit:page": {
@@ -18,9 +18,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": {
-              "base": "dist"
-            },
+            "outputPath": "www",
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
@@ -35,26 +33,14 @@
               }
             ],
             "styles": [
-              "node_modules/@ionic/angular/css/core.css",
-              "node_modules/@ionic/angular/css/normalize.css",
-              "node_modules/@ionic/angular/css/structure.css",
-              "node_modules/@ionic/angular/css/typography.css",
-              "node_modules/@ionic/angular/css/display.css",
-              "node_modules/@ionic/angular/css/padding.css",
-              "node_modules/@ionic/angular/css/float-elements.css",
-              "node_modules/@ionic/angular/css/text-alignment.css",
-              "node_modules/@ionic/angular/css/text-transformation.css",
-              "node_modules/@ionic/angular/css/flex-utils.css",
-              "node_modules/@ionic/angular/css/palettes/dark.system.css",
-              "node_modules/cookieconsent/build/cookieconsent.min.css",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
-              "src/theme/variables.scss",
+              "src/global.scss",
               "src/animations.scss",
-              "src/global.scss"
+              "src/theme/variables.scss",
+              "node_modules/cookieconsent/build/cookieconsent.min.css",
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ],
             "scripts": [
-              "node_modules/cookieconsent/build/cookieconsent.min.js",
-              "node_modules/leaflet/dist/leaflet.js"
+              "node_modules/cookieconsent/build/cookieconsent.min.js"
             ],
             "browser": "src/main.ts"
           },
@@ -64,17 +50,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "3mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "20kb",
+                  "maximumWarning": "4kb",
                   "maximumError": "20kb"
-                },
-                {
-                  "type": "any",
-                  "maximumWarning": "2mb",
-                  "maximumError": "3mb"
                 }
               ],
               "fileReplacements": [
@@ -83,8 +64,8 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
-              "baseHref": "/"
+              "outputHashing": "none",
+              "baseHref": "./"
             },
             "development": {
               "optimization": false,
@@ -138,7 +119,6 @@
               "src/global.scss",
               "src/theme/variables.scss",
               "src/animations.scss",
-              "node_modules/@ionic/angular/css/core.css",
               "node_modules/cookieconsent/build/cookieconsent.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ],
