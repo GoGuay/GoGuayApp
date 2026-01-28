@@ -9,7 +9,7 @@ import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
 export class VehiculosServicesService {
-  private apiUrl = '/api';
+  private apiUrl = 'https://pride-ride.vercel.app/api';
 
   constructor(private http: HttpClient) { }
 

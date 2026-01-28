@@ -9,7 +9,7 @@ import { Monedero } from 'src/app/models/user/monedero.model';
   providedIn: 'root',
 })
 export class UserServicesService {
-  private apiUrl = '/api';
+  private apiUrl = 'https://pride-ride.vercel.app/api';
   userData: Usuario = {} as Usuario;
 
   /**

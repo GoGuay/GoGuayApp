@@ -6,7 +6,7 @@ import { catchError, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class GoogleServices {
-  private apiUrl = '/api';
+  private apiUrl = 'https://pride-ride.vercel.app/api';
   // private geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
   // private apiKey = 'AIzaSyD2GJTw7EJR95V_4UQj_zIOTHw_RVGvkOM';
 
