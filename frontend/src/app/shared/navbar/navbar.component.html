@@ -7,39 +7,40 @@
           <ul class="navbar-nav d-flex justify-content-around w-100 mb-2 mb-lg-0 align-items-center opciones">
 
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/sobre-nosotros">
+              <a class="nav-link active" aria-current="page" [routerLink]="['/sobre-nosotros']">
                 {{ "NAVBAR.QUIENES" | translate }}
               </a>
             </li>
 
             <li class="nav-item ion-activatable ripple-parent circle">
-              <a class="nav-link active" aria-current="page" href="/faqs">
+              <a class="nav-link active" aria-current="page" [routerLink]="['/faqs']">
                 {{ "NAVBAR.FAQS" | translate }}
               </a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/decalogo">
+              <a class="nav-link active" aria-current="page" [routerLink]="['/decalogo']">
                 {{ "NAVBAR.DECALOGO" | translate }}
               </a>
             </li>
 
             <li class="nav-item d-flex flex-column align-items-center">
-              <a class="" href="#">
+              <a class="" [routerLink]="['/home']">
                 <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo" />
               </a>
               <h1 class="m-0 text-center">{{ "TITLE" | translate }}</h1>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link active d-flex align-items-center" aria-current="page" href="/busqueda-viajes">
+              <a class="nav-link active d-flex align-items-center" aria-current="page"
+                [routerLink]="['/busqueda-viajes']">
                 {{ "NAVBAR.BUSCAR_VIAJE" | translate }}
                 <!-- <img src="../../../assets/sistema/busqueda.png" class="search-icon" /> -->
               </a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link active" href="/nuevo-viaje" aria-current="page">
+              <a class="nav-link active" [routerLink]="['/nuevo-viaje']" aria-current="page">
                 {{ "NAVBAR.PUBLICAR_VIAJE" | translate }}
               </a>
             </li>
@@ -65,14 +66,14 @@
             <!-- Botones notificaciones y mensajes -->
             <div class="d-flex align-items-center gap-2">
               <button class="btn btnNotificaciones" type="button" *ngIf="isLoggedIn">
-                <a class="nav-link active" href="/notificaciones">
+                <a class="nav-link active" [routerLink]="['/notificaciones']">
                   <img class="idiomas" src="../../../assets/sistema/campana.gif">
                 </a>
                 <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
               </button>
 
               <button class="btnMensajes me-3" type="button" *ngIf="isLoggedIn">
-                <a class="nav-link active" href="/messaging-center">
+                <a class="nav-link active" [routerLink]="['/messaging-center']">
                   <img class="idiomas" src="../../../assets/sistema/messaging.png">
                 </a>
                 <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{
@@ -100,7 +101,8 @@
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link" href="/mi-perfil"> <i class="fi fi-rr-user icono_ajsutes me-1"></i>{{
+                      <a class="nav-link" [routerLink]="['/mi-perfil']"> <i
+                          class="fi fi-rr-user icono_ajsutes me-1"></i>{{
                         "NAVBAR.MIPERFIL" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
@@ -108,22 +110,22 @@
                         "NAVBAR.MIS_VIAJES" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link" href="/datos-contacto"> <i
+                      <a class="nav-link" [routerLink]="['/datos-contacto']"> <i
                           class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>{{ "NAVBAR.DATOSCONTACTO" | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link" href="/verificaciones-perfil"> <i
+                      <a class="nav-link" [routerLink]="['/verificaciones-perfil']"> <i
                           class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i>{{
                         "NAVBAR.VERIFICACION" | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
-                      <a class="nav-link" href="/saldo-transferencias"> <i
+                      <a class="nav-link" [routerLink]="['/saldo-transferencias']"> <i
                           class="fi fi-rr-wallet icono_ajsutes me-1"></i>{{ "NAVBAR.SALDO" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdow">
-                      <a class="nav-link" href="/ajustes-aplicacion">
+                      <a class="nav-link" [routerLink]="['/ajustes-aplicacion']">
                         <i class="fi fi-rr-settings icono_ajsutes me-1"></i>
                         {{ "NAVBAR.AJUSTES" | translate }}
                       </a>
@@ -156,7 +158,7 @@
                   <a class="dropdown-item" [routerLink]="['/login']">{{ "NAVBAR.LOGIN" | translate }}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/registro">{{ "NAVBAR.REGISTRO" | translate }}</a>
+                  <a class="dropdown-item" [routerLink]="['/registro']">{{ "NAVBAR.REGISTRO" | translate }}</a>
                 </li>
               </ul>
             </li>
