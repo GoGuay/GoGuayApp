@@ -7,7 +7,7 @@
         },
         {
             "source": "/(.*)",
-            "destination": "/frontend/www/browser/index.html"
+            "destination": "/frontend/www/index.html"
         }
     ]
 }
