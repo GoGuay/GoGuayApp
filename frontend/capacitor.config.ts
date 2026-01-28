@@ -1,14 +1,12 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'PrideRide_Ionic',
+  appId: 'com.tuempresa.prideride',
+  appName: 'PrideRide',
   webDir: 'www/browser',
   server: {
     androidScheme: 'http',
-    hostname: 'localhost',
-    cleartext: true,
-    allowNavigation: ['*']
+    cleartext: true
   }
 };
 

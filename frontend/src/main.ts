@@ -14,6 +14,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { IonicModule } from '@ionic/angular';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -53,7 +54,10 @@ const cookieConfig: NgcCookieConsentConfig = {
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({
+      mode: 'md',
+      rippleEffect: true
+    }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
     MessageService,
@@ -64,6 +68,7 @@ bootstrapApplication(AppComponent, {
     }),
     provideAnimations(),
     importProvidersFrom(
+      IonicModule.forRoot({ mode: 'md' }),
       NgcCookieConsentModule.forRoot(cookieConfig),
       HttpClientModule,
       TranslateModule.forRoot({

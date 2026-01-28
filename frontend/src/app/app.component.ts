@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular/standalone';
 import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
@@ -9,7 +8,7 @@ import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
-import { IonicModule, IonMenu } from '@ionic/angular';
+import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { MenuController } from '@ionic/angular';
@@ -23,7 +22,23 @@ export function HttpLoaderFactory(http: HttpClient) {
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [NotificationToastComponent, IonicModule, TranslateModule, RouterModule],
+  imports: [
+    NotificationToastComponent,
+    IonApp,
+    IonMenu,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonFooter,
+    IonRouterOutlet,
+    TranslateModule,
+    RouterModule,
+    IonButtons,
+    IonMenuButton
+  ],
   providers: [MenuController]
 })
 export class AppComponent implements OnInit {
@@ -94,12 +109,11 @@ export class AppComponent implements OnInit {
       this.consentGivenSubscription = this.ccService.statusChange$.subscribe(
         (event: NgcStatusChangeEvent) => {
           const status = event.status;
-
           localStorage.setItem('cookieConsentStatus', status);
-
           this.ccService.destroy();
         }
       );
+
     }
 
     /**
@@ -111,6 +125,8 @@ export class AppComponent implements OnInit {
     this.languageService.language$.subscribe((lang) => {
       console.log(`Idioma cambiado a: ${lang}`);
     });
+
+    this.menuCtrl.enable(true, 'mobileMenu');
   }
 
   /**

@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { IonicModule, NavController, Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
+import { IonMenuButton, IonHeader } from '@ionic/angular/standalone';
+
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -25,7 +27,7 @@ import { MessagingService } from 'src/app/core/menssaging-service/messaging.serv
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [IonicModule, MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule],
+  imports: [MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule, IonMenuButton, IonHeader],
   providers: [MessageService],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
