@@ -3,12 +3,12 @@ import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
-import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { MenuController } from '@ionic/angular';
@@ -35,9 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     IonFooter,
     IonRouterOutlet,
     TranslateModule,
-    RouterModule,
-    IonButtons,
-    IonMenuButton
+    RouterModule
   ],
   providers: [MenuController]
 })

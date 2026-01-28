@@ -8,7 +8,7 @@ import { NotificacionesService } from '../notificaciones/notificaciones.service'
   providedIn: 'root',
 })
 export class TravelService {
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = '/api';
 
   //Se declara un espacio en la memoria para almacenar datos referentes al viaje, de forma temporal.
   //Nadie puede ver lo que hay ni cambiar ningún dato.
@@ -23,7 +23,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService,
-  ) {}
+  ) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.

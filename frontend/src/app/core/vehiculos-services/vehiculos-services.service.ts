@@ -9,7 +9,7 @@ import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
 export class VehiculosServicesService {
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
 
