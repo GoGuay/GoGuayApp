@@ -1,11 +1,5 @@
 {
     "version": 2,
-    "functions": {
-        "backend/app.py": {
-            "runtime": "@vercel/python",
-            "includeFiles": "backend/**"
-        }
-    },
     "builds": [
         {
             "src": "backend/app.py",
@@ -19,14 +13,23 @@
             }
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/api/(.*)",
-            "destination": "/backend/app.py"
+            "src": "/api/(.*)",
+            "dest": "backend/app.py"
         },
         {
-            "source": "/((?!api/).*)",
-            "destination": "/frontend/www/broswer/index.html"
+            "src": "/assets/(.*)",
+            "dest": "/frontend/www/assets/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/frontend/www/$1",
+            "check": true
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/frontend/www/index.html"
         }
     ]
 }
