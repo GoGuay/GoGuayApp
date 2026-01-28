@@ -85,8 +85,8 @@
           <ng-container *ngIf="isLoggedIn; else loggedOutNav">
             <li class="nav-item dropdown ms-4">
               <!-- boton del menu -->
-              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false" (click)="cambioDireccionFlecha()">
                 <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil" src="../../../assets/user/logOn.gif">
                 <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
                   <img [src]="usuario?.fotoPerfil" alt="Foto de perfil">
@@ -95,7 +95,8 @@
                   [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
 
-              <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false">
+              <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false"
+                [class.show]="isDropdownOpen">
                 <nav class="nav nav-pills flex-column">
                   <ul>
                     <li class="perfil nav-item dropdown">
@@ -142,15 +143,15 @@
 
           <!-- Menú para login / registro  -->
           <ng-template #loggedOutNav>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+            <li class="nav-item dropdown ms-4">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false" (click)="cambioDireccionFlecha()">
                 <div class="caja_imagen_perfil"> <img class="tamano-icono" src="../../../assets/user/logOff.gif">
                 </div>
                 <mat-icon class="flecha-icono ms-2 flecha-animada"
                   [class.rotada]="isDropdownOpen">expand_more</mat-icon>
               </a>
-              <ul class="dropdown-menu menuusuario">
+              <ul class="dropdown-menu menuusuario" [class.show]="isDropdownOpen">
                 <li>
                   <a class="dropdown-item" href="/login">{{ "NAVBAR.LOGIN" | translate }}</a>
                 </li>
