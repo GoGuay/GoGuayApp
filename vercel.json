@@ -24,7 +24,7 @@
         },
         {
             "source": "/((?!api/).*)",
-            "destination": "/index.html"
+            "destination": "index.html"
         }
     ]
 }
