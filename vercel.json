@@ -9,18 +9,18 @@
             "src": "frontend/package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "www/browser"
+                "distDir": "www"
             }
         }
     ],
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "backend/app.py"
+            "destination": "/backend/app.py"
         },
         {
-            "source": "/(.*)",
-            "destination": "/$1"
+            "source": "/api/(.*)",
+            "destination": "/frontend/www/browser/index.html"
         }
     ]
 }
