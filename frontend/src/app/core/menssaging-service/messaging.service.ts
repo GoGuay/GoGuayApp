@@ -8,7 +8,7 @@ import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
     providedIn: 'root'
 })
 export class MessagingService {
-    private apiUrl = 'https://pride-ride.vercel.app/api';
+    private apiUrl = 'https://pride-ride-backend.vercel.app/api';
 
     constructor(private http: HttpClient) { }
 

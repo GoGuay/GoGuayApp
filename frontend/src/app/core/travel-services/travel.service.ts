@@ -8,7 +8,7 @@ import { NotificacionesService } from '../notificaciones/notificaciones.service'
   providedIn: 'root',
 })
 export class TravelService {
-  private apiUrl = 'https://pride-ride.vercel.app/api';
+  private apiUrl = 'https://pride-ride-backend.vercel.app/api';
 
   //Se declara un espacio en la memoria para almacenar datos referentes al viaje, de forma temporal.
   //Nadie puede ver lo que hay ni cambiar ningún dato.

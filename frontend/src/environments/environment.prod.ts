@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://pride-ride.vercel.app/api'
+  apiUrl: 'https://pride-ride-backend.vercel.app/api'
 };
