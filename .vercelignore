@@ -1,8 +1,5 @@
-frontend/node_modules
-frontend/.angular
-frontend/.ionic
-
-backend/.venv
-backend/__pycache__
-*.pyc
+node_modules/**
+.angular/**
+backend/.venv/**
+backend/__pycache__/**
 *.db
