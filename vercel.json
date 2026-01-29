@@ -1,12 +1,15 @@
 {
     "version": 2,
+    "functions": {
+        "backend/app.py": {
+            "runtime": "@vercel/python",
+            "includeFiles": "backend/**"
+        }
+    },
     "builds": [
         {
             "src": "backend/app.py",
-            "use": "@vercel/python",
-            "config": {
-                "includeFiles": "backend/**"
-            }
+            "use": "@vercel/python"
         },
         {
             "src": "frontend/package.json",
