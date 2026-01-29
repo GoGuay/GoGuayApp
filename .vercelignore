@@ -1,8 +1,8 @@
+frontend/src/**
 frontend/node_modules/**
 frontend/.angular/**
 frontend/.ionic/**
-frontend/src/assets/tmp/*
-node_modules/
+node_modules/**
 backend/.venv/**
 backend/__pycache__/**
 *.db

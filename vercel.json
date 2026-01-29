@@ -12,7 +12,7 @@
             "src": "frontend/package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "www/browser"
+                "distDir": "www"
             }
         }
     ],
@@ -23,7 +23,7 @@
         },
         {
             "source": "/((?!api/).*)",
-            "destination": "/frontend/index.html"
+            "destination": "/index.html"
         }
     ]
 }
