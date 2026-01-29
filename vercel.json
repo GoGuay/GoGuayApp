@@ -5,7 +5,8 @@
             "src": "backend/app.py",
             "use": "@vercel/python",
             "config": {
-                "includeFiles": "backend/**"
+                "includeFiles": "backend/**",
+                "excludeFiles": "frontend/**"
             }
         },
         {
