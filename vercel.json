@@ -3,7 +3,11 @@
     "builds": [
         {
             "src": "backend/app.py",
-            "use": "@vercel/python"
+            "use": "@vercel/python",
+            "config": {
+                "includeFiles": "backend/**",
+                "excludeFiles": "frontend/**"
+            }
         },
         {
             "src": "frontend/package.json",
