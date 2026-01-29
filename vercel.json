@@ -1,10 +1,5 @@
 {
     "version": 2,
-    "functions": {
-        "backend/app.py": {
-            "maxDuration": 10
-        }
-    },
     "builds": [
         {
             "src": "backend/app.py",
