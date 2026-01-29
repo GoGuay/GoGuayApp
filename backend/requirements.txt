@@ -10,8 +10,8 @@ cloudinary==1.41.0
 requests==2.32.3
 vonage-sms
 vonage-jwt
-pydantic==2.10.6
-python-telegram-bot==21.10
+# pydantic==2.10.6
+# python-telegram-bot==21.10
 itsdangerous==2.2.0
 bcrypt==4.2.1
 Flask-Bcrypt==1.0.1
