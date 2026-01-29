@@ -43,3 +43,4 @@ WTForms==3.2.1
 nexmo
 prelude-python-sdk
 twilio
+google-cloud-translate
