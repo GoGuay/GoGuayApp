@@ -12,6 +12,7 @@ vonage-sms
 vonage-jwt
 # pydantic==2.10.6
 # python-telegram-bot==21.10
+Flask-Admin==1.6.1
 itsdangerous==2.2.0
 bcrypt==4.2.1
 Flask-Bcrypt==1.0.1
