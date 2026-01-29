@@ -3,16 +3,13 @@
     "builds": [
         {
             "src": "backend/app.py",
-            "use": "@vercel/python",
-            "config": {
-                "includeFiles": "backend/**"
-            }
+            "use": "@vercel/python"
         },
         {
             "src": "frontend/package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "www"
+                "distDir": "frontend/www/browser"
             }
         }
     ],
@@ -22,7 +19,7 @@
             "destination": "/backend/app.py"
         },
         {
-            "source": "/(.*)",
+            "source": "/((?!api/).*)",
             "destination": "/frontend/www/broswer/index.html"
         }
     ]
