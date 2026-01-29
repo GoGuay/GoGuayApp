@@ -19,7 +19,7 @@
             "destination": "/backend/app.py"
         },
         {
-            "source": "/api/(.*)",
+            "source": "/(.*)",
             "destination": "/frontend/www/browser/index.html"
         }
     ]
