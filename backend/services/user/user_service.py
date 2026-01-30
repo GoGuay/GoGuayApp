@@ -551,7 +551,7 @@ def enviar_email():
     token = serializer.dumps(email, salt=salt)
 
     print('Token generado: ', token)
-    link= f"http://localhost:4200/verificaciones-perfil?token={token}"
+    link= f"http://localhost:4200/verificar-email/{token}"
     msg = Message("Verifica tu correo", recipients=[email])
     msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
     
