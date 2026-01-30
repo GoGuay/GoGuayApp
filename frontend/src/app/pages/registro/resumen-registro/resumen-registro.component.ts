@@ -296,9 +296,14 @@ export class ResumenRegistroComponent implements OnInit {
 
   aceptarNormas() {
     const datosRegistro = this.userService.getUsuarioData();
+    console.log('DatosRegistro: ', datosRegistro);
 
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
+        console.log('response: ', response);
+
+        localStorage.setItem('userData', JSON.stringify(response.usuario));
+        this.userService.actualizarEstadoUsuario(response.usuario);
         this.navCtrl.navigateRoot('/home');
       },
       error: (err) => {

@@ -97,6 +97,13 @@ def crear_usuario():
 
     access_token = create_access_token(identity=nuevo_usuario.id)
 
+    salt = 'email-verify'
+    token = serializer.dumps(nuevo_usuario.email, salt=salt)
+    link_verificacion = f"http://localhost:4200/verificar-email/{token}"
+    msg = Message("Bienvenidx a PrideRide", recipients=[nuevo_usuario.email])
+    msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
+    mail.send(msg)
+    nuevo_usuario.id
     return jsonify({
         "mensaje": "Nuevo usuario creado correctamente",
         "access_token": access_token,
