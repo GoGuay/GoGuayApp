@@ -8,6 +8,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NavController } from '@ionic/angular';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 @Component({
   selector: 'app-login',
@@ -20,12 +21,14 @@ import { NavController } from '@ionic/angular';
     FormsModule,
     MatButtonModule,
     ReactiveFormsModule,
+    SpinnerComponent
   ]
 })
 export class LoginPage implements OnInit {
 
   loginForm: FormGroup;
   listaUsuarios: Usuario[] = [];
+  spinner_de_carga: boolean = false;
 
   constructor(private userService: UserServicesService, private navCtrl: NavController, private dialog: MatDialog) {
     this.loginForm = new FormGroup({
@@ -84,48 +87,52 @@ export class LoginPage implements OnInit {
   /**
    * Función para comprobar datos del usuario y poder hacer el login
    */
-login() {
-  if (this.loginForm.invalid) {
-    this.loginForm.markAllAsTouched();
-    return;
+  login() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.spinner_de_carga = true;
+
+    const email = this.loginForm.get('emailFormControl')?.value;
+    const password = this.loginForm.get('passwordFormControl')?.value;
+    const rememberMe = this.loginForm.value.check;
+    const encodedPassword = btoa(password);
+
+    this.userService.login(email, password).subscribe({
+      next: (usuarioCompleto) => {
+        // 1. Guardamos en localStorage
+        localStorage.setItem('userData', JSON.stringify(usuarioCompleto));
+
+        // 2. ACTUALIZACIÓN CLAVE: Informamos al servicio para que toda la app se entere
+        // Esto disparará automáticamente las notificaciones y actualizará el Navbar
+        this.userService.actualizarEstadoUsuario(usuarioCompleto.usuario);
+
+        // 3. Gestión de "Recuérdame"
+        if (rememberMe) {
+          localStorage.setItem('email', email);
+          localStorage.setItem('password', encodedPassword);
+          localStorage.setItem('remember_me', 'true');
+        } else {
+          localStorage.removeItem('email');
+          localStorage.removeItem('password');
+          localStorage.removeItem('remember_me');
+        }
+
+        // 4. Navegación
+        this.navCtrl.navigateRoot(['/home']);
+      },
+      error: (error) => {
+        this.spinner_de_carga = false;
+
+        const title = 'Error!';
+        const errorMsg = error.error?.Error || 'Error al iniciar sesión. Inténtalo de nuevo.';
+        this.openError(title, errorMsg);
+      }
+    });
   }
 
-  const email = this.loginForm.get('emailFormControl')?.value;
-  const password = this.loginForm.get('passwordFormControl')?.value;
-  const rememberMe = this.loginForm.value.check;
-  const encodedPassword = btoa(password);
-
-  this.userService.login(email, password).subscribe({
-    next: (usuarioCompleto) => {
-      // 1. Guardamos en localStorage
-      localStorage.setItem('userData', JSON.stringify(usuarioCompleto));
-
-      // 2. ACTUALIZACIÓN CLAVE: Informamos al servicio para que toda la app se entere
-      // Esto disparará automáticamente las notificaciones y actualizará el Navbar
-      this.userService.actualizarEstadoUsuario(usuarioCompleto.usuario);
-
-      // 3. Gestión de "Recuérdame"
-      if (rememberMe) {
-        localStorage.setItem('email', email);
-        localStorage.setItem('password', encodedPassword);
-        localStorage.setItem('remember_me', 'true');
-      } else {
-        localStorage.removeItem('email');
-        localStorage.removeItem('password');
-        localStorage.removeItem('remember_me');
-      }
-
-      // 4. Navegación
-      this.navCtrl.navigateRoot(['/home']);
-    },
-    error: (error) => {
-      const title = 'Error!';
-      const errorMsg = error.error?.Error || 'Error al iniciar sesión. Inténtalo de nuevo.';
-      this.openError(title, errorMsg);
-    }
-  });
-}
-  
 
   /**
    * Función para mostrar una ventana modal con un mensaje de error.

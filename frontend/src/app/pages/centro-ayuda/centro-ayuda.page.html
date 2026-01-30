@@ -1,6 +1,6 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
-<ion-content [fullscreen]="true" *ngIf="!isLoading">
+<ion-content [fullscreen]="true">
   <div class="container">
     <h1>CENTRO DE AYUDA</h1>
     <mat-divider></mat-divider>
@@ -169,9 +169,3 @@
     </div>
   </div>
 </ion-content>
-<!-- SPINNER DE CARGA -->
-<div *ngIf="isLoading">
-  <app-spinner></app-spinner>
-</div>
-
-<!-- <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner> -->

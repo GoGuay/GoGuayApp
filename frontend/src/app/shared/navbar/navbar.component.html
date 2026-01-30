@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-lg navbar-diseno">
       <div class="container d-flex justify-content-between align-items-center">
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
-          <ul class="navbar-nav d-flex justify-content-around w-100 mb-2 mb-lg-0 align-items-center opciones">
+          <ul class="navbar-nav d-flex justify-content-around mb-2 mb-lg-0 align-items-center opciones">
 
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" [routerLink]="['/sobre-nosotros']">
@@ -54,7 +54,8 @@
           <div class="col-2 d-flex justify-content-start align-items-center ms-2" (click)="goBack()">
             <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_mobile mobile-only" />
           </div>
-          <div class="col-5 position-relative d-flex justify-content-end align-items-start">
+          <div class="col-5 position-relative d-flex justify-content-end align-items-start"
+            [ngClass]="{'gap-logged-in': isLoggedIn}">
             <!-- Contenedor para idiomas-->
             <div class="idiomas-container d-flex flex-column align-items-center justify-content-center">
               <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma"
@@ -64,7 +65,7 @@
             </div>
 
             <!-- Botones notificaciones y mensajes -->
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 ms-3">
               <button class="btn btnNotificaciones" type="button" *ngIf="isLoggedIn">
                 <a class="nav-link active" [routerLink]="['/notificaciones']">
                   <img class="idiomas" src="../../../assets/sistema/campana.gif">
@@ -72,7 +73,7 @@
                 <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
               </button>
 
-              <button class="btnMensajes me-3" type="button" *ngIf="isLoggedIn">
+              <button class="btnMensajes" type="button" *ngIf="isLoggedIn">
                 <a class="nav-link active" [routerLink]="['/messaging-center']">
                   <img class="idiomas" src="../../../assets/sistema/messaging.png">
                 </a>

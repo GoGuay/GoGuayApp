@@ -18,17 +18,16 @@ import { SpinnerComponent } from "../../components/spinner/spinner.component";
   imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, SpinnerComponent]
 })
 export class CentroAyudaPage implements OnInit {
-  
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
-  isLoading: boolean = true;
 
-  constructor() { 
-    this.loadData();
+  constructor() {
+
   }
 
   ngOnInit() {
-    
+
     /**
      * Se recoge la información del usuario de la caché si la hay,
      * en caso de no haber información, userData sería un objeto vacío {}.
@@ -46,11 +45,5 @@ export class CentroAyudaPage implements OnInit {
     } else {
       this.userLoggedIn = false;
     }
-  }
-
-  loadData() {
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000);
   }
 }
