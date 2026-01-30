@@ -45,19 +45,19 @@ def create_app():
     
     CORS(app, resources={r"/*": {
         "origins": [
-            "http://localhost:4200", 
-            "https://pride-ride.vercel.app", 
+            "https://pride-ride.vercel.app",
+            "https://pride-ride-backend.vercel.app", 
             "https://pride-ride-4tpkx55u8-priderides-projects.vercel.app",
-            "http://localhost",               
-            "capacitor://localhost",          
-            "http://localhost:8100",          
+            "http://localhost:4200",
+            "http://localhost:8100",
+            "capacitor://localhost",
             "ionic://localhost"
         ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
         "supports_credentials": True,
-        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"]
-    }
-    })
+        "expose_headers": ["Content-Type", "Authorization"]
+    }})
 
     db.init_app(app)
     
@@ -98,8 +98,6 @@ def create_app():
     user_service.serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
     return app
-
-app = create_app()
 
 app = create_app()
 
