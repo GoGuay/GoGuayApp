@@ -87,12 +87,19 @@ def create_app():
     app.register_blueprint(vehicle_blueprint, url_prefix="/api/vehicle")
     app.register_blueprint(apigoogle_blueprint, url_prefix="/api/apigoogle")
     app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
+    app.register_blueprint(user_blueprint, url_prefix="/api/user")
+    app.register_blueprint(travel_blueprint, url_prefix="/api/travel")
+    app.register_blueprint(vehicle_blueprint, url_prefix="/api/vehicle")
+    app.register_blueprint(apigoogle_blueprint, url_prefix="/api/apigoogle")
+    app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
 
  
     user_service.mail = mail
     user_service.serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
     return app
+
+app = create_app()
 
 app = create_app()
 
