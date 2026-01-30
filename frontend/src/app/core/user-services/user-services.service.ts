@@ -1,15 +1,15 @@
 import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Form } from '@angular/forms';
 import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 import { Monedero } from 'src/app/models/user/monedero.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserServicesService {
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = API_URL_BASE;
   userData: Usuario = {} as Usuario;
 
   /**

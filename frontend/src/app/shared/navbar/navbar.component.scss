@@ -290,7 +290,7 @@ ul {
     position: absolute;
     top: 100%;
     left: auto;
-    right: -26px;
+    right: 4px;
     transform: translateY(-10px);
     z-index: 1050;
     box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
@@ -322,6 +322,10 @@ ul {
 .mobile-navbar {
   position: relative;
   width: auto;
+  .gap-logged-in {
+    margin-left: 30px; 
+    transition: margin 0.3s ease;
+  }
 }
 
 .centered-logo {
@@ -422,11 +426,20 @@ ul {
   }
   .mobile-navbar {
     width: 100%;
+    .idiomas-container {
+    margin-right: 10px; // Separa las banderas de los iconos de notificación
+  }
   }
   .idiomas-container {
     position: relative !important;
     top: 0 !important;
-    right: -10px !important;
+    right: -20px !important;
     min-width: 30px;
+  }
+}
+
+@media (max-width: 380px) {
+  .gap-logged-in {
+    margin-left: 10px;
   }
 }

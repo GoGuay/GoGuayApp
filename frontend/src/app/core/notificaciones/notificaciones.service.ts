@@ -4,13 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, catchError, Observable, Subject, throwError } from 'rxjs';
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
 import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
-import { API_URL } from '../../models/constantes/constantes.model';
+import { URLS_API } from '../../models/constantes/constantes.model';
 
 
 @Injectable({ providedIn: 'root' })
 export class NotificacionesService {
 
-    private apiUrl = API_URL;
+    private apiUrl = URLS_API.NOTIFICATIONS;
 
     public notificacionPendiente: string | null = null;
     public esCreadorDelViaje: boolean = false;
