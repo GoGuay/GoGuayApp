@@ -43,7 +43,21 @@ def create_app():
     app.config.from_object(Config)
     JWTManager(app)
     
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:4200", "https://pride-ride.vercel.app", "https://pride-ride-4tpkx55u8-priderides-projects.vercel.app"], "supports_credentials": True}})
+    CORS(app, resources={r"/*": {
+        "origins": [
+            "http://localhost:4200", 
+            "https://pride-ride.vercel.app", 
+            "https://pride-ride-4tpkx55u8-priderides-projects.vercel.app",
+            "http://localhost",               
+            "capacitor://localhost",          
+            "http://localhost:8100",          
+            "ionic://localhost"
+        ],
+        "supports_credentials": True,
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"]
+    }
+    })
 
     db.init_app(app)
     
