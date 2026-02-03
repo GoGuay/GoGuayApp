@@ -13,6 +13,7 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-resultados-busqueda',
@@ -29,6 +30,7 @@ export class ResultadosBusquedaComponent implements OnInit {
   usuarioPorID: Usuario | undefined;
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
+  imagenesCargadas: { [key: number]: boolean } = {};
 
 
   /**
@@ -88,6 +90,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
       next: (viajes) => {
         this.listado_viajes = viajes;
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -103,15 +106,23 @@ export class ResultadosBusquedaComponent implements OnInit {
    */
   obtenerListaViajes() {
     this.isLoading = true;
+    this.imagenesCargadas = {};
+
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
       this.listado_viajes = viajes;
-      this.listado_viajes.forEach((viaje) => {
-        this.obtenerUsuarioPorID(viaje?.usuario_id).subscribe((usuario: any) => {
-          viaje.usuario = usuario;
+
+      const solicitudesUsuarios = this.listado_viajes.map(viaje =>
+        this.obtenerUsuarioPorID(viaje.usuario_id)
+      );
+
+      forkJoin(solicitudesUsuarios).subscribe((usuarios: any[]) => {
+        this.listado_viajes.forEach((viaje, index) => {
+          viaje.usuario = usuarios[index];
+          this.imagenesCargadas[viaje.id] = false;
         });
+        this.aplicarFiltro();
+        this.isLoading = false;
       });
-      // Aplica el filtro inicial
-      this.aplicarFiltro();
     });
   }
 
@@ -182,6 +193,9 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.isLoading = false;
   }
 
+  marcarImagenComoCargada(viajeId: number) {
+    this.imagenesCargadas[viajeId] = true;
+  }
 
 
 }

@@ -235,8 +235,12 @@ export class MisViajesPage implements OnInit {
   /**
    * Función para puntuar un viaje
    */
-  puntuarViaje() {
-    this._bottomSheet.open(PuntuacionesComponent);
+  puntuarViaje(viaje: Viaje) {
+    this._bottomSheet.open(PuntuacionesComponent, {
+      data: {
+        viaje: viaje
+      }
+    });
   }
 
   /**

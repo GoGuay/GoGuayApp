@@ -11,6 +11,7 @@ class Puntuacion(db.Model):
 
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', name="fk_puntuacion_usuario"), nullable=False)
     evaluador_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', name="fk_puntuacion_evaluador"), nullable=False)
+    viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id', name="fk_puntuacion_viaje"), nullable=False)
 
     def serialize(self):
         return {
@@ -19,5 +20,6 @@ class Puntuacion(db.Model):
             "comentario": self.comentario,
             "fecha": self.fecha.isoformat(),
             "usuario_id": self.usuario_id,
-            "evaluador_id": self.evaluador_id
+            "evaluador_id": self.evaluador_id,
+            "viaje_id": self.viaje_id
         }

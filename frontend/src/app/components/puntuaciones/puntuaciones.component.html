@@ -6,13 +6,12 @@
     <div class="container text-center mt-4">
       <div class="row">
         <div class="container row">
-          <h3>1. ¿Con qué probabilidad recomendarías PrideRide para realizar viajes a un familiar o amigo?</h3>
+          <h3>Esta puntuación es para {{ nombre_usuario }}</h3>
+          <p>¿Cómo ha sido tu experiencia?</p>
           <div class="d-flex justify-content-center starsContainer">
-            <img *ngFor="let estrella of estrellas; let i = index" 
-                 src="{{ i < calificacionSeleccionada ? '../../../../../assets/rating/como.gif' : '../../../../../assets/rating/favorito.gif' }}" 
-                 class="stars" 
-                 type="button" 
-                 (click)="seleccionarCalificacion(i + 1)">
+            <img *ngFor="let estrella of estrellas; let i = index"
+              src="{{ i < calificacionSeleccionada ? '../../../../../assets/rating/como.gif' : '../../../../../assets/rating/favorito.gif' }}"
+              class="stars" type="button" (click)="seleccionarCalificacion(i + 1)">
           </div>
         </div>
       </div>

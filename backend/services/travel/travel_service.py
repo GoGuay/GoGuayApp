@@ -4,7 +4,7 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion
 from extensions import db
 from sqlalchemy.orm import joinedload 
 
@@ -379,5 +379,22 @@ def buscar_viajes_filtrados():
     viajes = query.order_by(Viaje.fecha_salida.asc()).all()
 
     return jsonify([viaje.serialize() for viaje in viajes]), 200
+
+@travel_blueprint.route('/puntuacion', methods=['POST'])
+def post_puntuacion():
+    body = request.get_json()
+
+    nueva_puntuacion = Puntuacion(
+        puntuacion=body['puntuacion'],
+        comentario=body.get('comentario'),
+        usuario_id=body['usuario_id'],
+        evaluador_id=body['evaluador_id'],
+        viaje_id=body['viaje_id']
+    )
+
+    db.session.add(nueva_puntuacion)
+    db.session.commit()
+
+    return jsonify({"msg": "Puntuación registrada correctamente"}), 200
 
 
