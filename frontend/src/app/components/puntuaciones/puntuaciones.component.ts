@@ -23,6 +23,8 @@ export class PuntuacionesComponent implements OnInit {
   puntuacionForm: FormGroup;
   viaje: Viaje;
   nombre_usuario: string;
+  usuario_votado: boolean = false;
+  creador_del_viaje: boolean = false;
 
   private _bottomSheetRef = inject<MatBottomSheetRef<PuntuacionesComponent>>(MatBottomSheetRef);
 
@@ -38,6 +40,15 @@ export class PuntuacionesComponent implements OnInit {
 
     this.viaje = this.data.viaje;
     this.nombre_usuario = this.viaje.usuario_creador.nombre;
+    this.usuario_votado = this.viaje.usuario_creador.puntuacion_promedio;
+
+    const userDataLocal = JSON.parse(localStorage.getItem('userData') || '{}');
+    const idLogueado = userDataLocal.usuario?.id;
+
+    if (idLogueado === this.viaje.usuario_id) {
+      this.creador_del_viaje = true;
+    }
+
     console.log('Datos del conductor:', this.viaje);
   }
 
@@ -69,6 +80,11 @@ export class PuntuacionesComponent implements OnInit {
    * Puntua el viaje realizado
    */
   puntuarViaje() {
+
+    if (this.creador_del_viaje) {
+      console.error("No puedes puntuar tu propio viaje");
+      return;
+    }
 
     if (this.calificacionSeleccionada === 0) {
       console.error("Debes seleccionar al menos una estrella");
