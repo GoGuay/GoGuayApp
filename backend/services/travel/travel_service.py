@@ -4,11 +4,46 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush
 from extensions import db
 from sqlalchemy.orm import joinedload 
+from firebase_admin import messaging
 
 travel_blueprint = Blueprint('travel', __name__)
+
+
+def enviar_notificacion_push(usuario_id, titulo, cuerpo, data=None):
+    """
+    Busca los tokens de un usuario y envía una notificación push vía Firebase.
+    """
+    # 1. Obtener todos los dispositivos registrados del usuario
+    tokens = TokenPush.query.filter_by(usuario_id=usuario_id).all()
+    registration_tokens = [t.token for t in tokens]
+
+    if not registration_tokens:
+        print(f"No hay tokens registrados para el usuario {usuario_id}")
+        return
+
+    # 2. Construir el mensaje
+    message = messaging.MulticastMessage(
+        notification=messaging.Notification(
+            title=titulo,
+            body=cuerpo,
+        ),
+        data=data, # Información extra (ej. viaje_id)
+        tokens=registration_tokens,
+    )
+
+    # 3. Enviar
+    try:
+        response = messaging.send_multicast(message)
+        print(f"Éxito: {response.success_count} mensajes enviados. Fallos: {response.failure_count}")
+        
+        # Opcional: Si quieres limpiar tokens antiguos que Firebase dice que ya no valen
+        if response.failure_count > 0:
+            print("Algunos tokens ya no son válidos.")
+    except Exception as e:
+        print(f"Error crítico enviando push: {e}")
 
 
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -165,17 +200,26 @@ def unirse_viaje():
     if not usuario:
         return jsonify({"error": "El usuario no existe"}), 404
     
-    # Se notifica al creador del viaje la unión al mismo como pasajero
     creador_id = viaje.usuario_id
+    
     if creador_id != usuario_id: 
-        mensaje = f"El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
-        notificacion = Notificacion(
+        nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+        mensaje_texto = f"El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
+        
+        notificacion_db = Notificacion(
             usuario_id=creador_id,
             viaje_id=viaje_id,
-            mensaje=mensaje
+            mensaje=mensaje_texto
         )
-        db.session.add(notificacion)
+        db.session.add(notificacion_db)
         db.session.commit()
+
+        enviar_notificacion_push(
+            usuario_id=creador_id,
+            titulo="¡Tienes un nuevo pasajero!",
+            cuerpo=mensaje_texto,
+            data={"viaje_id": str(viaje_id)}
+        )
 
     return jsonify({
         "mensaje": "Usuario agregado al viaje correctamente",
@@ -218,29 +262,33 @@ def obtener_viaje_por_id(viaje_id):
 @travel_blueprint.route('/eliminar_viaje/<int:viaje_id>', methods=['DELETE'])
 def eliminar_viaje(viaje_id):
     viaje = db.session.query(Viaje).options(
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+        joinedload(Viaje.pasajeros)
     ).filter(Viaje.id == viaje_id).first()
 
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
-    # Obtener los IDs de los acompañantes
-    acompanantes = [pasajero.usuario_id for pasajero in viaje.pasajeros]
+    # 1. Notificar a los pasajeros ANTES de borrar
+    for pasajero in viaje.pasajeros:
+        mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor."
+        
+        # Guardar en DB para la campana
+        notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
+        db.session.add(notif_db)
+        
+        # Enviar Push al móvil
+        enviar_notificacion_push(
+            usuario_id=pasajero.usuario_id,
+            titulo="Viaje cancelado",
+            cuerpo=mensaje_cancelacion
+        )
 
-    # Eliminar a los pasajeros del viaje
+    # 2. Proceder al borrado
     PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
-
-    # Eliminar el viaje
     db.session.delete(viaje)
     db.session.commit()
 
-    # Simular el envío de notificaciones (puedes reemplazarlo con lógica real)
-    mensajes = [f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado." for _ in acompanantes]
-
-    return jsonify({
-        "mensaje": "Viaje eliminado correctamente",
-        "avisos_enviados": mensajes
-    }), 200
+    return jsonify({"mensaje": "Viaje eliminado correctamente y pasajeros notificados"}), 200
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -248,55 +296,39 @@ def eliminar_viaje(viaje_id):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/eliminar_pasajero/<int:viaje_id>/<int:usuario_id>', methods=['DELETE'])
 def eliminar_pasajero(viaje_id, usuario_id):
-    viaje = db.session.query(Viaje).options(
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
-    ).filter(Viaje.id == viaje_id).first()
-
+    viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
-    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
-    if not pasajero:
+    pasajero_rel = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    if not pasajero_rel:
         return jsonify({"error": "El pasajero no está en este viaje"}), 404
 
-    # Obtener el usuario (pasajero) para acceder al nombre y apellidos
-    usuario = pasajero.usuario  # Esto asume que tienes la relación configurada correctamente
-
-    # Si no se encuentran los datos del usuario
-    if not usuario:
-        return jsonify({"error": "El usuario no existe"}), 404
-
-    # Obtener nombre y apellidos del pasajero
+    # Datos para la notificación
+    usuario = pasajero_rel.usuario
     nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
-
-    db.session.delete(pasajero)
-    viaje.plazas += 1
-
-    # Verifica si 'viaje_id' no es None antes de crear la notificación
-    if viaje_id is None:
-        return jsonify({"error": "El viaje no tiene un ID válido"}), 400
-
-    # Crear notificación solo para el creador del viaje
     creador_id = viaje.usuario_id
 
-    # Verificar que la notificación solo se envíe al creador del viaje
-    if creador_id != usuario_id:  # Asegúrate de que no se envíe al pasajero eliminado
-        mensaje = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje de {viaje.origen} a {viaje.destino}."
-        notificacion = Notificacion(
-            usuario_id=creador_id,
-            viaje_id=viaje_id,
-            mensaje=mensaje
-        )
+    # Borramos al pasajero y devolvemos la plaza
+    db.session.delete(pasajero_rel)
+    viaje.plazas += 1
+
+    # Notificar al creador (si no es él mismo quien se borra, aunque suele ser el pasajero)
+    if creador_id != usuario_id:
+        mensaje_salida = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje a {viaje.destino}."
+        
+        notificacion = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=mensaje_salida)
         db.session.add(notificacion)
 
-    db.session.commit()
+        enviar_notificacion_push(
+            usuario_id=creador_id,
+            titulo="Baja en tu viaje",
+            cuerpo=mensaje_salida,
+            data={"viaje_id": str(viaje_id)}
+        )
 
-    return jsonify({
-        "mensaje": "Pasajero eliminado correctamente del viaje",
-        "aviso_enviado": mensaje if creador_id != usuario_id else None,
-        "plazas_actuales": viaje.plazas,
-        "creador_id": creador_id
-    }), 200
+    db.session.commit()
+    return jsonify({"mensaje": "Pasajero eliminado y conductor notificado"}), 200
 
 
 
@@ -398,3 +430,27 @@ def post_puntuacion():
     return jsonify({"msg": "Puntuación registrada correctamente"}), 200
 
 
+@travel_blueprint.route('/usuarios/registrar-token', methods=['POST'])
+def registrar_token():
+    data = request.get_json()
+    
+    usuario_id = data.get('usuarioId')
+    token_valor = data.get('token')
+
+    if not usuario_id or not token_valor:
+        return jsonify({"error": "Faltan datos (usuarioId o token)"}), 400
+
+    # Evitar duplicados: Si el token ya existe para ese usuario, no hacemos nada
+    token_existente = TokenPush.query.filter_by(token=token_valor).first()
+    
+    if not token_existente:
+        nuevo_token = TokenPush(usuario_id=usuario_id, token=token_valor)
+        db.session.add(nuevo_token)
+        try:
+            db.session.commit()
+            return jsonify({"mensaje": "Token registrado con éxito"}), 201
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": "Error al guardar el token", "detalle": str(e)}), 500
+    
+    return jsonify({"mensaje": "El token ya estaba registrado"}), 200
