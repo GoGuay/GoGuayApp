@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MessagingService {
-    private apiUrl = 'https://pride-ride-backend.vercel.app/api';
+    private apiUrl = API_URL_BASE;
 
     constructor(private http: HttpClient) { }
 

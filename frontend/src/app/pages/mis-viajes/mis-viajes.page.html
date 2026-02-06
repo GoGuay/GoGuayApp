@@ -85,7 +85,7 @@
           <span *ngIf="!funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
             class="fontSize etiquetaPendiente mb-1">Pendiente</span>
           <span type="button" *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)"
-            class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje()">
+            class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje(viaje)">
             Puntuar viaje
           </span>
           <!-- <ion-button *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" fill="solid"
@@ -119,6 +119,7 @@
         </div>
       </div>
     </div>
+    <p-toast position="bottom-center"></p-toast>
   </div>
 
   <!-- FAB: BUSCAR VIAJE -->

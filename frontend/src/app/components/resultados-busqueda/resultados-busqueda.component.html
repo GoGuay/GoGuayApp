@@ -83,13 +83,24 @@
               </ion-row>
               <ion-row class="d-flex justify-content-center">
                 <div class="d-flex justify-content-center">
+                  <div *ngIf="!imagenesCargadas[resultado_del_viaje.id]"
+                    class="d-flex align-items-center justify-content-center">
+                    <app-spinner></app-spinner>
+                  </div>
                   <img class="user" *ngIf="resultado_del_viaje.usuario?.fotoPerfil"
+                    [style.visibility]="imagenesCargadas[resultado_del_viaje.id] ? 'visible' : 'hidden'"
+                    (load)="marcarImagenComoCargada(resultado_del_viaje.id)"
                     [src]="resultado_del_viaje.usuario?.fotoPerfil" />
                   <img class="user" *ngIf="!resultado_del_viaje.usuario?.fotoPerfil"
-                    src="../../../assets/user/logOn.gif" />
+                    [style.visibility]="imagenesCargadas[resultado_del_viaje.id] ? 'visible' : 'hidden'"
+                    (load)="marcarImagenComoCargada(resultado_del_viaje.id)" src="../../../assets/user/logOn.gif" />
                 </div>
               </ion-row>
-              <ion-row class="d-flex justify-content-center">Puntuación</ion-row>
+              <ion-row class="d-flex flex-column align-items-center justify-content-center">
+                <span class="fw-bold">Puntuación</span>
+                <p class="ion-no-margin" style="font-size: 1.2rem;"> {{
+                  resultado_del_viaje.usuario_creador.puntuacion_promedio }} </p>
+              </ion-row>
             </ion-col>
           </ion-row>
         </div>

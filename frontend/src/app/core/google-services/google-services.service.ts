@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable } from 'rxjs';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GoogleServices {
-  private apiUrl = 'https://pride-ride-backend.vercel.app/api';
+  private apiUrl = API_URL_BASE;
   // private geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
   // private apiKey = 'AIzaSyD2GJTw7EJR95V_4UQj_zIOTHw_RVGvkOM';
 

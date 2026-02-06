@@ -5,6 +5,9 @@ import { BehaviorSubject, catchError, Observable, Subject, throwError } from 'rx
 import { NotificacionesComponent } from 'src/app/components/notificaciones/notificaciones.component';
 import { ToastData } from 'src/app/models/notificaciones/modificaciones-toast.model';
 import { URLS_API } from '../../models/constantes/constantes.model';
+import { PushNotifications, ActionPerformed } from '@capacitor/push-notifications';
+import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 
 
 @Injectable({ providedIn: 'root' })
@@ -22,8 +25,54 @@ export class NotificacionesService {
     // Array interno para almacenar toasts activos
     private toasts: ToastData[] = [];
 
-    constructor(private http: HttpClient, private dialog: MatDialog) { }
+    constructor(private http: HttpClient, private dialog: MatDialog, private router: Router) { }
 
+    enviarTokenAlServidor(token: string, usuarioId: number) {
+        return this.http.post(`${this.apiUrl}/usuarios/registrar-token`, {
+            token: token,
+            usuarioId: usuarioId
+        }).subscribe({
+            next: () => console.log('Token guardado en el servidor'),
+            error: (err) => console.error('Error guardando token', err)
+        });
+    }
+
+    inicializarPush(usuarioId: number) {
+        if (Capacitor.getPlatform() === 'web') {
+            console.warn('Push Notifications no funcionan en web.');
+            return;
+        }
+
+        this.configurarListeners(usuarioId);
+    }
+
+
+    private configurarListeners(usuarioId: number) {
+        PushNotifications.requestPermissions().then(result => {
+            if (result.receive === 'granted') {
+                PushNotifications.register();
+            }
+        });
+
+        PushNotifications.addListener('registration', (token) => {
+            console.log('Token:', token.value);
+            this.enviarTokenAlServidor(token.value, usuarioId);
+        });
+
+        PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+            this.router.navigate(['/notificaciones']);
+        });
+
+
+        PushNotifications.addListener('pushNotificationReceived', (notification) => {
+            this.mostrarToast({
+                id: Date.now(),
+                type: 'info',
+                mensaje: notification.body || 'Nueva notificación',
+                leida: false
+            });
+        });
+    }
     tieneNotificacionPendiente(): boolean {
         return this.notificacionPendiente !== null && this.esCreadorDelViaje;
     }

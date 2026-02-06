@@ -18,13 +18,16 @@ import { ActivatedRoute } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 import { catchError, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent]
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent, ToastModule],
+  providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
 
@@ -65,7 +68,8 @@ export class MisViajesPage implements OnInit {
   constructor(public funcionesComunes: FuncionesComunes,
     private navCtrl: NavController, private userService: UserServicesService,
     private dialog: MatDialog, private travelService: TravelService,
-    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet) { }
+    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
+    private messageService: MessageService) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -235,8 +239,27 @@ export class MisViajesPage implements OnInit {
   /**
    * Función para puntuar un viaje
    */
-  puntuarViaje() {
-    this._bottomSheet.open(PuntuacionesComponent);
+  puntuarViaje(viaje: Viaje) {
+    const bottomSheetRef = this._bottomSheet.open(PuntuacionesComponent, {
+      data: {
+        viaje: viaje
+      }
+    });
+
+    bottomSheetRef.afterDismissed().subscribe((result) => {
+      if (result) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Puntuación guardada',
+          detail: 'Muchas gracias por realizar nuestra encuesta de satisfacción.',
+          life: 3000
+        });
+
+        const userId = parseInt(this.usuarioParams.id, 10);
+        this.cargarTodosLosViajes(userId);
+      }
+    });
+
   }
 
   /**

@@ -22,6 +22,9 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.user import user_service
 
+import firebase_admin
+from firebase_admin import credentials
+
 
 
 def create_app():
@@ -42,6 +45,9 @@ def create_app():
 
     app.config.from_object(Config)
     JWTManager(app)
+
+    cred = credentials.Certificate("prideride_firebase.json")
+    firebase_admin.initialize_app(cred)
     
     CORS(app, resources={r"/*": {
         "origins": [
