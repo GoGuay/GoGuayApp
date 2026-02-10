@@ -96,6 +96,15 @@ export class TercerPasoComponent implements OnInit {
   markerOrigin: google.maps.LatLngLiteral | null = null;
   apiCargada: boolean = false;
 
+  public directionsOptions: google.maps.DirectionsRendererOptions = {
+    polylineOptions: {
+      strokeColor: '#B7E0B4', // Tu color personalizado
+      strokeOpacity: 1.0,
+      strokeWeight: 6,
+    },
+    suppressMarkers: false, // Mantener marcadores A y B
+  };
+
   constructor(private router: Router,
     private travelService: TravelService,
     private messageService: MessageService,
@@ -159,7 +168,7 @@ export class TercerPasoComponent implements OnInit {
     this.directionsService = new google.maps.DirectionsService();
     this.directionsRenderer = new google.maps.DirectionsRenderer({
       polylineOptions: {
-        strokeColor: '#B3B5E6',
+        strokeColor: '#B7E0B4',
         strokeOpacity: 1.0,
         strokeWeight: 5,
       },
@@ -180,14 +189,18 @@ export class TercerPasoComponent implements OnInit {
     this.routes = [];
   }
 
+  /**
+   * Función para obtener el click que se ha realizado en el mapa.
+   * Recibe la ubicación marcada y actualiza la ruta seleccionada.
+   * 
+   * @param event Recibe el click en el mapa de Google
+   */
   onMapClick(event: google.maps.MapMouseEvent) {
     if (event.latLng && typeof event.latLng.lat === 'function') {
       const latLng = event.latLng;
 
-      // 1. Marcador visual inmediato
       this.markerOrigin = { lat: latLng.lat(), lng: latLng.lng() };
 
-      // 2. Limpiamos rutas actuales para que el usuario vea que se está recargando
       this.routes = [];
       this.selectedRoute = null;
 
@@ -196,10 +209,8 @@ export class TercerPasoComponent implements OnInit {
 
       geocoder.geocode({ location: latLng }, (results, status) => {
         if (status === 'OK' && results && results[0]) {
-          // Importante: Actualizar la variable que usa el HTML en la lista de la izquierda
           this.origen = results[0].formatted_address;
 
-          // Actualizar servicio
           const currentData = this.travelService.getViajeData();
           this.travelService.setViajeData({
             ...currentData,
@@ -207,8 +218,6 @@ export class TercerPasoComponent implements OnInit {
             coordsOrigen: this.markerOrigin
           });
 
-          // 3. Llamar a buscar rutas pasando el objeto latLng (precisión) 
-          // pero con la variable 'this.origen' ya actualizada para la UI
           this.buscarRutas(latLng, this.destino, !this.marcaPeajes);
         } else {
           this.spinner.hide();
@@ -268,6 +277,14 @@ export class TercerPasoComponent implements OnInit {
 
           // Sincronizamos el marcador de peajes
           this.marcaPeajes = !response.request.avoidTolls;
+
+          this.directionsRenderer.setOptions({
+            polylineOptions: {
+              strokeColor: '#B7E0B4',
+              strokeWeight: 6,
+              strokeOpacity: 0.9
+            }
+          });
 
           // Pintamos la ruta en el mapa
           this.directionsRenderer.setDirections(response);

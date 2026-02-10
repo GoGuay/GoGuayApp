@@ -52,7 +52,10 @@ export class MessagingService {
      */
     cambiarEstadoLectura(conversacionId: number, usuarioId: number, marcarComoLeido: boolean): Observable<any> {
         const estado = marcarComoLeido ? 'leer' : 'no-leer';
-        return this.http.patch(`${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`, {});
+        // Prueba forzando la URL si sospechas del prefijo
+        const url = `${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`;
+        console.log("Llamando a:", url);
+        return this.http.patch(url, {});
     }
 
     /**

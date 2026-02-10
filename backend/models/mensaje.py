@@ -22,7 +22,6 @@ class Conversacion(db.Model):
 
         no_leidos = Mensaje.query.filter_by(
             conversacion_id=self.id, 
-            receptor_id=current_user_id, 
             leido=False
         ).count()
 

@@ -5,11 +5,12 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, retry, throwError } from 'rxjs';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
 export class VehiculosServicesService {
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = API_URL_BASE;
 
   constructor(private http: HttpClient) { }
 
