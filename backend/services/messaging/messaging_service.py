@@ -78,7 +78,6 @@ def iniciar_chat(emisor_id, receptor_id):
 def marcar_leido(conv_id, user_id):
     Mensaje.query.filter_by(
         conversacion_id=conv_id, 
-        receptor_id=user_id, 
         leido=False
     ).update({"leido": True})
     
@@ -91,16 +90,15 @@ def marcar_leido(conv_id, user_id):
 @chat_blueprint.route('/no-leer/<int:conv_id>/<int:user_id>', methods=['PATCH'])
 def marcar_no_leido(conv_id, user_id):
     try:
-        # 1. Buscamos el último mensaje recibido por este usuario en la conversación
+        # Buscamos el último mensaje de la conversación (SEA QUIEN SEA EL EMISOR)
         ultimo_msj = Mensaje.query.filter_by(
-            conversacion_id=conv_id, 
-            receptor_id=user_id
+            conversacion_id=conv_id
         ).order_by(Mensaje.fecha.desc()).first()
 
         if not ultimo_msj:
-            return jsonify({"error": "No se encontraron mensajes recibidos para marcar"}), 404
+            return jsonify({"error": "No hay mensajes en esta conversación"}), 404
 
-        # 2. Cambiamos el estado a False (No leído)
+        # Cambiamos el estado a False (No leído)
         ultimo_msj.leido = False
         db.session.commit()
 

@@ -32,7 +32,8 @@
               </label>
             </div>
             <div class="form-check" *ngIf="rutaConParadasSeleccionada">
-              <button type="button" class="trashBtn" (click)="eliminarRutaSeleccionada()"><mat-icon class="trahsIcon">delete</mat-icon></button>
+              <button type="button" class="trashBtn" (click)="eliminarRutaSeleccionada()"><mat-icon
+                  class="trahsIcon">delete</mat-icon></button>
             </div>
           </div>
           <div *ngIf="routes.length > 0">
@@ -105,9 +106,15 @@
         <!-- MAPA -->
         <ion-col #mapContainer id="mapContainer" size="12" size-md="12" size-xl="6">
           <div class="contenedor_mapa">
-            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="500px" width="100%">
+            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="500px" width="100%"
+              (mapClick)="onMapClick($event)">
               <map-directions-renderer *ngIf="selectedRoute" [directions]="selectedRoute"></map-directions-renderer>
+              <map-marker *ngIf="markerOrigin" [position]="markerOrigin"></map-marker>
             </google-map>
+          </div>
+          <div *ngIf="!apiCargada" class="spinner_box">
+            <app-spinner></app-spinner>
+            <p>Cargando mapa...</p>
           </div>
         </ion-col>
       </ion-row>

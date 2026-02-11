@@ -1,3 +1,6 @@
+from extensions import db
+from datetime import datetime
+
 class TokenPush(db.Model):
     __tablename__ = 'token_push'
     id = db.Column(db.Integer, primary_key=True)

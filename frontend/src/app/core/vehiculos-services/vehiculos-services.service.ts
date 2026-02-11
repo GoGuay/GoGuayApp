@@ -5,11 +5,12 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, retry, throwError } from 'rxjs';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Injectable({ providedIn: 'root' })
 export class VehiculosServicesService {
-  private apiUrl = 'https://pride-ride-backend.vercel.app/api';
+  private apiUrl = API_URL_BASE;
 
   constructor(private http: HttpClient) { }
 
