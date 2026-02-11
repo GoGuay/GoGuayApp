@@ -46,8 +46,15 @@ def create_app():
     app.config.from_object(Config)
     JWTManager(app)
 
-    cred = credentials.Certificate("prideride_firebase.json")
-    firebase_admin.initialize_app(cred)
+    service_account_info = os.environ.get('FIREBASE_SERVICE_ACCOUNT')
+    if service_account_info:
+        cert_dict = json.loads(service_account_info)
+        cred = credentials.Certificate(cert_dict)
+    else:
+        cred = credentials.Certificate("prideride_firebase.json")
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
     
     CORS(app, resources={r"/*": {
         "origins": [
