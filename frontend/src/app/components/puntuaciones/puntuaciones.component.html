@@ -42,7 +42,8 @@
 
   </div>
   <div class="container text-end">
-    <button mat-button type="button" class="btn_bg" (click)="puntuarViaje()">Puntuar viaje</button>
+    <button mat-button type="button" class="btn_bg" (click)="puntuarViaje()" [disabled]="creador_del_viaje">Puntuar
+      viaje</button>
   </div>
 
 </div>

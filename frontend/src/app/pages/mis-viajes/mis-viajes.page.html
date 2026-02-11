@@ -10,10 +10,45 @@
   </div>
   <div class="mis-viajes-header mt-2 ms-2 me-2">
     <h1>Mis viajes:</h1>
-    <button class="btn btn_bg" (click)="toggleAyuda()" aria-label="Ayuda">
-      <i class="fi fi-rs-interrogation"></i>
-    </button>
+    <div class="buttons-header">
+      <button class="btn btn_bg me-2 mb-2" id="open-filter">
+        <i class="fi fi-rr-filter"></i>
+      </button>
+
+      <button class="btn btn_bg" (click)="toggleAyuda()" aria-label="Ayuda">
+        <i class="fi fi-rs-interrogation"></i>
+      </button>
+    </div>
   </div>
+  <ion-popover #filtroPopover trigger="open-filter" triggerAction="click" mode="ios">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <ion-list lines="none">
+          <ion-radio-group [value]="filtroSeleccionado" (ionChange)="onFiltroChange($event, filtroPopover)">
+            <ion-item>
+              <ion-label>Más recientes</ion-label>
+              <ion-radio value="recientes"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Más antiguos</ion-label>
+              <ion-radio value="antiguos"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Pendientes primero</ion-label>
+              <ion-radio value="pendientes"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>{{ 'BUSQUEDA.PRECIO_ASC' | translate }}</ion-label>
+              <ion-radio value="precioAsc"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
   <div class="container mt-4 mb-5">
     <div [ngClass]="{
       'ayuda-explicacion-wrapper ayuda-explicacion rounded mb-3': true,
