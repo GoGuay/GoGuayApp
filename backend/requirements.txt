@@ -45,3 +45,4 @@ prelude-python-sdk
 twilio
 google-cloud-translatefirebase-admin==7.1.0
 python-dotenv==1.0.1
+firebase-admin==7.1.0
