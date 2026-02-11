@@ -22,6 +22,7 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.user import user_service
 
+import json
 import firebase_admin
 from firebase_admin import credentials
 
