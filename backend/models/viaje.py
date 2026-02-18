@@ -18,7 +18,7 @@ class Viaje(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     vehiculo = db.Column(db.Integer, nullable=False)
 
-    pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True)  # Cambiar el backref a 'viaje_pasajero'
+    pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True, overlaps="viaje,viaje_pasajero")  
 
   
     usuario = db.relationship('Usuario', backref='viajes')

@@ -68,9 +68,8 @@ def create_app():
             "ionic://localhost"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-        "supports_credentials": True,
-        "expose_headers": ["Content-Type", "Authorization"]
+        "allow_headers": ["*"],
+        "supports_credentials": False
     }})
 
     db.init_app(app)
