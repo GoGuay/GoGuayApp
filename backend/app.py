@@ -58,10 +58,19 @@ def create_app():
         firebase_admin.initialize_app(cred)
     
     CORS(app, resources={r"/*": {
-        "origins": "*", 
+        "origins": [
+            "https://pride-ride.vercel.app",
+            "https://pride-ride-backend.vercel.app",
+            "http://localhost",
+            "http://localhost:8100",
+            "http://localhost:4200",
+            "capacitor://localhost",
+            "ionic://localhost"
+        ],
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "allow_headers": ["*"],
-        "supports_credentials": False 
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+        "supports_credentials": True,
+        "expose_headers": ["Content-Type", "Authorization"]
     }})
 
     db.init_app(app)
