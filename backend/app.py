@@ -59,18 +59,15 @@ def create_app():
     
     CORS(app, resources={r"/*": {
         "origins": [
-            "https://pride-ride.vercel.app",
-            "https://pride-ride-backend.vercel.app",
+            "https://localhost",      
             "http://localhost",
-            "http://localhost:8100",
-            "http://localhost:4200",
             "capacitor://localhost",
-            "ionic://localhost"
+            "https://pride-ride.vercel.app",
+            "https://pride-ride-backend.vercel.app"
         ],
-        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-        "supports_credentials": True,
-        "expose_headers": ["Content-Type", "Authorization"]
+        "supports_credentials": True
     }})
 
     db.init_app(app)
