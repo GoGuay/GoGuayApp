@@ -104,31 +104,33 @@
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link" [routerLink]="['/mi-perfil']"> <i
                           class="fi fi-rr-user icono_ajsutes me-1"></i>{{
-                        "NAVBAR.MIPERFIL" | translate }}</a>
+                        "NAVBAR.MENUUSUARIO.MI_PERFIL" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link" (click)="irAMisViajes()"> <i class="fi fi-rr-cars icono_ajsutes me-1"></i>{{
-                        "NAVBAR.MIS_VIAJES" | translate }}</a>
+                        "NAVBAR.MENUUSUARIO.MIS_VIAJES" | translate }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link" [routerLink]="['/datos-contacto']"> <i
-                          class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>{{ "NAVBAR.DATOSCONTACTO" | translate
+                          class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>{{ "NAVBAR.MENUUSUARIO.DATOS_CONTACTO"
+                        | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link" [routerLink]="['/verificaciones-perfil']"> <i
                           class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i>{{
-                        "NAVBAR.VERIFICACION" | translate
+                        "NAVBAR.MENUUSUARIO.VERIFICACION" | translate
                         }}</a>
                     </li>
                     <li class="perfil nav-item dropdown">
                       <a class="nav-link" [routerLink]="['/saldo-transferencias']"> <i
-                          class="fi fi-rr-wallet icono_ajsutes me-1"></i>{{ "NAVBAR.SALDO" | translate }}</a>
+                          class="fi fi-rr-wallet icono_ajsutes me-1"></i>{{ "NAVBAR.MENUUSUARIO.SALDO" | translate
+                        }}</a>
                     </li>
                     <li class="perfil nav-item dropdow">
                       <a class="nav-link" [routerLink]="['/ajustes-aplicacion']">
                         <i class="fi fi-rr-settings icono_ajsutes me-1"></i>
-                        {{ "NAVBAR.AJUSTES" | translate }}
+                        {{ "NAVBAR.MENUUSUARIO.AJUSTES" | translate }}
                       </a>
                     </li>
                   </ul>
@@ -137,7 +139,7 @@
                 <li class="logout d-flex align-items-center justify-content-center">
                   <a class="dropdown-item d-flex align-items-center" (click)="logout()" type="button">
                     <mat-icon class="me-2">power_settings_new</mat-icon>
-                    {{ "NAVBAR.SALIR" | translate }}
+                    {{ "NAVBAR.MENUUSUARIO.SALIR" | translate }}
                   </a>
                 </li>
               </ul>
@@ -156,10 +158,11 @@
               </a>
               <ul class="dropdown-menu menuusuario" [class.show]="isDropdownOpen">
                 <li>
-                  <a class="dropdown-item" [routerLink]="['/login']">{{ "NAVBAR.LOGIN" | translate }}</a>
+                  <a class="dropdown-item" [routerLink]="['/login']">{{ "NAVBAR.MENUUSUARIO.LOGIN" | translate }}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" [routerLink]="['/registro']">{{ "NAVBAR.REGISTRO" | translate }}</a>
+                  <a class="dropdown-item" [routerLink]="['/registro']">{{ "NAVBAR.MENUUSUARIO.REGISTRO" | translate
+                    }}</a>
                 </li>
               </ul>
             </li>
