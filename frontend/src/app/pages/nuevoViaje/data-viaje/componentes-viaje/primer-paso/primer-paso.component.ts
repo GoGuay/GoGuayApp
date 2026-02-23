@@ -69,7 +69,7 @@ export class PrimerPasoComponent implements OnInit {
     private router: Router,
   ) {
     this._adapter.setLocale('es-ES');
-    this.obtenerVehiculos();
+
   }
 
   @HostListener('window:resize', ['$event'])
@@ -80,6 +80,8 @@ export class PrimerPasoComponent implements OnInit {
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.checkScreenSize();  // -> Para que sepa si es desktop o no al iniciar
+
+    this.obtenerVehiculos();
 
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
