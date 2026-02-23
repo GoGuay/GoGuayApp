@@ -448,4 +448,5 @@ export class ResumenViajeComponent implements OnInit {
       this.vehiculosUsuario = vehiculos;
     });
   }
+
 }

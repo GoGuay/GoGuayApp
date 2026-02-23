@@ -1,7 +1,7 @@
 <div class="container mainbox">
   <div class="contenido">
     <mat-icon class="me-1">search</mat-icon>
-    <ion-label>{{ "HOME.BUSCADOR.BUSCARVIAJE" | translate }}</ion-label>
+    <ion-label>{{ "BUSCADOR.TITULO" | translate }}</ion-label>
     <div class="ion-padding" slot="content">
       <ion-grid>
         <ion-row class="contenido d-flex justify-content-center">
@@ -9,8 +9,9 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.DESDE' | translate }}" labelPlacement="floating"
-                maxlength="20" [(ngModel)]="origen" (ionInput)="obtenerSugerenciasOrigen($event)">
+              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}"
+                labelPlacement="floating" maxlength="20" [(ngModel)]="origen"
+                (ionInput)="obtenerSugerenciasOrigen($event)">
               </ion-input>
               <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
                 <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item"
@@ -26,8 +27,9 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.A' | translate }}" labelPlacement="floating"
-                maxlength="20" [(ngModel)]="destino" (ionInput)="obtenerSugerenciasDestino($event)">
+              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}"
+                labelPlacement="floating" maxlength="20" [(ngModel)]="destino"
+                (ionInput)="obtenerSugerenciasDestino($event)">
               </ion-input>
               <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
                 <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item"
@@ -43,8 +45,8 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>schedule</mat-icon>
-              <ion-input class="inputs" label="{{ 'HOME.BUSCADOR.CUANDO' | translate }}" labelPlacement="floating"
-                type="date" [(ngModel)]="fecha_salida">
+              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_CUANDO' | translate }}"
+                labelPlacement="floating" type="date" [(ngModel)]="fecha_salida">
               </ion-input>
             </div>
           </ion-col>

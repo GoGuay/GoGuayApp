@@ -4,8 +4,7 @@
   </h4>
 
   <!--Se muestra la tabla si hay vehículos-->
-  <div
-    class="tabla-vehiculos d-none d-md-block"
+  <div class="tabla-vehiculos d-none d-md-block"
     *ngIf="funcionesUsuario.vehiculos_usuario && funcionesUsuario.vehiculos_usuario.length > 0; else noVehiculos">
     <table class="table table-hover">
       <thead>
@@ -49,26 +48,19 @@
               </select>
             </ng-container>
             <ng-template #noEditColor>
-              <img
-                class="colorCoche"
-                [src]="mostrarColorCoche(coche.color)"
-                role="img"
+              <img class="colorCoche" [src]="mostrarColorCoche(coche.color)" role="img"
                 [attr.alt]="'VEHICULOS.COLOR_VEHICULO' | translate: { color: (coche.color | translate) }" />
             </ng-template>
           </td>
 
           <!-- Botón para editar el vehículo -->
           <td class="acciones">
-            <button
-              class="botones_tabla btn_bg"
-              mat-icon-button
-              (click)="coche.editandoVehiculo ? guardarVehiculoEditado(coche) : editarFilaVehiculo(coche)"
-              [matTooltip]="
+            <button class="botones_tabla btn_bg" mat-icon-button
+              (click)="coche.editandoVehiculo ? guardarVehiculoEditado(coche) : editarFilaVehiculo(coche)" [matTooltip]="
                 coche.editandoVehiculo
                   ? ('MIPERFIL.MIS_VEHICULOS.TABLA.BTN_GUARDAR_TOOLTIP' | translate)
                   : ('MIPERFIL.MIS_VEHICULOS.TABLA.BTN_EDITAR_TOOLTIP' | translate)
-              "
-              [attr.aria-label]="
+              " [attr.aria-label]="
                 (coche.editandoVehiculo
                   ? ('MIPERFIL.MIS_VEHICULOS.TABLA.BTN_GUARDAR_TOOLTIP' | translate)
                   : ('MIPERFIL.MIS_VEHICULOS.TABLA.BTN_EDITAR_TOOLTIP' | translate)) +
@@ -80,10 +72,7 @@
               <mat-icon>{{ coche.editandoVehiculo ? 'save' : 'edit' }}</mat-icon>
             </button>
 
-            <button
-              class="botones_tabla btn_bg"
-              mat-icon-button
-              (click)="modalEliminarVehiculo(coche)"
+            <button class="botones_tabla btn_bg" mat-icon-button (click)="modalEliminarVehiculo(coche)"
               [matTooltip]="'MIPERFIL.MIS_VEHICULOS.TABLA.BTN_ELIMINAR_TOOLTIP' | translate"
               [attr.aria-label]="('MIPERFIL.MIS_VEHICULOS.TABLA.BTN_ELIMINAR_TOOLTIP' | translate) + ' ' + coche.marca + ' ' + coche.modelo">
               <mat-icon aria-hidden="true">delete</mat-icon>
@@ -134,9 +123,7 @@
         </div>
 
         <div class="text-center d-flex justify-content-center gap-3">
-          <button
-            mat-icon-button
-            class="botones_tabla btn_bg"
+          <button mat-icon-button class="botones_tabla btn_bg"
             (click)="coche.editandoVehiculo ? guardarVehiculoEditado(coche) : editarFilaVehiculo(coche)">
             <mat-icon>{{ coche.editandoVehiculo ? 'save' : 'edit' }}</mat-icon>
           </button>
@@ -164,12 +151,8 @@
 
 <!-- Boton para añadir vehiculos -->
 <div class="d-flex justify-content-center mb-4">
-  <button
-    type="button"
-    class="btn btn_bg mt-3 boton_anadir"
-    style="height: 33px"
-    [attr.aria-label]="'MIPERFIL.MIS_VEHICULOS.BTN_ANADIR_VEHICULO' | translate"
-    (click)="botonAnadirVehiculo()">
+  <button type="button" class="btn btn_bg mt-3 boton_anadir" style="height: 33px"
+    [attr.aria-label]="'MIPERFIL.MIS_VEHICULOS.BTN_ANADIR_VEHICULO' | translate" (click)="botonAnadirVehiculo()">
     {{ 'MIPERFIL.MIS_VEHICULOS.BTN_ANADIR_VEHICULO' | translate }}
   </button>
 </div>
@@ -180,10 +163,7 @@
     <ion-row class="" style="width: 500px">
       <!-- Selector de marca -->
       <ion-col size="4">
-        <select
-          class="form-select"
-          [(ngModel)]="marcaSeleccionada"
-          (change)="filtrarModelos()"
+        <select class="form-select" [(ngModel)]="marcaSeleccionada" (change)="filtrarModelos()"
           [ngModelOptions]="{ standalone: true }"
           [attr.aria-label]="'MIPERFIL.MIS_VEHICULOS.SELECTOR.AYUDA_MARCA' | translate">
           <option value="" disabled selected>
@@ -197,10 +177,7 @@
 
       <!-- Selector de modelo -->
       <ion-col size="5">
-        <select
-          class="form-select"
-          [(ngModel)]="modeloSeleccionado"
-          [disabled]="!marcaSeleccionada"
+        <select class="form-select" [(ngModel)]="modeloSeleccionado" [disabled]="!marcaSeleccionada"
           [ngModelOptions]="{ standalone: true }"
           [attr.aria-label]="'MIPERFIL.MIS_VEHICULOS.SELECTOR.AYUDA_MODELO' | translate">
           <option value="" disabled selected>
@@ -215,12 +192,8 @@
       <!-- Selector de color -->
       <ion-col size="3">
         <div *ngIf="funcionesComunes.validacionIdioma">
-          <select
-            class="form-select"
-            aria-label="Selección de color"
-            [(ngModel)]="colorSeleccionado"
-            [ngModelOptions]="{ standalone: true }"
-            [disabled]="!modeloSeleccionado">
+          <select class="form-select" aria-label="Selección de color" [(ngModel)]="colorSeleccionado"
+            [ngModelOptions]="{ standalone: true }" [disabled]="!modeloSeleccionado">
             <option value="" disabled selected>
               {{ 'VEHICULOS.SELECTOR_COLOR' | translate }}
             </option>
@@ -231,12 +204,8 @@
         </div>
 
         <div *ngIf="!funcionesComunes.validacionIdioma">
-          <select
-            class="form-select inputs_selectores"
-            aria-label="Selección de color"
-            [(ngModel)]="colorSeleccionado"
-            [ngModelOptions]="{ standalone: true }"
-            [disabled]="!modeloSeleccionado">
+          <select class="form-select inputs_selectores" aria-label="Selección de color" [(ngModel)]="colorSeleccionado"
+            [ngModelOptions]="{ standalone: true }" [disabled]="!modeloSeleccionado">
             <option value="" disabled selected>
               {{ 'VEHICULOS.SELECTOR_COLOR' | translate }}
             </option>
@@ -249,7 +218,8 @@
     </ion-row>
     <ion-row>
       <div class="container d-flex justify-content-center mt-2">
-        <button type="button" [disabled]="matriculaNoValida" class="btn btn_bg" mat-raised-button (click)="guardarVehiculo()">
+        <button type="button" [disabled]="matriculaNoValida" class="btn btn_bg" mat-raised-button
+          (click)="guardarVehiculo()">
           {{ 'BOTON.GUARDAR_VEHICULO' | translate }}
         </button>
       </div>

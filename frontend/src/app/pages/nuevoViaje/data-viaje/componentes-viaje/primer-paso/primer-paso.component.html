@@ -5,11 +5,7 @@
       <h1 class="d-flex justify-content-center">ELIGE LA FECHA DEL VIAJE</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
-          <ion-datetime
-            presentation="date"
-            locale="es-ES"
-            [min]="hoy"
-            [(ngModel)]="fecha_seleccionada"
+          <ion-datetime presentation="date" locale="es-ES" [min]="hoy" [(ngModel)]="fecha_seleccionada"
             (ionChange)="onDateChange($event)"></ion-datetime>
         </div>
         <p class="mt-2">Fecha seleccionada: {{ getFormattedDate() }}</p>
@@ -22,7 +18,8 @@
           <div *ngIf="isDesktop">
             <mat-form-field>
               <mat-label>Selecciona la hora</mat-label>
-              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker" (ngModelChange)="onTimeChange($event)" />
+              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
+                (ngModelChange)="onTimeChange($event)" />
               <mat-timepicker-toggle matIconSuffix [for]="minutesPicker" />
               <mat-timepicker interval="1min" #minutesPicker />
             </mat-form-field>
@@ -36,7 +33,8 @@
               <ion-datetime-button datetime="timePicker"></ion-datetime-button>
               <ion-modal [keepContentsMounted]="true">
                 <ng-template>
-                  <ion-datetime id="timePicker" presentation="time" (ionChange)="onTimeChange($event)" class="custom-datetime"></ion-datetime>
+                  <ion-datetime id="timePicker" presentation="time" (ionChange)="onTimeChange($event)"
+                    class="custom-datetime"></ion-datetime>
                 </ng-template>
               </ion-modal>
             </ion-item>
@@ -50,13 +48,8 @@
     <ion-col size="12" size-xl="6">
       <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
       <div class="contenedor_inputs">
-        <ion-select
-          class="form-control"
-          aria-label="n_personas"
-          interface="popover"
-          placeholder="Número de plazas"
-          [(ngModel)]="plazas"
-          (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas)">
+        <ion-select class="form-control" aria-label="n_personas" interface="popover" placeholder="Número de plazas"
+          [(ngModel)]="plazas" (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas)">
           <mat-icon slot="start">
             <img src="../../../../../../assets/sistema/usuarios-alt.png" class="marcador-icon input-icon" />
           </mat-icon>
@@ -82,12 +75,19 @@
                 </ion-item>
               </ion-radio-group>
             </ion-list>
+            <div class="d-flex flex-column align-items-center mt-3">
+              <p class="mb-2">¿Quieres añadir otro coche?</p>
+              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">
+                Añadir vehículo
+              </button>
+            </div>
           </ng-container>
 
           <ng-template #sinVehiculos>
             <div class="mensaje-sin-vehiculos">
               <p>No tienes vehículos registrados, por favor, registra tu vehículo para poder publicar el viaje.</p>
-              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">Añadir vehículo</button>
+              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">Añadir
+                vehículo</button>
             </div>
           </ng-template>
         </div>

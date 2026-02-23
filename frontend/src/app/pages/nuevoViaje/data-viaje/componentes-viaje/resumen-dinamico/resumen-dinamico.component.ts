@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
@@ -36,14 +36,44 @@ export class ResumenDinamicoComponent implements OnInit {
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
-  marcaModeloUnido: string = ''
+  marcaModeloUnido: string = '';
 
-  constructor(private travelService: TravelService, private googleService: GoogleServices, private vehiculosServicesService: VehiculosServicesService) { }
+  isDesktop: boolean = false;
+  mostrarResumenMobile: boolean = false;
+
+  constructor(
+    private travelService: TravelService,
+    private googleService: GoogleServices,
+    private vehiculosServicesService: VehiculosServicesService,
+    private platform: Platform) { }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
 
   ngOnInit() {
+    this.checkScreenSize();
+
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.actualizarInformacion();
     this.obtenerVehiculos();
+  }
+
+
+  /**
+   * Función para comprobar el tamaño de la pantalla.
+   */
+  checkScreenSize() {
+    const anchoActual = window.innerWidth;
+
+    this.isDesktop = this.platform.is('desktop') || anchoActual > 768;
+
+    if (this.isDesktop) {
+      this.mostrarResumenMobile = true;
+    } else if (!this.isDesktop && !this.mostrarResumenMobile) {
+      this.mostrarResumenMobile = false;
+    }
   }
 
   /**
@@ -87,10 +117,10 @@ export class ResumenDinamicoComponent implements OnInit {
     this.actualizarInformacion();
   }
 
-  seleccionarCoche(){
+  seleccionarCoche() {
 
   }
-  
+
   /**
    * Función para cancelar la edición del viaje que se está creando.
    */
@@ -139,9 +169,9 @@ export class ResumenDinamicoComponent implements OnInit {
   }
 
 
-/**
- * Función para obtener la lista de vehículos de un usuario.   *
- */
+  /**
+   * Función para obtener la lista de vehículos de un usuario.   *
+   */
   obtenerVehiculos() {
     const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
     this.vehiculosServicesService
@@ -150,6 +180,13 @@ export class ResumenDinamicoComponent implements OnInit {
         console.log('Vehículos: ', resultado.vehiculos);
         this.userData.usuario.vehiculos = resultado.vehiculos;
       });
+  }
+
+  /**
+   * Función para mostrar u ocultar el resumen del viaje en móvil.
+   */
+  toggleResumenMobile() {
+    this.mostrarResumenMobile = !this.mostrarResumenMobile;
   }
 
 }

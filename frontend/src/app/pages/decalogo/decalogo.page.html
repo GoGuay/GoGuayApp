@@ -1,131 +1,115 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'newTravel'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
-    <div class="d-flex justify-content-center">
-      <h1>DECÁLOGO</h1>
+  <div class="container mt-4">
+    <div class="text-center mb-4">
+      <h1 class="fw-bold">NUESTRO DECÁLOGO</h1>
+      <p class="text-muted">Los 10 principios para que cada kilómetro sea un orgullo.</p>
     </div>
+
     <ion-accordion-group class="mb-3">
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            1. Respeto y no discriminación
-          </ion-label>
+          <ion-label>1. Respeto Radical y No Discriminación</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Todos los usuarios deben tratarse con respeto, independientemente de
-          su identidad de género, orientación sexual, raza, religión o cualquier
-          otra característica. El lenguaje discriminatorio, ofensivo o agresivo
-          no será tolerado.
+          En Prideride, el respeto es la base. No toleramos ninguna forma de discriminación por identidad de género,
+          orientación sexual, expresión, raza, religión o diversidad funcional. El lenguaje de odio o agresivo conlleva
+          la expulsión inmediata.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            2. Privacidad y confidencialidad</ion-label
-          >
+          <ion-label>2. Privacidad y Confidencialidad</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          La identidad y orientación sexual de los usuarios es un tema personal.
-          Compartir información privada de otros usuarios fuera de la aplicación
-          está estrictamente prohibido.
+          El trayecto es un espacio privado. Está estrictamente prohibido compartir información, fotos o "sacar del
+          armario" (outing) a cualquier usuario fuera de la aplicación sin su consentimiento explícito.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera"> 3. Espacios seguros </ion-label>
+          <ion-label>3. Compromiso con el Espacio Seguro</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Los vehículos registrados deben ser espacios seguros donde todos se
-          sientan cómodos siendo ellos mismos. Los usuarios deben comprometerse
-          a crear un ambiente libre de juicios y hostilidad.
+          Cada vehículo es un refugio. Los usuarios se comprometen a mantener un ambiente libre de juicios, prejuicios y
+          microagresiones, permitiendo que todos viajen con total libertad de ser quienes son.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera"> 4. Verificación de identidad </ion-label>
+          <ion-label>4. Confianza mediante la Verificación</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Para garantizar la seguridad, todos los usuarios deben completar un
-          proceso de verificación de identidad (por ejemplo, subir un documento
-          oficial y una foto reciente).
+          La seguridad se construye entre todos. Para formar parte de Prideride, es obligatorio completar el proceso de
+          verificación de identidad para asegurar que nuestra comunidad sea real, transparente y fiable.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            5. Política de cancelaciones justas
-          </ion-label>
+          <ion-label>5. Compromiso y Puntualidad</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Si un conductor o pasajero necesita cancelar un viaje, debe hacerlo
-          con antelación y explicar la razón, para no perjudicar a otros
-          usuarios..
+          Respetamos el tiempo ajeno. Las cancelaciones deben ser excepcionales, realizadas con antelación y debidamente
+          justificadas para no romper la logística y confianza de los demás miembros.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            6. Prohibición de actividades inapropiadas
-          </ion-label>
+          <ion-label>6. Ambiente Saludable y Libre de Sustancias</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          No está permitido el consumo de alcohol, drogas ni conductas sexuales
-          durante el viaje. El objetivo es crear una experiencia cómoda para
-          todos los ocupantes.
+          Para garantizar una convivencia óptima, no se permite el consumo de alcohol o drogas durante el viaje.
+          Asimismo, cualquier conducta de índole sexual está prohibida en los trayectos compartidos.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera"
-            >7. Códigos de conducta para comentarios
-          </ion-label>
+          <ion-label>7. Reseñas Constructivas y Honestas</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          El sistema de reseñas y calificaciones debe usarse de manera
-          constructiva, evitando ataques personales, lenguaje hostil o
-          difamatorio.
+          Usa el sistema de valoraciones para ayudar a la comunidad. Los comentarios deben ser respetuosos y veraces,
+          enfocados en mejorar la experiencia y reconocer el buen comportamiento de otros usuarios.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            8. Aceptación de todas las identidades
-          </ion-label>
+          <ion-label>8. Validación de todas las Identidades</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          La aplicación fomenta la inclusión de personas trans, no binarias,
-          intersex y todas las identidades dentro del espectro LGTBIQ+. El
-          respeto a los pronombres y nombres de las personas es obligatorio.
+          Somos un espectro diverso. El uso del <strong>nombre sentido</strong> y el respeto absoluto a los
+          <strong>pronombres</strong> es obligatorio. En Prideride, no se cuestiona la identidad de nadie.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera"> 9. Seguridad en los viajes </ion-label>
+          <ion-label>9. Seguridad en Ruta</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          Los conductores deben asegurarse de que sus vehículos cumplan con los
-          requisitos legales y técnicos (por ejemplo, seguro, revisiones). Los
-          pasajeros deben utilizar cinturones de seguridad y seguir las
-          normativas locales de tránsito.
+          Conductores y pasajeros deben cumplir con todas las normativas de tráfico. Los vehículos deben estar en
+          perfecto estado técnico y con el seguro en vigor para garantizar la integridad física de todos.
         </div>
       </ion-accordion>
-      <ion-accordion class="mb-3">
+
+      <ion-accordion class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">
-            10. Denuncia y resolución de conflictos</ion-label
-          >
+          <ion-label>10. Vigilancia Comunitaria y Soporte</ion-label>
         </ion-item>
         <div slot="content" class="p-3">
-          La aplicación debe incluir una función para denunciar comportamientos
-          inapropiados o peligrosos, con un equipo de soporte que gestione las
-          incidencias de manera confidencial y rápida.
+          Si algo no va bien, no estás solo/a. Prideride ofrece canales directos para reportar incidencias. Nuestro
+          equipo actúa con rapidez y confidencialidad para resolver conflictos y proteger a la comunidad.
         </div>
       </ion-accordion>
+
     </ion-accordion-group>
   </div>
 </ion-content>

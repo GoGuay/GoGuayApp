@@ -33,10 +33,19 @@ export class TravelService {
    */
   setViajeData(data: any) {
     this.viajeDataSubject.next(data);
+    localStorage.setItem('tempViaje', JSON.stringify(data));
   }
 
   getViajeData() {
-    return this.viajeDataSubject.getValue();
+    let data = this.viajeDataSubject.getValue();
+    if (!data) {
+      const saved = localStorage.getItem('tempViaje');
+      if (saved) {
+        data = JSON.parse(saved);
+        this.viajeDataSubject.next(data);
+      }
+    }
+    return data;
   }
 
   /**
@@ -54,6 +63,7 @@ export class TravelService {
       viajeData.usuario_id = usuarioId;
     }
 
+    this.clearTempViaje();
     return this.http.post(this.apiUrl + '/travel/crear_viaje', viajeData);
   }
 
@@ -191,5 +201,10 @@ export class TravelService {
 
   guardarPuntuacion(puntuacion: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/travel/puntuacion`, puntuacion);
+  }
+
+  clearTempViaje() {
+    this.viajeDataSubject.next(null);
+    localStorage.removeItem('tempViaje');
   }
 }
