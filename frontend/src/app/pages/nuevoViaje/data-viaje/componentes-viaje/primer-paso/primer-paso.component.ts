@@ -56,7 +56,6 @@ export class PrimerPasoComponent implements OnInit {
   plazas: string = '';
   cocheSeleccionado: string = '';
 
-  isMobileWeb: boolean = false;
   isDesktop: boolean = true;
 
   invalid_date: boolean = false;
@@ -73,10 +72,14 @@ export class PrimerPasoComponent implements OnInit {
     this.obtenerVehiculos();
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.isMobileWeb = this.platform.is('mobileweb');
-    this.isDesktop = this.platform.is('desktop');
+    this.checkScreenSize();  // -> Para que sepa si es desktop o no al iniciar
 
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
@@ -269,5 +272,13 @@ export class PrimerPasoComponent implements OnInit {
 
   irARegistrarVehiculo() {
     this.router.navigate(['/mi-perfil'], { queryParams: { from: 'newTravel' } });
+  }
+
+  /**
+   * Función para comprobar el tamaño de la pantalla.
+   */
+  checkScreenSize() {
+    const anchoActual = window.innerWidth;
+    this.isDesktop = this.platform.is('desktop') || anchoActual > 768;
   }
 }
