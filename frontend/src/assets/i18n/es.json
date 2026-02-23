@@ -20,6 +20,7 @@
   },
   "NavBar Home": "Opciones del navbar que aparece en el Home",
   "NAVBAR": {
+    "INICIO": "Inicio",
     "QUIENES": "Quienes somos",
     "FAQS": "FAQs",
     "DECALOGO": "Decálogo",
