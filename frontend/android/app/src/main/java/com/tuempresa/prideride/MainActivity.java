@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.tuempresa.prideride;
 
 import com.getcapacitor.BridgeActivity;
 
