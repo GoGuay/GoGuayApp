@@ -251,7 +251,7 @@
                 style="text-align: right; font-size: 0.8rem; margin-top: 5px">
                 {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
-
+              <app-spinner *ngIf="spinnerActivo"></app-spinner>
               <span id="bioHelp" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.AYUDA_SOBRETI' | translate }}</span>
             </div>
           </ion-col>

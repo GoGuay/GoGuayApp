@@ -25,6 +25,7 @@ from prelude_python_sdk import Prelude
 import os
 from twilio.rest import Client
 from sqlalchemy import func
+from datetime import datetime, timezone
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
@@ -641,9 +642,19 @@ def enviar_email_reset_password():
 #         print(f"Error al verificar token: {e}")
 #         return jsonify({'error': 'Token invalido o expirado'}), 400
 
-#Función backend para cambiar la contraseña con el correo de reestablecimiento:
+## FUNCIÓN PARA RESTABLECER LA CONTRASEÑA CON EL CORREO RECIBIDO ##
 @user_blueprint.route('/restablecerpassword', methods=['POST'])
 def restablacerpassword():
+    """
+    1. Se extrae el campo token del json y se guarda en token, igual con el password que se guarda en nueva_password.
+    2. if: si no hay token o nueva_password retorna un error y se detiene la función.
+    3. Consulta a la tabla TokenUsado. Se busca el token, si ya aparece y es igual que el que le estamos pasando da un error y sale.
+    4. Con el serializer abre el token, extrae el email y lo guarda en la variable email, si el token se genero hace más de 1800 segundo da error pasando al Except. En este paso se busca la relación email-token.
+    5. Busca al usuario por el email en la tabla usuario. Si no lo encuentra, devuelve error. 
+    6. generate_password_hash --> toma la nueva contraseña, la hashea y la guarda en la propiedad password del usuario. Guarda los cambios con commit.
+    7. Guarda el token en la tabla de TokenUsado para que no se pueda reutilizar. Si se hace se detectaría en el paso 3.
+    8. except SignatureExpired --> cuando han pasado más de 1800 segundos desde que se creo el token // badSignature --> cuando el token ha sido manipulado y no es el original // Exception as e --> error genérico. 
+    """
     token = request.json.get('token')
     print(f"Token recibido: {token}")
     nueva_password = request.json.get('password')
@@ -681,9 +692,16 @@ def restablacerpassword():
         return jsonify ({"error": "Token inválido o expirado"}), 400
 
 
-#Función para comprobar el estado de vida del token
+## FUNCIÓN PARA COMPROBAR EL ESTADO DE VIDA DEL TOKEN ##
 @user_blueprint.route('/comprobacion_token', methods= ['GET'])
 def comprobacion_token():
+    """
+    1. Se extrae el campo token de la url y se guarda en token. Si no existe token, devuelve error y sale de la función.
+    2. En la tabla de TokenUsado filtra el token con el token guardado y obtiene el primer resultado: asi comprueba si el token ya ha sido usado. 
+    3. Con el serializer abre el token, extrae el email y lo guarda en la variable email, si el token se genero hace más de 1800 segundo da error pasando al Except. En este paso se busca la relación email-token.
+    4. except SignaturaExpired: lanza error cuando el token ha caducado (el usuario ha clicado demasiado tarde)
+    5. except Exception: valida otro tipo de errores. 
+    """
     token = request.args.get('token')
 
     if not token:
@@ -705,24 +723,26 @@ def comprobacion_token():
         return jsonify({"error": "Token inválido"}), 400
     
 
-
-
-
-
-    
-
-# #Verificar si la contraseña actual es la correcta
+## FUNCIÓN PARA VERIFICAR SI LA CONTRASEÑA ACTUAL ES LA CORRECTA ##
 @user_blueprint.route('/comprobarpwactual', methods=['POST'])
 def comprobarpwactual():
+    """
+    1. Obtiene el id y el password del json y los guarda en 'id' y 'password' respectivamente. 
+    2. Busca el usuario en la tabla Usuario filtrando por el id y guardando la primera coincidencia que encuentre.
+    3. Si no encuentra al usuario devuelve un error y sale de la función. 
+    4. Hace el print de la contraseña hasheada. 
+    5. check_password_hash -->  toma la contraseña que escribió el usuario, le aplica el mismo algoritmo de cifrado y comprueba si el resultado coincide con el hash guardado (usuario.password). Si coinciden devuelve un True (el usuario ha acreaditado quien es), si no devuelve un false y devuelve un código de estado (no autorizado) 
+    """
     id = request.json.get('id')
     password = request.json.get('password')
-    print(f"id: {id}")
-    print(f"Password ingresada: {password}")
+    # print(f"id: {id}")
+    # print(f"Password ingresada: {password}")
 
     usuario = Usuario.query.filter_by(id=id).first()
 
     if usuario is None:
         return jsonify({'error:': 'usuario no encontrado'}), 404
+    
     print (f"Hash de contraseña almacenada: {usuario.password}")
 
     if check_password_hash(usuario.password, password):
@@ -731,9 +751,15 @@ def comprobarpwactual():
         return jsonify({'isValid': False}), 401
     
 
-# Cambio de contraseña desde la ventana de ajustes
+## FUNCIÓN PARA CAMBIAR LA CONTRASEÑA DESDE LA VENTANA DE AJUSTES ##
 @user_blueprint.route('/cambiopassword/<int:id>', methods=['PUT'])
 def cambiopassword(id):
+    """
+    1. Obtiene al usuario del json por el id y lo guarda en usuario. Si no existe, devuelve error si no lo encuentra y sale
+    2. Obtiene el contenido del json y lo guarda en data. Obtiene el campo 'password' y lo guarda en nueva_password. Si no existe, devuelve un error y sale de la función.
+    3. con generate_password_hash coge la contraseña plana del usuario y la convierte en un hash irreversible, y la guarda en nueva_password_hash
+    4. Esa contraseña hasheada la guarda en el campo password del uusuario. Con el commit sincroniza los cambios del objeto en la base de datos.  
+    """
     usuario = Usuario.query.get(id)
     if usuario is None:
         return jsonify({'error': 'usuario no encontrado'})
@@ -742,7 +768,7 @@ def cambiopassword(id):
     nueva_password = data.get('password')
 
     if not nueva_password:
-        return jsonify({'La nueva password es requerida'}), 400
+        return jsonify({'error': 'La nueva password es requerida'}), 400
     
     nueva_password_hash = generate_password_hash(nueva_password)
     usuario.password = nueva_password_hash
@@ -755,22 +781,31 @@ def cambiopassword(id):
 #########  MONEDERO DEL USUARIO #########
 
 
-# # # # # # # # # # # # # # # # # # # # 
-#      OBTENER EL MONEDERO DEL USUARIO
-# # # # # # # # # # # # # # # # # # # # 
+
+## OBTENER EL MONEDERO DEL USUARIO ##
 @user_blueprint.route('/obtener_datos_monedero/<int:usuario_id>', methods=['GET'])
 def obtener_monedero(usuario_id):
+    """
+    1. De la tabla Monedero, filtra por el id del usuario y guarda el primer resultado que encuentra en 'monedero'. Si no lo encuentra, devuelve error y sale de la función.
+    2. serialize: convierte el objeto de la base de datos en un diccionario python para poder enviar datos. 
+    """
     monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
     if not monedero:
         return jsonify({"error": "Monedero del usuario no encontrado"}), 404
     return jsonify(monedero.serialize()), 200
 
 
-# # # # # # # # # # # # # # # # # # # # 
-#      RECARGAR EL MONEDERO DEL USUARIO
-# # # # # # # # # # # # # # # # # # # # 
+
+## RECARGAR EL MONEDERO DEL USUARIO ##
 @user_blueprint.route('/recargar', methods=['POST'])
 def recargar_saldo():
+    """
+    1. Del json, obtiene el usuario_id, la cantidad y el concepto (si no se ha guardado concepto, asigna "recarga manual") y lo guarda en sus correspondientes campos. Si no hay usuario o cantidad devuelve error y sale de la función. 
+    2. En la tabla monedero busca por el id del usuario, obtiene el primer resultado de la busqueda y lo guarda en monedero. Si no hay, devuelve error y sale. 
+    3. Toma el saldo que tenía el monedero y le suma la nueva cantidad. Con db.session.add indica que la información del monedero ha cambiado. 
+    4. En la tabla MovimientoMonedero anota quien recargó, cuanto recargó, el tipo de recarga y la fecha con hora de la recarga. 
+    5. Guarda los datos con el commit.
+    """
     data = request.json
     usuario_id = data.get('usuario_id')
     cantidad = data.get('cantidad')
@@ -787,13 +822,13 @@ def recargar_saldo():
     monedero.saldo += cantidad
     db.session.add(monedero)
 
-    # Registrar movimiento
+    # Registrar movimiento en el historial del monedero
     movimiento = MovimientoMonedero(
         usuario_id=usuario_id,
         cantidad=cantidad,
         tipo='recarga',
         concepto=concepto,
-        fecha=datetime.utcnow()
+        fecha=datetime.now(timezone.utc)
     )
     db.session.add(movimiento)
     db.session.commit()
@@ -801,11 +836,17 @@ def recargar_saldo():
     return jsonify(monedero.serialize()), 200
 
 
-# # # # # # # # # # # # # # # # # # # # 
-#      PAGAR CON EL MONEDERO DEL USUARIO
-# # # # # # # # # # # # # # # # # # # # 
+# #PAGAR CON EL MONEDERO DEL USUARIO ##
 @user_blueprint.route('/pagar', methods=['POST'])
 def pagar():
+    """
+    1. De la data obtiene el id del usuario, la cantidad y el concepto (si no hay concepto, asigna el concepto 'pago'). Si no hay usuario_id o cantidad devuelve error y sale.
+    2. En la tabla monedero busca por el id del usuario, obtiene el primer resultado de la busqueda y lo guarda en monedero. Si no hay, devuelve error y sale. 
+    3. Si el saldo que tiene el monedero es < que la cantidad a pagar, da error y se detiene la función.
+    4. Al saldo que tiene el monedero, le restamos la cantidad y actualizamos el monedero. 
+    5. En la tabla MovimientoMonedero anota quien recargó, cuanto recargó, el tipo de recarga y la fecha con hora de la recarga. 
+    6. Guardamos los datos del monedero. 
+    """
     data = request.json
     usuario_id = data.get('usuario_id')
     cantidad = data.get('cantidad')
@@ -831,7 +872,7 @@ def pagar():
         cantidad=-cantidad, 
         tipo='pago',
         concepto=concepto,
-        fecha=datetime.utcnow()
+        fecha=datetime.now(timezone.utc)
     )
     db.session.add(movimiento)
     db.session.commit()
@@ -839,23 +880,17 @@ def pagar():
     return jsonify(monedero.serialize()), 200
 
 
-# # # # # # # # # # # # # # # # # # # # 
-#     OBTENER MOVIMIENTOS DEL MONEDERO DEL USUARIO
-# # # # # # # # # # # # # # # # # # # # 
+
+## OBTENER MOVIMIENTOS DEL MONEDERO DEL USUARIO ##
 @user_blueprint.route('/movimientos/<int:usuario_id>', methods=['GET'])
 def obtener_movimientos(usuario_id):
+    """
+    1. EN la tabla MovimientoMonedero busca por id los registros de un usuario. Con el ordey_by los ordena de forma descendente (aparece primero el mas reciente). Con el .all mostramos toda la lista de movimientos.
+    2. Recorre cada movimiento encontrado, lo convierte a formato Json y lo guarda en una lista nueva. 
+    """
     movimientos = MovimientoMonedero.query.filter_by(usuario_id=usuario_id).order_by(MovimientoMonedero.fecha.desc()).all()
     lista = [m.serialize() for m in movimientos]
     return jsonify(lista), 200
-
-
-
-
-
-
-
-
-
 
 
 
