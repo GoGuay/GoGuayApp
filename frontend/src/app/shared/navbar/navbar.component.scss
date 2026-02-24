@@ -268,25 +268,6 @@ ul {
 
 }
 
-@media (max-width: 991px) {
-
-  .navbar-collapse {
-    display: flex !important;
-    flex-basis: auto;
-  }
-
-  .navbar-toggler {
-    display: none !important;
-  }
-
-  .navbar-diseno .container {
-    max-width: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    justify-content: space-between;
-  }
-}
-
 @media (max-width: 1100px) {
   .opciones-lado .nav-link {
     font-size: 0.85rem;
