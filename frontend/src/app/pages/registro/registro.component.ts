@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -14,7 +14,7 @@ import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule, FormsModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -23,7 +23,8 @@ export class RegistroComponent implements OnInit {
   formulario1: FormGroup;
   formulario2: FormGroup;
   formulario3: FormGroup;
-  paso1: boolean = false;
+  paso1: boolean = true;
+
   fechaNacimiento: string = '';
   botonHabilitadoContacto: boolean = false;
   botonHabilitadoTelefono: boolean = false;
@@ -32,6 +33,8 @@ export class RegistroComponent implements OnInit {
   fechaValida: boolean = false;
   hoy: string = new Date().toISOString();
   mostrarPassword1: boolean = false;
+  mostrarPassword2: boolean = false;
+
   EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -41,30 +44,81 @@ export class RegistroComponent implements OnInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes,
+    private translate: TranslateService,
   ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
-    this.fechaNacimiento = this.formulario1.get('fecha_nacimiento')?.value;
 
     this.formulario2 = this.fb.group({
-      nombre: ['', [Validators.required]],
-      apellidos: [{ value: '', disabled: true }, [Validators.required]],
+      nombre: ['', Validators.required],
+      apellidos: [{ value: '', disabled: true }, Validators.required],
       telefono: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-      genero: [{ value: '', disabled: true }, [Validators.required]],
-      orientacion: [{ value: '', disabled: true }, [Validators.required]],
+      genero: [{ value: '', disabled: true }, Validators.required],
+      orientacion: [{ value: '', disabled: true }, Validators.required],
     });
 
-    this.formulario3 = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
-    });
+    this.formulario3 = this.fb.group(
+      {
+        password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
+        confirmarPassword: ['', Validators.required], // Asegúrate de que solo sea ''
+      },
+      { validators: this.passwordMatchValidator },
+    );
   }
 
   ngOnInit() {
-    if (this.pasoActual === 1) {
-      this.paso1 = true;
+    this.configurarEscalera();
+  }
+
+  private configurarEscalera() {
+    // PASO 1: Habilitar fecha solo si email es válido y verificado
+    // La lógica de habilitar fecha se queda en comprobarEmailRegistrado para esperar al servidor
+
+    // PASO 2: Escalera fluida
+    this.formulario2.get('nombre')?.valueChanges.subscribe((val) => {
+      this.gestionarControl(this.formulario2, 'apellidos', !!val);
+    });
+
+    this.formulario2.get('apellidos')?.valueChanges.subscribe((val) => {
+      this.gestionarControl(this.formulario2, 'telefono', !!val);
+    });
+
+    this.formulario2.get('telefono')?.valueChanges.subscribe(() => {
+      const control = this.formulario2.get('telefono');
+      // Solo habilitar género si el teléfono cumple el patrón (9 dígitos)
+      this.gestionarControl(this.formulario2, 'genero', !!control?.valid);
+    });
+
+    this.formulario2.get('genero')?.valueChanges.subscribe((val) => {
+      this.gestionarControl(this.formulario2, 'orientacion', !!val);
+    });
+
+    // PASO 3: Escalera de contraseña
+    // this.formulario3.get('password')?.valueChanges.subscribe(() => {
+    //   const passValid = this.formulario3.get('password')?.valid;
+    //   this.gestionarControl(this.formulario3, 'confirmarPassword', !!passValid);
+    // });
+  }
+  private gestionarControl(form: FormGroup, name: string, habilitar: boolean) {
+    const control = form.get(name);
+    if (habilitar) {
+      if (control?.disabled) control.enable({ emitEvent: false });
+    } else {
+      if (control?.enabled) {
+        control.disable({ emitEvent: false });
+        control.setValue('', { emitEvent: false });
+      }
     }
+  }
+
+  // Getter de validación corregido para el Paso 2
+  get isPaso2Valido(): boolean {
+    // getRawValue permite obtener los valores aunque estén deshabilitados
+    const values = this.formulario2.getRawValue();
+    const todoLleno = values.nombre && values.apellidos && values.telefono && values.genero && values.orientacion;
+    return !!(todoLleno && this.formulario2.valid);
   }
 
   // Getter para la fecha actual
@@ -84,6 +138,9 @@ export class RegistroComponent implements OnInit {
 
   botonMostrarPassword_1() {
     this.mostrarPassword1 = !this.mostrarPassword1;
+  }
+  botonMostrarPassword_2() {
+    this.mostrarPassword2 = !this.mostrarPassword2;
   }
 
   // Función que se llama cuando hay un cambio en los inputs o checkboxes
@@ -320,31 +377,20 @@ export class RegistroComponent implements OnInit {
    * @param email
    */
   comprobarEmailRegistrado(email: string) {
-    const emailNormalizado = email.toLowerCase();
-    this.userService.verificarEmailExistente(emailNormalizado).subscribe({
-      next: (existe: boolean) => {
-        const control = this.formulario1.get('email');
-        const fechaControl = this.formulario1.get('fecha_nacimiento');
-        if (control) {
-          if (existe) {
-            control.setErrors({ ...control.errors, emailRepetido: true });
-            this.emailValido = false;
-            fechaControl?.disable();
-          } else {
-            if (control.errors?.['emailRepetido']) {
-              const { emailRepetido, ...rest } = control.errors;
-              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
-            }
-            if (!control.errors) {
-              this.emailValido = true;
-              fechaControl?.enable();
-            }
-          }
-          this.actualizarEstadoBoton();
+    if (this.formulario1.get('email')?.invalid) return;
+
+    this.userService.verificarEmailExistente(email.toLowerCase()).subscribe({
+      next: (existe) => {
+        const emailCtrl = this.formulario1.get('email');
+        const fechaCtrl = this.formulario1.get('fecha_nacimiento');
+        if (existe) {
+          emailCtrl?.setErrors({ emailRepetido: true });
+          this.emailValido = false;
+          fechaCtrl?.disable();
+        } else {
+          this.emailValido = true;
+          fechaCtrl?.enable();
         }
-      },
-      error: (err: any) => {
-        console.error('Error al verificar email:', err);
       },
     });
   }
@@ -447,9 +493,63 @@ export class RegistroComponent implements OnInit {
    * @param event
    * @param idSiguiente
    */
-  enfocarSiguiente(event: any, idSiguiente: string) {
-    event.preventDefault(); // detiene el tab por defecto
-    const siguiente = document.getElementById(idSiguiente);
-    if (siguiente) siguiente.focus();
+  // enfocarSiguiente(event: any, idSiguiente: string) {
+  //   event.preventDefault(); // detiene el tab por defecto
+  //   const siguiente = document.getElementById(idSiguiente);
+  //   if (siguiente) siguiente.focus();
+  // }
+
+  /**
+   * Si hay nuevaPassword y además es diferente a la actual, habilitamos isNuevaPassword1 y reseteamos el mensaje de error.
+   * De lo contrario, dejamos de nuevoesNuevaPasswor1 en false y lanzamos mensaje de error.
+   * Resetea el campo de nuevaPassword2 para que "obligue" al usuario a escribir algo y valida de nuevo.
+   */
+  // validarNuevaPassword() {
+  //   if (this.password) {
+  //     this.isNuevaPassword1Valida = true;
+  //     this.errorMensaje = '';
+  //   } else {
+  //     this.isNuevaPassword1Valida = false;
+  //     this.translate.get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL').subscribe((translation) => {
+  //       this.errorMensaje = translation;
+  //     });
+  //   }
+  //   this.confirmarPassword = '';
+  //   this.isConfirmacionPasswordValida = false;
+  // }
+
+  /**
+   * Si hay nuevaPassword2 y además es igual que la nuevaPassword1 pone la confirmación en true
+   * DE lo contrario deja la confirmación en false y lanza un mensaje de error
+   */
+  // validarConfirmacionPassword() {
+  //   if (this.confirmarPassword && this.confirmarPassword === this.password) {
+  //     this.isNuevaPassword1Valida = true;
+  //     this.errorMensaje = '';
+  //   } else {
+  //     this.isNuevaPassword1Valida = false;
+  //     this.translate.get('AJUSTESAPP.PASSWORD.NO_COINCIDEN').subscribe((translation) => {
+  //       this.errorMensaje = translation;
+  //     });
+  //   }
+  // }
+
+  // Este es el validador que sustituye a tus funciones manuales
+  passwordMatchValidator(g: FormGroup) {
+    const pass = g.get('password')?.value;
+    const conf = g.get('confirmarPassword')?.value;
+
+    // Si el campo de confirmar está vacío, no ponemos error todavía
+    if (!conf) {
+      return null;
+    }
+
+    if (pass !== conf) {
+      g.get('confirmarPassword')?.setErrors({ noCoincide: true });
+      return { mismatch: true };
+    }
+
+    // Si coinciden, limpiamos los errores
+    return null;
   }
 }

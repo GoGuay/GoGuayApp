@@ -5,7 +5,7 @@
 
 }
 
-select{
+select {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   border-radius: 35px;
 }
@@ -38,6 +38,15 @@ select{
   outline: none;
 }
 
+.input-deshabilitado {
+  background-color: #f4f4f4 !important;
+  color: #888;
+  cursor: not-allowed;
+  /* El pointer-events: none evita clics, pero NO evita el foco del Tabulador */
+  pointer-events: none;
+  opacity: 0.7;
+}
+
 // CONFIGURACIÓN PARA EL MENSAJE DE ALERTA
 .alert-warning {
   color: #856404;
@@ -52,6 +61,6 @@ select.ng-invalid.ng-touched {
   border: 2px solid red;
 }
 
-.dato-obligatorio{
+.dato-obligatorio {
   color: red;
 }

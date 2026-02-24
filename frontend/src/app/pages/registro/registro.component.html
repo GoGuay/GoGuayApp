@@ -56,8 +56,7 @@
             aria-describedby="fnacimientoHelp"
             required
             formControlName="fecha_nacimiento"
-            (change)="onFechaChange()"
-            (keydown.tab)="enfocarSiguiente($event, 'btnSiguiente')" />
+            (change)="onFechaChange()" />
           <!-- Mensaje de ayuda accesible -->
           <span id="fnacimientoHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.FNACIMIENTO.AYUDA' | translate }}</span>
           <div class="text-danger" *ngIf="formulario1.get('fecha_nacimiento')?.invalid && formulario1.get('fecha_nacimiento')?.touched">
@@ -253,6 +252,7 @@
       </ul>
     </div>
 
+    <!-- Contraseña -->
     <div class="container d-flex justify-content-center">
       <form [formGroup]="formulario3" class="formulario">
         <div class="mb-3">
@@ -264,8 +264,7 @@
             <input
               [type]="mostrarPassword1 ? 'text' : 'password'"
               formControlName="password"
-              type="password"
-              required
+              tabindex="0"
               class="form-control form-input"
               id="password" />
             <button
@@ -276,10 +275,39 @@
               <i class="bi" [ngClass]="mostrarPassword1 ? 'bi-eye-slash' : 'bi-eye'"></i>
             </button>
           </div>
-
           <span class="text-danger" *ngIf="formulario3.get('password')?.errors?.['pattern']">
             {{ 'REGISTRO.FORM3.CONTRASEÑA.FORMATO' | translate }}
           </span>
+          <!-- Confirmar password de registro -->
+          <div class="mt-4">
+            <label for="confirmarPassword" class="form-label mb-1">
+              {{ 'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate }}
+            </label>
+            <div class="position-relative">
+              <input
+                [type]="mostrarPassword2 ? 'text' : 'password'"
+                class="form-control"
+                id="confirmarPassword"
+                tabindex="0"
+                [readonly]="formulario3.get('password')?.invalid"
+                [class.input-deshabilitado]="formulario3.get('password')?.invalid"
+                [value]="formulario3.get('confirmarPassword')?.value || ''"
+                formControlName="confirmarPassword"
+                aria-label="Campo para confirmar la nueva contraseña" />
+
+              <button
+                type="button"
+                (click)="botonMostrarPassword_2()"
+                class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                tabindex="-1">
+                <i class="bi" [ngClass]="mostrarPassword2 ? 'bi-eye-slash' : 'bi-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="formulario3.get('confirmarPassword')?.hasError('noCoincide') && formulario3.get('confirmarPassword')?.touched">
+            <small class="text-danger">{{ 'AJUSTESAPP.PASSWORD.NO_COINCIDEN' | translate }}</small>
+          </div>
         </div>
       </form>
     </div>
@@ -287,7 +315,7 @@
 
   <nav aria-label="Page navigation example">
     <div class="d-flex justify-content-center">
-      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg_secondary" (click)="pasoAnterior()">
+      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg_secondary" tabindex="0" (click)="pasoAnterior()">
         {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
       </button>
 
@@ -296,7 +324,7 @@
         id="btnSiguiente"
         class="btn btn_bg ms-3"
         *ngIf="pasoActual !== 3"
-        [disabled]="(pasoActual === 1 && !validarEmailYFecha) || (pasoActual === 2 && !formulario2.valid) || (pasoActual === 3 && !formulario3.valid)"
+        [disabled]="(pasoActual === 1 && !validarEmailYFecha) || (pasoActual === 2 && !isPaso2Valido)"
         (click)="siguientePaso()">
         {{ 'REGISTRO.BOTONES.SIGUIENTE' | translate }}
       </button>
