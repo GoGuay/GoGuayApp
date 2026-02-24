@@ -8,7 +8,7 @@ import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
-import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet, IonMenuToggle } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { MenuController } from '@ionic/angular';
@@ -35,7 +35,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     IonFooter,
     IonRouterOutlet,
     TranslateModule,
-    RouterModule
+    RouterModule,
+    IonMenuToggle
   ],
   providers: [MenuController]
 })
