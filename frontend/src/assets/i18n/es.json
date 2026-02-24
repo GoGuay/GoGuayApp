@@ -18,9 +18,9 @@
     "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
     "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
   },
-
   "NavBar Home": "Opciones del navbar que aparece en el Home",
   "NAVBAR": {
+    "INICIO": "Inicio",
     "QUIENES": "Quienes somos",
     "FAQS": "FAQs",
     "DECALOGO": "Decálogo",
@@ -41,7 +41,6 @@
       "SALIR": "Salir"
     }
   },
-
   "_Home": "Por secciones",
   "HOME": {
     "JUMBO": {
@@ -59,7 +58,6 @@
       "TITULO": "¿TIENES DUDAS?"
     }
   },
-
   "__Eventos": "Sección Eventos del Home",
   "EVENTOS": {
     "TITULO": "¿Quieres ir a algún evento?",
@@ -76,7 +74,6 @@
     },
     "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: PrideRide no se responsabiliza de cualquier modificación realizada por la organización del evento."
   },
-
   "SELECTOR_GENERO": {
     "H_CIS": "Hombre Cis",
     "M_CIS": "Mujer Cis",
@@ -99,7 +96,6 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
-
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -274,14 +270,12 @@
       "FINALIZAR_REGISTRO": "Finalizar registro"
     }
   },
-
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
     "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
     "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
     "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
-
     "MI_CORREO": "Mi correo electrónico",
     "MI_TFNO": "Mi teléfono",
     "COM_COMERCIALES": "Comunicaciones comerciales",
@@ -315,13 +309,11 @@
     "NUMERO_DOCUMENTO": "Número de documento sin espacios",
     "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
     "BOTÓN_VERIFICAR_IDENTIDAD": "Confirmar documento",
-
     "VAVANZADA": {
       "TITULO": "Verificación avanzada",
       "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
     }
   },
-
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
   "AJUSTESAPP": {
     "TITULO": "Ajustes",
@@ -366,10 +358,8 @@
       "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
       "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
     },
-
     "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
   },
-
   "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
   "FORGOT_PW": {
     "TITULO": "¿CONTRASEÑA OLVIDADA",
@@ -378,21 +368,18 @@
     "TOAST_TITULO": "Correo enviado",
     "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
   },
-
   "TOKEN_EXPIRADO": "Pagina que se muestra cuando el token del correo ha caducado",
   "TOKEN_EXP": {
     "TITULO": "El enlace ha caducado",
     "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual, ha caducado.",
     "SUBTITULO2": "Debes solicita otro enlace a través de la página de Ajustes en el menú de usuario."
   },
-
   "TOKEN_YA_USADO_": "Página que se muestra cuando el token del correo ya ha sido usado",
   "TOKEN_YA_USADO": {
     "TITULO": "El enlace ya ha sido usado",
     "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual ya se ha usado.",
     "SUBTITULO2": "Puedes volver a cambiar tu contraseña actual a través de la página Ajustes en el menú de usuario."
   },
-
   "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
   "SALDO": {
     "SALDOTRANSF": "Saldo y transferencias",
@@ -422,7 +409,6 @@
     "TRANS_CONCEPTO": "Transferencia a cuenta",
     "SALDO": "Saldo"
   },
-
   "__Botones": "Modal de Mi perfil y componente mi perfil",
   "BOTON": {
     "ANADIR_VEHICULO": "Añadir vehículo",
@@ -442,13 +428,11 @@
     "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
-
   "_Footer": "Links del footer",
   "FOOTER": {
     "TERMS": "Términos y condiciones",
     "COOKIES": "Cookies"
   },
-
   "_Búsqueda de viaje": "/busqueda-viajes",
   "BUSQUEDA": {
     "FILTRAR_POR": "Filtrar por...",
@@ -476,6 +460,19 @@
   "CENTRODEAYUDA": {
     "TITULO": "Centro de ayuda",
     "SUBTITULO": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte"
+  },
+  "_BUSCADOR": "/buscador",
+  "BUSCADOR": {
+    "TITULO": "¿Estás buscando un viaje?",
+    "BUSCAR_VIAJE_DESDE": "Desde donde",
+    "BUSCAR_VIAJE_HASTA": "Hasta donde",
+    "BUSCAR_VIAJE_CUANDO": "Cuando"
+  },
+  "_JUMBOTRON": "",
+  "JUMBOTRON": {
+    "SLOGAN": "Tu camino, tu comunidad",
+    "QUIENES_SOMOS_SLOGAN": "Tu camino, tu comunidad",
+    "BUSCAR_VIAJE_SLOGAN": "Encuentra tu viaje ideal"
   },
   "ANTIGUO DEBAJO": "",
   "NUEVO_VIAJE2": {

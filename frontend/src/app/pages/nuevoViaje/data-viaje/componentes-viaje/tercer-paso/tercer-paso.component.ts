@@ -18,6 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject, takeUntil } from 'rxjs';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MessageService } from 'primeng/api';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 @Component({
   selector: 'app-tercer-paso',
@@ -37,7 +38,8 @@ import { MessageService } from 'primeng/api';
     MatIconModule,
     NgxSpinnerModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    SpinnerComponent
   ],
   templateUrl: './tercer-paso.component.html',
   styleUrls: ['./tercer-paso.component.scss'],
@@ -57,8 +59,8 @@ export class TercerPasoComponent implements OnInit {
 
   waypoints: google.maps.DirectionsWaypoint[] = [];
 
-  private directionsService: google.maps.DirectionsService;
-  private directionsRenderer: google.maps.DirectionsRenderer;
+  private directionsService!: google.maps.DirectionsService;
+  private directionsRenderer!: google.maps.DirectionsRenderer;
   private destroy$ = new Subject<void>();
 
   sugerenciasParadas: any[] = [];
@@ -91,24 +93,41 @@ export class TercerPasoComponent implements OnInit {
     fullscreenControl: false,
   };
 
+  markerOrigin: google.maps.LatLngLiteral | null = null;
+  apiCargada: boolean = false;
+
+  public directionsOptions: google.maps.DirectionsRendererOptions = {
+    polylineOptions: {
+      strokeColor: '#B7E0B4', // Tu color personalizado
+      strokeOpacity: 1.0,
+      strokeWeight: 6,
+    },
+    suppressMarkers: false, // Mantener marcadores A y B
+  };
+
   constructor(private router: Router,
     private travelService: TravelService,
     private messageService: MessageService,
     private spinner: NgxSpinnerService) {
-    this.directionsService = new google.maps.DirectionsService();
 
-
-    this.directionsRenderer = new google.maps.DirectionsRenderer({
-      polylineOptions: {
-        strokeColor: '#B3B5E6',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-      },
-      suppressMarkers: false, // Mostrar los marcadores de inicio y fin
-    });
   }
 
   ngOnInit() {
+    if (typeof google !== 'undefined' && google.maps) {
+      this.apiCargada = true;
+      this.inicializarServiciosMapas();
+    } else {
+      // Si no está, podemos esperar un poco o escuchar un evento de carga
+      // Esta es una solución rápida para desarrollo:
+      const checkGoogle = setInterval(() => {
+        if (typeof google !== 'undefined' && google.maps) {
+          this.apiCargada = true;
+          this.inicializarServiciosMapas();
+          clearInterval(checkGoogle);
+        }
+      }, 500);
+    }
+
     this.travelService.viajeData$
       .pipe(takeUntil(this.destroy$)) // Elimina la suscripción al salir del componente.
       .subscribe((viajeData) => {
@@ -145,6 +164,18 @@ export class TercerPasoComponent implements OnInit {
     }, 500);
   }
 
+  private inicializarServiciosMapas() {
+    this.directionsService = new google.maps.DirectionsService();
+    this.directionsRenderer = new google.maps.DirectionsRenderer({
+      polylineOptions: {
+        strokeColor: '#B7E0B4',
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+      },
+      suppressMarkers: false,
+    });
+  }
+
   /**
    * Función para saber si se está marcando la opción "Con peajes" o "Sin peajes"
    * Cada vez que se cambia la opción se vuelven a buscar las rutas,
@@ -159,6 +190,43 @@ export class TercerPasoComponent implements OnInit {
   }
 
   /**
+   * Función para obtener el click que se ha realizado en el mapa.
+   * Recibe la ubicación marcada y actualiza la ruta seleccionada.
+   * 
+   * @param event Recibe el click en el mapa de Google
+   */
+  onMapClick(event: google.maps.MapMouseEvent) {
+    if (event.latLng && typeof event.latLng.lat === 'function') {
+      const latLng = event.latLng;
+
+      this.markerOrigin = { lat: latLng.lat(), lng: latLng.lng() };
+
+      this.routes = [];
+      this.selectedRoute = null;
+
+      const geocoder = new google.maps.Geocoder();
+      this.spinner.show();
+
+      geocoder.geocode({ location: latLng }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          this.origen = results[0].formatted_address;
+
+          const currentData = this.travelService.getViajeData();
+          this.travelService.setViajeData({
+            ...currentData,
+            origen: this.origen,
+            coordsOrigen: this.markerOrigin
+          });
+
+          this.buscarRutas(latLng, this.destino, !this.marcaPeajes);
+        } else {
+          this.spinner.hide();
+        }
+      });
+    }
+  }
+
+  /**
   * Función para buscar rutas.
   * --------------------------
   * Esta función utiliza un servicio propio de Google: "directionsService"
@@ -170,65 +238,66 @@ export class TercerPasoComponent implements OnInit {
   * @returns Devuelve una lista de rutas sugeridas en función del Origen y Destino
   */
   buscarRutas(
-    origen: string,
+    origen: string | google.maps.LatLng | google.maps.LatLngLiteral,
     destino: string,
     evitarPeajes: boolean = false
   ): void {
+    if (!origen || !destino) {
+      console.error('Faltan datos');
+      return;
+    }
+
     this.isLoadingRoutes = true;
     this.spinner.show();
-    setTimeout(() => {
-      const currentViajeData = this.travelService.getViajeData();
-      if (!origen || !destino) {
-        console.error('El origen y destino deben estar definidos.');
-        return;
-      }
 
-      if (!this.googleMap?.googleMap) {
-        console.error("El mapa aún no está disponible.");
-        return;
-      }
+    const currentViajeData = this.travelService.getViajeData();
+    const fechaSalida = currentViajeData.fecha_salida ? new Date(currentViajeData.fecha_salida) : new Date();
 
-      const fechaSalida = currentViajeData.fecha_salida
-        ? new Date(currentViajeData.fecha_salida)
-        : new Date();
-
-      this.directionsService.route(
-        {
-          origin: origen,
-          destination: destino,
-          travelMode: google.maps.TravelMode.DRIVING,
-          provideRouteAlternatives: true,
-          drivingOptions: {
-            departureTime: fechaSalida,
-            trafficModel: google.maps.TrafficModel.OPTIMISTIC,
-          },
-          unitSystem: google.maps.UnitSystem.METRIC,
-          region: 'ES',
-          avoidTolls: evitarPeajes,
+    this.directionsService.route(
+      {
+        origin: origen,
+        destination: destino,
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+        drivingOptions: {
+          departureTime: fechaSalida,
+          trafficModel: google.maps.TrafficModel.OPTIMISTIC,
         },
-        (response, status) => {
-          this.isLoadingRoutes = false;
-          this.spinner.hide();
-          if (status === 'OK' && response) {
-            if (response.request.avoidTolls === false) {
-              this.marcaPeajes = true;
-            } else {
-              this.marcaPeajes = false;
+        unitSystem: google.maps.UnitSystem.METRIC,
+        region: 'ES',
+        avoidTolls: evitarPeajes,
+      },
+      (response, status) => {
+        this.spinner.hide();
+        this.isLoadingRoutes = false;
+
+        if (status === 'OK' && response) {
+          // Actualizamos las rutas para el *ngFor de la izquierda
+          this.routes = response.routes;
+
+          // Sincronizamos el marcador de peajes
+          this.marcaPeajes = !response.request.avoidTolls;
+
+          this.directionsRenderer.setOptions({
+            polylineOptions: {
+              strokeColor: '#B7E0B4',
+              strokeWeight: 6,
+              strokeOpacity: 0.9
             }
-            this.routes = response.routes;
-            this.directionsRenderer.setDirections(response);
-            this.sugerenciasParadas = [];
+          });
 
-          } else {
-            console.error('Error al calcular rutas:', status);
-            this.routes = [];
-          }
+          // Pintamos la ruta en el mapa
+          this.directionsRenderer.setDirections(response);
+
+          // Seleccionamos la primera por defecto para que aparezca la info detallada
+          this.selectRoute(0);
+        } else {
+          console.error('Error de Directions:', status);
+          this.routes = [];
         }
-      );
-    }, 2000)
+      }
+    );
   }
-
-
 
   /**
    * Función para actualizar la ruta cuando se añade una parada.

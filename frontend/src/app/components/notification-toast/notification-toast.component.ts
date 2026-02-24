@@ -128,6 +128,16 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
 
   /**
    * Función para cerrar un toast específico.
+   * @param event Recibe el evento
+   * @param toast Recibe los datos de la notificación toast
+   */
+  onCerrarClick(event: Event, toast: any) {
+    event.stopPropagation(); // --> Esto evita que se dispare el click del div padre
+    this.cerrarToast(toast);
+  }
+
+  /**
+   * Función para cerrar un toast específico.
    * @param toast --> Datos de la notificación toast a cerrar
    * @param desdeRedireccion --> Indica si el cierre es debido a una redirección
    */

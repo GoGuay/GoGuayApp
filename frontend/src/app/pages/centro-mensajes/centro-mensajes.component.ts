@@ -55,12 +55,32 @@ export class CentroMensajesPage implements OnInit {
         }
     }
 
+    /**
+     * Funcion que abre el chat de una conversacion
+     * 
+     * @param conv Conversacion a la que se le va a abrir el chat
+     */
     abrirChat(conv: any) {
-        this.navCtrl.navigateForward(['/chat', conv.id], {
-            animated: false  // -> Elimina las animaciones de navegación de Ionic
+        const usuarioId = this.userData.usuario.id;
+
+        this.messagingService.marcarComoLeido(conv.id, usuarioId).subscribe({
+            next: () => {
+                // Navegamos al chat
+                this.navCtrl.navigateForward(['/chat', conv.id], {
+                    animated: false
+                });
+            },
+            error: (err) => {
+                console.error("No se pudo marcar como leído al entrar", err);
+                // Navegamos de todos modos aunque falle la marca
+                this.navCtrl.navigateForward(['/chat', conv.id], { animated: false });
+            }
         });
     }
 
+    /**
+     * Funcion que carga las conversaciones
+     */
     cargarConversaciones() {
         this.messagingService.getConversaciones(this.userData.usuario.id).subscribe(data => {
             this.conversaciones = data;
@@ -68,34 +88,46 @@ export class CentroMensajesPage implements OnInit {
         });
     }
 
+    /**
+     * Funcion que navega hacia la pagina de inicio
+     */
     goBack() {
         this.navCtrl.navigateBack('/home', {
             animated: false // -> Elimina las animaciones de navegación de Ionic
         });
     }
 
+    /**
+     * Funcion que navega hacia la pagina de busqueda de viajes
+     */
     irABuscar() {
         this.navCtrl.navigateForward('/busqueda-viajes');
     }
 
+    /**
+     * Funcion que abre el menu de opciones de una conversacion
+     * 
+     * @param ev Evento que se dispara al hacer clic en el menu
+     * @param conv Conversacion a la que se le va a abrir el menu
+     */
     async abrirOpciones(ev: any, conv: any) {
-        ev.stopPropagation(); // Evita que se abra el chat al hacer clic en los puntos
+        ev.stopPropagation();
 
         const popover = await this.popoverCtrl.create({
-            component: 'popover-opciones', // Podemos usar un template o un componente
+            component: 'popover-opciones',
             event: ev,
             translucent: true,
             mode: 'ios',
             componentProps: { conversacion: conv }
         });
-
-        // En lugar de un componente externo, para algo rápido podemos usar ActionSheetController
-        // o crear un menú dinámico. Aquí te muestro cómo manejar las acciones:
-
-        // Para este ejemplo, usaremos un Action Sheet que es más nativo para móviles:
         this.mostrarMenuAcciones(conv);
     }
 
+    /**
+     * Funcion que muestra el menu de acciones de una conversacion
+     * 
+     * @param conv Conversacion a la que se le va a mostrar el menu
+     */
     async mostrarMenuAcciones(conv: any) {
         const actionSheet = await this.alertCtrl.create({
             header: 'Opciones de chat',
@@ -123,17 +155,33 @@ export class CentroMensajesPage implements OnInit {
         await actionSheet.present();
     }
 
+    /**
+     * Funcion que alterna el estado de lectura de una conversacion
+     * 
+     * @param conv Conversacion a la que se le va a alterar el estado de lectura
+     */
     alternarEstadoLeido(conv: any) {
-        const accionLeer = conv.no_leidos > 0;
+        const marcarComoLeido = conv.no_leidos > 0;
         const usuarioId = this.userData.usuario.id;
-        this.messagingService.cambiarEstadoLectura(conv.id, usuarioId, accionLeer).subscribe({
+
+        console.log(`Conversación ${conv.id}. Acción: ${marcarComoLeido ? 'Leer' : 'No Leer'}`);
+
+        this.messagingService.cambiarEstadoLectura(conv.id, usuarioId, marcarComoLeido).subscribe({
             next: () => {
-                this.cargarConversaciones(); // Refresca la lista y los badges
+                console.log('Cambio de estado exitoso');
+                this.cargarConversaciones(); // Recarga la lista para ver el badge rojo
             },
-            error: (err) => console.error('Error al cambiar estado:', err)
+            error: (err) => {
+                console.error('Error al cambiar estado:', err);
+            }
         });
     }
 
+    /**
+     * Funcion que confirma la eliminacion de una conversacion
+     * 
+     * @param conv Conversacion a la que se le va a confirmar la eliminacion
+     */
     async confirmarEliminacion(conv: any) {
         const alert = await this.alertCtrl.create({
             header: '¿Eliminar conversación?',

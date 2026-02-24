@@ -8,27 +8,26 @@ import { RouterModule } from '@angular/router';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { SpinnerComponent } from "../../components/spinner/spinner.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-centro-ayuda',
   templateUrl: './centro-ayuda.page.html',
   styleUrls: ['./centro-ayuda.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, SpinnerComponent]
+  imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, TranslateModule]
 })
 export class CentroAyudaPage implements OnInit {
-  
+
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
-  isLoading: boolean = true;
 
-  constructor() { 
-    this.loadData();
+  constructor() {
+
   }
 
   ngOnInit() {
-    
+
     /**
      * Se recoge la información del usuario de la caché si la hay,
      * en caso de no haber información, userData sería un objeto vacío {}.
@@ -46,11 +45,5 @@ export class CentroAyudaPage implements OnInit {
     } else {
       this.userLoggedIn = false;
     }
-  }
-
-  loadData() {
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000);
   }
 }

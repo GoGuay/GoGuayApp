@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MessagingService {
-    private apiUrl = 'http://127.0.0.1:5000';
+    private apiUrl = API_URL_BASE;
 
     constructor(private http: HttpClient) { }
 
@@ -51,7 +52,10 @@ export class MessagingService {
      */
     cambiarEstadoLectura(conversacionId: number, usuarioId: number, marcarComoLeido: boolean): Observable<any> {
         const estado = marcarComoLeido ? 'leer' : 'no-leer';
-        return this.http.patch(`${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`, {});
+        // Prueba forzando la URL si sospechas del prefijo
+        const url = `${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`;
+        console.log("Llamando a:", url);
+        return this.http.patch(url, {});
     }
 
     /**

@@ -2,45 +2,72 @@
 
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron
-      [title]="'Un espacio seguro para compartir cada kilómetro.'"
-      [imageSrc]="'../../assets/folder/jumbo3.jpg'"
-      [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
+    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
+      [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
   </div>
 
-  <div class="container">
-    <div class="d-flex justify-content-center mb3">
-      <h1>FAQ´s - PREGUNTAS FRECUENTES</h1>
+  <div class="container mt-4">
+    <div class="text-center mb-4">
+      <h1 class="titulo-faq">Preguntas Frecuentes</h1>
+      <p>Todo lo que necesitas saber para viajar con tranquilidad.</p>
     </div>
 
     <ion-accordion-group class="mb-3">
-      <ion-accordion value="registro" class="mb-3">
+
+      <ion-accordion value="espacioSeguro" class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">¿Cómo puedo registrarme?</ion-label>
+          <ion-label>¿Por qué Prideride es un espacio seguro?</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Para registrarte, haz clic en "Crear cuenta", introduce tu información personal y verifica tu email para completar el registro.
+        <div slot="content" class="p-3 text-muted">
+          Prideride nace para conectar a personas del colectivo LGBTIQ+ y aliados, eliminando el miedo al prejuicio.
+          Verificamos perfiles y fomentamos un sistema de reseñas basado en el respeto y la identidad.
         </div>
       </ion-accordion>
-      <ion-accordion value="editarPerfil" class="mb-3">
+
+      <ion-accordion value="publicarViaje" class="mb-3 shadow-sm">
         <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">¿Cómo puedo editar mi perfil?</ion-label>
+          <ion-label>¿Cómo puedo publicar un viaje?</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">Ve a la sección de "Perfil" en el menú, realiza los cambios que desees y guarda la configuración.</div>
-      </ion-accordion>
-      <ion-accordion value="seguridadDatos" class="mb-3">
-        <ion-item slot="header" class="white-header">
-          <ion-label class="cabecera">¿Qué medidas de seguridad se aplican a los datos personales?</ion-label>
-        </ion-item>
-        <div slot="content" class="p-3">
-          Implementamos estándares avanzados de cifrado para proteger tu información personal. Tus datos nunca serán compartidos sin tu
-          consentimiento.
+        <div slot="content" class="p-3 text-muted">
+          Si tienes coche, pulsa en "Publicar", indica el origen, destino, fecha y el número de plazas disponibles. ¡Tú
+          eliges con quién compartir tu trayecto!
         </div>
       </ion-accordion>
+
+      <ion-accordion value="reservar" class="mb-3 shadow-sm">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Cómo reservo una plaza?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          Busca tu destino en el buscador principal, elige el conductor que más te encaje y solicita tu plaza. Una vez
+          aceptada, podrás chatear para concretar el punto de encuentro.
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="identidad" class="mb-3 shadow-sm">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Se respeta mi identidad de género en la app?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          Totalmente. En tu perfil puedes configurar tu nombre sentido y pronombres. Queremos que te sientas libre de
+          ser quien eres desde que subes al coche hasta que bajas.
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="seguridadDatos" class="mb-3 shadow-sm">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Qué pasa con mis datos personales?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          Implementamos cifrado avanzado para proteger tu información. Tus datos de contacto solo se comparten con el
+          conductor/pasajero una vez confirmada la reserva.
+        </div>
+      </ion-accordion>
+
     </ion-accordion-group>
   </div>
 
-  <div class="container d-flex justify-content-center">
+  <div class="container d-flex justify-content-center mt-4">
     <app-ventana-dudas></app-ventana-dudas>
   </div>
 </ion-content>

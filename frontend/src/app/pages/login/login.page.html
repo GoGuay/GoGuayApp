@@ -1,12 +1,6 @@
 <div class="container">
   <div class="d-flex justify-content-center mt-4">
-    <img
-      src="../../../assets/logo/PRIDECAR.png"
-      alt="Logo"
-      class="logo_login"
-      type="button"
-      [routerLink]="['/home']"
-    />
+    <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo_login" type="button" [routerLink]="['/home']" />
   </div>
 
   <div>
@@ -16,82 +10,48 @@
         <!-- Email -->
         <div class="mb-3 row">
           <label for="emailFormControl" class="form-label">Email</label>
-          <input
-            type="email"
-            id="emailFormControl"
-            class="form-control"
-            formControlName="emailFormControl"
-            aria-describedby="emailHelpBlock"
-            placeholder="Escribe tu email aquí"
-          />
+          <input type="email" id="emailFormControl" class="form-control" formControlName="emailFormControl"
+            aria-describedby="emailHelpBlock" placeholder="Escribe tu email aquí" />
           <div *ngIf="isFieldInvalid('emailFormControl')" class="error-message">
-            <small
-              *ngIf="loginForm.get('emailFormControl')?.hasError('required')"
-              >El email es <strong>obligatorio</strong>.</small
-            >
-            <small *ngIf="loginForm.get('emailFormControl')?.hasError('email')"
-              >Por favor, introduce un email válido.</small
-            >
+            <small *ngIf="loginForm.get('emailFormControl')?.hasError('required')">El email es
+              <strong>obligatorio</strong>.</small>
+            <small *ngIf="loginForm.get('emailFormControl')?.hasError('email')">Por favor, introduce un email
+              válido.</small>
           </div>
         </div>
 
         <!-- Password -->
         <div class="mb-3 row">
           <label for="passwordFormControl" class="form-label">Contraseña</label>
-          <input
-            type="password"
-            id="passwordFormControl"
-            class="form-control"
-            formControlName="passwordFormControl"
-            aria-describedby="passwordHelpBlock"
-            placeholder="Escribe tu contraseña aquí"
-          />
-          <div
-            *ngIf="isFieldInvalid('passwordFormControl')"
-            class="error-message"
-          >
-            <small
-              *ngIf="loginForm.get('passwordFormControl')?.hasError('required')"
-              >La contraseña es <strong>obligatoria</strong>.</small
-            >
+          <input type="password" id="passwordFormControl" class="form-control" formControlName="passwordFormControl"
+            aria-describedby="passwordHelpBlock" placeholder="Escribe tu contraseña aquí" />
+          <div *ngIf="isFieldInvalid('passwordFormControl')" class="error-message">
+            <small *ngIf="loginForm.get('passwordFormControl')?.hasError('required')">La contraseña es
+              <strong>obligatoria</strong>.</small>
           </div>
         </div>
 
         <!-- Check para recordar datos -->
         <div class="mb-3 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="check"
-            formControlName="check"
-          />
+          <input type="checkbox" class="form-check-input" id="check" formControlName="check" />
           <label class="form-check-label" for="check">Recuérdame</label>
         </div>
         <div class="text-start mb-4">
-          <a
-            class="small"
-            href="'../../../forgot-password//forgot-password.page.html"
-            >¿No recuerdas tu contraseña actual?</a
-          >
+          <a class="small" href="'../../../forgot-password//forgot-password.page.html">¿No recuerdas tu contraseña
+            actual?</a>
         </div>
         <div class="mb-3 row">
-          <label class="form-label" for="register"
-            >¿Aún no estás registrado?
+          <label class="form-label" for="register">¿Aún no estás registrado?
             <a type="button" href="/registro" class="enlace">
-              <strong>Registrarse</strong></a
-            ></label
-          >
+              <strong>Registrarse</strong></a></label>
         </div>
-        <button
-          mat-raised-button
-          class="btn_bg"
-          type="submit"
-          [disabled]="loginForm.invalid"
-        >
+        <button mat-raised-button class="btn_bg" type="submit" [disabled]="loginForm.invalid">
           Iniciar sesión
         </button>
       </form>
     </div>
-    <div></div>
+    <div>
+      <app-spinner *ngIf="spinner_de_carga"></app-spinner>
+    </div>
   </div>
 </div>

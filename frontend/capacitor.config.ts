@@ -1,12 +1,15 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.tuempresa.prideride',
+  appId: 'com.prideride.prideride',
   appName: 'PrideRide',
   webDir: 'www/browser',
   server: {
-    androidScheme: 'http',
-    cleartext: true
+    androidScheme: 'https',
+    cleartext: true,
+    allowNavigation: [
+      'pride-ride-backend.vercel.app'
+    ]
   }
 };
 

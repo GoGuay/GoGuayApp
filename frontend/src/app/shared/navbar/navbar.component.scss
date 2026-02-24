@@ -12,7 +12,8 @@ ion-button {
 
 .logo {
   max-width: 75px;
-  width: 100%; /* Se adapta al contenedor */
+  width: 100%;
+  /* Se adapta al contenedor */
   height: auto;
   flex-shrink: 1;
 }
@@ -30,7 +31,7 @@ ion-button {
 
 .opciones {
   display: flex;
-  flex-wrap: nowrap !important; 
+  flex-wrap: nowrap !important;
   width: 100%;
   justify-content: space-evenly;
 }
@@ -161,6 +162,7 @@ ion-button {
   visibility: visible;
   transform: translateY(0);
 }
+
 .navbar .dropdown-menu li {
   transition: transform 0.2s ease-in-out;
 }
@@ -229,7 +231,8 @@ ul {
 }
 
 .navbar-diseno .container {
-  max-width: 1200px;
+  // max-width: 1200px;
+  max-width: 957px;
 }
 
 .opciones .nav-item {
@@ -253,12 +256,42 @@ ul {
   .navbar-collapse {
     justify-content: space-between !important;
   }
+
+
+}
+
+@media (min-width: 768px) and (max-width: 1500px) {
+
+  .navbar-diseno .container {
+    max-width: 1200px;
+  }
+
+}
+
+@media (max-width: 991px) {
+
+  .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
+
+  .navbar-toggler {
+    display: none !important;
+  }
+
+  .navbar-diseno .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between;
+  }
 }
 
 @media (max-width: 1100px) {
   .opciones-lado .nav-link {
     font-size: 0.85rem;
   }
+
   .logo {
     width: 60px;
   }
@@ -266,23 +299,28 @@ ul {
 
 @media (max-width: 1200px) {
   .opciones li {
-    padding: 0 5px; /* Menos espacio entre botones */
+    padding: 0 5px;
+    /* Menos espacio entre botones */
   }
-  
+
   .logo {
-    width: 50px; /* Logo más pequeño */
+    width: 50px;
+    /* Logo más pequeño */
   }
 
   .caja_imagen_perfil {
-    width: 45px; /* Avatar más pequeño */
+    width: 45px;
+    /* Avatar más pequeño */
     height: 45px;
   }
-  
+
   /* Ocultamos el texto "Buscar viaje" y dejamos solo la lupa si es necesario */
   /* O simplemente reducimos el gap */
   .navbar-nav {
     gap: 2px;
   }
+
+
 }
 
 @media (max-width: 576px) {
@@ -290,7 +328,7 @@ ul {
     position: absolute;
     top: 100%;
     left: auto;
-    right: -26px;
+    right: 4px;
     transform: translateY(-10px);
     z-index: 1050;
     box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
@@ -304,6 +342,7 @@ ul {
     width: 60px;
     border-radius: 50%;
   }
+
   .btnNotificaciones img {
     width: 45px;
     height: 40px;
@@ -322,6 +361,11 @@ ul {
 .mobile-navbar {
   position: relative;
   width: auto;
+
+  .gap-logged-in {
+    margin-left: 30px;
+    transition: margin 0.3s ease;
+  }
 }
 
 .centered-logo {
@@ -417,16 +461,29 @@ ul {
   .desktop-only {
     display: none !important;
   }
+
   .mobile-only {
     display: flex !important;
   }
+
   .mobile-navbar {
     width: 100%;
+
+    .idiomas-container {
+      margin-right: 10px; // Separa las banderas de los iconos de notificación
+    }
   }
+
   .idiomas-container {
     position: relative !important;
     top: 0 !important;
-    right: -10px !important;
+    right: -20px !important;
     min-width: 30px;
+  }
+}
+
+@media (max-width: 380px) {
+  .gap-logged-in {
+    margin-left: 10px;
   }
 }

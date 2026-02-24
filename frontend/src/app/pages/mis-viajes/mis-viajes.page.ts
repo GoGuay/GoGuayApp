@@ -18,13 +18,17 @@ import { ActivatedRoute } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 import { catchError, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent]
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent, ToastModule, TranslateModule],
+  providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
 
@@ -59,13 +63,15 @@ export class MisViajesPage implements OnInit {
   usuarioParams: any = {};
 
   mostrarJumbotron = true;
+  filtroSeleccionado: string = 'horaSalida';
 
   // private _bottomSheet = inject(MatBottomSheet);
 
   constructor(public funcionesComunes: FuncionesComunes,
     private navCtrl: NavController, private userService: UserServicesService,
     private dialog: MatDialog, private travelService: TravelService,
-    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet) { }
+    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
+    private messageService: MessageService) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -225,18 +231,52 @@ export class MisViajesPage implements OnInit {
         this.pasajero = true;
         break;
 
+      case 'antiguos':
+        this.misViajes.sort((a, b) => {
+          return new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime();
+        });
+        break;
+
+      case 'pendientes':
+        this.misViajes.sort((a, b) => {
+          const aFinalizado = this.funcionesComunes.esViajeFinalizado(a.fecha_salida, a.hora_salida);
+          const bFinalizado = this.funcionesComunes.esViajeFinalizado(b.fecha_salida, b.hora_salida);
+          return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
+        });
+        break;
+
       default:
         this.misViajes = [];
         break;
     }
+    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => { } });
   }
 
 
   /**
    * Función para puntuar un viaje
    */
-  puntuarViaje() {
-    this._bottomSheet.open(PuntuacionesComponent);
+  puntuarViaje(viaje: Viaje) {
+    const bottomSheetRef = this._bottomSheet.open(PuntuacionesComponent, {
+      data: {
+        viaje: viaje
+      }
+    });
+
+    bottomSheetRef.afterDismissed().subscribe((result) => {
+      if (result) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Puntuación guardada',
+          detail: 'Muchas gracias por realizar nuestra encuesta de satisfacción.',
+          life: 3000
+        });
+
+        const userId = parseInt(this.usuarioParams.id, 10);
+        this.cargarTodosLosViajes(userId);
+      }
+    });
+
   }
 
   /**
@@ -245,10 +285,11 @@ export class MisViajesPage implements OnInit {
    */
   editarViaje(viaje_id: number) {
     const viaje = {
-      id: viaje_id
+      id: viaje_id,
+      origin: 'mis-viajes'
     }
     this.navCtrl.navigateRoot('/resumen-viaje', {
-      queryParams: viaje,
+      queryParams: viaje
     });
   }
 
@@ -321,5 +362,56 @@ export class MisViajesPage implements OnInit {
    */
   goToNuevoViaje() {
     this.navCtrl.navigateRoot('/nuevo-viaje');
+  }
+
+  onFiltroChange(event: any, popover: any) {
+    this.filtroSeleccionado = event.detail.value;
+
+    switch (this.filtroSeleccionado) {
+      case 'horaSalida':
+        this.misViajes.sort((a, b) => (a.hora_salida || '').localeCompare(b.hora_salida || ''));
+        break;
+
+      case 'recientes':
+        this.misViajes.sort((a, b) => {
+          return new Date(b.fecha_salida).getTime() - new Date(a.fecha_salida).getTime();
+        });
+        break;
+
+      case 'antiguos':
+        this.misViajes.sort((a, b) => {
+          return new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime();
+        });
+        break;
+
+      case 'precioAsc':
+        this.misViajes.sort((a, b) => {
+          const precioA = a.precio_viaje || 0;
+          const precioB = b.precio_viaje || 0;
+          return precioA - precioB;
+        });
+        break;
+
+      case 'precioDesc':
+        this.misViajes.sort((a, b) => {
+          const precioA = a.precio_viaje || 0;
+          const precioB = b.precio_viaje || 0;
+          return precioB - precioA;
+        });
+        break;
+
+      case 'pendientes':
+        this.misViajes.sort((a, b) => {
+          const aFinalizado = this.funcionesComunes.esViajeFinalizado(a.fecha_salida, a.hora_salida);
+          const bFinalizado = this.funcionesComunes.esViajeFinalizado(b.fecha_salida, b.hora_salida);
+          return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
+        });
+        break;
+    }
+
+    // Verificamos que popover existe antes de llamar a dismiss (por seguridad)
+    if (popover && typeof popover.dismiss === 'function') {
+      popover.dismiss();
+    }
   }
 }
