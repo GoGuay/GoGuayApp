@@ -468,6 +468,12 @@
     "BUSCAR_VIAJE_HASTA": "Hasta donde",
     "BUSCAR_VIAJE_CUANDO": "Cuando"
   },
+  "_JUMBOTRON": "",
+  "JUMBOTRON": {
+    "SLOGAN": "Tu camino, tu comunidad",
+    "QUIENES_SOMOS_SLOGAN": "Tu camino, tu comunidad",
+    "BUSCAR_VIAJE_SLOGAN": "Encuentra tu viaje ideal"
+  },
   "ANTIGUO DEBAJO": "",
   "NUEVO_VIAJE2": {
     "TITLE_BTN_BACK": "PrideRide",
