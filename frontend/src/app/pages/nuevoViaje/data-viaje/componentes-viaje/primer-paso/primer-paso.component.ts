@@ -44,7 +44,7 @@ registerLocaleData(localeEs);
   styleUrls: ['./primer-paso.component.scss'],
 })
 export class PrimerPasoComponent implements OnInit {
-  userData: Usuario = {} as Usuario;
+  userData: any = { usuario: { vehiculos: [] } };
 
   private destroy$ = new Subject<void>();
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
@@ -157,8 +157,9 @@ export class PrimerPasoComponent implements OnInit {
     if (id) {
       this.vehiculosServicesService.obtenerVehiculosUsuario(id).subscribe({
         next: (resultado) => {
-          console.log('Vehículos recibidos:', resultado.vehiculos);
-          this.userData.usuario.vehiculos = resultado.vehiculos;
+          if (resultado && resultado.vehiculos) {
+            this.userData.usuario.vehiculos = [...resultado.vehiculos];
+          }
           usuarioLocal.usuario.vehiculos = resultado.vehiculos;
           localStorage.setItem('userData', JSON.stringify(usuarioLocal));
         },
@@ -322,6 +323,17 @@ export class PrimerPasoComponent implements OnInit {
    */
   compareVehiculos(coche1: any, coche2: any) {
     return coche1 && coche2 ? coche1.id === coche2.id : coche1 === coche2;
+  }
+
+  /**
+   * Función para trackear el vehículo.
+   *
+   * @param index -> Índice del vehículo.
+   * @param coche -> Vehículo a trackear.
+   * @returns Devuelve el id del vehículo.
+   */
+  trackByVehiculo(index: number, coche: any) {
+    return coche.id;
   }
 
   /**

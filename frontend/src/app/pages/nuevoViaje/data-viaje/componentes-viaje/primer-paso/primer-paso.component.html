@@ -66,7 +66,8 @@
           <ng-container *ngIf="userData?.usuario?.vehiculos?.length > 0; else sinVehiculos">
             <ion-list class="scrollable-list">
               <ion-radio-group [(ngModel)]="cocheSeleccionado" [compareWith]="compareVehiculos">
-                <ion-item *ngFor="let coche of userData?.usuario?.vehiculos" (click)="seleccionarCoche(coche)">
+                <ion-item *ngFor="let coche of userData?.usuario?.vehiculos; trackBy: trackByVehiculo"
+                  (click)="seleccionarCoche(coche)">
                   <ion-label>
                     <img class="colorCoche" [src]="mostrarColorCoche(coche.color)" />
                     {{ coche.marca }} {{ coche.modelo }}
