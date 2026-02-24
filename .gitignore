@@ -1,3 +1,4 @@
 ﻿e -i e7970fb4^
 backend/.env
 backend/prideride_firebase.json
+__pycache__/
