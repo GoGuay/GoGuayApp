@@ -71,6 +71,7 @@ export class MiPerfilPage implements OnInit {
   cargando = false; // Variable que se utiliza para mostrar el spinner de carga
   perfilSinFoto: boolean = false;
   variableEjemplo: boolean = false;
+  spinnerActivo: boolean = false;
 
   vengoDeViaje: boolean = false;
 
@@ -166,12 +167,14 @@ export class MiPerfilPage implements OnInit {
    * que se llama texto_traducido que contiene la traducción del texto como tal y es lo que le paso a this.bioEditada.
    */
   detectarIdioma_traducirTexto(textoATraducir: string) {
+    this.spinnerActivo = true;
     this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
       console.log('resultado: ', resultado);
       if (this.lang !== resultado.idioma) {
         this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
           console.log('resultadoTraduccion: ', resultadoTraduccion);
           this.bioEditada = resultadoTraduccion.texto_traducido;
+          this.spinnerActivo = false;
         });
       }
     });

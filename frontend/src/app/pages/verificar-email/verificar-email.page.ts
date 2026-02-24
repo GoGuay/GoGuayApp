@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, NavController } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -18,7 +18,8 @@ export class VerificarEmailPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private navCtrl: NavController,
   ) {}
 
   ngOnInit() {
@@ -32,5 +33,10 @@ export class VerificarEmailPage implements OnInit {
         this.verified = false;
       }
     });
+  }
+
+  boton_volver() {
+    window.open('http://localhost:4200/verificaciones-perfil', '_blank');
+    window.close();
   }
 }

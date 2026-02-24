@@ -64,7 +64,7 @@ export class UserServicesService {
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -261,10 +261,10 @@ export class UserServicesService {
     return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
   }
 
-  verificar_codigo_sms(codigo: string, phone_number: string) {
+  verificar_codigo_sms(codigo: string, telefono: string) {
     return this.http.post(`${this.apiUrl}/user/verificar_codigo`, {
       codigo,
-      phone_number,
+      telefono,
     });
   }
 

@@ -100,7 +100,13 @@
             </ion-col>
           </ion-row>
           <ion-col>
-            <button type="button" [disabled]="sms_enviado" class="btn btn_bg" mat-raised-button type="btn" (click)="enviar_sms(telefonoUsuario)">
+            <button
+              type="button"
+              [disabled]="sms_enviado || usuario.telefonoVerificado"
+              class="btn btn_bg"
+              mat-raised-button
+              type="btn"
+              (click)="enviar_sms(telefonoUsuario)">
               {{telefonoUsuario}}
             </button>
           </ion-col>

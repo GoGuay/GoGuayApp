@@ -1,8 +1,16 @@
 <ion-content [fullscreen]="true">
   <div class="verify-message">
-    <h2 *ngIf="verified; else errorMsg">¡CORREO VERIFICADO CORRECTAMENTE</h2>
+    <div>
+      <img src="https://res.cloudinary.com/dnrxptrb0/image/upload/v1749583413/logo/ahhqej3rrccdr6bdf7vg.png" alt="PrideRide" class="logo" />
+      <h2 *ngIf="verified; else errorMsg">¡CORREO VERIFICADO CORRECTAMENTE!</h2>
+    </div>
+
     <ng-template #errorMsg>
       <h2>El enlace de verificación no es valido o ha expirado</h2>
     </ng-template>
+    <div class="mt-4">
+      <p>Puedes seguir verificando tu teléfono y documento si aún no lo has hecho</p>
+      <button type="button" class="btn btn_bg" (click)="boton_volver()">Volver a PrideRide</button>
+    </div>
   </div>
 </ion-content>

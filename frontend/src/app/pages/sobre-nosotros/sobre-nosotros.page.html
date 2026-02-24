@@ -1,7 +1,7 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'Tu camino, tu comunidad.'" [imageSrc]="'../../assets/folder/jumbo2.jpg'"
+    <app-jumbotron [title]="'JUMBOTRON.QUIENES_SOMOS_SLOGAN' | translate" [imageSrc]="'../../assets/folder/jumbo2.jpg'"
       [helpText]="'JUMBOTRON.HELP'">
     </app-jumbotron>
   </div>

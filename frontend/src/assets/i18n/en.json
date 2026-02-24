@@ -18,7 +18,6 @@
     "SALDO_TOOL_TITULO": "Content about Balance and transfers",
     "SALDO_TOOL_MODAL": "You can check your available balance, top-up methods, latest movements, and transfer available balance to your bank account"
   },
-
   "NavBar Home": "Opciones del navbar que aparece en el Home",
   "NAVBAR": {
     "QUIENES": "About us",
@@ -41,7 +40,6 @@
       "SALIR": "Logout"
     }
   },
-
   "HOME": {
     "JUMBO": {
       "SLOGAN": "Whoever you are, we travel with you"
@@ -62,7 +60,6 @@
       "BOTON": "Check here"
     }
   },
-
   "SELECTOR_GENERO": {
     "H_CIS": "Cis Man",
     "M_CIS": "Cis Woman",
@@ -416,7 +413,6 @@
     "PUBLICAR_VIAJE": "Publish your trip",
     "CENTROAYUDA": "Consult our help center"
   },
-
   "_NuevoViaje": "/nuevo-viaje",
   "NUEVOVIAJE": {
     "PLACE_DONDE_COMIENZA": "Where does the trip start?",
@@ -450,7 +446,6 @@
     "HELP_CENTER_TITLE": "Help Center",
     "HELP_CENTER_BTN": "Consult our Help Center"
   },
-
   "VEHICULOS": {
     "MIS_VEHICULOS": "My vehicles",
     "FORMULARIO_ANADIR": "Form to add a new vehicle",
@@ -551,7 +546,6 @@
     "OTROS": "Others",
     "NO_RESPONDE": "I prefer not to answer"
   },
-
   "_Footer": "Footer links",
   "FOOTER": {
     "TERMS": "Terms and Conditions",
@@ -559,7 +553,6 @@
   },
   "antiguo": "debajo",
   "GUARDAR": "Save",
-
   "HEADER": {
     "ABOUT": "About us",
     "FAQS": "FAQs",
@@ -750,43 +743,10 @@
     "PRECIO_DESC": "Price (Descending)",
     "RESULTADOS": "Results found"
   },
-  "_AjustesAplicacion": "/application-settings ok ok ok ok ok ok ok ok ok",
-  "AJUSTESAPP": {
-    "TITULO": "Settings",
-    "SUBTITULO_1": "Here you can configure aspects of the page and your profile",
-    "OPCION_IDIOMA": {
-      "TITULO": "Language selection",
-      "SUBTITULO": "Modify the page to view it in Spanish or English",
-      "OPTION_DEFAULT": "Select a language",
-      "ESPAÑOL": "Español",
-      "INGLES": "English"
-    },
-    "OPCION_BANNER": {
-      "TITULO": "Show banner",
-      "SUBTITULO": "Hide or show the banner that appears on some application screens.",
-      "ALERT_TITULO": "Banner settings",
-      "ALERT_MENSAJE": "Banner settings have been successfully modified."
-    },
-    "OPCION_NOTIFICACION": {
-      "TITULO": "Notifications",
-      "SUBTITULO": "This setting allows you to configure notifications."
-    },
-    "PASSWORD": {
-      "TITULO": "Change password:",
-      "CONTRAS_ACTUAL": "Current password:",
-      "NUEVA_CONTRAS": "New password:",
-      "CONF_NUEVA_CONTRAS": "Confirm new password:",
-      "FORGOT_PASSWORD": "Forgot your current password?",
-      "PASSWORD_CONFIRM": "Current password verified successfully.",
-      "PASSWORD_INCORRECTA": "The current password is incorrect."
-    },
-    "ELIMINARCTA": {
-      "TITULO": "Delete account:",
-      "MODAL_TITULO": "WARNING: You are about to delete your user",
-      "MODAL_MENSAJE": "Are you sure you want to delete your user?",
-      "INFO_ELIMINAR_CTA": "This action will permanently delete your account, with no possibility of recovery.",
-      "INFO_ELIMINAR_CTA2": "If you have a balance, make sure to transfer it to your bank account first to avoid losing that money."
-    },
-    "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D."
+  "_JUMBOTRON": "",
+  "JUMBOTRON": {
+    "SLOGAN": "Your way, your community",
+    "QUIENES_SOMOS_SLOGAN": "Your way, your community",
+    "BUSCAR_VIAJE_SLOGAN": "Find your ideal trip"
   }
 }

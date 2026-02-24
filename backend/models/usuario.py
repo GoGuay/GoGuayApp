@@ -26,7 +26,7 @@ class Usuario(db.Model):
     fotoPerfil = db.Column(db.String(250), nullable=True)
     fotoPublicId = db.Column(db.String(255), nullable=True) 
     fotoCabecera = db.Column(db.String(250), nullable=True)
-    preferencias = db.Column(JSON, nullable=False) 
+    preferencias = db.Column(JSON, nullable=True) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
     numero_documento = db.Column(db.String(9),  unique=True, nullable=True)
     dni_verificado = db.Column(db.Boolean, default=False, nullable=True)
