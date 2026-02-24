@@ -111,9 +111,24 @@ export class ResumenDinamicoComponent implements OnInit {
 
   /**
    * Función para guardar de forma temporal los datos del viaje.
+   * Actualiza el servicio para que el resto de componentes se sincronicen.
+   * 
    */
   guardarCambios() {
+    const viajeActualizado = {
+      ...this.travelService.getViajeData(),
+      origen: this.origen,
+      destino: this.destino,
+      coche: this.currentViajeData.coche,
+      plazas: this.currentViajeData.plazas,
+      fecha_salida: this.currentViajeData.fecha_salida,
+      hora_salida: this.currentViajeData.hora_salida,
+    };
+
+    this.travelService.setViajeData(viajeActualizado);
+
     this.editandoViaje = false;
+
     this.actualizarInformacion();
   }
 

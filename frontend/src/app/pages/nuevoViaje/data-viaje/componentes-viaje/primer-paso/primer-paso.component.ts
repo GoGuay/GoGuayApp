@@ -17,6 +17,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { Subject, takeUntil } from 'rxjs';
 
 registerLocaleData(localeEs);
 
@@ -45,6 +46,7 @@ registerLocaleData(localeEs);
 export class PrimerPasoComponent implements OnInit {
   userData: Usuario = {} as Usuario;
 
+  private destroy$ = new Subject<void>();
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
@@ -78,7 +80,11 @@ export class PrimerPasoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const datosUsuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (datosUsuarioLocal) {
+      this.userData = datosUsuarioLocal;
+    }
+
     this.checkScreenSize();  // -> Para que sepa si es desktop o no al iniciar
 
     this.obtenerVehiculos();
@@ -108,6 +114,17 @@ export class PrimerPasoComponent implements OnInit {
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
+
+    this.travelService.viajeData$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((viajeData) => {
+        if (viajeData) {
+          this.cocheSeleccionado = viajeData.coche || '';
+          this.plazas = viajeData.plazas || '';
+          this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
+          this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
+        }
+      });
   }
 
   /**
@@ -131,11 +148,23 @@ export class PrimerPasoComponent implements OnInit {
    * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
-    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.vehiculosServicesService.obtenerVehiculosUsuario(usuario.usuario.id).subscribe((resultado) => {
-      console.log('Vehículos: ', resultado.vehiculos);
-      this.userData.usuario.vehiculos = resultado.vehiculos;
-    });
+    const data = localStorage.getItem('userData');
+    if (!data) return;
+
+    const usuarioLocal = JSON.parse(data);
+    const id = usuarioLocal.usuario?.id;
+
+    if (id) {
+      this.vehiculosServicesService.obtenerVehiculosUsuario(id).subscribe({
+        next: (resultado) => {
+          console.log('Vehículos recibidos:', resultado.vehiculos);
+          this.userData.usuario.vehiculos = resultado.vehiculos;
+          usuarioLocal.usuario.vehiculos = resultado.vehiculos;
+          localStorage.setItem('userData', JSON.stringify(usuarioLocal));
+        },
+        error: (err) => console.error('Error cargando vehículos:', err)
+      });
+    }
   }
 
   /**
@@ -282,5 +311,24 @@ export class PrimerPasoComponent implements OnInit {
   checkScreenSize() {
     const anchoActual = window.innerWidth;
     this.isDesktop = this.platform.is('desktop') || anchoActual > 768;
+  }
+
+  /**
+   * Función para comparar dos vehículos.
+   *
+   * @param coche1 -> Primer vehículo a comparar.
+   * @param coche2 -> Segundo vehículo a comparar.
+   * @returns Devuelve true si los vehículos son iguales, false en caso contrario.
+   */
+  compareVehiculos(coche1: any, coche2: any) {
+    return coche1 && coche2 ? coche1.id === coche2.id : coche1 === coche2;
+  }
+
+  /**
+   * Función para destruir el componente.
+   */
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
