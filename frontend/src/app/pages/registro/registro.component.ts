@@ -35,9 +35,16 @@ export class RegistroComponent implements OnInit {
   mostrarPassword1: boolean = false;
   mostrarPassword2: boolean = false;
 
+  /**
+   * Expresión regular estándar para la validación de correos electrónicos.
+   * Verifica que el formato sea 'usuario@dominio.extension', permitiendo
+   * caracteres alfanuméricos y símbolos permitidos, y obligando a una
+   * extensión de dominio válida (ej: .com, .es).
+   */
   EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+  //CONSTRUCTOR: Inyección de dependencias y validación de los formularios
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
@@ -45,7 +52,13 @@ export class RegistroComponent implements OnInit {
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
-  ) {
+  ) /**
+   * Con el formBuilder creamos un grupo de formularios.
+   * El formulario 1 va a tener dos campos:
+   *  -email: se inicializa vacio (''), required indica que es obligatorio. Pattern comprueba que tenga el formato REGEX correcto
+   *  -fecha_nacimiento: el campo esta vacío, y deshabilitado por defecto. required: obligatorio.
+   */
+  {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
@@ -551,5 +564,27 @@ export class RegistroComponent implements OnInit {
 
     // Si coinciden, limpiamos los errores
     return null;
+  }
+
+  manejarTabPassword(event: any) {
+    // Capturamos la tecla Tab (puedes recibir KeyboardEvent o any)
+    if (event.key === 'Tab' || event.keyCode === 9) {
+      const passwordControl = this.formulario3.get('password');
+
+      // Si pulsamos TAB hacia adelante Y (el password es inválido o está vacío)
+      if (!event.shiftKey && (passwordControl?.invalid || !passwordControl?.value)) {
+        console.log('TAB detectado - Password inválido. Forzando foco a Atrás...');
+
+        // Detenemos el comportamiento original
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Buscamos el botón por ID
+        const btnAtras = document.getElementById('btnAtras');
+        if (btnAtras) {
+          (btnAtras as HTMLElement).focus();
+        }
+      }
+    }
   }
 }

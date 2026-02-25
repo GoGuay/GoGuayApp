@@ -266,7 +266,8 @@
               formControlName="password"
               tabindex="0"
               class="form-control form-input"
-              id="password" />
+              id="password"
+              (keydown)="manejarTabPassword($event)" />
             <button
               type="button"
               (click)="botonMostrarPassword_1()"
@@ -288,11 +289,10 @@
                 [type]="mostrarPassword2 ? 'text' : 'password'"
                 class="form-control"
                 id="confirmarPassword"
-                tabindex="0"
-                [readonly]="formulario3.get('password')?.invalid"
-                [class.input-deshabilitado]="formulario3.get('password')?.invalid"
-                [value]="formulario3.get('confirmarPassword')?.value || ''"
                 formControlName="confirmarPassword"
+                [readonly]="formulario3.get('password')?.invalid"
+                [attr.tabindex]="formulario3.get('password')?.invalid ? -1 : 0"
+                [class.input-deshabilitado]="formulario3.get('password')?.invalid"
                 aria-label="Campo para confirmar la nueva contraseña" />
 
               <button

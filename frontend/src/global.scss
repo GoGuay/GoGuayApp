@@ -445,4 +445,20 @@ ion-fab-button {
       color: #666666 !important;
     }
   }
+
+  // Solo se activa cuando se navega por teclado (TAB)
+  button:focus-visible,
+  .btn:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #000000 !important; // Borde negro
+    outline-offset: 2px; // Espacio entre el botón y el borde
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important; // Sombra negra difuminada
+    transition: box-shadow 0.2s ease;
+  }
+
+  // Opcional: Eliminar el borde azul por defecto de los navegadores (Chrome/Edge)
+  :focus {
+    outline: none;
+  }
 }
