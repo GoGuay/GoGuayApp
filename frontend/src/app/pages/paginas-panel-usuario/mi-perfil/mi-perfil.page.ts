@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
-import { firstValueFrom } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 
@@ -73,6 +73,8 @@ export class MiPerfilPage implements OnInit {
   variableEjemplo: boolean = false;
   spinnerActivo: boolean = false;
 
+  vengoDeViaje: boolean = false;
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private languageService: LanguageService,
@@ -85,6 +87,8 @@ export class MiPerfilPage implements OnInit {
     public translate: TranslateService,
     private navCtrl: NavController,
     private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
@@ -129,6 +133,10 @@ export class MiPerfilPage implements OnInit {
           this.detectarIdioma_traducirTexto(this.bioEditada);
         });
         this.cdr.detectChanges();
+
+        this.route.queryParams.subscribe(params => {
+          this.vengoDeViaje = params['from'] === 'newTravel';
+        });
       }
     });
 
@@ -443,5 +451,9 @@ export class MiPerfilPage implements OnInit {
   presentPopover(e: Event) {
     this.popover.event = e;
     this.isOpen = true;
+  }
+
+  volverAViaje() {
+    this.router.navigate(['/data-viaje']);
   }
 }

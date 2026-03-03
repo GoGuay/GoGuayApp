@@ -1,177 +1,109 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
-<ion-content [fullscreen]="true" *ngIf="!isLoading">
-  <div class="container">
-    <h1>CENTRO DE AYUDA</h1>
+<ion-content [fullscreen]="true">
+  <div class="container mt-4">
+    <div class="text-center mb-4">
+      <h1 class="fw-bold">{{ 'CENTRODEAYUDA.TITULO' | translate }}</h1>
+      <p class="text-muted">{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
+    </div>
     <mat-divider></mat-divider>
 
-    <!-- Introducción y Visión General -->
-    <div class="contanier mt-2 mb-3">
-      <h3>Introducción y Visión General</h3>
+    <div class="container mt-4 mb-4">
+      <h3 class="section-title"><ion-icon name="heart-outline" class="me-2"></ion-icon>Sobre Prideride</h3>
       <ion-accordion-group class="mb-3">
         <ion-accordion value="intro">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Qué es la aplicación? </ion-label>
+            <ion-label> ¿Qué nos diferencia de otras apps? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Nuestra aplicación conecta a miembros de la comunidad LGBTQ+ que
-            buscan compartir viajes, ofreciendo un espacio seguro e inclusivo
-            para todos.
+            Prideride no es solo una app de viajes compartidos; es una red de confianza. Conectamos a personas del
+            colectivo <strong>LGBTIQ+ y aliados</strong> para garantizar trayectos libres de discriminación, donde
+            puedas ser tú mismo/a/e en todo momento.
           </div>
         </ion-accordion>
       </ion-accordion-group>
       <mat-divider></mat-divider>
 
-      <!-- Registro de Usuarios -->
-      <h3>Registro de Usuarios</h3>
+      <h3 class="section-title mt-4"><ion-icon name="person-add-outline" class="me-2"></ion-icon>Tu Cuenta e Identidad
+      </h3>
       <ion-accordion-group class="mb-3">
-        <ion-accordion value="registro" class="mb-3">
+        <ion-accordion value="registro" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo puedo registrarme? </ion-label>
+            <ion-label> ¿Cómo creo mi cuenta? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Para registrarte, haz clic en "Crear cuenta", introduce tu
-            información personal y verifica tu email para completar el registro.
+            Pulsa en "Crear cuenta", completa tus datos y verifica tu correo. Recuerda que puedes usar tu <strong>nombre
+              sentido</strong>; queremos que te sientas cómodo/a/e desde el primer paso.
           </div>
         </ion-accordion>
-        <ion-accordion value="editarPerfil" class="mb-3">
+        <ion-accordion value="editarPerfil" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo puedo editar mi perfil? </ion-label>
+            <ion-label> ¿Cómo actualizo mis pronombres o perfil? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Ve a la sección de "Perfil" en el menú, realiza los cambios que
-            desees y guarda la configuración.
+            En la sección de "Perfil", puedes editar tu información, foto y preferencias. Mantener tu perfil actualizado
+            ayuda a generar más confianza con otros usuarios.
           </div>
         </ion-accordion>
-        <ion-accordion value="seguridadDatos" class="mb-3">
+        <ion-accordion value="seguridadDatos" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Qué medidas de seguridad se aplican a los datos personales?
-            </ion-label>
+            <ion-label> ¿Están seguros mis datos personales? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Implementamos estándares avanzados de cifrado para proteger tu
-            información personal. Tus datos nunca serán compartidos sin tu
-            consentimiento.
+            Totalmente. Utilizamos cifrado de grado bancario. Tu número de teléfono y detalles específicos solo se
+            muestran a las personas con las que hayas confirmado un viaje.
           </div>
         </ion-accordion>
       </ion-accordion-group>
       <mat-divider></mat-divider>
 
-      <!-- Publicar un Viaje -->
-      <h3>Publicar un Viaje</h3>
+      <h3 class="section-title mt-4"><ion-icon name="car-outline" class="me-2"></ion-icon>Conducir en Prideride</h3>
       <ion-accordion-group class="mb-3">
-        <ion-accordion value="publicarViaje" class="mb-3">
+        <ion-accordion value="publicarViaje" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo puedo publicar un viaje? </ion-label>
+            <ion-label> ¿Cómo publico un viaje como conductor/a? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Ve a la sección "Publicar viaje", selecciona origen, destino, fecha,
-            hora, y el precio de tu viaje. Finalmente, haz clic en "Publicar".
+            Ve a "Publicar", elige tu ruta, fecha, hora y el aporte por plaza. Puedes añadir notas adicionales, como si
+            aceptas mascotas o el tamaño del equipaje.
           </div>
         </ion-accordion>
-        <ion-accordion value="editarViaje" class="mb-3">
+        <ion-accordion value="cancelarViaje" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Cómo puedo editar o cancelar un viaje publicado?
-            </ion-label>
+            <ion-label> ¿Qué hago si no puedo realizar el viaje? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Accede a "Mis viajes", selecciona el viaje que deseas modificar o
-            cancelar, y realiza los cambios necesarios.
-          </div>
-        </ion-accordion>
-        <ion-accordion value="cancelarViaje" class="mb-3">
-          <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Qué pasa si tengo que cancelar un viaje a última hora?
-            </ion-label>
-          </ion-item>
-          <div slot="content" class="p-3">
-            Notifica a los pasajeros lo antes posible desde la opción "Cancelar
-            viaje" en la sección de "Mis viajes".
+            Entendemos que surgen imprevistos. Ve a "Mis viajes" y selecciona "Cancelar". Te pedimos que lo hagas con la
+            mayor antelación posible para que tus pasajeros puedan buscar una alternativa.
           </div>
         </ion-accordion>
       </ion-accordion-group>
       <mat-divider></mat-divider>
 
-      <!-- Buscar y Reservar un Viaje -->
-      <h3>Buscar y Reservar un Viaje</h3>
+      <h3 class="section-title mt-4 text-danger"><ion-icon name="shield-checkmark-outline"
+          class="me-2"></ion-icon>Seguridad y Comunidad</h3>
       <ion-accordion-group class="mb-3">
-        <ion-accordion value="buscarViaje" class="mb-3">
+        <ion-accordion value="reportarProblema" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo puedo buscar un viaje? </ion-label>
+            <ion-label> ¿Cómo reporto una mala experiencia? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Usa el buscador principal en la pantalla de inicio. Ingresa el
-            origen, destino y fecha del viaje para encontrar opciones
-            disponibles.
+            La seguridad es nuestra prioridad. Si sufres cualquier tipo de falta de respeto o discriminación, usa el
+            botón "Reportar" en el perfil del usuario o en el detalle del viaje. Nuestro equipo revisará el caso de
+            inmediato.
           </div>
         </ion-accordion>
-        <ion-accordion value="reservaViaje" class="mb-3">
+        <ion-accordion value="espacioSeguro" class="mb-2">
           <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo funciona la reserva de un viaje? </ion-label>
+            <ion-label> ¿Qué pasa si un usuario no es respetuoso? </ion-label>
           </ion-item>
           <div slot="content" class="p-3">
-            Selecciona el viaje que deseas, confirma tu reserva, y contacta al
-            conductor para coordinar detalles del encuentro.
-          </div>
-        </ion-accordion>
-        <ion-accordion value="cancelarReserva" class="mb-3">
-          <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Qué sucede si mi conductor cancela el viaje?
-            </ion-label>
-          </ion-item>
-          <div slot="content" class="p-3">
-            Recibirás una notificación y podrás buscar otros viajes disponibles
-            en la misma ruta.
-          </div>
-        </ion-accordion>
-      </ion-accordion-group>
-      <mat-divider></mat-divider>
-
-      <!-- Seguridad y Confianza -->
-      <h3>Seguridad y Confianza</h3>
-      <ion-accordion-group class="mb-3">
-        <ion-accordion value="reportarProblema" class="mb-3">
-          <ion-item slot="header" class="white-header">
-            <ion-label> ¿Cómo puedo reportar un problema o usuario? </ion-label>
-          </ion-item>
-          <div slot="content" class="p-3">
-            Ve al perfil del usuario o viaje en cuestión, y selecciona
-            "Reportar" en el menú de opciones.
-          </div>
-        </ion-accordion>
-        <ion-accordion value="seguridadMedidas" class="mb-3">
-          <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Qué medidas toman para garantizar la seguridad?
-            </ion-label>
-          </ion-item>
-          <div slot="content" class="p-3">
-            Verificamos perfiles, realizamos revisiones regulares, y fomentamos
-            las calificaciones para asegurar un ambiente confiable.
-          </div>
-        </ion-accordion>
-        <ion-accordion value="confianzaLGBTQ" class="mb-3">
-          <ion-item slot="header" class="white-header">
-            <ion-label>
-              ¿Puedo viajar con confianza siendo parte de la comunidad LGBTQ+?
-            </ion-label>
-          </ion-item>
-          <div slot="content" class="p-3">
-            Absolutamente. Nuestro objetivo es proporcionar un espacio inclusivo
-            y seguro para todos los usuarios de la comunidad LGBTQ+.
+            Prideride aplica una política de <strong>Tolerancia Cero</strong> ante el odio, la LGTBIfobia o el acoso.
+            Los usuarios que no cumplan con nuestras normas comunitarias serán expulsados permanentemente de la
+            plataforma.
           </div>
         </ion-accordion>
       </ion-accordion-group>
     </div>
   </div>
 </ion-content>
-<!-- SPINNER DE CARGA -->
-<div *ngIf="isLoading">
-  <app-spinner></app-spinner>
-</div>
-
-<!-- <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner> -->

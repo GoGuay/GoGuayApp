@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
+import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TravelService {
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = API_URL_BASE;
 
   //Se declara un espacio en la memoria para almacenar datos referentes al viaje, de forma temporal.
   //Nadie puede ver lo que hay ni cambiar ningún dato.
@@ -23,7 +24,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService,
-  ) {}
+  ) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -32,10 +33,19 @@ export class TravelService {
    */
   setViajeData(data: any) {
     this.viajeDataSubject.next(data);
+    localStorage.setItem('tempViaje', JSON.stringify(data));
   }
 
   getViajeData() {
-    return this.viajeDataSubject.getValue();
+    let data = this.viajeDataSubject.getValue();
+    if (!data) {
+      const saved = localStorage.getItem('tempViaje');
+      if (saved) {
+        data = JSON.parse(saved);
+        this.viajeDataSubject.next(data);
+      }
+    }
+    return data;
   }
 
   /**
@@ -53,6 +63,7 @@ export class TravelService {
       viajeData.usuario_id = usuarioId;
     }
 
+    this.clearTempViaje();
     return this.http.post(this.apiUrl + '/travel/crear_viaje', viajeData);
   }
 
@@ -186,5 +197,14 @@ export class TravelService {
     return this.http.get<Viaje[]>(`${this.apiUrl}/travel/viajes_filtrados`, {
       params,
     });
+  }
+
+  guardarPuntuacion(puntuacion: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/puntuacion`, puntuacion);
+  }
+
+  clearTempViaje() {
+    this.viajeDataSubject.next(null);
+    localStorage.removeItem('tempViaje');
   }
 }

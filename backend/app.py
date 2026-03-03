@@ -22,6 +22,9 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.user import user_service
 
+import firebase_admin
+from firebase_admin import credentials
+
 
 
 def create_app():
@@ -42,8 +45,24 @@ def create_app():
 
     app.config.from_object(Config)
     JWTManager(app)
+
+    cred = credentials.Certificate("prideride_firebase.json")
+    firebase_admin.initialize_app(cred)
     
-    CORS(app, resources={r"/*": {"origins": ["http://localhost:4200"], "supports_credentials": True}})
+    CORS(app, resources={r"/*": {
+        "origins": [
+            "http://localhost:4200",
+            "http://127.0.0.1:4200",  
+            "http://localhost:8100",  
+            "http://127.0.0.1:8100",  
+            "https://pride-ride.vercel.app",
+            "capacitor://localhost",
+            "ionic://localhost"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+        "supports_credentials": True
+    }})
 
     db.init_app(app)
     
@@ -68,11 +87,11 @@ def create_app():
     # --> vehicle_blueprint: Servicio relacionado con los vehículos
     # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    app.register_blueprint(user_blueprint, url_prefix="/user")
-    app.register_blueprint(travel_blueprint, url_prefix="/travel")
-    app.register_blueprint(vehicle_blueprint, url_prefix="/vehicle")
-    app.register_blueprint(apigoogle_blueprint, url_prefix="/apigoogle")
-    app.register_blueprint(chat_blueprint, url_prefix="/chat")
+    app.register_blueprint(user_blueprint, url_prefix="/api/user")
+    app.register_blueprint(travel_blueprint, url_prefix="/api/travel")
+    app.register_blueprint(vehicle_blueprint, url_prefix="/api/vehicle")
+    app.register_blueprint(apigoogle_blueprint, url_prefix="/api/apigoogle")
+    app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
 
  
     user_service.mail = mail
@@ -80,6 +99,7 @@ def create_app():
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)

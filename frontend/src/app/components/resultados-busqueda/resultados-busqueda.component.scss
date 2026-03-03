@@ -109,6 +109,19 @@
   width: 60px;
 }
 
+.position-relative {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Ajusta esto al tamaño de tu clase .user
+  width: 60px; 
+  height: 60px; 
+  border-radius: 50%;
+  overflow: hidden;
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200px 0;

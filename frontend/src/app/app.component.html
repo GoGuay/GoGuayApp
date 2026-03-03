@@ -9,21 +9,37 @@
 
     <ion-content color="secondary">
       <ion-list>
-        <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{
-          "NAVBAR.QUIENES" |
-          translate }}</ion-item>
-        <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"
-          | translate
-          }}</ion-item>
-        <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{
-          "NAVBAR.DECALOGO" |
-          translate }}</ion-item>
-        <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{
-          "NAVBAR.BUSCAR_VIAJE"
-          | translate }}</ion-item>
-        <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{
-          "NAVBAR.PUBLICAR_VIAJE" |
-          translate }}</ion-item>
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/" routerDirection="forward" color="secondary" detail="false">{{
+            "NAVBAR.INICIO" |
+            translate }}</ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{
+            "NAVBAR.QUIENES" |
+            translate }}</ion-item>
+        </ion-menu-toggle>
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"
+            | translate
+            }}</ion-item>
+        </ion-menu-toggle>
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{
+            "NAVBAR.DECALOGO" |
+            translate }}</ion-item>
+        </ion-menu-toggle>
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{
+            "NAVBAR.BUSCAR_VIAJE"
+            | translate }}</ion-item>
+        </ion-menu-toggle>
+        <ion-menu-toggle auto-hide="false">
+          <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{
+            "NAVBAR.PUBLICAR_VIAJE" |
+            translate }}</ion-item>
+        </ion-menu-toggle>
       </ion-list>
     </ion-content>
 

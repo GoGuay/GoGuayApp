@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sobre-nosotros',
@@ -26,7 +27,8 @@ import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comun
     MatButtonModule,
     MatCardModule,
     JumbotronComponent,
-    NavbarComponent
+    NavbarComponent,
+    TranslateModule
   ]
 })
 export class SobreNosotrosPage implements OnInit {

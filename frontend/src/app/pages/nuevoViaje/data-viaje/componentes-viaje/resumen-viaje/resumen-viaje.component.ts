@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 
 @Component({
@@ -35,6 +36,7 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
     MatButtonModule,
     CommonModule,
     TranslateModule,
+    SpinnerComponent
   ],
   templateUrl: './resumen-viaje.component.html',
   styleUrls: ['./resumen-viaje.component.scss'],
@@ -64,6 +66,8 @@ export class ResumenViajeComponent implements OnInit {
   vehiculoSeleccionado: { marca: string; modelo: string } | null = null;
   nombreVehiculo: string = '';
   vehiculosUsuario: any[] = [];
+  ruta_navegacion_origen: string = '';
+  cargando_viaje: boolean = false;
 
 
   constructor(
@@ -79,6 +83,7 @@ export class ResumenViajeComponent implements OnInit {
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
     if (this.userData?.usuario?.email) {
       this.userLoggedIn = true;
       this.obtenerVehiculosUsuario(this.userData.usuario.id);
@@ -88,6 +93,7 @@ export class ResumenViajeComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       const viajeId = params['id'];
+      this.ruta_navegacion_origen = params['origin'];
 
       this.currentViajeData = this.travelService.getViajeData();
       this.obtenerViaje(viajeId);
@@ -201,11 +207,17 @@ export class ResumenViajeComponent implements OnInit {
       'Si continuas se va a confirmar el viaje.',
       true, false, false
     );
+    this.cargando_viaje = true;
     mensajeConfirmación.afterClosed().subscribe(() => {
       this.travelService.guardarViaje(this.currentViajeData).subscribe(
         (response) => {
           console.log('Viaje guardado con éxito:', response);
-          this.openHelp(title, message, true, false, true);
+          this.cargando_viaje = false;
+          const modalExito = this.openHelp(title, message, true, false, true);
+          modalExito.afterClosed().subscribe(() => {
+            const userId = this.userData.usuario.id;
+            this.navCtrl.navigateRoot(`/mis-viajes?id=${userId}`);
+          });
         },
         (error) => {
           this.openError(
@@ -217,8 +229,6 @@ export class ResumenViajeComponent implements OnInit {
       );
     });
   }
-
-
 
   /**
  * Calcula la duración entre la hora de salida y llegada.
@@ -270,7 +280,13 @@ export class ResumenViajeComponent implements OnInit {
    * Función que nos va a devolver a la pantalla de inicio del viaje
    */
   volverAInicioDelViaje() {
-    this.navCtrl.navigateRoot('/data-viaje');
+    const userId = this.userData.usuario.id;
+    if (this.ruta_navegacion_origen === 'mis-viajes') {
+      this.navCtrl.navigateRoot(`/mis-viajes?id=${userId}`);
+    } else {
+      this.navCtrl.navigateRoot('/data-viaje');
+    }
+
   }
 
   /**
@@ -361,8 +377,6 @@ export class ResumenViajeComponent implements OnInit {
     }
   }
 
-
-
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
    *
@@ -434,4 +448,5 @@ export class ResumenViajeComponent implements OnInit {
       this.vehiculosUsuario = vehiculos;
     });
   }
+
 }
