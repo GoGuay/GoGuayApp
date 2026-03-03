@@ -21,6 +21,8 @@ import { NotificacionesService } from 'src/app/core/notificaciones/notificacione
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef } from '@angular/core';
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
+import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -83,7 +85,8 @@ export class NavbarComponent implements OnInit {
     private element: ElementRef,
     private translate: TranslateService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
 
   }
@@ -356,6 +359,20 @@ export class NavbarComponent implements OnInit {
     this.cdr.detectChanges();
 
     this.navCtrl.navigateRoot(['/home'], { animated: true });
+  }
+
+  modalCerrarSesion() {
+    const titulo: string = '¡ATENCIÓN: Vas a cerrar sesión!';
+    const mensaje: string = `¿Estás seguro que deseas cerrar sesión?`;
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.logout();
+      }
+    });
   }
 
   irAMisViajes() {

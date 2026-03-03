@@ -1,14 +1,22 @@
 .caja-resultado {
   width: 100%;
-  background-color: #b3b5e6;
-  border: 1px solid black;
-  height: auto;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  max-width: 750px;
+  margin: 0 auto;
+  background-color: #f3ffaf;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: none;
 }
 
 .col-viaje {
   border-right: 1px solid black;
+}
+
+.precio-texto {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
 }
 
 .infoPrecio {
@@ -35,7 +43,8 @@
 }
 
 .col-separator {
-  border-right: 1px solid rgb(143, 141, 141); 
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }
 
 .col-separator:last-child {
@@ -43,11 +52,32 @@
 }
 
 .resultado-viaje {
-  width: 750px;
-  height: 150px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  width: 100%;
+  max-width: 750px;
+  /* Esto permite que se encoja en móvil */
+  min-height: 150px;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
   background-color: #f3ffaf;
   border-radius: 15px;
+  overflow: hidden;
+}
+
+.trayecto-row {
+  margin-top: 5px;
+
+  .hora {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .ciudad {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+  }
 }
 
 .fila-hora {
@@ -55,15 +85,15 @@
 }
 
 .user {
-  width: 50px; 
-  height: 50px; 
-  border-radius: 50%; 
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   object-fit: cover;
-  
+
 }
 
 .linea {
-  width: 196px;
+  width: 100px;
 }
 
 .columna_scroll {
@@ -73,11 +103,11 @@
 
 .fontSize {
   font-size: 0.9rem;
-  width: fit-content; 
-  max-width: 100%; 
+  width: fit-content;
+  max-width: 100%;
 }
 
-.title{
+.title {
   font-weight: bold;
 }
 
@@ -85,7 +115,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  
+
 }
 
 .skeleton-avatar {
@@ -114,10 +144,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  // Ajusta esto al tamaño de tu clase .user
-  width: 60px; 
-  height: 60px; 
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   overflow: hidden;
 }
@@ -126,6 +154,7 @@
   0% {
     background-position: -200px 0;
   }
+
   100% {
     background-position: 200px 0;
   }
@@ -134,18 +163,21 @@
 
 @media (max-width: 1024px) {
   .columna_scroll {
-    max-height: 45vh; /* Para pantallas más pequeñas, como tablets */
+    max-height: 45vh;
+    /* Para pantallas más pequeñas, como tablets */
   }
 }
 
 @media (max-width: 783px) {
   .columna_scroll {
-    max-height: 40vh; /* Para pantallas medianas, como móviles de tamaño medio */
+    max-height: 40vh;
+    /* Para pantallas medianas, como móviles de tamaño medio */
   }
 }
 
 
 @media (max-width: 576px) {
+
   /* Ajusta la tarjeta resultado-viaje */
   .resultado-viaje {
     width: 95% !important;
@@ -228,10 +260,58 @@
   }
 }
 
-
-.gifs{
+.gifs {
   height: 30px;
   width: 30px;
   border-radius: 50%;
   mix-blend-mode: multiply;
+}
+
+@media (max-width: 768px) {
+  .col-separator {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    /* Separador horizontal en móvil */
+    padding-bottom: 10px;
+  }
+
+  .hide-mobile {
+    display: none !important;
+    /* Escondemos textos innecesarios en móvil */
+  }
+
+  .linea {
+    width: 60px;
+    /* Línea más corta en móvil */
+  }
+
+  .user-section {
+    padding: 10px 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    /* Un toque de color para diferenciar al usuario */
+  }
+
+  /* Para que el nombre y la foto salgan al lado en lugar de arriba/abajo en móvil */
+  .d-flex.flex-md-column {
+    flex-direction: row !important;
+    padding: 0 15px;
+  }
+
+  .precio-texto {
+    font-size: 20px;
+  }
+
+  .columna_scroll {
+    max-height: 70vh;
+    /* Más espacio en móvil */
+  }
+}
+
+/* Badge de puntuación más moderno */
+.puntuacion-badge {
+  background: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
