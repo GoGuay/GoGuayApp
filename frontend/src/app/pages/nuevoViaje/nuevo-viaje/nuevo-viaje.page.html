@@ -4,81 +4,102 @@
   <ion-row class="primera-seccion">
     <div class="imagen-fondo">
       <div class="formulario-viaje">
-        <form>
-          <div class="contenido_formulario">
-            <div class="input-container">
-              <img src="../../../../assets/sistema/marcador.png" class="marcador-icon input-icon">
-              <input [(ngModel)]="origen" (input)="buscarSugerenciasOrigen($event)"
-                placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control" name="origen">
-              <div *ngIf="cargandoOrigen" class="spinner-container">
-                <app-spinner></app-spinner>
-              </div>
-              <ul *ngIf="!cargandoOrigen && funcionesComunes.sugerenciasOrigen.length > 0"
-                class="list-group lista_sugerencias">
-                <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen"
-                  (click)="seleccionarLocalidadOrigen(sugerencia)" [ngClass]="{'list-group-item': true}">
-                  {{ sugerencia.display_name }}
-                </li>
-              </ul>
+        <div class="contenido_formulario">
+          <div class="input-container">
+            <img src="../../../../assets/sistema/marcador.png" class="marcador-icon input-icon" />
+            <input
+              [(ngModel)]="origen"
+              (input)="buscarSugerenciasOrigen($event)"
+              placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}"
+              class="input-viaje form-control"
+              name="origen" />
+            <div *ngIf="cargandoOrigen" class="spinner-container">
+              <app-spinner></app-spinner>
+            </div>
+            <ul *ngIf="!cargandoOrigen && funcionesComunes.sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
+              <li
+                *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen"
+                (click)="seleccionarLocalidadOrigen(sugerencia)"
+                [ngClass]="{'list-group-item': true}">
+                {{ sugerencia.display_name }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="input-container">
+            <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon" />
+            <input
+              [(ngModel)]="destino"
+              (input)="buscarSugerenciasDestino($event)"
+              placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}"
+              class="input-viaje form-control"
+              name="destino" />
+            <!-- Spinner de carga -->
+            <div *ngIf="cargandoDestino" class="spinner-container">
+              <app-spinner></app-spinner>
             </div>
 
-            <div class="input-container">
-              <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon">
-              <input [(ngModel)]="destino" (input)="buscarSugerenciasDestino($event)"
-                placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control" name="destino">
-              <!-- Spinner de carga -->
-              <div *ngIf="cargandoDestino" class="spinner-container">
-                <app-spinner></app-spinner>
-              </div>
+            <ul *ngIf="!cargandoDestino && funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+              <li
+                *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino"
+                (click)="seleccionarLocalidadDestino(sugerencia)"
+                [ngClass]="{'list-group-item': true}">
+                {{ sugerencia.display_name }}
+              </li>
+            </ul>
+          </div>
 
-              <ul *ngIf="!cargandoDestino && funcionesComunes.sugerenciasDestino.length > 0"
-                class="list-group lista_sugerencias">
-                <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino"
-                  (click)="seleccionarLocalidadDestino(sugerencia)" [ngClass]="{'list-group-item': true}">
-                  {{ sugerencia.display_name }}
-                </li>
-              </ul>
-            </div>
+          <div class="select-container">
+            <img src="../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios" />
+            <select
+              #plazasSelect
+              class="form-select input-viaje form-control custom-select"
+              aria-label="n_personas"
+              [(ngModel)]="plazas"
+              name="viajeros"
+              [ngModelOptions]="{standalone: true}">
+              <option value="" disabled selected>{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
 
-            <div class="select-container">
-              <img src="../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios">
-              <select #plazasSelect class="form-select input-viaje form-control custom-select" aria-label="n_personas"
-                [(ngModel)]="plazas" name="viajeros" [ngModelOptions]="{standalone: true}">
-                <option value="" disabled selected>{{ 'NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate }}</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </select>
-            </div>
-
-            <div class="alert" *ngIf="!userLoggedIn">
-              <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
-              <div class="d-flex justify-content-center">
-                <button type="button" class="help_btn d-flex justify-content-center"
-                  title="Ayuda para iniciar sesión / registrarse"
-                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
-                  <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon">
-                </button>
-              </div>
-            </div>
-            <div class="alert" *ngIf="userLoggedIn">
-              <p>{{ 'NUEVOVIAJE.CARNET_NO_REGISTRADO' | translate }}</p>
-              <div class="d-flex justify-content-center">
-                <button type="button" class="help_btn d-flex justify-content-center"
-                  title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
-                  (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)">
-                  <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon">
-                </button>
-              </div>
+          <div class="alert" *ngIf="!userLoggedIn">
+            <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
+            <div class="d-flex justify-content-center">
+              <button
+                type="button"
+                class="help_btn d-flex justify-content-center"
+                title="Ayuda para iniciar sesión / registrarse"
+                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
+                <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
+              </button>
             </div>
           </div>
-          <button type="button" class="btn-publicar ion-activatable ripple-parent circle"
-            title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}" (click)="goTo()"
-            matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}">
-            {{ 'BOTON.PUBLICAR_VIAJE' | translate }}<ion-ripple-effect></ion-ripple-effect>
-          </button>
-        </form>
+          <div class="alert" *ngIf="userLoggedIn">
+            <p>{{ 'NUEVOVIAJE.CARNET_NO_REGISTRADO' | translate }}</p>
+            <div class="d-flex justify-content-center">
+              <button
+                type="button"
+                class="help_btn d-flex justify-content-center"
+                title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
+                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)">
+                <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn-publicar ion-activatable ripple-parent circle"
+          title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}"
+          (click)="goTo()"
+          matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}">
+          {{ 'BOTON.PUBLICAR_VIAJE' | translate }}
+          <ion-ripple-effect></ion-ripple-effect>
+        </button>
       </div>
     </div>
   </ion-row>
@@ -89,15 +110,15 @@
       <p>{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
       <div class="d-flex justify-content-center">
         <button type="button" mat-raised-button class="btn_bg" routerLink="/centro-ayuda">
-          <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon"> {{
-          'BOTON.CENTROAYUDA' | translate }}
+          <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
+          {{ 'BOTON.CENTROAYUDA' | translate }}
         </button>
       </div>
     </div>
   </ion-row>
   <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-ajustes fab-buscar">
     <ion-fab-button aria-label="Ir atrás" (click)="goBack()">
-      <img [src]="irAtrasImg" alt="Ir atrás" style="width: 24px; height: 24px;">
+      <img [src]="irAtrasImg" alt="Ir atrás" style="width: 24px; height: 24px" />
     </ion-fab-button>
   </ion-fab>
 </ion-content>

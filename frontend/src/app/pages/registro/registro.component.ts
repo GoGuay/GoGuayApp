@@ -37,9 +37,7 @@ export class RegistroComponent implements OnInit {
 
   /**
    * Expresión regular estándar para la validación de correos electrónicos.
-   * Verifica que el formato sea 'usuario@dominio.extension', permitiendo
-   * caracteres alfanuméricos y símbolos permitidos, y obligando a una
-   * extensión de dominio válida (ej: .com, .es).
+   * Verifica que el formato sea 'usuario@dominio.extension', permitiendo caracteres alfanuméricos y símbolos permitidos, y obligando a una extensión de dominio válida (ej: .com, .es).
    */
   EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -51,19 +49,25 @@ export class RegistroComponent implements OnInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private funcionesComunes: FuncionesComunes,
-    private translate: TranslateService,
-  ) /**
-   * Con el formBuilder creamos un grupo de formularios.
-   * El formulario 1 va a tener dos campos:
-   *  -email: se inicializa vacio (''), required indica que es obligatorio. Pattern comprueba que tenga el formato REGEX correcto
-   *  -fecha_nacimiento: el campo esta vacío, y deshabilitado por defecto. required: obligatorio.
-   */
-  {
+    private translate: TranslateService /**
+     * Con el formBuilder creamos un grupo de formularios.
+     * El formulario 1 va a tener dos campos:
+     *  -email: se inicializa vacio (''), required indica que es obligatorio. Pattern comprueba que tenga el formato REGEX correcto
+     *  -fecha_nacimiento: el campo esta vacío, y deshabilitado por defecto. required: obligatorio.
+     */,
+  ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
       fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
 
+    /**
+     * Inicialización del Formulario 2: Datos Personales.
+     * * @description
+     * Define los controles para la segunda pantalla del registro.
+     * - Regla de flujo: Solo el nombre está activo inicialmente.
+     * - Validación Teléfono: Expresión regular para exactamente 9 números.
+     */
     this.formulario2 = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: [{ value: '', disabled: true }, Validators.required],
@@ -72,6 +76,13 @@ export class RegistroComponent implements OnInit {
       orientacion: [{ value: '', disabled: true }, Validators.required],
     });
 
+    /**
+     * Inicialización del formuarlio 3: Contraseña.
+     * * @description
+     * Contraseña segura: mínimo 6 dígitos. Pattern: debe llevar al menos una mayúscula y al menos un nº o carácter especial.
+     * confirmarPassword: campo en blanco y obligatorio.
+     * passwordMatchValidator: es un validador de formulario. Compara las 2 contraseñas. Si no son idénticas marca el formulario como inválido.
+     */
     this.formulario3 = this.fb.group(
       {
         password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
@@ -85,11 +96,35 @@ export class RegistroComponent implements OnInit {
     this.configurarEscalera();
   }
 
-  private configurarEscalera() {
-    // PASO 1: Habilitar fecha solo si email es válido y verificado
-    // La lógica de habilitar fecha se queda en comprobarEmailRegistrado para esperar al servidor
+  /**
+   *
+   * @param form --> recibe el nombre del formulario
+   * @param name --> recibe el nombre del campo
+   * @param habilitar --> booleano que indica si se debe habilitar (true) o deshabilitar (false)
+   * * @description
+   * Guardamos en control el nombre del campo a tratar (nombre, apellidos, etc)
+   * Si habilitar es true y si el campo esta deshabilitado entonces ponemos el campo en habilitado y con el emitEvent:false le indicamos que ese cambio se quede ahí y no lo propague al resto del formulario para que no haya errores.
+   * Si habilitar es false y el campo está habilitado: ponemos el campo en deshabilitado y no propagamos ese cambio y seteamos el control borrando su contenido.Esto sirve por si el usuario borra algo que hubiese escrito, por ejemplo.
+   */
+  private gestionarControl(form: FormGroup, name: string, habilitar: boolean) {
+    const control = form.get(name);
+    if (habilitar) {
+      if (control?.disabled) control.enable({ emitEvent: false });
+    } else {
+      if (control?.enabled) {
+        control.disable({ emitEvent: false });
+        control.setValue('', { emitEvent: false });
+      }
+    }
+  }
 
-    // PASO 2: Escalera fluida
+  /**
+   * Gestiona la lógica de desbloqueo en escalera de los inputs: Escucha los cambios de valor de cada input y habilita el siguiente. Empieza a funcionar directamente en el formulario2, ya que en el formulario1 actua la función comprobarEmailRegistrado.
+   * En el formulario2 se suscribe a los cambios que tenga el campo 'nombre'. Cuando detecta algún cambio llama a la función gestionarControl y le dice que en el formulario2 habilite el campo 'apellidos'.
+   *
+   *
+   */
+  private configurarEscalera() {
     this.formulario2.get('nombre')?.valueChanges.subscribe((val) => {
       this.gestionarControl(this.formulario2, 'apellidos', !!val);
     });
@@ -107,23 +142,6 @@ export class RegistroComponent implements OnInit {
     this.formulario2.get('genero')?.valueChanges.subscribe((val) => {
       this.gestionarControl(this.formulario2, 'orientacion', !!val);
     });
-
-    // PASO 3: Escalera de contraseña
-    // this.formulario3.get('password')?.valueChanges.subscribe(() => {
-    //   const passValid = this.formulario3.get('password')?.valid;
-    //   this.gestionarControl(this.formulario3, 'confirmarPassword', !!passValid);
-    // });
-  }
-  private gestionarControl(form: FormGroup, name: string, habilitar: boolean) {
-    const control = form.get(name);
-    if (habilitar) {
-      if (control?.disabled) control.enable({ emitEvent: false });
-    } else {
-      if (control?.enabled) {
-        control.disable({ emitEvent: false });
-        control.setValue('', { emitEvent: false });
-      }
-    }
   }
 
   // Getter de validación corregido para el Paso 2
@@ -212,6 +230,9 @@ export class RegistroComponent implements OnInit {
   pasoAnterior() {
     if (this.pasoActual > 1) {
       this.pasoActual--;
+      if (this.pasoActual == 1) {
+        this.paso1 = true;
+      }
     }
   }
 
@@ -566,24 +587,48 @@ export class RegistroComponent implements OnInit {
     return null;
   }
 
-  manejarTabPassword(event: any) {
-    // Capturamos la tecla Tab (puedes recibir KeyboardEvent o any)
-    if (event.key === 'Tab' || event.keyCode === 9) {
+  manejarTabPassword(event: KeyboardEvent) {
+    // Solo actuamos si se presiona Tab
+    if (event.key === 'Tab') {
       const passwordControl = this.formulario3.get('password');
 
-      // Si pulsamos TAB hacia adelante Y (el password es inválido o está vacío)
+      // CASO: TAB hacia ADELANTE y el campo NO es válido
       if (!event.shiftKey && (passwordControl?.invalid || !passwordControl?.value)) {
-        console.log('TAB detectado - Password inválido. Forzando foco a Atrás...');
-
-        // Detenemos el comportamiento original
+        // Detenemos el salto al input de "Confirmar Password"
         event.preventDefault();
-        event.stopPropagation();
 
-        // Buscamos el botón por ID
+        // Buscamos el botón Atrás
         const btnAtras = document.getElementById('btnAtras');
+
         if (btnAtras) {
-          (btnAtras as HTMLElement).focus();
+          // Usamos un pequeño timeout para asegurar que el foco se asiente
+          setTimeout(() => {
+            btnAtras.focus();
+          }, 0);
         }
+      }
+    }
+  }
+
+  saltarAFecha(event: KeyboardEvent) {
+    if (event.key === 'Tab' && !event.shiftKey) {
+      const emailControl = this.formulario1.get('email');
+      const fechaControl = this.formulario1.get('fecha_nacimiento');
+
+      if (emailControl?.valid) {
+        event.preventDefault();
+
+        // Habilitamos el control en el formulario de Angular
+        fechaControl?.enable();
+
+        // Ahora que Angular sabe que está habilitado, esperamos al DOM
+        setTimeout(() => {
+          const campoFecha = document.getElementById('fnacimiento') as HTMLInputElement;
+          if (campoFecha) {
+            campoFecha.focus();
+            campoFecha.click();
+          }
+        }, 50);
       }
     }
   }

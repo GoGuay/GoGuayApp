@@ -32,7 +32,8 @@
             aria-describedby="emailHelp"
             autocomplete="email"
             (blur)="validarCampo('email', formulario1)"
-            (ngModelChange)="onInputChange()" />
+            (ngModelChange)="onInputChange()"
+            (keydown)="saltarAFecha($event)" />
           <!-- Mensaje de ayuda accesible -->
           <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}</span>
           <div *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched" class="text-danger">
@@ -50,7 +51,6 @@
             type="date"
             class="form-control"
             id="fnacimiento"
-            inputmode=""
             min="1930-01-01"
             [max]="fechaMaxima"
             aria-describedby="fnacimientoHelp"
@@ -290,6 +290,7 @@
                 class="form-control"
                 id="confirmarPassword"
                 formControlName="confirmarPassword"
+                tabindex="1"
                 [readonly]="formulario3.get('password')?.invalid"
                 [attr.tabindex]="formulario3.get('password')?.invalid ? -1 : 0"
                 [class.input-deshabilitado]="formulario3.get('password')?.invalid"
@@ -314,8 +315,8 @@
   </div>
 
   <nav aria-label="Page navigation example">
-    <div class="d-flex justify-content-center">
-      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg_secondary" tabindex="0" (click)="pasoAnterior()">
+    <div class="d-flex justify-content-center mb-3">
+      <button id="btnAtras" *ngIf="!paso1" type="button" class="btn btn_bg_secondary" (click)="pasoAnterior()">
         {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
       </button>
 

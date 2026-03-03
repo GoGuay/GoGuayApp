@@ -134,6 +134,16 @@ ion-content {
   outline-offset: 2px;
 }
 
+.btn_bg_secondary {
+  color: black;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.btn_bg_secondary:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
 .logo {
   width: 60px;
   border-radius: 30px;
@@ -446,19 +456,43 @@ ion-fab-button {
     }
   }
 
-  // Solo se activa cuando se navega por teclado (TAB)
-  button:focus-visible,
-  .btn:focus-visible,
-  input:focus-visible,
-  select:focus-visible {
-    outline: 2px solid #000000 !important; // Borde negro
-    outline-offset: 2px; // Espacio entre el botón y el borde
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important; // Sombra negra difuminada
-    transition: box-shadow 0.2s ease;
-  }
 
-  // Opcional: Eliminar el borde azul por defecto de los navegadores (Chrome/Edge)
-  :focus {
-    outline: none;
-  }
+
+
+
+}
+
+
+// Solo se activa cuando se navega por teclado (TAB)
+button:focus-visible,
+.btn_bg_secondary:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid #000000 !important; // Borde negro
+  outline-offset: 2px; // Espacio entre el botón y el borde
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important; // Sombra negra difuminada
+  transition: box-shadow 0.2s ease;
+}
+
+// Opcional: Eliminar el borde azul por defecto de los navegadores (Chrome/Edge)
+:focus {
+  outline: none;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 35px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+.form-check:focus,
+.form-check-input:focus,
+span:focus {
+  border: 3px solid #9b59b6 !important;
+  outline: none;
 }

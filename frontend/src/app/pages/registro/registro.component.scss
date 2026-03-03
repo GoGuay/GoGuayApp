@@ -24,19 +24,7 @@ select {
   box-sizing: border-box;
 }
 
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border-radius: 35px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
 
-.form-control:focus {
-  border: 3px solid #9b59b6;
-  outline: none;
-}
 
 .input-deshabilitado {
   background-color: #f4f4f4 !important;
