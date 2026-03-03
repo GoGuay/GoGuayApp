@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,6 +42,8 @@ export class BuscadorComponent implements OnInit {
 
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
+
+  @Output() onSearch = new EventEmitter<any>();
 
   constructor(private navCtrl: NavController, private messageService: MessageService, private googleService: GoogleServices) {
     addIcons({ eye, lockClosed });
@@ -126,5 +127,16 @@ export class BuscadorComponent implements OnInit {
     this.sugerenciasOrigen = [];
     this.sugerenciasDestino = [];
   }
-  
+
+  buscar() {
+    const params = {
+      origen: this.origen,
+      destino: this.destino,
+      plazas: this.plazas,
+      fecha_salida: this.fecha_salida
+    };
+
+    this.onSearch.emit(params);
+    this.navCtrl.navigateForward('/busqueda-viajes', { queryParams: params });
+  }
 }

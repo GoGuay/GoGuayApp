@@ -6,7 +6,7 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
-import { Observable } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { SpinnerComponent } from "../spinner/spinner.component";
 import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
 import { IonicModule, NavController } from '@ionic/angular';
@@ -31,6 +31,7 @@ export class ResultadosBusquedaComponent implements OnInit {
   filtroSeleccionado: string = 'horaSalida';
   isLoading: boolean = false;
   imagenesCargadas: { [key: number]: boolean } = {};
+  usuariosCache: Map<number, any> = new Map();
 
 
   /**
@@ -52,15 +53,14 @@ export class ResultadosBusquedaComponent implements OnInit {
    * Función que se ejecuta cuando hay cambios en las variables de entrada
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['filtroOrden']) {
+    if (changes['filtroOrden'] && !changes['filtroOrden'].firstChange) {
       this.filtroSeleccionado = changes['filtroOrden'].currentValue;
-      if (!changes['filtroOrden'].firstChange) {
-        this.aplicarFiltro();
-      }
+      this.aplicarFiltro();
     }
 
+    // Si cambian los parámetros de búsqueda, decidimos qué cargar
     if (changes['paramsBusqueda']) {
-      this.obtenerListaViajes();
+      this.cargarDatos();
     }
   }
 
@@ -69,6 +69,57 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.obtenerListaViajes();
     this.funcionesComunes.getBaseUrl();
+  }
+
+  cargarDatos() {
+    this.isLoading = true;
+
+    // Verificamos si hay parámetros de búsqueda reales (no un objeto vacío)
+    const tieneFiltros = this.paramsBusqueda && Object.values(this.paramsBusqueda).some(val => val !== '' && val !== null);
+
+    const peticion = tieneFiltros
+      ? this.travelService.obtenerViajesFiltrados(this.paramsBusqueda)
+      : this.travelService.obtenerTodosLosViajes();
+
+    peticion.subscribe({
+      next: (viajes) => {
+        this.listado_viajes = viajes;
+
+        if (viajes.length === 0) {
+          this.isLoading = false;
+          return;
+        }
+
+        // Obtener usuarios de forma eficiente
+        this.cargarUsuariosParaViajes(viajes);
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.listado_viajes = [];
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private cargarUsuariosParaViajes(viajes: Viaje[]) {
+    const idsUnicos = [...new Set(viajes.map(v => v.usuario_id))];
+
+    const solicitudesUsuarios = idsUnicos.map(id => {
+      if (this.usuariosCache.has(id)) {
+        return of(this.usuariosCache.get(id));
+      }
+      return this.userService.obtenerUsuarioPorID(id).pipe(
+        tap(user => this.usuariosCache.set(id, user))
+      );
+    });
+
+    forkJoin(solicitudesUsuarios).subscribe(() => {
+      this.listado_viajes.forEach(viaje => {
+        viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
+      });
+      this.aplicarFiltro();
+      this.isLoading = false;
+    });
   }
 
 
@@ -106,19 +157,27 @@ export class ResultadosBusquedaComponent implements OnInit {
    */
   obtenerListaViajes() {
     this.isLoading = true;
-    this.imagenesCargadas = {};
-
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
       this.listado_viajes = viajes;
 
-      const solicitudesUsuarios = this.listado_viajes.map(viaje =>
-        this.obtenerUsuarioPorID(viaje.usuario_id)
-      );
+      // 2. Creamos un set de IDs únicos para no repetir llamadas
+      const idsUnicos = [...new Set(viajes.map(v => v.usuario_id))];
 
-      forkJoin(solicitudesUsuarios).subscribe((usuarios: any[]) => {
-        this.listado_viajes.forEach((viaje, index) => {
-          viaje.usuario = usuarios[index];
-          this.imagenesCargadas[viaje.id] = false;
+      const solicitudesUsuarios = idsUnicos.map(id => {
+        // Si ya lo tenemos en caché, devolvemos un observable del valor
+        if (this.usuariosCache.has(id)) {
+          return of(this.usuariosCache.get(id));
+        }
+        // Si no, lo pedimos y lo guardamos en la caché al recibirlo
+        return this.userService.obtenerUsuarioPorID(id).pipe(
+          tap(user => this.usuariosCache.set(id, user))
+        );
+      });
+
+      forkJoin(solicitudesUsuarios).subscribe(() => {
+        // 3. Asignamos los usuarios desde la caché a los viajes
+        this.listado_viajes.forEach(viaje => {
+          viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
         });
         this.aplicarFiltro();
         this.isLoading = false;
