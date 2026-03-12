@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { BuscaUnViajePrincipalComponent } from './busca-un-viaje-principal.component';
+import { BuscaUnViajePrincipalComponent } from './buscador_viaje_home.component';
 
 describe('BuscaUnViajePrincipalComponent', () => {
   let component: BuscaUnViajePrincipalComponent;
@@ -9,8 +9,8 @@ describe('BuscaUnViajePrincipalComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BuscaUnViajePrincipalComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [BuscaUnViajePrincipalComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BuscaUnViajePrincipalComponent);

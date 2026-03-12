@@ -1,7 +1,7 @@
 <div class="container mainbox">
   <div class="contenido">
     <mat-icon class="me-1">search</mat-icon>
-    <ion-label>{{ "BUSCADOR.TITULO" | translate }}</ion-label>
+    <ion-label>{{ 'BUSCADOR.TITULO' | translate }}</ion-label>
     <div class="ion-padding" slot="content">
       <ion-grid>
         <ion-row class="contenido d-flex justify-content-center">
@@ -9,14 +9,16 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}"
-                labelPlacement="floating" maxlength="20" [(ngModel)]="origen"
-                (ionInput)="obtenerSugerenciasOrigen($event)">
-              </ion-input>
+              <ion-input
+                class="inputs text-start"
+                label="{{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}"
+                labelPlacement="floating"
+                maxlength="20"
+                [(ngModel)]="origen"
+                (ionInput)="obtenerSugerenciasOrigen($event)"></ion-input>
               <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item"
-                  (click)="seleccionarLocalidadOrigen(localidad)">
-                  {{ localidad.descripcion.split(",")[0].trim() }} -
+                <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item" (click)="seleccionarLocalidadOrigen(localidad)">
+                  {{ localidad.descripcion.split(',')[0].trim() }} -
                   {{ localidad.provincia }}
                 </li>
               </ul>
@@ -27,14 +29,16 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}"
-                labelPlacement="floating" maxlength="20" [(ngModel)]="destino"
-                (ionInput)="obtenerSugerenciasDestino($event)">
-              </ion-input>
+              <ion-input
+                class="inputs text-start"
+                label="{{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}"
+                labelPlacement="floating"
+                maxlength="20"
+                [(ngModel)]="destino"
+                (ionInput)="obtenerSugerenciasDestino($event)"></ion-input>
               <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item"
-                  (click)="seleccionarLocalidadDestino(localidad)">
-                  {{ localidad.descripcion.split(",")[0].trim() }} -
+                <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item" (click)="seleccionarLocalidadDestino(localidad)">
+                  {{ localidad.descripcion.split(',')[0].trim() }} -
                   {{ localidad.provincia }}
                 </li>
               </ul>
@@ -45,9 +49,12 @@
           <ion-col class="columna" size="12" size-md="3">
             <div class="input-container">
               <mat-icon>schedule</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_CUANDO' | translate }}"
-                labelPlacement="floating" type="date" [(ngModel)]="fecha_salida">
-              </ion-input>
+              <ion-input
+                class="inputs text-start"
+                label="{{ 'BUSCADOR.BUSCAR_VIAJE_CUANDO' | translate }}"
+                labelPlacement="floating"
+                type="date"
+                [(ngModel)]="fecha_salida"></ion-input>
             </div>
           </ion-col>
         </ion-row>
@@ -60,7 +67,7 @@
             <p-toast position="bottom-center"></p-toast>
             <button mat-raised-button class="btn_config btn btn_bg" (click)="buscar()">
               <mat-icon>search</mat-icon>
-              {{ "BOTON.BUSCAR" | translate }}
+              {{ 'BOTON.BUSCAR' | translate }}
             </button>
           </div>
         </ion-col>
@@ -74,10 +81,6 @@
           </div>
         </ion-col>
       </ion-row>
-
-
     </div>
   </div>
-
-
 </div>
