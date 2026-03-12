@@ -496,3 +496,8 @@ span:focus {
   border: 3px solid #9b59b6 !important;
   outline: none;
 }
+
+::ng-deep .calendario-bajo-boton {
+  margin-top: 5px;
+  /* Ya no necesita el transform-origin manual, Angular lo calculará al detectar el input */
+}

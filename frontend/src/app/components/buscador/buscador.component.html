@@ -1,23 +1,68 @@
 <div class="container mainbox">
   <div class="contenido">
-    <mat-icon class="me-1">search</mat-icon>
-    <ion-label>{{ 'BUSCADOR.TITULO' | translate }}</ion-label>
-    <div class="ion-padding" slot="content">
+    <div class="d-flex justify-content-center">
+      <mat-icon
+        class="me-1"
+        aria-hidden="true"
+      >
+        search
+      </mat-icon>
+
+      <ion-label
+        id="buscador-titulo"
+        build-priority="1"
+      >
+        <h2 class="titulo-semantico">{{ 'BUSCADOR.TITULO' | translate }}</h2>
+      </ion-label>
+    </div>
+
+    <div
+      class="ion-padding"
+      slot="content"
+    >
       <ion-grid>
         <ion-row class="contenido d-flex justify-content-center">
           <!-- Campo Desde -->
-          <ion-col class="columna" size="12" size-md="3">
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
             <div class="input-container">
-              <mat-icon>share_location</mat-icon>
-              <ion-input
-                class="inputs text-start"
-                label="{{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}"
+              <label class="d-flex align-items-center mb-1">
+                <mat-icon aria-hidden="true">share_location</mat-icon>
+
+                {{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}
+              </label>
+
+              <input
+                class="form-control text-start"
                 labelPlacement="floating"
-                maxlength="20"
+                type="text"
                 [(ngModel)]="origen"
-                (ionInput)="obtenerSugerenciasOrigen($event)"></ion-input>
-              <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item" (click)="seleccionarLocalidadOrigen(localidad)">
+                (input)="obtenerSugerenciasOrigen($event)"
+                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+                aria-haspopup="listbox"
+                aria-autocomplete="list"
+                role="combobox"
+                aria-controls="lista-origen"
+              />
+
+              <ul
+                *ngIf="sugerenciasOrigen.length > 0"
+                class="list-group lista_sugerencias"
+                role="listbox"
+                aria-live="polite"
+              >
+                <li
+                  *ngFor="let localidad of sugerenciasOrigen"
+                  class="list-group-item"
+                  (click)="seleccionarLocalidadOrigen(localidad)"
+                  role="option"
+                  tabindex="0"
+                  (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                >
+                  >
                   {{ localidad.descripcion.split(',')[0].trim() }} -
                   {{ localidad.provincia }}
                 </li>
@@ -26,18 +71,46 @@
           </ion-col>
 
           <!-- Campo Hasta -->
-          <ion-col class="columna" size="12" size-md="3">
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
             <div class="input-container">
-              <mat-icon>share_location</mat-icon>
-              <ion-input
-                class="inputs text-start"
-                label="{{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}"
+              <label class="d-flex align-items-center mb-1">
+                <mat-icon aria-hidden="true">share_location</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}
+              </label>
+              <input
+                class="form-control text-start"
                 labelPlacement="floating"
                 maxlength="20"
+                type="text"
                 [(ngModel)]="destino"
-                (ionInput)="obtenerSugerenciasDestino($event)"></ion-input>
-              <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item" (click)="seleccionarLocalidadDestino(localidad)">
+                (ionInput)="obtenerSugerenciasDestino($event)"
+                role="combobox"
+                aria-required="true"
+                aria-autocomplete="list"
+                [attr.aria-expanded]="sugerenciasDestino.length > 0"
+                aria-haspopup="listbox"
+                aria-controls="lista-destino"
+              />
+              <ul
+                *ngIf="sugerenciasDestino.length > 0"
+                class="list-group lista_sugerencias"
+                id="lista-destino"
+                role="listbox"
+                aria-live="polite"
+              >
+                <li
+                  *ngFor="let localidad of sugerenciasDestino"
+                  class="list-group-item"
+                  (click)="seleccionarLocalidadDestino(localidad)"
+                  role="option"
+                  tabindex="0"
+                  (keyup.enter)="seleccionarLocalidadDestino(localidad)"
+                >
+                  >
                   {{ localidad.descripcion.split(',')[0].trim() }} -
                   {{ localidad.provincia }}
                 </li>
@@ -45,42 +118,120 @@
             </div>
           </ion-col>
 
-          <!-- Campo Cuando -->
-          <ion-col class="columna" size="12" size-md="3">
-            <div class="input-container">
-              <mat-icon>schedule</mat-icon>
-              <ion-input
-                class="inputs text-start"
-                label="{{ 'BUSCADOR.BUSCAR_VIAJE_CUANDO' | translate }}"
+          <!-- Campo Cuando Ida -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
+            <div class="input-container position-relative">
+              <label class="d-flex align-items-center mb-1">
+                <mat-icon aria-hidden="true">schedule</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_IDA' | translate }}
+              </label>
+              <div class="datepicker-wrapper">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  class="input-oculto-posicionador"
+                  [min]="fechaMinima"
+                  [(ngModel)]="fecha_salida"
+                />
+
+                <button
+                  type="button"
+                  class="form-control"
+                  (click)="picker.open()"
+                >
+                  <span *ngIf="textoBotonFecha">
+                    {{ textoBotonFecha | translate }}
+                  </span>
+
+                  <span *ngIf="!textoBotonFecha">
+                    {{
+                      fecha_salida
+                        | date: 'EEE, d MMMM' : '' : translate.currentLang
+                        | titlecase
+                    }}
+                  </span>
+                </button>
+              </div>
+              <mat-datepicker
+                #picker
+                panelClass="calendario-bajo-boton"
+              ></mat-datepicker>
+
+              <!-- <input
+                class="form-control text-start"
                 labelPlacement="floating"
                 type="date"
-                [(ngModel)]="fecha_salida"></ion-input>
+                [min]="fechaMinima"
+                [(ngModel)]="fecha_salida"
+                aria-required="true"
+              /> -->
+            </div>
+          </ion-col>
+
+          <!-- Campo Cuando vuelta -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
+            <div class="input-container">
+              <label class="d-flex align-items-center mb-1">
+                Fecha de vuelta
+                <mat-icon aria-hidden="true">schedule</mat-icon>
+              </label>
+              <input
+                class="form-control text-start"
+                labelPlacement="floating"
+                type="date"
+                [min]="fechaMinima"
+                [(ngModel)]="fecha_salida"
+                aria-required="true"
+              />
             </div>
           </ion-col>
         </ion-row>
       </ion-grid>
 
-      <ion-row>
-        <ion-col>
-          <!-- Botón para buscar -->
-          <div class="caja_boton">
-            <p-toast position="bottom-center"></p-toast>
-            <button mat-raised-button class="btn_config btn btn_bg" (click)="buscar()">
-              <mat-icon>search</mat-icon>
-              {{ 'BOTON.BUSCAR' | translate }}
-            </button>
-          </div>
-        </ion-col>
-        <ion-col>
-          <!-- Botón para limpiar los campos -->
-          <div class="caja_boton">
-            <button mat-raised-button class="btn_limpiar btn btn_bg" (click)="limpiarBusqueda()">
-              <i class="fi fi-rs-clean"></i>
-              Limpiar búsqueda
-            </button>
-          </div>
-        </ion-col>
-      </ion-row>
+      <div class="d-flex justify-content-center">
+        <ion-row>
+          <ion-col>
+            <!-- Botón para buscar -->
+            <div class="caja_boton">
+              <p-toast position="bottom-center"></p-toast>
+              <button
+                mat-raised-button
+                class="btn_config btn btn_bg"
+                (click)="buscar()"
+                aria-label="Buscar viajes disponibles"
+              >
+                <mat-icon aria-hidden="true">search</mat-icon>
+                {{ 'BOTON.BUSCAR' | translate }}
+              </button>
+            </div>
+          </ion-col>
+          <ion-col>
+            <!-- Botón para limpiar los campos -->
+            <div class="caja_boton">
+              <button
+                mat-raised-button
+                class="btn_limpiar btn btn_bg"
+                (click)="limpiarBusqueda()"
+                aria-label="Limpiar todos los campos del buscador"
+              >
+                <i
+                  class="fi fi-rs-clean"
+                  aria-hidden="true"
+                ></i>
+                Limpiar búsqueda
+              </button>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
     </div>
   </div>
 </div>

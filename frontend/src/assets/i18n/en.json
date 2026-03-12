@@ -255,6 +255,17 @@
       "FINALIZAR_REGISTRO": "Complete registration"
     }
   },
+
+  "BUSCADOR": {
+    "TITULO": "Are you looking for a trip?",
+    "BUSCAR_VIAJE_DESDE": "From...",
+    "BUSCAR_VIAJE_HASTA": "To...",
+    "BUSCAR_VIAJE_IDA": "When are you going?",
+    "BUSCAR_VIAJE_VUELTA": "Do you want to schedule the return?",
+    "HOY": "Today",
+    "MAÑANA": "Tomorrow"
+  },
+
   "__DatosContacto": "OK OK OK OK OK OK OK , contact page",
   "DATOS_CONTACTO": {
     "TITULO": "Contact Details",

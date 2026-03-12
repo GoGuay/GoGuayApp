@@ -270,6 +270,17 @@
       "FINALIZAR_REGISTRO": "Finalizar registro"
     }
   },
+
+  "_BUSCADOR": "Componente de búsqueda de viaje (/busqueda-viajes)",
+  "BUSCADOR": {
+    "TITULO": "¿Estás buscando un viaje?",
+    "BUSCAR_VIAJE_DESDE": "Desde...",
+    "BUSCAR_VIAJE_HASTA": "Hasta...",
+    "BUSCAR_VIAJE_IDA": "¿Cuando vas?",
+    "BUSCAR_VIAJE_VUELTA": "¿Quieres programar la vuelta?",
+    "HOY": "Hoy",
+    "MAÑANA": "Mañana"
+  },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
@@ -460,13 +471,6 @@
   "CENTRODEAYUDA": {
     "TITULO": "Centro de ayuda",
     "SUBTITULO": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte"
-  },
-  "_BUSCADOR": "/buscador",
-  "BUSCADOR": {
-    "TITULO": "¿Estás buscando un viaje?",
-    "BUSCAR_VIAJE_DESDE": "Desde donde",
-    "BUSCAR_VIAJE_HASTA": "Hasta donde",
-    "BUSCAR_VIAJE_CUANDO": "Cuando"
   },
   "_JUMBOTRON": "",
   "JUMBOTRON": {

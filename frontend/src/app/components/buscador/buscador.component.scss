@@ -1,8 +1,37 @@
-
-
 /* Asegura que los iconos también sean visibles */
 .white-header ion-icon {
   color: black !important;
+}
+
+.form-control {
+  width: 250px;
+}
+
+.datepicker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-oculto-posicionador {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  /* Se vuelve invisible */
+  cursor: pointer;
+  z-index: -1;
+  /* Se coloca detrás del botón para que no interfiera */
+  border: none;
+  pointer-events: none;
+  /* Evita que el usuario interactúe con el input directamente */
+}
+
+.btn-disparador {
+  text-align: center;
+  background-color: white;
+  /* Ajusta según tu diseño de PrideRide */
 }
 
 .ion-valid.sc-ion-input-md-h {
@@ -24,8 +53,9 @@
 }
 
 .input-container {
-  display: flex;
-  align-items: center;
+  position: relative;
+  display: inline-block;
+
 }
 
 .input-container mat-icon {
@@ -43,6 +73,7 @@
 .btn_limpiar {
   background-color: #E0B6B6 !important;
 }
+
 .btn_limpiar:hover {
   background-color: #b3b5e6 !important;
 }
@@ -64,26 +95,29 @@
   .input-container {
     margin-bottom: 16px;
   }
+
   .input-container mat-icon {
     margin-right: 6px;
   }
+
   .input-container ion-input {
     margin-right: -31px;
   }
+
   .caja_boton {
     text-align: center;
   }
 
-  .contenido{
+  .contenido {
     display: flex;
     flex-direction: column;
   }
 
-  .columna{
+  .columna {
     margin-bottom: 10%;
   }
 
-  .inputs{
+  .inputs {
     text-align: start !important;
   }
 }

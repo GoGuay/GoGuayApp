@@ -27,49 +27,80 @@ googleapykey=os.getenv('GOOGLE_API_KEY')
 @apigoogle_blueprint.route('/buscar_localidad', methods=['GET'])
 def buscar_localidad():
     query = request.args.get('q')
-    url = f'https://maps.googleapis.com/maps/api/place/autocomplete/json?input={query}&language=es&types=locality&components=country:ES&key={googleapykey}'
-    
+    url = 'https://places.googleapis.com/v1/places:autocomplete'   
+    payload = {
+        "input": query,
+        "languageCode": "es",
+        "includedRegionCodes": ["es"],
+        "includedPrimaryTypes": ["locality"]
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': googleapykey,
+        'X-Goog-FieldMask': 'suggestions.placePrediction.text,suggestions.placePrediction.placeId'
+    }
+
+
     try:        
-        response = requests.get(url)
+        response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()  
         data = response.json()  
+        print('DATA ORIGEN: ', data)
+
 
         # Extraer las predicciones de la respuesta
         localidades = []
-        for item in data.get('predictions', []):
-            place_id = item['place_id']
+        for item in data.get('suggestions', []):
+            prediction = item.get('placePrediction')
 
-            provincia = detalle_localidad(place_id)
+            if prediction:
+                place_id = prediction['placeId']            
+                provincia = detalle_localidad(place_id)
 
-            localidades.append({
-                'descripcion': item['description'],  
-                'place_id': item['place_id'],    
-                'provincia': provincia
-            })
-
+                localidades.append({
+                    'descripcion': prediction['text']['text'],
+                    'place_id': place_id,    
+                    'provincia': provincia
+                })
         
         return jsonify(localidades), 200
-    except requests.exceptions.RequestException as e:        
+    except requests.exceptions.RequestException as e:   
+        print(f"Error en Google API: {e.response.text if e.response else e}")     
         return jsonify({'error': str(e)}), 500
     
 
 #Vinculada a la función anterior, devuelve la provincia según el municipio escogido
 def detalle_localidad(place_id):
-        url = f'https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={googleapykey}'
-        respuesta = requests.get(url)
-        if respuesta.status_code == 200:
-            data = respuesta.json()
-            address_components = data.get('result', {}).get('address_components',[])
+        url = f'https://places.googleapis.com/v1/places/{place_id}'
 
-            provincia = None
-            for component in address_components:
-                if 'administrative_area_level_2' in component ['types']:
-                    provincia = component['long_name']
-                    break
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': googleapykey,
+            'X-Goog-FieldMask': 'addressComponents'
+        }
 
-            return provincia
-        else:
-            print (f"Error: {respuesta.status_code}")
+        respuesta = requests.get(url, headers=headers)
+        
+
+        try:
+
+            if respuesta.status_code == 200:
+                data = respuesta.json()
+                address_components = data.get('addressComponents',[])
+                print ('Address Component: ', address_components)
+
+                provincia = None
+                for component in address_components:
+                    if 'administrative_area_level_2' in component.get('types', []):
+                        provincia = component.get('longtext')
+                        break
+
+                return provincia
+            else:
+                print(f"Error en detalle_localidad: {respuesta.status_code} - {respuesta.text}")
+                return None
+        except Exception as e:
+            print(f"Excepción en detalle_localidad: {str(e)}")
             return None
 
 
