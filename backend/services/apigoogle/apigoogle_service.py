@@ -7,6 +7,8 @@ import requests
 import os
 from dotenv import load_dotenv
 from google.cloud import translate
+import re
+
 
 
 
@@ -26,7 +28,14 @@ googleapykey=os.getenv('GOOGLE_API_KEY')
 #Busca una localidad según los caracteres que introduzca el usuario
 @apigoogle_blueprint.route('/buscar_localidad', methods=['GET'])
 def buscar_localidad():
-    query = request.args.get('q')
+    query = request.args.get('q', '')
+
+    patron_letras = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]'
+    
+    #Si la longitud es menor de 3 se devuelve la lista vacía, sin error. 
+    if len(query) < 3 or not re.match(patron_letras, query):
+        return jsonify([]), 200
+
     url = 'https://places.googleapis.com/v1/places:autocomplete'   
     payload = {
         "input": query,
@@ -51,17 +60,28 @@ def buscar_localidad():
         # Extraer las predicciones de la respuesta
         localidades = []
         for item in data.get('suggestions', []):
+            print ('item: ', item)
             prediction = item.get('placePrediction')
 
             if prediction:
-                place_id = prediction['placeId']            
-                provincia = detalle_localidad(place_id)
+                texto_completo = prediction.get('text', {}).get('text', '')
+                partes = [p.strip() for p in texto_completo.split(',')]
+                partes_sin_pais = [p for p in partes if p.lower() != 'españa']
+
+                if len(partes_sin_pais) >=2:
+                    ciudad = partes_sin_pais[0]
+                    provincia = partes_sin_pais[1]
+                    descripcion = f"{ciudad} ({provincia})"
+                elif len (partes_sin_pais) == 1:
+                    descripcion = partes_sin_pais[0]
+                else:
+                    descripcion = texto_completo
+                
 
                 localidades.append({
-                    'descripcion': prediction['text']['text'],
-                    'place_id': place_id,    
-                    'provincia': provincia
-                })
+                    'descripcion': descripcion,
+                    'place_id': prediction['placeId']
+        })
         
         return jsonify(localidades), 200
     except requests.exceptions.RequestException as e:   

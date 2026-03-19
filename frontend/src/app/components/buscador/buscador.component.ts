@@ -13,6 +13,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+} from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-buscador',
@@ -45,6 +52,8 @@ export class BuscadorComponent implements OnInit {
 
   @Output() onSearch = new EventEmitter<any>();
 
+  private buscadorOrigen$ = new Subject<string>();
+
   constructor(
     public translate: TranslateService,
     private navCtrl: NavController,
@@ -52,6 +61,35 @@ export class BuscadorComponent implements OnInit {
     private googleService: GoogleServices,
   ) {
     addIcons({ eye, lockClosed });
+
+    /**
+     * CEREBRO DE BÚSQUEDA DE LOCALIDAD
+     * Con el pipe establecemos unos filtros para que los resultados sean mejores.
+     * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
+     * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
+     * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
+     * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
+     */
+    this.buscadorOrigen$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        filter((texto) => {
+          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
+          return regexLetra.test(texto);
+        }),
+        switchMap((texto) => {
+          if (texto.length >= 3) {
+            return this.googleService.obtenerLocalidad(texto);
+          } else {
+            this.sugerenciasOrigen = [];
+            return [];
+          }
+        }),
+      )
+      .subscribe((respuesta: any) => {
+        this.sugerenciasOrigen = respuesta;
+      });
   }
 
   ngOnInit() {}
@@ -95,11 +133,7 @@ export class BuscadorComponent implements OnInit {
    */
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.googleService
-      .obtenerLocalidad(contenidoInput)
-      .subscribe((respuesta: any) => {
-        this.sugerenciasOrigen = respuesta;
-      });
+    this.buscadorOrigen$.next(contenidoInput);
   }
 
   /**
