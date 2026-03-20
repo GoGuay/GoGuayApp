@@ -270,7 +270,6 @@
       "FINALIZAR_REGISTRO": "Finalizar registro"
     }
   },
-
   "_BUSCADOR": "Componente de búsqueda de viaje (/busqueda-viajes)",
   "BUSCADOR": {
     "TITULO": "¿Estás buscando un viaje?",
@@ -369,7 +368,19 @@
       "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
       "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
     },
-    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D."
+    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D.",
+    "MODO_OSCURO": {
+      "TITLE": "Modo oscuro",
+      "SUBTITLE": "Selecciona si quieres utilizar el modo oscuro o por defecto"
+    },
+    "PREFERENCIAS": {
+      "TITLE": "Selecciona tus preferencias",
+      "SUBTITLE": "Recuerda que también puedes modificar estas preferencias desde el menú de 'Mi perfil'",
+      "MASCOTAS": "Se admiten mascotas",
+      "MUSICA": "Me gusta viajar escuchando música",
+      "HABLAR": "Me gusta viajar hablando con los acompañantes",
+      "SILENCIO": "Me gusta ir en silencio"
+    }
   },
   "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
   "FORGOT_PW": {

@@ -255,7 +255,6 @@
       "FINALIZAR_REGISTRO": "Complete registration"
     }
   },
-
   "BUSCADOR": {
     "TITULO": "Are you looking for a trip?",
     "BUSCAR_VIAJE_DESDE": "From...",
@@ -265,7 +264,6 @@
     "HOY": "Today",
     "MAÑANA": "Tomorrow"
   },
-
   "__DatosContacto": "OK OK OK OK OK OK OK , contact page",
   "DATOS_CONTACTO": {
     "TITULO": "Contact Details",
@@ -354,7 +352,19 @@
       "INFO_ELIMINAR_CTA": "This action will permanently delete your account, with no possibility of recovery in the future.",
       "INFO_ELIMINAR_CTA2": "If you have a balance, remember to transfer it to your bank account first so as not to lose that money."
     },
-    "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D."
+    "DERECHOS_TXT": "All rights reserved ©. | Application created by: Tomás P.H. & Daniel G.D.",
+    "MODO_OSCURO": {
+      "TITLE": "Dark mode",
+      "SUBTITLE": "Select whether you want to use dark mode or the default theme"
+    },
+    "PREFERENCIAS": {
+      "TITLE": "Select your preferences",
+      "SUBTITLE": "Remember you can also change these preferences from the 'My Profile' menu",
+      "MASCOTAS": "Pets allowed",
+      "MUSICA": "I enjoy listening to music while traveling",
+      "HABLAR": "I like chatting with my fellow travelers",
+      "SILENCIO": "I prefer traveling in silence"
+    }
   },
   "Forgot_Password": "Page to send password reset email",
   "FORGOT_PW": {

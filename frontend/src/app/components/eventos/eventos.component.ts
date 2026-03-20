@@ -7,11 +7,13 @@ import { Evento, Eventos } from '../../models/eventos/eventos';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule],
+  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.scss'],
 })

@@ -54,6 +54,18 @@ export class AjustesAplicacionPage implements OnInit {
   errorMensaje: string = '';
   exitoMensaje: string = '';
 
+  preferenciasSeleccionadas: string[] = [];
+  aceptaMascotas: boolean = false;
+  fuma: boolean = false;
+  leGustaMusica: boolean = false;
+  leGustaHablar: boolean = false;
+  leGustaSilencio: boolean = false;
+  soloMujeres: boolean = false;
+  darkTheme: boolean = false;
+  usuario: Usuario['usuario'] | null = null;
+  isLoggedIn: boolean = false;
+  numNotificaciones: number = 0;
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -70,8 +82,20 @@ export class AjustesAplicacionPage implements OnInit {
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
     this.mostrarJumbotron = savedJumbotronSetting === 'true';
+    this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
+    this.darkTheme = localStorage.getItem('darkTheme') === 'true';
+
+    // Aplicar el tema al iniciar
+    this.aplicarTema(this.darkTheme);
+
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.obtenerUsuario();
+    this.userService.usuario$.subscribe((usuario) => {
+      if (usuario) {
+        this.userData.usuario = usuario;
+        this.preferenciasSeleccionadas = usuario.preferencias || [];
+      }
+    });
   }
 
 
@@ -292,4 +316,128 @@ export class AjustesAplicacionPage implements OnInit {
         },
       });
   }
+
+  /**
+   * Función para cambiar el modo de visión de la app
+   * @param event 
+   */
+  toggleDarkMode(event: any) {
+    this.darkTheme = event.detail.checked;
+    localStorage.setItem('darkTheme', this.darkTheme.toString());
+    this.aplicarTema(this.darkTheme);
+  }
+
+  /**
+   * Función para aplicar el tema seleccionado
+   * @param isDark 
+   */
+  private aplicarTema(isDark: boolean) {
+    document.body.classList.toggle('dark', isDark);
+  }
+
+  /**
+   * Función para actualizar la selección de notificaciones
+   */
+  actualizarNotificaciones() {
+    localStorage.setItem('notificacionesActivas', this.notificacionesActivas.toString());
+  }
+
+  /**
+   * Función para obtener las preferencias de viaje del usuario.
+   * 
+   */
+  cargarPreferencias() {
+    // Intentamos cargar desde el usuario de la BD primero, si no, del local
+    const usuario = this.userData?.usuario;
+    const prefsArray: string[] = usuario?.preferencias || JSON.parse(localStorage.getItem('userPreferences') || '[]');
+
+    // Mapeo inverso: de Array de strings a Booleanos de la UI
+    this.leGustaHablar = prefsArray.includes('Hablar');
+    this.leGustaMusica = prefsArray.includes('Escuchar música');
+    this.leGustaSilencio = prefsArray.includes('Ir en silencio');
+    // Para 'Dormir' podrías añadir otro checkbox si lo necesitas
+
+    this.aceptaMascotas = prefsArray.includes('Permitir mascotas');
+    this.fuma = prefsArray.includes('Permitir fumar');
+  }
+  /**
+   * Función para guardar las nuevas preferencias de viaje del usuario.
+   * 
+   */
+  guardarPreferencias() {
+    // 1. Construir el array de strings según el Enum del Backend
+    const nuevasPreferencias: string[] = [];
+
+    if (this.leGustaHablar) nuevasPreferencias.push('Hablar');
+    if (this.leGustaMusica) nuevasPreferencias.push('Escuchar música');
+    if (this.leGustaSilencio) nuevasPreferencias.push('Ir en silencio');
+    if (this.aceptaMascotas) nuevasPreferencias.push('Permitir mascotas');
+    if (this.fuma) nuevasPreferencias.push('Permitir fumar');
+
+    // 2. Guardar en LocalStorage para persistencia rápida
+    localStorage.setItem('userPreferences', JSON.stringify(nuevasPreferencias));
+
+    // 3. Llamada real al Backend (IMPORTANTE)
+    // Asumimos que tu servicio acepta un array de strings en el campo 'preferencias'
+    this.userService.actualizarUsuario(this.userData.usuario.id, {
+      preferencias: nuevasPreferencias
+    }).subscribe({
+      next: (usuarioActualizado) => {
+        // Actualizamos el observable y el objeto local
+        this.userService.setUsuarioData(usuarioActualizado);
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Preferencias actualizadas',
+          detail: 'Se han sincronizado tus preferencias con tu perfil.',
+          life: 2000
+        });
+      },
+      error: (err) => {
+        console.error('Error al guardar preferencias:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron guardar las preferencias en el servidor.',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  /**
+   * Función para cerrar sesión
+   */
+  async logout() {
+    const rememberMe = localStorage.getItem('remember_me') === 'true';
+    const email = localStorage.getItem('email') || '';
+    const password = localStorage.getItem('password') || '';
+    const alert = await this.dialog.open(HelpModalComponent, {
+      data: {
+        title: 'Cerrar Sesión',
+        message: '¿Estás seguro de que quieres salir de Pridecar?',
+        showAcceptButton: true
+      }
+    });
+
+    alert.afterClosed().subscribe(confirmado => {
+      if (confirmado) {
+        if (rememberMe) {
+          localStorage.setItem('remember_me', 'true');
+          localStorage.setItem('email', email);
+          localStorage.setItem('password', password);
+        }
+
+        this.userService.setUsuarioData(null);
+
+        this.userData = {} as Usuario;
+        this.usuario = null;
+        this.isLoggedIn = false;
+        this.numNotificaciones = 0;
+
+        this.navCtrl.navigateRoot(['/home'], { animated: true });
+      }
+    });
+  }
+
 }

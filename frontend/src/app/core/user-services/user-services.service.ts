@@ -64,7 +64,7 @@ export class UserServicesService {
 
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -112,6 +112,26 @@ export class UserServicesService {
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(`${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`);
+  }
+
+  /**
+   * Función para actualizar datos genéricos del usuario (como las preferencias).
+   * @param usuarioId ID del usuario a actualizar.
+   * @param datos Objeto con los campos a cambiar (ej: { preferencias: ['Hablar', 'Dormir'] }).
+   * @returns Observable con el usuario actualizado.
+   */
+  actualizarUsuario(usuarioId: number, datos: Partial<Usuario['usuario']>): Observable<Usuario['usuario']> {
+    return this.http.put<Usuario['usuario']>(`${this.apiUrl}/user/editarusuario/${usuarioId}`, datos).pipe(
+      map((usuarioActualizado) => {
+        // Sincronizamos el estado reactivo de la aplicación
+        this.actualizarEstadoUsuario(usuarioActualizado);
+        return usuarioActualizado;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al actualizar datos del usuario: ', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
