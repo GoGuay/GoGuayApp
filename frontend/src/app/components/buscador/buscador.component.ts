@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,14 +52,20 @@ export class BuscadorComponent implements OnInit {
   destino: string = '';
   plazas: string = '';
   fecha_salida: Date = new Date();
+  fecha_vuelta: Date | null = null;
   fechaMinima: Date = new Date();
+  fechaMinimaVuelta: Date = new Date();
 
   sugerenciasOrigen: any[] = [];
   sugerenciasDestino: any[] = [];
 
+  @ViewChild('inputOrigen') inputOrigen!: ElementRef;
+  @ViewChild('inputDestino') inputDestino!: ElementRef;
+
   @Output() onSearch = new EventEmitter<any>();
 
   private buscadorOrigen$ = new Subject<string>();
+  private buscadorDestino$ = new Subject<string>();
 
   constructor(
     public translate: TranslateService,
@@ -63,7 +76,7 @@ export class BuscadorComponent implements OnInit {
     addIcons({ eye, lockClosed });
 
     /**
-     * CEREBRO DE BÚSQUEDA DE LOCALIDAD
+     * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
      * Con el pipe establecemos unos filtros para que los resultados sean mejores.
      * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
      * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
@@ -90,6 +103,30 @@ export class BuscadorComponent implements OnInit {
       .subscribe((respuesta: any) => {
         this.sugerenciasOrigen = respuesta;
       });
+
+    /**
+     * CEREBRO BUSQUEDA LOCALIDAD DESTINO
+     */
+    this.buscadorDestino$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        filter((texto) => {
+          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
+          return regexLetra.test(texto);
+        }),
+        switchMap((texto) => {
+          if (texto.length >= 3) {
+            return this.googleService.obtenerLocalidad(texto);
+          } else {
+            this.sugerenciasDestino = [];
+            return [];
+          }
+        }),
+      )
+      .subscribe((respuesta: any) => {
+        this.sugerenciasDestino = respuesta;
+      });
   }
 
   ngOnInit() {}
@@ -101,7 +138,7 @@ export class BuscadorComponent implements OnInit {
    * Pasa la fecha_salida a formato simplificado (día Mes dd aaaa) y lo guardar en fechaStrg. Si coincide con hoy.dateString devuelve 'Hoy' e igual para 'Mañana' desde el archivo de traducciones.
    * return '' --> Si no es hoy, ni mañana. La función llega a este return y devuelve un string vacío --> coge lo que se haya seleccionado.
    */
-  get textoBotonFecha(): string {
+  get textoBotonFechaIda(): string {
     if (!this.fecha_salida) return 'Seleccionar fecha';
 
     const hoy = new Date();
@@ -109,6 +146,20 @@ export class BuscadorComponent implements OnInit {
     mañana.setDate(hoy.getDate() + 1);
 
     const fechaStr = this.fecha_salida.toDateString();
+    if (fechaStr === hoy.toDateString()) return 'BUSCADOR.HOY';
+    if (fechaStr === mañana.toDateString()) return 'BUSCADOR.MAÑANA';
+
+    return '';
+  }
+
+  get textoBotonFechaVuelta(): string {
+    if (!this.fecha_vuelta) return 'Seleccionar fecha';
+
+    const hoy = new Date();
+    const mañana = new Date();
+    mañana.setDate(hoy.getDate() + 1);
+
+    const fechaStr = this.fecha_vuelta.toDateString();
     if (fechaStr === hoy.toDateString()) return 'BUSCADOR.HOY';
     if (fechaStr === mañana.toDateString()) return 'BUSCADOR.MAÑANA';
 
@@ -142,11 +193,7 @@ export class BuscadorComponent implements OnInit {
    */
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.googleService
-      .obtenerLocalidad(contenidoInput)
-      .subscribe((respuesta: any) => {
-        this.sugerenciasDestino = respuesta;
-      });
+    this.buscadorDestino$.next(contenidoInput);
   }
 
   /**
@@ -168,6 +215,16 @@ export class BuscadorComponent implements OnInit {
   }
 
   buscar() {
+    if (!this.origen || this.origen.trim() === '') {
+      this.inputOrigen.nativeElement.focus();
+      return;
+    }
+
+    if (!this.destino || this.destino.trim() === '') {
+      this.inputDestino.nativeElement.focus();
+      return;
+    }
+
     const params = {
       origen: this.origen,
       destino: this.destino,
@@ -178,13 +235,4 @@ export class BuscadorComponent implements OnInit {
     this.onSearch.emit(params);
     this.navCtrl.navigateForward('/busqueda-viajes', { queryParams: params });
   }
-
-  // Getter para la fecha actual
-  // get fechaMinima() {
-  //   const hoy = new Date();
-  //   const dd = String(hoy.getDate()).padStart(2, '0');
-  //   const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-  //   const yyyy = hoy.getFullYear();
-  //   return `${yyyy}-${mm}-${dd}`;
-  // }
 }
