@@ -94,6 +94,7 @@ export class AjustesAplicacionPage implements OnInit {
       if (usuario) {
         this.userData.usuario = usuario;
         this.preferenciasSeleccionadas = usuario.preferencias || [];
+        this.cargarPreferencias();
       }
     });
   }
@@ -357,8 +358,8 @@ export class AjustesAplicacionPage implements OnInit {
     this.leGustaSilencio = prefsArray.includes('Ir en silencio');
     // Para 'Dormir' podrías añadir otro checkbox si lo necesitas
 
-    this.aceptaMascotas = prefsArray.includes('Permitir mascotas');
-    this.fuma = prefsArray.includes('Permitir fumar');
+    this.aceptaMascotas = prefsArray.includes('Mascotas');
+    this.fuma = prefsArray.includes('Fumar');
   }
   /**
    * Función para guardar las nuevas preferencias de viaje del usuario.
