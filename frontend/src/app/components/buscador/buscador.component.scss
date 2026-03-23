@@ -25,6 +25,10 @@
   pointer-events: none;
 }
 
+.lista_sugerencias {
+  width: 240px;
+}
+
 .btn-disparador {
   text-align: center;
   background-color: white;
@@ -100,27 +104,7 @@
 * CONFIGURACIÓN PARA LA LISTA DE SUGERENCIAS
 * ------------------------------------------
 */
-.lista_sugerencias {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-  z-index: 1000;
-  max-height: 200px;
-  overflow-y: auto;
-  width: auto;
-}
 
-.lista_sugerencias li {
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.lista_sugerencias li:hover {
-  background-color: #f0f0f0;
-}
 
 
 

@@ -29,38 +29,62 @@
             size-md="3"
           >
             <div class="input-container">
-              <label class="d-flex align-items-center mb-1">
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-origen"
+              >
                 <mat-icon aria-hidden="true">share_location</mat-icon>
                 {{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}
               </label>
 
               <input
                 #inputOrigen
-                class="form-control text-start"
-                labelPlacement="floating"
+                id="input-origen"
                 type="text"
+                class="form-control text-start"
                 [(ngModel)]="origen"
+                (blur)="estaEnOrigen = false; validarSeleccion('origen')"
+                (focus)="estaEnOrigen = true"
                 (input)="obtenerSugerenciasOrigen($event)"
-                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
-                aria-haspopup="listbox"
-                aria-autocomplete="list"
+                (keydown)="manejarNavegacionTeclado($event, 'origen')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
                 role="combobox"
-                aria-controls="lista-origen"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasOrigen.length > 0
+                    ? 'lista-origen-resultados'
+                    : null
+                "
               />
+              <!-- Accesibilidad: span oculto - instrucciones de búsqueda de resultados -->
+              <span
+                id="instrucciones-busqueda"
+                class="visually-hidden"
+              >
+                {{ 'BUSCADOR.INSTRUCCIONES_BUSQUEDA' | translate }}
+              </span>
 
               <ul
+                id="lista-origen-resultados"
                 *ngIf="sugerenciasOrigen.length > 0"
                 class="list-group lista_sugerencias"
                 role="listbox"
                 aria-live="polite"
               >
                 <li
-                  *ngFor="let localidad of sugerenciasOrigen"
+                  *ngFor="let localidad of sugerenciasOrigen; let i = index"
                   class="list-group-item"
                   (click)="seleccionarLocalidadOrigen(localidad)"
+                  [class.active]="i === indiceActivoOrigen"
                   role="option"
-                  tabindex="0"
+                  tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                  (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
                 >
                   {{ localidad.descripcion }}
                 </li>
@@ -75,38 +99,61 @@
             size-md="3"
           >
             <div class="input-container">
-              <label class="d-flex align-items-center mb-1">
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-destino"
+              >
                 <mat-icon aria-hidden="true">share_location</mat-icon>
                 {{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}
               </label>
 
               <input
                 #inputDestino
-                class="form-control text-start"
-                labelPlacement="floating"
+                id="input-destino"
                 type="text"
+                class="form-control text-start"
                 [(ngModel)]="destino"
+                (blur)="estaEnDestino = false; validarSeleccion('destino')"
+                (focus)="estaEnDestino = true"
                 (input)="obtenerSugerenciasDestino($event)"
-                [attr.aria-expanded]="sugerenciasDestino.length > 0"
-                aria-haspopup="listbox"
-                aria-autocomplete="list"
+                (keydown)="manejarNavegacionTeclado($event, 'destino')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
                 role="combobox"
-                aria-controls="lista-destino"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasDestino.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasDestino.length > 0
+                    ? 'lista-destino-resultados'
+                    : null
+                "
               />
+              <!-- Accesibilidad: span oculto - instrucciones de búsqueda de resultados -->
+              <span
+                id="instrucciones-busqueda"
+                class="visually-hidden"
+              >
+                {{ 'BUSCADOR.INSTRUCCIONES_BUSQUEDA' | translate }}
+              </span>
 
               <ul
                 *ngIf="sugerenciasDestino.length > 0"
                 class="list-group lista_sugerencias"
-                id="lista-destino"
+                id="lista-destino-resultados"
                 role="listbox"
                 aria-live="polite"
               >
                 <li
-                  *ngFor="let localidad of sugerenciasDestino"
+                  *ngFor="let localidad of sugerenciasDestino; let i = index"
                   class="list-group-item"
+                  [class.active]="i === indiceActivoDestino"
+                  (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
                   (click)="seleccionarLocalidadDestino(localidad)"
                   role="option"
-                  tabindex="0"
+                  tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadDestino(localidad)"
                 >
                   {{ localidad.descripcion }}
@@ -169,7 +216,7 @@
             <div class="input-container position-relative">
               <label class="d-flex align-items-center mb-1">
                 <mat-icon aria-hidden="true">schedule</mat-icon>
-                {{ 'BUSCADOR.BUSCAR_VIAJE_IDA' | translate }}
+                {{ 'BUSCADOR.BUSCAR_VIAJE_VUELTA' | translate }}
               </label>
               <input
                 matInput
@@ -234,7 +281,7 @@
                   class="fi fi-rs-clean"
                   aria-hidden="true"
                 ></i>
-                Limpiar búsqueda
+                {{ 'BOTON.LIMPIAR_BUSQUEDA' | translate }}
               </button>
             </div>
           </ion-col>
