@@ -356,6 +356,15 @@ export class BuscadorComponent implements OnInit {
   }
 
   buscar() {
+    if (!this.origen || this.origen.trim() === '') {
+      this.inputOrigen.nativeElement.focus();
+      return;
+    }
+
+    if (!this.destino || this.destino.trim() === '') {
+      this.inputDestino.nativeElement.focus();
+      return;
+    }
     const params = {
       origen: this.origen,
       destino: this.destino,
