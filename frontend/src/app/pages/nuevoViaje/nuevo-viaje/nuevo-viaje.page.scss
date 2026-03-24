@@ -233,32 +233,64 @@ ion-select::part(icon) {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
-/*
-* CONFIGURACIÓN PARA LA LISTA DE SUGERENCIAS
-* ------------------------------------------
-*/
-.lista_sugerencias {
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  width: 100%;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  max-height: 200px;
-  overflow-y: auto;
-}
 
-.lista_sugerencias li {
-  padding: 10px;
+/* Estilo para el contenedor y el select */
+.custom-dropdown {
+  position: relative;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  padding: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 
-.lista_sugerencias li:hover {
-  background-color: #f0f0f0;
+  .selected-value {
+    margin-left: 35px;
+    color: #666;
+  }
+
+  .custom-options {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 35px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    li {
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 35px;
+      transition: all 0.2s ease;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // EFECTO HOVER
+      &:hover {
+        background-color: #F0D7B4;
+        color: black;
+        transform: translateX(5px); // Un pequeño efecto visual
+      }
+
+      &.selected {
+        background-color: #F0D7B4;
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
 }
 
 /**

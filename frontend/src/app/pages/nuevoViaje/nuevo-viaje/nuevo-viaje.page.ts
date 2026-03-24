@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 import { Location } from '@angular/common';
+import { debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, tap } from 'rxjs';
+import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -37,6 +39,7 @@ import { Location } from '@angular/common';
 })
 export class NuevoViajePage implements OnInit {
   userLoggedIn: boolean = false;
+  isOpen: boolean = false;
 
   origen: string = '';
   destino: string = '';
@@ -53,7 +56,40 @@ export class NuevoViajePage implements OnInit {
   cargandoOrigen: boolean = false;
   cargandoDestino: boolean = false;
 
+  indiceActivoOrigen: number = -1;
+  indiceActivoDestino: number = -1;
+
   irAtrasImg: string = '../../../assets/sistema/atras.png';
+
+  private buscadorOrigen$ = new Subject<string>();
+  private buscadorDestino$ = new Subject<string>();
+  estaEnOrigen: boolean = false;
+  estaEnDestino: boolean = false;
+  private ultimaLocalidadValidaOrigen: any = null;
+  private ultimaLocalidadValidaDestino: any = null;
+
+  private cacheConsultas: { [key: string]: any[] } = {};
+
+  @ViewChild('inputOrigen') inputOrigen!: ElementRef;
+  @ViewChild('inputDestino') inputDestino!: ElementRef;
+
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+  }
+
+  selectOption(valor: string) {
+    this.plazas = valor;
+    this.isOpen = false;
+    // Aquí puedes disparar la lógica que necesites al cambiar
+  }
+
+  // Opcional: Cerrar si el usuario hace click fuera
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
 
   constructor(
     private navCtrl: NavController,
@@ -61,7 +97,9 @@ export class NuevoViajePage implements OnInit {
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private location: Location
+    private location: Location,
+    private googleService: GoogleServices,
+    private elementRef: ElementRef
   ) {
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
@@ -78,6 +116,74 @@ export class NuevoViajePage implements OnInit {
       .subscribe((traduccion: string) => {
         this.message_help_auth = traduccion;
       });
+
+    /**
+         * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
+         * Con el pipe establecemos unos filtros para que los resultados sean mejores.
+         * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
+         * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
+         * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
+         * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
+         */
+    this.buscadorOrigen$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        filter(() => this.estaEnOrigen),
+        filter((texto) => {
+          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
+          return regexLetra.test(texto);
+        }),
+        switchMap((texto) => {
+          const termino = texto.toLowerCase().trim();
+          if (this.cacheConsultas[termino]) {
+            return of(this.cacheConsultas[termino]);
+          }
+          if (texto.length >= 3) {
+            return this.googleService
+              .obtenerLocalidad(texto)
+              .pipe(
+                tap(
+                  (resultados) => (this.cacheConsultas[termino] = resultados),
+                ),
+              );
+          } else {
+            this.sugerenciasOrigen = [];
+            return [];
+          }
+        }),
+        filter(() => this.estaEnOrigen),
+      )
+      .subscribe((respuesta: any) => {
+        this.sugerenciasOrigen = respuesta;
+      });
+
+    /**
+   * CEREBRO BUSQUEDA LOCALIDAD DESTINO: Funciona igual que la de origen
+   */
+    this.buscadorDestino$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        filter(() => this.estaEnDestino),
+        filter((texto) => {
+          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
+          return regexLetra.test(texto);
+        }),
+        switchMap((texto) => {
+          if (texto.length >= 3) {
+            return this.googleService.obtenerLocalidad(texto);
+          } else {
+            this.sugerenciasDestino = [];
+            return [];
+          }
+        }),
+        filter(() => this.estaEnDestino),
+      )
+      .subscribe((respuesta: any) => {
+        this.sugerenciasDestino = respuesta;
+      });
+
   }
 
   ngOnInit() {
@@ -109,78 +215,27 @@ export class NuevoViajePage implements OnInit {
   }
 
 
+  /**
+   * Función para buscar la lista de sugerencias para el origen.
+   * 
+   * @param event Recibe la información del input
+   */
   buscarSugerenciasOrigen(event: Event) {
+    const contenidoInput = (event.target as HTMLInputElement).value;
     this.cargandoOrigen = true;
-    this.funcionesComunes.obtenerSugerenciasOrigen(event)
-      .finally(() => {
-        console.log("Búsqueda de sugerencias completada");
-        this.cargandoOrigen = false;
-        this.cdr.detectChanges(); // fuerza render del componente
-      });
+    this.buscadorOrigen$.next(contenidoInput);
   }
 
+  /**
+   * Función para buscar la lista de sugerencias para el destino.
+   * 
+   * @param event Recibe la información del input
+   */
   buscarSugerenciasDestino(event: Event) {
-    this.cargandoDestino = true;
-    this.funcionesComunes.obtenerSugerenciasDestino(event)
-      .finally(() => {
-        this.cargandoDestino = false;
-        this.cdr.detectChanges();
-      });
+    const contenidoInput = (event.target as HTMLInputElement).value;
+    this.buscadorDestino$.next(contenidoInput);
   }
 
-  /**
-  * Función para obtener la lista de sugerencias para el origen
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
-  obtenerSugerenciasOrigen(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasOrigen = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es'
-          );
-        })
-        .catch(error => {
-          console.error('Error al obtener sugerencias de origen:', error);
-        });
-    } else {
-      this.sugerenciasOrigen = [];
-    }
-  }
-
-  /**
-  * Función para obtener la lista de sugerencias para el destino
-  * en función de lo que escriba el usuario en el input correspondiente.
-  * 
-  * @param evento Recibe el evento del input.
-  */
-  obtenerSugerenciasDestino(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    if (contenidoInput.length > 2) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          this.sugerenciasDestino = data.filter((item: any) =>
-            item.address && (item.address.city || item.address.town || item.address.village) &&
-            item.address.country_code === 'es'
-          );
-        })
-        .catch(error => {
-          console.error('Error al obtener sugerencias de destino:', error);
-        });
-    } else {
-      this.sugerenciasDestino = [];
-    }
-  }
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
@@ -213,8 +268,148 @@ export class NuevoViajePage implements OnInit {
     this.funcionesComunes.sugerenciasDestino = [];
   }
 
+  /**
+ *
+ * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
+ * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
+ * @param index --> si es -1 el usuario pulsó la tecla estando dentro del input. Si es 0,1,2...significa que el usuario ya esta navegando en la lista de sugerencias.
+ *
+ * Condicional sugerencias: si el tipo es origen, elige sugerenciasOrigen. Si no es ese tipo, coge sugerenciasDestino. Si el array de sugerencias es 0 sale de la función.
+ * Condicional indiceActual: si el tipo es origen indiceActual pasa a valer lo que esté en la definición de indiceActivoOrigen (-1), si no pasa a valor lo que tenga indiceActivoDestino (-1).
+ * Si el evento es tecla abajo:
+ *  -event.preventDefault --> indicamos que somos nosotros quienes vamos a manejar con la tecla, impedimos la accion natural que tiene el navegador.
+ *  - Si indiceActual es menor que el array de sugerencias -1 (para igual el tamaño del array al número del índice), le sumamos 1 indiceActual y llamamos a actualizarIndiceyFoco
+ * Si el evento es tecla arriba:
+ *  -
+ */
+  manejarNavegacionTeclado(
+    event: KeyboardEvent,
+    tipo: 'origen' | 'destino',
+    index: number = -1,
+  ) {
+    const sugerencias =
+      tipo === 'origen' ? this.sugerenciasOrigen : this.sugerenciasDestino;
+    let indiceActual =
+      tipo === 'origen' ? this.indiceActivoOrigen : this.indiceActivoDestino;
+
+    if (sugerencias.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (indiceActual < sugerencias.length - 1) {
+        indiceActual++;
+        this.actualizarIndiceYFoco(tipo, indiceActual);
+      }
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (indiceActual > 0) {
+        indiceActual--;
+        this.actualizarIndiceYFoco(tipo, indiceActual);
+      } else {
+        this.actualizarIndiceYFoco(tipo, -1);
+        const input = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
+        input.nativeElement.focus();
+      }
+    } else if (event.key === 'Enter') {
+      // Si hay algo seleccionado en la lista, lo elegimos
+      if (indiceActual !== -1) {
+        event.preventDefault();
+        const seleccionada = sugerencias[indiceActual];
+        if (tipo === 'origen') {
+          this.seleccionarLocalidadOrigen(seleccionada);
+        } else {
+          this.seleccionarLocalidadDestino(seleccionada);
+        }
+      }
+    } else if (event.key === 'Escape') {
+      this.limpiarSugerencias(tipo);
+    }
+  }
+
+  private actualizarIndiceYFoco(
+    tipo: 'origen' | 'destino',
+    nuevoIndice: number,
+  ) {
+    if (tipo === 'origen') {
+      this.indiceActivoOrigen = nuevoIndice;
+    } else {
+      this.indiceActivoDestino = nuevoIndice;
+    }
+
+    if (nuevoIndice !== -1) {
+      // Selector dinámico basado en el tipo
+      const selector =
+        tipo === 'origen'
+          ? '.lista_sugerencias_origen'
+          : '.lista_sugerencias_destino';
+      setTimeout(() => {
+        const elementos = document.querySelectorAll(selector);
+        (elementos[nuevoIndice] as HTMLElement)?.focus();
+      }, 10);
+    }
+  }
+
+  limpiarSugerencias(
+    tipo: 'origen' | 'destino',
+    devolverFoco: boolean = false,
+  ) {
+    if (tipo === 'origen') {
+      this.sugerenciasOrigen = [];
+      this.indiceActivoOrigen = -1;
+      this.buscadorOrigen$.next('');
+      if (devolverFoco) {
+        this.inputOrigen.nativeElement.focus();
+      }
+    } else {
+      this.sugerenciasDestino = [];
+      this.indiceActivoDestino = -1;
+      this.buscadorDestino$.next('');
+      if (devolverFoco) {
+        this.inputDestino.nativeElement.focus();
+      }
+    }
+  }
+  validarSeleccion(tipo: 'origen' | 'destino') {
+    setTimeout(() => {
+      if (tipo === 'origen') {
+        const textoActual = this.origen.trim();
+        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion
+          .split(',')[0]
+          .trim();
+
+        if (textoActual === '') {
+          this.ultimaLocalidadValidaOrigen = null;
+          this.limpiarSugerencias('origen', false);
+          return;
+        }
+
+        if (!this.ultimaLocalidadValidaOrigen || textoActual !== textoValido) {
+          this.origen = '';
+          this.ultimaLocalidadValidaOrigen = null;
+          this.limpiarSugerencias('origen', true);
+        }
+      } else {
+        const textoActual = this.destino.trim();
+
+        if (textoActual === '') {
+          this.ultimaLocalidadValidaDestino = null;
+          this.limpiarSugerencias('destino', false);
+          return;
+        }
+        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion
+          .split(',')[0]
+          .trim();
+
+        if (!this.ultimaLocalidadValidaDestino || textoActual !== textoValido) {
+          this.destino = '';
+          this.ultimaLocalidadValidaDestino = null;
+          this.limpiarSugerencias('destino', true);
+        }
+      }
+    }, 250);
+  }
   goBack() {
     this.location.back();
   }
-  
+
 }

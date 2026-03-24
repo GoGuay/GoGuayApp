@@ -52,7 +52,8 @@ ion-item {
   --border-style: none !important;
 }
 
-ion-select, ion-list {
+ion-select,
+ion-list {
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
@@ -64,15 +65,16 @@ ion-select, ion-list {
 /*
 * AJUSTES PARA MODIFICAR SELECTOR DE HORA
 */
-:host{
+:host {
   --mdc-filled-text-field-container-color: white;
   --mat-sys-surface-variant: white;
   --mat-sys-primary: #e0a667;
   // Color componentes de ionic
-  --ion-color-success:#e0a667;
-  --ion-color-success-shade:#e0a667;
+  --ion-color-success: #e0a667;
+  --ion-color-success-shade: #e0a667;
   --ion-color-success-tint: #e0a667;
   --border-style: none;
+
   ::ng-deep .mat-mdc-text-field-wrapper {
     border-radius: 15px !important;
     overflow: hidden;
@@ -83,15 +85,18 @@ ion-select, ion-list {
 
 
 @media (max-width: 768px) {
+
   .contenedor_calendario,
   .contenedor_hora,
   .contenedor_inputs {
     width: 100%;
     margin: 0 auto;
   }
+
   h1 {
     font-size: 1rem;
   }
+
   .line {
     border-right: none;
   }

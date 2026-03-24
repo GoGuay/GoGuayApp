@@ -35,6 +35,7 @@ div[slot="content"] {
   max-height: 200px;
   overflow-y: auto;
 }
+
 .lista_sugerencias li {
   padding: 10px;
   cursor: pointer;
@@ -52,7 +53,7 @@ button {
 input,
 select {
   margin-bottom: 1%;
-  border-radius: 15px;
+  border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
@@ -65,7 +66,7 @@ select {
   display: block;
   width: 60%;
   padding: 10px 10px 10px 30px;
-  margin: 20px 0;
+  margin: 9px 0;
   border: 1px solid #ccc;
   border-radius: 35px;
   font-size: 1rem;
@@ -74,33 +75,35 @@ select {
 
 .selectCar {
   margin-bottom: 1%;
-  border-radius: 15px;
+  border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   width: 50%;
 }
 
-.selecthour{
+.selecthour {
   width: 20%;
+  border-radius: 35px;
 }
 
-.selectDate{
+.selectDate {
   width: 30%;
+  border-radius: 35px;
 }
 
-.selectPlaces{
+.selectPlaces {
   width: 20%;
 }
 
 .resumen-container {
   margin-top: 15px;
-  
+
   .btn-toggle-resumen {
-    width: 100%; 
+    width: 100%;
     border-radius: 20px;
     background-color: #f8f9fa;
     color: black;
     border: 1px solid var(--ion-color-primary);
-    
+
     i {
       margin-right: 8px;
       vertical-align: middle;
@@ -112,16 +115,87 @@ select {
 .list-unstyled {
   list-style: none;
   padding: 0;
-  li { margin-bottom: 8px; }
+
+  li {
+    margin-bottom: 8px;
+  }
+}
+
+.custom-dropdown {
+  margin-left: 0 !important;
+  margin-right: none !important;
+  max-width: 200px !important;
+}
+
+.custom-dropdown-car {
+  position: relative;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  padding: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  max-width: 300px;
+  width: 100%;
+  margin-left: 0 !important;
+  margin-right: none !important;
+
+  .selected-value {
+    margin-left: 35px;
+    color: #666;
+  }
+
+  .custom-options {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 35px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    li {
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 35px;
+      transition: all 0.2s ease;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // EFECTO HOVER
+      &:hover {
+        background-color: #F0D7B4;
+        color: black;
+        transform: translateX(5px); // Un pequeño efecto visual
+      }
+
+      &.selected {
+        background-color: #F0D7B4;
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
   #resumen_viaje {
     margin-left: 5px;
     margin-right: 5px;
-    padding: 10px; 
+    padding: 10px;
   }
-  
+
   .input-viaje {
     width: 100% !important;
   }

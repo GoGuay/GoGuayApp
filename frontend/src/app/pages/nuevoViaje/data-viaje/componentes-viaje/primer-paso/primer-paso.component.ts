@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIcon } from '@angular/material/icon';
@@ -18,6 +18,7 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 registerLocaleData(localeEs);
 
@@ -26,7 +27,6 @@ registerLocaleData(localeEs);
   standalone: true,
   imports: [
     IonicModule,
-    MatIcon,
     MatCardModule,
     MatDatepickerModule,
     FormsModule,
@@ -35,6 +35,7 @@ registerLocaleData(localeEs);
     MatInputModule,
     CommonModule,
     MatButtonModule,
+    TranslateModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -45,6 +46,7 @@ registerLocaleData(localeEs);
 })
 export class PrimerPasoComponent implements OnInit {
   userData: any = { usuario: { vehiculos: [] } };
+  isOpen: boolean = false;
 
   private destroy$ = new Subject<void>();
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
@@ -64,11 +66,31 @@ export class PrimerPasoComponent implements OnInit {
 
   hoy: string = new Date().toISOString();
 
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+  }
+
+  selectOption(valor: string) {
+    this.plazas = valor;
+    this.isOpen = false;
+    // Aquí puedes disparar la lógica que necesites al cambiar
+  }
+
+  // Opcional: Cerrar si el usuario hace click fuera
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
+
+
   constructor(
     private travelService: TravelService,
     private platform: Platform,
     private vehiculosServicesService: VehiculosServicesService,
     private router: Router,
+    private elementRef: ElementRef
   ) {
     this._adapter.setLocale('es-ES');
 

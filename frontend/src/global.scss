@@ -548,3 +548,88 @@ span:focus {
   background-color: #f0d7b4;
 
 }
+
+/* Estilo para el contenedor y el select */
+.custom-dropdown {
+  position: relative;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  padding: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 300px;
+  width: 100%;
+
+  .selected-value {
+    margin-left: 35px;
+    color: #666;
+  }
+
+  .custom-options {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 35px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    li {
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 35px;
+      transition: all 0.2s ease;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // EFECTO HOVER
+      &:hover {
+        background-color: #F0D7B4;
+        color: black;
+        transform: translateX(5px); // Un pequeño efecto visual
+      }
+
+      &.selected {
+        background-color: #F0D7B4;
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 250px;
+}
+
+.select-container select {
+  padding-left: 40px;
+  width: 100%;
+}
+
+.select-container .select-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
