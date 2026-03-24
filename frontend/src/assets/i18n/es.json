@@ -42,8 +42,6 @@
     "ELIMINAR_CTA": "Eliminar mi cuenta",
     "ELIMINAR": "Eliminar perfil",
     "CANCELAR:": "Cancelar",
-    "BUSCAR": "Buscar",
-    "LIMPIAR_BUSQUEDA": "Limpiar búsqueda",
     "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
     "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
     "CONSULTA_AQUI": "Consulta aquí",
@@ -62,7 +60,12 @@
     "MAÑANA": "Mañana",
     "BUSCAR_VIAJE_VUELTA": "¿Quieres programar la vuelta?",
     "SELECCIONAR_FECHA": "Seleccionar fecha",
-    "INSTRUCCIONES_BUSQUEDA": "Cuando aparezcan resultados, use las flechas arriba y abajo para revisar y Enter para seleccionar."
+    "BOTONES_ACCES": "Acciones del buscador de viajes",
+    "BOTON_BUSCAR": "Buscar",
+    "BOTON_BUSCAR_ACCES": "Ver viajes disponibles con los criterios seleccionados",
+    "BOTON_LIMPIAR": "Limpiar búsqueda",
+    "BOTON_LIMPIAR_ACCES": "Borrar todos los criterios para empezar una nueva búsqueda",
+    "INSTRUCCIONES_BUSQUEDA": "Escriba al menos tres caracteres y use las flechas arriba y abajo para moverse entre los resultados y Enter para seleccionar."
   },
 
   "TITLE": "PrideRide",

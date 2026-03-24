@@ -52,7 +52,7 @@ export class BuscadorComponent implements OnInit {
   origen: string = '';
   destino: string = '';
   plazas: string = '';
-  fecha_salida: Date = new Date();
+  fecha_ida: Date = new Date();
   fecha_vuelta: Date | null = null;
   fechaMinima: Date = new Date();
   fechaMinimaVuelta: Date = new Date();
@@ -163,17 +163,17 @@ export class BuscadorComponent implements OnInit {
    * Lógica para el texto del botón del calendario ( Hoy / Mañana / Fecha)
    * Si no hay fecha de salida, devuelve mensaje y sale.
    * Establece con new Date los días de hoy y mañana.
-   * Pasa la fecha_salida a formato simplificado (día Mes dd aaaa) y lo guardar en fechaStrg. Si coincide con hoy.dateString devuelve 'Hoy' e igual para 'Mañana' desde el archivo de traducciones.
+   * Pasa la fecha_ida a formato simplificado (día Mes dd aaaa) y lo guardar en fechaStrg. Si coincide con hoy.dateString devuelve 'Hoy' e igual para 'Mañana' desde el archivo de traducciones.
    * return '' --> Si no es hoy, ni mañana. La función llega a este return y devuelve un string vacío --> coge lo que se haya seleccionado.
    */
   get textoBotonFechaIda(): string {
-    if (!this.fecha_salida) return 'Seleccionar fecha';
+    if (!this.fecha_ida) return 'Seleccionar fecha';
 
     const hoy = new Date();
     const mañana = new Date();
     mañana.setDate(hoy.getDate() + 1);
 
-    const fechaStr = this.fecha_salida.toDateString();
+    const fechaStr = this.fecha_ida.toDateString();
     if (fechaStr === hoy.toDateString()) return 'BUSCADOR.HOY';
     if (fechaStr === mañana.toDateString()) return 'BUSCADOR.MAÑANA';
 
@@ -201,9 +201,10 @@ export class BuscadorComponent implements OnInit {
     this.origen = '';
     this.destino = '';
     this.plazas = '';
-    this.fecha_salida = new Date();
+    this.fecha_ida = new Date();
     this.sugerenciasOrigen = [];
     this.sugerenciasDestino = [];
+    this.inputOrigen.nativeElement.focus();
   }
 
   /**
@@ -355,21 +356,13 @@ export class BuscadorComponent implements OnInit {
   }
 
   buscar() {
-    if (!this.origen || this.origen.trim() === '') {
-      this.inputOrigen.nativeElement.focus();
-      return;
-    }
-
-    if (!this.destino || this.destino.trim() === '') {
-      this.inputDestino.nativeElement.focus();
-      return;
-    }
-
     const params = {
       origen: this.origen,
       destino: this.destino,
       plazas: this.plazas,
-      fecha_salida: this.fecha_salida,
+      fecha_ida: this.fecha_ida,
+      // Esto solo añade la propiedad si fecha_vuelta no es null
+      ...(this.fecha_vuelta && { fecha_vuelta: this.fecha_vuelta }),
     };
 
     this.onSearch.emit(params);
@@ -414,5 +407,19 @@ export class BuscadorComponent implements OnInit {
         }
       }
     }, 250);
+  }
+
+  onFechaIdaChange(evento: any) {
+    const fechaSeleccionada = evento.value;
+    this.fecha_ida = fechaSeleccionada;
+
+    // Actualizamos el límite mínimo de la vuelta para que coincida con la ida
+    this.fechaMinimaVuelta = fechaSeleccionada;
+
+    // Si el usuario ya había elegido una vuelta y ahora es inválida (anterior a la nueva ida)
+    // la reseteamos a null para que sea opcional otra vez
+    if (this.fecha_vuelta && this.fecha_vuelta < fechaSeleccionada) {
+      this.fecha_vuelta = null;
+    }
   }
 }
