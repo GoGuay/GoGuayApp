@@ -29,38 +29,62 @@
             size-md="3"
           >
             <div class="input-container">
-              <label class="d-flex align-items-center mb-1">
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-origen"
+              >
                 <mat-icon aria-hidden="true">share_location</mat-icon>
-
                 {{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}
               </label>
 
               <input
-                class="form-control text-start"
-                labelPlacement="floating"
+                #inputOrigen
+                id="input-origen"
                 type="text"
+                class="form-control text-start"
                 [(ngModel)]="origen"
+                (blur)="estaEnOrigen = false; validarSeleccion('origen')"
+                (focus)="estaEnOrigen = true"
                 (input)="obtenerSugerenciasOrigen($event)"
-                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
-                aria-haspopup="listbox"
-                aria-autocomplete="list"
+                (keydown)="manejarNavegacionTeclado($event, 'origen')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
                 role="combobox"
-                aria-controls="lista-origen"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasOrigen.length > 0
+                    ? 'lista-origen-resultados'
+                    : null
+                "
               />
+              <!-- Accesibilidad: span oculto - instrucciones de búsqueda de resultados -->
+              <span
+                id="instrucciones-busqueda"
+                class="visually-hidden"
+              >
+                {{ 'BUSCADOR.INSTRUCCIONES_BUSQUEDA' | translate }}
+              </span>
 
               <ul
+                id="lista-origen-resultados"
                 *ngIf="sugerenciasOrigen.length > 0"
                 class="list-group lista_sugerencias"
                 role="listbox"
                 aria-live="polite"
               >
                 <li
-                  *ngFor="let localidad of sugerenciasOrigen"
+                  *ngFor="let localidad of sugerenciasOrigen; let i = index"
                   class="list-group-item"
                   (click)="seleccionarLocalidadOrigen(localidad)"
+                  [class.active]="i === indiceActivoOrigen"
                   role="option"
-                  tabindex="0"
+                  tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                  (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
                 >
                   {{ localidad.descripcion }}
                 </li>
@@ -75,42 +99,64 @@
             size-md="3"
           >
             <div class="input-container">
-              <label class="d-flex align-items-center mb-1">
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-destino"
+              >
                 <mat-icon aria-hidden="true">share_location</mat-icon>
                 {{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}
               </label>
+
               <input
-                class="form-control text-start"
-                labelPlacement="floating"
-                maxlength="20"
+                #inputDestino
+                id="input-destino"
                 type="text"
+                class="form-control text-start"
                 [(ngModel)]="destino"
-                (ionInput)="obtenerSugerenciasDestino($event)"
+                (blur)="estaEnDestino = false; validarSeleccion('destino')"
+                (focus)="estaEnDestino = true"
+                (input)="obtenerSugerenciasDestino($event)"
+                (keydown)="manejarNavegacionTeclado($event, 'destino')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
                 role="combobox"
-                aria-required="true"
                 aria-autocomplete="list"
-                [attr.aria-expanded]="sugerenciasDestino.length > 0"
                 aria-haspopup="listbox"
-                aria-controls="lista-destino"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasDestino.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasDestino.length > 0
+                    ? 'lista-destino-resultados'
+                    : null
+                "
               />
+              <!-- Accesibilidad: span oculto - instrucciones de búsqueda de resultados -->
+              <span
+                id="instrucciones-busqueda"
+                class="visually-hidden"
+              >
+                {{ 'BUSCADOR.INSTRUCCIONES_BUSQUEDA' | translate }}
+              </span>
+
               <ul
                 *ngIf="sugerenciasDestino.length > 0"
                 class="list-group lista_sugerencias"
-                id="lista-destino"
+                id="lista-destino-resultados"
                 role="listbox"
                 aria-live="polite"
               >
                 <li
-                  *ngFor="let localidad of sugerenciasDestino"
+                  *ngFor="let localidad of sugerenciasDestino; let i = index"
                   class="list-group-item"
+                  [class.active]="i === indiceActivoDestino"
+                  (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
                   (click)="seleccionarLocalidadDestino(localidad)"
                   role="option"
-                  tabindex="0"
+                  tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadDestino(localidad)"
                 >
-                  >
-                  {{ localidad.descripcion.split(',')[0].trim() }} -
-                  {{ localidad.provincia }}
+                  {{ localidad.descripcion }}
                 </li>
               </ul>
             </div>
@@ -130,7 +176,7 @@
               <div class="datepicker-wrapper">
                 <input
                   matInput
-                  [matDatepicker]="picker"
+                  [matDatepicker]="picker_ida"
                   class="input-oculto-posicionador"
                   [min]="fechaMinima"
                   [(ngModel)]="fecha_salida"
@@ -139,13 +185,13 @@
                 <button
                   type="button"
                   class="form-control"
-                  (click)="picker.open()"
+                  (click)="picker_ida.open()"
                 >
-                  <span *ngIf="textoBotonFecha">
-                    {{ textoBotonFecha | translate }}
+                  <span *ngIf="textoBotonFechaIda">
+                    {{ textoBotonFechaIda | translate }}
                   </span>
 
-                  <span *ngIf="!textoBotonFecha">
+                  <span *ngIf="!textoBotonFechaIda">
                     {{
                       fecha_salida
                         | date: 'EEE, d MMMM' : '' : translate.currentLang
@@ -155,18 +201,9 @@
                 </button>
               </div>
               <mat-datepicker
-                #picker
+                #picker_ida
                 panelClass="calendario-bajo-boton"
               ></mat-datepicker>
-
-              <!-- <input
-                class="form-control text-start"
-                labelPlacement="floating"
-                type="date"
-                [min]="fechaMinima"
-                [(ngModel)]="fecha_salida"
-                aria-required="true"
-              /> -->
             </div>
           </ion-col>
 
@@ -176,20 +213,40 @@
             size="12"
             size-md="3"
           >
-            <div class="input-container">
+            <div class="input-container position-relative">
               <label class="d-flex align-items-center mb-1">
-                Fecha de vuelta
                 <mat-icon aria-hidden="true">schedule</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_VUELTA' | translate }}
               </label>
               <input
-                class="form-control text-start"
-                labelPlacement="floating"
-                type="date"
-                [min]="fechaMinima"
-                [(ngModel)]="fecha_salida"
-                aria-required="true"
+                matInput
+                [matDatepicker]="picker_vuelta"
+                class="input-oculto-posicionador"
+                [min]="fechaMinimaVuelta"
+                [(ngModel)]="fecha_vuelta"
               />
+              <button
+                type="button"
+                class="form-control"
+                (click)="picker_vuelta.open()"
+              >
+                <span *ngIf="textoBotonFechaVuelta">
+                  {{ textoBotonFechaVuelta | translate }}
+                </span>
+
+                <span *ngIf="!textoBotonFechaVuelta">
+                  {{
+                    fecha_vuelta
+                      | date: 'EEE, d MMMM' : '' : translate.currentLang
+                      | titlecase
+                  }}
+                </span>
+              </button>
             </div>
+            <mat-datepicker
+              #picker_vuelta
+              panelClass="calendario-bajo-boton"
+            ></mat-datepicker>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -224,7 +281,7 @@
                   class="fi fi-rs-clean"
                   aria-hidden="true"
                 ></i>
-                Limpiar búsqueda
+                {{ 'BOTON.LIMPIAR_BUSQUEDA' | translate }}
               </button>
             </div>
           </ion-col>

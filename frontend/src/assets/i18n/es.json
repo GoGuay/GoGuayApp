@@ -1,4 +1,70 @@
 {
+  "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
+
+  "SELECTOR_GENERO": {
+    "LABEL": "Género con el que te identificas",
+    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
+    "SELECCIONA": "Selecciona tu género",
+    "H_CIS": "Hombre Cis",
+    "M_CIS": "Mujer Cis",
+    "TRANS": "Transexual",
+    "NO_BINARIO": "No binario",
+    "INTER": "Intergénero",
+    "NO_FLUIDO": "No Fluido",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+
+  "SELECTOR_ORIENTACION": {
+    "LABEL": "¿Cuál es tu orientación sexual?",
+    "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
+    "SELECCIONA": "Selecciona tu orientación",
+    "GAY": "Gay",
+    "LESBIANA": "Lesbiana",
+    "BISEXUAL": "Bisexual",
+    "PANSEXUAL": "Pansexual",
+    "ASEXUAL": "Asexual",
+    "DEMISEXUAL": "Demisexual",
+    "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+
+  "BOTON": {
+    "ANADIR_VEHICULO": "Añadir vehículo",
+    "GUARDAR": "Guardar",
+    "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
+    "GUARDAR_VEHICULO": "Guardar vehículo",
+    "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
+    "ELEGIR_ARCHIVOS": "Elegir archivos",
+    "CAMBIAR": "Cambiar!",
+    "ELIMINAR_CTA": "Eliminar mi cuenta",
+    "ELIMINAR": "Eliminar perfil",
+    "CANCELAR:": "Cancelar",
+    "BUSCAR": "Buscar",
+    "LIMPIAR_BUSQUEDA": "Limpiar búsqueda",
+    "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
+    "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
+    "CONSULTA_AQUI": "Consulta aquí",
+    "PUBLICAR_VIAJE": "Publica tu viaje",
+    "CENTROAYUDA": "Consulta nuestro centro de ayuda"
+  },
+
+  "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
+  "BUSCADOR": {
+    "TITULO": "¿Estás buscando un viaje?",
+    "BUSCAR_VIAJE_DESDE": "Desde...",
+    "BUSCAR_VIAJE_HASTA": "Hasta...",
+    "PLACEHOLDER_LOCALIDAD": "Busca una localidad",
+    "BUSCAR_VIAJE_IDA": "¿Cuando vas?",
+    "HOY": "Hoy",
+    "MAÑANA": "Mañana",
+    "BUSCAR_VIAJE_VUELTA": "¿Quieres programar la vuelta?",
+    "SELECCIONAR_FECHA": "Seleccionar fecha",
+    "INSTRUCCIONES_BUSQUEDA": "Cuando aparezcan resultados, use las flechas arriba y abajo para revisar y Enter para seleccionar."
+  },
+
   "TITLE": "PrideRide",
   "Panel de usuario": "Pagina de Panel de usuario",
   "PANELUSUARIO": {
@@ -74,28 +140,7 @@
     },
     "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: PrideRide no se responsabiliza de cualquier modificación realizada por la organización del evento."
   },
-  "SELECTOR_GENERO": {
-    "H_CIS": "Hombre Cis",
-    "M_CIS": "Mujer Cis",
-    "TRANS": "Transexual",
-    "NO_BINARIO": "No binario",
-    "INTER": "Intergénero",
-    "NO_FLUIDO": "No Fluido",
-    "OTRO": "Otro",
-    "NO_RESPONDE": "Prefiero no responder"
-  },
-  "SELECTOR_ORIENTACION": {
-    "GAY": "Gay",
-    "LESBIANA": "Lesbiana",
-    "BISEXUAL": "Bisexual",
-    "PANSEXUAL": "Pansexual",
-    "ASEXUAL": "Asexual",
-    "DEMISEXUAL": "Demisexual",
-    "QUEER": "Queer",
-    "HETEROSEXUAL": "Heterosexual",
-    "OTRO": "Otro",
-    "NO_RESPONDE": "Prefiero no responder"
-  },
+
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -120,20 +165,7 @@
         "OPC_NOUSO": "No uso ninguno",
         "OPC_NORESPONDO": "Prefiero no responder"
       },
-      "GENERO": {
-        "LABEL": "Género",
-        "INFO": "Es la identidad con la que una persona se siente reconocida. Puede ser hombre, mujer, no binario, entre otros. No siempre tiene que coincidir con el sexo asignado al nacer.",
-        "AYUDA": "Se muestran las opciones para elegir tu género",
-        "ESCOGE_OPCION": "Escoge tu género",
-        "OPC_HOMBRECIS": "Hombre CIS",
-        "OPC_MUJERCIS": "Mujer CIS",
-        "OPC_TRANSEXUAL": "Transexual",
-        "OPC_NOBINARIO": "No Binario",
-        "OPC_INTERGENERO": "Intergénero",
-        "OPC_NOFLUIDO": "No fluido",
-        "OPC_OTROS": "Otros",
-        "OPC_NORESPONDO": "Prefiero no responder"
-      },
+
       "ORIENTACION": {
         "LABEL": "Orientación",
         "INFO": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales.",
@@ -222,16 +254,8 @@
         "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
         "YAEXISTE": "Este teléfono ya nos consta registrado."
       },
-      "GÉNERO": {
-        "LABEL": "Género con el que te identificas",
-        "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
-        "SELECCIONA": "Selecciona tu género"
-      },
-      "ORIENTACION": {
-        "LABEL": "¿Cuál es tu orientación sexual?",
-        "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
-        "SELECCIONA": "Selecciona tu orientación"
-      }
+      "GÉNERO": {},
+      "ORIENTACION": {}
     },
     "FORM3": {
       "TITULO": "ALGO IMPORTANTE: TU CONTRASEÑA",
@@ -270,16 +294,7 @@
       "FINALIZAR_REGISTRO": "Finalizar registro"
     }
   },
-  "_BUSCADOR": "Componente de búsqueda de viaje (/busqueda-viajes)",
-  "BUSCADOR": {
-    "TITULO": "¿Estás buscando un viaje?",
-    "BUSCAR_VIAJE_DESDE": "Desde...",
-    "BUSCAR_VIAJE_HASTA": "Hasta...",
-    "BUSCAR_VIAJE_IDA": "¿Cuando vas?",
-    "BUSCAR_VIAJE_VUELTA": "¿Quieres programar la vuelta?",
-    "HOY": "Hoy",
-    "MAÑANA": "Mañana"
-  },
+
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
   "DATOS_CONTACTO": {
     "TITULO": "Datos de contacto",
@@ -431,25 +446,7 @@
     "TRANS_CONCEPTO": "Transferencia a cuenta",
     "SALDO": "Saldo"
   },
-  "__Botones": "Modal de Mi perfil y componente mi perfil",
-  "BOTON": {
-    "ANADIR_VEHICULO": "Añadir vehículo",
-    "GUARDAR": "Guardar",
-    "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
-    "GUARDAR_VEHICULO": "Guardar vehículo",
-    "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
-    "ELEGIR_ARCHIVOS": "Elegir archivos",
-    "CAMBIAR": "Cambiar!",
-    "ELIMINAR_CTA": "Eliminar mi cuenta",
-    "ELIMINAR": "Eliminar perfil",
-    "CANCELAR:": "Cancelar",
-    "BUSCAR": "Buscar",
-    "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
-    "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
-    "CONSULTA_AQUI": "Consulta aquí",
-    "PUBLICAR_VIAJE": "Publica tu viaje",
-    "CENTROAYUDA": "Consulta nuestro centro de ayuda"
-  },
+
   "_Footer": "Links del footer",
   "FOOTER": {
     "TERMS": "Términos y condiciones",

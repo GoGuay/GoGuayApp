@@ -513,3 +513,38 @@ span:focus {
   margin-top: 5px;
   padding: 8px 0 !important;
 }
+
+.lista_sugerencias {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  z-index: 1000;
+  max-height: 230px;
+  overflow-y: auto;
+  width: auto;
+}
+
+.lista_sugerencias li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lista_sugerencias li:hover {
+  background-color: #f0d7b4;
+  color: black;
+  font-weight: bold;
+}
+
+
+
+
+.list-group-item.active {
+  z-index: 2;
+  color: black;
+  font-weight: bold;
+  background-color: #f0d7b4;
+
+}
