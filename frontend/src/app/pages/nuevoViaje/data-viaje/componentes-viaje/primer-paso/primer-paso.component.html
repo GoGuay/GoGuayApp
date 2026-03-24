@@ -16,7 +16,7 @@
         <div class="contenedor_hora">
           <!-- Selector de hora para escritorio -->
           <div *ngIf="isDesktop">
-            <mat-form-field>
+            <mat-form-field appearance="fill" class="custom-time-field">
               <mat-label>Selecciona la hora</mat-label>
               <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
                 (ngModelChange)="onTimeChange($event)" />
@@ -97,4 +97,11 @@
       </div>
     </ion-col>
   </ion-row>
+
+  <div class="d-flex justify-content-center align-items-center">
+    <span class="info_message"><i class="fi fi-rr-info me-1"></i>Recuerda que debes introducir todos los datos para
+      poder
+      continuar.</span>
+  </div>
+
 </ion-grid>
