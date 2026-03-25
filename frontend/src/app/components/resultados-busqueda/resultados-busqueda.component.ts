@@ -7,8 +7,8 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
 import { Observable, of, tap } from 'rxjs';
-import { SpinnerComponent } from "../spinner/spinner.component";
-import { LoadTravelLineComponent } from "../load-travel-line/load-travel-line.component";
+import { SpinnerComponent } from '../spinner/spinner.component';
+import { LoadTravelLineComponent } from '../load-travel-line/load-travel-line.component';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
@@ -18,12 +18,18 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent, MatDivider],
+  imports: [
+    IonicModule,
+    TranslateModule,
+    CommonModule,
+    SpinnerComponent,
+    LoadTravelLineComponent,
+    MatDivider,
+  ],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })
 export class ResultadosBusquedaComponent implements OnInit {
-
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   listado_viajes: Viaje[] = [];
@@ -33,21 +39,19 @@ export class ResultadosBusquedaComponent implements OnInit {
   imagenesCargadas: { [key: number]: boolean } = {};
   usuariosCache: Map<number, any> = new Map();
 
-
   /**
    * Variables de entrada para el filtro
    */
   @Input() paramsBusqueda: any;
   @Input() filtroOrden: string = 'horaSalida';
 
-
   constructor(
     private travelService: TravelService,
     private funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
     private navCtrl: NavController,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+  ) {}
 
   /**
    * Función que se ejecuta cuando hay cambios en las variables de entrada
@@ -75,7 +79,11 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.isLoading = true;
 
     // Verificamos si hay parámetros de búsqueda reales (no un objeto vacío)
-    const tieneFiltros = this.paramsBusqueda && Object.values(this.paramsBusqueda).some(val => val !== '' && val !== null);
+    const tieneFiltros =
+      this.paramsBusqueda &&
+      Object.values(this.paramsBusqueda).some(
+        (val) => val !== '' && val !== null,
+      );
 
     const peticion = tieneFiltros
       ? this.travelService.obtenerViajesFiltrados(this.paramsBusqueda)
@@ -97,31 +105,30 @@ export class ResultadosBusquedaComponent implements OnInit {
         console.error('Error:', err);
         this.listado_viajes = [];
         this.isLoading = false;
-      }
+      },
     });
   }
 
   private cargarUsuariosParaViajes(viajes: Viaje[]) {
-    const idsUnicos = [...new Set(viajes.map(v => v.usuario_id))];
+    const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 
-    const solicitudesUsuarios = idsUnicos.map(id => {
+    const solicitudesUsuarios = idsUnicos.map((id) => {
       if (this.usuariosCache.has(id)) {
         return of(this.usuariosCache.get(id));
       }
-      return this.userService.obtenerUsuarioPorID(id).pipe(
-        tap(user => this.usuariosCache.set(id, user))
-      );
+      return this.userService
+        .obtenerUsuarioPorID(id)
+        .pipe(tap((user) => this.usuariosCache.set(id, user)));
     });
 
     forkJoin(solicitudesUsuarios).subscribe(() => {
-      this.listado_viajes.forEach(viaje => {
+      this.listado_viajes.forEach((viaje) => {
         viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
       });
       this.aplicarFiltro();
       this.isLoading = false;
     });
   }
-
 
   /**
    * Función para obtener la lista de viajes filtrados según los parámetros de búsqueda.
@@ -148,7 +155,7 @@ export class ResultadosBusquedaComponent implements OnInit {
         console.error('Error al obtener viajes:', err);
         this.listado_viajes = [];
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -161,22 +168,22 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.listado_viajes = viajes;
 
       // 2. Creamos un set de IDs únicos para no repetir llamadas
-      const idsUnicos = [...new Set(viajes.map(v => v.usuario_id))];
+      const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 
-      const solicitudesUsuarios = idsUnicos.map(id => {
+      const solicitudesUsuarios = idsUnicos.map((id) => {
         // Si ya lo tenemos en caché, devolvemos un observable del valor
         if (this.usuariosCache.has(id)) {
           return of(this.usuariosCache.get(id));
         }
         // Si no, lo pedimos y lo guardamos en la caché al recibirlo
-        return this.userService.obtenerUsuarioPorID(id).pipe(
-          tap(user => this.usuariosCache.set(id, user))
-        );
+        return this.userService
+          .obtenerUsuarioPorID(id)
+          .pipe(tap((user) => this.usuariosCache.set(id, user)));
       });
 
       forkJoin(solicitudesUsuarios).subscribe(() => {
         // 3. Asignamos los usuarios desde la caché a los viajes
-        this.listado_viajes.forEach(viaje => {
+        this.listado_viajes.forEach((viaje) => {
           viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
         });
         this.aplicarFiltro();
@@ -187,9 +194,9 @@ export class ResultadosBusquedaComponent implements OnInit {
 
   /**
    * Función para obtener los datos del usuario logado.
-   * 
-   * @param id_usuario 
-   * @returns 
+   *
+   * @param id_usuario
+   * @returns
    */
   obtenerUsuarioPorID(id_usuario: number): Observable<any> {
     return this.userService.obtenerUsuarioPorID(id_usuario);
@@ -197,8 +204,8 @@ export class ResultadosBusquedaComponent implements OnInit {
 
   /**
    * Función para abrir el perfil público seleccionado.
-   * 
-   * @param id_usuario 
+   *
+   * @param id_usuario
    */
   openPerfilPublico(id_usuario: number) {
     const usuario = { id: id_usuario };
@@ -209,24 +216,27 @@ export class ResultadosBusquedaComponent implements OnInit {
 
   /**
    * Función para abrir los detalles del viaje seleccionado.
-   * 
-   * @param viaje 
+   *
+   * @param viaje
    */
   openDetalleViaje(viaje: Viaje) {
     this.dialog.open(ViajeSeleccionadoComponent, {
-      data: { viaje }
+      data: { viaje },
     });
   }
-
 
   /**
    * Función para aplicar el filtro a la lista de viajes
    */
   aplicarFiltro() {
     if (this.filtroSeleccionado === 'precioAsc') {
-      this.listado_viajes.sort((a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0));
+      this.listado_viajes.sort(
+        (a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0),
+      );
     } else if (this.filtroSeleccionado === 'precioDesc') {
-      this.listado_viajes.sort((a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0));
+      this.listado_viajes.sort(
+        (a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0),
+      );
     } else if (this.filtroSeleccionado === 'horaSalida') {
       const horaActual = new Date();
       const horaActualMilisegundos = horaActual.getTime();
@@ -255,6 +265,4 @@ export class ResultadosBusquedaComponent implements OnInit {
   marcarImagenComoCargada(viajeId: number) {
     this.imagenesCargadas[viajeId] = true;
   }
-
-
 }
