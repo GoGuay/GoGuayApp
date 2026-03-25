@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,6 +19,8 @@ import { Usuario } from 'src/app/models/user/usuario.model';
   styleUrls: ['./resumen-dinamico.component.scss'],
 })
 export class ResumenDinamicoComponent implements OnInit {
+  isOpen: boolean = false;
+  isOpenCoche: boolean = false;
 
   userData: Usuario = {} as Usuario;
   currentViajeData: any;
@@ -41,11 +43,23 @@ export class ResumenDinamicoComponent implements OnInit {
   isDesktop: boolean = false;
   mostrarResumenMobile: boolean = false;
 
+
+
+  // Opcional: Cerrar si el usuario hace click fuera
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+      this.isOpenCoche = false;
+    }
+  }
+
+
   constructor(
     private travelService: TravelService,
     private googleService: GoogleServices,
     private vehiculosServicesService: VehiculosServicesService,
-    private platform: Platform) { }
+    private platform: Platform, private elementRef: ElementRef) { }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -58,9 +72,38 @@ export class ResumenDinamicoComponent implements OnInit {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.actualizarInformacion();
     this.obtenerVehiculos();
+    this.iniciarEdicion();
   }
 
+  iniciarEdicion() {
+    this.editandoViaje = true;
+  }
 
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) this.isOpenCoche = false;
+  }
+
+  toggleDropdownCoche() {
+    this.isOpenCoche = !this.isOpenCoche;
+    if (this.isOpenCoche) this.isOpen = false;
+  }
+
+  // 3. Función para seleccionar el coche
+  selectCoche(coche: any) {
+    if (this.currentViajeData) {
+      this.currentViajeData.coche = coche;
+    }
+    this.isOpenCoche = false;
+  }
+
+  selectOption(valor: string) {
+    if (this.currentViajeData) {
+      this.currentViajeData.plazas = valor;
+      this.travelService.setViajeData(this.currentViajeData);
+    }
+    this.isOpen = false;
+  }
   /**
    * Función para comprobar el tamaño de la pantalla.
    */
@@ -105,8 +148,18 @@ export class ResumenDinamicoComponent implements OnInit {
   }
 
   toggleEditarViaje() {
-    this.editandoViaje = true;
+    const datosUltimos = this.travelService.getViajeData();
+
+    if (datosUltimos) {
+      this.currentViajeData = { ...datosUltimos };
+      // Sincronizamos variables locales si las usas para los inputs
+      this.origen = this.currentViajeData.origen;
+      this.destino = this.currentViajeData.destino;
+    }
+
+    // 2. Ahora sí, creamos la copia de seguridad para el "Cancelar"
     this.copiaViajeData = JSON.parse(JSON.stringify(this.currentViajeData));
+    this.editandoViaje = true;
   }
 
   /**
@@ -116,20 +169,14 @@ export class ResumenDinamicoComponent implements OnInit {
    */
   guardarCambios() {
     const viajeActualizado = {
-      ...this.travelService.getViajeData(),
+      ...this.currentViajeData,
       origen: this.origen,
-      destino: this.destino,
-      coche: this.currentViajeData.coche,
-      plazas: this.currentViajeData.plazas,
-      fecha_salida: this.currentViajeData.fecha_salida,
-      hora_salida: this.currentViajeData.hora_salida,
+      destino: this.destino
     };
 
     this.travelService.setViajeData(viajeActualizado);
 
     this.editandoViaje = false;
-
-    this.actualizarInformacion();
   }
 
   seleccionarCoche() {

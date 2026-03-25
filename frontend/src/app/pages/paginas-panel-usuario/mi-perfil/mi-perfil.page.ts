@@ -36,6 +36,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
     ToastModule,
     MatTooltipModule,
     SpinnerComponent,
+    MatDivider
   ],
 
   providers: [MessageService],

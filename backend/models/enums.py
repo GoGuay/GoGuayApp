@@ -10,6 +10,8 @@ class PreferenciasViajeEnum(Enum):
     escuchar = "Escuchar música"
     dormir = "Dormir"
     silencio = "Ir en silencio"
+    mascotas = "Se permiten mascotas"
+    fumar = "Se permite fumar"
 
 class Genero(Enum):
     defecto = ""

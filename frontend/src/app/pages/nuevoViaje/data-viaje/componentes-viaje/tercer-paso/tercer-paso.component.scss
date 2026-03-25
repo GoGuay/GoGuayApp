@@ -1,9 +1,7 @@
 @import "node_modules/ngx-spinner/animations/square-jelly-box.css";
 
-
-
-.mat-mdc-progress-spinner { 
-  --mdc-circular-progress-active-indicator-color: #F0D7B4; 
+.mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: #F0D7B4;
 }
 
 .header-content {
@@ -78,7 +76,7 @@ ion-alert {
 
 .route-option {
   padding: 10px;
-  border: 1px solid #F0D7B4;
+  border: 1px solid #B3B5E6;
   border-radius: 15px;
   cursor: pointer;
   margin-bottom: 10px;
@@ -92,7 +90,8 @@ ion-alert {
 
 .route-option.selected {
   background-color: #F0D7B4;
-  color: white;
+  color: black;
+  font-weight: bold;
 }
 
 .toll-label {
@@ -125,7 +124,7 @@ ion-alert {
   background-color: #555;
 }
 
-.btn_paradas{
+.btn_paradas {
   border-radius: 50%;
 }
 
@@ -139,9 +138,9 @@ ion-alert {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(179, 181, 230, 0.7); 
-  z-index: 10; 
-  border-radius: 15px; 
+  background: rgba(179, 181, 230, 0.7);
+  z-index: 10;
+  border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
@@ -181,6 +180,7 @@ ion-alert {
     opacity: 0;
     transform: translate(-50%, -130%);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -120%);
@@ -196,7 +196,7 @@ ion-alert {
 
 .spinner_box {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -207,10 +207,10 @@ ion-alert {
   overflow: hidden;
   width: fit-content;
   height: fit-content;
-  padding: 20px; 
+  padding: 20px;
 }
 
-.sugerencia_paradas{
+.sugerencia_paradas {
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
@@ -233,7 +233,7 @@ ion-alert {
   color: #E0B6B6;
 }
 
-.trashBtn{
+.trashBtn {
   border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }

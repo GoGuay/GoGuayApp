@@ -99,7 +99,8 @@ ion-select,
 ion-item,
 textarea,
 label,
-small {
+small,
+span {
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -458,10 +459,6 @@ ion-fab-button {
     }
   }
 
-
-
-
-
 }
 
 
@@ -540,8 +537,48 @@ span:focus {
   font-weight: bold;
 }
 
+/********************************************
+    CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+*********************************************/
+/* Redondear el contenedor principal del Timepicker */
+.mat-timepicker-panel {
+  border-radius: 35px !important;
+  // overflow: hidden !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  background-color: white !important;
+}
 
+/* Redondear el contenido interno (el reloj o lista de horas) */
+.mat-timepicker-content,
+mat-timepicker-content {
+  border-radius: 35px !important;
+  border: none !important;
+}
 
+/* Ajustar el contenedor que envuelve las acciones (Botones de Cancelar/OK) */
+.mat-timepicker-container {
+  border-radius: 35px !important;
+  padding: 10px !important;
+}
+
+/* esto asegura que los bordes se corten */
+.mat-timepicker-content-container {
+  border-radius: 35px !important;
+}
+
+/* Cambia el color de la selección al naranja de tu app */
+.mat-timepicker-clock-cell.mat-timepicker-clock-cell-selected {
+  background-color: #e0a667 !important;
+  color: white !important;
+}
+
+.mat-timepicker-button.mat-primary {
+  color: #e0a667 !important;
+}
+
+/********************************************
+  FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+*********************************************/
 
 .list-group-item.active {
   z-index: 2;
@@ -549,4 +586,89 @@ span:focus {
   font-weight: bold;
   background-color: #f0d7b4;
 
+}
+
+/* Estilo para el contenedor y el select */
+.custom-dropdown {
+  position: relative;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  padding: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 300px;
+  width: 100%;
+
+  .selected-value {
+    margin-left: 35px;
+    color: #666;
+  }
+
+  .custom-options {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 35px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    li {
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 35px;
+      transition: all 0.2s ease;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // EFECTO HOVER
+      &:hover {
+        background-color: #F0D7B4;
+        color: black;
+        transform: translateX(5px); // Un pequeño efecto visual
+      }
+
+      &.selected {
+        background-color: #F0D7B4;
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 250px;
+}
+
+.select-container select {
+  padding-left: 40px;
+  width: 100%;
+}
+
+.select-container .select-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
 }

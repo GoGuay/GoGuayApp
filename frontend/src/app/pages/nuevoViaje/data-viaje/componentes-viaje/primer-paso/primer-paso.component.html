@@ -16,7 +16,7 @@
         <div class="contenedor_hora">
           <!-- Selector de hora para escritorio -->
           <div *ngIf="isDesktop">
-            <mat-form-field>
+            <mat-form-field appearance="fill" class="custom-time-field">
               <mat-label>Selecciona la hora</mat-label>
               <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
                 (ngModelChange)="onTimeChange($event)" />
@@ -47,17 +47,19 @@
     <!-- Columna derecha: Número de plazas y coche -->
     <ion-col size="12" size-xl="6">
       <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
-      <div class="contenedor_inputs">
-        <ion-select class="form-control" aria-label="n_personas" interface="popover" placeholder="Número de plazas"
-          [(ngModel)]="plazas" (ionChange)="guardaDatosDelViajeEnServicio('plazas', plazas)">
-          <mat-icon slot="start">
-            <img src="../../../../../../assets/sistema/usuarios-alt.png" class="marcador-icon input-icon" />
-          </mat-icon>
-          <ion-select-option value="1">1</ion-select-option>
-          <ion-select-option value="2">2</ion-select-option>
-          <ion-select-option value="3">3</ion-select-option>
-          <ion-select-option value="4">4</ion-select-option>
-        </ion-select>
+      <div class="select-container custom-dropdown mt-4 mb-3" (click)="toggleDropdown()" [class.open]="isOpen">
+        <img src="../../../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios" />
+
+        <div class="selected-value">
+          {{ plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
+        </div>
+
+        <ul class="custom-options" *ngIf="isOpen">
+          <li (click)="selectOption('1')" [class.selected]="plazas === '1'">1</li>
+          <li (click)="selectOption('2')" [class.selected]="plazas === '2'">2</li>
+          <li (click)="selectOption('3')" [class.selected]="plazas === '3'">3</li>
+          <li (click)="selectOption('4')" [class.selected]="plazas === '4'">4</li>
+        </ul>
       </div>
 
       <div class="contenedor_seccion">
@@ -95,4 +97,11 @@
       </div>
     </ion-col>
   </ion-row>
+
+  <div class="d-flex justify-content-center align-items-center">
+    <span class="info_message"><i class="fi fi-rr-info me-1"></i>Recuerda que debes introducir todos los datos para
+      poder
+      continuar.</span>
+  </div>
+
 </ion-grid>
