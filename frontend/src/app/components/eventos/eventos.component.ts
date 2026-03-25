@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
@@ -20,6 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 export class TrayectosPopularesComponent implements OnInit {
   //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
   lista_eventos: Evento[] = Eventos;
+  isOpen: boolean = false;
 
   usuarioNoLogueado: boolean = false;
   ciudadesUnicas: string[] = [];
@@ -27,6 +28,14 @@ export class TrayectosPopularesComponent implements OnInit {
   message_help_auth: string = '';
   ciudadSeleccionada: string = '';
   filtradosPorCiudad: Evento[] = [];
+  ciudadSeleccionadaLabel: string = '';
+
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
 
   constructor(
     private viajesService: TravelService,
@@ -34,6 +43,7 @@ export class TrayectosPopularesComponent implements OnInit {
     public dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
+    private elementRef: ElementRef
   ) {
     this.translate.get('NUEVOVIAJE.TITULO_MODAL_AYUDA').subscribe((traduccion: string) => {
       this.title_help_auth = traduccion;
@@ -49,6 +59,17 @@ export class TrayectosPopularesComponent implements OnInit {
     this.lista_eventos = Eventos;
     this.ciudadesUnicas = [...new Set(this.lista_eventos.map((evento) => evento.ciudad))];
     this.ciudadesUnicas.sort();
+  }
+
+  selectOption(ciudad: string) {
+    this.ciudadSeleccionadaLabel = ciudad;
+    this.isOpen = false;
+
+    this.actualizarCiudadSeleccionada(ciudad);
+  }
+
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
   }
 
   /**

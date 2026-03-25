@@ -21,6 +21,77 @@
   transition: border-color 0.3s ease;
 }
 
+
+.contenedor {
+  overflow: visible !important;
+}
+
+.custom-dropdown .selected-value {
+  margin-left: -18px !important;
+  color: #666;
+}
+
+.custom-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 35px;
+  padding: 12px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  z-index: 100;
+
+  i {
+    margin-right: 10px;
+    color: black;
+  }
+
+  .selected-value {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* LA LISTA FLOTANTE */
+  .custom-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+    padding: 10px;
+    margin: 0;
+    list-style: none;
+    z-index: 9999 !important;
+    max-height: 250px;
+    overflow-y: auto;
+
+    li {
+      padding: 12px 15px;
+      border-radius: 15px;
+      margin-bottom: 5px;
+      transition: all 0.2s ease;
+      text-align: center;
+      color: #333;
+
+      &:hover {
+        background-color: #f8f1e9;
+        color: #e0a667;
+      }
+
+      &.selected {
+        background-color: #e0a667;
+        color: black;
+      }
+    }
+  }
+}
+
 .custom-select:focus {
   border-color: #80bdff;
   box-shadow: none;

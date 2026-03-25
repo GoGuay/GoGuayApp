@@ -1,16 +1,23 @@
 <h1>{{ 'EVENTOS.TITULO' | translate }}</h1>
-<div class="container">
+<div class="contenedor">
   <div class="d-flex justify-content-center mb-3">
-    <label for="ciudad_evento" class="visually-hidden">{{ 'EVENTOS.INFO_SELECTOR' | translate }}</label>
-    <select class="form-control custom-select" #ciudadRef (change)="actualizarCiudadSeleccionada(ciudadRef.value)"
-      id="ciudad_evento">
-      <option value="" selected disabled>{{ 'EVENTOS.SELECTOR' | translate }}</option>
-      <option [value]="ciudad" *ngFor="let ciudad of ciudadesUnicas">{{ ciudad }}</option>
-    </select>
+
+    <div class="select-container custom-dropdown mt-4 mb-3" (click)="toggleDropdown()" [class.open]="isOpen">
+      <i class="fi fi-rr-calendar-heart"></i>
+      <div class="selected-value">
+        {{ ciudadSeleccionadaLabel || ('EVENTOS.SELECTOR' | translate) }}
+      </div>
+      <ul class="custom-options" *ngIf="isOpen">
+        <li *ngFor="let ciudad of ciudadesUnicas" (click)="selectOption(ciudad); $event.stopPropagation()"
+          [class.selected]="ciudadSeleccionadaLabel === ciudad">
+          {{ ciudad }}
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
-<div *ngIf="ciudadRef.value != ''" aria-live="polite">
-  <h2>Próximos eventos en {{ ciudadRef.value }}</h2>
+<div *ngIf="filtradosPorCiudad.length > 0" aria-live="polite">
+  <h2>Próximos eventos en {{ ciudadSeleccionadaLabel }}</h2>
 
   <ion-grid [fixed]="true">
     <ion-row>
