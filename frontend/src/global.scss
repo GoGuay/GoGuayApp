@@ -5,7 +5,7 @@
 @import "./animations.scss";
 @import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
-
+@import '@angular/cdk/a11y-prebuilt.css';
 @import "@ionic/angular/css/core.css";
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
@@ -125,6 +125,8 @@ ion-content {
 }
 
 .btn_bg {
+  min-width: 150px;
+  padding: 10px 20px;
   background-color: #b3b5e6 !important;
   color: black !important;
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;

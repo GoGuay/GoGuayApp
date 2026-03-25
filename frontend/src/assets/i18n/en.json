@@ -1,4 +1,73 @@
 {
+  "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
+
+  "SELECTOR_GENERO": {
+    "LABEL": "Gender you identify with",
+    "INFO": "It is a person's internal and individual experience, expressed through identity, clothing, or behavior. It is not related to the sex assigned at birth and is not limited only to man or woman.",
+    "SELECCIONA": "Select your gender",
+    "H_CIS": "Cisgender Man",
+    "M_CIS": "Cisgender Woman",
+    "TRANS": "Transsexual",
+    "NO_BINARIO": "Non-binary",
+    "INTER": "Intergender",
+    "NO_FLUIDO": "Non-fluid",
+    "OTRO": "Other",
+    "NO_RESPONDE": "Prefer not to answer"
+  },
+
+  "SELECTOR_ORIENTACION": {
+    "LABEL": "What is your sexual orientation?",
+    "INFO": "It is the emotional, romantic, and/or sexual attraction felt towards other people.",
+    "SELECCIONA": "Select your orientation",
+    "GAY": "Gay",
+    "LESBIANA": "Lesbian",
+    "BISEXUAL": "Bisexual",
+    "PANSEXUAL": "Pansexual",
+    "ASEXUAL": "Asexual",
+    "DEMISEXUAL": "Demisexual",
+    "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
+    "OTRO": "Other",
+    "NO_RESPONDE": "Prefer not to answer"
+  },
+
+  "BOTON": {
+    "ANADIR_VEHICULO": "Add vehicle",
+    "GUARDAR": "Save",
+    "VERIF_TU_IDENTIDAD": "Verify your identity",
+    "GUARDAR_VEHICULO": "Save vehicle",
+    "CONFIRMAR_CODIGO_TFNO": "Confirm code",
+    "ELEGIR_ARCHIVOS": "Choose files",
+    "CAMBIAR": "Change!",
+    "ELIMINAR_CTA": "Delete my account",
+    "ELIMINAR": "Delete profile",
+    "CANCELAR:": "Cancel",
+    "PUBLICA_TU_VIAJE_AQUI": "Post your next trip here",
+    "BUSCA_TU_VIAJE_AQUI": "Search for your next trip here",
+    "CONSULTA_AQUI": "Check here",
+    "PUBLICAR_VIAJE": "Post your trip",
+    "CENTROAYUDA": "Visit our help center"
+  },
+
+  "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
+  "BUSCADOR": {
+    "TITULO": "Are you looking for a trip?",
+    "BUSCAR_VIAJE_DESDE": "From...",
+    "BUSCAR_VIAJE_HASTA": "To...",
+    "PLACEHOLDER_LOCALIDAD": "Search for a city",
+    "BUSCAR_VIAJE_IDA": "When are you going?",
+    "HOY": "Today",
+    "MAÑANA": "Tomorrow",
+    "BUSCAR_VIAJE_VUELTA": "Return date (optional)",
+    "SELECCIONAR_FECHA": "Select date",
+    "BOTONES_ACCES": "Trip search engine actions",
+    "BOTON_BUSCAR": "Search",
+    "BOTON_BUSCAR_ACCES": "View available trips based on selected criteria",
+    "BOTON_LIMPIAR": "Clear search",
+    "BOTON_LIMPIAR_ACCES": "Clear all criteria to start a new search",
+    "INSTRUCCIONES_BUSQUEDA": "Type at least three characters and use the up and down arrows to navigate through the results and Enter to select."
+  },
+
   "TITLE": "PrideRide",
   "Panel de usuario": "User Panel Page",
   "PANELUSUARIO": {
@@ -60,28 +129,7 @@
       "BOTON": "Check here"
     }
   },
-  "SELECTOR_GENERO": {
-    "H_CIS": "Cis Man",
-    "M_CIS": "Cis Woman",
-    "TRANS": "Transsexual",
-    "NO_BINARIO": "Non-binary",
-    "INTER": "Intergender",
-    "NO_FLUIDO": "Non-fluid",
-    "OTRO": "Other",
-    "NO_RESPONDE": "Prefer not to say"
-  },
-  "SELECTOR_ORIENTACION": {
-    "GAY": "Gay",
-    "LESBIANA": "Lesbian",
-    "BISEXUAL": "Bisexual",
-    "PANSEXUAL": "Pansexual",
-    "ASEXUAL": "Asexual",
-    "DEMISEXUAL": "Demisexual",
-    "QUEER": "Queer",
-    "HETEROSEXUAL": "Heterosexual",
-    "OTRO": "Other",
-    "NO_RESPONDE": "Prefer not to say"
-  },
+
   "__MiPerfil": "My Profile Component - /mi-perfil --------- FINISHED OCTOBER 2025",
   "MIPERFIL": {
     "TITULO": "My Profile",
@@ -255,15 +303,7 @@
       "FINALIZAR_REGISTRO": "Complete registration"
     }
   },
-  "BUSCADOR": {
-    "TITULO": "Are you looking for a trip?",
-    "BUSCAR_VIAJE_DESDE": "From...",
-    "BUSCAR_VIAJE_HASTA": "To...",
-    "BUSCAR_VIAJE_IDA": "When are you going?",
-    "BUSCAR_VIAJE_VUELTA": "Do you want to schedule the return?",
-    "HOY": "Today",
-    "MAÑANA": "Tomorrow"
-  },
+
   "__DatosContacto": "OK OK OK OK OK OK OK , contact page",
   "DATOS_CONTACTO": {
     "TITULO": "Contact Details",
@@ -415,25 +455,7 @@
     "TRANS_CONCEPTO": "Transfer to account",
     "SALDO": "Balance"
   },
-  "__Botones": "My profile modal and my profile component",
-  "BOTON": {
-    "ANADIR_VEHICULO": "Add vehicle",
-    "GUARDAR": "Save",
-    "VERIF_TU_IDENTIDAD": "Verify your identity",
-    "GUARDAR_VEHICULO": "Save vehicle",
-    "CONFIRMAR_CODIGO_TFNO": "Confirm code",
-    "ELEGIR_ARCHIVOS": "Choose files",
-    "CAMBIAR": "Change!",
-    "ELIMINAR_CTA": "Delete my account",
-    "ELIMINAR": "Delete profile",
-    "CANCELAR:": "Cancel",
-    "BUSCAR": "Search",
-    "PUBLICA_TU_VIAJE_AQUI": "Publish your next trip here",
-    "BUSCA_TU_VIAJE_AQUI": "Search for your next trip here",
-    "CONSULTA_AQUI": "Check here",
-    "PUBLICAR_VIAJE": "Publish your trip",
-    "CENTROAYUDA": "Consult our help center"
-  },
+
   "_NuevoViaje": "/nuevo-viaje",
   "NUEVOVIAJE": {
     "PLACE_DONDE_COMIENZA": "Where does the trip start?",
