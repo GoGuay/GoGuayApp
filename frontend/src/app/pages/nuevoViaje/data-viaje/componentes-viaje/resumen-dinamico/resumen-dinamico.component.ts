@@ -72,12 +72,8 @@ export class ResumenDinamicoComponent implements OnInit {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.actualizarInformacion();
     this.obtenerVehiculos();
-    this.iniciarEdicion();
   }
 
-  iniciarEdicion() {
-    this.editandoViaje = true;
-  }
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;
