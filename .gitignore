@@ -2,3 +2,4 @@
 backend/.env
 backend/prideride_firebase.json
 __pycache__/
+backend/models/__pycache__
