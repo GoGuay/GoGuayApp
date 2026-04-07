@@ -123,7 +123,7 @@ def verificar_email_existente():
     """
     email = request.args.get('email')
     if not email:
-        return jsonify({"Error": "Parámetro no encontrado"}), 400
+        return jsonify({"Error": "Email no encontrado"}), 400
 
     email_normalizado = email.lower()
 
@@ -137,9 +137,9 @@ def verificar_telefono_existente():
     """Verifica si el teléfono ya existe en la base de datos durante un nuevo proceso de registro."""
     telefono = request.args.get('telefono')
     if not telefono:
-        return jsonify({"Error": "Parámetro no encontrado"}), 400
+        return jsonify({"Error": "Teléfono no encontrado"}), 400
     existe = Usuario.query.filter_by(telefono=telefono).first() is not None
-    return jsonify ({"existe": existe}), 200
+    return jsonify ({"Ya existe teléfono": existe}), 200
 
 
 ## LOGIN DEL USUARIO AL SISTEMA ##
