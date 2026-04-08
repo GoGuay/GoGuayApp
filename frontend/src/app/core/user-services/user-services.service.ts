@@ -10,6 +10,7 @@ import {
   throwError,
 } from 'rxjs';
 import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -160,7 +161,14 @@ export class UserServicesService {
    */
   login(email: string, password: string): Observable<Usuario> {
     const loginData = { email, password };
-    return this.http.post<Usuario>(`${this.apiUrl}/user/login`, loginData);
+    return this.http.post<Usuario>(`${this.apiUrl}/user/login`, loginData).pipe(
+      tap((response) => {
+        if (response && response.access_token) {
+          localStorage.setItem('access_token', response.access_token);
+          console.log('Token detectado y guardado en localStorage');
+        }
+      }),
+    );
   }
 
   /**
