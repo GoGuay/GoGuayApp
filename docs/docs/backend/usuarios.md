@@ -201,7 +201,7 @@ Permite a un usuario registrado autenticarse en la plataforma para obtener un to
 2. **Búsqueda:** Se consulta en la base de datos el primer usuario que coincida con el email proporcionado.
 3. **Validación de existencia:** Si el usuario es `None`, se detiene el proceso con un error **404**.
 4. **Verificación de seguridad:** Se utiliza `check_password_hash` para comparar la contraseña enviada con el hash cifrado de la base de datos. Si no coinciden, devuelve un error **401**.
-5. **Generación de Token:** Si las credenciales son válidas, se genera un `access_token` guardando el `ID` del usuario como identidad del token.
+5. **Generación de Token:** Si las credenciales son válidas, se genera un `access_token` guardando el `ID` del usuario como identidad del token. Se guarda como tipo de dato string.
 6. **Respuesta:** Se retorna el perfil del usuario serializado junto con el token generado.
 
 ### Respuestas
@@ -292,12 +292,17 @@ Busca y retorna la información detallada de un usuario específico mediante su 
 
 ### Flujo Lógico
 
-1. **Validación de Token:** El decorador `@jwt_required()` intercepta la petición para verificar que el token sea válido, no haya expirado y no haya sido manipulado.
-2. **Búsqueda por ID:** El servidor captura el ID dinámico de la URL y busca el registro correspondiente en la tabla `Usuario`.
-3. **Evaluación:**
-   - ✅ **Si el usuario existe:** Se convierte el objeto a formato JSON serializado.
-   - ❌ **Si el usuario no existe (None):** Se devuelve un error **404**.
-4. **Respuesta Final:** Se envía el objeto JSON con los datos del usuario y un código **200**.
+1. **Validación de Token:** El decorador `@jwt_required()` verifica la autenticidad de la petición.
+2. **Extracción de Identidad:** Se obtiene el ID del usuario desde el token mediante `get_jwt_identity()`.
+3. **Control de Acceso (Casting):** \* Se convierte la identidad del token a entero: `int(current_user_id)`.
+   - Se compara con el `id` solicitado en la URL.
+   - Si no coinciden, se retorna un **403 Forbidden**.
+4. **Consulta:** Si coinciden, se busca al usuario en la base de datos.
+5. **Respuesta:** Se retorna el objeto serializado.
+
+   :::warning Nota sobre tipos de datos
+   La identidad en el JWT se almacena como `string`. Es imperativo realizar la conversión a `int` antes de comparar con parámetros de ruta definidos como `<int:id>`.
+   :::
 
 ### Respuestas
 
