@@ -1,4 +1,8 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container">
@@ -15,41 +19,44 @@
 
     <!-- 🟢 Tablas -->
     <div class="container mt-5 mb-5">
-      <div class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper">
+      <div
+        class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper"
+      >
         <div class="verif-col">
           <h5>{{'VERIFICACION.TABLA_VBASICA.TITULO' | translate}}</h5>
           <table class="verification-table mt-3 mx-auto">
             <tr>
               <td>{{'VERIFICACION.TABLA_VBASICA.COL_CORREO' | translate}}</td>
               <td>
-                <span *ngIf="usuario.emailVerificado" class="check">✔️</span>
-                <span *ngIf="!usuario.emailVerificado" class="cross">❌</span>
+                <span
+                  *ngIf="usuario.emailVerificado"
+                  class="check"
+                >
+                  ✔️
+                </span>
+                <span
+                  *ngIf="!usuario.emailVerificado"
+                  class="cross"
+                >
+                  ❌
+                </span>
               </td>
             </tr>
             <tr>
               <td>{{'VERIFICACION.TABLA_VBASICA.COL_TELÉFONO' | translate}}</td>
               <td>
-                <span *ngIf="usuario.telefonoVerificado" class="check">✔️</span>
-                <span *ngIf="!usuario.telefonoVerificado" class="cross">❌</span>
-              </td>
-            </tr>
-            <tr>
-              <td>{{'VERIFICACION.TABLA_VBASICA.COL_DOCUMENTO' | translate}}</td>
-              <td>
-                <span *ngIf="usuario.dni_verificado" class="check">✔️</span>
-                <span *ngIf="!usuario.dni_verificado" class="cross">❌</span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="verif_avanzada">
-          <h5>{{'VERIFICACION.TABLA_VAVANZADA.TITULO' | translate}}</h5>
-          <table class="verification-table mt-3 mx-auto">
-            <tr>
-              <td>{{'VERIFICACION.TABLA_VAVANZADA.COL_CARNETCONDUCIR' | translate}}</td>
-              <td>
-                <span *ngIf="usuario.carnetVerificado" class="check">✔️</span>
-                <span *ngIf="!usuario.carnetVerificado" class="cross">❌</span>
+                <span
+                  *ngIf="usuario.telefonoVerificado"
+                  class="check"
+                >
+                  ✔️
+                </span>
+                <span
+                  *ngIf="!usuario.telefonoVerificado"
+                  class="cross"
+                >
+                  ❌
+                </span>
               </td>
             </tr>
           </table>
@@ -60,14 +67,23 @@
     <!-- Correo, teléfono e identidad -->
     <ion-row class="justify-content-between fila_superior">
       <!-- Verificación de correo -->
-      <ion-col size="12" size-md="3" class="mb-2">
+      <ion-col
+        size="12"
+        size-md="3"
+        class="mb-2"
+      >
         <div class="mt-2 text-center">
           <p class="mb-4">
             <strong>{{'VERIFICACION.VERIFICA_CORREO' | translate}}</strong>
           </p>
           <ion-row>
             <ion-col>
-              <p class="text-align-justify" style="font-size: 14px">{{'VERIFICACION.INFO_VERIF_CORREO' | translate}}</p>
+              <p
+                class="text-align-justify"
+                style="font-size: 14px"
+              >
+                {{'VERIFICACION.INFO_VERIF_CORREO' | translate}}
+              </p>
             </ion-col>
           </ion-row>
           <ion-col>
@@ -76,7 +92,8 @@
               class="btn btn_bg mb-4 w-100"
               mat-raised-button
               (click)="envio_mail_verificar_correo(emailUsuario)"
-              [disabled]="usuario.emailVerificado || botonCorreoVerificado">
+              [disabled]="usuario.emailVerificado || botonCorreoVerificado"
+            >
               {{emailUsuario}}
             </button>
             <p-toast position="bottom-center"></p-toast>
@@ -89,14 +106,23 @@
       </div>
 
       <!-- Verificación de teléfono -->
-      <ion-col size="12" size-md="3" class="mb-2">
+      <ion-col
+        size="12"
+        size-md="3"
+        class="mb-2"
+      >
         <div class="mt-2 text-center">
           <p>
             <strong>{{'VERIFICACION.VERIFICA_TELEFONO' | translate}}</strong>
           </p>
           <ion-row>
             <ion-col>
-              <p class="text-align-justify" style="font-size: 14px">{{'VERIFICACION.INFO_VERIF_TELEFONO' | translate}}</p>
+              <p
+                class="text-align-justify"
+                style="font-size: 14px"
+              >
+                {{'VERIFICACION.INFO_VERIF_TELEFONO' | translate}}
+              </p>
             </ion-col>
           </ion-row>
           <ion-col>
@@ -106,12 +132,16 @@
               class="btn btn_bg"
               mat-raised-button
               type="btn"
-              (click)="enviar_sms(telefonoUsuario)">
+              (click)="enviar_sms(telefonoUsuario)"
+            >
               {{telefonoUsuario}}
             </button>
           </ion-col>
           <ion-row class="mt-4"></ion-row>
-          <div class="input-container d-flex justify-content-center mb-3" *ngIf="!usuario.telefonoVerificado">
+          <div
+            class="input-container d-flex justify-content-center mb-3"
+            *ngIf="!usuario.telefonoVerificado"
+          >
             <input
               #d0
               type="text"
@@ -123,7 +153,8 @@
               (keydown)="handleBackspace($event, 0)"
               (focus)="focusedInput = 0"
               [disabled]="!inputsHabilitados"
-              (paste)="handlePaste($event)" />
+              (paste)="handlePaste($event)"
+            />
             <input
               #d1
               type="text"
@@ -134,7 +165,8 @@
               (input)="moveNext(d1, d2, 1)"
               (keydown)="handleBackspace($event, 1)"
               (focus)="focusedInput = 1"
-              [disabled]="!inputsHabilitados" />
+              [disabled]="!inputsHabilitados"
+            />
             <input
               #d2
               type="text"
@@ -145,7 +177,8 @@
               (input)="moveNext(d2, d3, 2)"
               (keydown)="handleBackspace($event, 2)"
               (focus)="focusedInput = 2"
-              [disabled]="!inputsHabilitados" />
+              [disabled]="!inputsHabilitados"
+            />
             <input
               #d3
               type="text"
@@ -156,7 +189,8 @@
               (input)="moveNext(d3, d4, 3)"
               (keydown)="handleBackspace($event, 3)"
               (focus)="focusedInput = 3"
-              [disabled]="!inputsHabilitados" />
+              [disabled]="!inputsHabilitados"
+            />
             <input
               #d4
               type="text"
@@ -167,7 +201,8 @@
               (input)="moveNext(d4, d5, 4)"
               (keydown)="handleBackspace($event, 4)"
               (focus)="focusedInput = 4"
-              [disabled]="!inputsHabilitados" />
+              [disabled]="!inputsHabilitados"
+            />
             <input
               #d5
               type="text"
@@ -178,9 +213,13 @@
               (input)="updateCodigo()"
               (keydown)="handleBackspace($event, 5)"
               (focus)="focusedInput = 5"
-              [disabled]="!inputsHabilitados" />
+              [disabled]="!inputsHabilitados"
+            />
           </div>
-          <span *ngIf="codigo_erroneo">Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos</span>
+          <span *ngIf="codigo_erroneo">
+            Este código no es correcto. Vuelve a introducirlo o solicita uno
+            nuevo pasados 10 minutos
+          </span>
 
           <button
             (click)="verificar_codigo_sms(codigo)"
@@ -188,7 +227,8 @@
             type="button"
             class="btn mt-2 btn_bg"
             mat-raised-button
-            [disabled]="!codigoCompleto">
+            [disabled]="!codigoCompleto"
+          >
             {{'VERIFICACION.BOTÓN_VERIFICAR_TELEFONO' | translate}}
           </button>
         </div>
@@ -198,98 +238,7 @@
         <mat-divider vertical></mat-divider>
       </div>
 
-      <!-- Verificación documento -->
-      <ion-col size="12" size-md="3" class="mb-2">
-        <div class="mt-2 text-center">
-          <p>
-            <strong>{{'VERIFICACION.VERIF_IDENTIDAD' | translate}}</strong>
-          </p>
-          <ion-row>
-            <ion-col>
-              <p style="font-size: 14px">{{'VERIFICACION.INFO_VERIF_IDENTIDAD' | translate}}</p>
-            </ion-col>
-          </ion-row>
-        </div>
-
-        <div>
-          <label for="tipoDocumento" class="form-label">{{'VERIFICACION.TIPO_DOCUMENTO' | translate}}</label>
-          <select
-            [disabled]="usuario.dni_verificado"
-            id="tipoDocumento"
-            class="form-select"
-            name="tipoDocumento"
-            [(ngModel)]="tipoDocumentoSeleccionado"
-            (ngModelChange)="onTipoDocumentoChange($event)">
-            <option value="" [disabled]="true" [hidden]="false">{{ 'VERIFICACION.ESCOGE_TIPO_DOCUMENTO' | translate }}</option>
-            <option value="DNI">DNI / NIF</option>
-            <option value="NIE">NIE</option>
-          </select>
-        </div>
-        <!-- Input visible solo cuando hay selección -->
-        <div *ngIf="tipoDocumentoSeleccionado && !usuario.dni_verificado" class="mt-3">
-          <label for="numeroDocumento" class="form-label pronombre">{{ 'VERIFICACION.NUMERO_DOCUMENTO' | translate }}</label>
-          <input
-            type="text"
-            inputmode="text"
-            id="numeroDocumento"
-            class="form-control"
-            name="numeroDocumento"
-            [(ngModel)]="numeroDocumento"
-            (input)="validarDocumentoEnTiempoReal()"
-            placeholder="{{ 'VERIFICACION.PLACEHOLDER_DOCUMENTO' | translate }}" />
-          <div *ngIf="mensajeErrorDocumento" class="text-danger mt-1">{{ mensajeErrorDocumento }}</div>
-        </div>
-        <div class="d-flex justify-content-center mt-3">
-          <button
-            *ngIf="tipoDocumentoSeleccionado && !usuario.dni_verificado"
-            (click)="verificar_documento(numeroDocumento)"
-            type="button"
-            class="btn mt-2 btn_bg"
-            mat-raised-button
-            [disabled]="!documentoValido">
-            {{'VERIFICACION.BOTÓN_VERIFICAR_IDENTIDAD' | translate}}
-          </button>
-        </div>
-      </ion-col>
-
       <div class="divider-container hide-on-mobile"></div>
-    </ion-row>
-
-    <ion-row class="d-flex justify-content-center">
-      <!-- Verificación avanzada: CARNET DE CONDUCIR -->
-      <div>
-        <div class="mt-2 text-center">
-          <p class="mb-4">
-            <strong>{{ 'VERIFICACION.VAVANZADA.TITULO' | translate }}</strong>
-          </p>
-          <p style="font-size: 14px" class="mb-3">{{'VERIF.VERIFADICIONALINFO1' | translate}}</p>
-
-          <ion-row>
-            <ion-col class="filadocumentodelantero d-flex justify-content-center d-md-block">
-              <div class="file-upload">
-                <label for="carnetdelantera" class="upload-button floating-plus">+</label>
-                <input type="file" id="carnetdelantera" class="file-input" accept="image/*" (change)="fotoCarnetDelantera($event)" />
-              </div>
-            </ion-col>
-            <ion-col>
-              <div class="fotoDocumento">
-                <img [src]="sinDocumentoDelantera" alt="Sin foto de documento delantera" *ngIf="!usuario?.fotoCarnetCondDelantera" />
-                <img class="fotoDocumento" *ngIf="usuario?.fotoCarnetCondDelantera" [src]="usuario?.fotoCarnetCondDelantera" />
-              </div>
-              <div class="overlay" *ngIf="cargandoCarnetDelantera">
-                <app-spinner></app-spinner>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row class="mb-3">
-            <ion-col>
-              <div>
-                <p style="font-size: 13px">{{'VERIF.FOTODELANTERA' | translate}}</p>
-              </div>
-            </ion-col>
-          </ion-row>
-        </div>
-      </div>
     </ion-row>
   </div>
 </ion-content>

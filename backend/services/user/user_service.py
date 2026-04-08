@@ -14,7 +14,7 @@ from flask_jwt_extended import create_access_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, Monedero, MovimientoMonedero, RolUsuarioEnum
+from models import Usuario, RolUsuarioEnum
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -26,7 +26,7 @@ import os
 from twilio.rest import Client
 from sqlalchemy import func
 from datetime import datetime, timezone
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
@@ -201,6 +201,7 @@ def obtener_usuario_por_id(id):
 
 ## EDITAR INFORMACIÓN DE UN USUAURIO ##
 @user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
+@jwt_required()
 def actualizar_usuario(user_id):
     """
     1. Con el método PUT actualizamos un recurso que ya existe.
@@ -213,6 +214,11 @@ def actualizar_usuario(user_id):
     8. commit: guarda en base de datos los cambios.
     9 Devuelve la información de los cambios en formato json.
     """
+    current_user_id = get_jwt_identity()
+
+    if current_user_id != user_id:
+        return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
+    
     usuario = Usuario.query.get_or_404(user_id)
     data = request.json
 
@@ -228,6 +234,7 @@ def actualizar_usuario(user_id):
 
 ## ELIMINAR USUARIO POR ID ##
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
+@jwt_required()
 def eliminar_usuario(id):
     """
     1. Con el metodo DELETE permite borrar.
@@ -235,6 +242,11 @@ def eliminar_usuario(id):
     3. Si encuentra al usuario hacemos el db.session.delete para borrarlo y guardamos los cambios con el commit.
     4. Devolvemos un mensaje en formato Json con la confirmación de eliminación.
     """
+    current_user_id = get_jwt_identity()
+
+    if current_user_id != id:
+        return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
+    
     usuario = Usuario.query.get(id)
     
     if usuario is None:

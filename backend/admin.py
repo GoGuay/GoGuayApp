@@ -2,7 +2,7 @@
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from extensions import db
-from models import Usuario, Vehiculo, Monedero, Puntuacion, Viaje, Notificacion, TokenUsado
+from models import Usuario, Vehiculo, Puntuacion, Viaje, Notificacion, TokenUsado
 from views.HomeView import HomeView  # Cambia esta línea para la nueva ubicación
  
 def setup_admin(app):
@@ -15,7 +15,6 @@ def setup_admin(app):
     admin.add_view(ModelView(Usuario, db.session))
     admin.add_view(ModelView(Notificacion, db.session))
     admin.add_view(ModelView(Vehiculo, db.session))
-    admin.add_view(ModelView(Monedero, db.session))
     admin.add_view(ModelView(Puntuacion, db.session))
     admin.add_view(ModelView(Viaje, db.session))
     admin.add_view(ModelView (TokenUsado, db.session))

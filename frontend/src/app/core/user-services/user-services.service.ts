@@ -1,9 +1,15 @@
 import { Usuario } from './../../models/user/usuario.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  throwError,
+} from 'rxjs';
 import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
-import { Monedero } from 'src/app/models/user/monedero.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +46,9 @@ export class UserServicesService {
     }
   }
 
-  private usuarioSource = new BehaviorSubject<Usuario['usuario'] | null>(this.getInitialUser());
+  private usuarioSource = new BehaviorSubject<Usuario['usuario'] | null>(
+    this.getInitialUser(),
+  );
 
   /**
    * usuario$ es la versión pública observable para suscribirse desde cualquier componente
@@ -53,18 +61,17 @@ export class UserServicesService {
    * this.usuarioSource.next(nuevoUsuario): --> emite el usuario actuaizado a todos los suscriptores de usuario$. Actualiza tambien userData.usuario y localStorage
    */
   actualizarEstadoUsuario(usuarioActualizado: Partial<Usuario['usuario']>) {
-    const usuarioActual = this.usuarioSource.getValue() || ({} as Usuario['usuario']);
+    const usuarioActual =
+      this.usuarioSource.getValue() || ({} as Usuario['usuario']);
     const nuevoUsuario = { ...usuarioActual, ...usuarioActualizado };
     this.usuarioSource.next(nuevoUsuario); // <--- aquí se emite un nuevo objeto
     this.userData.usuario = nuevoUsuario; // actualizar localStorage también
     localStorage.setItem('userData', JSON.stringify(this.userData));
   }
 
-  monedero: any = null;
-
   private usuariosCache: Usuario[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Para guardar de forma temporal los datos que haya introducido el usuario durante el registro
@@ -97,12 +104,14 @@ export class UserServicesService {
       return of(this.usuariosCache);
     }
 
-    return this.http.get<Usuario[]>(`${this.apiUrl}/user/obtener_usuarios`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener los usuarios registrados:', error);
-        throw error;
-      }),
-    );
+    return this.http
+      .get<Usuario[]>(`${this.apiUrl}/user/obtener_usuarios`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al obtener los usuarios registrados:', error);
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -111,7 +120,9 @@ export class UserServicesService {
    * @returns Observable del objeto Usuario.
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
-    return this.http.get<Usuario>(`${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`);
+    return this.http.get<Usuario>(
+      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`,
+    );
   }
 
   /**
@@ -120,18 +131,25 @@ export class UserServicesService {
    * @param datos Objeto con los campos a cambiar (ej: { preferencias: ['Hablar', 'Dormir'] }).
    * @returns Observable con el usuario actualizado.
    */
-  actualizarUsuario(usuarioId: number, datos: Partial<Usuario['usuario']>): Observable<Usuario['usuario']> {
-    return this.http.put<Usuario['usuario']>(`${this.apiUrl}/user/editarusuario/${usuarioId}`, datos).pipe(
-      map((usuarioActualizado) => {
-        // Sincronizamos el estado reactivo de la aplicación
-        this.actualizarEstadoUsuario(usuarioActualizado);
-        return usuarioActualizado;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar datos del usuario: ', error);
-        return throwError(() => error);
-      })
-    );
+  actualizarUsuario(
+    usuarioId: number,
+    datos: Partial<Usuario['usuario']>,
+  ): Observable<Usuario['usuario']> {
+    return this.http
+      .put<
+        Usuario['usuario']
+      >(`${this.apiUrl}/user/editarusuario/${usuarioId}`, datos)
+      .pipe(
+        map((usuarioActualizado) => {
+          // Sincronizamos el estado reactivo de la aplicación
+          this.actualizarEstadoUsuario(usuarioActualizado);
+          return usuarioActualizado;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar datos del usuario: ', error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -160,7 +178,9 @@ export class UserServicesService {
    */
   verificarEmailExistente(email: string): Observable<boolean> {
     const url = `${this.apiUrl}/user/verificar-email-existente?email=${encodeURIComponent(email)}`;
-    return this.http.get<{ existe: boolean }>(url).pipe(map((response) => response.existe));
+    return this.http
+      .get<{ existe: boolean }>(url)
+      .pipe(map((response) => response.existe));
   }
 
   /**
@@ -170,7 +190,9 @@ export class UserServicesService {
    */
   verificarTelefonoExistente(telefono: string): Observable<boolean> {
     const url = `${this.apiUrl}/user/verificar-telefono-existente?telefono=${encodeURIComponent(telefono)}`;
-    return this.http.get<{ existe: boolean }>(url).pipe(map((response) => response.existe));
+    return this.http
+      .get<{ existe: boolean }>(url)
+      .pipe(map((response) => response.existe));
   }
 
   /**
@@ -188,24 +210,32 @@ export class UserServicesService {
    * Llama a "actualizarEstadoUsuario" con el nuevo campo fotoPerfil. Esto actualiza usuario$ (cualquiera componente suscrito ve la nueva foto), userData.usuario (copia local) y localStorage.
    * Devuelve el resultado del backend para usarlo en el componente (por eso el ngOnInit ya refleja la nueva foto sin recargar la pagina)
    */
-  actualizarImagenPerfil(usuarioId: number, imagenPerfil: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/actualizar_imagen_perfil/${usuarioId}`, imagenPerfil).pipe(
-      map((resultado: any) => {
-        // Actualiza el BehaviorSubject con la nueva foto
-        const usuarioActualizado: Partial<Usuario['usuario']> = {
-          ...this.userData.usuario, // solo el objeto interno
-          fotoPerfil: resultado.url,
-          fotoPublicId: resultado.publicId,
-        };
+  actualizarImagenPerfil(
+    usuarioId: number,
+    imagenPerfil: FormData,
+  ): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/actualizar_imagen_perfil/${usuarioId}`,
+        imagenPerfil,
+      )
+      .pipe(
+        map((resultado: any) => {
+          // Actualiza el BehaviorSubject con la nueva foto
+          const usuarioActualizado: Partial<Usuario['usuario']> = {
+            ...this.userData.usuario, // solo el objeto interno
+            fotoPerfil: resultado.url,
+            fotoPublicId: resultado.publicId,
+          };
 
-        this.actualizarEstadoUsuario(usuarioActualizado);
-        return resultado;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la imagen de perfil: ', error);
-        return throwError(() => error);
-      }),
-    );
+          this.actualizarEstadoUsuario(usuarioActualizado);
+          return resultado;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la imagen de perfil: ', error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -215,19 +245,21 @@ export class UserServicesService {
    * catchError: manejo de errores.
    */
   eliminarFotoPerfil(usuarioId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`).pipe(
-      map(() => {
-        // Actualiza fotoPerfil y fotoPublicId a undefineduser
-        this.actualizarEstadoUsuario({
-          fotoPerfil: undefined,
-          fotoPublicId: undefined,
-        });
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al eliminar la foto de perfil: ', error);
-        return throwError(() => error);
-      }),
-    );
+    return this.http
+      .delete(`${this.apiUrl}/user/eliminar_imagen_perfil/${usuarioId}`)
+      .pipe(
+        map(() => {
+          // Actualiza fotoPerfil y fotoPublicId a undefineduser
+          this.actualizarEstadoUsuario({
+            fotoPerfil: undefined,
+            fotoPublicId: undefined,
+          });
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al eliminar la foto de perfil: ', error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -236,18 +268,29 @@ export class UserServicesService {
    * @param imagenCabecera FormData con la imagen de cabecera.
    * @returns Observable con la respuesta del backend.
    */
-  actualizarImagenCabecera(usuarioId: number, imagenCabecera: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/actualizar_imagen_cabecera/${usuarioId}`, imagenCabecera).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la imagen de cabecera: ', error);
-        return throwError(error);
-      }),
-    );
+  actualizarImagenCabecera(
+    usuarioId: number,
+    imagenCabecera: FormData,
+  ): Observable<any> {
+    return this.http
+      .put(
+        `${this.apiUrl}/user/actualizar_imagen_cabecera/${usuarioId}`,
+        imagenCabecera,
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar la imagen de cabecera: ', error);
+          return throwError(error);
+        }),
+      );
   }
   // Función para editar los cambios en la info personal del usuario
   editarDatosUsuario(usuarioId: number, userData: any): Observable<any> {
     const datosAActualizar = {};
-    return this.http.put(`${this.apiUrl}/user/editarusuario/${usuarioId}`, userData);
+    return this.http.put(
+      `${this.apiUrl}/user/editarusuario/${usuarioId}`,
+      userData,
+    );
   }
 
   /**
@@ -271,10 +314,12 @@ export class UserServicesService {
    * @returns
    */
   verificar_email(token: any): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/user/verificar_email`, { token }).pipe(
-      map(() => true),
-      catchError(() => of(false)),
-    );
+    return this.http
+      .post(`${this.apiUrl}/user/verificar_email`, { token })
+      .pipe(
+        map(() => true),
+        catchError(() => of(false)),
+      );
   }
 
   enviar_sms(telefono: string) {
@@ -288,53 +333,15 @@ export class UserServicesService {
     });
   }
 
-  // Función para verificar el documento del usuario.
-  verificar_documento(id: number, documento: string) {
-    return this.http.post(`${this.apiUrl}/user/verificar_documento/${id}`, { numero_documento: documento });
-  }
-
-  fotoDocumentoDelantera(imagen: FormData, usuarioId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/subirfoto_documentodelantera/${usuarioId}`, imagen).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la foto delantera de documento');
-        return throwError(error);
-      }),
-    );
-  }
-
-  fotoDocumentoTrasera(imagen: FormData, usuarioId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/subirfoto_documentotrasera/${usuarioId}`, imagen).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la foto delantera de documento');
-        return throwError(error);
-      }),
-    );
-  }
-
-  fotoCarnetDelantera(imagen: FormData, usuarioId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/subirfoto_carnetdelantera/${usuarioId}`, imagen).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la foto delantera del carnet');
-        return throwError(error);
-      }),
-    );
-  }
-
-  fotoCarnetTrasera(imagen: FormData, usuarioId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/user/subirfoto_carnettrasera/${usuarioId}`, imagen).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al actualizar la foto trasera del carnet');
-        return throwError(error);
-      }),
-    );
-  }
-
   // Verificar contraseña actual del usuario
   verificar_pw_actual(id: number, password: string) {
-    return this.http.post<{ isValid: boolean }>(`${this.apiUrl}/user/comprobarpwactual`, {
-      id,
-      password,
-    });
+    return this.http.post<{ isValid: boolean }>(
+      `${this.apiUrl}/user/comprobarpwactual`,
+      {
+        id,
+        password,
+      },
+    );
   }
 
   /**
@@ -376,98 +383,5 @@ export class UserServicesService {
     return this.http.get(`${this.apiUrl}/user/comprobacion_token`, {
       params: { token },
     });
-  }
-
-  /* Cargar el monedero del usuario logueado.
-   * @returns Observable con los datos del monedero.
-   */
-  cargarMonedero(usuarioId: number): Observable<Monedero> {
-    if (!usuarioId) {
-      return throwError(() => new Error('Usuario no definido'));
-    }
-    return this.http.get<Monedero>(`${this.apiUrl}/user/obtener_datos_monedero/${usuarioId}`).pipe(
-      map((monedero) => {
-        this.monedero = monedero;
-        return monedero;
-      }),
-      catchError((error) => {
-        console.error('Error al cargar el monedero:', error);
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * Recargar saldo al monedero del usuario logueado.
-   * @param cantidad Monto a recargar.
-   * @returns Observable con el monedero actualizado.
-   */
-  recargarSaldo(cantidad: number, usuarioId: number): Observable<Monedero> {
-    if (!usuarioId) {
-      return throwError(() => new Error('Usuario no definido'));
-    }
-
-    const body = {
-      usuario_id: usuarioId,
-      cantidad,
-      concepto: 'Recarga manual',
-    };
-
-    return this.http.post<Monedero>(`${this.apiUrl}/user/recargar`, body).pipe(
-      map((monedero) => {
-        this.monedero = monedero;
-        return monedero;
-      }),
-      catchError((error) => {
-        console.error('Error al recargar saldo:', error);
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * Realizar un pago desde el monedero del usuario logueado.
-   * @param cantidad Monto a descontar.
-   * @returns Observable con el monedero actualizado.
-   */
-  pagar(cantidad: number, usuarioId: number): Observable<Monedero> {
-    if (!usuarioId) {
-      return throwError(() => new Error('Usuario no definido'));
-    }
-
-    const body = {
-      usuario_id: usuarioId,
-      cantidad,
-      concepto: 'Pago',
-    };
-
-    return this.http.post<Monedero>(`${this.apiUrl}/user/pagar`, body).pipe(
-      map((monedero) => {
-        this.monedero = monedero;
-        return monedero;
-      }),
-      catchError((error) => {
-        console.error('Error al pagar con el monedero:', error);
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * Función para obtener los movimientos del monedero del usuario logueado.
-   * @param usuarioId ID del usuario cuyo monedero se quiere consultar.
-   * @returns
-   */
-  obtenerMovimientos(usuarioId: number): Observable<any[]> {
-    if (!usuarioId) {
-      return throwError(() => new Error('Usuario no definido'));
-    }
-
-    return this.http.get<any[]>(`${this.apiUrl}/user/movimientos/${usuarioId}`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener movimientos del monedero:', error);
-        return throwError(() => error);
-      }),
-    );
   }
 }
