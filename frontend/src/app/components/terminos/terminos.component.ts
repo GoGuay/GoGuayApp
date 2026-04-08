@@ -13,7 +13,7 @@ import { AnimationController } from '@ionic/angular/standalone';
 @Component({
   selector: 'app-terminos',
   standalone: true,
-  imports: [  
+  imports: [
     MatDialogContent,
     MatDividerModule,
     MatButtonModule,
@@ -23,11 +23,11 @@ import { AnimationController } from '@ionic/angular/standalone';
   templateUrl: './terminos.component.html',
   styleUrls: ['./terminos.component.scss'],
 })
-export class TerminosComponent  implements OnInit {
- 
+export class TerminosComponent implements OnInit {
+
   fechaActual: string = '';
-  email: string = 'gestion.prideride@gmail.com';
-  
+  email: string = 'goguay.app@gmail.com';
+
   constructor(private dialogRef: MatDialogRef<TerminosComponent>, private animationCtrl: AnimationController) { }
 
   ngOnInit() {

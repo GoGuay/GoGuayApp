@@ -21,56 +21,45 @@
                   <li
                     *ngFor="let campo of ['email', 'fecha_de_nacimiento', 'nombre', 'apellidos', 'telefono', 'genero', 'orientacion']"
                     class="d-flex align-items-center mb-2">
-                    <i
-                      [ngClass]="{
+                    <i [ngClass]="{
                         'fi fi-rr-at': campo === 'email',
                         'fi fi-rr-cake-birthday': campo === 'fecha_de_nacimiento',
                         'fi fi-rr-id-card': campo === 'nombre' || campo === 'apellidos',
                         'fi fi-rr-phone-call': campo === 'telefono',
                         'fi fi-rr-venus-mars': campo === 'genero',
                         'fi fi-rs-heart-half-stroke': campo === 'orientacion',
-                      }"
-                      class="me-1"></i>
+                      }" class="me-1"></i>
                     <strong class="me-1">{{ transformToTitleCase(campo) }}:</strong>
 
                     <div class="flex-grow-1">
                       <span *ngIf="!editando[campo]">
                         {{
-                          campo === 'genero'
-                            ? validacionGenero(getValorCampo(campo))
-                            : campo === 'fecha_de_nacimiento'
-                              ? (getValorCampo(campo) | date: 'dd/MM/yyyy')
-                              : campo === 'orientacion'
-                                ? validacionOrientacion(getValorCampo(campo))
-                                : getValorCampo(campo)
+                        campo === 'genero'
+                        ? validacionGenero(getValorCampo(campo))
+                        : campo === 'fecha_de_nacimiento'
+                        ? (getValorCampo(campo) | date: 'dd/MM/yyyy')
+                        : campo === 'orientacion'
+                        ? validacionOrientacion(getValorCampo(campo))
+                        : getValorCampo(campo)
                         }}
                       </span>
                       <ng-container *ngIf="editando[campo]">
-                        <select
-                          *ngIf="campo === 'genero' || campo === 'orientacion'"
-                          class="form-control form-control-sm"
-                          [formControlName]="campo"
+                        <select *ngIf="campo === 'genero' || campo === 'orientacion'"
+                          class="form-control form-control-sm" [formControlName]="campo"
                           [ngModel]="getValorCampo(campo)">
-                          <option value="" selected disabled hidden>{{ 'REGISTRO.RESUMEN_REGISTRO.SELECCIONA' | translate }}</option>
+                          <option value="" selected disabled hidden>{{ 'REGISTRO.RESUMEN_REGISTRO.SELECCIONA' |
+                            translate }}</option>
                           <option *ngFor="let opcion of campo === 'genero' ? generos : orientaciones" [value]="opcion">
                             {{ campo === 'genero' ? validacionGenero(opcion) : validacionOrientacion(opcion) }}
                           </option>
                         </select>
                         <!-- Input tipo date para fecha_nacimiento -->
-                        <input
-                          *ngIf="campo === 'fecha_de_nacimiento'"
-                          type="date"
-                          class="form-control form-control-sm"
-                          [formControlName]="campo"
-                          min="1930-01-01"
-                          aria-describedby="fnacimientoHelp"
-                          [max]="fechaMaxima"
-                          required
-                          (change)="onFechaChange()"
-                          [ngModel]="getValorCampo(campo)" />
-                        <span id="fnacimientoHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.FNACIMIENTO.AYUDA' | translate }}</span>
-                        <div
-                          class="text-danger posicion_error"
+                        <input *ngIf="campo === 'fecha_de_nacimiento'" type="date" class="form-control form-control-sm"
+                          [formControlName]="campo" min="1930-01-01" aria-describedby="fnacimientoHelp"
+                          [max]="fechaMaxima" required (change)="onFechaChange()" [ngModel]="getValorCampo(campo)" />
+                        <span id="fnacimientoHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.FNACIMIENTO.AYUDA' |
+                          translate }}</span>
+                        <div class="text-danger posicion_error"
                           *ngIf="formularioResumen.get('fecha_de_nacimiento')?.invalid && formularioResumen.get('fecha_de_nacimiento')?.touched">
                           <span *ngIf="formularioResumen.get('fecha_de_nacimiento')?.errors?.['fechalimite']">
                             {{ 'REGISTRO.FORM1.FNACIMIENTO.INCORRECTA' | translate }}
@@ -86,27 +75,19 @@
                           </span>
                         </div>
                         <!-- Input tipo email -->
-                        <input
-                          *ngIf="campo === 'email'"
-                          type="email"
-                          required
-                          inputmode="email"
-                          id="email"
-                          name="email"
-                          aria-describedby="emailHelp"
-                          autocomplete="email"
-                          class="form-control form-control-sm"
-                          [formControlName]="campo"
-                          (input)="validarCampo('email', formularioResumen)" />
-                        <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}</span>
+                        <input *ngIf="campo === 'email'" type="email" required inputmode="email" id="email" name="email"
+                          aria-describedby="emailHelp" autocomplete="email" class="form-control form-control-sm"
+                          [formControlName]="campo" (input)="validarCampo('email', formularioResumen)" />
+                        <span id="emailHelp" class="visually-hidden">{{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate
+                          }}</span>
 
-                        <div
-                          *ngIf="formularioResumen.get('email')?.invalid && formularioResumen.get('email')?.touched"
+                        <div *ngIf="formularioResumen.get('email')?.invalid && formularioResumen.get('email')?.touched"
                           class="text-danger posicion_error">
                           <span *ngIf="formularioResumen.get('email')?.errors?.['required']">
                             {{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}
                           </span>
-                          <span *ngIf="formularioResumen.get('email')?.errors?.['pattern']">{{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}</span>
+                          <span *ngIf="formularioResumen.get('email')?.errors?.['pattern']">{{
+                            'REGISTRO.FORM1.CORREO.FORMATO' | translate }}</span>
                           <span *ngIf="formularioResumen.get('email')?.errors?.['emailRepetido']">
                             {{ 'REGISTRO.FORM1.CORREO.YAEXISTE' | translate }}
                           </span>
@@ -114,12 +95,12 @@
                         <!-- Input teléfono -->
                         <input
                           *ngIf="campo !== 'genero' && campo !== 'orientacion' && campo !== 'fecha_de_nacimiento' && campo !== 'email'"
-                          type="text"
-                          required
-                          class="form-control form-control-sm"
-                          [formControlName]="campo" />
-                        <div *ngIf="formularioResumen.get('telefono')?.invalid && formularioResumen.get('telefono')?.touched" class="text-danger">
-                          <span class="text-danger posicion_error" *ngIf="formularioResumen.get('telefono')?.errors?.['required']">
+                          type="text" required class="form-control form-control-sm" [formControlName]="campo" />
+                        <div
+                          *ngIf="formularioResumen.get('telefono')?.invalid && formularioResumen.get('telefono')?.touched"
+                          class="text-danger">
+                          <span class="text-danger posicion_error"
+                            *ngIf="formularioResumen.get('telefono')?.errors?.['required']">
                             {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
                           </span>
                           <span *ngIf="formularioResumen.get('telefono')?.errors?.['pattern']">
@@ -133,7 +114,8 @@
                     </div>
 
                     <!-- Íconos -->
-                    <i *ngIf="!editando[campo]" class="fi fi-rr-pencil ms-2" style="cursor: pointer" (click)="activarEdicion(campo)"></i>
+                    <i *ngIf="!editando[campo]" class="fi fi-rr-pencil ms-2" style="cursor: pointer"
+                      (click)="activarEdicion(campo)"></i>
 
                     <button *ngIf="editando[campo] && hayCambio(campo)" (click)="guardar(campo)">
                       <i class="fi fi-rs-disk"></i>
@@ -150,11 +132,38 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center m-4">
-    <p>Al registrarte, reconoces haber leído, entendido y aceptado nuestras Normas y condiciones del Servicio</p>
+  <div #seccionCondiciones class="container mt-2 mb-4" *ngIf="mostrarCondiciones">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <app-contrato-registro (terminosAceptados)="onTerminosConfirmados()"></app-contrato-registro>
+      </div>
+    </div>
   </div>
-  <div class="text-center">
-    <button type="button" class="btn btn_bg me-3" (click)="aceptarNormas()">Aceptar y registrar</button>
+
+  <div *ngIf="condicionesAceptadas" class="alert alert-success text-center mx-4">
+    <i class="fi fi-rr-check-circle me-2"></i>
+    ¡Has aceptado las condiciones! Ahora puedes finalizar tu registro.
+  </div>
+
+
+  <div class="d-flex justify-content-center m-4">
+    <p class="text-center mb-1">
+      Al registrarte, reconoces haber leído, entendido y aceptado nuestras
+      <a (click)="abrirCondicionesInline()" class="terminos-link"
+        style="cursor: pointer; color: var(--ion-color-primary); text-decoration: underline;">
+        Condiciones del Servicio
+      </a>
+    </p>
+  </div>
+
+  <div class="d-flex justify-content-center m-4">
+    <p class="text-center mb-2">Debes aceptar las condiciones para poder continuar.</p>
+  </div>
+
+  <div class="text-center mb-5">
+    <button type="button" class="btn btn_bg me-3" (click)="finalizarRegistro()" [disabled]="!condicionesAceptadas">
+      Finalizar y Crear Cuenta
+    </button>
     <button type="button" routerLink="/home" class="btn btn_bg_secondary">Rechazar y salir</button>
   </div>
 </div>

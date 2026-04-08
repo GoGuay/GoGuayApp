@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import {MatIconModule} from '@angular/material/icon';
+import { IonicModule, NavController } from '@ionic/angular';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TerminosComponent } from 'src/app/components/terminos/terminos.component';
 import { CookiesComponent } from 'src/app/components/cookies/cookies.component';
@@ -18,7 +18,7 @@ export class FooterComponent implements OnInit {
 
   dialog = inject(MatDialog);
 
-  constructor() {}
+  constructor(private navCtrl: NavController) { }
 
   ngOnInit() {
 
@@ -30,5 +30,9 @@ export class FooterComponent implements OnInit {
 
   openCookies() {
     this.dialog.open(CookiesComponent, {});
+  }
+
+  openCondiciones() {
+    this.navCtrl.navigateRoot('/condiciones-generales', {});
   }
 }

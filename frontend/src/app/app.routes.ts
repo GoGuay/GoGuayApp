@@ -144,4 +144,12 @@ export const routes: Routes = [
     path: 'chat/:id',
     loadComponent: () => import('./pages/centro-mensajes/chat/chat.component').then((m) => m.ChatPage),
   },
+  {
+    path: 'condiciones-generales',
+    loadComponent: () => import('./pages/condiciones-generales/condiciones-generales.page').then((m) => m.CondicionesUsoComponent),
+  },
+  {
+    path: 'contrato-registro',
+    loadComponent: () => import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
+  },
 ];

@@ -1,0 +1,41 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.white-header {
+    --background: #ffffff;
+    --color: #333;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+ion-accordion {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.text-muted {
+    line-height: 1.6;
+    font-size: 0.95rem;
+
+    ul {
+        padding-left: 20px;
+        margin-top: 10px;
+    }
+}
+
+.text-small {
+    font-size: 0.8rem;
+}
+
+.info-text {
+    font-size: 10px;
+}
+
+.icon_logo {
+    height: 20px;
+    width: 20px;
+}

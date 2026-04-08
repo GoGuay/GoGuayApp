@@ -1,33 +1,44 @@
-<app-resumen-registro />
-<div class="container box_normas">
-  <h2>NORMAS COMO USUARIO DE PRIDERIDE</h2>
-  <p>
-    Al registrarte en nuestra aplicación, te comprometes a respetar a todos los
-    usuarios, independientemente de su identidad de género, orientación sexual o
-    cualquier otra característica personal.
+<div class="container box_normas shadow-sm p-4 mt-3" style="border-radius: 20px; background: #fff;">
+  <h2 class="fw-bold text-center mb-3">ÚLTIMO PASO: TU COMPROMISO</h2>
+
+  <p class="text-center text-muted">
+    Al unirte a <strong>GoGuay</strong>, te comprometes a mantener un espacio seguro y legal.
+    Por favor, marca las casillas para confirmar:
   </p>
 
-  <ul>
-    <li>Tratar a todos los usuarios con amabilidad y empatía.</li>
-    <li>
-      No se tolerará ningún tipo de discriminación, acoso o conducta
-      inapropiada.
-    </li>
-    <li>
-      El incumplimiento de estas normas puede conllevar la suspensión de tu
-      cuenta.
-    </li>
-  </ul>
+  <div class="check-legal-group mb-4">
+    <div class="d-flex align-items-start mb-3 p-2 rounded shadow-sm">
+      <ion-checkbox [(ngModel)]="checkEdadTerminos" class="me-3 mt-1"></ion-checkbox>
+      <label class="text-small">
+        Confirmo que soy <strong>mayor de 18 años</strong> y acepto las
+        <a (click)="verCondiciones()" class="link-primary text-decoration-underline" style="cursor:pointer">Condiciones
+          Generales de Uso</a>.
+      </label>
+    </div>
 
-  <p>
-    Para conocer más detalles sobre nuestro código de conducta, haz clic en el
-    siguiente botón:
-  </p>
-  <div class="text-center">
-    <button type="button" class="btn btn_bg me-3" (click)="aceptarNormas()">
-      Aceptar y registrar
+    <div class="d-flex align-items-start mb-3 p-2  rounded shadow-sm">
+      <ion-checkbox [(ngModel)]="checkCarnet" class="me-3 mt-1"></ion-checkbox>
+      <label class="text-small">
+        Declaro bajo mi responsabilidad que, en caso de publicar viajes, dispongo de
+        <strong>carnet de conducir y seguro en vigor</strong>.
+      </label>
+    </div>
+
+    <div class="d-flex align-items-start mb-3 p-2  rounded shadow-sm">
+      <ion-checkbox [(ngModel)]="checkDecalogo" class="me-3 mt-1"></ion-checkbox>
+      <label class="text-small">
+        Me comprometo a respetar el <strong>Decálogo de Comunidad</strong>: cero tolerancia al acoso o discriminación.
+      </label>
+    </div>
+  </div>
+
+  <div class="text-center d-grid gap-2 d-md-block">
+    <button type="button" class="btn btn_bg btn-lg px-5 me-md-3 mb-2 mb-md-0"
+      [disabled]="!checkEdadTerminos || !checkCarnet || !checkDecalogo" (click)="aceptarNormas()">
+      Aceptar condiciones
     </button>
-    <button type="button" routerLink="/home" class="btn btn_bg">
+
+    <button type="button" routerLink="/home" class="btn btn-outline-secondary btn-lg px-4">
       Rechazar y salir
     </button>
   </div>
