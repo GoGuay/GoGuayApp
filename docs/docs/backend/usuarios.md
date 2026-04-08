@@ -177,3 +177,163 @@ Valida si un número de teléfono ya está registrado en el sistema.
   "Error": "Teléfono no encontrado"
 }
 ```
+
+---
+
+## 4. Login de Usuario
+
+Permite a un usuario registrado autenticarse en la plataforma para obtener un token de acceso (JWT).
+
+### Ruta y Método
+
+`POST /login`
+
+### Cuerpo de la Petición (JSON)
+
+| Campo      | Tipo     | Obligatorio | Descripción                     |
+| :--------- | :------- | :---------- | :------------------------------ |
+| `email`    | `string` | **Sí**      | Correo electrónico del usuario. |
+| `password` | `string` | **Sí**      | Contraseña en texto plano.      |
+
+### Flujo Lógico
+
+1. **Captura de datos:** Se extraen el `email` y `password` del cuerpo de la petición (JSON).
+2. **Búsqueda:** Se consulta en la base de datos el primer usuario que coincida con el email proporcionado.
+3. **Validación de existencia:** Si el usuario es `None`, se detiene el proceso con un error **404**.
+4. **Verificación de seguridad:** Se utiliza `check_password_hash` para comparar la contraseña enviada con el hash cifrado de la base de datos. Si no coinciden, devuelve un error **401**.
+5. **Generación de Token:** Si las credenciales son válidas, se genera un `access_token` guardando el `ID` del usuario como identidad del token.
+6. **Respuesta:** Se retorna el perfil del usuario serializado junto con el token generado.
+
+### Respuestas
+
+#### ✅ 200 OK (Autenticación exitosa)
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "usuario": {
+    "id": 1,
+    "email": "usuario@ejemplo.com",
+    "nombre": "Alex"
+  }
+}
+```
+
+#### ❌ 404 Not Found (Usuario inexistente)
+
+```json
+{
+  "Error": "No se ha encontrado el correo"
+}
+```
+
+#### ❌ 401 Unauthorized (Credenciales inválidas)
+
+```json
+{
+  "Error": "Contraseña incorrecta"
+}
+```
+
+---
+
+## 5. Obtener todos los usuarios
+
+Recupera el listado completo de usuarios registrados junto con su información extendida (vehículos, monederos y puntuaciones).
+
+### Ruta y Método
+
+`GET /obtener_usuarios`
+
+### Flujo Lógico
+
+1. **Consulta Optimizada:** Se utiliza joinedload para realizar una carga conjunta de las relaciones de vehiculos, monedero y puntuaciones en una sola consulta.
+2. **Extracción:** Se recuperan todos los registros (.all()) de la tabla Usuario.
+3. **Serialización:** Se recorre la lista de objetos convirtiendo cada uno a un diccionario de Python mediante el método serialize().
+4. **Respuesta:** Se envía la lista completa en formato JSON.
+
+### Respuestas
+
+#### ✅ 200 OK (Lista de usuarios)
+
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Alex",
+    "monedero": { "saldo": 50.0 },
+    "vehiculos": [],
+    "puntuaciones": []
+  }
+]
+```
+
+---
+
+## 6. Obtener usuario por ID
+
+Busca y retorna la información detallada de un usuario específico mediante su identificador único.
+
+### Ruta y Método
+
+`GET /obtener_usuario_por_id/<int:id>`
+
+### Seguridad
+
+| Tipo de Seguridad | Cabecera Requerida | Valor            |
+| :---------------- | :----------------- | :--------------- |
+| **JWT (Token)**   | `Authorization`    | `Bearer <token>` |
+
+### Parámetros de Ruta (Path Args)
+
+| Parámetro | Tipo      | Obligatorio | Descripción                                  |
+| :-------- | :-------- | :---------- | :------------------------------------------- |
+| `id`      | `integer` | **Sí**      | ID numérico del usuario en la base de datos. |
+
+### Flujo Lógico
+
+1. **Validación de Token:** El decorador `@jwt_required()` intercepta la petición para verificar que el token sea válido, no haya expirado y no haya sido manipulado.
+2. **Búsqueda por ID:** El servidor captura el ID dinámico de la URL y busca el registro correspondiente en la tabla `Usuario`.
+3. **Evaluación:**
+   - ✅ **Si el usuario existe:** Se convierte el objeto a formato JSON serializado.
+   - ❌ **Si el usuario no existe (None):** Se devuelve un error **404**.
+4. **Respuesta Final:** Se envía el objeto JSON con los datos del usuario y un código **200**.
+
+### Respuestas
+
+#### ✅ 200 OK (Usuario encontrado)
+
+```json
+{
+  "id": 1,
+  "nombre": "Alex",
+  "email": "alex@ejemplo.com",
+  "apellidos": "García"
+}
+```
+
+#### ❌ 404 Not Found (ID no registrado)
+
+```json
+{
+  "error": "no se ha encontrado al usuario"
+}
+```
+
+#### ❌ 401 Unauthorized (Error de seguridad - Token ausente o inválido)
+
+Se devuelve cuando el token falta, ha expirado o es inválido.
+
+```json
+{ "msg": "Missing Authorization Header" }
+```
+
+(Nota: El mensaje puede variar según el error específico del JWT).
+
+## 7. NOMBRE FUNCIÓN
+
+Descripción función
+
+### Ruta y Método
+
+``
