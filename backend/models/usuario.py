@@ -28,15 +28,6 @@ class Usuario(db.Model):
     fotoCabecera = db.Column(db.String(250), nullable=True)
     preferencias = db.Column(JSON, nullable=True) 
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
-    numero_documento = db.Column(db.String(9),  unique=True, nullable=True)
-    dni_verificado = db.Column(db.Boolean, default=False, nullable=True)
-    # fotoDocumentoDelantera= db.Column(db.String(250), nullable=True)
-    # fotoDocumentoTrasera = db.Column(db.String(250), nullable=True)
-    fotoCarnetCondDelantera = db.Column(db.String(250), nullable=True)
-    # fotoCarnetCondTrasera = db.Column(db.String(250), nullable=True)
-    carnet_conducir_verificado = db.Column(db.Boolean, default=False, nullable=True)
-    numero_carnet_conducir = db.Column(db.String(50), nullable=True)
-    fecha_vencimiento_carnet = db.Column(db.Date) 
     fecha_nacimiento = db.Column(db.Date)
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
@@ -45,7 +36,6 @@ class Usuario(db.Model):
     
     # Relaciones
     vehiculos = db.relationship('Vehiculo', backref='usuario', cascade='all, delete-orphan')
-    monedero = db.relationship('Monedero', backref='usuario', uselist=False, cascade='all, delete-orphan')
     puntuaciones = db.relationship('Puntuacion', backref='usuario', cascade='all, delete-orphan', foreign_keys='Puntuacion.usuario_id')
     evaluaciones_realizadas = db.relationship(
         'Puntuacion', 
@@ -86,21 +76,11 @@ class Usuario(db.Model):
             "fotoCabecera": self.fotoCabecera,
             "preferencias": preferencias,
             "rolPerfil": self.rolPerfil,
-            "dni_verificado": self.dni_verificado,
-            "numero_documento": self.numero_documento,
-            "carnet_conducir_verificado": self.carnet_conducir_verificado,
-            "numero_carnet_conducir": self.numero_carnet_conducir,
-            "fecha_vencimiento_carnet": self.fecha_vencimiento_carnet.isoformat() if self.fecha_vencimiento_carnet else None,
             "fecha_nacimiento": self.fecha_nacimiento.isoformat() if self.fecha_nacimiento else None,
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
-            "monedero": self.monedero.serialize() if self.monedero else None,
             "puntuacion_promedio": self.puntuacion_promedio,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
-            # "fotoDocumentoDelantera": self.fotoDocumentoDelantera,
-            # "fotoDocumentoTrasera": self.fotoDocumentoTrasera,
-            "fotoCarnetCondDelantera": self.fotoCarnetCondDelantera,
-            # "fotoCarnetCondTrasera": self.fotoCarnetCondTrasera,
         }
