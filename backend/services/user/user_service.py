@@ -26,6 +26,7 @@ import os
 from twilio.rest import Client
 from sqlalchemy import func
 from datetime import datetime, timezone
+from flask_jwt_extended import jwt_required
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
@@ -84,24 +85,19 @@ def crear_usuario():
         genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
-        carnet_conducir_verificado=data.get('carnet_conducir_verificado', False),
-        numero_carnet_conducir=data.get('numero_carnet_conducir'),
         fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
-        fecha_vencimiento_carnet=datetime.strptime(data['fecha_vencimiento_carnet'], '%Y-%m-%d') if data.get('fecha_vencimiento_carnet') else None
     )
 
     db.session.add(nuevo_usuario)
     db.session.commit()
 
-    nuevo_usuario.monedero = Monedero()
-    db.session.commit()
-
+    
     access_token = create_access_token(identity=nuevo_usuario.id)
 
     salt = 'email-verify'
     token = serializer.dumps(nuevo_usuario.email, salt=salt)
     link_verificacion = f"http://localhost:4200/verificar-email/{token}"
-    msg = Message("Bienvenidx a PrideRide", recipients=[nuevo_usuario.email])
+    msg = Message("Bienvenidx a GoGuay",recipients=[nuevo_usuario.email])
     msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
     mail.send(msg)
     nuevo_usuario.id
@@ -182,7 +178,6 @@ def obtener_usuarios():
     """
     lista_usuarios = Usuario.query.options(
         joinedload(Usuario.vehiculos),
-        joinedload(Usuario.monedero),
         joinedload(Usuario.puntuaciones)
     ).all()
     
@@ -191,10 +186,12 @@ def obtener_usuarios():
 
 ## OBTENER USUARIO POR ID ##
 @user_blueprint.route('/obtener_usuario_por_id/<int:id>', methods=['GET'])
+@jwt_required()
 def obtener_usuario_por_id(id):
     """
     1. Realiza una peticion a la tabla Usuarios de la base de datos, buscando por el Id (que obtiene de manera dinámica por la ruta con <int:id>), y lo guarda en usuario.
     2. Si no encuentra al usuario, devuelve error. Si lo encuentra lo convierte en un diccionario python y lo envía en formato Json con toda la información serializada.
+    3. jwt_required: mira si en la petición que llega desde el front existe una cabecera llamada Authorization. Si el token no existe bloquea la petición y devuelve un 401 Unauthorized (401-Token expired; 422-Token falso o manipulado). Si el token es válido se ejecuta el código de esta función. 
     """
     usuario = Usuario.query.get(id)
     if usuario is None:
@@ -410,37 +407,8 @@ def actualizar_imagen_cabecera(user_id):
     return jsonify({"mensaje": "Imagen de cabecera actualizada correctamente", "url": result['secure_url']}), 200
 
 
-## CLOUDINARY -- SUBIR FOTO DELANTERA DEL CARNET DE CONDUCIR ##
-@user_blueprint.route('/subirfoto_carnetdelantera/<int:user_id>', methods=['PUT'])
-def subirfoto_carnetdelantera(user_id):
-    """
-    1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario (404 si no existe).
-    2. Recoge el archivo que haya en fotoCarnetCondDelantera y lo guarda en imagen. Si no hay ninguna imagen, detiene la función.
-    3. Si el usuario ya tiene una fotoCarnetCondDelantera, extrae su public_id de la URL y elimina el archivo anterior en Cloudinary.
-    4. Aplica la función reducir_imagen si fuese necesario.
-    5. Sube la nueva imagen a la carpeta específica del usuario (creándola si no existe).
-    6. Actualiza la URL en la base de datos, guarda los cambios (commit) y retorna la nueva 'secure_url'.
 
-    """
-    user = Usuario.query.get_or_404(user_id)
-    imagen = request.files.get('fotoCarnetCondDelantera')
-    if not imagen:
-        return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
-    
-    if user.fotoCarnetCondDelantera:
-        public_id =  obtener_public_id(user.fotoCarnetCondDelantera)
-        if public_id:
-            uploader.destroy(public_id)
-    
-    imagen = reducir_imagen(imagen)
 
-    carpeta_usuario = f"user_{user_id}"
-    result = uploader.upload(imagen, folder=carpeta_usuario)
-
-    user.fotoCarnetCondDelantera = result['secure_url']
-    db.session.commit()
-
-    return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
 
 
 ## ENVÍO DE SMS AL TFNO DEL USUARIO PARA VERIFICAR PERFIL ##
@@ -514,32 +482,7 @@ def verificar_codigo():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
-## PONER COMO VERIFICADO EL CAMPO 'DOCUMENTO' CUANDO EL USUARIO INTRODUCE EL NÚMERO ##
-@user_blueprint.route('/verificar_documento/<int:user_id>', methods=['POST'])
-def verificar_documento(user_id):
-    """
-    1. Se busca al usuario en la BD por el Id. Si no lo encuentra se devuelve un error.
-    2. Se recibe el json desde el front y se guarda en 'data'.
-    3. Obtenemos el 'numero_documento' del json y se guarda en 'documento'.
-    4. Si no hay documento, se devuelve un error y se detiene la función. 
-    5. El documento recibido se guarda en el atributo numero_documento del user, y se actualiza el estado del atributo dni_verificado a True.
-    6. Se guardan los cambios y se devuelve un mensaje de éxito.
-    7. Si hay algún error durante el proceso, se devuelve un error. 
-    """
-    user = Usuario.query.get_or_404(user_id)
-    data = request.get_json()
-    documento = data.get('numero_documento')
 
-    if not documento:
-        return jsonify({'status': False, 'message': 'Falta el documento'}), 400
-    
-    try:
-        user.numero_documento = documento
-        user.dni_verificado = True
-        db.session.commit()
-        return jsonify({'status': True, "mensaje": "Documento guardado correctamente"}), 200
-    except Exception as e:
-        return jsonify({'status': False, 'message': str(e)}), 500
 
     
 ## ENVIAR CORREO DE VERIFICACIÓN DE EMAIL AL USUARIO ##
@@ -621,26 +564,7 @@ def enviar_email_reset_password():
     
     return jsonify({'message': 'Correo enviado'}), 200
 
-# #Función backend para verificar el correo desde la pantalla de verificaciones-perfil
-# @user_blueprint.route('/verificar_email', methods=['POST'])
-# def verificar_email():
-#     token = request.json['token']
-#     salt = 'email-verify'
-#     try:
 
-#         email = serializer.loads(token, salt=salt, max_age=1800)
-#         print(f"Email extraído del token: {email}") 
-#         usuario = Usuario.query.filter_by(email=email).first()
-#         if usuario:
-#             usuario.emailVerificado = True
-#             db.session.commit()
-#             return jsonify({'message': 'Correo verificado correctamente'}), 200
-#         else:
-#             return jsonify({'error': 'Usuario no encontrado'}), 404
-
-#     except Exception as e:
-#         print(f"Error al verificar token: {e}")
-#         return jsonify({'error': 'Token invalido o expirado'}), 400
 
 ## FUNCIÓN PARA RESTABLECER LA CONTRASEÑA CON EL CORREO RECIBIDO ##
 @user_blueprint.route('/restablecerpassword', methods=['POST'])
@@ -778,199 +702,3 @@ def cambiopassword(id):
     return jsonify({'mensaje': 'nueva contraseña actualizada con éxito'}), 200
 
 
-#########  MONEDERO DEL USUARIO #########
-
-
-
-## OBTENER EL MONEDERO DEL USUARIO ##
-@user_blueprint.route('/obtener_datos_monedero/<int:usuario_id>', methods=['GET'])
-def obtener_monedero(usuario_id):
-    """
-    1. De la tabla Monedero, filtra por el id del usuario y guarda el primer resultado que encuentra en 'monedero'. Si no lo encuentra, devuelve error y sale de la función.
-    2. serialize: convierte el objeto de la base de datos en un diccionario python para poder enviar datos. 
-    """
-    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
-    if not monedero:
-        return jsonify({"error": "Monedero del usuario no encontrado"}), 404
-    return jsonify(monedero.serialize()), 200
-
-
-
-## RECARGAR EL MONEDERO DEL USUARIO ##
-@user_blueprint.route('/recargar', methods=['POST'])
-def recargar_saldo():
-    """
-    1. Del json, obtiene el usuario_id, la cantidad y el concepto (si no se ha guardado concepto, asigna "recarga manual") y lo guarda en sus correspondientes campos. Si no hay usuario o cantidad devuelve error y sale de la función. 
-    2. En la tabla monedero busca por el id del usuario, obtiene el primer resultado de la busqueda y lo guarda en monedero. Si no hay, devuelve error y sale. 
-    3. Toma el saldo que tenía el monedero y le suma la nueva cantidad. Con db.session.add indica que la información del monedero ha cambiado. 
-    4. En la tabla MovimientoMonedero anota quien recargó, cuanto recargó, el tipo de recarga y la fecha con hora de la recarga. 
-    5. Guarda los datos con el commit.
-    """
-    data = request.json
-    usuario_id = data.get('usuario_id')
-    cantidad = data.get('cantidad')
-    concepto = data.get('concepto', 'Recarga manual')
-
-    if not usuario_id or cantidad is None:
-        return jsonify({"error": "Datos insuficientes"}), 400
-
-    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
-    if not monedero:
-        return jsonify({"error": "Monedero no encontrado"}), 404
-
-    # Sumar saldo
-    monedero.saldo += cantidad
-    db.session.add(monedero)
-
-    # Registrar movimiento en el historial del monedero
-    movimiento = MovimientoMonedero(
-        usuario_id=usuario_id,
-        cantidad=cantidad,
-        tipo='recarga',
-        concepto=concepto,
-        fecha=datetime.now(timezone.utc)
-    )
-    db.session.add(movimiento)
-    db.session.commit()
-
-    return jsonify(monedero.serialize()), 200
-
-
-# #PAGAR CON EL MONEDERO DEL USUARIO ##
-@user_blueprint.route('/pagar', methods=['POST'])
-def pagar():
-    """
-    1. De la data obtiene el id del usuario, la cantidad y el concepto (si no hay concepto, asigna el concepto 'pago'). Si no hay usuario_id o cantidad devuelve error y sale.
-    2. En la tabla monedero busca por el id del usuario, obtiene el primer resultado de la busqueda y lo guarda en monedero. Si no hay, devuelve error y sale. 
-    3. Si el saldo que tiene el monedero es < que la cantidad a pagar, da error y se detiene la función.
-    4. Al saldo que tiene el monedero, le restamos la cantidad y actualizamos el monedero. 
-    5. En la tabla MovimientoMonedero anota quien recargó, cuanto recargó, el tipo de recarga y la fecha con hora de la recarga. 
-    6. Guardamos los datos del monedero. 
-    """
-    data = request.json
-    usuario_id = data.get('usuario_id')
-    cantidad = data.get('cantidad')
-    concepto = data.get('concepto', 'Pago')
-
-    if not usuario_id or cantidad is None:
-        return jsonify({"error": "Datos insuficientes"}), 400
-
-    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
-    if not monedero:
-        return jsonify({"error": "Monedero no encontrado"}), 404
-
-    if monedero.saldo < cantidad:
-        return jsonify({"error": "Saldo insuficiente"}), 400
-
-    # Restar saldo
-    monedero.saldo -= cantidad
-    db.session.add(monedero)
-
-    # Registrar movimiento
-    movimiento = MovimientoMonedero(
-        usuario_id=usuario_id,
-        cantidad=-cantidad, 
-        tipo='pago',
-        concepto=concepto,
-        fecha=datetime.now(timezone.utc)
-    )
-    db.session.add(movimiento)
-    db.session.commit()
-
-    return jsonify(monedero.serialize()), 200
-
-
-
-## OBTENER MOVIMIENTOS DEL MONEDERO DEL USUARIO ##
-@user_blueprint.route('/movimientos/<int:usuario_id>', methods=['GET'])
-def obtener_movimientos(usuario_id):
-    """
-    1. EN la tabla MovimientoMonedero busca por id los registros de un usuario. Con el ordey_by los ordena de forma descendente (aparece primero el mas reciente). Con el .all mostramos toda la lista de movimientos.
-    2. Recorre cada movimiento encontrado, lo convierte a formato Json y lo guarda en una lista nueva. 
-    """
-    movimientos = MovimientoMonedero.query.filter_by(usuario_id=usuario_id).order_by(MovimientoMonedero.fecha.desc()).all()
-    lista = [m.serialize() for m in movimientos]
-    return jsonify(lista), 200
-
-
-
-
-
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#               FOTOS DE DOCUMENTOS DNI               #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# Función para que el usuario suba la foto DELANTERA del documento de IDENTIDAD
-# @user_blueprint.route('/subirfoto_documentodelantera/<int:user_id>', methods=['PUT'])
-# def subirfoto_documentodelantera(user_id):
-#     user = Usuario.query.get_or_404(user_id)
-
-#     imagen = request.files.get('fotoDocumentoDelantera')
-#     if not imagen:
-#         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
-    
-#     if user.fotoDocumentoDelantera:
-#         public_id =  obtener_public_id(user.fotoDocumentoDelantera)
-#         if public_id:
-#             uploader.destroy(public_id)
-    
-#     imagen = reducir_imagen(imagen)
-
-#     carpeta_usuario = f"user_{user_id}"
-#     result = uploader.upload(imagen, folder=carpeta_usuario)
-
-#     user.fotoDocumentoDelantera = result['secure_url']
-#     db.session.commit()
-
-#     return jsonify({"mensaje": "Imagen de documento delantera actualizada correctamente", "url": result['secure_url']}), 200
-
-
-# Función para que el usuario suba la foto TRASERA del documento de IDENTIDAD
-# @user_blueprint.route('/subirfoto_documentotrasera/<int:user_id>', methods=['PUT'])
-# def subirfoto_documentotrasera(user_id):
-#     user = Usuario.query.get_or_404(user_id)
-#     imagen = request.files.get('fotoDocumentoTrasera')
-#     if not imagen:
-#         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
-    
-#     if user.fotoDocumentoTrasera:
-#         public_id =  obtener_public_id(user.fotoDocumentoTrasera)
-#         if public_id:
-#             uploader.destroy(public_id)
-    
-#     imagen = reducir_imagen(imagen)
-
-#     carpeta_usuario = f"user_{user_id}"
-#     result = uploader.upload(imagen, folder=carpeta_usuario)
-
-#     user.fotoDocumentoTrasera = result['secure_url']
-#     db.session.commit()
-
-#     return jsonify({"mensaje": "Imagen de documento trasera actualizada correctamente", "url": result['secure_url']}), 200
-
-
-
-# Función para que el usuario suba la foto TRASERA del carnet de conducir
-# @user_blueprint.route('/subirfoto_carnettrasera/<int:user_id>', methods=['PUT'])
-# def subirfoto_carnettrasera(user_id):
-#     user = Usuario.query.get_or_404(user_id)
-#     imagen = request.files.get('fotoCarnetCondTrasera')
-#     if not imagen:
-#         return jsonify({"error": "No se ha enviado ninguna imagen."}), 400
-    
-#     if user.fotoCarnetCondTrasera:
-#         public_id =  obtener_public_id(user.fotoCarnetCondTrasera)
-#         if public_id:
-#             uploader.destroy(public_id)
-    
-#     imagen = reducir_imagen(imagen)
-
-#     carpeta_usuario = f"user_{user_id}"
-#     result = uploader.upload(imagen, folder=carpeta_usuario)
-
-#     user.fotoCarnetCondTrasera = result['secure_url']
-#     db.session.commit()
-
-#     return jsonify({"mensaje": "Imagen de carnet delantera actualizada correctamente", "url": result['secure_url']}), 200
