@@ -273,6 +273,21 @@ ion-segment-button {
   align-items: center;
 }
 
+.btn-reporte-movil {
+  position: absolute;
+  top: 7px;
+  left: 335px;
+  z-index: 10;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
 @media (max-width: 576px) {
   .mi_viaje_box {
     flex-direction: column !important;
@@ -407,5 +422,33 @@ ion-segment-button {
   .info-viaje {
     display: block;
     text-align: left;
+  }
+}
+
+/* Configuración para PC */
+@media (min-width: 768px) {
+  .btn-reporte-movil {
+    position: static;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    margin-right: 8px;
+    order: -1;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .botones {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .info-viaje {
+    margin-left: 15px;
   }
 }
