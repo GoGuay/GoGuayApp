@@ -405,14 +405,17 @@ ion-fab-button {
     text-align: center;
     color: #000000 !important; // Título en negro
     font-weight: bold !important;
+    border-bottom: 1px solid #f9f9f9ec !important;
   }
 
   .alert-checkbox-group {
     max-height: 300px;
-    border-top: 0px solid #f0f0f0 !important;
+    border-top: 0px solid #8f5b5b !important;
+    border-bottom: 0px solid #f9f9f9 !important;
 
     .alert-checkbox-button {
       border-bottom: 0px solid #f9f9f9 !important;
+      border-radius: 15px !important;
 
       .alert-checkbox-label {
         padding-left: 52px !important;
@@ -431,6 +434,30 @@ ion-fab-button {
         border-radius: 15px !important;
         transform: translateY(-50%);
       }
+
+      &.alert-checkbox-button:hover {
+        border-radius: 15px !important;
+      }
+    }
+  }
+
+  .alert-button-group {
+    padding: 8px;
+
+    button {
+      border-radius: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .alert-button-role-cancel {
+      color: #888;
+    }
+
+    .alert-button-role-destructive {
+      color: #d32f2f;
+      background-color: #ffeeee;
+      border-radius: 35px !important;
     }
   }
 
@@ -463,7 +490,7 @@ ion-fab-button {
 
 
   .alert-button:hover {
-    border-radius: 15px !important;
+    border-radius: 35px !important;
   }
 }
 

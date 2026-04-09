@@ -127,15 +127,12 @@
             class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje(viaje)">
             Puntuar viaje
           </span>
-          <!-- <ion-button *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" fill="solid"
-            size="small" class="viajeApuntuar fontSize btn_shadow mb-1 d-inline-block" (click)="puntuarViaje()">
-            Puntuar viaje
-          </ion-button> -->
         </div>
 
         <!-- Botones -->
         <div class="col-12 col-md-6 col-lg-3 text-end mb-2">
           <span class="botones d-flex justify-content-end flex-wrap gap-2">
+
             <button type="button" class="btn btn_bg_report" matTooltip="Reportar" (click)="reportar($event, viaje)">
               <i class="fi fi-rr-triangle-warning"></i>
             </button>
@@ -166,18 +163,18 @@
   </div>
 
   <!-- FAB: BUSCAR VIAJE -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes fab-buscar">
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes fab-buscar">
     <ion-fab-button aria-label="Buscar viaje" (click)="goToBuscarViaje()">
       <img [src]="buscarViaje" alt="Buscar viaje" style="width: 24px; height: 24px;">
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 
   <!-- FAB: NUEVO VIAJE -->
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="fab-ajustes">
+  <!-- <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="fab-ajustes">
     <ion-fab-button aria-label="Nuevo viaje" (click)="goToNuevoViaje()">
       <img [src]="imgNuevoViaje" alt="Nuevo viaje" style="width: 24px; height: 24px;">
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 
 
 </ion-content>

@@ -443,7 +443,13 @@ export class MisViajesPage implements OnInit {
       const alertVacio = await this.alertCtrl.create({
         header: 'Reportar pasajero',
         message: 'No hay pasajeros apuntados en este viaje.',
-        buttons: ['OK']
+        cssClass: 'custom-alert-chat',
+        buttons: [
+          {
+            text: 'Ok',
+            role: 'cancel'
+          },
+        ]
       });
       await alertVacio.present();
       return;
@@ -457,7 +463,7 @@ export class MisViajesPage implements OnInit {
     }));
 
     const actionSheet = await this.alertCtrl.create({
-      header: 'Selecciona al pasajero',
+      header: 'Reportar pasajero',
       subHeader: '¿A quién deseas reportar por no presentarse?',
       cssClass: 'custom-alert-chat',
       inputs: inputsAcompanantes,
@@ -495,6 +501,15 @@ export class MisViajesPage implements OnInit {
    */
   confirmarReporte(pasajeros: any[], viajeId: number) {
     console.log(`Reportando ${pasajeros.length} pasajero(s) en el viaje ${viajeId}:`, pasajeros);
+
+    pasajeros.forEach(pasajero => {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Reporte enviado',
+        detail: `Se ha registrado la ausencia de ${pasajero.nombre}.`,
+        life: 2000
+      });
+    });
 
     /*
     this.travelService.reportarAusencia(viajeId, pasajero.id).subscribe({
