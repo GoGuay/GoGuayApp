@@ -36,6 +36,31 @@ class Orientacion(Enum):
     Heterosexual = "Heterosexual"
     Otro = "Otro"
 
+class EstadoViajeEnum(str, Enum):
+    PROXIMO = "Próximo"
+    EN_CURSO = "En curso"
+    FINALIZADO = "Finalizado"
+    CANCELADO = "Cancelado"  
 
+class MotivosCancelacionConductor(str, Enum):
+    NO_SE_CANCELA = ""
+    AVERIA = "Avería o coche en taller"
+    ENFERMEDAD = "Enfermedad"
+    PERSONAL = "Problema personal"
+    CAMBIOSVIAJE = "Cambios de plan o anulación del viaje"
+    ERRORPUBLICACION = "Se ha publicado el viaje por error"
+    OTROS = "Otros motivos" #Campo abierto
+
+class MotivosCancelacionPasajero (str, Enum):
+    NO_SE_CANCELA = ""
+    ENFERMEDAD = "Enfermedad"
+    PERSONAL = "Problema personal"
+    CAMBIOSVIAJE = "Cambios de plan o anulación del viaje"
+    RESERVAPORERROR = "Se ha dado el botón de reserva por error"
+    NOAPARECECONDUCTOR = "Tras 15 minutos en el punto de encuentro, el conductor no aparece"
+    CONDUCTORNORESPONDE = "Se ha intentado contactar con el conductor pero no responde"
+    CAMBIOCONDICIONES = "Se ha cambiado el punto de encuentro y la hora y no me viene bien"
+    OTRAFORMAVIAJE = "He encontrado otra forma para hacer el viaje"
+    OTROS = "Otros motivos" #Campo abierto
 
 

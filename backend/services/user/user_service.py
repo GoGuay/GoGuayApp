@@ -5,6 +5,7 @@
 
 from datetime import datetime
 import random
+import requests
 from flask import Blueprint, jsonify, render_template,  request
 from itsdangerous import SignatureExpired, BadSignature
 import nexmo
@@ -44,6 +45,11 @@ SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 otp_store = {}
+
+##Configuración Paypal
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_API = os.getenv('PAYPAL_API')
 
 
 ## --- RUTAS DE USUARIO --- ##
@@ -716,5 +722,23 @@ def cambiopassword(id):
     db.session.commit()
 
     return jsonify({'mensaje': 'nueva contraseña actualizada con éxito'}), 200
+
+
+
+## --- RUTAS DE PAYPAL --- ##
+
+#Obtener el access_token de paypal
+def get_access_token():
+    """
+    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
+    2. Se le pasan otros permisos aparte del id y la clave secreta
+    3. Devuelve un json el access_token
+    """
+    res = requests.post(
+        f"{PAYPAL_API}/v1/oauth2/token",
+        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+        data={'grant_type': 'client_credentials'}
+    )
+    return res.json()['access_token']
 
 
