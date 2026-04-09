@@ -4,7 +4,10 @@
       <ion-row>
         <ion-col>
           <ion-row class="d-flex justify-content-center p-4 columna_scroll">
-            <div class="skeleton-card resultado-viaje mb-3 p-1" *ngFor="let i of [1, 2, 3]">
+            <div
+              class="skeleton-card resultado-viaje mb-3 p-1"
+              *ngFor="let i of [1, 2, 3]"
+            >
               <div class="skeleton-avatar mb-2"></div>
               <div class="skeleton-line"></div>
             </div>
@@ -18,7 +21,10 @@
 <ng-template #contenidoReal>
   <div class="container">
     <p>{{ 'BUSQUEDA.RESULTADOS' | translate }}</p>
-    <div *ngIf="!listado_viajes.length" class="d-flex justify-content-center align-content-center">
+    <div
+      *ngIf="!listado_viajes.length"
+      class="d-flex justify-content-center align-content-center"
+    >
       <app-spinner></app-spinner>
       Cargando viajes...
     </div>
@@ -26,9 +32,140 @@
     <div class="columna_scroll">
       <div *ngFor="let resultado_del_viaje of listado_viajes">
         <div class="card resultado-viaje mb-3">
-          <ion-row class="ion-align-items-center"> <ion-col class="col-separator ion-activatable" size="12" size-md="9"
-              (click)="openDetalleViaje(resultado_del_viaje)">
+          <div class="container">
+            <div class="row">
+              <div class="col-9 col-separator">
+                <div class="row">
+                  <!-- Columna datos del viaje -->
+                  <div class="col-5 mt-2">
+                    <span class="ciudad-texto">
+                      {{ resultado_del_viaje.origen }}
+                    </span>
+                    <p class="hora-texto">
+                      {{ resultado_del_viaje.hora_salida }}
+                    </p>
+                  </div>
+                  <div class="col-2">
+                    <div class="linea">
+                      <app-load-travel-line></app-load-travel-line>
+                    </div>
+                  </div>
 
+                  <div class="col-5 mt-2">
+                    <span class="ciudad-texto">
+                      {{ resultado_del_viaje.destino }}
+                    </span>
+                    <p class="hora-texto">
+                      {{ resultado_del_viaje.hora_llegada }}
+                    </p>
+                  </div>
+                  <div class="row mb-4 text-center">
+                    <div class="container">
+                      <span>Duración del viaje:</span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="container text-center">
+                      <button
+                        (click)="openDetalleViaje(resultado_del_viaje)"
+                        type="button"
+                        class="btn btn_bg me-3"
+                      >
+                        Mas detalles
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn_bg"
+                      >
+                        Unirse al viaje
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Datos del conductor y precio -->
+              <div class="col-3 mt-2">
+                <div class="row mb-1">
+                  <div class="col">
+                    <div
+                      class="d-flex flex-md-column justify-content-around align-items-center w-100"
+                    >
+                      <div class="avatar-container">
+                        <app-spinner
+                          *ngIf="!imagenesCargadas[resultado_del_viaje.id]"
+                        ></app-spinner>
+                        <img
+                          class="user"
+                          [src]="
+                            resultado_del_viaje.usuario?.fotoPerfil ||
+                            '../../../assets/user/logOn.gif'
+                          "
+                          [style.visibility]="
+                            imagenesCargadas[resultado_del_viaje.id]
+                              ? 'visible'
+                              : 'hidden'
+                          "
+                          (load)="
+                            marcarImagenComoCargada(resultado_del_viaje.id)
+                          "
+                        />
+                      </div>
+                      <div class="user-info text-center">
+                        <p class="fontSize fw-bold mb-0">
+                          {{ resultado_del_viaje.usuario?.nombre }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col d-flex align-items-center justify-content-center"
+                  >
+                    <div class="">
+                      <span class="puntuacion-badge">
+                        ★
+                        {{
+                          resultado_del_viaje.usuario_creador
+                            .puntuacion_promedio
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <mat-divider class="hide-mobile"></mat-divider>
+
+                <div
+                  class="row cajon_precio d-flex flex-column justify-content-center align-items-center"
+                >
+                  <div class="text-center">
+                    <p class="mb-0">Precio final</p>
+
+                    <p
+                      class="precio-texto mb-0"
+                      *ngIf="resultado_del_viaje.precio_viaje"
+                    >
+                      {{ resultado_del_viaje.precio_viaje }} €
+                    </p>
+                    <p
+                      *ngIf="!resultado_del_viaje.precio_viaje"
+                      class="sin-precio mb-0"
+                    >
+                      Sin precio
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card actual -->
+        <!-- <div class="card resultado-viaje mb-3">
+          <ion-row class="ion-align-items-center">
+            <ion-col
+              class="col-separator ion-activatable"
+              size="12"
+              size-md="9"
+              (click)="openDetalleViaje(resultado_del_viaje)"
+            >
               <ion-row class="d-flex justify-content-between px-2 hide-mobile">
                 <span class="title">ORIGEN</span>
                 <span class="title">DURACIÓN</span>
@@ -39,56 +176,108 @@
               <ion-ripple-effect></ion-ripple-effect>
 
               <ion-row class="fila-info">
-                <ion-col size="4" class="ion-text-start">
-                  <p class="hora-texto">{{ resultado_del_viaje.hora_salida }}</p>
+                <ion-col
+                  size="4"
+                  class="ion-text-start"
+                >
+                  <p class="hora-texto">
+                    {{ resultado_del_viaje.hora_salida }}
+                  </p>
                   <p class="ciudad-texto">{{ resultado_del_viaje.origen }}</p>
                 </ion-col>
 
-                <ion-col size="4" class="ion-text-center d-flex flex-column align-items-center justify-content-center">
+                <ion-col
+                  size="4"
+                  class="ion-text-center d-flex flex-column align-items-center justify-content-center"
+                >
                   <div class="d-flex align-items-center line-container">
-                    <img class="gifs hide-mobile" src="../../../assets/travel/ubicacion.gif" />
-                    <div class="linea"><app-load-travel-line></app-load-travel-line></div>
-                    <img class="gifs hide-mobile" src="../../../assets/travel/mapa.gif" />
+                    <img
+                      class="gifs hide-mobile"
+                      src="../../../assets/travel/ubicacion.gif"
+                    />
+                    <div class="linea">
+                      <app-load-travel-line></app-load-travel-line>
+                    </div>
+                    <img
+                      class="gifs hide-mobile"
+                      src="../../../assets/travel/mapa.gif"
+                    />
                   </div>
                   <small>{{ resultado_del_viaje?.duracion_viaje }}</small>
                 </ion-col>
 
-                <ion-col size="4" class="ion-text-end">
-                  <p class="hora-texto">{{ resultado_del_viaje.hora_llegada }}</p>
+                <ion-col
+                  size="4"
+                  class="ion-text-end"
+                >
+                  <p class="hora-texto">
+                    {{ resultado_del_viaje.hora_llegada }}
+                  </p>
                   <p class="ciudad-texto">{{ resultado_del_viaje.destino }}</p>
                 </ion-col>
               </ion-row>
 
               <ion-row>
                 <ion-col class="ion-text-center">
-                  <p class="precio-texto" *ngIf="resultado_del_viaje.precio_viaje">
+                  <p
+                    class="precio-texto"
+                    *ngIf="resultado_del_viaje.precio_viaje"
+                  >
                     {{ resultado_del_viaje.precio_viaje }} €
                   </p>
-                  <p *ngIf="!resultado_del_viaje.precio_viaje" class="sin-precio">Sin precio</p>
+                  <p
+                    *ngIf="!resultado_del_viaje.precio_viaje"
+                    class="sin-precio"
+                  >
+                    Sin precio
+                  </p>
                 </ion-col>
               </ion-row>
             </ion-col>
 
-            <ion-col size="12" size-md="3" class="user-section"
-              (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)">
-              <div class="d-flex flex-md-column justify-content-around align-items-center w-100">
+            <ion-col
+              size="12"
+              size-md="3"
+              class="user-section"
+              (click)="openPerfilPublico(resultado_del_viaje.usuario?.id)"
+            >
+              <div
+                class="d-flex flex-md-column justify-content-around align-items-center w-100"
+              >
                 <div class="avatar-container">
-                  <app-spinner *ngIf="!imagenesCargadas[resultado_del_viaje.id]"></app-spinner>
-                  <img class="user" [src]="resultado_del_viaje.usuario?.fotoPerfil || '../../../assets/user/logOn.gif'"
-                    [style.visibility]="imagenesCargadas[resultado_del_viaje.id] ? 'visible' : 'hidden'"
-                    (load)="marcarImagenComoCargada(resultado_del_viaje.id)" />
+                  <app-spinner
+                    *ngIf="!imagenesCargadas[resultado_del_viaje.id]"
+                  ></app-spinner>
+                  <img
+                    class="user"
+                    [src]="
+                      resultado_del_viaje.usuario?.fotoPerfil ||
+                      '../../../assets/user/logOn.gif'
+                    "
+                    [style.visibility]="
+                      imagenesCargadas[resultado_del_viaje.id]
+                        ? 'visible'
+                        : 'hidden'
+                    "
+                    (load)="marcarImagenComoCargada(resultado_del_viaje.id)"
+                  />
                 </div>
                 <div class="user-info text-center">
-                  <p class="fontSize fw-bold mb-0">{{ resultado_del_viaje.usuario?.nombre }}</p>
-                  <span class="puntuacion-badge">★ {{ resultado_del_viaje.usuario_creador.puntuacion_promedio }}</span>
+                  <p class="fontSize fw-bold mb-0">
+                    {{ resultado_del_viaje.usuario?.nombre }}
+                  </p>
+                  <span class="puntuacion-badge">
+                    ★
+                    {{
+                      resultado_del_viaje.usuario_creador.puntuacion_promedio
+                    }}
+                  </span>
                 </div>
               </div>
             </ion-col>
-
           </ion-row>
-        </div>
+        </div> -->
       </div>
     </div>
-
   </div>
 </ng-template>

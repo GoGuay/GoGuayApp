@@ -1,15 +1,9 @@
-import { ChangeDetectorRef, Injectable, Optional } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { UserServicesService } from '../user-services/user-services.service';
 import { FuncionesComunes } from '../funciones-comunes/funciones-comunes.service';
-import { BehaviorSubject } from 'rxjs';
-import { Coches } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { DialogRef } from '@angular/cdk/dialog';
-import { DatosContactoComponent } from 'src/app/components/botones-panel-usuario/datos-contacto/datos-contacto.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +22,7 @@ export class FuncionesUsuario {
     private funcionesComunes: FuncionesComunes,
     private vehiculosServices: VehiculosServicesService,
 
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.loadUserData();
   }

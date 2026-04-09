@@ -53,7 +53,7 @@
 
 .resultado-viaje {
   width: 100%;
-  max-width: 750px;
+  max-width: 650px;
   /* Esto permite que se encoja en móvil */
   min-height: 150px;
   height: auto;
@@ -93,7 +93,7 @@
 }
 
 .linea {
-  width: 100px;
+  width: 50px;
 }
 
 .columna_scroll {
@@ -267,6 +267,24 @@
   mix-blend-mode: multiply;
 }
 
+/* Badge de puntuación más moderno */
+
+.puntuacion-badge {
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-size: 1.16rem;
+
+}
+
+.cajon_precio {
+  /* Ajusta esta altura según cuánto espacio quieras que ocupe el bloque del precio */
+  min-height: 80px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 @media (max-width: 768px) {
   .col-separator {
     border-right: none;
@@ -305,13 +323,4 @@
     max-height: 70vh;
     /* Más espacio en móvil */
   }
-}
-
-/* Badge de puntuación más moderno */
-.puntuacion-badge {
-  background: #fff;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
