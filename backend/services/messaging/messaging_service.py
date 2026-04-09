@@ -134,3 +134,66 @@ def eliminar_conversacion(conv_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+#
+# Función para compartir el teléfono en una conversación
+#
+@chat_blueprint.route('/compartir-telefono', methods=['POST'])
+def compartir_telefono():
+    data = request.json
+    conv_id = data.get('conversacion_id')
+    emisor_id = data.get('emisor_id')
+
+    conv = Conversacion.query.get(conv_id)
+    if not conv:
+        return jsonify({"error": "Conversación no encontrada"}), 404
+
+    usuario = Usuario.query.get(emisor_id)
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    receptor_id = conv.usuario2_id if emisor_id == conv.usuario1_id else conv.usuario1_id
+
+    
+    notificacion_msj = Mensaje(
+        conversacion_id=conv_id,
+        emisor_id=emisor_id,
+        receptor_id=receptor_id,
+        texto=f"TELEFONO USUARIO:{usuario.telefono}",
+        leido=False
+    )
+    
+    db.session.add(notificacion_msj)
+    db.session.commit()
+
+    return jsonify({
+        "status": "Teléfono compartido",
+        "telefono": usuario.telefono,
+        "receptor_id": receptor_id
+    }), 200
+
+#
+# Función para dejar de compartir el teléfono
+#
+@chat_blueprint.route('/dejar-de-compartir', methods=['DELETE'])
+def dejar_de_compartir():
+    data = request.json
+    conv_id = data.get('conversacion_id')
+    emisor_id = data.get('emisor_id')
+
+    try:
+        mensajes_sistema = Mensaje.query.filter(
+            Mensaje.conversacion_id == conv_id,
+            Mensaje.emisor_id == emisor_id,
+            Mensaje.texto.like('TELEFONO USUARIO:%')
+        ).all()
+
+        for msj in mensajes_sistema:
+            db.session.delete(msj)
+        
+        db.session.commit()
+        return jsonify({"message": "Has dejado de compartir tu teléfono"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

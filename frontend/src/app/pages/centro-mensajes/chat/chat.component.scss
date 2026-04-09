@@ -101,6 +101,39 @@ ion-fab.fab-atras {
   color: #777;
 }
 
+.phone-share-box {
+  display: flex;
+  justify-content: center;
+
+  .card {
+    max-width: 300px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+
+  ion-button {
+    --border-radius: 8px;
+    font-weight: bold;
+    text-transform: none;
+  }
+}
+
+.phone-info-banner {
+  ion-badge {
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.burbuja-sistema {
+  background-color: #e3f2fd !important;
+  font-style: italic;
+  color: #1976d2;
+}
+
 @media (max-width: 576px) {
   .input-wrapper {
     background: #fff;

@@ -10,12 +10,55 @@
   </ion-fab>
 
   <div class="chat-container p-3">
+
+    <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
+      <div class="card shadow-sm border-0 text-center p-3">
+        <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>
+        <div class="d-flex justify-content-center gap-2">
+          <ion-button size="small" color="success" (click)="decidirCompartirTelefono(true)">
+            Sí, compartir
+          </ion-button>
+          <ion-button size="small" color="light" (click)="decidirCompartirTelefono(false)">
+            Ahora no
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-info-banner mb-1 text-center" *ngIf="telefonoRecibido">
+      <ion-badge color="secondary" class="p-2">
+        <i class="fi fi-rr-phone-call"></i>
+        Teléfono del contacto: {{ telefonoRecibido }}
+      </ion-badge>
+    </div>
+
+    <div class="text-center mb-3" *ngIf="compartiendoMiTelefono">
+      <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()">
+        <i class="fi fi-rs-crossed-eye"></i>
+        Dejar de compartir mi número
+      </ion-button>
+    </div>
+
     <div *ngFor="let m of mensajes"
       [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
       class="mensaje-wrapper">
 
       <div class="mensaje-burbuja">
-        {{ m.texto }}
+
+        <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.startsWith('TELEFONO USUARIO:')}">
+          <ng-container *ngIf="m.texto.startsWith('TELEFONO USUARIO:'); else mensajeNormal">
+            <i class="fi fi-rr-phone-call me-1"></i>
+            Ahora estás compartiendo tu número de teléfono
+            <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()"><i
+                class="fi fi-rs-crossed-eye"></i> Dejar de compartir </ion-button>
+          </ng-container>
+        </div>
+
+
+        <ng-template #mensajeNormal>
+          {{ m.texto }}
+        </ng-template>
+
         <div class="info-meta">
           <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
 

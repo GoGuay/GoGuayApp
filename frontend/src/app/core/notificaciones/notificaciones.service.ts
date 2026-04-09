@@ -189,10 +189,10 @@ export class NotificacionesService {
 
 
     /**
- * Marca una notificación como leída o no leída.
- * @param notificacionId ID de la notificación.
- * @param leida Estado booleano: true = leída, false = no leída.
- */
+     * Marca una notificación como leída o no leída.
+     * @param notificacionId ID de la notificación.
+     * @param leida Estado booleano: true = leída, false = no leída.
+     */
     toggleEstadoNotificacion(notificacionId: number, leida: boolean): Observable<any> {
         return this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
             catchError((error) => {
@@ -201,4 +201,19 @@ export class NotificacionesService {
             })
         );
     }
+
+    /**
+     * Solicita al servidor eliminar los mensajes de sistema que comparten
+     * el teléfono del usuario en una conversación específica.
+     * @param data Objeto con conversacion_id y emisor_id
+     */
+    dejarDeCompartirTelefono(data: { conversacion_id: number, emisor_id: number }): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/chat/dejar-de-compartir`, { body: data }).pipe(
+            catchError((error) => {
+                console.error('Error al dejar de compartir teléfono:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
 }

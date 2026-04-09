@@ -10,6 +10,8 @@ import { IonContent, IonicModule, NavController } from "@ionic/angular";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
 import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
+import { Usuario } from 'src/app/models/user/usuario.model';
+import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 
 @Component({
     selector: 'app-chat',
@@ -32,6 +34,14 @@ import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
 export class ChatPage implements OnInit {
 
     @ViewChild(IonContent, { static: false }) content!: IonContent;
+
+    userData: any = {} as Usuario;
+
+    mostrarPreguntaTelefono: boolean = true;
+    telefonoRecibido: string | null = null;
+    cargandoPreferenciaTelefono: boolean = true;
+    compartiendoMiTelefono: boolean = false;
+
     userLoggedIn: boolean = false;
     irAtrasImg: string = '../../../assets/sistema/atras.png';
 
@@ -41,12 +51,16 @@ export class ChatPage implements OnInit {
     usuarioLogueadoId!: number;
     conversacionId!: number;
 
-    constructor(private route: ActivatedRoute, private messagingService: MessagingService, private navCtrl: NavController) { }
+    constructor(private route: ActivatedRoute,
+        private messagingService: MessagingService,
+        private notificacionesService: NotificacionesService,
+        private navCtrl: NavController) { }
 
     ngOnInit() {
-        const data = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.usuarioLogueadoId = data.usuario.id;
+        this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.usuarioLogueadoId = this.userData.usuario.id;
         this.conversacionId = Number(this.route.snapshot.paramMap.get('id'));
+
         this.cargarMensajes();
         this.marcarComoLeidos();
     }
@@ -57,6 +71,21 @@ export class ChatPage implements OnInit {
     cargarMensajes() {
         this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
             this.mensajes = data;
+
+            const mensajeDelOtro = data.find((m: any) =>
+                m.texto.startsWith('TELEFONO USUARIO: ') &&
+                m.emisor_id !== this.usuarioLogueadoId
+            );
+            this.telefonoRecibido = mensajeDelOtro ? mensajeDelOtro.texto.split(':')[1] : null;
+
+            this.compartiendoMiTelefono = data.some((m: any) =>
+                m.texto.startsWith('TELEFONO USUARIO: ') &&
+                m.emisor_id === this.usuarioLogueadoId
+            );
+
+            this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
+            this.cargandoPreferenciaTelefono = false;
+
             this.scrollToBottom();
         });
     }
@@ -106,5 +135,65 @@ export class ChatPage implements OnInit {
                 this.content.scrollToBottom(300);
             }
         }, 100);
+    }
+
+    decidirCompartirTelefono(acepta: boolean) {
+        if (acepta) {
+            this.enviarNotificacionTelefono();
+        } else {
+            this.mostrarPreguntaTelefono = false;
+        }
+    }
+
+    enviarNotificacionTelefono() {
+        const receptorId = this.mensajes.find(m => m.emisor_id === this.usuarioLogueadoId)?.receptor_id;
+
+        if (!receptorId) {
+            console.error("No se pudo determinar el receptor_id. Prueba a enviar un mensaje de texto primero.");
+            return;
+        }
+
+        const payload: Mensaje = {
+            conversacion_id: this.conversacionId,
+            emisor_id: this.usuarioLogueadoId,
+            receptor_id: receptorId,
+            texto: `TELEFONO USUARIO: ${this.userData.usuario.telefono}`
+        };
+
+        this.messagingService.enviarMensaje(payload).subscribe({
+            next: () => {
+                this.mostrarPreguntaTelefono = false;
+                this.cargarMensajes();
+            },
+            error: (err) => console.error('Error al compartir teléfono', err)
+        });
+    }
+
+    /**
+     * 
+     */
+    dejarDeCompartir() {
+        const payload = {
+            conversacion_id: this.conversacionId,
+            emisor_id: this.usuarioLogueadoId
+        };
+
+        this.notificacionesService.dejarDeCompartirTelefono(payload).subscribe({
+            next: (res) => {
+                console.log("Teléfono compartido con éxito.");
+                this.mostrarPreguntaTelefono = false;
+                this.cargarMensajes();
+            },
+            error: (err) => {
+                console.error('Error al compartir teléfono', err);
+                this.mostrarPreguntaTelefono = true;
+                this.notificacionesService.mostrarToast({
+                    id: Date.now(),
+                    type: 'info',
+                    mensaje: 'No se pudo revocar el acceso al teléfono',
+                    leida: false
+                });
+            }
+        });
     }
 }
