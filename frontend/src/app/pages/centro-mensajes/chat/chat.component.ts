@@ -196,4 +196,13 @@ export class ChatPage implements OnInit {
             }
         });
     }
+
+    mostrarFecha(index: number): boolean {
+        if (index === 0) return true;
+
+        const fechaActual = new Date(this.mensajes[index].fecha).setHours(0, 0, 0, 0);
+        const fechaAnterior = new Date(this.mensajes[index - 1].fecha).setHours(0, 0, 0, 0);
+
+        return fechaActual !== fechaAnterior;
+    }
 }

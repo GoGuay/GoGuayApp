@@ -41,7 +41,7 @@ ion-fab.fab-atras {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: #f0f2f5;
+  background-color: #b3cdf3;
   min-height: 100%;
 }
 
@@ -70,8 +70,27 @@ ion-fab.fab-atras {
   }
 }
 
+.fecha-separador {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  width: 100%;
+  clear: both;
+
+  span {
+    background-color: #d1d9e0;
+    color: #4a5568;
+    padding: 4px 12px;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+}
+
 .mensaje-burbuja {
-  max-width: 70%;
+  max-width: 100%;
   padding: 8px 12px;
   position: relative;
   font-size: 16px;
@@ -113,10 +132,14 @@ ion-fab.fab-atras {
   }
 
   ion-button {
-    --border-radius: 8px;
-    font-weight: bold;
+    --border-radius: 35px !important;
     text-transform: none;
   }
+}
+
+ion-button {
+  --border-radius: 35px !important;
+  text-transform: none;
 }
 
 .phone-info-banner {
@@ -132,6 +155,47 @@ ion-fab.fab-atras {
   background-color: #e3f2fd !important;
   font-style: italic;
   color: #1976d2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  ion-button {
+    --border-radius: 35px !important;
+    text-transform: none;
+  }
+
+  .contenido-sistema {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .texto-telefono {
+    font-size: 0.95rem;
+    color: #3880ff;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-revocar {
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --margin-top: 0;
+    --margin-bottom: 0;
+    height: 32px;
+    margin: 0;
+  }
+}
+
+span {
+  margin-bottom: 5px;
+  font-size: smaller;
 }
 
 @media (max-width: 576px) {

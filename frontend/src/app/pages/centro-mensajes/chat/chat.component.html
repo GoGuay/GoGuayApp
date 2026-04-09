@@ -51,35 +51,51 @@
       </ion-button>
     </div>
 
-    <div *ngFor="let m of mensajes"
-      [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
-      class="mensaje-wrapper">
+    <ng-container *ngFor="let m of mensajes; let i = index">
 
-      <div class="mensaje-burbuja">
+      <div class="fecha-separador" *ngIf="mostrarFecha(i)">
+        <span>{{ m.fecha | date:'dd-MM-yyyy' }}</span>
+      </div>
 
-        <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.startsWith('TELEFONO USUARIO:')}">
-          <ng-container *ngIf="m.texto.startsWith('TELEFONO USUARIO:'); else mensajeNormal">
-            <i class="fi fi-rr-phone-call me-1"></i>
-            Ahora estás compartiendo tu número de teléfono
-            <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()"><i
-                class="fi fi-rs-crossed-eye"></i> Dejar de compartir </ion-button>
-          </ng-container>
-        </div>
+      <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
+        class="mensaje-wrapper">
 
 
-        <ng-template #mensajeNormal>
-          {{ m.texto }}
-        </ng-template>
+        <div class="mensaje-burbuja">
+          <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.startsWith('TELEFONO USUARIO:')}">
+            <ng-container *ngIf="m.texto.startsWith('TELEFONO USUARIO:'); else mensajeNormal">
 
-        <div class="info-meta">
-          <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
+              <div class="contenido-sistema">
+                <span class="texto-telefono">
+                  <i class="fi fi-rr-phone-call me-1"></i>
+                  Ahora estás compartiendo tu número de teléfono
+                </span>
 
-          <ion-icon *ngIf="m.emisor_id === usuarioLogueadoId" [name]="m.leido ? 'checkmark-done' : 'checkmark'"
-            [color]="m.leido ? 'primary' : 'medium'" class="read-icon">
-          </ion-icon>
+                <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()" class="btn-revocar">
+                  <i class="fi fi-rs-crossed-eye me-1"></i>
+                  Dejar de compartir
+                </ion-button>
+              </div>
+
+            </ng-container>
+          </div>
+
+          <ng-template #mensajeNormal>
+            {{ m.texto }}
+          </ng-template>
+
+          <div class="info-meta">
+            <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
+
+            <i *ngIf="m.emisor_id === usuarioLogueadoId"
+              [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
+              class="read-icon-ui">
+            </i>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+
   </div>
 </ion-content>
 
