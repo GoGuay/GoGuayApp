@@ -10,6 +10,7 @@ import { NavbarComponent } from "src/app/shared/navbar/navbar.component";
 import { IonicModule } from "@ionic/angular";
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
 import { PopoverController, AlertController } from '@ionic/angular';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 
 @Component({
     selector: 'app-centro-mensajes',
@@ -25,7 +26,8 @@ import { PopoverController, AlertController } from '@ionic/angular';
         ReactiveFormsModule,
         MatSliderModule,
         NavbarComponent,
-        IonicModule
+        IonicModule,
+        SpinnerComponent
     ],
     providers: []
 })
@@ -35,6 +37,7 @@ export class CentroMensajesPage implements OnInit {
     irAtrasImg: string = '../../../assets/sistema/atras.png';
     conversaciones: any[] = [];
     userData: any;
+    loadMessages: boolean = false;
 
     constructor(private messagingService: MessagingService, private navCtrl: NavController, private popoverCtrl: PopoverController,
         private alertCtrl: AlertController) { }
@@ -82,8 +85,10 @@ export class CentroMensajesPage implements OnInit {
      * Funcion que carga las conversaciones
      */
     cargarConversaciones() {
+        this.loadMessages = true;
         this.messagingService.getConversaciones(this.userData.usuario.id).subscribe(data => {
             this.conversaciones = data;
+            this.loadMessages = false;
             console.log('Conversaciones cargadas:', this.conversaciones);
         });
     }

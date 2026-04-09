@@ -7,7 +7,8 @@
         <h1>Centro de mensajes</h1>
     </div>
 
-    <div *ngIf="conversaciones.length === 0" class="empty-state-container">
+    <app-spinner *ngIf="loadMessages"></app-spinner>
+    <div *ngIf="conversaciones.length === 0 && !loadMessages" class="empty-state-container">
         <ion-icon name="chatbubbles-outline" class="empty-icon"></ion-icon>
         <h3>Tu buzón está vacío</h3>
         <p>Aquí aparecerán tus chats cuando contactes con otros conductores o pasajeros.</p>
