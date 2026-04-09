@@ -397,13 +397,41 @@ ion-fab-button {
   --background: #ffffff; // Fondo blanco del alert
 
   .alert-wrapper {
-    border-radius: 20px !important; // Bordes muy redondeados
+    border-radius: 35px !important; // Bordes muy redondeados
     overflow: hidden;
   }
 
   .alert-title {
+    text-align: center;
     color: #000000 !important; // Título en negro
     font-weight: bold !important;
+  }
+
+  .alert-checkbox-group {
+    max-height: 300px;
+    border-top: 0px solid #f0f0f0 !important;
+
+    .alert-checkbox-button {
+      border-bottom: 0px solid #f9f9f9 !important;
+
+      .alert-checkbox-label {
+        padding-left: 52px !important;
+        padding-right: 16px !important;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        display: block !important;
+      }
+
+      .alert-checkbox-icon {
+        left: 16px !important;
+        margin-right: 0 !important;
+        position: absolute !important;
+        top: 50%;
+        border-radius: 15px !important;
+        transform: translateY(-50%);
+      }
+    }
   }
 
   /* Forzar que todos los botones sean negros */
@@ -431,6 +459,8 @@ ion-fab-button {
       }
     }
   }
+
+
 
   .alert-button:hover {
     border-radius: 15px !important;

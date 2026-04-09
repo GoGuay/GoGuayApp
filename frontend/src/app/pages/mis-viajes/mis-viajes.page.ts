@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { IonicModule, NavController } from '@ionic/angular';
+import { AlertController, IonicModule, NavController } from '@ionic/angular';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -21,6 +21,7 @@ import { catchError, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule } from '@ngx-translate/core';
+import { PopoverController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-mis-viajes',
@@ -71,7 +72,8 @@ export class MisViajesPage implements OnInit {
     private navCtrl: NavController, private userService: UserServicesService,
     private dialog: MatDialog, private travelService: TravelService,
     private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
-    private messageService: MessageService) { }
+    private messageService: MessageService, private popoverCtrl: PopoverController,
+    private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -414,4 +416,97 @@ export class MisViajesPage implements OnInit {
       popover.dismiss();
     }
   }
+
+  async reportar(ev: any, viaje: any) {
+    ev.stopPropagation();
+
+    await this.popoverCtrl.create({
+      component: 'popover-opciones',
+      event: ev,
+      translucent: true,
+      mode: 'ios',
+      componentProps: { pasajeros: viaje }
+    });
+    this.mostrarMenuAcciones(viaje);
+  }
+
+  /**
+   * Función para mostrar el menú para reportar al pasajero o pasajeros
+   * que no han aparecido en el punto de encuentro.
+   * 
+   * @param viaje --> Datos del viaje seleccionado.
+   * 
+   * @returns 
+   */
+  async mostrarMenuAcciones(viaje: any) {
+    if (!viaje.acompanantes || viaje.acompanantes.length === 0) {
+      const alertVacio = await this.alertCtrl.create({
+        header: 'Reportar pasajero',
+        message: 'No hay pasajeros apuntados en este viaje.',
+        buttons: ['OK']
+      });
+      await alertVacio.present();
+      return;
+    }
+
+    const inputsAcompanantes = viaje.acompanantes.map((pasajero: any) => ({
+      type: 'checkbox',
+      label: pasajero.nombre + ' ' + (pasajero.apellidos || ''),
+      value: pasajero,
+      checked: false
+    }));
+
+    const actionSheet = await this.alertCtrl.create({
+      header: 'Selecciona al pasajero',
+      subHeader: '¿A quién deseas reportar por no presentarse?',
+      cssClass: 'custom-alert-chat',
+      inputs: inputsAcompanantes,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Reportar ausencias',
+          role: 'destructive',
+          handler: (pasajerosSeleccionados: any[]) => {
+            if (!pasajerosSeleccionados || pasajerosSeleccionados.length === 0) {
+              console.warn('No se seleccionó ningún pasajero');
+              return false;
+            }
+
+            this.confirmarReporte(pasajerosSeleccionados, viaje.id);
+            return true;
+          }
+        }
+      ]
+    });
+
+    await actionSheet.present();
+  }
+
+
+  /**
+   * Función para confirmar el reporte al pasajero
+   * 
+   * @param pasajeros --> Listado de pasajeros seleccionados para el reporte.
+   * 
+   * @param viajeId --> ID del viaje seleccionado.
+   */
+  confirmarReporte(pasajeros: any[], viajeId: number) {
+    console.log(`Reportando ${pasajeros.length} pasajero(s) en el viaje ${viajeId}:`, pasajeros);
+
+    /*
+    this.travelService.reportarAusencia(viajeId, pasajero.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Reporte enviado',
+          detail: `Se ha registrado la ausencia de ${pasajero.nombre}.`
+        });
+      }
+    });
+    */
+  }
+
 }

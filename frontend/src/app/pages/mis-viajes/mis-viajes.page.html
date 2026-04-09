@@ -26,6 +26,10 @@
         <ion-list lines="none">
           <ion-radio-group [value]="filtroSeleccionado" (ionChange)="onFiltroChange($event, filtroPopover)">
             <ion-item>
+              <ion-label>En curso</ion-label>
+              <ion-radio value="en_curso"></ion-radio>
+            </ion-item>
+            <ion-item>
               <ion-label>Más recientes</ion-label>
               <ion-radio value="recientes"></ion-radio>
             </ion-item>
@@ -132,6 +136,10 @@
         <!-- Botones -->
         <div class="col-12 col-md-6 col-lg-3 text-end mb-2">
           <span class="botones d-flex justify-content-end flex-wrap gap-2">
+            <button type="button" class="btn btn_bg_report" matTooltip="Reportar" (click)="reportar($event, viaje)">
+              <i class="fi fi-rr-triangle-warning"></i>
+            </button>
+
             <button type="button" class="btn btn_bg" matTooltip="Más detalles" (click)="openDetalleViaje(viaje)">
               <i class="fi fi-rr-attention-detail"></i>
             </button>

@@ -116,7 +116,7 @@ export class CentroMensajesPage implements OnInit {
     async abrirOpciones(ev: any, conv: any) {
         ev.stopPropagation();
 
-        const popover = await this.popoverCtrl.create({
+        await this.popoverCtrl.create({
             component: 'popover-opciones',
             event: ev,
             translucent: true,
