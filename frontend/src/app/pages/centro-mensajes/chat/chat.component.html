@@ -11,6 +11,18 @@
 
   <div class="chat-container p-3">
 
+    <div class="phone-share-box mb-2">
+      <div class="card shadow-sm border-0 text-center p-3 alert-warning-custom">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fi fi-rr-shield-check me-2" style="font-size: 20px;"></i>
+          <span>
+            <strong>Por tu seguridad:</strong> Mantén las conversaciones sobre el viaje dentro de la app.
+            No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.
+          </span>
+        </div>
+      </div>
+    </div>
+
     <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
       <div class="card shadow-sm border-0 text-center p-3">
         <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>

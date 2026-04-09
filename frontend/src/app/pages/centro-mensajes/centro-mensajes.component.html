@@ -17,8 +17,21 @@
         </button>
     </div>
 
+
     <!-- Centro de chats -->
     <div class="mt-3 centroMensajes">
+        <div class="phone-share-box mb-2">
+            <div class="card shadow-sm border-0 text-center p-3 alert-warning-custom">
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fi fi-rr-shield-check me-2" style="font-size: 20px;"></i>
+                    <span>
+                        <strong>Por tu seguridad:</strong> Mantén las conversaciones sobre el viaje dentro de la app.
+                        No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <ion-list>
             <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
                 <ion-item lines="none" detail="false">
