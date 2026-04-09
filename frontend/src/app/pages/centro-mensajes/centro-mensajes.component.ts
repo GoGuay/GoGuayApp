@@ -68,14 +68,12 @@ export class CentroMensajesPage implements OnInit {
 
         this.messagingService.marcarComoLeido(conv.id, usuarioId).subscribe({
             next: () => {
-                // Navegamos al chat
                 this.navCtrl.navigateForward(['/chat', conv.id], {
                     animated: false
                 });
             },
             error: (err) => {
                 console.error("No se pudo marcar como leído al entrar", err);
-                // Navegamos de todos modos aunque falle la marca
                 this.navCtrl.navigateForward(['/chat', conv.id], { animated: false });
             }
         });

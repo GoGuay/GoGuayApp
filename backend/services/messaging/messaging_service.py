@@ -78,6 +78,7 @@ def iniciar_chat(emisor_id, receptor_id):
 def marcar_leido(conv_id, user_id):
     Mensaje.query.filter_by(
         conversacion_id=conv_id, 
+        receptor_id=user_id, 
         leido=False
     ).update({"leido": True})
     

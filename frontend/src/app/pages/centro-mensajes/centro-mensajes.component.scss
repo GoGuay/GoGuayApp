@@ -2,6 +2,11 @@
   padding: 2%
 }
 
+.card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
+  border-radius: 15px !important;
+}
+
 .chat_card {
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
@@ -24,9 +29,9 @@
   }
 
   ion-item {
-    --inner-padding-end: 8px; // Espacio sutil al final
+    --inner-padding-end: 8px; // Espacio al final
     display: flex;
-    align-items: center; // Centra todo el contenido del item verticalmente
+    align-items: center;
   }
 
   .iconoAjustes {
