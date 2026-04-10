@@ -365,7 +365,7 @@ export class NavbarComponent implements OnInit {
     const titulo: string = '¡ATENCIÓN: Vas a cerrar sesión!';
     const mensaje: string = `¿Estás seguro que deseas cerrar sesión?`;
     const dialogRef = this.dialog.open(HelpModalComponent, {
-      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      data: { title: titulo, message: mensaje, showAcceptButton: true, autoFocus: false },
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((confirmar) => {
