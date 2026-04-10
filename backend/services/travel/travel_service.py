@@ -8,42 +8,9 @@ from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, Tok
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
+from services.notifications.notifications_utils import enviar_notificacion_push
 
 travel_blueprint = Blueprint('travel', __name__)
-
-
-def enviar_notificacion_push(usuario_id, titulo, cuerpo, data=None):
-    """
-    Busca los tokens de un usuario y envía una notificación push vía Firebase.
-    """
-    # 1. Obtener todos los dispositivos registrados del usuario
-    tokens = TokenPush.query.filter_by(usuario_id=usuario_id).all()
-    registration_tokens = [t.token for t in tokens]
-
-    if not registration_tokens:
-        print(f"No hay tokens registrados para el usuario {usuario_id}")
-        return
-
-    # 2. Construir el mensaje
-    message = messaging.MulticastMessage(
-        notification=messaging.Notification(
-            title=titulo,
-            body=cuerpo,
-        ),
-        data=data, # Información extra (ej. viaje_id)
-        tokens=registration_tokens,
-    )
-
-    # 3. Enviar
-    try:
-        response = messaging.send_multicast(message)
-        print(f"Éxito: {response.success_count} mensajes enviados. Fallos: {response.failure_count}")
-        
-        # Opcional: Si quieres limpiar tokens antiguos que Firebase dice que ya no valen
-        if response.failure_count > 0:
-            print("Algunos tokens ya no son válidos.")
-    except Exception as e:
-        print(f"Error crítico enviando push: {e}")
 
 
 # # # # # # # # # # # # # # # # # # # # # # # #

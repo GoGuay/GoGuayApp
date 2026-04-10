@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
 from models import Usuario
+from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
 
@@ -36,18 +37,34 @@ def enviar_mensaje():
     if not conv:
         return jsonify({"error": "Conversación no encontrada"}), 404
         
-    receptor_id = conv.usuario2_id if data['emisor_id'] == conv.usuario1_id else conv.usuario1_id
+    emisor_id = data.get('emisor_id')
+    receptor_id = conv.usuario2_id if emisor_id == conv.usuario1_id else conv.usuario1_id
+
+    emisor = db.session.get(Usuario, emisor_id)
+    nombre_emisor = emisor.nombre if emisor else "Un usuario"
+
+    texto_mensaje = data.get('texto', '')
 
     nuevo_msj = Mensaje(
         conversacion_id=data['conversacion_id'],
         emisor_id=data['emisor_id'],
         receptor_id=receptor_id,
-        texto=data['texto'],
+        texto=texto_mensaje,
         leido=False
     )
-    
+
     db.session.add(nuevo_msj)
     db.session.commit()
+
+    enviar_notificacion_push(
+            usuario_id=receptor_id, 
+            titulo=f"Mensaje de {nombre_emisor}", 
+            cuerpo=texto_mensaje,
+            data={
+                "conversacion_id": str(data['conversacion_id']), 
+                "tipo": "chat"
+            }
+        )
     
     return jsonify(nuevo_msj.serialize()), 201
 
@@ -156,7 +173,6 @@ def compartir_telefono():
 
     receptor_id = conv.usuario2_id if emisor_id == conv.usuario1_id else conv.usuario1_id
 
-    
     notificacion_msj = Mensaje(
         conversacion_id=conv_id,
         emisor_id=emisor_id,
@@ -164,6 +180,16 @@ def compartir_telefono():
         texto=f"TELEFONO USUARIO:{usuario.telefono}",
         leido=False
     )
+
+    texto_mensaje = f"El usuario {usuario.nombre} ha compartido su número de teléfono contigo."
+    
+    enviar_notificacion_push(
+        usuario_id=receptor_id, 
+        titulo="Teléfono compartido", 
+        cuerpo=texto_mensaje,
+        data={"conversacion_id": str(conv_id), "tipo": "chat"}
+    )
+    
     
     db.session.add(notificacion_msj)
     db.session.commit()
