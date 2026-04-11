@@ -177,6 +177,9 @@
         "OPC_OTROS": "Otros",
         "OPC_NORESPONDO": "Prefiero no responder"
       },
+      "GENERO": {
+        "LABEL": "Género"
+      },
       "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
       "LABEL_EDAD": "Edad",
       "LABEL_SOBRETI": "Sobre ti",
@@ -389,7 +392,8 @@
       "MASCOTAS": "Se admiten mascotas",
       "MUSICA": "Me gusta viajar escuchando música",
       "HABLAR": "Me gusta viajar hablando con los acompañantes",
-      "SILENCIO": "Me gusta ir en silencio"
+      "SILENCIO": "Me gusta ir en silencio",
+      "FUMAR": "Se permite fumar"
     }
   },
   "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",

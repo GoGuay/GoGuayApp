@@ -1,6 +1,5 @@
 {
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
-
   "SELECTOR_GENERO": {
     "LABEL": "Gender you identify with",
     "INFO": "It is a person's internal and individual experience, expressed through identity, clothing, or behavior. It is not related to the sex assigned at birth and is not limited only to man or woman.",
@@ -14,7 +13,6 @@
     "OTRO": "Other",
     "NO_RESPONDE": "Prefer not to answer"
   },
-
   "SELECTOR_ORIENTACION": {
     "LABEL": "What is your sexual orientation?",
     "INFO": "It is the emotional, romantic, and/or sexual attraction felt towards other people.",
@@ -30,7 +28,6 @@
     "OTRO": "Other",
     "NO_RESPONDE": "Prefer not to answer"
   },
-
   "BOTON": {
     "ANADIR_VEHICULO": "Add vehicle",
     "GUARDAR": "Save",
@@ -48,7 +45,6 @@
     "PUBLICAR_VIAJE": "Post your trip",
     "CENTROAYUDA": "Visit our help center"
   },
-
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
   "BUSCADOR": {
     "TITULO": "Are you looking for a trip?",
@@ -67,7 +63,6 @@
     "BOTON_LIMPIAR_ACCES": "Clear all criteria to start a new search",
     "INSTRUCCIONES_BUSQUEDA": "Type at least three characters and use the up and down arrows to navigate through the results and Enter to select."
   },
-
   "TITLE": "PrideRide",
   "Panel de usuario": "User Panel Page",
   "PANELUSUARIO": {
@@ -129,7 +124,6 @@
       "BOTON": "Check here"
     }
   },
-
   "__MiPerfil": "My Profile Component - /mi-perfil --------- FINISHED OCTOBER 2025",
   "MIPERFIL": {
     "TITULO": "My Profile",
@@ -303,7 +297,6 @@
       "FINALIZAR_REGISTRO": "Complete registration"
     }
   },
-
   "__DatosContacto": "OK OK OK OK OK OK OK , contact page",
   "DATOS_CONTACTO": {
     "TITULO": "Contact Details",
@@ -403,7 +396,8 @@
       "MASCOTAS": "Pets allowed",
       "MUSICA": "I enjoy listening to music while traveling",
       "HABLAR": "I like chatting with my fellow travelers",
-      "SILENCIO": "I prefer traveling in silence"
+      "SILENCIO": "I prefer traveling in silence",
+      "FUMAR": "Smoking friendly"
     }
   },
   "Forgot_Password": "Page to send password reset email",
@@ -455,7 +449,6 @@
     "TRANS_CONCEPTO": "Transfer to account",
     "SALDO": "Balance"
   },
-
   "_NuevoViaje": "/nuevo-viaje",
   "NUEVOVIAJE": {
     "PLACE_DONDE_COMIENZA": "Where does the trip start?",
@@ -512,18 +505,6 @@
     "SELECTOR_MARCA": "Brand selection",
     "SELECTOR_MODELO": "Model selection",
     "SELECTOR_COLOR": "Color"
-  },
-  "__ContactInfo": "Contact Modal and Page",
-  "DATOS_CONTACTO": {
-    "TITULO": "Contact Information",
-    "DESCRIPCION_SECCION": "From this section, you can update your email and phone number. (Remember that these are important details when making a trip.)",
-    "DESCRIPCION_SECCION_2": "Remember that if you want to be a verified profile, you must do so in the Verification section.",
-    "MODIF_CORREO_TFNO": "Email / Phone Update",
-    "MI_CORREO": "My Email",
-    "MI_TFNO": "My Phone Number",
-    "COM_COMERCIALES": "Commercial Communications",
-    "CHECK_POR_EMAIL": "I agree to receive commercial communications via email",
-    "CHECK_TERCEROS": "I agree that my data may be used for commercial purposes by third parties"
   },
   "__ProfileVerifications": "Modal and Page Verify Profile",
   "VERIF_PERFIL": {

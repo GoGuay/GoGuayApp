@@ -90,8 +90,8 @@
                   </ng-template>
                 </ion-popover>
               </label>
-              <select id="pronombre" class="form-select col-pronombre" [(ngModel)]="pronombreEditado" name="pronombre"
-                (ngModelChange)="onInputChange()" aria-describedby="pronombreAyuda">
+              <select id="pronombre" class="form-select col-pronombre form-control" [(ngModel)]="pronombreEditado"
+                name="pronombre" (ngModelChange)="onInputChange()" aria-describedby="pronombreAyuda">
                 <option selected disabled>{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate }}</option>
                 <option value="Él / He / Him">Él / He / Him</option>
                 <option value="Ella / She / Her">Ella / She / Her</option>
@@ -123,7 +123,7 @@
                 </ion-popover>
               </label>
 
-              <select id="genero" class="form-select col-genero" [(ngModel)]="generoEditado" name="genero"
+              <select id="genero" class="form-select col-genero form-control" [(ngModel)]="generoEditado" name="genero"
                 (ngModelChange)="onInputChange()" aria-describedby="generoAyuda">
                 <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}</option>
                 <option value="H_CIS">{{ 'SELECTOR_GENERO.H_CIS' | translate }}</option>
@@ -157,7 +157,7 @@
                 </ion-popover>
               </label>
               <select id="orientacion" [(ngModel)]="orientacionEditada" name="orientacion"
-                class="form-select col-orientacion" (ngModelChange)="onInputChange()"
+                class="form-select col-orientacion form-control" (ngModelChange)="onInputChange()"
                 aria-describedby="orientacionAyuda">
                 >
                 <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}

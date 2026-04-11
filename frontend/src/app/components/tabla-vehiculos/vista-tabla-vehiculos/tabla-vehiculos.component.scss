@@ -69,6 +69,8 @@ td.acciones {
   --bs-table-hover-bg: #f7e9d3;
   table-layout: fixed;
   width: 100%;
+  border-radius: 35px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 .botones_tabla {
@@ -96,13 +98,10 @@ td.acciones {
   margin-top: 4px;
 }
 
-
-
 .table {
   border-collapse: separate;
   border-spacing: 0;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-
 }
 
 .table thead tr:first-child th:first-child {

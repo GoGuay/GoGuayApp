@@ -6,10 +6,10 @@
 ion-footer {
   background-color: var(--ion-background-color);
   color: var(--ion-text-color);
-  position: fixed;
-  bottom: 0;
+  // position: fixed;
+  // bottom: 0;
   width: 100%;
-  z-index: 10;
+  // z-index: 10;
 }
 
 ::ng-deep ion-footer {
@@ -37,8 +37,8 @@ ion-toolbar {
 
 .footer-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .footer-item {
@@ -46,6 +46,19 @@ ion-toolbar {
   justify-content: center;
   align-items: center;
   gap: 0.3rem;
+}
+
+.brand-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-brand-name {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: 4px;
 }
 
 .footer-link {
@@ -86,6 +99,20 @@ ion-title {
   color: black;
 }
 
+.social-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.mobile-logo-container {
+  display: none;
+}
+
+.separator {
+  font-size: 0.8rem;
+  color: var(--ion-text-color);
+}
+
 @media (max-width: 576px) {
   .footer-row {
     flex-wrap: wrap;
@@ -107,5 +134,64 @@ ion-title {
 
   .footer-link {
     font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-row {
+    flex-wrap: wrap;
+  }
+
+  /* Redes sociales arriba a la izquierda */
+  .col-socials {
+    order: 1;
+    justify-content: flex-start !important;
+    padding-left: 15px;
+  }
+
+  /* Logo arriba a la derecha */
+  .col-brand {
+    order: 2;
+    justify-content: flex-end !important;
+    padding-right: 15px;
+
+    .footer-logo {
+      width: 35px;
+      height: 35px;
+    }
+
+    .footer-brand-name {
+      font-size: 0.5rem;
+    }
+  }
+
+  /* Links centrados abajo */
+  .col-links {
+    order: 3;
+    width: 100%;
+    margin-top: 15px;
+    justify-content: center !important;
+    padding-bottom: 10px;
+  }
+}
+
+/* --- PC --- */
+@media (min-width: 768px) {
+  .footer-row {
+
+    .col-socials {
+      order: 1;
+      justify-content: flex-start;
+    }
+
+    .col-links {
+      order: 2;
+      justify-content: center;
+    }
+
+    .col-brand {
+      order: 3;
+      justify-content: flex-end;
+    }
   }
 }
