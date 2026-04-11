@@ -169,7 +169,10 @@ class Usuario(db.Model):
     @property
     def estado_perfil(self):
         """
-        
+        Si el usuario tiene un bloqueo actualmente, devuelve el mensaje "Sancionado (suspensión temporal)" y sale de la función.
+        max: Elige el número más alto entre 2 opciones: Si eres un buen conductor, pero un mal pasajero, el estado será crítico, ya que el perfil de pasajero tiene riesgo alto. 
+        Con el if, se clasifica al usuario según su nota. 
+
         """
         if self.bloqueado_hasta and self.bloqueado_hasta > datetime.utcnow():
             return "Sancionado (Suspensión temporal)"
