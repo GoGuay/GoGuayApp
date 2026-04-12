@@ -1,6 +1,9 @@
 from datetime import datetime
 from extensions import db
 import json
+from enum import Enum
+from models.enums import EstadoViajeEnum
+
 
 class Viaje(db.Model):
     __tablename__ = 'viajes'
@@ -15,6 +18,7 @@ class Viaje(db.Model):
     duracion_viaje = db.Column(db.String(50), nullable=True)
     fecha_salida = db.Column(db.DateTime, nullable=False)
     ruta_seleccionada = db.Column(db.JSON, nullable=False)
+    estado_viaje = db.Column(db.String(50), nullable=True, default=EstadoViajeEnum.PROXIMO.value)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     vehiculo = db.Column(db.Integer, nullable=False)
 
