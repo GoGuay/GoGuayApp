@@ -220,6 +220,7 @@ class Usuario(db.Model):
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
+            "estado_perfil": self.estado_perfil,
             "puntuaciones": self.estrellas_por_opiniones,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
