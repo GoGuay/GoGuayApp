@@ -35,16 +35,23 @@ class Usuario(db.Model):
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
     # --- CAMPOS DE CONTROL Y SANCIONES ---
     bloqueado_desde = db.Column(db.DateTime, nullable=True)
     bloqueado_hasta = db.Column(db.DateTime, nullable=True) # Para suspensión de 6 meses
     ya_ha_sido_suspendido = db.Column(db.Boolean, default=False)     # Flag tras cumplir primera sanción
     motivo_bloqueo = db.Column(db.String(255), nullable=True) # Ej: "ICH Pasajero Crítico"
     
-    # Relaciones
+    # --- RELACIONES ---
     vehiculos = db.relationship('Vehiculo', backref='usuario', cascade='all, delete-orphan')
+    notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
+        # Viajes donde el usuario es el Conductor
+    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True)
+        # Reservas donde el usuario es el Pasajero
+    reservas_realizadas = db.relationship('PasajeroViaje', backref='usuario', lazy=True)
 
-    # Relaciones de valoraciones -- Opiniones de pasajeros
+        #Relaciones de valoraciones, opiniones de otros usuarios
     puntuaciones = db.relationship('Puntuacion', backref='usuario', cascade='all, delete-orphan', foreign_keys='Puntuacion.usuario_id')
     evaluaciones_realizadas = db.relationship(
         'Puntuacion', 
@@ -53,22 +60,7 @@ class Usuario(db.Model):
         cascade='all, delete-orphan'
     )
 
-    # --- LÓGICA DE VALORACIONES (ESTRELLAS) ---
-
-    @property
-    def estrellas_por_opiniones(self):
-        """Media de puntuación recibida por otros usuarios al finalizar viajes"""
-        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1) if self.puntuaciones else 0
-    
-    notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
-
-    # Viajes donde el usuario es el Conductor
-    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True)
-
-    # Reservas donde el usuario es el Pasajero
-    reservas_realizadas = db.relationship('PasajeroViaje', backref='usuario', lazy=True)
-
-    # Cancelaciones provocadas por este usuario (como conductor o pasajero)
+        # Cancelaciones provocadas por usuario (como conductor o pasajero)
     cancelaciones_provocadas = db.relationship(
         'Cancelacion', 
         foreign_keys='Cancelacion.cancelado_por_id', 
@@ -76,15 +68,25 @@ class Usuario(db.Model):
         lazy='dynamic'
     )
 
-    @property
-    def estrellas_por_opiniones(self):
-        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1) if self.puntuaciones else 0
+
     
 
-     
-    # --- LÓGICA DE CANCELACIONES (ICH Índice de Criticidad Histórico) ---
+    # --- PROPIEDADES CALCULADAS (Lógica de Negocio) ---
 
-    #Para calcular el ICH del conductor. Se calcula a partir de la tercerca cancelación que haga el conductor de su viaje. 
+    @property
+    def estrellas_por_opiniones(self):
+        """
+        Si no tiene valoraciones, devuelve None.
+        Si tiene valoraciones, hace el promedio redondeado de las notas que tenga.
+        """
+        if not self.puntuaciones:
+            return None 
+    
+        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1)
+
+
+
+        #Para calcular el ICH del conductor. Se calcula a partir de la tercerca cancelación que haga el conductor de su viaje. 
     @property
     def ich_conductor(self):
         """
@@ -113,7 +115,9 @@ class Usuario(db.Model):
             
         return round(puntos / total_viajes, 2)
     
-    #Para calcular el ICH del pasajero por cancelar reservas efectuadas. Se calcula desde la primera cancelación de reserva. 
+
+
+        #Para calcular el ICH del pasajero por cancelar reservas efectuadas. Se calcula desde la primera cancelación de reserva. 
     @property
     def ich_pasajero(self):
         """
@@ -165,7 +169,7 @@ class Usuario(db.Model):
         return round(puntos / total_reservas, 2)
     
 
-    #Nivel de fiabilidad de un usuario basado en las cancelaciones de viajes/reservas
+        #Nivel de fiabilidad de un usuario basado en las cancelaciones de viajes/reservas
     @property
     def estado_perfil(self):
         """
@@ -185,6 +189,8 @@ class Usuario(db.Model):
         if 3.6 <= peor_ich <= 5.0: return "Crítico (Nivel 1)"
         return "Crítico (Nivel 2)"
     
+
+    # --- 5. MÉTODOS DE UTILIDAD ---
 
     def serialize(self):
         preferencias = self.preferencias
@@ -216,7 +222,19 @@ class Usuario(db.Model):
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
-            "puntuacion_promedio": self.puntuacion_promedio,
+            "estrellas_por_opiniones": self.estrellas_por_opiniones,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+    
+
+
+
+
+    
+
+    
+
+
+    
+
