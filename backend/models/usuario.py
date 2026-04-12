@@ -1,13 +1,11 @@
 from flask import json
 from models.enums import PreferenciasViajeEnum, RolUsuarioEnum, Genero, Orientacion
+from models.cancelacion import Cancelacion
 from extensions import db
 from datetime import datetime
 from enum import Enum
 from sqlalchemy import JSON
 import statistics
-
-
-
 
 
 class Usuario(db.Model):
@@ -66,7 +64,7 @@ class Usuario(db.Model):
     viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True)
 
     # Reservas donde el usuario es el Pasajero
-    reservas_realizadas = db.relationship('PasajeroViaje', backref='usuario', lazy=True)
+    reservas_realizadas = db.relationship('PasajeroViaje', backref='pasajero_rel', lazy=True)
 
     # Cancelaciones provocadas por este usuario (como conductor o pasajero)
     cancelaciones_provocadas = db.relationship(
@@ -75,11 +73,6 @@ class Usuario(db.Model):
         backref='autor',
         lazy='dynamic'
     )
-
-    @property
-    def estrellas_por_opiniones(self):
-        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1) if self.puntuaciones else 0
-    
 
      
     # --- LÓGICA DE CANCELACIONES (ICH Índice de Criticidad Histórico) ---
@@ -213,7 +206,7 @@ class Usuario(db.Model):
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
-            "puntuacion_promedio": self.puntuacion_promedio,
+            "puntuaciones": self.estrellas_por_opiniones,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

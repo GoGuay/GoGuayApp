@@ -11,7 +11,7 @@ class PasajeroViaje(db.Model):
     fecha_confirmacion_reserva = db.Column(db.DateTime, default=datetime.utcnow)
     
     viaje = db.relationship('Viaje', backref='viaje_pasajero', lazy=True) 
-    usuario = db.relationship('Usuario', backref='pasajeros_viaje', lazy=True)
+    usuario = db.relationship('Usuario', lazy=True)
 
     def serialize(self):
         return {
