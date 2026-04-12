@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
-from models import Usuario
+from models import Usuario, Notificacion
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
@@ -173,13 +173,7 @@ def compartir_telefono():
 
     receptor_id = conv.usuario2_id if emisor_id == conv.usuario1_id else conv.usuario1_id
 
-    notificacion_msj = Mensaje(
-        conversacion_id=conv_id,
-        emisor_id=emisor_id,
-        receptor_id=receptor_id,
-        texto=f"TELEFONO USUARIO:{usuario.telefono}",
-        leido=False
-    )
+
 
     texto_mensaje = f"El usuario {usuario.nombre} ha compartido su número de teléfono contigo."
     
@@ -190,7 +184,21 @@ def compartir_telefono():
         data={"conversacion_id": str(conv_id), "tipo": "chat"}
     )
     
+    nueva_notif = Notificacion(
+        usuario_id=receptor_id,
+        mensaje=texto_mensaje,
+        viaje_id=None # O el ID del viaje si lo tienes a mano
+    )
+    db.session.add(nueva_notif)
     
+    notificacion_msj = Mensaje(
+        conversacion_id=conv_id,
+        emisor_id=emisor_id,
+        receptor_id=receptor_id,
+        texto=f"TELEFONO USUARIO:{usuario.telefono}",
+        leido=False
+    )
+
     db.session.add(notificacion_msj)
     db.session.commit()
 

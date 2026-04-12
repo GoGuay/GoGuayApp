@@ -48,7 +48,7 @@ class Viaje(db.Model):
                 "nombre": self.usuario.nombre,
                 "email": self.usuario.email,
                 "fotoPerfil": self.usuario.fotoPerfil,
-                "puntuacion_promedio": self.usuario.puntuacion_promedio
+                "puntuacion_promedio": self.usuario.estrellas_por_opiniones
             },
             "acompanantes": [
                 {

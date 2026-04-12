@@ -52,46 +52,39 @@
     </div>
 
     <ng-container *ngFor="let m of mensajes; let i = index">
-
-      <div class="fecha-separador" *ngIf="mostrarFecha(i)">
-        <span>{{ m.fecha | date:'dd-MM-yyyy' }}</span>
-      </div>
-
       <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
         class="mensaje-wrapper">
 
+        <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:')}">
 
-        <div class="mensaje-burbuja">
-          <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.startsWith('TELEFONO USUARIO:')}">
-            <ng-container *ngIf="m.texto.startsWith('TELEFONO USUARIO:'); else mensajeNormal">
+          <ng-container
+            *ngIf="m.texto.includes('TELEFONO USUARIO:') && m.emisor_id === usuarioLogueadoId; else mensajeRecibido">
+            <div class="contenido-sistema">
+              <span class="texto-telefono">Has compartido tu teléfono</span>
+            </div>
+          </ng-container>
 
-              <div class="contenido-sistema">
-                <span class="texto-telefono">
-                  <i class="fi fi-rr-phone-call me-1"></i>
-                  Ahora estás compartiendo tu número de teléfono
-                </span>
-
-                <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()" class="btn-revocar">
-                  <i class="fi fi-rs-crossed-eye me-1"></i>
-                  Dejar de compartir
-                </ion-button>
+          <ng-template #mensajeRecibido>
+            <ng-container *ngIf="m.texto.includes('TELEFONO USUARIO:'); else mensajeNormal">
+              <div class="texto-telefono-contacto">
+                <i class="fi fi-rr-phone-call me-1"></i>
+                <strong>Teléfono recibido:</strong> {{ m.texto.split(':')[1] }}
               </div>
-
             </ng-container>
-          </div>
 
-          <ng-template #mensajeNormal>
-            {{ m.texto }}
+            <ng-template #mensajeNormal>
+              {{ m.texto }}
+            </ng-template>
+            <div class="info-meta">
+              <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
+
+              <i *ngIf="m.emisor_id === usuarioLogueadoId"
+                [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
+                class="read-icon-ui">
+              </i>
+            </div>
           </ng-template>
 
-          <div class="info-meta">
-            <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
-
-            <i *ngIf="m.emisor_id === usuarioLogueadoId"
-              [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
-              class="read-icon-ui">
-            </i>
-          </div>
         </div>
       </div>
     </ng-container>

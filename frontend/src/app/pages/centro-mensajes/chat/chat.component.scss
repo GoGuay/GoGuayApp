@@ -94,6 +94,7 @@ ion-fab.fab-atras {
   padding: 8px 12px;
   position: relative;
   font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 
   .mensaje-fecha {
     font-size: 10px;
@@ -148,6 +149,8 @@ ion-button {
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    border-radius: 35px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   }
 }
 

@@ -21,4 +21,4 @@ class Cancelacion(db.Model):
 
     # Relaciones
     viaje = db.relationship('Viaje', backref=db.backref('datos_cancelacion', uselist=False))
-    autor = db.relationship('Usuario', foreign_keys=[cancelado_por_id])
+    # autor = db.relationship('Usuario', foreign_keys=[cancelado_por_id])

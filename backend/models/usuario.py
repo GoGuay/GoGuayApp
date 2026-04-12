@@ -1,13 +1,11 @@
 from flask import json
 from models.enums import PreferenciasViajeEnum, RolUsuarioEnum, Genero, Orientacion
+from models.cancelacion import Cancelacion
 from extensions import db
 from datetime import datetime
 from enum import Enum
 from sqlalchemy import JSON
 import statistics
-
-
-
 
 
 class Usuario(db.Model):
@@ -60,7 +58,22 @@ class Usuario(db.Model):
         cascade='all, delete-orphan'
     )
 
-        # Cancelaciones provocadas por usuario (como conductor o pasajero)
+    # --- LÓGICA DE VALORACIONES (ESTRELLAS) ---
+
+    @property
+    def estrellas_por_opiniones(self):
+        """Media de puntuación recibida por otros usuarios al finalizar viajes"""
+        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1) if self.puntuaciones else 0
+    
+    notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
+
+    # Viajes donde el usuario es el Conductor
+    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True)
+
+    # Reservas donde el usuario es el Pasajero
+    reservas_realizadas = db.relationship('PasajeroViaje', backref='pasajero_rel', lazy=True)
+
+    # Cancelaciones provocadas por este usuario (como conductor o pasajero)
     cancelaciones_provocadas = db.relationship(
         'Cancelacion', 
         foreign_keys='Cancelacion.cancelado_por_id', 
@@ -68,23 +81,8 @@ class Usuario(db.Model):
         lazy='dynamic'
     )
 
-
-
-
-    # --- PROPIEDADES CALCULADAS (Lógica de Negocio) ---
-
-    @property
-    def estrellas_por_opiniones(self):
-        """
-        Si no tiene valoraciones, devuelve None.
-        Si tiene valoraciones, hace el promedio redondeado de las notas que tenga.
-        """
-        if not self.puntuaciones:
-            return None 
-    
-        return round(statistics.mean((p.puntuacion for p in self.puntuaciones)), 1)
-
-
+     
+    # --- LÓGICA DE CANCELACIONES (ICH Índice de Criticidad Histórico) ---
 
         #Para calcular el ICH del conductor. Se calcula a partir de la tercerca cancelación que haga el conductor de su viaje. 
     @property
@@ -222,8 +220,7 @@ class Usuario(db.Model):
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
-            "estrellas_por_opiniones": self.estrellas_por_opiniones,
-            "estado_perfil": self.estado_perfil, 
+            "puntuaciones": self.estrellas_por_opiniones,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

@@ -28,6 +28,8 @@ class Conversacion(db.Model):
 
         return {
             "id": self.id,
+            "usuario1_id": self.usuario1_id, 
+            "usuario2_id": self.usuario2_id,
             "otro_usuario_nombre": f"{otro.nombre} {otro.apellidos}",
             "otro_usuario_foto": otro.fotoPerfil,
             "ultimoMensaje": ultimo_msj.texto if ultimo_msj else "No hay mensajes aún",

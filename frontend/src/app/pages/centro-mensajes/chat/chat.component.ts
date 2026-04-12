@@ -50,6 +50,7 @@ export class ChatPage implements OnInit {
     userId = 1;
     usuarioLogueadoId!: number;
     conversacionId!: number;
+    detallesConversacion: any;
 
     constructor(private route: ActivatedRoute,
         private messagingService: MessagingService,
@@ -72,20 +73,22 @@ export class ChatPage implements OnInit {
         this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
             this.mensajes = data;
 
-            const mensajeDelOtro = data.find((m: any) =>
-                m.texto.startsWith('TELEFONO USUARIO: ') &&
-                m.emisor_id !== this.usuarioLogueadoId
-            );
-            this.telefonoRecibido = mensajeDelOtro ? mensajeDelOtro.texto.split(':')[1] : null;
+            this.telefonoRecibido = null;
+            this.compartiendoMiTelefono = false;
 
-            this.compartiendoMiTelefono = data.some((m: any) =>
-                m.texto.startsWith('TELEFONO USUARIO: ') &&
-                m.emisor_id === this.usuarioLogueadoId
-            );
+            data.forEach((m: any) => {
+                if (m.texto.includes('TELEFONO USUARIO:')) {
+                    if (m.emisor_id === this.usuarioLogueadoId) {
+                        this.compartiendoMiTelefono = true;
+                    } else {
+                        this.telefonoRecibido = m.texto.split(':')[1].trim();
+                    }
+                }
+            });
 
             this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
-            this.cargandoPreferenciaTelefono = false;
 
+            this.cargandoPreferenciaTelefono = false;
             this.scrollToBottom();
         });
     }
@@ -146,26 +149,34 @@ export class ChatPage implements OnInit {
     }
 
     enviarNotificacionTelefono() {
-        const receptorId = this.mensajes.find(m => m.emisor_id === this.usuarioLogueadoId)?.receptor_id;
+        const mensajeReferencia = this.mensajes[0];
 
-        if (!receptorId) {
-            console.error("No se pudo determinar el receptor_id. Prueba a enviar un mensaje de texto primero.");
+        if (!mensajeReferencia) {
+            console.error("No se pudo determinar el receptor_id porque no hay mensajes.");
             return;
         }
 
-        const payload: Mensaje = {
+
+        const receptorId = mensajeReferencia.emisor_id !== this.usuarioLogueadoId
+            ? mensajeReferencia.emisor_id
+            : mensajeReferencia.receptor_id;
+
+        if (!receptorId || receptorId === 0) {
+            console.error("Error: receptorId inválido.");
+            return;
+        }
+
+        const payload = {
             conversacion_id: this.conversacionId,
             emisor_id: this.usuarioLogueadoId,
-            receptor_id: receptorId,
-            texto: `TELEFONO USUARIO: ${this.userData.usuario.telefono}`
         };
 
-        this.messagingService.enviarMensaje(payload).subscribe({
-            next: () => {
+        this.notificacionesService.compartirTelefono(payload).subscribe({
+            next: (res) => {
                 this.mostrarPreguntaTelefono = false;
                 this.cargarMensajes();
             },
-            error: (err) => console.error('Error al compartir teléfono', err)
+            error: (err) => console.error('Error al compartir', err)
         });
     }
 
