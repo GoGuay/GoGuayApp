@@ -203,6 +203,20 @@ export class NotificacionesService {
     }
 
     /**
+     * Envía la solicitud al servidor para compartir el número de teléfono.
+     * Esto disparará la notificación push al receptor en el backend.
+     * @param data Objeto con conversacion_id y emisor_id
+     */
+    compartirTelefono(data: { conversacion_id: number, emisor_id: number }): Observable<any> {
+        return this.http.post(`${this.apiUrl}/chat/compartir-telefono`, data).pipe(
+            catchError((error) => {
+                console.error('Error al compartir el teléfono:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
      * Solicita al servidor eliminar los mensajes de sistema que comparten
      * el teléfono del usuario en una conversación específica.
      * @param data Objeto con conversacion_id y emisor_id
