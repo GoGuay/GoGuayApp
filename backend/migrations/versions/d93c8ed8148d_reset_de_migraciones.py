@@ -1,17 +1,17 @@
-"""Añadidos campos de bloqueo e ICH
+"""Reset de migraciones
 
-Revision ID: 80b3032ca459
-Revises: c0183d715561
-Create Date: 2026-04-12 13:17:07.092064
+Revision ID: d93c8ed8148d
+Revises: 
+Create Date: 2026-04-12 14:00:33.315313
 
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+
 
 # revision identifiers, used by Alembic.
-revision = '80b3032ca459'
-down_revision = 'c0183d715561'
+revision = 'd93c8ed8148d'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -30,8 +30,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['viaje_id'], ['viajes.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.drop_table('movimientos_monedero')
-    op.drop_table('monederos')
     with op.batch_alter_table('notificaciones', schema=None) as batch_op:
         batch_op.alter_column('id',
                existing_type=sa.INTEGER(),
@@ -43,15 +41,11 @@ def upgrade():
                nullable=True)
 
     with op.batch_alter_table('pasajeros_viaje', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('fecha_confirmacion_reserva', sa.DateTime(), nullable=True))
         batch_op.alter_column('id',
                existing_type=sa.INTEGER(),
                server_default=None,
                existing_nullable=False,
                autoincrement=True)
-
-    with op.batch_alter_table('puntuaciones', schema=None) as batch_op:
-        batch_op.create_foreign_key('fk_puntuacion_viaje', 'viajes', ['viaje_id'], ['id'])
 
     with op.batch_alter_table('usuarios', schema=None) as batch_op:
         batch_op.alter_column('id',
@@ -59,13 +53,6 @@ def upgrade():
                server_default=None,
                existing_nullable=False,
                autoincrement=True)
-        batch_op.drop_constraint('usuarios_numero_documento_key', type_='unique')
-        batch_op.drop_column('numero_carnet_conducir')
-        batch_op.drop_column('numero_documento')
-        batch_op.drop_column('fecha_vencimiento_carnet')
-        batch_op.drop_column('fotoCarnetCondDelantera')
-        batch_op.drop_column('dni_verificado')
-        batch_op.drop_column('carnet_conducir_verificado')
 
     with op.batch_alter_table('vehiculos', schema=None) as batch_op:
         batch_op.alter_column('id',
@@ -75,7 +62,6 @@ def upgrade():
                autoincrement=True)
 
     with op.batch_alter_table('viajes', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('estado_viaje', sa.String(length=50), nullable=True))
         batch_op.alter_column('id',
                existing_type=sa.INTEGER(),
                server_default=None,
@@ -93,7 +79,6 @@ def downgrade():
                server_default=sa.Identity(always=False, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1),
                existing_nullable=False,
                autoincrement=True)
-        batch_op.drop_column('estado_viaje')
 
     with op.batch_alter_table('vehiculos', schema=None) as batch_op:
         batch_op.alter_column('id',
@@ -103,21 +88,11 @@ def downgrade():
                autoincrement=True)
 
     with op.batch_alter_table('usuarios', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('carnet_conducir_verificado', sa.BOOLEAN(), autoincrement=False, nullable=True))
-        batch_op.add_column(sa.Column('dni_verificado', sa.BOOLEAN(), autoincrement=False, nullable=True))
-        batch_op.add_column(sa.Column('fotoCarnetCondDelantera', sa.VARCHAR(length=250), autoincrement=False, nullable=True))
-        batch_op.add_column(sa.Column('fecha_vencimiento_carnet', sa.DATE(), autoincrement=False, nullable=True))
-        batch_op.add_column(sa.Column('numero_documento', sa.VARCHAR(length=9), autoincrement=False, nullable=True))
-        batch_op.add_column(sa.Column('numero_carnet_conducir', sa.VARCHAR(length=50), autoincrement=False, nullable=True))
-        batch_op.create_unique_constraint('usuarios_numero_documento_key', ['numero_documento'])
         batch_op.alter_column('id',
                existing_type=sa.INTEGER(),
                server_default=sa.Identity(always=False, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1),
                existing_nullable=False,
                autoincrement=True)
-
-    with op.batch_alter_table('puntuaciones', schema=None) as batch_op:
-        batch_op.drop_constraint('fk_puntuacion_viaje', type_='foreignkey')
 
     with op.batch_alter_table('pasajeros_viaje', schema=None) as batch_op:
         batch_op.alter_column('id',
@@ -125,7 +100,6 @@ def downgrade():
                server_default=sa.Identity(always=False, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1),
                existing_nullable=False,
                autoincrement=True)
-        batch_op.drop_column('fecha_confirmacion_reserva')
 
     with op.batch_alter_table('notificaciones', schema=None) as batch_op:
         batch_op.alter_column('viaje_id',
@@ -137,25 +111,5 @@ def downgrade():
                existing_nullable=False,
                autoincrement=True)
 
-    op.create_table('monederos',
-    sa.Column('id', sa.INTEGER(), sa.Identity(always=False, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), autoincrement=True, nullable=False),
-    sa.Column('saldo', sa.NUMERIC(), autoincrement=False, nullable=True),
-    sa.Column('usuario_id', sa.INTEGER(), autoincrement=False, nullable=True),
-    sa.Column('estado', sa.VARCHAR(length=20), autoincrement=False, nullable=True),
-    sa.Column('ultima_actualizacion', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
-    sa.ForeignKeyConstraint(['usuario_id'], ['usuarios.id'], name='monederos_usuario_id_fkey'),
-    sa.PrimaryKeyConstraint('id', name='monederos_pkey'),
-    sa.UniqueConstraint('usuario_id', name='monederos_usuario_id_key')
-    )
-    op.create_table('movimientos_monedero',
-    sa.Column('id', sa.INTEGER(), sa.Identity(always=False, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), autoincrement=True, nullable=False),
-    sa.Column('usuario_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.Column('cantidad', sa.NUMERIC(), autoincrement=False, nullable=False),
-    sa.Column('tipo', sa.VARCHAR(length=20), autoincrement=False, nullable=True),
-    sa.Column('concepto', sa.VARCHAR(length=255), autoincrement=False, nullable=True),
-    sa.Column('fecha', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
-    sa.ForeignKeyConstraint(['usuario_id'], ['usuarios.id'], name='movimientos_monedero_usuario_id_fkey'),
-    sa.PrimaryKeyConstraint('id', name='movimientos_monedero_pkey')
-    )
     op.drop_table('cancelaciones')
     # ### end Alembic commands ###
