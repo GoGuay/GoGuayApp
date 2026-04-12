@@ -69,7 +69,7 @@ class Usuario(db.Model):
     )
 
 
-    
+
 
     # --- PROPIEDADES CALCULADAS (Lógica de Negocio) ---
 
@@ -223,6 +223,7 @@ class Usuario(db.Model):
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros":self.comunic_terceros,
             "estrellas_por_opiniones": self.estrellas_por_opiniones,
+            "estado_perfil": self.estado_perfil, 
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
