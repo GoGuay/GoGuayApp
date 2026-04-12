@@ -51,7 +51,7 @@ class Usuario(db.Model):
         # Reservas donde el usuario es el Pasajero
     reservas_realizadas = db.relationship('PasajeroViaje', backref='usuario', lazy=True)
 
-        #Relaciones de valoraciones, opiniones de otros usuarios
+        #Relaciones de valoraciones, opiniones de otros usuarios-
     puntuaciones = db.relationship('Puntuacion', backref='usuario', cascade='all, delete-orphan', foreign_keys='Puntuacion.usuario_id')
     evaluaciones_realizadas = db.relationship(
         'Puntuacion', 
