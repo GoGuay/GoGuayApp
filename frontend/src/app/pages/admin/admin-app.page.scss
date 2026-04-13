@@ -42,6 +42,10 @@ ion-toolbar {
     --padding-end: 8px;
 }
 
+.mensajes:hover {
+    --border-radius: 35px !important;
+}
+
 
 ion-searchbar {
     --border-radius: 35px !important;

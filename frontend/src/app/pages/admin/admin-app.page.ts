@@ -5,6 +5,8 @@ import { addIcons } from 'ionicons';
 import { peopleOutline, mailUnreadOutline, eyeOutline, lockClosedOutline, lockOpenOutline } from 'ionicons/icons';
 import { UserServicesService } from "src/app/core/user-services/user-services.service";
 import { NavbarAdmin } from "./shared-admin/navbar-admin/navbar-admin.page";
+import { FuncionesComunes } from "src/app/core/funciones-comunes/funciones-comunes.service";
+import { Usuario } from "src/app/models/user/usuario.model";
 
 @Component({
     selector: 'app-admin',
@@ -15,7 +17,14 @@ import { NavbarAdmin } from "./shared-admin/navbar-admin/navbar-admin.page";
 })
 export class AdminApp implements OnInit {
     listaUsuarios: any[] = [];
-    avatar: string = '../../../assets/User-Profile-PNG-Image.png'
+    avatar: string = '../../../assets/User-Profile-PNG-Image.png';
+
+    hours: string = '';
+    minutes: string = '';
+
+    usuario: any;
+    userData: Usuario = {} as Usuario;
+    userLoggedIn: boolean = false;
 
     usuarios = [
         { id: 1, nombre: 'Alex G.', email: 'alex@pride.com', restringido: false, avatar: 'https://i.pravatar.cc/150?u=1' },
@@ -32,12 +41,45 @@ export class AdminApp implements OnInit {
     mensajesPendientes = 5;
     usuariosRestringidos = 12;
 
-    constructor(public navCtrl: NavController, private userService: UserServicesService) {
+    constructor(
+        public navCtrl: NavController,
+        private userService: UserServicesService,
+        private funcionesComunes: FuncionesComunes) {
+
         addIcons({ peopleOutline, mailUnreadOutline, eyeOutline, lockClosedOutline, lockOpenOutline });
     }
 
     ngOnInit() {
+        this.loadUserData();
+        this.updateTime();
+        setInterval(() => this.updateTime(), 1000);
+
+        this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+
+        if (this.userLoggedIn && this.userData?.usuario?.id) {
+            this.obtenerUsuarioPorID(this.userData.usuario.id);
+        }
+
         this.obtenerUsuariosApp();
+    }
+
+
+    loadUserData(): void {
+        const data = localStorage.getItem('userData');
+        if (data) {
+            this.userData = JSON.parse(data);
+        }
+    }
+
+    obtenerUsuarioPorID(id_usuario: number) {
+        if (!id_usuario) return;
+        this.userService.obtenerUsuarioPorID(id_usuario).subscribe({
+            next: (resultado) => {
+                console.log(resultado);
+                this.usuario = resultado.usuario ? resultado.usuario : resultado;
+            },
+            error: (err) => console.error("Error cargando perfil admin", err)
+        });
     }
 
     toggleRestriccion(user: any) {
@@ -85,4 +127,11 @@ export class AdminApp implements OnInit {
     goGuayApp() {
         this.navCtrl.navigateRoot(['/home']);
     }
+
+    updateTime() {
+        const now = new Date();
+        this.hours = now.getHours().toString().padStart(2, '0');
+        this.minutes = now.getMinutes().toString().padStart(2, '0');
+    }
+
 }
