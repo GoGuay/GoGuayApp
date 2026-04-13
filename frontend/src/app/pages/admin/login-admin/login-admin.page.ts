@@ -4,7 +4,6 @@ import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { NavController, IonicModule } from '@ionic/angular';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-// Servicios y Modelos
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";

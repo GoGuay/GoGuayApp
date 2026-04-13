@@ -31,9 +31,8 @@ ion-button {
 }
 
 .custom-input {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
     border-radius: 35px !important;
-    --background: #f9f9f9;
+    --background: #f9f9f9 !important;
     --border-radius: 35px;
     --highlight-height: 0;
     --border-width: 0;

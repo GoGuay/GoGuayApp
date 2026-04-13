@@ -1,0 +1,92 @@
+<app-navbar-admin></app-navbar-admin>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div class="container">
+        <h1 class="text-center">Gestión de Eventos GoGuay</h1>
+
+        <!-- BOTON PARA CREAR NUEVOS EVENTOS  -->
+        <ion-row>
+            <ion-col size="12" size-md="4">
+                <ion-card color="primary" class="button_gestion" (click)="toggleForm()">
+                    <ion-card-header>
+                        <ion-card-subtitle>
+                            <i class="fi" [ngClass]="showForm ? 'fi-rr-cross-small' : 'fi-rr-plus'"></i>
+                            {{ showForm ? 'Cancelar' : 'Añadir nuevo evento' }}
+                        </ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+
+        <!-- CREACIÓN DE EVENTOS  -->
+        <ion-card *ngIf="showForm" class="card_nuevo_evento ion-padding animate__animated animate__fadeIn">
+            <form [formGroup]="eventForm" (ngSubmit)="crearEvento()">
+                <ion-item lines="none" class="custom-input mb-3">
+                    <ion-label position="stacked">Nombre del evento</ion-label>
+                    <input formControlName="nombre_evento" type="text" placeholder="Ej: Mado Madrid">
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input mb-3">
+                    <ion-label position="stacked">Ciudad</ion-label>
+                    <input formControlName="ciudad" type="text" placeholder="Ej: Barcelona">
+                </ion-item>
+
+                <ion-row>
+                    <ion-col size="6">
+                        <ion-item lines="none" class="custom-input mb-3">
+                            <ion-label position="stacked">Fecha Inicio</ion-label>
+                            <input formControlName="fecha_inicio" type="text" placeholder="DD/MM/YYYY">
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-item lines="none" class="custom-input mb-3">
+                            <ion-label position="stacked">Fecha Fin</ion-label>
+                            <input formControlName="fecha_fin" type="text" placeholder="DD/MM/YYYY">
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+
+                <ion-item lines="none" class="custom-input mb-3">
+                    <ion-label position="stacked">URL Imagen</ion-label>
+                    <input formControlName="imagen" type="text" placeholder="https://...">
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input mb-3">
+                    <ion-label position="stacked">Enlace Info (Opcional)</ion-label>
+                    <input formControlName="enlace_info" type="text" placeholder="Web oficial">
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input mb-3">
+                    <ion-label position="stacked">Descripción</ion-label>
+                    <textarea formControlName="descripcion" rows="3" class="native-textarea"></textarea>
+                </ion-item>
+
+                <button [disabled]="eventForm.invalid" class="btn btn_bg">
+                    Publicar en la App
+                </button>
+            </form>
+        </ion-card>
+
+        <!-- LISTADO DE EVENTOS  -->
+        <div class="ion-margin-top">
+            <h2>Eventos activos ({{ listaEventos.length }})</h2>
+            <div class="container_eventos">
+                <ion-list lines="full" class="lista_eventos">
+                    <ion-item *ngFor="let evento of listaEventos">
+                        <ion-thumbnail slot="start">
+                            <img [src]="evento.imagen" style="border-radius: 8px;" />
+                        </ion-thumbnail>
+                        <ion-label class="ion-text-wrap">
+                            <h2 style="font-weight: bold;">{{ evento.nombre_evento }}</h2>
+                            <p><i class="fi fi-rr-marker"></i> {{ evento.ciudad }}</p>
+                            <p><i class="fi fi-rr-calendar"></i> {{ evento.fecha_inicio }} - {{ evento.fecha_fin }}</p>
+                        </ion-label>
+                        <ion-button slot="end" fill="clear" color="danger" (click)="eliminarEvento(evento.id)">
+                            <i class="fi fi-rr-trash"></i>
+                        </ion-button>
+                    </ion-item>
+                </ion-list>
+            </div>
+        </div>
+    </div>
+</ion-content>

@@ -1,23 +1,4 @@
-<ion-header [translucent]="true">
-    <ion-toolbar color="primary">
-        <ion-buttons slot="start">
-            <ion-button (click)="goHome()">
-                <i class="fi fi-rr-house-chimney me-2"></i>
-                Inicio
-            </ion-button>
-        </ion-buttons>
-
-        <ion-title>Panel Admin LGTBIQ+</ion-title>
-
-        <ion-buttons slot="end">
-            <ion-button (click)="logout()" fill="solid" color="danger" class="logout-btn">
-                Cerrar sesión
-                <i class="fi fi-rr-power ms-2"></i>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
-
+<app-navbar-admin></app-navbar-admin>
 <ion-content [fullscreen]="true" class="ion-padding">
     <div class="admin-container">
 
@@ -48,32 +29,61 @@
             </ion-col>
         </ion-row>
 
+
+        <ion-row>
+            <ion-col size="12" size-md="4">
+                <ion-card class="button_gestion" color="secondary" (click)="goEvents()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Gestión de eventos</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+                <ion-card class="button_gestion" color="secondary">
+                    <ion-card-header>
+                        <ion-card-subtitle>Gestión de usuarios</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+                <ion-card class="button_gestion" color="secondary">
+                    <ion-card-header>
+                        <ion-card-subtitle>Centro de mensajes</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+
         <section class="ion-margin-top">
             <h2><ion-icon name="people-outline"></ion-icon> Gestión de Usuarios</h2>
             <ion-searchbar placeholder="Buscar por nombre o email" (ionInput)="filtrarUsuarios($event)"></ion-searchbar>
 
-            <ion-list lines="full" class="user-list">
-                <ion-item *ngFor="let user of usuarios">
-                    <ion-avatar slot="start">
-                        <img [src]="user.avatar" />
-                    </ion-avatar>
-                    <ion-label>
-                        <h3>{{ user.nombre }}</h3>
-                        <p>{{ user.email }}</p>
-                    </ion-label>
+            <div class="user-list-container">
+                <ion-list lines="full" class="user-list">
+                    <ion-item *ngFor="let user of listaUsuarios">
+                        <ion-avatar slot="start">
+                            <img [src]="user.fotoPerfil || avatar" />
+                        </ion-avatar>
+                        <ion-label>
+                            <h3>{{ user.nombre }}</h3>
+                            <p>{{ user.email }}</p>
+                        </ion-label>
 
-                    <ion-badge [color]="user.restringido ? 'danger' : 'success'" slot="end">
-                        {{ user.restringido ? 'Restringido' : 'Activo' }}
-                    </ion-badge>
+                        <ion-badge [color]="user.ya_ha_sido_suspendido ? 'danger' : 'success'" slot="end">
+                            {{ user.ya_ha_sido_suspendido ? 'Restringido' : 'Activo' }}
+                        </ion-badge>
 
-                    <ion-button fill="clear" slot="end" (click)="verDetalles(user)">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </ion-button>
-                    <ion-button fill="clear" color="medium" slot="end" (click)="toggleRestriccion(user)">
-                        <ion-icon [name]="user.restringido ? 'lock-open-outline' : 'lock-closed-outline'"></ion-icon>
-                    </ion-button>
-                </ion-item>
-            </ion-list>
+                        <ion-button fill="clear" slot="end" (click)="verDetalles(user)">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" color="medium" slot="end" (click)="toggleRestriccion(user)">
+                            <ion-icon
+                                [name]="user.ya_ha_sido_suspendido  ? 'lock-open-outline' : 'lock-closed-outline'"></ion-icon>
+                        </ion-button>
+                    </ion-item>
+                </ion-list>
+            </div>
+
         </section>
 
         <section class="ion-margin-top">
@@ -90,5 +100,8 @@
                 </ion-list>
             </ion-card>
         </section>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn_bg" (click)="goGuayApp()">Ir a GoGuay</button>
     </div>
 </ion-content>

@@ -160,4 +160,8 @@ export const routes: Routes = [
     path: 'login-admin',
     loadComponent: () => import('./pages/admin/login-admin/login-admin.page').then((m) => m.AdminLoginPage),
   },
+  {
+    path: 'events-admin',
+    loadComponent: () => import('./pages/admin/eventos-admin/eventos-admin.page').then((m) => m.EventosAdmin),
+  },
 ];

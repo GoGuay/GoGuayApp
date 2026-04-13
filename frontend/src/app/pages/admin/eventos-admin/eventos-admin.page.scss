@@ -1,0 +1,72 @@
+.button_gestion {
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 35px;
+
+    &:hover {
+        transform: translateY(-5px);
+        filter: brightness(1.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(-2px);
+        filter: brightness(0.9);
+    }
+
+    ion-card-subtitle {
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: rgb(0, 0, 0);
+    }
+}
+
+.custom-input {
+    --background: #f4f5f8;
+    --border-radius: 35px;
+
+    input,
+    textarea {
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 10px 0;
+        width: 100%;
+    }
+}
+
+.custom-input input:focus {
+    outline: none !important;
+    border: none !important;
+}
+
+.user-list {
+    border-radius: 35px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.container_eventos {
+    padding: 1%;
+}
+
+.lista_eventos {
+    border-radius: 35px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    font-weight: 700;
+    margin: 20px 0;
+}
+
+.card_nuevo_evento {
+    border-radius: 35px;
+}
