@@ -35,4 +35,8 @@ export class FooterComponent implements OnInit {
   openCondiciones() {
     this.navCtrl.navigateRoot('/condiciones-generales', {});
   }
+
+  openAdmin() {
+    this.navCtrl.navigateRoot('/login-admin', {});
+  }
 }

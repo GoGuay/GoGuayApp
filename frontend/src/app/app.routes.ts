@@ -152,4 +152,12 @@ export const routes: Routes = [
     path: 'contrato-registro',
     loadComponent: () => import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
   },
+  {
+    path: 'admin-app',
+    loadComponent: () => import('./pages/admin/admin-app.page').then((m) => m.AdminApp),
+  },
+  {
+    path: 'login-admin',
+    loadComponent: () => import('./pages/admin/login-admin/login-admin.page').then((m) => m.AdminLoginPage),
+  },
 ];

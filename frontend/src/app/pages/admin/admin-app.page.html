@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="goHome()">
+                <i class="fi fi-rr-house-chimney me-2"></i>
+                Inicio
+            </ion-button>
+        </ion-buttons>
+
+        <ion-title>Panel Admin LGTBIQ+</ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button (click)="logout()" fill="solid" color="danger" class="logout-btn">
+                Cerrar sesión
+                <i class="fi fi-rr-power ms-2"></i>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div class="admin-container">
+
+        <ion-row>
+            <ion-col size="12" size-md="4">
+                <ion-card color="tertiary">
+                    <ion-card-header>
+                        <ion-card-title>{{ totalUsuarios }}</ion-card-title>
+                        <ion-card-subtitle>Usuarios Totales</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+                <ion-card color="warning">
+                    <ion-card-header>
+                        <ion-card-title>{{ mensajesPendientes }}</ion-card-title>
+                        <ion-card-subtitle>Mensajes Soporte</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+                <ion-card color="danger">
+                    <ion-card-header>
+                        <ion-card-title>{{ usuariosRestringidos }}</ion-card-title>
+                        <ion-card-subtitle>Usuarios Restringidos</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+
+        <section class="ion-margin-top">
+            <h2><ion-icon name="people-outline"></ion-icon> Gestión de Usuarios</h2>
+            <ion-searchbar placeholder="Buscar por nombre o email" (ionInput)="filtrarUsuarios($event)"></ion-searchbar>
+
+            <ion-list lines="full" class="user-list">
+                <ion-item *ngFor="let user of usuarios">
+                    <ion-avatar slot="start">
+                        <img [src]="user.avatar" />
+                    </ion-avatar>
+                    <ion-label>
+                        <h3>{{ user.nombre }}</h3>
+                        <p>{{ user.email }}</p>
+                    </ion-label>
+
+                    <ion-badge [color]="user.restringido ? 'danger' : 'success'" slot="end">
+                        {{ user.restringido ? 'Restringido' : 'Activo' }}
+                    </ion-badge>
+
+                    <ion-button fill="clear" slot="end" (click)="verDetalles(user)">
+                        <ion-icon name="eye-outline"></ion-icon>
+                    </ion-button>
+                    <ion-button fill="clear" color="medium" slot="end" (click)="toggleRestriccion(user)">
+                        <ion-icon [name]="user.restringido ? 'lock-open-outline' : 'lock-closed-outline'"></ion-icon>
+                    </ion-button>
+                </ion-item>
+            </ion-list>
+        </section>
+
+        <section class="ion-margin-top">
+            <h2><ion-icon name="mail-unread-outline"></ion-icon> Centro de Mensajes</h2>
+            <ion-card>
+                <ion-list>
+                    <ion-item button *ngFor="let msg of mensajes" (click)="abrirMensaje(msg)">
+                        <ion-label>
+                            <h3>{{ msg.asunto }}</h3>
+                            <p>{{ msg.remitente }} - {{ msg.fecha }}</p>
+                        </ion-label>
+                        <ion-note slot="end" color="primary" *ngIf="!msg.leido">Nuevo</ion-note>
+                    </ion-item>
+                </ion-list>
+            </ion-card>
+        </section>
+    </div>
+</ion-content>
