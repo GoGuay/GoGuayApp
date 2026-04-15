@@ -1,4 +1,5 @@
 from extensions import db
+from datetime import datetime
 
 class Evento(db.Model):
     __tablename__ = 'eventos'
