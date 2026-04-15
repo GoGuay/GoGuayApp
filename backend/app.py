@@ -20,6 +20,7 @@ from services.travel.travel_service import travel_blueprint
 from services.vehicles.vehicle_service import vehicle_blueprint
 from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
+from services.events.events_service import evento_blueprint
 from services.user import user_service
 
 import firebase_admin
@@ -86,12 +87,14 @@ def create_app():
     # --> travel_blueprint: Servicio relacionado con los viajes
     # --> vehicle_blueprint: Servicio relacionado con los vehículos
     # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
+    # --> evento_blueprint: Servicio relacionado con los eventos
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     app.register_blueprint(user_blueprint, url_prefix="/api/user")
     app.register_blueprint(travel_blueprint, url_prefix="/api/travel")
     app.register_blueprint(vehicle_blueprint, url_prefix="/api/vehicle")
     app.register_blueprint(apigoogle_blueprint, url_prefix="/api/apigoogle")
     app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
+    app.register_blueprint(evento_blueprint, url_prefix="/api/evento")
 
  
     user_service.mail = mail

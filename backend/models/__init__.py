@@ -8,3 +8,4 @@ from .notificaciones import Notificacion
 from .tokensusados import TokenUsado
 from .mensaje import Conversacion, Mensaje
 from .tokenPush import TokenPush
+from .evento import Evento
