@@ -498,5 +498,16 @@
     "PUBLISH_TRIP_TITLE": "Botón para publicar viaje",
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
+  },
+  "__Eventos_Administracion": "Sección Eventos de Administración",
+  "EVENTOS_ADMIN": "",
+  "MENSAJES": {
+    "NOTIFICATION": "Notificación",
+    "SUCCESS_TO_ADD": "Evento añadido correctamente.",
+    "KO_TO_ADD": "Error al añadir el evento.",
+    "SUCCESS_TO_EDIT": "Evento editado correctamente.",
+    "KO_TO_EDIT": "Error al editar el evento.",
+    "SUCCESS_TO_DELETE": "Evento eliminado correctamente.",
+    "KO_TO_DELETE": "Error al eliminar el evento."
   }
 }

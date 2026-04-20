@@ -20,7 +20,8 @@
 
         <!-- CREACIÓN DE EVENTOS  -->
         <ion-card *ngIf="showForm" class="card_nuevo_evento ion-padding animate__animated animate__fadeIn">
-            <form [formGroup]="eventForm" (ngSubmit)="crearEvento()">
+            <h2 class="ion-padding-start">{{ isEditing ? 'Editar Evento' : 'Nuevo Evento' }}</h2>
+            <form [formGroup]="eventForm" (ngSubmit)="guardarEvento()">
                 <ion-item lines="none" class="custom-input mb-3">
                     <ion-label position="stacked">Nombre del evento</ion-label>
                     <input formControlName="nombre_evento" type="text" placeholder="Ej: Mado Madrid">
@@ -35,13 +36,13 @@
                     <ion-col size="6">
                         <ion-item lines="none" class="custom-input mb-3">
                             <ion-label position="stacked">Fecha Inicio</ion-label>
-                            <input formControlName="fecha_inicio" type="text" placeholder="DD/MM/YYYY">
+                            <input formControlName="fecha_inicio" type="date" placeholder="DD/MM/YYYY">
                         </ion-item>
                     </ion-col>
                     <ion-col size="6">
                         <ion-item lines="none" class="custom-input mb-3">
                             <ion-label position="stacked">Fecha Fin</ion-label>
-                            <input formControlName="fecha_fin" type="text" placeholder="DD/MM/YYYY">
+                            <input formControlName="fecha_fin" type="date" placeholder="DD/MM/YYYY">
                         </ion-item>
                     </ion-col>
                 </ion-row>
@@ -62,7 +63,7 @@
                 </ion-item>
 
                 <button [disabled]="eventForm.invalid" class="btn btn_bg">
-                    Publicar en la App
+                    {{ isEditing ? 'Actualizar cambios' : 'Publicar en la App' }}
                 </button>
             </form>
         </ion-card>
@@ -81,6 +82,9 @@
                             <p><i class="fi fi-rr-marker"></i> {{ evento.ciudad }}</p>
                             <p><i class="fi fi-rr-calendar"></i> {{ evento.fecha_inicio }} - {{ evento.fecha_fin }}</p>
                         </ion-label>
+                        <ion-button slot="end" fill="clear" color="success" (click)="editarEvento(evento.id)">
+                            <i class="fi fi-rr-edit"></i>
+                        </ion-button>
                         <ion-button slot="end" fill="clear" color="danger" (click)="eliminarEvento(evento.id)">
                             <i class="fi fi-rr-trash"></i>
                         </ion-button>
@@ -88,5 +92,7 @@
                 </ion-list>
             </div>
         </div>
+
+        <p-toast position="bottom-center"></p-toast>
     </div>
 </ion-content>

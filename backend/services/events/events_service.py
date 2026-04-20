@@ -55,6 +55,22 @@ def obtener_evento_id():
     return jsonify(evento.serialize()), 200
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER TODOS LOS EVENTOS
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@evento_blueprint.route('/obtener_eventos', methods=['GET'])
+def obtener_eventos():
+    try:
+        eventos = Evento.query.all()
+        
+        eventos_serializados = [evento.serialize() for evento in eventos]
+        
+        return jsonify(eventos_serializados), 200
+        
+    except Exception as e:
+        return jsonify({"error": "Error al recuperar los eventos", "detalle": str(e)}), 500
+   
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA EDITAR UN EVENTO 

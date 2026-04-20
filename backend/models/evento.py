@@ -9,8 +9,8 @@ class Evento(db.Model):
     ciudad = db.Column(db.String(100), nullable=False)
     fecha_inicio = db.Column(db.DateTime, nullable=False)
     fecha_fin = db.Column(db.DateTime, nullable=False)
-    descripcion = db.Column(db.String(250), nullable=False)
-    imagen = db.Column(db.String(100), nullable=False)
+    descripcion = db.Column(db.Text, nullable=False)
+    imagen = db.Column(db.String(500), nullable=False)
     enlace_info = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -146,7 +146,7 @@ ion-accordion [slot="content"] {
   box-sizing: border-box;
   border-radius: 15px;
   border: 1px solid black;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+
   background-color: #f4f5f8;
   overflow: hidden;
 }
@@ -154,7 +154,7 @@ ion-accordion [slot="content"] {
 .contenedor_imagen {
   width: 270px !important;
   height: 270px !important;
-  margin: -33px !important;
+  margin: 1px !important;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -165,6 +165,25 @@ ion-accordion [slot="content"] {
   width: 100% !important;
   height: 100% !important;
   object-fit: contain;
+}
+
+.imagen_evento img {
+  border-radius: 35px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.enlace-info {
+  background: linear-gradient(to right, #ff9999, #ffb366, #85d685, #66b3ff, #b366ff, #ff66b3);
+  text-decoration: none;
+  font-weight: bold;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+
+  &:hover {
+    color: #3600cc;
+    text-decoration: underline;
+  }
 }
 
 /* Muy importante: Ionic a veces añade padding automático al abrir. Lo fijamos: */

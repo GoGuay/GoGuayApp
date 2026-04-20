@@ -16,7 +16,7 @@
     </div>
   </div>
 </div>
-<div *ngIf="filtradosPorCiudad.length > 0" aria-live="polite">
+<div *ngIf="filtradosPorCiudad.length > 0; else noEventos" aria-live="polite">
   <h2>Próximos eventos en {{ ciudadSeleccionadaLabel }}</h2>
 
   <ion-grid [fixed]="true">
@@ -37,7 +37,7 @@
                     ': ' +
                     evento.fecha_fin
                   ">
-                  {{ evento.fecha_inicio }} - {{ evento.fecha_fin }}
+                  {{ evento.fecha_inicio | date: 'dd/MM/yyyy' }} - {{ evento.fecha_fin | date: 'dd/MM/yyyy' }}
                 </p>
               </ion-label>
             </ion-item>
@@ -48,8 +48,8 @@
                   [alt]="('EVENTOS.IMAGEN' | translate) + ': ' + evento.nombre_evento" />
               </div>
               <div class="mb-3">
-                <a href="{{ evento.enlace_info }}"
-                  [attr.aria-label]="('EVENTOS.ENLACE' | translate) + ' ' + evento.nombre_evento">>+Info</a>
+                <a class="enlace-info" href="{{ evento.enlace_info }}"
+                  [attr.aria-label]="('EVENTOS.ENLACE' | translate) + ' ' + evento.nombre_evento">> +Info</a>
               </div>
               <div class="contenedor-botones">
                 <button class="btn btn_bg" type="button" tabindex="0" (click)="crearViaje(evento)"
@@ -69,6 +69,15 @@
     </ion-row>
   </ion-grid>
 </div>
+
+<ng-template #noEventos>
+  <div class="text-center mt-4 p-4" *ngIf="ciudadSeleccionadaLabel">
+    <p>No hay eventos disponibles actualmente para {{ ciudadSeleccionadaLabel }}.</p>
+  </div>
+  <div class="text-center mt-4 p-4" *ngIf="!ciudadSeleccionadaLabel && lista_eventos.length === 0">
+    <p>Estamos preparando nuevos eventos. ¡Vuelve pronto!</p>
+  </div>
+</ng-template>
 
 <div class="mt-3">
   <span>
