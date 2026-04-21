@@ -14,7 +14,6 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
-import { AdminApp } from "../../admin/admin-app.page";
 
 @Component({
     selector: 'app-chat',
@@ -31,8 +30,7 @@ import { AdminApp } from "../../admin/admin-app.page";
     MatSliderModule,
     NavbarComponent,
     IonicModule,
-    SpinnerComponent,
-    AdminApp
+    SpinnerComponent
 ],
     providers: []
 })
