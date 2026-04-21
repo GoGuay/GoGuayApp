@@ -201,6 +201,16 @@ span {
   font-size: smaller;
 }
 
+.ion-color-success {
+    --ion-color-base: #DCF8C6 !important;
+    --ion-color-base-rgb: var(--ion-color-success-rgb) !important;
+    --ion-color-contrast: var(--ion-color-success-contrast, #000) !important;
+    --ion-color-contrast-rgb: var(--ion-color-success-contrast-rgb) !important;
+    --ion-color-shade: #DCF8C6 !important;
+    --ion-color-tint: #DCF8C6 !important;
+    border-radius: 15px 15px 0 15px !important;
+}
+
 @media (max-width: 576px) {
   .input-wrapper {
     background: #fff;

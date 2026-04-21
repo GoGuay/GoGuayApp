@@ -13,6 +13,8 @@ import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { AdminApp } from "../../admin/admin-app.page";
 
 @Component({
     selector: 'app-chat',
@@ -20,16 +22,18 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
     styleUrls: ['./chat.component.scss'],
     standalone: true,
     imports: [
-        CommonModule,
-        FormsModule,
-        MatButtonModule,
-        MatRadioModule,
-        MatCheckboxModule,
-        ReactiveFormsModule,
-        MatSliderModule,
-        NavbarComponent,
-        IonicModule
-    ],
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    MatSliderModule,
+    NavbarComponent,
+    IonicModule,
+    SpinnerComponent,
+    AdminApp
+],
     providers: []
 })
 export class ChatPage implements OnInit {
@@ -52,6 +56,9 @@ export class ChatPage implements OnInit {
     usuarioLogueadoId!: number;
     conversacionId!: number;
     detallesConversacion: any;
+
+    cargandoSolicitud: { [key: number]: boolean } = {};
+    solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' } = {};
 
     constructor(private route: ActivatedRoute,
         private messagingService: MessagingService,
@@ -98,15 +105,27 @@ export class ChatPage implements OnInit {
     /**
      * Función para enviar un nuevo mensaje.
      */
-    enviar() {
+    enviar(viajeId?: any) {
         if (!this.texto.trim()) return;
 
-        const nuevoMensaje: Mensaje = {
+        let receptorId = 0;
+        if (this.mensajes.length > 0) {
+            const primerMsj = this.mensajes[0];
+            receptorId = primerMsj.emisor_id !== this.usuarioLogueadoId 
+                        ? primerMsj.emisor_id 
+                        : primerMsj.receptor_id;
+        }
+
+        const nuevoMensaje: any = {
             emisor_id: this.usuarioLogueadoId,
-            receptor_id: 0,
+            receptor_id: receptorId,
             conversacion_id: this.conversacionId,
             texto: this.texto
         };
+
+        if (viajeId) {
+            nuevoMensaje.viaje_id = viajeId;
+        }
 
         this.messagingService.enviarMensaje(nuevoMensaje).subscribe(res => {
             this.mensajes.push(res);
@@ -243,15 +262,27 @@ export class ChatPage implements OnInit {
     gestionarSolicitud(mensaje: any, accion: 'aceptar' | 'rechazar') {
         const viajeId = mensaje.texto.split(':')[1];
         const pasajeroId = mensaje.emisor_id;
+        const mensajeId = mensaje.id;
+
+        this.cargandoSolicitud[mensajeId] = true;
 
         if (accion === 'aceptar') {
             this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
-            next: () => {
-                this.enviarMensajeSistema("He aceptado tu solicitud. ¡Nos vemos en el viaje!");
-            }
+                next: () => {
+                    this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                    this.cargandoSolicitud[mensajeId] = false;
+                    this.enviarMensajeSistema("He aceptado tu solicitud. ¡Nos vemos en el viaje!", viajeId);
+                },
+                error: (err) => {
+                    this.cargandoSolicitud[mensajeId] = false;
+                }
             });
         } else {
-            this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.");
+            setTimeout(() => {
+                this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                this.cargandoSolicitud[mensajeId] = false;
+                this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.");
+            }, 1000);
         }
     }
 
@@ -260,8 +291,8 @@ export class ChatPage implements OnInit {
      * 
      * @param texto --> Recibe el texto que se quiere enviar como mensaje del sistema (aceptación o rechazo de solicitud de viaje).
      */
-    enviarMensajeSistema(texto: string) {
+    enviarMensajeSistema(texto: string, viajeId?: any) {
         this.texto = texto;
-        this.enviar();
+        this.enviar(viajeId);
     }
 }

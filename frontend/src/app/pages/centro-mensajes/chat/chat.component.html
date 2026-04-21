@@ -55,16 +55,38 @@
           <ng-container *ngIf="m.texto.includes('SOLICITUD_UNIRSE_VIAJE:'); else checkTelefono">
             <div class="solicitud-container p-2">
               <p><strong><i class="fi fi-rr-messages"></i> Solicitud de viaje</strong></p>
-              <p>Hola, me gustaría unirme a tu viaje.</p>
               
-              <div class="d-flex gap-2 mt-2" *ngIf="m.emisor_id !== usuarioLogueadoId">
-                <ion-button size="small" color="success" (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
-                <ion-button size="small" color="danger" (click)="gestionarSolicitud(m, 'rechazar')">Rechazar</ion-button>
+              <div *ngIf="cargandoSolicitud[m.id]" class="text-center p-2">
+                <app-spinner></app-spinner>
+                <p class="small">Procesando solicitud...</p>
               </div>
-              
-              <div *ngIf="m.emisor_id === usuarioLogueadoId">
-                <ion-badge color="medium">Solicitud enviada</ion-badge>
+
+              <ng-container *ngIf="!cargandoSolicitud[m.id] && !solicitudesGestionadas[m.id]">
+                <p>Hola, me gustaría unirme a tu viaje.</p>
+                
+                <div class="d-flex gap-2 mt-2" *ngIf="m.emisor_id !== usuarioLogueadoId">
+                  <ion-button size="small" color="success" (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
+                  <ion-button size="small" color="danger" (click)="gestionarSolicitud(m, 'rechazar')">Rechazar</ion-button>
+                </div>
+                
+                <div *ngIf="m.emisor_id === usuarioLogueadoId">
+                  <ion-badge color="medium">Solicitud enviada</ion-badge>
+                </div>
+              </ng-container>
+
+              <div *ngIf="!cargandoSolicitud[m.id] && solicitudesGestionadas[m.id]" class="mt-2">
+                <ion-item lines="none" class="info-gestion" [color]="solicitudesGestionadas[m.id] === 'aceptada' ? 'success' : 'light'">
+                  <ion-icon slot="start" [name]="solicitudesGestionadas[m.id] === 'aceptada' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    <small>
+                      {{ solicitudesGestionadas[m.id] === 'aceptada' 
+                        ? 'Has aceptado a este pasajero.' 
+                        : 'Has rechazado esta solicitud.' }}
+                    </small>
+                  </ion-label>
+                </ion-item>
               </div>
+
             </div>
           </ng-container>
 
