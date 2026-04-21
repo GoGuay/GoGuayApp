@@ -75,8 +75,16 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center">
-      <button mat-raised-button class="btn mb-2" (click)="contactarAcompanante(data.viaje.usuario.id)" *ngIf="data.viaje.id !== data.viaje.usuario.id && !conductor"> Enviar mensaje al conductor </button>
+
+    <div class="d-flex justify-content-center mb-2 mt-2" *ngIf="data.viaje.reserva_automatica">
+      <i class="fi fi-rr-bolt bolt-icon"></i> Este viaje tiene reserva automática.
+    </div>
+
+    <div class="d-flex justify-content-center mt-1">
+      <button mat-raised-button class="btn mb-2" (click)="contactarAcompanante(data.viaje.usuario.id)" *ngIf="data.viaje.id !== data.viaje.usuario.id && !conductor"> 
+        <i class="fi fi-rr-messages"></i>
+        Enviar mensaje a {{ viaje.usuario?.nombre }}
+      </button>
     </div>
   </mat-dialog-content>
 

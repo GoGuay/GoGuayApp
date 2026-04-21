@@ -9,13 +9,16 @@ import { NavbarComponent } from "../../shared/navbar/navbar.component";
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { MatIcon } from "@angular/material/icon";
+import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-notificaciones',
   templateUrl: './notificaciones.page.html',
   styleUrls: ['./notificaciones.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent, MatIcon]
 })
 export class NotificacionesPage implements OnInit {
 
@@ -29,14 +32,23 @@ export class NotificacionesPage implements OnInit {
 
   idResaltado: number | null = null;
 
-  constructor(private notificationService: NotificacionesService, private userService: UserServicesService, private router: Router) { }
+  constructor(
+    private notificationService: NotificacionesService, 
+    private userService: UserServicesService, 
+    private router: Router, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.idResaltado = this.notificationService.idNotificacionResaltada;
     this.loadUserData();
-    this.userLoggedIn = !!(this.userData && this.userData.usuario.email);
-    this.obtenerNotificaciones(this.userData.usuario.id);
+    
+    this.userLoggedIn = !!(this.userData && this.userData.usuario && this.userData.usuario.email);
+    
+    if (this.userData?.usuario?.id) {
+      this.obtenerNotificaciones(this.userData.usuario.id);
+    }
+    
     this.notificationService.clearToasts();
+    
     if (this.idResaltado) {
       setTimeout(() => {
         this.idResaltado = null;
@@ -53,13 +65,21 @@ export class NotificacionesPage implements OnInit {
    */
   obtenerNotificaciones(usuarioId: number) {
     this.mostrarSpinner = true;
-    this.notificationService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
-      this.mostrarSpinner = false;
-      if (notificaciones.length) {
-        this.notificaciones = notificaciones;
-        this.notificationService.notificacionPendiente = notificaciones[0].mensaje;
-        this.notificationService.esCreadorDelViaje = true;
-        this.notificationService.leerNotificacion(notificaciones);
+    this.notificationService.obtenerNotificaciones(usuarioId).subscribe({
+      next: (notificaciones) => {
+        this.mostrarSpinner = false;
+        if (notificaciones && notificaciones.length) {
+          
+          this.notificaciones = notificaciones.sort((a: any, b: any) => Number(a.leida) - Number(b.leida));
+          
+          this.notificationService.notificacionPendiente = notificaciones[0].mensaje;
+          this.notificationService.esCreadorDelViaje = true;
+          this.notificationService.leerNotificacion(notificaciones);
+        }
+      },
+      error: (err) => {
+        this.mostrarSpinner = false;
+        console.error('Error al obtener notificaciones', err);
       }
     });
   }
@@ -91,5 +111,64 @@ export class NotificacionesPage implements OnInit {
    */
   goToSettings() {
     this.router.navigate(['/ajustes-aplicacion'], { fragment: 'notificaciones-section' });
+  }
+
+  irAlChat(n: any) {
+    if (!n.leida) {
+      this.toggleLeida(n);
+    }
+    // Navega a la ruta de chat pasando el ID de la conversación
+    this.router.navigate(['/chat', n.conversacion_id]);
+  }
+
+
+  /**
+   * Función para eliminar todas las notificaciones del usuario. Se muestra un mensaje de confirmación antes de proceder a eliminar.
+   * Solo se muestra el botón de eliminar todo si hay notificaciones en la lista.
+   */
+  borrarTodas() {
+    const usuarioId = this.userData.usuario.id;
+
+    const titulo = 'Vas a eliminar todas tus notificaciones';
+    const mensaje = 'Esta acción no se puede deshacer. Se eliminarán todas tus notificaciones y no podrás recuperarlas. Si estás seguro de que quieres continuar, haz clic en "Aceptar".';
+
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmar: any) => {
+      if (confirmar) {
+        this.notificationService.eliminarTodasNotificaciones(usuarioId).subscribe({
+        next: () => {
+            this.notificaciones = [];
+            this.notificationService.mostrarToast({
+              id: Date.now(),
+              type: 'success',
+              mensaje: 'Se han eliminado todas las notificaciones',
+              leida: false
+            });
+          }, error: (err) => console.error('Error al limpiar historial:', err)
+        });
+      }
+    });
+  }
+
+  /**
+   * Función para eliminar una sola notificación por su ID.
+   * @param id --> ID de la notificación a eliminar.
+   */
+  borrarUna(id: number) {
+    this.notificationService.eliminarNotificacion(id).subscribe({
+      next: () => {
+        this.notificaciones = this.notificaciones.filter(notificacion => notificacion.id !== id);
+        this.notificationService.mostrarToast({
+          id: Date.now(),
+          type: 'success',
+          mensaje: 'Se ha eliminado la notificación',
+          leida: false
+        });
+      }
+    });
   }
 }

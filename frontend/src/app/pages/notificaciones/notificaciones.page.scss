@@ -58,9 +58,13 @@
   transition: all 0.6s ease;
   
   &.resaltado {
-    background-color: #fff3cd !important; // Un tono amarillento/dorado
+    background-color: #fff3cd !important;
     border: 2px solid #ffc107;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
     transform: translateY(-2px);
   }
+}
+
+.btn-link:hover {
+  color: #FFB3BA !important;
 }

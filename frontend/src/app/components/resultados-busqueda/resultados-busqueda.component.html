@@ -63,19 +63,29 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="container text-center">
-                      <button (click)="openDetalleViaje(resultado_del_viaje)" type="button" class="btn btn_bg me-3">
-                        <i class="fi fi-rr-file-circle-info"></i>
-                        Mas detalles
-                      </button>
-                      <button type="button" class="btn btn_bg" *ngIf="resultado_del_viaje?.usuario?.id !== userData?.usuario?.id">
-                       <i class="fi fi-rr-calendar-clock"></i>
-                        Unirse al viaje
-                      </button>
-                      <button type="button" class="btn btn_bg mt-2" *ngIf="resultado_del_viaje?.usuario?.id !== userData?.usuario?.id">
-                        <i class="fi fi-rr-messages"></i>
-                        Contactar con {{resultado_del_viaje.usuario?.nombre}}
-                      </button>
+                    <div class="row">
+                      <div class="container d-flex align-items-center justify-content-center flex-wrap">
+                        
+                        <div *ngIf="resultado_del_viaje.reserva_automatica" class="me-3 bolt-container" title="Reserva automática">
+                          <i class="fi fi-rr-bolt bolt-icon"></i>
+                        </div>
+
+                        <button (click)="openDetalleViaje(resultado_del_viaje)" type="button" class="btn btn_bg me-2">
+                          <i class="fi fi-rr-file-circle-info"></i>
+                          Mas detalles
+                        </button>
+
+                        <button type="button" class="btn btn_bg me-2" *ngIf="resultado_del_viaje.usuario?.id !== userData?.usuario?.id">
+                          <i class="fi fi-rr-calendar-clock"></i>
+                          Unirse al viaje
+                        </button>
+
+                        <button type="button" class="btn btn_bg mt-2" *ngIf="resultado_del_viaje.usuario?.id !== userData?.usuario?.id">
+                          <i class="fi fi-rr-messages"></i>
+                          Contactar con {{resultado_del_viaje.usuario?.nombre}}
+                        </button>
+                        
+                      </div>
                     </div>
                   </div>
                 </div>

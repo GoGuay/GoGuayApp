@@ -12,6 +12,7 @@ import { MessagingService } from 'src/app/core/menssaging-service/messaging.serv
 import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { TravelService } from 'src/app/core/travel-services/travel.service';
 
 @Component({
     selector: 'app-chat',
@@ -55,6 +56,7 @@ export class ChatPage implements OnInit {
     constructor(private route: ActivatedRoute,
         private messagingService: MessagingService,
         private notificacionesService: NotificacionesService,
+        private travelService: TravelService,
         private navCtrl: NavController) { }
 
     ngOnInit() {
@@ -140,6 +142,10 @@ export class ChatPage implements OnInit {
         }, 100);
     }
 
+    /**
+     * Función para decidir si compartir o no el teléfono con el otro usuario de la conversación.
+     * @param acepta --> Recibe un booleano indicando si el usuario acepta compartir su teléfono (true para aceptar, false para rechazar).
+     */
     decidirCompartirTelefono(acepta: boolean) {
         if (acepta) {
             this.enviarNotificacionTelefono();
@@ -148,6 +154,12 @@ export class ChatPage implements OnInit {
         }
     }
 
+    /**
+     * Función para enviar una notificación al otro usuario de la conversación 
+     * con el teléfono del usuario logueado (compartir teléfono).
+     * 
+     * @returns --> Devuelve un booleano indicando si se compartió el teléfono correctamente o no (true para compartido, false para error).
+     */
     enviarNotificacionTelefono() {
         const mensajeReferencia = this.mensajes[0];
 
@@ -181,7 +193,8 @@ export class ChatPage implements OnInit {
     }
 
     /**
-     * 
+     * Función para dejar de compartir el teléfono (revocar acceso al teléfono). 
+     * Solo se muestra si el usuario ha compartido su teléfono previamente.
      */
     dejarDeCompartir() {
         const payload = {
@@ -208,6 +221,11 @@ export class ChatPage implements OnInit {
         });
     }
 
+    /**
+     * Función para mostrar la fecha en el chat solo cuando cambia el día entre mensajes.
+     * @param index --> Recibe el índice del mensaje actual en el array de mensajes.
+     * @returns --> Devuelve un booleano indicando si se debe mostrar la fecha o no (true para mostrar, false para ocultar).
+     */
     mostrarFecha(index: number): boolean {
         if (index === 0) return true;
 
@@ -215,5 +233,35 @@ export class ChatPage implements OnInit {
         const fechaAnterior = new Date(this.mensajes[index - 1].fecha).setHours(0, 0, 0, 0);
 
         return fechaActual !== fechaAnterior;
+    }
+
+    /**
+     * Función para gestionar una solicitud de unirse a un viaje (aceptar o rechazar).
+     * @param mensaje --> Recibe el mensaje que contiene la solicitud de unirse a un viaje.
+     * @param accion  --> Recibe la acción que se quiere realizar con la solicitud (aceptar o rechazar).
+     */
+    gestionarSolicitud(mensaje: any, accion: 'aceptar' | 'rechazar') {
+        const viajeId = mensaje.texto.split(':')[1];
+        const pasajeroId = mensaje.emisor_id;
+
+        if (accion === 'aceptar') {
+            this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
+            next: () => {
+                this.enviarMensajeSistema("He aceptado tu solicitud. ¡Nos vemos en el viaje!");
+            }
+            });
+        } else {
+            this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.");
+        }
+    }
+
+    /**
+     * Función para enviar un mensaje del sistema (respuestas a solicitudes de viaje).
+     * 
+     * @param texto --> Recibe el texto que se quiere enviar como mensaje del sistema (aceptación o rechazo de solicitud de viaje).
+     */
+    enviarMensajeSistema(texto: string) {
+        this.texto = texto;
+        this.enviar();
     }
 }

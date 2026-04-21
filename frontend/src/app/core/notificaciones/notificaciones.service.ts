@@ -230,4 +230,23 @@ export class NotificacionesService {
         );
     }
 
+    /**
+     * Función para eliminar una notificación específica por su ID.
+     * @param id --> ID de la notificación a eliminar.
+     * @returns --> Devuelve un Observable con la respuesta del backend.
+     */
+    eliminarNotificacion(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/notifications/eliminar_notificacion/${id}`);
+    }
+
+    
+    /**
+     * Función para eliminar todas las notificaciones de un usuario.
+     * @param usuarioId --> ID del usuario cuyas notificaciones se quieren eliminar.
+     * @returns --> Devuelve un Observable con la respuesta del backend.
+     */
+    eliminarTodasNotificaciones(usuarioId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/notifications/eliminar_todas_notificaciones/${usuarioId}`);
+    }
+
 }

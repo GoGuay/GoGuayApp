@@ -10,14 +10,12 @@
   </ion-fab>
 
   <div class="chat-container p-3">
-
     <div class="phone-share-box mb-2">
       <div class="card shadow-sm border-0 text-center p-3 alert-warning-custom">
         <div class="d-flex align-items-center justify-content-center">
           <i class="fi fi-rr-shield-check me-2" style="font-size: 20px;"></i>
           <span>
             <strong>Por tu seguridad:</strong> Mantén las conversaciones sobre el viaje dentro de la app.
-            No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.
           </span>
         </div>
       </div>
@@ -27,77 +25,82 @@
       <div class="card shadow-sm border-0 text-center p-3">
         <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>
         <div class="d-flex justify-content-center gap-2">
-          <ion-button size="small" color="success" (click)="decidirCompartirTelefono(true)">
-            Sí, compartir
-          </ion-button>
-          <ion-button size="small" color="light" (click)="decidirCompartirTelefono(false)">
-            Ahora no
-          </ion-button>
+          <ion-button size="small" color="success" (click)="decidirCompartirTelefono(true)">Sí, compartir</ion-button>
+          <ion-button size="small" color="light" (click)="decidirCompartirTelefono(false)">Ahora no</ion-button>
         </div>
       </div>
     </div>
 
     <div class="phone-info-banner mb-1 text-center" *ngIf="telefonoRecibido">
       <ion-badge color="secondary" class="p-2">
-        <i class="fi fi-rr-phone-call"></i>
-        Teléfono del contacto: {{ telefonoRecibido }}
+        <i class="fi fi-rr-phone-call"></i> Teléfono del contacto: {{ telefonoRecibido }}
       </ion-badge>
     </div>
 
     <div class="text-center mb-3" *ngIf="compartiendoMiTelefono">
       <ion-button fill="clear" size="small" color="danger" (click)="dejarDeCompartir()">
-        <i class="fi fi-rs-crossed-eye"></i>
-        Dejar de compartir mi número
+        <i class="fi fi-rs-crossed-eye"></i> Dejar de compartir mi número
       </ion-button>
     </div>
 
     <ng-container *ngFor="let m of mensajes; let i = index">
-      <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
-        class="mensaje-wrapper">
+      <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}" class="mensaje-wrapper">
+        
+        <div class="mensaje-burbuja" 
+             [ngClass]="{
+               'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:'),
+               'burbuja-solicitud': m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')
+             }">
 
-        <div class="mensaje-burbuja" [ngClass]="{'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:')}">
-
-          <ng-container
-            *ngIf="m.texto.includes('TELEFONO USUARIO:') && m.emisor_id === usuarioLogueadoId; else mensajeRecibido">
-            <div class="contenido-sistema">
-              <span class="texto-telefono">Has compartido tu teléfono</span>
+          <ng-container *ngIf="m.texto.includes('SOLICITUD_UNIRSE_VIAJE:'); else checkTelefono">
+            <div class="solicitud-container p-2">
+              <p><strong><i class="fi fi-rr-messages"></i> Solicitud de viaje</strong></p>
+              <p>Hola, me gustaría unirme a tu viaje.</p>
+              
+              <div class="d-flex gap-2 mt-2" *ngIf="m.emisor_id !== usuarioLogueadoId">
+                <ion-button size="small" color="success" (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
+                <ion-button size="small" color="danger" (click)="gestionarSolicitud(m, 'rechazar')">Rechazar</ion-button>
+              </div>
+              
+              <div *ngIf="m.emisor_id === usuarioLogueadoId">
+                <ion-badge color="medium">Solicitud enviada</ion-badge>
+              </div>
             </div>
           </ng-container>
 
-          <ng-template #mensajeRecibido>
+          <ng-template #checkTelefono>
             <ng-container *ngIf="m.texto.includes('TELEFONO USUARIO:'); else mensajeNormal">
-              <div class="texto-telefono-contacto">
+              <div *ngIf="m.emisor_id === usuarioLogueadoId" class="contenido-sistema">
+                <span class="texto-telefono">Has compartido tu teléfono</span>
+              </div>
+              <div *ngIf="m.emisor_id !== usuarioLogueadoId" class="texto-telefono-contacto">
                 <i class="fi fi-rr-phone-call me-1"></i>
                 <strong>Teléfono recibido:</strong> {{ m.texto.split(':')[1] }}
               </div>
             </ng-container>
-
-            <ng-template #mensajeNormal>
-              {{ m.texto }}
-            </ng-template>
-            <div class="info-meta">
-              <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
-
-              <i *ngIf="m.emisor_id === usuarioLogueadoId"
-                [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
-                class="read-icon-ui">
-              </i>
-            </div>
           </ng-template>
+
+          <ng-template #mensajeNormal>
+            <div class="texto-mensaje">{{ m.texto }}</div>
+          </ng-template>
+
+          <div class="info-meta" *ngIf="!m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')">
+            <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
+            <i *ngIf="m.emisor_id === usuarioLogueadoId"
+               [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
+               class="read-icon-ui">
+            </i>
+          </div>
 
         </div>
       </div>
     </ng-container>
-
   </div>
 </ion-content>
 
 <ion-footer>
   <div class="input-wrapper d-flex align-items-center p-2 bg-light">
-    <ion-textarea [(ngModel)]="texto" placeholder="Escribe un mensaje..." autoGrow="true"
-      class="chat-textarea me-2"></ion-textarea>
-    <ion-button (click)="enviar()" [disabled]="!texto.trim()">
-      Enviar
-    </ion-button>
+    <ion-textarea [(ngModel)]="texto" placeholder="Escribe un mensaje..." autoGrow="true" class="chat-textarea me-2"></ion-textarea>
+    <ion-button (click)="enviar()" [disabled]="!texto.trim()">Enviar</ion-button>
   </div>
 </ion-footer>

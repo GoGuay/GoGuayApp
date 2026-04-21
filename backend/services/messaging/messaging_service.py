@@ -42,29 +42,41 @@ def enviar_mensaje():
 
     emisor = db.session.get(Usuario, emisor_id)
     nombre_emisor = emisor.nombre if emisor else "Un usuario"
-
     texto_mensaje = data.get('texto', '')
+    viaje_id_notif = data.get('viaje_id')
 
+    # 1. Creamos el mensaje de chat
     nuevo_msj = Mensaje(
         conversacion_id=data['conversacion_id'],
-        emisor_id=data['emisor_id'],
+        emisor_id=emisor_id,
         receptor_id=receptor_id,
         texto=texto_mensaje,
         leido=False
     )
-
     db.session.add(nuevo_msj)
+
+    nueva_notif = Notificacion(
+        usuario_id=receptor_id,
+        mensaje=f"Nuevo mensaje de {nombre_emisor}: {texto_mensaje[:30]}...",
+        leida=False,
+        tipo="mensaje",
+        conversacion_id=data['conversacion_id'],
+        viaje_id=viaje_id_notif
+    )
+    db.session.add(nueva_notif)
+
     db.session.commit()
 
+    # 4. Enviamos la push (esto ya lo tenías)
     enviar_notificacion_push(
-            usuario_id=receptor_id, 
-            titulo=f"Mensaje de {nombre_emisor}", 
-            cuerpo=texto_mensaje,
-            data={
-                "conversacion_id": str(data['conversacion_id']), 
-                "tipo": "chat"
-            }
-        )
+        usuario_id=receptor_id, 
+        titulo=f"Mensaje de {nombre_emisor}", 
+        cuerpo=texto_mensaje,
+        data={
+            "conversacion_id": str(data['conversacion_id']), 
+            "tipo": "chat"
+        }
+    )
     
     return jsonify(nuevo_msj.serialize()), 201
 
@@ -162,6 +174,7 @@ def compartir_telefono():
     data = request.json
     conv_id = data.get('conversacion_id')
     emisor_id = data.get('emisor_id')
+    viaje_id_notif = data.get('viaje_id')
 
     conv = Conversacion.query.get(conv_id)
     if not conv:
@@ -172,8 +185,6 @@ def compartir_telefono():
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     receptor_id = conv.usuario2_id if emisor_id == conv.usuario1_id else conv.usuario1_id
-
-
 
     texto_mensaje = f"El usuario {usuario.nombre} ha compartido su número de teléfono contigo."
     
@@ -187,7 +198,8 @@ def compartir_telefono():
     nueva_notif = Notificacion(
         usuario_id=receptor_id,
         mensaje=texto_mensaje,
-        viaje_id=None # O el ID del viaje si lo tienes a mano
+        tipo="mensaje",
+        viaje_id=viaje_id_notif
     )
     db.session.add(nueva_notif)
     
@@ -232,3 +244,52 @@ def dejar_de_compartir():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+   
+
+#
+# Función para solicitar unirse a un viaje a través del chat 
+# (envía un mensaje con la solicitud y una notificación push al conductor).
+#
+@chat_blueprint.route('/solicitar-unirse', methods=['POST'])
+def solicitar_unirse():
+    data = request.json
+    viaje_id = data.get('viaje_id')
+    emisor_id = data.get('emisor_id')
+    receptor_id = data.get('receptor_id')
+    conv_id = data.get('conversacion_id')
+
+    texto_solicitud = f"SOLICITUD_UNIRSE_VIAJE:{viaje_id}"
+    
+    nuevo_msj = Mensaje(
+        conversacion_id=conv_id,
+        emisor_id=emisor_id,
+        receptor_id=receptor_id,
+        texto=texto_solicitud,
+        leido=False
+    )
+    db.session.add(nuevo_msj)
+    
+    nueva_notif = Notificacion(
+        usuario_id=receptor_id,
+        viaje_id=viaje_id,
+        conversacion_id=conv_id,
+        tipo="mensaje", 
+        mensaje="Alguien ha solicitado unirse a tu viaje.",
+        leida=False
+    )
+    db.session.add(nueva_notif)
+
+    enviar_notificacion_push(
+        usuario_id=receptor_id,
+        titulo="Nueva solicitud de viaje",
+        cuerpo="Un pasajero quiere unirse a tu viaje. Responde en el chat.",
+        data={
+            "tipo": "mensaje", 
+            "viaje_id": str(viaje_id),
+            "conversacion_id": str(conv_id)
+        }
+    )
+    
+    db.session.commit()
+    return jsonify(nuevo_msj.serialize()), 201
