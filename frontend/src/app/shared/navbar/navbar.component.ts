@@ -21,7 +21,8 @@ import { NotificacionesService } from 'src/app/core/notificaciones/notificacione
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef } from '@angular/core';
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
-import { RouterModule } from '@angular/router';
+import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -84,51 +85,67 @@ export class NavbarComponent implements OnInit {
     private element: ElementRef,
     private translate: TranslateService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
 
   }
 
   async ngOnInit() {
     this.loadUserData();
+    this.setupPlatformConfig();
 
-    // 2. Comprobar si hay sesión para inicializar datos
-    if (this.userData && this.userData.usuario && this.userData.usuario.id) {
-      this.isLoggedIn = true;
-      await this.obtenerDatosUsuario(this.userData.usuario.id);
-      this.obtenerNotificaciones(this.userData.usuario.id);
-      this.obtenerNotificacionesMensajes(this.userData.usuario.id);
-      this.iniciarPolling();
-    } else {
-      this.usuario = null;
-      this.isLoggedIn = false;
-      this.cdr.detectChanges();
-    }
-
-    // 3. Suscribirse a cambios futuros del usuario
     this.usuarioSub = this.userService.usuario$.subscribe(
       (usuarioActualizado) => {
-        console.log('Cambio detectado en el servicio:', usuarioActualizado);
-
         if (usuarioActualizado) {
           this.usuario = usuarioActualizado;
           this.isLoggedIn = true;
-          if (usuarioActualizado.id) {
-            this.obtenerNotificaciones(usuarioActualizado.id);
-            this.obtenerNotificacionesMensajes(usuarioActualizado.id);
-          }
+          
+          const id = usuarioActualizado.id;
+          this.obtenerNotificaciones(id);
+          this.obtenerNotificacionesMensajes(id);
+          this.iniciarPolling();
         } else {
-          this.usuario = null;
-          this.userData = {} as Usuario;
-          this.isLoggedIn = false;
-          this.numNotificaciones = 0;
-
-          this.cdr.detectChanges();
+          this.resetUserStatus();
         }
+        this.cdr.detectChanges();
       }
     );
+  }
 
-    // Configuración de rutas y plataforma
+  /**
+   * Función para iniciar el polling (obtención) de notificaciones cada 10 segundos.
+   */
+  iniciarPolling() {
+    if (this.pollingSub) clearInterval(this.pollingSub);
+    this.pollingSub = setInterval(() => {
+      if (this.isLoggedIn && this.userData?.usuario?.id) {
+        this.obtenerNotificaciones(this.userData.usuario.id);
+        this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+      }
+    }, 10000);
+  }
+
+
+  /**
+   * Función para cargar los datos del usuario desde el servicio de usuario.
+   * Si el usuario tiene notificaciones no leídas, se actualiza el mensaje de la notificación pendiente.
+   */
+  private resetUserStatus() {
+    this.usuario = null;
+    this.userData = {} as Usuario;
+    this.isLoggedIn = false;
+    this.numNotificaciones = 0;
+    if (this.pollingSub) clearInterval(this.pollingSub);
+  }
+
+
+  /**
+   * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.
+   * 1º Actualiza el número de notificaciones no leídas.
+   * 2º Si hay notificaciones no leídas, actualiza el mensaje de la notificación pendiente.
+   */
+  setupPlatformConfig(){
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
@@ -145,8 +162,8 @@ export class NavbarComponent implements OnInit {
     this.validacionHomePage = this.searchRoute === '/home';
 
     /**
-     * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
-     */
+    * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
+    */
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
@@ -167,15 +184,6 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  iniciarPolling() {
-    if (this.pollingSub) clearInterval(this.pollingSub);
-    this.pollingSub = setInterval(() => {
-      if (this.isLoggedIn && this.userData?.usuario?.id) {
-        this.obtenerNotificaciones(this.userData.usuario.id);
-        this.obtenerNotificacionesMensajes(this.userData.usuario.id);
-      }
-    }, 10000);
-  }
   /**
    * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.ç
    * 1º Actualiza el número de notificaciones no leídas.
@@ -357,6 +365,20 @@ export class NavbarComponent implements OnInit {
     this.cdr.detectChanges();
 
     this.navCtrl.navigateRoot(['/home'], { animated: true });
+  }
+
+  modalCerrarSesion() {
+    const titulo: string = '¡ATENCIÓN: Vas a cerrar sesión!';
+    const mensaje: string = `¿Estás seguro que deseas cerrar sesión?`;
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true, autoFocus: false },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.logout();
+      }
+    });
   }
 
   irAMisViajes() {

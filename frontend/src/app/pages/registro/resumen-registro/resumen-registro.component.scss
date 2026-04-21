@@ -11,8 +11,11 @@
   justify-content: center;
   margin: 0 auto;
   gap: 8px;
+}
 
-  /* espacio entre icono y texto */
+a {
+  color: #B3B5E6 !important;
+  font-weight: bold;
 }
 
 .white-header {

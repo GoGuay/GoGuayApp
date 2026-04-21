@@ -94,14 +94,14 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    */
   obtenerUsuarioActual() {
     this.usersService.obtenerUsuarioPorID(this.data.viaje.usuario_id).subscribe({
-      next: (usuario) => {
-        this.userID = usuario.id;
-        this.verificarSiEstaUnido();
-      },
-      error: (error) => {
-        console.error('Error al obtener el usuario:', error);
-      }
-    });
+    next: (usuario) => {
+      this.viaje.usuario = usuario; 
+      this.userID = usuario.id;
+      this.verificarSiEstaUnido();
+      this.cdRef.markForCheck();
+    },
+    error: (error) => console.error('Error al obtener el usuario:', error)
+  });
   }
 
   /**
@@ -133,14 +133,16 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
 
     this.travelService.getViaje(this.data.viaje.id).subscribe({
       next: (viajeServer) => {
-        // Actualizamos el objeto local con los datos frescos del servidor
+        // Mantenemos los datos del usuario que ya teníamos para que no "parpadee"
+        const usuarioTemporal = this.viaje.usuario; 
         this.viaje = { ...viajeServer };
-        this.yaUnido = this.viaje.acompanantes?.some((a: any) => a.id === usuarioId) || false;
+        if (!this.viaje.usuario) this.viaje.usuario = usuarioTemporal;
 
-        this.cdRef.markForCheck(); // Usar markForCheck con OnPush
+        this.yaUnido = this.viaje.acompanantes?.some((a: any) => a.id === usuarioId) || false;
+        this.cdRef.markForCheck();
       }
     });
-  }
+}
 
 
   /**
@@ -150,6 +152,15 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    * @returns 
    */
   unirseAViaje(viajeID: number) {
+    if (this.data.viaje.reserva_automatica) {
+    this.solicitudAutomatica(viajeID);
+  } else {
+    // NUEVO FLUJO: Abrir chat y enviar solicitud
+    this.enviarSolicitudManual();
+  }
+  }
+
+  solicitudAutomatica(viajeID: number) {
     const title_error: string = '¡Algo anda mal!';
     const message_ya_unico: string = '<p>Ya estás unido a este viaje.</p>';
     const title_viaje_confirmado: string = '¡Confirmado!';
@@ -189,6 +200,35 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     });
   }
 
+  enviarSolicitudManual() {
+    const emisorId = this.userData.usuario.id;
+    const receptorId = this.data.viaje.usuario_id;
+
+    // 1. Iniciamos/Obtenemos conversación
+    this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
+      next: (res) => {
+        const convId = res.conversacion_id;
+        
+        // 2. Enviamos el mensaje especial de solicitud
+        const payload = {
+          viaje_id: this.data.viaje.id,
+          emisor_id: emisorId,
+          receptor_id: receptorId,
+          conversacion_id: convId
+        };
+
+        // Llamada a un nuevo método en messagingService
+        this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
+          this.closeDialog();
+          this.funcionesComunes.openConfirmModal(
+            'Solicitud enviada', 
+            'El conductor debe aceptar tu solicitud para unirte.'
+          );
+          this.navCtrl.navigateForward(['/chat', convId]);
+        });
+      }
+    });
+  }
 
   /**
    * Función para redirigir al perfil público del usuario.
@@ -223,8 +263,13 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   formatData(date: any) {
     return date.split('T')[0].trim();
   }
+
+  /**
+   * 
+   * @param receptorId 
+   * @returns 
+   */
   contactarAcompanante(receptorId: number) {
-    // 1. Obtener el ID del usuario actual desde el localStorage o servicio
     const emisorId = this.userData.usuario.id;
 
     if (emisorId === receptorId) {
@@ -232,13 +277,10 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
        return;
     }
 
-    // 2. Llamar al endpoint para iniciar/obtener conversación
     this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
       next: (res) => {
-        // 3. Cerrar el modal actual
         this.closeDialog();
 
-        // 4. Redirigir a la página de chat con el ID de la conversación obtenida
         this.navCtrl.navigateForward(['/chat', res.conversacion_id], {
           animated: true
         });

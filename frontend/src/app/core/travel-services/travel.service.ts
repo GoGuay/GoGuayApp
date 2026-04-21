@@ -207,4 +207,15 @@ export class TravelService {
     this.viajeDataSubject.next(null);
     localStorage.removeItem('tempViaje');
   }
+
+  confirmarPasajeroManual(viajeId: number, pasajeroId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/confirmar_pasajero_manual`, { viaje_id: viajeId, pasajero_id: pasajeroId }).pipe(
+      catchError((error) => {
+        console.error('Error al confirmar pasajero manualmente:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
+    );  
+  }
 }

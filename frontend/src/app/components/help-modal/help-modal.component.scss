@@ -26,6 +26,13 @@
   }
 }
 
+.close-button:focus,
+.close-button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
 .modal-body {
   font-size: 1rem;
   margin: 1rem 0;

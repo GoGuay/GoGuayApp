@@ -1,15 +1,107 @@
-.form-select {
-  /* En lugar de 50% o 90px, usamos el ancho del contenido más largo */
+.form-control {
   width: 100% !important;
   max-width: 380px !important;
-  /* El ancho aproximado de tu frase larga + flecha */
   min-width: 300px;
-  /* Evita que se encoja demasiado */
-
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
-  /* Lo centra si el padre es un bloque */
+}
+
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+  border-radius: 35px;
+  border: 2px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+
+.contenedor {
+  overflow: visible !important;
+}
+
+.custom-dropdown .selected-value {
+  margin-left: -18px !important;
+  color: #666;
+}
+
+.custom-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 35px;
+  padding: 12px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  z-index: 100;
+
+  i {
+    margin-right: 10px;
+    color: black;
+  }
+
+  .selected-value {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* LA LISTA FLOTANTE */
+  .custom-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+    padding: 10px;
+    margin: 0;
+    list-style: none;
+    z-index: 9999 !important;
+    max-height: 250px;
+    overflow-y: auto;
+
+    li {
+      padding: 12px 15px;
+      border-radius: 15px;
+      margin-bottom: 5px;
+      transition: all 0.2s ease;
+      text-align: center;
+      color: #333;
+
+      &:hover {
+        background-color: #f8f1e9;
+        color: #e0a667;
+      }
+
+      &.selected {
+        background-color: #e0a667;
+        color: black;
+      }
+    }
+  }
+}
+
+.custom-select:focus {
+  border-color: #80bdff;
+  box-shadow: none;
+}
+
+.custom-select option {
+  background-color: white;
+  color: #333;
+  padding: 10px;
+  border-radius: 15px !important;
 }
 
 ion-accordion {
@@ -54,7 +146,7 @@ ion-accordion [slot="content"] {
   box-sizing: border-box;
   border-radius: 15px;
   border: 1px solid black;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+
   background-color: #f4f5f8;
   overflow: hidden;
 }
@@ -62,7 +154,7 @@ ion-accordion [slot="content"] {
 .contenedor_imagen {
   width: 270px !important;
   height: 270px !important;
-  margin: -33px !important;
+  margin: 1px !important;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -73,6 +165,25 @@ ion-accordion [slot="content"] {
   width: 100% !important;
   height: 100% !important;
   object-fit: contain;
+}
+
+.imagen_evento img {
+  border-radius: 35px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.enlace-info {
+  background: linear-gradient(to right, #ff9999, #ffb366, #85d685, #66b3ff, #b366ff, #ff66b3);
+  text-decoration: none;
+  font-weight: bold;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+
+  &:hover {
+    color: #3600cc;
+    text-decoration: underline;
+  }
 }
 
 /* Muy importante: Ionic a veces añade padding automático al abrir. Lo fijamos: */

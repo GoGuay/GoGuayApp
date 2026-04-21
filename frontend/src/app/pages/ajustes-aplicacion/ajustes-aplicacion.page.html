@@ -19,11 +19,8 @@
               {{ "AJUSTESAPP.OPCION_IDIOMA.SUBTITULO" | translate }}
             </p>
             <div class="d-flex justify-content-center mt-2">
-              <select
-                class="form-select w-75 selectIdiomas"
-                aria-label="Selecciona un idioma"
-                (change)="changeLanguage($event)"
-              >
+              <select class="form-select w-75 selectIdiomas" aria-label="Selecciona un idioma"
+                (change)="changeLanguage($event)">
                 <option selected disabled>
                   {{ "AJUSTESAPP.OPCION_IDIOMA.OPTION_DEFAULT" | translate }}
                 </option>
@@ -47,10 +44,7 @@
               {{ "AJUSTESAPP.OPCION_BANNER.SUBTITULO" | translate }}
             </p>
             <div class="d-flex justify-content-center mt-4">
-              <ion-toggle
-                [(ngModel)]="mostrarJumbotron"
-                (ionChange)="guardarAjustes()"
-              ></ion-toggle>
+              <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="guardarAjustes()"></ion-toggle>
             </div>
           </div>
         </ion-col>
@@ -62,14 +56,8 @@
             <p class="mt-2 text-start">
               {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
             </p>
-            <div class="d-flex justify-content-center mt-4">
-              <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
-            </div>
-            <div class="d-flex justify-content-center">
-              <mat-divider class="mt-2" style="width: 150px;"></mat-divider>
-            </div>
-            
-             <p class="mt-2 text-start">
+
+            <p class="mt-2 text-start">
               Mostrar notificaciones leídas
             </p>
             <div class="d-flex justify-content-center mt-4">
@@ -77,7 +65,69 @@
             </div>
           </div>
         </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <div class="box-section">
+            <h3>{{ "AJUSTESAPP.MODO_OSCURO.TITLE" | translate }}</h3>
+            <mat-divider></mat-divider>
+            <p class="mt-2 text-start">
+              {{ "AJUSTESAPP.MODO_OSCURO.SUBTITLE" | translate }}
+            </p>
+            <div class="d-flex justify-content-center mt-4">
+              <ion-icon name="sunny-outline" class="me-2"></ion-icon>
+              <ion-toggle (ionChange)="toggleDarkMode($event)"></ion-toggle>
+              <ion-icon name="moon-outline" class="ms-2"></ion-icon>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <div class="box-section">
+            <h3>{{ "AJUSTESAPP.PREFERENCIAS.TITLE" | translate }}</h3>
+            <mat-divider></mat-divider>
+            <p class="mt-2 text-start">
+              {{ "AJUSTESAPP.PREFERENCIAS.SUBTITLE" | translate }}
+            </p>
+            <div class="mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fi fi-rs-meeting me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.HABLAR" | translate }}</span>
+                <ion-checkbox [(ngModel)]="leGustaHablar" (ionChange)="guardarPreferencias()"></ion-checkbox>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fi fi-rr-music me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.MUSICA" | translate }}</span>
+                <ion-checkbox [(ngModel)]="leGustaMusica" (ionChange)="guardarPreferencias()"></ion-checkbox>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fi fi-rs-lips-silence me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.SILENCIO" | translate
+                  }}</span>
+                <ion-checkbox [(ngModel)]="leGustaSilencio" (ionChange)="guardarPreferencias()"></ion-checkbox>
+              </div>
+
+              <mat-divider class="my-2"></mat-divider>
+
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fi fi-rr-paw me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.MASCOTAS" | translate }}</span>
+                <ion-checkbox [(ngModel)]="aceptaMascotas" (ionChange)="guardarPreferencias()"></ion-checkbox>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="fi fi-rr-smoking me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.FUMAR" | translate }}</span>
+                <ion-checkbox [(ngModel)]="fuma" (ionChange)="guardarPreferencias()"></ion-checkbox>
+              </div>
+            </div>
+          </div>
+        </ion-col>
+
       </ion-row>
+
+      <div class="d-flex justify-content-center mt-4 mb-4">
+        <button class="btn btn_bg" (click)="logout()">
+          <i class="fi fi-rs-log-out"></i>
+          Cerrar Sesión
+        </button>
+      </div>
 
       <ion-row class="container d-flex justify-content-center">
         <!-- Cambio de contraseña -->
@@ -93,32 +143,18 @@
                 <label for="passwordActual" class="form-label">
                   {{'AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL' | translate}}
                 </label>
-                <input
-                  type="password"
-                  class="form-control w-10 mb-1"
-                  id="passwordActual"
-                  [(ngModel)]="passwordActual"
-                  (blur)="comprobarContrasenaActual()"
-                  [disabled]="false"
-                  aria-label="Campo para escribir la contraseña actual"
-                />
+                <input type="password" class="form-control w-10 mb-1" id="passwordActual" [(ngModel)]="passwordActual"
+                  (blur)="comprobarContrasenaActual()" [disabled]="false"
+                  aria-label="Campo para escribir la contraseña actual" />
                 <div class="text-start mb-4">
-                  <a
-                    class="small"
-                    href="'../../../forgot-password//forgot-password.page.html"
-                    >{{'AJUSTESAPP.PASSWORD.FORGOT_PASSWORD' | translate}}</a
-                  >
+                  <a class="small"
+                    href="'../../../forgot-password//forgot-password.page.html">{{'AJUSTESAPP.PASSWORD.FORGOT_PASSWORD'
+                    | translate}}</a>
                 </div>
-                <div
-                  *ngIf="isPasswordActualValida === true"
-                  class="text-success mt-2"
-                >
+                <div *ngIf="isPasswordActualValida === true" class="text-success mt-2">
                   {{'AJUSTESAPP.PASSWORD.PASSWORD_CONFIRM' | translate}}
                 </div>
-                <div
-                  *ngIf="isPasswordActualValida === false"
-                  class="text-danger mt-2"
-                >
+                <div *ngIf="isPasswordActualValida === false" class="text-danger mt-2">
                   {{'AJUSTESAPP.PASSWORD.PASSWORD_INCORRECTA' | translate}}
                 </div>
               </div>
@@ -128,15 +164,9 @@
                 <label for="nuevaPassword1" class="form-label">
                   {{'AJUSTESAPP.PASSWORD.NUEVA_CONTRAS' | translate}}
                 </label>
-                <input
-                  type="password"
-                  class="form-control w-10"
-                  id="nuevaPassword1"
-                  [(ngModel)]="nuevaPassword1"
-                  [disabled]="!isPasswordActualValida"
-                  (input)="validarNuevaPassword()"
-                  aria-label="Campo para escibir la nueva contraseña"
-                />
+                <input type="password" class="form-control w-10" id="nuevaPassword1" [(ngModel)]="nuevaPassword1"
+                  [disabled]="!isPasswordActualValida" (input)="validarNuevaPassword()"
+                  aria-label="Campo para escibir la nueva contraseña" />
               </div>
 
               <!-- Confirmar nueva contraseña2 -->
@@ -144,15 +174,9 @@
                 <label for="nuevaPassword2" class="form-label mb-1">
                   {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
                 </label>
-                <input
-                  type="password"
-                  class="form-control w-10"
-                  id="nuevaPassword2"
-                  [(ngModel)]="nuevaPassword2"
-                  [disabled]="!isNuevaPassword1Valida"
-                  (input)="validarConfirmacionPassword()"
-                  aria-label="Campo para confirmar la nueva contraseña"
-                />
+                <input type="password" class="form-control w-10" id="nuevaPassword2" [(ngModel)]="nuevaPassword2"
+                  [disabled]="!isNuevaPassword1Valida" (input)="validarConfirmacionPassword()"
+                  aria-label="Campo para confirmar la nueva contraseña" />
               </div>
               <div *ngIf="errorMensaje" class="text-danger mt-2">
                 {{ errorMensaje }}
@@ -162,13 +186,8 @@
               </div>
 
               <ion-row class="boton_guardar d-flex justify-content-center">
-                <button
-                  type="button"
-                  class="btn btn_bg"
-                  mat-raised-button
-                  [disabled]="!isConfirmacionPasswordValida"
-                  (click)="botonCambioPassword()"
-                >
+                <button type="button" class="btn btn_bg" mat-raised-button [disabled]="!isConfirmacionPasswordValida"
+                  (click)="botonCambioPassword()">
                   {{ "BOTON.CAMBIAR" | translate }}
                 </button>
               </ion-row>
@@ -185,30 +204,17 @@
           <div class="box-section-2">
             <div class="text-center">
               <p class="text-center">
-                <strong
-                  >{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</strong
-                >
+                <strong>{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</strong>
               </p>
               <div>
-                <p
-                  class="mt-4"
-                  style="color: red; font-weight: bold; text-align: justify"
-                >
+                <p class="mt-4" style="color: red; font-weight: bold; text-align: justify">
                   {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}
                 </p>
-                <p
-                  class="mt-5 mb-4"
-                  style="color: red; font-weight: bold; text-align: justify"
-                >
+                <p class="mt-5 mb-4" style="color: red; font-weight: bold; text-align: justify">
                   {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA2" | translate }}
                 </p>
                 <div class="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn_bg mt-5"
-                    mat-raised-button
-                    (click)="modalEliminarUsuario()"
-                  >
+                  <button type="button" class="btn btn_bg mt-5" mat-raised-button (click)="modalEliminarUsuario()">
                     {{ "BOTON.ELIMINAR_CTA" | translate }}
                   </button>
                 </div>
@@ -220,10 +226,13 @@
 
       <!-- Mensaje de confirmación de los cambios - pie de página -->
       <p-toast position="bottom-center"></p-toast>
-      <p class="info-text">
-        {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
-        <img class="icon_logo" src="../../../assets/logo/PRIDECAR.png" />
-      </p>
+      <div class="text-center">
+        <p class="info-text">
+          {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
+          <img class="icon_logo" src="../../../assets/logo/PRIDECAR.png" />
+        </p>
+      </div>
+
     </div>
   </div>
 </ion-content>

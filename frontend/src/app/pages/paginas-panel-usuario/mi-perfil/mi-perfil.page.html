@@ -78,7 +78,7 @@
             <div class="mb-3">
               <label for="pronombre" class="form-label pronombre">
                 {{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL' | translate}}
-                <span class="ms-2 text-primary" tabindex="0" role="button" (click)="presentPopover($event)"
+                <span tabindex="0" class="ms-2 text-primary" role="button" (click)="presentPopover($event)"
                   [matTooltip]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate" matTooltipPosition="above"
                   [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate">
                   <i class="bi-question-circle" aria-hidden="true"></i>
@@ -90,8 +90,8 @@
                   </ng-template>
                 </ion-popover>
               </label>
-              <select id="pronombre" class="form-select col-pronombre" [(ngModel)]="pronombreEditado" name="pronombre"
-                (ngModelChange)="onInputChange()" aria-describedby="pronombreAyuda">
+              <select id="pronombre" class="form-select col-pronombre form-control" [(ngModel)]="pronombreEditado"
+                name="pronombre" (ngModelChange)="onInputChange()" aria-describedby="pronombreAyuda">
                 <option selected disabled>{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate }}</option>
                 <option value="Él / He / Him">Él / He / Him</option>
                 <option value="Ella / She / Her">Ella / She / Her</option>
@@ -123,7 +123,7 @@
                 </ion-popover>
               </label>
 
-              <select id="genero" class="form-select col-genero" [(ngModel)]="generoEditado" name="genero"
+              <select id="genero" class="form-select col-genero form-control" [(ngModel)]="generoEditado" name="genero"
                 (ngModelChange)="onInputChange()" aria-describedby="generoAyuda">
                 <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}</option>
                 <option value="H_CIS">{{ 'SELECTOR_GENERO.H_CIS' | translate }}</option>
@@ -157,7 +157,7 @@
                 </ion-popover>
               </label>
               <select id="orientacion" [(ngModel)]="orientacionEditada" name="orientacion"
-                class="form-select col-orientacion" (ngModelChange)="onInputChange()"
+                class="form-select col-orientacion form-control" (ngModelChange)="onInputChange()"
                 aria-describedby="orientacionAyuda">
                 >
                 <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
@@ -244,8 +244,9 @@
             <h4 class="text-center mb-4">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</h4>
 
             <div role="group" aria-labelledby="preferencias-label">
-              <label id="preferencias-label" class="form-label mb-3">{{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' | translate
-                }}</label>
+              <label id="preferencias-label" class="form-label mb-3"><strong>{{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' |
+                  translate
+                  }}</strong></label>
 
               <!-- HABLAR -->
               <div class="form-check">
@@ -281,6 +282,28 @@
                   (change)="onCheckboxChange('Silencio', $event)"
                   [checked]="preferenciasSeleccionadas.includes('Silencio')" id="pref-silence" />
                 <label class="form-check-label" for="pref-silence">{{ 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate
+                  }}</label>
+              </div>
+
+              <mat-divider class="mb-1 mt-2"></mat-divider>
+              <label class="mb-2"><strong>Otras preferencias de viaje</strong></label>
+
+              <!-- MASCOTAS -->
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [value]=" 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate "
+                  (change)="onCheckboxChange('Mascotas', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('Mascotas')" id="pref-silence" />
+                <label class="form-check-label" for="pref-pets">{{ 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate
+                  }}</label>
+              </div>
+
+              <!-- FUMAR -->
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" [value]=" 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate "
+                  (change)="onCheckboxChange('Fumar', $event)" [checked]="preferenciasSeleccionadas.includes('Fumar')"
+                  id="pref-silence" />
+                <label class="form-check-label" for="pref-smoke">{{ 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate
                   }}</label>
               </div>
             </div>

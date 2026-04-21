@@ -33,6 +33,8 @@
                     </li>
                   </ul>
                 </li>
+
+                <!-- Selección de destino  -->
                 <li>
                   <i class="fi fi-rr-spain-map me-1"></i>
                   <strong>Lugar de destino: </strong>
@@ -48,19 +50,39 @@
                     </li>
                   </ul>
                 </li>
+
+                <!-- Selección de coches  -->
                 <li>
                   <i class="fi fi-rr-car me-1"></i>
                   <strong>Coche seleccionado: </strong>
-                  <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo
-                    }}</span>
-                  <select *ngIf="editandoViaje" class="form-control selectCar" [(ngModel)]="currentViajeData.coche">
-                    <option [ngValue]="null" disabled selected *ngIf="!currentViajeData?.coche">
-                      Selecciona un coche para el viaje
-                    </option>
-                    <option *ngFor="let coche of userData?.usuario?.vehiculos" [ngValue]="coche">
-                      {{ coche.marca }} {{ coche.modelo }}
-                    </option>
-                  </select>
+
+                  <span *ngIf="!editandoViaje">
+                    {{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo }}
+                  </span>
+
+                  <div *ngIf="editandoViaje" class="select-container custom-dropdown-car mt-2 mb-2"
+                    (click)="toggleDropdownCoche()" [class.open]="isOpenCoche">
+
+                    <img src="../../../../../../assets/sistema/viaje-en-coche.png" class="select-icon"
+                      alt="icono coche" />
+
+                    <div class="selected-value">
+                      {{ currentViajeData?.coche ? (currentViajeData.coche.marca + ' ' + currentViajeData.coche.modelo)
+                      : 'Selecciona un coche' }}
+                    </div>
+
+                    <ul class="custom-options" *ngIf="isOpenCoche">
+                      <li *ngFor="let coche of userData?.usuario?.vehiculos"
+                        (click)="selectCoche(coche); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.coche?.id === coche.id">
+                        {{ coche.marca }} {{ coche.modelo }}
+                        <small style="opacity: 0.7;">({{ coche.color }})</small>
+                      </li>
+                      <li *ngIf="userData?.usuario?.vehiculos?.length === 0" class="disabled">
+                        No tienes coches registrados
+                      </li>
+                    </ul>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -70,9 +92,30 @@
                 <li>
                   <i class="fi fi-rs-users-alt me-1"></i>
                   <strong>Plazas disponibles: </strong>
+
                   <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
-                  <input *ngIf="editandoViaje" type="number" min="1" max="4" [(ngModel)]="currentViajeData.plazas"
-                    class="form-control selectPlaces" />
+
+                  <div *ngIf="editandoViaje" class="select-container custom-dropdown mt-2 mb-2"
+                    (click)="toggleDropdown()" [class.open]="isOpen">
+
+                    <img src="../../../../../../assets/sistema/usuarios-alt.png" class="select-icon"
+                      alt="icono usuarios" />
+
+                    <div class="selected-value">
+                      {{ currentViajeData?.plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
+                    </div>
+
+                    <ul class="custom-options" *ngIf="isOpen">
+                      <li (click)="selectOption('1'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '1'">1</li>
+                      <li (click)="selectOption('2'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '2'">2</li>
+                      <li (click)="selectOption('3'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '3'">3</li>
+                      <li (click)="selectOption('4'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '4'">4</li>
+                    </ul>
+                  </div>
                 </li>
                 <li>
                   <i class="fi fi-rr-calendar me-1"></i>

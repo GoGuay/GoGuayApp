@@ -5,7 +5,7 @@
 @import "./animations.scss";
 @import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
-
+@import '@angular/cdk/a11y-prebuilt.css';
 @import "@ionic/angular/css/core.css";
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
@@ -99,7 +99,8 @@ ion-select,
 ion-item,
 textarea,
 label,
-small {
+small,
+span {
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -130,6 +131,16 @@ ion-content {
 }
 
 .btn_bg:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.btn_bg_secondary {
+  color: black;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.btn_bg_secondary:focus-visible {
   outline: 2px solid #000;
   outline-offset: 2px;
 }
@@ -386,13 +397,68 @@ ion-fab-button {
   --background: #ffffff; // Fondo blanco del alert
 
   .alert-wrapper {
-    border-radius: 20px !important; // Bordes muy redondeados
+    border-radius: 35px !important; // Bordes muy redondeados
     overflow: hidden;
   }
 
   .alert-title {
+    text-align: center;
     color: #000000 !important; // Título en negro
     font-weight: bold !important;
+    border-bottom: 1px solid #f9f9f9ec !important;
+  }
+
+  .alert-checkbox-group {
+    max-height: 300px;
+    border-top: 0px solid #8f5b5b !important;
+    border-bottom: 0px solid #f9f9f9 !important;
+
+    .alert-checkbox-button {
+      border-bottom: 0px solid #f9f9f9 !important;
+      border-radius: 15px !important;
+
+      .alert-checkbox-label {
+        padding-left: 52px !important;
+        padding-right: 16px !important;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        display: block !important;
+      }
+
+      .alert-checkbox-icon {
+        left: 16px !important;
+        margin-right: 0 !important;
+        position: absolute !important;
+        top: 50%;
+        border-radius: 15px !important;
+        transform: translateY(-50%);
+      }
+
+      &.alert-checkbox-button:hover {
+        border-radius: 15px !important;
+      }
+    }
+  }
+
+  .alert-button-group {
+    padding: 8px;
+
+    button {
+      border-radius: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .alert-button-role-cancel {
+      color: #888;
+    }
+
+    .alert-button-role-destructive {
+      color: #d32f2f;
+      background-color: #ffeeee;
+      border-radius: 35px !important;
+    }
   }
 
   /* Forzar que todos los botones sean negros */
@@ -421,8 +487,10 @@ ion-fab-button {
     }
   }
 
+
+
   .alert-button:hover {
-    border-radius: 15px !important;
+    border-radius: 35px !important;
   }
 }
 
@@ -445,4 +513,217 @@ ion-fab-button {
       color: #666666 !important;
     }
   }
+
+}
+
+
+// Solo se activa cuando se navega por teclado (TAB)
+button:focus-visible,
+.btn_bg_secondary:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid #000000 !important; // Borde negro
+  outline-offset: 2px; // Espacio entre el botón y el borde
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important; // Sombra negra difuminada
+  transition: box-shadow 0.2s ease;
+}
+
+// Opcional: Eliminar el borde azul por defecto de los navegadores (Chrome/Edge)
+:focus {
+  outline: none;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 35px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+.form-check:focus,
+.form-check-input:focus,
+span:focus {
+  border: 3px solid #9b59b6 !important;
+  outline: none;
+}
+
+::ng-deep .calendario-bajo-boton {
+  margin-top: 5px;
+  /* Ya no necesita el transform-origin manual, Angular lo calculará al detectar el input */
+}
+
+.select-form-field .mat-mdc-text-field-wrapper {
+  border-radius: 35px !important;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.mat-mdc-select-panel {
+  border-radius: 15px !important;
+  margin-top: 5px;
+  padding: 8px 0 !important;
+}
+
+.lista_sugerencias {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+  z-index: 1000;
+  max-height: 230px;
+  overflow-y: auto;
+  width: auto;
+}
+
+.lista_sugerencias li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lista_sugerencias li:hover {
+  background-color: #f0d7b4;
+  color: black;
+  font-weight: bold;
+}
+
+/********************************************
+    CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+*********************************************/
+/* Redondear el contenedor principal del Timepicker */
+.mat-timepicker-panel {
+  border-radius: 35px !important;
+  // overflow: hidden !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  background-color: white !important;
+}
+
+/* Redondear el contenido interno (el reloj o lista de horas) */
+.mat-timepicker-content,
+mat-timepicker-content {
+  border-radius: 35px !important;
+  border: none !important;
+}
+
+/* Ajustar el contenedor que envuelve las acciones (Botones de Cancelar/OK) */
+.mat-timepicker-container {
+  border-radius: 35px !important;
+  padding: 10px !important;
+}
+
+/* esto asegura que los bordes se corten */
+.mat-timepicker-content-container {
+  border-radius: 35px !important;
+}
+
+/* Cambia el color de la selección al naranja de tu app */
+.mat-timepicker-clock-cell.mat-timepicker-clock-cell-selected {
+  background-color: #e0a667 !important;
+  color: white !important;
+}
+
+.mat-timepicker-button.mat-primary {
+  color: #e0a667 !important;
+}
+
+/********************************************
+  FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+*********************************************/
+
+.list-group-item.active {
+  z-index: 2;
+  color: black;
+  font-weight: bold;
+  background-color: #f0d7b4;
+
+}
+
+/* Estilo para el contenedor y el select */
+.custom-dropdown {
+  position: relative;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 35px;
+  padding: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 300px;
+  width: 100%;
+
+  .selected-value {
+    margin-left: 35px;
+    color: #666;
+  }
+
+  .custom-options {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 35px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    li {
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 35px;
+      transition: all 0.2s ease;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // EFECTO HOVER
+      &:hover {
+        background-color: #F0D7B4;
+        color: black;
+        transform: translateX(5px); // Un pequeño efecto visual
+      }
+
+      &.selected {
+        background-color: #F0D7B4;
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 250px;
+}
+
+.select-container select {
+  padding-left: 40px;
+  width: 100%;
+}
+
+.select-container .select-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
 }

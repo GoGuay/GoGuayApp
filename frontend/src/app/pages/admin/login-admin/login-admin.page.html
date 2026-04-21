@@ -1,0 +1,41 @@
+<ion-content class="ion-padding">
+    <div class="login-wrapper">
+        <div class="login-header">
+            <ion-icon name="shield-lock-outline" color="primary"></ion-icon>
+            <h1>Admin Portal</h1>
+            <p>Gestión de GoGuay</p>
+        </div>
+
+        <form class="form_container" [formGroup]="adminForm" (ngSubmit)="login()">
+            <ion-list lines="none">
+                <ion-item class="custom-input">
+                    <ion-label position="stacked">Email Corporativo</ion-label>
+                    <input formControlName="email" type="email" placeholder="nombre@app.com">
+                </ion-item>
+
+                <ion-item class="custom-input ion-margin-top">
+                    <ion-label position="stacked">Contraseña</ion-label>
+                    <input formControlName="password" type="password" placeholder="••••••••">
+                </ion-item>
+
+
+                <input type="checkbox" class="form-check-input me-2" id="check" formControlName="check" />
+                <label class="form-check-label" for="check">Recuérdame</label>
+
+
+                <div class="ion-margin-top">
+                    <ion-button expand="block" type="submit" [disabled]="spinner_de_carga">
+                        <span *ngIf="!spinner_de_carga">Acceder al Panel</span>
+                        <app-spinner *ngIf="spinner_de_carga"></app-spinner>
+                    </ion-button>
+                </div>
+            </ion-list>
+        </form>
+
+        <div class="footer-links">
+            <ion-button fill="clear" color="medium" size="small" (click)="navCtrl.back()">
+                Volver a GoGuay
+            </ion-button>
+        </div>
+    </div>
+</ion-content>

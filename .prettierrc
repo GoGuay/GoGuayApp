@@ -1,11 +1,11 @@
 {
-  "printWidth": 150,
+  "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
   "singleQuote": true,
   "semi": true,
-  "bracketSameLine": true,
+  "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "ignore",
-  "singleAttributePerLine": false,
+  "singleAttributePerLine": true,
   "arrowParens": "always"
 }

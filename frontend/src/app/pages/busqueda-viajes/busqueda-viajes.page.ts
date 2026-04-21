@@ -35,7 +35,7 @@ export class BusquedaViajesPage implements OnInit {
 
   mostrarJumbotron = true;
   /** Objeto para guardar los parámetros que vienen en la URL */
-  busquedaParams: any = {};
+  busquedaParams: any;
 
   irAtras: string = '../../../assets/sistema/atras.png';
   imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
@@ -86,5 +86,9 @@ export class BusquedaViajesPage implements OnInit {
     const valor = event.detail.value;
     this.filtroSeleccionado = valor;
     popover.dismiss();
+  }
+
+  actualizarParametrosBusqueda(event: any) {
+    this.busquedaParams = event;
   }
 }

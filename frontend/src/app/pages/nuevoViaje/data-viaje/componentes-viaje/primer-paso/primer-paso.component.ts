@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIcon } from '@angular/material/icon';
@@ -18,6 +18,7 @@ import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehicu
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 registerLocaleData(localeEs);
 
@@ -26,7 +27,6 @@ registerLocaleData(localeEs);
   standalone: true,
   imports: [
     IonicModule,
-    MatIcon,
     MatCardModule,
     MatDatepickerModule,
     FormsModule,
@@ -35,6 +35,7 @@ registerLocaleData(localeEs);
     MatInputModule,
     CommonModule,
     MatButtonModule,
+    TranslateModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -45,6 +46,7 @@ registerLocaleData(localeEs);
 })
 export class PrimerPasoComponent implements OnInit {
   userData: any = { usuario: { vehiculos: [] } };
+  isOpen: boolean = false;
 
   private destroy$ = new Subject<void>();
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
@@ -62,13 +64,35 @@ export class PrimerPasoComponent implements OnInit {
 
   invalid_date: boolean = false;
 
+  reservaAutomatica: boolean = false;
+
   hoy: string = new Date().toISOString();
+
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+  }
+
+  selectOption(valor: string) {
+    this.plazas = valor;
+    this.isOpen = false;
+    this.guardaDatosDelViajeEnServicio('plazas', valor);
+  }
+
+  // Opcional: Cerrar si el usuario hace click fuera
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
+
 
   constructor(
     private travelService: TravelService,
     private platform: Platform,
     private vehiculosServicesService: VehiculosServicesService,
     private router: Router,
+    private elementRef: ElementRef
   ) {
     this._adapter.setLocale('es-ES');
 
@@ -110,6 +134,7 @@ export class PrimerPasoComponent implements OnInit {
       this.viajeros = viajeData.viajeros || '0';
       this.plazas = viajeData.plazas || '';
       this.cocheSeleccionado = viajeData.coche || '';
+      this.reservaAutomatica = viajeData.reserva_automatica ?? false;
     }
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
@@ -180,6 +205,8 @@ export class PrimerPasoComponent implements OnInit {
    */
   guardaDatosDelViajeEnServicio(clave: string, valor: any) {
     const currentViajeData = this.travelService.getViajeData() || {};
+
+    console.log('Datos del viaje a crear: ', currentViajeData);
 
     const viajeData = {
       ...currentViajeData,
@@ -297,11 +324,18 @@ export class PrimerPasoComponent implements OnInit {
     }
   }
 
+  /**
+   * Función para seleccionar el coche con el que quiere realizar el viaje.
+   * @param coche --> Recibe la información del coche seleccionado.
+   */
   seleccionarCoche(coche: any) {
     this.cocheSeleccionado = coche;
     this.guardaDatosDelViajeEnServicio('coche', coche);
   }
 
+  /**
+   * Función para redirigir a la ventana del perfil para añadir coche.
+   */
   irARegistrarVehiculo() {
     this.router.navigate(['/mi-perfil'], { queryParams: { from: 'newTravel' } });
   }
@@ -334,6 +368,15 @@ export class PrimerPasoComponent implements OnInit {
    */
   trackByVehiculo(index: number, coche: any) {
     return coche.id;
+  }
+
+  /**
+   * Función para seleccionar el tipo de reserva.
+   * @param esAutomatica --> Recibe la selección del tipo de reserva que hace el usuario.
+   */
+  seleccionarTipoReserva(esAutomatica: boolean) {
+    this.reservaAutomatica = esAutomatica;
+    this.guardaDatosDelViajeEnServicio('reserva_automatica', esAutomatica);
   }
 
   /**

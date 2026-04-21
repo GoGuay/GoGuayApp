@@ -189,10 +189,10 @@ export class NotificacionesService {
 
 
     /**
- * Marca una notificación como leída o no leída.
- * @param notificacionId ID de la notificación.
- * @param leida Estado booleano: true = leída, false = no leída.
- */
+     * Marca una notificación como leída o no leída.
+     * @param notificacionId ID de la notificación.
+     * @param leida Estado booleano: true = leída, false = no leída.
+     */
     toggleEstadoNotificacion(notificacionId: number, leida: boolean): Observable<any> {
         return this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
             catchError((error) => {
@@ -201,4 +201,52 @@ export class NotificacionesService {
             })
         );
     }
+
+    /**
+     * Envía la solicitud al servidor para compartir el número de teléfono.
+     * Esto disparará la notificación push al receptor en el backend.
+     * @param data Objeto con conversacion_id y emisor_id
+     */
+    compartirTelefono(data: { conversacion_id: number, emisor_id: number }): Observable<any> {
+        return this.http.post(`${this.apiUrl}/chat/compartir-telefono`, data).pipe(
+            catchError((error) => {
+                console.error('Error al compartir el teléfono:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Solicita al servidor eliminar los mensajes de sistema que comparten
+     * el teléfono del usuario en una conversación específica.
+     * @param data Objeto con conversacion_id y emisor_id
+     */
+    dejarDeCompartirTelefono(data: { conversacion_id: number, emisor_id: number }): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/chat/dejar-de-compartir`, { body: data }).pipe(
+            catchError((error) => {
+                console.error('Error al dejar de compartir teléfono:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Función para eliminar una notificación específica por su ID.
+     * @param id --> ID de la notificación a eliminar.
+     * @returns --> Devuelve un Observable con la respuesta del backend.
+     */
+    eliminarNotificacion(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/notifications/eliminar_notificacion/${id}`);
+    }
+
+    
+    /**
+     * Función para eliminar todas las notificaciones de un usuario.
+     * @param usuarioId --> ID del usuario cuyas notificaciones se quieren eliminar.
+     * @returns --> Devuelve un Observable con la respuesta del backend.
+     */
+    eliminarTodasNotificaciones(usuarioId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/notifications/eliminar_todas_notificaciones/${usuarioId}`);
+    }
+
 }

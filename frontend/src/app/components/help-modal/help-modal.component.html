@@ -8,6 +8,7 @@
       <mat-icon>close</mat-icon>
     </button>
 
+
   </div>
   <mat-divider></mat-divider>
   <div class="modal-body">
@@ -25,10 +26,10 @@
     <button mat-raised-button color="primary" class="me-2" (click)="crearVuelta()" *ngIf="data.showReturnTripButton">
       Crear viaje de vuelta
     </button>
-    <button mat-button class="btn_bg" (click)="aceptarCondiciones('registro')" *ngIf="data.showAcceptButton">
+    <button mat-button class="btn_bg" (click)="aceptarCondiciones('registro')" *ngIf="data.showAcceptButton"
+      cdkFocusInitial>
       Aceptar
     </button>
-
     <button mat-button (click)="cerrarParaMasInfo('home')" *ngIf="data.showMoreInfoButton">
       No aceptar
     </button>

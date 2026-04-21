@@ -1,83 +1,351 @@
 <div class="container mainbox">
   <div class="contenido">
-    <mat-icon class="me-1">search</mat-icon>
-    <ion-label>{{ "BUSCADOR.TITULO" | translate }}</ion-label>
-    <div class="ion-padding" slot="content">
+    <div class="d-flex justify-content-center">
+      <mat-icon
+        class="me-1"
+        aria-hidden="true"
+      >
+        search
+      </mat-icon>
+
+      <ion-label
+        id="buscador-titulo"
+        build-priority="1"
+      >
+        <h2 class="titulo-semantico">{{ 'BUSCADOR.TITULO' | translate }}</h2>
+      </ion-label>
+    </div>
+
+    <!-- Accesibilidad: span oculto - instrucciones de búsqueda de resultados -->
+    <span
+      id="instrucciones-busqueda"
+      class="visually-hidden"
+    >
+      {{ 'BUSCADOR.INSTRUCCIONES_BUSQUEDA' | translate }}
+    </span>
+
+    <div
+      class="ion-padding"
+      slot="content"
+    >
       <ion-grid>
         <ion-row class="contenido d-flex justify-content-center">
-          <!-- Campo Desde -->
-          <ion-col class="columna" size="12" size-md="3">
+          <!-- Campo elegir localidad origen -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
             <div class="input-container">
-              <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}"
-                labelPlacement="floating" maxlength="20" [(ngModel)]="origen"
-                (ionInput)="obtenerSugerenciasOrigen($event)">
-              </ion-input>
-              <ul *ngIf="sugerenciasOrigen.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasOrigen" class="list-group-item"
-                  (click)="seleccionarLocalidadOrigen(localidad)">
-                  {{ localidad.descripcion.split(",")[0].trim() }} -
-                  {{ localidad.provincia }}
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-origen"
+              >
+                <mat-icon aria-hidden="true">share_location</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_DESDE' | translate }}
+              </label>
+
+              <input
+                #inputOrigen
+                id="input-origen"
+                type="text"
+                class="form-control text-start"
+                [(ngModel)]="origen"
+                (blur)="estaEnOrigen = false; validarSeleccion('origen')"
+                (focus)="estaEnOrigen = true"
+                (input)="obtenerSugerenciasOrigen($event)"
+                (keydown)="manejarNavegacionTeclado($event, 'origen')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasOrigen.length > 0
+                    ? 'lista-origen-resultados'
+                    : null
+                "
+                [attr.aria-activedescendant]="
+                  indiceActivoOrigen >= 0
+                    ? 'opt-orig-' + indiceActivoOrigen
+                    : null
+                "
+              />
+
+              <ul
+                id="lista-origen-resultados"
+                *ngIf="sugerenciasOrigen.length > 0"
+                class="list-group lista_sugerencias"
+                role="listbox"
+                aria-live="polite"
+              >
+                <li
+                  [id]="'opt-orig-' + i"
+                  *ngFor="let localidad of sugerenciasOrigen; let i = index"
+                  class="list-group-item"
+                  (click)="seleccionarLocalidadOrigen(localidad)"
+                  [class.active]="i === indiceActivoOrigen"
+                  role="option"
+                  tabindex="-1"
+                  (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                  (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
+                >
+                  {{ localidad.descripcion }}
                 </li>
               </ul>
             </div>
           </ion-col>
 
-          <!-- Campo Hasta -->
-          <ion-col class="columna" size="12" size-md="3">
+          <!-- Campo elegir localidad destino -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
             <div class="input-container">
-              <mat-icon>share_location</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}"
-                labelPlacement="floating" maxlength="20" [(ngModel)]="destino"
-                (ionInput)="obtenerSugerenciasDestino($event)">
-              </ion-input>
-              <ul *ngIf="sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-                <li *ngFor="let localidad of sugerenciasDestino" class="list-group-item"
-                  (click)="seleccionarLocalidadDestino(localidad)">
-                  {{ localidad.descripcion.split(",")[0].trim() }} -
-                  {{ localidad.provincia }}
+              <label
+                class="d-flex align-items-center mb-1"
+                for="input-destino"
+              >
+                <mat-icon aria-hidden="true">share_location</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_HASTA' | translate }}
+              </label>
+
+              <input
+                #inputDestino
+                id="input-destino"
+                type="text"
+                class="form-control text-start"
+                [(ngModel)]="destino"
+                (blur)="estaEnDestino = false; validarSeleccion('destino')"
+                (focus)="estaEnDestino = true"
+                (input)="obtenerSugerenciasDestino($event)"
+                (keydown)="manejarNavegacionTeclado($event, 'destino')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-describedby="instrucciones-busqueda"
+                [attr.aria-expanded]="sugerenciasDestino.length > 0"
+                [attr.aria-controls]="
+                  sugerenciasDestino.length > 0
+                    ? 'lista-destino-resultados'
+                    : null
+                "
+                [attr.aria-activedescendant]="
+                  indiceActivoDestino >= 0
+                    ? 'opt-dest-' + indiceActivoDestino
+                    : null
+                "
+              />
+
+              <ul
+                *ngIf="sugerenciasDestino.length > 0"
+                class="list-group lista_sugerencias"
+                id="lista-destino-resultados"
+                role="listbox"
+                aria-live="polite"
+              >
+                <li
+                  [id]="'opt-dest-' + i"
+                  *ngFor="let localidad of sugerenciasDestino; let i = index"
+                  class="list-group-item"
+                  [class.active]="i === indiceActivoDestino"
+                  (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
+                  (click)="seleccionarLocalidadDestino(localidad)"
+                  role="option"
+                  tabindex="-1"
+                  (keyup.enter)="seleccionarLocalidadDestino(localidad)"
+                >
+                  {{ localidad.descripcion }}
                 </li>
               </ul>
             </div>
           </ion-col>
 
-          <!-- Campo Cuando -->
-          <ion-col class="columna" size="12" size-md="3">
-            <div class="input-container">
-              <mat-icon>schedule</mat-icon>
-              <ion-input class="inputs" label="{{ 'BUSCADOR.BUSCAR_VIAJE_CUANDO' | translate }}"
-                labelPlacement="floating" type="date" [(ngModel)]="fecha_salida">
-              </ion-input>
+          <!-- Campo Cuando Ida -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
+            <div class="input-container position-relative">
+              <label
+                [for]="'input_ida'"
+                class="d-flex align-items-center mb-1"
+              >
+                <mat-icon aria-hidden="true">schedule</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_IDA' | translate }}
+              </label>
+              <div class="datepicker-wrapper">
+                <input
+                  id="input_ida"
+                  matInput
+                  [matDatepicker]="picker_ida"
+                  class="input-datepicker-accesible"
+                  [min]="fechaMinima"
+                  [(ngModel)]="fecha_ida"
+                  (dateChange)="onFechaIdaChange($event)"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
+
+                <button
+                  #btnIda
+                  type="button"
+                  class="form-control"
+                  (click)="picker_ida.open()"
+                  aria-haspopup="dialog"
+                  [attr.aria-expanded]="picker_ida.opened"
+                  [attr.aria-label]="
+                    ('BUSCADOR.BUSCAR_VIAJE_IDA' | translate) +
+                    ': ' +
+                    (textoBotonFechaIda
+                      ? (textoBotonFechaIda | translate)
+                      : (fecha_ida | date: 'fullDate'))
+                  "
+                >
+                  <span *ngIf="textoBotonFechaIda">
+                    {{ textoBotonFechaIda | translate }}
+                  </span>
+
+                  <span *ngIf="!textoBotonFechaIda">
+                    {{
+                      fecha_ida
+                        | date: 'EEE, d MMMM' : '' : translate.currentLang
+                        | titlecase
+                    }}
+                  </span>
+                </button>
+              </div>
+              <mat-datepicker
+                #picker_ida
+                (closed)="btnIda.focus()"
+                panelClass="calendario-bajo-boton"
+              ></mat-datepicker>
             </div>
+          </ion-col>
+
+          <!-- Campo Cuando vuelta -->
+          <ion-col
+            class="columna"
+            size="12"
+            size-md="3"
+          >
+            <div class="input-container position-relative">
+              <label
+                [for]="'input_vuelta'"
+                class="d-flex align-items-center mb-1"
+              >
+                <mat-icon aria-hidden="true">schedule</mat-icon>
+                {{ 'BUSCADOR.BUSCAR_VIAJE_VUELTA' | translate }}
+              </label>
+              <input
+                id="input_vuelta"
+                matInput
+                [matDatepicker]="picker_vuelta"
+                class="input-datepicker-accesible"
+                [min]="fechaMinimaVuelta"
+                [(ngModel)]="fecha_vuelta"
+              />
+              <button
+                #btnVuelta
+                type="button"
+                class="form-control"
+                (click)="picker_vuelta.open()"
+                aria-haspopup="dialog"
+                [attr.aria-expanded]="picker_vuelta.opened"
+                [attr.aria-label]="
+                  ('BUSCADOR.BUSCAR_VIAJE_VUELTA' | translate) +
+                  ': ' +
+                  (textoBotonFechaVuelta
+                    ? (textoBotonFechaVuelta | translate)
+                    : (fecha_vuelta | date: 'fullDate'))
+                "
+              >
+                <span
+                  *ngIf="textoBotonFechaVuelta"
+                  aria-hidden="true"
+                >
+                  {{ textoBotonFechaVuelta | translate }}
+                </span>
+
+                <span
+                  *ngIf="!textoBotonFechaVuelta"
+                  aria-hidden="true"
+                >
+                  {{
+                    fecha_vuelta
+                      | date: 'EEE, d MMMM' : '' : translate.currentLang
+                      | titlecase
+                  }}
+                </span>
+              </button>
+            </div>
+            <mat-datepicker
+              #picker_vuelta
+              (closed)="btnVuelta.focus()"
+              panelClass="calendario-bajo-boton"
+            ></mat-datepicker>
           </ion-col>
         </ion-row>
       </ion-grid>
 
-      <ion-row>
-        <ion-col>
-          <!-- Botón para buscar -->
-          <div class="caja_boton">
-            <p-toast position="bottom-center"></p-toast>
-            <button mat-raised-button class="btn_config btn btn_bg" (click)="openSearchTravels()">
-              <mat-icon>search</mat-icon>
-              {{ "BOTON.BUSCAR" | translate }}
-            </button>
-          </div>
-        </ion-col>
-        <ion-col>
-          <!-- Botón para limpiar los campos -->
-          <div class="caja_boton">
-            <button mat-raised-button class="btn_limpiar btn btn_bg" (click)="limpiarBusqueda()">
-              <i class="fi fi-rs-clean"></i>
-              Limpiar búsqueda
-            </button>
-          </div>
-        </ion-col>
-      </ion-row>
-
-
+      <div
+        class="d-flex justify-content-center mt-2"
+        role="group"
+        aria-label="('BUSCADOR.BOTONES_ACCES | translate)"
+      >
+        <ion-row>
+          <ion-col>
+            <!-- Botón para buscar -->
+            <div class="caja_boton">
+              <p-toast position="bottom-center"></p-toast>
+              <button
+                type="button"
+                mat-raised-button
+                class="btn_config btn btn_bg"
+                (click)="buscar()"
+                [attr.aria-label]="
+                  ('BUSCADOR.BOTON_BUSCAR' | translate) +
+                  '. ' +
+                  ('BUSCADOR.BOTON_BUSCAR_ACCES' | translate)
+                "
+              >
+                <mat-icon aria-hidden="true">search</mat-icon>
+                {{ 'BUSCADOR.BOTON_BUSCAR' | translate }}
+              </button>
+            </div>
+          </ion-col>
+          <ion-col>
+            <!-- Botón para limpiar los campos -->
+            <div class="caja_boton">
+              <button
+                type="button"
+                mat-raised-button
+                class="btn_limpiar btn btn_bg"
+                (click)="limpiarBusqueda()"
+                [attr.aria-label]="
+                  ('BUSCADOR.BOTON_LIMPIAR' | translate) +
+                  '. ' +
+                  ('BUSCADOR.BOTON_LIMPIAR_ACCES' | translate)
+                "
+              >
+                <i
+                  class="fi fi-rs-clean"
+                  aria-hidden="true"
+                ></i>
+                {{ 'BUSCADOR.BOTON_LIMPIAR' | translate }}
+              </button>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
     </div>
   </div>
-
-
 </div>

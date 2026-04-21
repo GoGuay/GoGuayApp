@@ -52,7 +52,6 @@ export class MessagingService {
      */
     cambiarEstadoLectura(conversacionId: number, usuarioId: number, marcarComoLeido: boolean): Observable<any> {
         const estado = marcarComoLeido ? 'leer' : 'no-leer';
-        // Prueba forzando la URL si sospechas del prefijo
         const url = `${this.apiUrl}/chat/${estado}/${conversacionId}/${usuarioId}`;
         console.log("Llamando a:", url);
         return this.http.patch(url, {});
@@ -64,5 +63,14 @@ export class MessagingService {
      */
     eliminarConversacion(conversacionId: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/chat/conversacion/${conversacionId}`);
+    }
+
+    /**
+     * Función para enviar una solicitud de unirse a un viaje a través del chat.
+     * @param mensaje  --> Recibe el mensaje que contiene la solicitud de unirse a un viaje (debe incluir el ID del viaje en el texto del mensaje).
+     * @returns --> Devuelve un Observable con la respuesta del backend (el mensaje enviado con la solicitud de viaje).
+     */
+    enviarSolicitudViaje(mensaje: any): Observable<any> {
+         return this.http.post<Mensaje>(`${this.apiUrl}/chat/solicitar-unirse`, mensaje);    
     }
 }

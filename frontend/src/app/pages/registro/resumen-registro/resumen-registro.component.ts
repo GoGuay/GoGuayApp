@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
-import { construct } from 'ionicons/icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from '../../../core/user-services/user-services.service';
-import { Subject, takeUntil } from 'rxjs';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ModalController } from '@ionic/angular/standalone';
+import { ContratoRegistroComponent } from "../contrato-registro-final/contrato-registro.component";
 
 @Component({
   selector: 'app-resumen-registro',
-  imports: [ReactiveFormsModule, IonicModule, MatIconModule, CommonModule, FormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, IonicModule, MatIconModule, CommonModule, FormsModule, TranslateModule, ContratoRegistroComponent],
   templateUrl: './resumen-registro.component.html',
   styleUrl: './resumen-registro.component.scss',
+  standalone: true
 })
 export class ResumenRegistroComponent implements OnInit {
   //Variables para almacenar los datos del usuario
@@ -29,6 +30,9 @@ export class ResumenRegistroComponent implements OnInit {
   emailValido: boolean = false;
   telefonoValido: boolean = false;
   fechaValida: boolean = false;
+
+  mostrarCondiciones: boolean = false;
+  condicionesAceptadas: boolean = false;
 
   //Se crea un objeto para guardar los valores originales de cada campo antes de editar
   original: { [campo: string]: boolean } = {};
@@ -52,12 +56,15 @@ export class ResumenRegistroComponent implements OnInit {
 
   orientaciones: string[] = ['GAY', 'LESBIANA', 'BISEXUAL', 'PANSEXUAL', 'ASEXUAL', 'DEMISEXUAL', 'QUEER', 'HETEROSEXUAL', 'OTRO', 'NO_RESPONDE'];
 
+  @ViewChild('seccionCondiciones') seccionCondiciones!: ElementRef;
+
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
     private navCtrl: NavController,
     private translateService: TranslateService,
-  ) {}
+    private modalCtrl: ModalController
+  ) { }
 
   ngOnInit() {
     //Obtenemos los datos del usuario guardados en caché
@@ -294,24 +301,6 @@ export class ResumenRegistroComponent implements OnInit {
     return this.translateService.instant(clave);
   }
 
-  aceptarNormas() {
-    const datosRegistro = this.userService.getUsuarioData();
-    console.log('DatosRegistro: ', datosRegistro);
-
-    this.userService.registrarUsuario(datosRegistro).subscribe({
-      next: (response) => {
-        console.log('response: ', response);
-
-        localStorage.setItem('userData', JSON.stringify(response.usuario));
-        this.userService.actualizarEstadoUsuario(response.usuario);
-        this.navCtrl.navigateRoot('/home');
-      },
-      error: (err) => {
-        this.navCtrl.navigateRoot('/home');
-      },
-    });
-  }
-
   /**
    * Convierte una cadena de formato 'kebab_case' a 'Título de caso'.
    * @param value La cadena de entrada.
@@ -443,5 +432,55 @@ export class ResumenRegistroComponent implements OnInit {
       }
       return true;
     }
+  }
+
+  /**
+   * Función para mostrar las condiciones generales de uso al usuario
+   */
+  abrirCondicionesInline() {
+    this.mostrarCondiciones = true;
+
+    setTimeout(() => {
+      this.seccionCondiciones.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
+
+  /**
+   * Función para cerrar la ventana de las condiciones
+   * una vez estas se han aceptado.
+   */
+  onTerminosConfirmados() {
+    this.mostrarCondiciones = false;
+    this.condicionesAceptadas = true;
+
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 300);
+  }
+
+
+  /**
+   * Función para finalizar el registro del usuario.,
+   * Los datos que el usuario ha introducido se guardan en caché
+   * y además se envían a BBDD.
+   * Después de compeltar el proceso, se le redirige al Home de la aplicación.
+   * 
+   */
+  finalizarRegistro() {
+    const datosRegistro = this.userService.getUsuarioData();
+
+    this.userService.registrarUsuario(datosRegistro).subscribe({
+      next: (response) => {
+        localStorage.setItem('userData', JSON.stringify(response.usuario));
+        this.userService.actualizarEstadoUsuario(response.usuario);
+        this.navCtrl.navigateRoot('/home');
+      },
+      error: (err) => {
+        console.error("Error al registrar", err);
+      },
+    });
   }
 }

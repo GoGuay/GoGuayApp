@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, NavController } from '@ionic/angular';
-import { BuscaUnViajePrincipalComponent } from '../components/busca-un-viaje-principal/busca-un-viaje-principal.component';
+import { BuscadorViajeHomeComponent } from '../components/buscador_viaje_home/buscador_viaje_home.component';
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
@@ -32,7 +32,7 @@ import { Usuario } from '../models/user/usuario.model';
     TranslateModule,
     AnimateOnScrollModule,
     NavbarComponent,
-    BuscaUnViajePrincipalComponent,
+    BuscadorViajeHomeComponent,
     CommonModule,
   ],
 })
@@ -61,7 +61,6 @@ export class HomePage implements OnInit {
       this.obtenerUsuarioPorID(this.userData?.usuario?.id);
       this.obtenerNotificaciones(this.userData?.usuario?.id);
     }
-
   }
 
   changeLanguage(lang: string) {

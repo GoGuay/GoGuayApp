@@ -1,6 +1,11 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
+  <div *ngIf="mostrarJumbotron">
+    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
+      [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
+  </div>
+
   <div class="container mt-4">
     <div class="text-center mb-4">
       <h1 class="fw-bold">NUESTRO DECÁLOGO</h1>

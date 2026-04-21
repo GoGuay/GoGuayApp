@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
@@ -7,17 +7,21 @@ import { Evento, Eventos } from '../../models/eventos/eventos';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { EventosServices } from 'src/app/core/eventos-services/eventos-services.service';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule],
+  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
   //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
   lista_eventos: Evento[] = Eventos;
+  isOpen: boolean = false;
 
   usuarioNoLogueado: boolean = false;
   ciudadesUnicas: string[] = [];
@@ -25,6 +29,14 @@ export class TrayectosPopularesComponent implements OnInit {
   message_help_auth: string = '';
   ciudadSeleccionada: string = '';
   filtradosPorCiudad: Evento[] = [];
+  ciudadSeleccionadaLabel: string = '';
+
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
 
   constructor(
     private viajesService: TravelService,
@@ -32,6 +44,8 @@ export class TrayectosPopularesComponent implements OnInit {
     public dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
+    private eventosService: EventosServices,
+    private elementRef: ElementRef
   ) {
     this.translate.get('NUEVOVIAJE.TITULO_MODAL_AYUDA').subscribe((traduccion: string) => {
       this.title_help_auth = traduccion;
@@ -44,9 +58,29 @@ export class TrayectosPopularesComponent implements OnInit {
   //Lo que se usa nada más iniciar el componente.
   ngOnInit() {
     this.usuarioNoLogueado = this.funcionesComunes.isUserLoggedIn();
-    this.lista_eventos = Eventos;
-    this.ciudadesUnicas = [...new Set(this.lista_eventos.map((evento) => evento.ciudad))];
-    this.ciudadesUnicas.sort();
+    this.obtenerEventos();
+  }
+
+  selectOption(ciudad: string) {
+    this.ciudadSeleccionadaLabel = ciudad;
+    this.isOpen = false;
+
+    this.actualizarCiudadSeleccionada(ciudad);
+  }
+
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
+  }
+
+  obtenerEventos() {
+    this.eventosService.obtenerTodosLosEventos()
+      .subscribe((resultado) => {
+        this.lista_eventos = resultado;
+        this.obtener_ciudades_eventos();
+        // if (this.ciudadesUnicas.length > 0) {
+        //   this.selectOption(this.ciudadesUnicas[0]);
+        // }
+      })
   }
 
   /**
@@ -94,8 +128,11 @@ export class TrayectosPopularesComponent implements OnInit {
    * @return: Pasa cada uno de los strings numeros a formato número y guarda cada uno de esos números en formato DATE.
    * @param FechaStr
    */
-  convertirFecha(FechaStr: string): Date {
-    const [dia, mes, anio] = FechaStr.split('/');
+  convertirFecha(fecha: string): Date {
+    if (fecha.includes('-')) {
+      return new Date(fecha);
+    }
+    const [dia, mes, anio] = fecha.split('/');
     return new Date(Number(anio), Number(mes) - 1, Number(dia));
   }
 
@@ -115,10 +152,11 @@ export class TrayectosPopularesComponent implements OnInit {
    */
   actualizarCiudadSeleccionada(valor: string) {
     const filtrados = this.lista_eventos.filter((cadaEvento) => cadaEvento.ciudad === valor);
-    this.filtradosPorCiudad = filtrados.sort((inicioEventoA, inicioEventoB) => {
-      const fechaInicioA: any = this.convertirFecha(inicioEventoA.fecha_inicio);
-      const fechaInicioB: any = this.convertirFecha(inicioEventoB.fecha_inicio);
-      return fechaInicioA - fechaInicioB;
+
+    this.filtradosPorCiudad = filtrados.sort((a, b) => {
+      const fechaA = this.convertirFecha(a.fecha_inicio).getTime();
+      const fechaB = this.convertirFecha(b.fecha_inicio).getTime();
+      return fechaA - fechaB;
     });
   }
 }

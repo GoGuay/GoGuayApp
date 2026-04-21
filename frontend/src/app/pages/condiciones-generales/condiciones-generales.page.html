@@ -1,0 +1,109 @@
+<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+
+<ion-content [fullscreen]="true">
+    <div *ngIf="mostrarJumbotron">
+        <app-jumbotron [title]="'La base de nuestra confianza mutua.'" [imageSrc]="'../../../assets/folder/jumbo4.jpg'"
+            [helpText]="'LEGAL.HELP'"></app-jumbotron>
+    </div>
+
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold">Términos y Condiciones</h1>
+            <p class="text-muted">Información legal sobre el uso de la plataforma GoGuay.</p>
+        </div>
+
+        <ion-accordion-group class="mb-3">
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>1. Naturaleza de GoGuay</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    GoGuay es una plataforma tecnológica de intermediación que conecta a conductores y pasajeros
+                    particulares para compartir gastos de viaje.
+                    <strong>No somos una empresa de transporte, taxis ni VTC.</strong> Los conductores no obtienen un
+                    beneficio económico; el importe aportado por los pasajeros se destina exclusivamente a cubrir gastos
+                    de combustible, peajes y mantenimiento del vehículo.
+                </div>
+            </ion-accordion>
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>2. Requisitos para el registro</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    Para utilizar la aplicación, el usuario debe:
+                    <ul>
+                        <li>Ser mayor de 18 años.</li>
+                        <li>Haber completado el proceso de verificación de identidad.</li>
+                        <li>Proporcionar información veraz y actualizada.</li>
+                    </ul>
+                    Los conductores deben poseer un permiso de conducir válido y un seguro de responsabilidad civil
+                    obligatorio en vigor.
+                </div>
+            </ion-accordion>
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>3. Limitación de Responsabilidad</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    GoGuay no es parte del contrato de transporte entre usuarios. Por lo tanto, no se hace responsable
+                    de:
+                    <ul>
+                        <li>Accidentes, retrasos o daños materiales durante el trayecto.</li>
+                        <li>La veracidad de las valoraciones de los usuarios.</li>
+                        <li>Cualquier pérdida de objetos personales.</li>
+                    </ul>
+                    La plataforma se reserva el derecho de expulsar a cualquier usuario que incumpla el <strong>Decálogo
+                        de Comunidad</strong>.
+                </div>
+            </ion-accordion>
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>4. Normas de Conducta y Cancelaciones</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    Los usuarios se comprometen a cumplir con el Decálogo de GoGuay. Las cancelaciones reiteradas sin
+                    justificación técnica o de fuerza mayor podrán suponer la suspensión de la cuenta. Está prohibido el
+                    uso de la app para fines ilícitos o comerciales ajenos al carpooling.
+                </div>
+            </ion-accordion>
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>5. Protección de Datos y Privacidad</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    Tratamos tus datos personales (nombre sentido, contacto, vehículo) conforme al Reglamento General de
+                    Protección de Datos (RGPD). Tu información de contacto solo será revelada al otro usuario una vez
+                    confirmada la reserva para facilitar la coordinación del viaje.
+                </div>
+            </ion-accordion>
+
+            <ion-accordion class="mb-3 shadow-sm">
+                <ion-item slot="header" class="white-header">
+                    <ion-label>6. Propiedad Intelectual</ion-label>
+                </ion-item>
+                <div slot="content" class="p-3 text-muted">
+                    El nombre "GoGuay", el logo, el diseño de la interfaz y el código fuente son propiedad exclusiva de
+                    sus creadores. Queda prohibida su reproducción o uso comercial sin autorización previa.
+                </div>
+            </ion-accordion>
+
+        </ion-accordion-group>
+    </div>
+
+    <div class="container d-flex justify-content-center mt-4 mb-5">
+        <p class="text-small text-muted">Última actualización: Marzo 2026</p>
+    </div>
+    <div class="container d-flex justify-content-center mt-4 mb-5">
+        <div class="text-center">
+            <p class="info-text">
+                {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
+                <img class="icon_logo" src="../../../assets/logo/PRIDECAR.png" />
+            </p>
+        </div>
+    </div>
+</ion-content>

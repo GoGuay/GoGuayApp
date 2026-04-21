@@ -32,5 +32,9 @@ export interface Usuario {
     created_at?: string;
     updated_at?: string;
     token?: string;
+    ya_ha_sido_suspendido?: boolean;
+    motivo_bloqueo?: string;
+    bloqueado_desde?: Date;
+    bloqueado_hasta?: Date;
   };
 }

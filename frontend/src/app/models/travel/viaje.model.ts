@@ -18,4 +18,5 @@ export interface Viaje {
   acompanantes?: any;
   notificaciones?: any;
   preferencias?: [];
+  reserva_automatica?: boolean;
 }

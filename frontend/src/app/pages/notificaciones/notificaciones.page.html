@@ -1,33 +1,71 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-between align-items-center mt-3 px-3">
       <h1>Centro de notificaciones</h1>
+      <button *ngIf="notificaciones.length > 0" 
+              class="btn btn_bg d-flex align-items-center" 
+              (click)="borrarTodas()">
+        <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">delete_sweep</mat-icon>
+        Limpiar todo
+      </button>
     </div>
 
-    <div class="lista_notificaciones">
+    <div class="lista_notificaciones px-2">
       <div *ngIf="mostrarSpinner" class="text-center p-3">
         <app-spinner></app-spinner>
       </div>
+
       <div *ngIf="notificaciones.length === 0 && !mostrarSpinner" class="text-center mt-4">
         No tienes notificaciones.
       </div>
-      <div *ngFor="let n of notificaciones" class="notificacion_container notificacion-item p-3 mb-2 mt-3"
-        [class.resaltado]="n.id === idResaltado" [class.notificacion-no-leida]="!n.leida">
 
-        <strong>Mensaje:</strong> {{ n.mensaje }}
+      <div *ngFor="let n of notificaciones" 
+           class="notificacion_container notificacion-item p-3 mb-2 mt-3"
+           [class.resaltado]="n.id === idResaltado" 
+           [class.notificacion-no-leida]="!n.leida" 
+           [class.notificacion-mensaje]="n.tipo === 'mensaje'">
 
-        <div *ngIf="!n.leida" class="badge badge-danger ml-2">
-          No leída
+        <div class="d-flex align-items-start">
+          <i class="fi fi-rr-messages me-3 mt-1" *ngIf="n.tipo === 'mensaje'"></i>
+          <i class="fi fi-rr-bell-notification-social-media me-3 mt-1" *ngIf="n.tipo !== 'mensaje'"></i>
+
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="tipo-texto small fw-bold text-uppercase">{{ n.tipo || 'Sistema' }}</span>
+              
+              <div class="d-flex align-items-center gap-2">
+                <div *ngIf="!n.leida" class="badge bg-danger">No leída</div>
+                
+                <button class="btn btn-link text-muted p-0 d-flex align-items-center justify-content-center" 
+                        (click)="borrarUna(n.id)" 
+                        title="Eliminar"
+                        style="width: 24px; height: 24px; text-decoration: none;">
+                  <mat-icon style="font-size: 20px; width: 20px; height: 20px;">delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <p class="mb-1 mt-1 text-dark">{{ n.mensaje }}</p>
+
+            <div class="text-muted extra-small">
+              {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+
+            <div class="d-flex gap-2 mt-2">
+              <button class="btn btn-sm btn-outline-secondary" (click)="toggleLeida(n)">
+                Marcar como {{ n.leida ? 'no leída' : 'leída' }}
+              </button>
+
+              <button *ngIf="n.tipo === 'mensaje' && n.conversacion_id" 
+                      class="btn btn-sm btn_bg" 
+                      (click)="irAlChat(n)">
+                <i class="fi fi-rr-messages me-1"></i> Responder
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div class="text-muted small mt-1">
-          {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}
-        </div>
-
-        <button class="btn btn_bg mt-2" (click)="toggleLeida(n)">
-          Marcar como {{ n.leida ? 'no leída' : 'leída' }}
-        </button>
       </div>
     </div>
   </div>

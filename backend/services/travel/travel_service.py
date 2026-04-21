@@ -8,42 +8,9 @@ from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, Tok
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
+from services.notifications.notifications_utils import enviar_notificacion_push
 
 travel_blueprint = Blueprint('travel', __name__)
-
-
-def enviar_notificacion_push(usuario_id, titulo, cuerpo, data=None):
-    """
-    Busca los tokens de un usuario y envía una notificación push vía Firebase.
-    """
-    # 1. Obtener todos los dispositivos registrados del usuario
-    tokens = TokenPush.query.filter_by(usuario_id=usuario_id).all()
-    registration_tokens = [t.token for t in tokens]
-
-    if not registration_tokens:
-        print(f"No hay tokens registrados para el usuario {usuario_id}")
-        return
-
-    # 2. Construir el mensaje
-    message = messaging.MulticastMessage(
-        notification=messaging.Notification(
-            title=titulo,
-            body=cuerpo,
-        ),
-        data=data, # Información extra (ej. viaje_id)
-        tokens=registration_tokens,
-    )
-
-    # 3. Enviar
-    try:
-        response = messaging.send_multicast(message)
-        print(f"Éxito: {response.success_count} mensajes enviados. Fallos: {response.failure_count}")
-        
-        # Opcional: Si quieres limpiar tokens antiguos que Firebase dice que ya no valen
-        if response.failure_count > 0:
-            print("Algunos tokens ya no son válidos.")
-    except Exception as e:
-        print(f"Error crítico enviando push: {e}")
 
 
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -115,7 +82,8 @@ def crear_viaje():
         fecha_salida=fecha_salida,
         ruta_seleccionada=ruta_seleccionada,
         usuario_id=usuario_id,
-        vehiculo = vehiculo_id
+        vehiculo = vehiculo_id,
+        reserva_automatica=data.get('reserva_automatica', False)
     )
 
     db.session.add(nuevo_viaje)
@@ -430,6 +398,9 @@ def post_puntuacion():
     return jsonify({"msg": "Puntuación registrada correctamente"}), 200
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA REGISTRAR UN TOKEN DE SESIÓN PARA NOTIFICACIONES PUSH
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/usuarios/registrar-token', methods=['POST'])
 def registrar_token():
     data = request.get_json()
@@ -454,3 +425,63 @@ def registrar_token():
             return jsonify({"error": "Error al guardar el token", "detalle": str(e)}), 500
     
     return jsonify({"mensaje": "El token ya estaba registrado"}), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA CONFIRMAR UN PASAJERO MANUALMENTE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
+def confirmar_pasajero_manual():
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
+
+    viaje_id = data.get('viaje_id')
+    pasajero_id = data.get('pasajero_id')
+
+    if not viaje_id or not pasajero_id:
+        return jsonify({"error": "Faltan datos obligatorios (viaje_id y/o pasajero_id)"}), 400
+
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "El viaje no existe"}), 404
+
+    if viaje.plazas <= 0:
+        return jsonify({"error": "Ya no quedan plazas disponibles en este viaje"}), 400
+
+    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=pasajero_id, viaje_id=viaje_id).first()
+    if pasajero_existente:
+        return jsonify({"error": "El usuario ya ha sido aceptado anteriormente"}), 400
+
+    try:
+        nuevo_pasajero = PasajeroViaje(usuario_id=pasajero_id, viaje_id=viaje_id)
+        db.session.add(nuevo_pasajero)
+        
+        viaje.plazas -= 1
+        
+        mensaje_texto = f"¡Buenas noticias! El conductor ha aceptado tu solicitud para el viaje a {viaje.destino}."
+        notificacion_db = Notificacion(
+            usuario_id=pasajero_id,
+            viaje_id=viaje_id,
+            mensaje=mensaje_texto
+        )
+        db.session.add(notificacion_db)
+        
+        db.session.commit()
+
+        enviar_notificacion_push(
+            usuario_id=pasajero_id,
+            titulo="Solicitud de viaje aceptada",
+            cuerpo=mensaje_texto,
+            data={"viaje_id": str(viaje_id), "tipo": "solicitud_aceptada"}
+        )
+
+        return jsonify({
+            "mensaje": "Pasajero confirmado correctamente",
+            "viaje": viaje.serialize()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error interno al procesar la confirmación", "detalle": str(e)}), 500

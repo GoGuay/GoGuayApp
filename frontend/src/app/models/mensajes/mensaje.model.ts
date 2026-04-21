@@ -5,4 +5,5 @@ export interface Mensaje {
   conversacion_id: number;
   texto: string;
   fecha?: string;
+  viaje_id: number | null; // Agregado para relacionar el mensaje con un viaje específico
 }

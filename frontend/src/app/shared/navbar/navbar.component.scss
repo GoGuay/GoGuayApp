@@ -155,6 +155,7 @@ ion-button {
   visibility: hidden;
   transition: all 0.3s ease-in-out;
   display: block;
+  width: 220px;
 }
 
 .navbar .dropdown-menu.show {
@@ -431,8 +432,8 @@ ul {
 
 .tamano-icono,
 .caja-icono {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
   border-radius: 50%;
   mix-blend-mode: multiply;
