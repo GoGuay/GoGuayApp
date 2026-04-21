@@ -6,7 +6,7 @@ import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
-import { Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { LoadTravelLineComponent } from '../load-travel-line/load-travel-line.component';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -31,7 +31,7 @@ import { forkJoin } from 'rxjs';
 })
 export class ResultadosBusquedaComponent implements OnInit {
   userLoggedIn: boolean = false;
-  userData: Usuario = {} as Usuario;
+  userData: Usuario | undefined = {} as Usuario;
   listado_viajes: Viaje[] = [];
   usuarioPorID: Usuario | undefined;
   filtroSeleccionado: string = 'horaSalida';
@@ -51,7 +51,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
-  ) {}
+  ) { }
 
   /**
    * Función que se ejecuta cuando hay cambios en las variables de entrada
@@ -71,38 +71,41 @@ export class ResultadosBusquedaComponent implements OnInit {
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-    this.obtenerListaViajes();
+    // this.obtenerListaViajes();
     this.funcionesComunes.getBaseUrl();
   }
 
   cargarDatos() {
-    this.isLoading = true;
-
-    // Verificamos si hay parámetros de búsqueda reales (no un objeto vacío)
     const tieneFiltros =
       this.paramsBusqueda &&
+      Object.keys(this.paramsBusqueda).length > 0 &&
       Object.values(this.paramsBusqueda).some(
-        (val) => val !== '' && val !== null,
+        (val) => val !== '' && val !== null && val !== undefined
       );
 
-    const peticion = tieneFiltros
-      ? this.travelService.obtenerViajesFiltrados(this.paramsBusqueda)
-      : this.travelService.obtenerTodosLosViajes();
+    // 2. Si no hay filtros, limpiamos la lista y no hacemos nada
+    if (!tieneFiltros) {
+      this.listado_viajes = [];
+      this.isLoading = false;
+      return;
+    }
 
-    peticion.subscribe({
+    // 3. Iniciamos carga solo si hay parámetros
+    this.isLoading = true;
+
+    this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
       next: (viajes) => {
         this.listado_viajes = viajes;
 
-        if (viajes.length === 0) {
+        if (!viajes || viajes.length === 0) {
           this.isLoading = false;
           return;
         }
 
-        // Obtener usuarios de forma eficiente
         this.cargarUsuariosParaViajes(viajes);
       },
       error: (err) => {
-        console.error('Error:', err);
+        console.error('Error al filtrar:', err);
         this.listado_viajes = [];
         this.isLoading = false;
       },
@@ -112,21 +115,36 @@ export class ResultadosBusquedaComponent implements OnInit {
   private cargarUsuariosParaViajes(viajes: Viaje[]) {
     const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 
+    if (idsUnicos.length === 0) {
+      this.isLoading = false;
+      return;
+    }
+
     const solicitudesUsuarios = idsUnicos.map((id) => {
       if (this.usuariosCache.has(id)) {
-        return of(this.usuariosCache.get(id));
-      }
-      return this.userService
-        .obtenerUsuarioPorID(id)
-        .pipe(tap((user) => this.usuariosCache.set(id, user)));
+    return of(this.usuariosCache.get(id));
+  }
+  return this.userService
+    .obtenerUsuarioPorID(id)
+    .pipe(
+      tap((user) => this.usuariosCache.set(id, user)),
+      catchError(err => {
+        console.error(`Error cargando usuario ${id}`, err);
+        return of(null); // Devuelve null para que forkJoin no se rompa
+      })
+    );
     });
 
-    forkJoin(solicitudesUsuarios).subscribe(() => {
-      this.listado_viajes.forEach((viaje) => {
-        viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
-      });
-      this.aplicarFiltro();
-      this.isLoading = false;
+    forkJoin(solicitudesUsuarios).subscribe({
+      next: () => {
+        this.listado_viajes.forEach((viaje) => {
+          viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
+        });
+        this.aplicarFiltro();
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 

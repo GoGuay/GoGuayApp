@@ -199,14 +199,10 @@ def obtener_usuario_por_id(id):
     2. Si no encuentra al usuario, devuelve error. Si lo encuentra lo convierte en un diccionario python y lo envía en formato Json con toda la información serializada.
     3. jwt_required: mira si en la petición que llega desde el front existe una cabecera llamada Authorization. Si el token no existe bloquea la petición y devuelve un 401 Unauthorized (401-Token expired; 422-Token falso o manipulado). Si el token es válido se ejecuta el código de esta función. 
     """
-    current_user_id = get_jwt_identity()
-
-    if int(current_user_id) != id:
-        return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     usuario = Usuario.query.get(id)
     if usuario is None:
-        return jsonify({"error": "no se ha encontrado al usuario"}), 404
-
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
     return jsonify(usuario.serialize()), 200
 
 ## EDITAR INFORMACIÓN DE UN USUAURIO ##

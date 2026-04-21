@@ -21,6 +21,7 @@ class Viaje(db.Model):
     estado_viaje = db.Column(db.String(50), nullable=True, default=EstadoViajeEnum.PROXIMO.value)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     vehiculo = db.Column(db.Integer, nullable=False)
+    reserva_automatica = db.Column(db.Boolean, nullable=False, default=False)
 
     pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True)  # Cambiar el backref a 'viaje_pasajero'
 
@@ -43,6 +44,7 @@ class Viaje(db.Model):
             "ruta_seleccionada": self.ruta_seleccionada,
             "usuario_id": self.usuario_id,
             "vehiculo": self.vehiculo,
+            "reserva_automatica": self.reserva_automatica,
             "usuario_creador": {
                 "id": self.usuario.id,
                 "nombre": self.usuario.nombre,

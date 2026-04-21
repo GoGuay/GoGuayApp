@@ -82,7 +82,8 @@ def crear_viaje():
         fecha_salida=fecha_salida,
         ruta_seleccionada=ruta_seleccionada,
         usuario_id=usuario_id,
-        vehiculo = vehiculo_id
+        vehiculo = vehiculo_id,
+        reserva_automatica=data.get('reserva_automatica', False)
     )
 
     db.session.add(nuevo_viaje)

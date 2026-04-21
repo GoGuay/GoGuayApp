@@ -94,6 +94,34 @@
             </div>
           </ng-template>
         </div>
+
+        <div class="contenedor_inputs mt-4">
+          <h1 class="d-flex justify-content-center">MODO DE RESERVA</h1>
+
+          <ion-list class="reserva-list">
+            <ion-radio-group [value]="reservaAutomatica" (ionChange)="seleccionarTipoReserva($event.detail.value)">
+
+              <ion-item (click)="seleccionarTipoReserva(false)">
+                <ion-label>
+                  <h2>Aceptación manual</h2>
+                  <p>Tú decides quién viaja contigo aceptando cada solicitud.</p>
+                </ion-label>
+                <ion-radio slot="start" [value]="false"></ion-radio>
+                <ion-icon name="hand-right-outline" slot="end" color="primary"></ion-icon>
+              </ion-item>
+
+              <ion-item (click)="seleccionarTipoReserva(true)">
+                <ion-label>
+                  <h2>Reserva automática</h2>
+                  <p>Las plazas se reservan al instante sin tu intervención.</p>
+                </ion-label>
+                <ion-radio slot="start" [value]="true"></ion-radio>
+                <ion-icon name="flash-outline" slot="end" color="warning"></ion-icon>
+              </ion-item>
+
+            </ion-radio-group>
+          </ion-list>
+        </div>
       </div>
     </ion-col>
   </ion-row>

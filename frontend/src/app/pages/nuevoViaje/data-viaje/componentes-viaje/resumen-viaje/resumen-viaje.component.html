@@ -154,6 +154,33 @@
                       </button>
                     </ion-col>
                   </ion-row>
+
+                  <!-- RESERVA DEL VIAJE  -->
+                  <ion-row class="ion-align-items-center">
+                    <ion-col size="9" size-md="9">
+                      <i class="fi fi-rr-coin-up-arrow me-2"></i> <strong>Modo de reserva: </strong>
+                      <span class="ms-2" *ngIf="!editMode.reserva_automatica">{{ currentViajeData?.reserva_automatica ? 'Automática' : 'Manual' }} </span>
+                      <!-- <input class="ms-2" *ngIf="editMode.reserva_automatica" type="number"
+                        [(ngModel)]="editableFields.reserva_automatica" class="currencyInput" /> -->
+                      <select *ngIf="editMode.reserva_automatica" class="form-select" [(ngModel)]="editableFields.reserva_automatica"
+                        [ngModelOptions]="{ standalone: true }" aria-label="Selección del modo de reserva">
+                        <option value="" disabled selected>
+                          Modo de reserva
+                        </option>
+                        <option  [ngValue]="true">
+                          Automática
+                        </option>
+                        <option  [ngValue]="false">
+                          Manual
+                        </option>
+                      </select>
+                    </ion-col>
+                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
+                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('precio_viaje')">
+                        <mat-icon>{{ editMode.precio_viaje ? 'save' : 'edit_square' }}</mat-icon>
+                      </button>
+                    </ion-col>
+                  </ion-row>
                 </ion-grid>
 
               </div>
