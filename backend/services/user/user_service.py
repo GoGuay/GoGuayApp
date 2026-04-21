@@ -738,3 +738,32 @@ def get_access_token():
     return res.json()['access_token']
 
 
+
+# Recibe los datos del viaje con el precio de este. 
+@user_blueprint.route("/create-order", methods=['POST'])
+def create_order():
+    data = request.get_json()
+    viaje_id = data.get('viaje_id')
+
+    if not viaje_id:
+        return {"error": "Falta el id del viaje"}, 400
+    
+    viaje = db.trips.find_one({"id": viaje_id})
+    precio_real = viaje.precio_viaje 
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    payload = {
+        "intent": "CAPTURE",
+        "purchase_units": [{"reference_id": str(viaje_id), "amount": {"currency_code": "EUR", "value": precio_real}}]
+    }
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
+    return response.json() 
+
+
+@user_blueprint.route("/capture-order/{order_id}", methods=['POST'])
+def capture_order(order_id: str):
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
+    return response.json()
