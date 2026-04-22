@@ -120,24 +120,22 @@
 .fontSize {
   font-size: 0.9rem;
   width: fit-content;
-  /* Hace que el contenedor se ajuste al contenido */
   max-width: 100%;
-  /* Evita que el texto se desborde del contenedor */
 }
 
 ion-segment {
   --background: #b3b5e6;
-  --color: #e9edd5;
-  border-radius: 15px !important;
+  --color: #000000;
+  border-radius: 35px !important;
   margin-bottom: 1%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 /* Cambiar el color de texto de los botones de segment (por defecto) */
 ion-segment-button {
-  --color: #212529;
-  --color-checked: #212529;
-  --indicator-color: #212529;
+  --color: #000000;
+  --color-checked: #000000;
+  --indicator-color: #F0D7B4;
 }
 
 .col-puntuar {
@@ -338,9 +336,9 @@ ion-segment-button {
   }
 
   ion-segment-button {
-    --color: #212529;
-    --color-checked: #212529;
-    --indicator-color: #21252940;
+    --color: #000000;
+    --color-checked: #000000;
+    --indicator-color: #F0D7B4;
     font-size: 0.9rem;
   }
 
@@ -379,21 +377,21 @@ ion-segment-button {
     gap: 8px;
   }
 
-  /* ---- 1️⃣ Destino y Fecha lado a lado ---- */
+  /* ---- Destino y Fecha lado a lado ---- */
   .mi_viaje_box .row>div:nth-child(1),
   .mi_viaje_box .row>div:nth-child(2) {
     width: 48%;
     margin: 0;
   }
 
-  /* ---- 2️⃣ Estado debajo ---- */
+  /* ---- Estado debajo ---- */
   .mi_viaje_box .row>div:nth-child(3) {
     width: 100%;
     order: 2;
     text-align: center;
   }
 
-  /* ---- 3️⃣ Botones al final, centrados ---- */
+  /* ---- Botones al final, centrados ---- */
   .mi_viaje_box .row>div:nth-child(4) {
     width: 100%;
     order: 3;
@@ -451,4 +449,136 @@ ion-segment-button {
   .info-viaje {
     margin-left: 15px;
   }
+}
+
+// Contenedor de la Card principal
+.mis-viajes-card {
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    border-radius: 16px 0 0 16px;
+    z-index: 1;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.col-trayecto {
+  border-right: 1px dashed #efefef;
+  padding-left: 20px !important;
+}
+
+.fecha-viaje {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  i { color: #888; }
+}
+
+// Badges de Estado
+.badge-pendiente, .badge-finalizado {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.badge-pendiente { background: #fff9c4; color: #fbc02d; }
+.badge-finalizado { background: #e8f5e9; color: #4caf50; }
+
+.btn-puntuar-mini {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #5c6bc0;
+  cursor: pointer;
+  text-decoration: underline;
+  &:hover { color: #3f51b5; }
+}
+
+
+.punto-viaje {
+  .hora { display: block; font-size: 1.3rem; font-weight: 800; color: #333; }
+  .ciudad { font-size: 0.85rem; color: #777; font-weight: 500; }
+}
+
+.duracion-badge {
+  font-size: 0.7rem;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #999;
+  display: inline-block;
+  margin-bottom: -10px;
+}
+
+// Lado de Acciones
+.side-management {
+  background-color: #fafafa;
+  border-radius: 0 16px 16px 0;
+}
+
+.acciones-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .btn-gestion {
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    
+    i, mat-icon { font-size: 18px; }
+
+    &.btn-report { background: #fff3e0; color: #ff9800; }
+    &.btn-detalle { background: #e8eaf6; color: #3f51b5; }
+    &.btn-editar { background: #e1f5fe; color: #03a9f4; }
+    &.btn-eliminar { background: #ffebee; color: #f44336; }
+
+    &:hover { transform: scale(1.1); }
+  }
+}
+
+// --- RESPONSIVE ---
+@media (max-width: 768px) {
+  .col-trayecto {
+    border-right: none;
+    border-bottom: 1px dashed #efefef;
+  }
+  
+  .side-management {
+    border-radius: 0 0 16px 16px;
+    padding: 15px !important;
+  }
+
+  .acciones-grid {
+    justify-content: space-around;
+    .btn-gestion {
+        width: 45px;
+        height: 45px;
+    }
+  }
+
+  .punto-viaje .hora { font-size: 1.1rem; }
 }

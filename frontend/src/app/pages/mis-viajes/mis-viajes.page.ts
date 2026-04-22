@@ -22,13 +22,14 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular/standalone';
+import { LoadTravelLineComponent } from "src/app/components/load-travel-line/load-travel-line.component";
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent, ToastModule, TranslateModule],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent, ToastModule, TranslateModule, LoadTravelLineComponent],
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
