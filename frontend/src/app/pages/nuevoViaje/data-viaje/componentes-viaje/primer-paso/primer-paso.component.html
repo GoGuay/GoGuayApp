@@ -40,13 +40,14 @@
             </ion-item>
           </div>
         </div>
-        <p class="d-flex justify-content-center">Hora seleccionada: {{ getTime() }}</p>
+        <p class="d-flex justify-content-center mt-1">Hora seleccionada: {{ getTime() }}</p>
       </div>
     </ion-col>
 
     <!-- Columna derecha: Número de plazas y coche -->
     <ion-col size="12" size-xl="6">
       <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
+      <span class="d-flex justify-content-center span">Selecciona el número de plazas disponibles:</span>
       <div class="select-container custom-dropdown mt-4 mb-3" (click)="toggleDropdown()" [class.open]="isOpen">
         <img src="../../../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios" />
 
@@ -97,7 +98,6 @@
 
         <div class="contenedor_inputs mt-4">
           <h1 class="d-flex justify-content-center">MODO DE RESERVA</h1>
-
           <ion-list class="reserva-list">
             <ion-radio-group [value]="reservaAutomatica" (ionChange)="seleccionarTipoReserva($event.detail.value)">
 
@@ -126,7 +126,7 @@
     </ion-col>
   </ion-row>
 
-  <div class="d-flex justify-content-center align-items-center">
+  <div class="d-flex justify-content-center align-items-center mt-3">
     <span class="info_message"><i class="fi fi-rr-info me-1"></i>Recuerda que debes introducir todos los datos para
       poder
       continuar.</span>
