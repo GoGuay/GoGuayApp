@@ -1,14 +1,16 @@
 .centroMensajes {
-  padding: 2%
+  // padding: 2%;
+  width: 60%;
+  max-width: 600px;
 }
 
 .card {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
-  border-radius: 15px !important;
+  border-radius: 35px !important;
 }
 
 .chat_card {
-  border-radius: 15px;
+  border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   margin-bottom: 16px;
   overflow: hidden;
@@ -83,9 +85,11 @@ ion-item.chat_box {
 
 ion-button[fill="clear"] {
   --padding-start: 4px;
-  --padding-end: 4px;
+  --padding-top: 25px;
+  --padding-bottom: 25px;
   margin: 0;
   height: 24px;
+  border-radius: 50%;
 }
 
 .chat_card ion-item {
