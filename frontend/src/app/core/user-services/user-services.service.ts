@@ -126,6 +126,13 @@ export class UserServicesService {
     );
   }
 
+
+  obtenerUsuarioPorID_busqueda_viajes(usuarioId: number): Observable<any> {
+    return this.http.get<Usuario>(
+      `${this.apiUrl}/user/obtener_usuario_por_id_busqueda_viajes/${usuarioId}`,
+    );
+  }
+
   /**
    * Función para actualizar datos genéricos del usuario (como las preferencias).
    * @param usuarioId ID del usuario a actualizar.

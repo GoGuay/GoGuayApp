@@ -47,7 +47,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   viajesSubscription: Subscription = new Subscription();
   accordion = viewChild.required(MatAccordion);
   conductor: boolean = false;
-  userData: Usuario = {} as Usuario;
+  userData: Usuario | undefined = {} as Usuario;
 
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
@@ -66,14 +66,19 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const storedData = localStorage.getItem('userData');
+    this.userData = storedData ? JSON.parse(storedData) : null;
     console.log('DETALLES DEL VIAJE: ', this.viaje);
 
     this.viaje = { ...this.data.viaje };
     this.obtenerUsuarioActual();
     this.obtenerViajesActualizados();
-    if (this.userData.usuario) {
+    if (this.userData && this.userData.usuario) {
       this.validarSiEsConductor(this.userData.usuario.id, this.viaje);
+      this.verificarSiEstaUnido();
+    } else {
+      this.conductor = false;
+      this.yaUnido = false;
     }
     this.cdRef.detectChanges();
   }
@@ -93,15 +98,20 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    * 
    */
   obtenerUsuarioActual() {
-    this.usersService.obtenerUsuarioPorID(this.data.viaje.usuario_id).subscribe({
-    next: (usuario) => {
-      this.viaje.usuario = usuario; 
-      this.userID = usuario.id;
-      this.verificarSiEstaUnido();
-      this.cdRef.markForCheck();
-    },
-    error: (error) => console.error('Error al obtener el usuario:', error)
-  });
+    this.usersService.obtenerUsuarioPorID_busqueda_viajes(this.data.viaje.usuario_id).subscribe({
+      next: (usuario) => {
+        this.viaje = { ...this.viaje, usuario: usuario };
+        this.userID = usuario.id;
+        
+        if (this.userData && this.userData.usuario) {
+          this.verificarSiEstaUnido();
+        }
+
+        this.cdRef.markForCheck();
+        this.cdRef.detectChanges();
+      },
+      error: (error) => console.error('Error al obtener el conductor:', error)
+    });
   }
 
   /**
@@ -125,15 +135,15 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    * Función para verificar si el usuario ya está unido al viaje seleccionado.
    */
   verificarSiEstaUnido() {
-    const userDataString = localStorage.getItem('userData');
-    if (!userDataString) return;
+    if (!this.userData || !this.userData.usuario) {
+      this.yaUnido = false;
+      return;
+    }
 
-    const userData = JSON.parse(userDataString);
-    const usuarioId = userData.usuario.id;
+    const usuarioId = this.userData.usuario.id;
 
     this.travelService.getViaje(this.data.viaje.id).subscribe({
       next: (viajeServer) => {
-        // Mantenemos los datos del usuario que ya teníamos para que no "parpadee"
         const usuarioTemporal = this.viaje.usuario; 
         this.viaje = { ...viajeServer };
         if (!this.viaje.usuario) this.viaje.usuario = usuarioTemporal;
@@ -142,7 +152,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
         this.cdRef.markForCheck();
       }
     });
-}
+  }
 
 
   /**
@@ -152,14 +162,26 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    * @returns 
    */
   unirseAViaje(viajeID: number) {
+
+    if (!this.userData || !this.userData.usuario) {
+      this.redirigirAlLogin();
+      return;
+    }
+
     if (this.data.viaje.reserva_automatica) {
-    this.solicitudAutomatica(viajeID);
-  } else {
-    // NUEVO FLUJO: Abrir chat y enviar solicitud
-    this.enviarSolicitudManual();
-  }
+      this.solicitudAutomatica(viajeID);
+    } else {
+      this.enviarSolicitudManual();
+    }
+
   }
 
+  /**
+   * Función para enviar una solicitud automática al conductor del viaje (en caso de que el viaje tenga reserva automática).
+   * 
+   * @param viajeID --> ID del viaje al que se quiere unir el usuario.
+   * @returns --> No devuelve nada, pero muestra un modal de confirmación o error dependiendo del resultado de la solicitud.
+   */
   solicitudAutomatica(viajeID: number) {
     const title_error: string = '¡Algo anda mal!';
     const message_ya_unico: string = '<p>Ya estás unido a este viaje.</p>';
@@ -200,16 +222,18 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Función para enviar una solicitud manual al conductor del viaje.
+   * 
+   */
   enviarSolicitudManual() {
-    const emisorId = this.userData.usuario.id;
+    const emisorId = this.userData?.usuario.id || 0;
     const receptorId = this.data.viaje.usuario_id;
 
-    // 1. Iniciamos/Obtenemos conversación
     this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
       next: (res) => {
         const convId = res.conversacion_id;
         
-        // 2. Enviamos el mensaje especial de solicitud
         const payload = {
           viaje_id: this.data.viaje.id,
           emisor_id: emisorId,
@@ -217,7 +241,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
           conversacion_id: convId
         };
 
-        // Llamada a un nuevo método en messagingService
         this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
           this.closeDialog();
           this.funcionesComunes.openConfirmModal(
@@ -260,16 +283,26 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Función para formatear la fecha de salida del viaje.
+   * @param date --> fecha en formato ISO (ejemplo: "2024-06-20T15:30:00")
+   * @returns --> fecha formateada (ejemplo: "2024-06-20")
+   */
   formatData(date: any) {
     return date.split('T')[0].trim();
   }
 
   /**
-   * 
+   * Función para contactar con el conductor o acompañante del viaje a través del sistema de mensajería interna de la aplicación.
    * @param receptorId 
    * @returns 
    */
-  contactarAcompanante(receptorId: number) {
+  contactar(receptorId: number) {
+    if (!this.userData || !this.userData.usuario) {
+      this.redirigirAlLogin();
+      return;
+    }
+
     const emisorId = this.userData.usuario.id;
 
     if (emisorId === receptorId) {
@@ -289,6 +322,19 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
         console.error('Error al iniciar chat:', err);
         this.funcionesComunes.openErrorModal('¡Error!', 'No se pudo abrir el chat en este momento.');
       }
+    });
+  }
+
+  /**
+   * Función para redirigir al login si el usuario no ha iniciado sesión.
+   */
+  private redirigirAlLogin() {
+    this.closeDialog();
+    this.funcionesComunes.openConfirmModal(
+      '¡Atención!', 
+      'Debes iniciar sesión para realizar esta acción.'
+    ).afterClosed().subscribe(res => {
+      if (res) this.navCtrl.navigateRoot(['/login']);
     });
   }
 }

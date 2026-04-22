@@ -205,6 +205,19 @@ def obtener_usuario_por_id(id):
     
     return jsonify(usuario.serialize()), 200
 
+@user_blueprint.route('/obtener_usuario_por_id_busqueda_viajes/<int:id>', methods=['GET'])
+def obtener_usuario_por_id_busqueda_viajes(id):
+    """
+    1. Realiza una peticion a la tabla Usuarios de la base de datos, buscando por el Id (que obtiene de manera dinámica por la ruta con <int:id>), y lo guarda en usuario.
+    2. Si no encuentra al usuario, devuelve error. Si lo encuentra lo convierte en un diccionario python y lo envía en formato Json con toda la información serializada.
+    3. jwt_required: mira si en la petición que llega desde el front existe una cabecera llamada Authorization. Si el token no existe bloquea la petición y devuelve un 401 Unauthorized (401-Token expired; 422-Token falso o manipulado). Si el token es válido se ejecuta el código de esta función. 
+    """
+    usuario = Usuario.query.get(id)
+    if usuario is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    return jsonify(usuario.serialize_public()), 200
+
 ## EDITAR INFORMACIÓN DE UN USUAURIO ##
 @user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
 @jwt_required()

@@ -69,9 +69,9 @@ export class ResultadosBusquedaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const storedData = localStorage.getItem('userData');
+    this.userData = storedData ? JSON.parse(storedData) : { usuario: { id: -1 } };
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-    // this.obtenerListaViajes();
     this.funcionesComunes.getBaseUrl();
   }
 
@@ -83,32 +83,28 @@ export class ResultadosBusquedaComponent implements OnInit {
         (val) => val !== '' && val !== null && val !== undefined
       );
 
-    // 2. Si no hay filtros, limpiamos la lista y no hacemos nada
-    if (!tieneFiltros) {
-      this.listado_viajes = [];
-      this.isLoading = false;
-      return;
-    }
-
-    // 3. Iniciamos carga solo si hay parámetros
-    this.isLoading = true;
-
-    this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
-      next: (viajes) => {
-        this.listado_viajes = viajes;
-
-        if (!viajes || viajes.length === 0) {
-          this.isLoading = false;
-          return;
-        }
-
-        this.cargarUsuariosParaViajes(viajes);
-      },
-      error: (err) => {
-        console.error('Error al filtrar:', err);
+      if (!tieneFiltros) {
         this.listado_viajes = [];
         this.isLoading = false;
+        return;
+      }
+
+      this.isLoading = true;
+
+      this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
+      next: (viajes) => {
+        this.listado_viajes = viajes.map(viaje => {
+          return {
+            ...viaje,
+            duracion_calculada: this.calcularDuracion(viaje.hora_salida, viaje.hora_llegada)
+          };
+        });
+        this.cargarUsuariosParaViajes(this.listado_viajes);
       },
+      error: (err) => {
+        this.isLoading = false;
+        this.listado_viajes = [];
+      }
     });
   }
 
@@ -122,30 +118,30 @@ export class ResultadosBusquedaComponent implements OnInit {
 
     const solicitudesUsuarios = idsUnicos.map((id) => {
       if (this.usuariosCache.has(id)) {
-    return of(this.usuariosCache.get(id));
-  }
-  return this.userService
-    .obtenerUsuarioPorID(id)
-    .pipe(
-      tap((user) => this.usuariosCache.set(id, user)),
-      catchError(err => {
-        console.error(`Error cargando usuario ${id}`, err);
-        return of(null); // Devuelve null para que forkJoin no se rompa
-      })
-    );
-    });
-
-    forkJoin(solicitudesUsuarios).subscribe({
-      next: () => {
-        this.listado_viajes.forEach((viaje) => {
-          viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
-        });
-        this.aplicarFiltro();
-      },
-      complete: () => {
-        this.isLoading = false;
+        return of(this.usuariosCache.get(id));
       }
-    });
+      return this.userService
+        .obtenerUsuarioPorID(id)
+        .pipe(
+          tap((user) => this.usuariosCache.set(id, user)),
+          catchError(err => {
+            console.error(`Error cargando usuario ${id}`, err);
+            return of(null);
+          })
+        );
+        });
+
+        forkJoin(solicitudesUsuarios).subscribe({
+          next: () => {
+            this.listado_viajes.forEach((viaje) => {
+              viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
+            });
+            this.aplicarFiltro();
+          },
+          complete: () => {
+            this.isLoading = false;
+          }
+      });
   }
 
   /**
@@ -185,22 +181,18 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
       this.listado_viajes = viajes;
 
-      // 2. Creamos un set de IDs únicos para no repetir llamadas
       const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 
       const solicitudesUsuarios = idsUnicos.map((id) => {
-        // Si ya lo tenemos en caché, devolvemos un observable del valor
         if (this.usuariosCache.has(id)) {
           return of(this.usuariosCache.get(id));
         }
-        // Si no, lo pedimos y lo guardamos en la caché al recibirlo
         return this.userService
           .obtenerUsuarioPorID(id)
           .pipe(tap((user) => this.usuariosCache.set(id, user)));
       });
 
       forkJoin(solicitudesUsuarios).subscribe(() => {
-        // 3. Asignamos los usuarios desde la caché a los viajes
         this.listado_viajes.forEach((viaje) => {
           viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
         });
@@ -280,7 +272,49 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.isLoading = false;
   }
 
+  /**
+   * Función para marcar que la imagen de un viaje ha sido cargada, evitando mostrar 
+   * el spinner en viajes que ya han cargado su imagen previamente.
+   * 
+   * @param viajeId ID del viaje cuya imagen ha sido cargada
+   */
   marcarImagenComoCargada(viajeId: number) {
     this.imagenesCargadas[viajeId] = true;
   }
+
+
+  /**
+   * Función para calcular la duración de un trayecto entre dos horas.
+   * 
+   * @param horaSalida --> Hora de salida del viaje en formato "HH:mm"
+   * @param horaLlegada --> Hora de llegada del viaje en formato "HH:mm"
+   * @returns --> Duración del viaje en formato "Xh Ymin", "Xh" o "Ymin". Si las horas son iguales, 
+   * devuelve un mensaje indicando que la duración no está disponible.
+   */
+  calcularDuracion(horaSalida: string, horaLlegada: string): string {
+    if (!horaSalida || !horaLlegada) return '---';
+
+    if (horaSalida === horaLlegada) {
+      return 'Duración estimada no disponible'; 
+    }
+
+    const [h1, m1] = horaSalida.split(':').map(Number);
+    const [h2, m2] = horaLlegada.split(':').map(Number);
+
+    let minutosInicio = h1 * 60 + m1;
+    let minutosFin = h2 * 60 + m2;
+
+    if (minutosFin < minutosInicio) {
+      minutosFin += 24 * 60; 
+    }
+
+    const diferenciaTotal = minutosFin - minutosInicio;
+    const horas = Math.floor(diferenciaTotal / 60);
+    const minutos = diferenciaTotal % 60;
+
+    if (horas === 0) return `${minutos}min`;
+    if (minutos === 0) return `${horas}h`;
+    return `${horas}h ${minutos}min`;
+  }
+
 }

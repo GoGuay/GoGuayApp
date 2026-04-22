@@ -83,7 +83,7 @@ export class ChatPage implements OnInit {
             this.telefonoRecibido = null;
             this.compartiendoMiTelefono = false;
 
-            data.forEach((m: any) => {
+            data.forEach((m: Mensaje) => {
                 if (m.texto.includes('TELEFONO USUARIO:')) {
                     if (m.emisor_id === this.usuarioLogueadoId) {
                         this.compartiendoMiTelefono = true;
