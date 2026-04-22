@@ -211,6 +211,11 @@ ion-accordion-group {
   margin-top: 12px;
 }
 
+.btn_bg{
+  border-radius: 35px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
 @media (max-width: 576px) {
   .form-select {
     min-width: 90%;
