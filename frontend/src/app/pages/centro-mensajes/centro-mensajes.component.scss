@@ -95,3 +95,9 @@ ion-button[fill="clear"] {
 .chat_card ion-item {
   --inner-padding-end: 0;
 }
+
+@media (max-width: 768px) {
+  .centroMensajes {
+    width: 100%;
+  }
+}

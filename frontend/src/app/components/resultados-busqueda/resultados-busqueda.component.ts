@@ -12,7 +12,6 @@ import { LoadTravelLineComponent } from '../load-travel-line/load-travel-line.co
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
-import { MatDivider } from '@angular/material/divider';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -23,9 +22,8 @@ import { forkJoin } from 'rxjs';
     TranslateModule,
     CommonModule,
     SpinnerComponent,
-    LoadTravelLineComponent,
-    MatDivider,
-  ],
+    LoadTravelLineComponent
+],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })

@@ -118,26 +118,6 @@
 
 }
 
-.skeleton-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(-90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
-  animation: shimmer 1.2s infinite linear;
-}
-
-.skeleton-line {
-  height: 80px;
-  margin-bottom: 1rem;
-  border-radius: 12px;
-  background: linear-gradient(-90deg, #eee 0%, #ddd 50%, #eee 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite linear;
-}
-
-.skeleton-line.short {
-  width: 60px;
-}
 
 .position-relative {
   position: relative;
@@ -420,11 +400,11 @@
 }
 
 .bolt-indicator {
-  background: #fffae6;
+  // background: #fffae6;
   color: #f1c40f;
-  padding: 5px;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px #f1c40f55;
+  // padding: 5px;
+  // border-radius: 50%;
+  // box-shadow: inset 0 0 0 1px #f1c40f55;
 }
 
 // Mobile Responsive

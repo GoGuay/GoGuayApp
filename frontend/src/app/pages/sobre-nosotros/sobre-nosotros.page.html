@@ -1,169 +1,124 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'JUMBOTRON.QUIENES_SOMOS_SLOGAN' | translate" [imageSrc]="'../../assets/folder/jumbo2.jpg'"
-      [helpText]="'JUMBOTRON.HELP'">
+    <app-jumbotron [title]="'CADA VIAJE ES UNA NUEVA HISTORIA' | translate" 
+      [imageSrc]="'../../assets/folder/jumbo2.jpg'"
+      [helpText]="'Descubre quiénes estamos detrás de GoGuay.'">
     </app-jumbotron>
   </div>
 
-  <div class="container">
-    <div class="container box_text">
-      <h1 size="large">SOBRE NOSOTROS</h1>
-      <mat-divider class="mb-2"></mat-divider>
+  <div class="container py-4">
+    <div class="box_text main-content p-4">
+      <h1 class="titulo-principal">SOBRE NOSOTROS</h1>
+      <mat-divider class="mb-4"></mat-divider>
+      
       <div id="general">
-        <p class="borderDraw"> "Aquí se hacen un motón de cosas" </p>
-        <p>En PrideRide nos apasiona ofrecer experiencias únicas a nuestros usuarios, promoviendo un entorno inclusivo,
-          sostenible y divertido. Creemos que el transporte puede ser más que solo un medio para llegar de un lugar a
-          otro: debe ser una forma de disfrutar del viaje y conectarse con la comunidad.</p>
-        <p>Nuestra misión es proporcionar opciones de movilidad que no solo sean ecológicas, sino que también fomenten
-          la
-          igualdad y la diversidad. Trabajamos para ofrecer soluciones que beneficien a todos, sin importar su
-          identidad,
-          género u orientación sexual. En PrideRide, nos comprometemos a crear un espacio donde cada persona se sienta
-          cómoda y bienvenida.</p>
-        <p>Desde nuestras bicicletas eléctricas hasta nuestras opciones de transporte compartido, buscamos siempre la
-          mejor forma de hacer tu viaje más accesible y agradable. Únete a nosotros en este viaje por un futuro más
-          inclusivo, respetuoso y divertido.</p>
-      </div>
-
-      <div id="comienzo">
-        <h6> CÓMO COMENZÓ LA IDEA PARA CREAR PRIDERIDE </h6>
-      </div>
-
-      <div class="d-flex justify-content-center">
-        <ion-grid>
-          <ion-row>
-            <ion-col class="d-flex justify-content-center">
-              <mat-card class="body-card" appearance="outlined">
-                <mat-card-header>
-                  <div mat-card-avatar class="header-image-tom"></div>
-                  <mat-card-title>Tomás</mat-card-title>
-                  <mat-card-subtitle>Desarrollador FullStack</mat-card-subtitle>
-                </mat-card-header>
-                <div class="image-container">
-                  <img mat-card-image [src]="'../../../assets/autores/137113975.png'" alt="Foto de Tomás P.H.">
-                </div>
-                <mat-card-content>
-                  <p>Apasionado de la tecnología. Autodidacta y curioso (nunca te acostarás sin aprender algo nuevo)!!
-                  </p>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button (click)="openLinkedin('Tomas')" title="Enlace a Linkedin de Tomás.">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 448 512">
-                      <path
-                        d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
-                    </svg>
-                    Linkedin
-                  </button>
-                  <button mat-button (click)="openGitHub('Tomas')" title="Enlace a GitHub de Tmás.">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 496 512">
-                      <path
-                        d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
-                    </svg>
-                    GitHub
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </ion-col>
-            <ion-col class="d-flex justify-content-center">
-              <mat-card class="body-card" appearance="outlined">
-                <mat-card-header>
-                  <div mat-card-avatar class="header-image-dani"></div>
-                  <mat-card-title>Dani</mat-card-title>
-                  <mat-card-subtitle>Desarrollador FullStack</mat-card-subtitle>
-                </mat-card-header>
-                <div class="image-container">
-                  <img mat-card-image [src]="'../../../assets/autores/24509644.jpeg'" alt="Foto de Dani G.D.">
-                </div>
-
-                <mat-card-content>
-                  <p>Curioso de las nuevas tecnologías.</p>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button (click)="openLinkedin('Dani')" title="Enlace a Linkedin de Dani.">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 448 512">
-                      <path
-                        d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
-                    </svg>
-                    Linkedin
-                  </button>
-                  <button mat-button (click)="openGitHub('Dani')" title="Enlace a GitHub de Dani.">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 496 512">
-                      <path
-                        d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
-                    </svg>
-                    GitHub
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-
-      <div class="d-flex justify-content-center">
-        <p class="borderDraw"><strong>Creadores de PrideRide</strong> 👉 Tommy & Dani </p>
-      </div>
-
-      <div id="sugerencias" class="box_sugerencias mb-3">
-        <h6>¿Tienes algo que contarnos?</h6>
-        <mat-divider class="mb-2"></mat-divider>
-        <p>Si tienes algún tipo de sugerencia o ruego, háznoslo saber. Estaremos encantados de ayudarte en todo lo
-          posible. 😀
+        <p class="borderDraw text-center mb-4"> "Viajar con orgullo, viajar GoGuay" </p>
+        <p class="descripcion-texto">
+          <strong>En GoGuay</strong> nos apasiona crear entornos inclusivos, sostenibles y, sobre todo, libres de prejuicios. 
+          Nuestra misión es proporcionar opciones de movilidad que fomenten la igualdad y celebren la diversidad. 
+          Aquí, cada persona se siente cómoda y bienvenida, sin importar su identidad, género u orientación sexual.
         </p>
-        <div class="d-flex justify-content-center">
-          <button type="button" mat-raised-button class="btn_bg"><img src="../../../assets/sistema/sobre.png"
-              class="_icon">Envíanos tu sugerencia</button>
-        </div>
       </div>
 
-      <div class="container">
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <div class="mt-2 mb-2 borderDraw">
-                <h6><strong>ENLACES DE INTERÉS DE PRIDERIDE</strong></h6>
-                <ul>
-                  <li>
-                    <a href="/cookies" class="interes me-2"><i class="fi fi-rr-cookie me-2"></i>Política de
-                      cookies</a>👈
-                  </li>
-                  <li>
-                    <a href="/terminos" class="interes me-2"><i class="fi fi-rr-file me-2"></i>Términos y
-                      condiciones</a> 👈
-                  </li>
-                  <li>
-                    <a href="/faqs" class="interes me-2"><i class="fi fi-rr-question me-2"></i>Preguntas
-                      frecuentes</a>👈
-                  </li>
-                </ul>
-              </div>
-            </ion-col>
-            <ion-col>
-              <div class="mt-2 mb-2 d-flex justify-content-end">
-                <div class="text-end borderDrawRight">
-                  <h6><strong>CONTACTO</strong></h6>
-                  <ul class="list-unstyled">
-                    <li>
-                      <a href="/centro-contacto" class="interes me-2"><i class="fi fi-rr-form me-2"></i>Formulario de
-                        contacto</a>👈
-                    </li>
-                    <li>
-                      <a href="mailto:gestion.prideride@gmail.com?subject=Contacto&body=Por favor, déjenos su duda aquí."
-                        class="interes me-2"><i class="fi fi-rr-envelope me-2"></i>Correo</a> 👈
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+      <div id="comienzo" class="mt-5 mb-4 text-center">
+        <h6 class="seccion-subtitulo"> LAS PERSONAS DETRÁS DE GOGUAY </h6>
       </div>
 
-      <div class="container box_img">
-        <img class="img_arco" src="../../../assets/imgs/arcoiris.png">
+      <ion-grid>
+        <ion-row class="justify-content-center">
+          <ion-col size="12" size-md="5" class="d-flex justify-content-center">
+            <mat-card class="creador-card shadow-sm">
+              <mat-card-header>
+                <div mat-card-avatar class="header-image-tom"></div>
+                <mat-card-title>Tomás</mat-card-title>
+                <mat-card-subtitle>Desarrollador FullStack</mat-card-subtitle>
+              </mat-card-header>
+              <div class="image-wrapper mt-2">
+                <img [src]="'../../../assets/autores/137113975.png'" alt="Tomás">
+              </div>
+              <mat-card-content class="mt-3">
+                <p>Apasionado de la tecnología y autodidacta. Siempre buscando aprender algo nuevo para mejorar GoGuay.</p>
+              </mat-card-content>
+              <mat-card-actions class="d-flex justify-content-around pb-3">
+                <button mat-icon-button (click)="openLinkedin('Tomas')" class="btn-social-media linkedin" title="LinkedIn">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 448 512" fill="currentColor">
+                    <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
+                  </svg>
+                </button>
+
+                <button mat-icon-button (click)="openGitHub('Tomas')" class="btn-social-media github" title="GitHub">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 496 512" fill="currentColor">
+                    <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/>
+                  </svg>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="5" class="d-flex justify-content-center">
+            <mat-card class="creador-card shadow-sm">
+              <mat-card-header>
+                <div mat-card-avatar class="header-image-dani"></div>
+                <mat-card-title>Dani</mat-card-title>
+                <mat-card-subtitle>Desarrollador FullStack</mat-card-subtitle>
+              </mat-card-header>
+              <div class="image-wrapper mt-2">
+                <img [src]="'../../../assets/autores/24509644.jpeg'" alt="Dani">
+              </div>
+              <mat-card-content class="mt-3">
+                <p>Curioso por naturaleza y experto en nuevas tecnologías. Enfocado en la mejor experiencia de usuario.</p>
+              </mat-card-content>
+              <mat-card-actions class="d-flex justify-content-around pb-3">
+                <button mat-icon-button (click)="openLinkedin('Dani')" class="btn-social-media linkedin" title="LinkedIn">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 448 512" fill="currentColor">
+                    <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
+                  </svg>
+                </button>
+
+                <button mat-icon-button (click)="openGitHub('Dani')" class="btn-social-media github" title="GitHub">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 496 512" fill="currentColor">
+                    <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/>
+                  </svg>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <div id="sugerencias" class="box_sugerencias my-5 text-center p-4">
+        <h6>¿Tienes algo que contarnos?</h6>
+        <p>Estamos construyendo GoGuay juntxs. Háznoslo saber. 😀</p>
+        <button mat-raised-button class="btn_bg_main">
+          <i class="fi fi-rr-envelope me-2"></i> Envíanos tu sugerencia
+        </button>
       </div>
+
+      <div class="links-footer p-4 borderDraw">
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <h6 class="fw-bold mb-3">ENLACES DE INTERÉS</h6>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="/cookies" class="link-item"><i class="fi fi-rr-cookie me-2"></i>Política de cookies</a></li>
+              <li class="mb-2"><a href="/terminos" class="link-item"><i class="fi fi-rr-file me-2"></i>Términos y condiciones</a></li>
+              <li class="mb-2"><a href="/faqs" class="link-item"><i class="fi fi-rr-question me-2"></i>Preguntas frecuentes</a></li>
+            </ul>
+          </ion-col>
+          <ion-col size="12" size-md="6" class="text-md-end mt-4 mt-md-0">
+            <h6 class="fw-bold mb-3">CONTACTO</h6>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="/centro-contacto" class="link-item">Formulario de contacto <i class="fi fi-rr-form ms-2"></i></a></li>
+              <li class="mb-2"><a href="mailto:gestion.goguay&#64;gmail.com" class="link-item">
+                  gestion.goguay&#64;gmail.com <i class="fi fi-rr-envelope ms-2"></i>
+                </a>
+              </li>
+            </ul>
+          </ion-col>
+        </ion-row>
+      </div>
+
     </div>
   </div>
-
 </ion-content>

@@ -1,238 +1,124 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'"></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container-fluid vh-100">
-    <div class="container">
-      <h1 class="mb-4 text-center">
-        {{ "AJUSTESAPP.TITULO" | translate }}
-        <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif" />
-      </h1>
+  <div class="container py-4">
+    <h1 class="text-center mb-2">
+      {{ "AJUSTESAPP.TITULO" | translate }}
+      <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif" />
+    </h1>
+    <p class="text-center mb-4 text-muted">{{ "AJUSTESAPP.SUBTITULO_1" | translate }}</p>
 
-      <p class="text-center">{{ "AJUSTESAPP.SUBTITULO_1" | translate }}</p>
-      <!-- Sección de selección de idioma -->
-      <ion-row>
-        <ion-col size="12" size-md="4">
-          <div class="box-section">
-            <h3>{{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}</h3>
-            <mat-divider></mat-divider>
-            <p class="mt-2 text-start">
-              {{ "AJUSTESAPP.OPCION_IDIOMA.SUBTITULO" | translate }}
-            </p>
-            <div class="d-flex justify-content-center mt-2">
-              <select class="form-select w-75 selectIdiomas" aria-label="Selecciona un idioma"
-                (change)="changeLanguage($event)">
-                <option selected disabled>
-                  {{ "AJUSTESAPP.OPCION_IDIOMA.OPTION_DEFAULT" | translate }}
-                </option>
-                <option value="es">
-                  {{ "AJUSTESAPP.OPCION_IDIOMA.ESPAÑOL" | translate }}
-                </option>
-                <option value="en">
-                  {{ "AJUSTESAPP.OPCION_IDIOMA.INGLES" | translate }}
-                </option>
-              </select>
-            </div>
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="box-section goguay-border">
+          <h3><i class="fi fi-rr-world me-2"></i>{{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}</h3>
+          <mat-divider></mat-divider>
+          <div class="p-2">
+            <select class="form-select mt-3 custom-select" (change)="changeLanguage($event)">
+              <option value="es" [selected]="selectedLanguage === 'es'">Español</option>
+              <option value="en" [selected]="selectedLanguage === 'en'">English</option>
+            </select>
+            
+            <!-- <div class="mt-4">
+              <h6>{{ "AJUSTESAPP.MODO_OSCURO.TITLE" | translate }}</h6>
+              <div class="d-flex align-items-center gap-3 mt-2">
+                <ion-icon name="sunny-outline"></ion-icon>
+                <ion-toggle [checked]="darkTheme" (ionChange)="toggleDarkMode($event)"></ion-toggle>
+                <ion-icon name="moon-outline"></ion-icon>
+              </div>
+            </div> -->
           </div>
-        </ion-col>
-
-        <ion-col size="12" size-md="4">
-          <!-- Sección de mostrar banner -->
-          <div class="box-section">
-            <h3>{{ "AJUSTESAPP.OPCION_BANNER.TITULO" | translate }}</h3>
-            <mat-divider></mat-divider>
-            <p class="mt-2 text-start">
-              {{ "AJUSTESAPP.OPCION_BANNER.SUBTITULO" | translate }}
-            </p>
-            <div class="d-flex justify-content-center mt-4">
-              <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="guardarAjustes()"></ion-toggle>
-            </div>
-          </div>
-        </ion-col>
-        <ion-col size="12" size-md="4">
-          <!-- Sección de notificaciones -->
-          <div class="box-section" id="notificaciones-section">
-            <h3>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
-            <mat-divider></mat-divider>
-            <p class="mt-2 text-start">
-              {{ "AJUSTESAPP.OPCION_NOTIFICACION.SUBTITULO" | translate }}
-            </p>
-
-            <p class="mt-2 text-start">
-              Mostrar notificaciones leídas
-            </p>
-            <div class="d-flex justify-content-center mt-4">
-              <ion-toggle [(ngModel)]="notificacionesActivas"></ion-toggle>
-            </div>
-          </div>
-        </ion-col>
-
-        <ion-col size="12" size-md="4">
-          <div class="box-section">
-            <h3>{{ "AJUSTESAPP.MODO_OSCURO.TITLE" | translate }}</h3>
-            <mat-divider></mat-divider>
-            <p class="mt-2 text-start">
-              {{ "AJUSTESAPP.MODO_OSCURO.SUBTITLE" | translate }}
-            </p>
-            <div class="d-flex justify-content-center mt-4">
-              <ion-icon name="sunny-outline" class="me-2"></ion-icon>
-              <ion-toggle (ionChange)="toggleDarkMode($event)"></ion-toggle>
-              <ion-icon name="moon-outline" class="ms-2"></ion-icon>
-            </div>
-          </div>
-        </ion-col>
-
-        <ion-col size="12" size-md="4">
-          <div class="box-section">
-            <h3>{{ "AJUSTESAPP.PREFERENCIAS.TITLE" | translate }}</h3>
-            <mat-divider></mat-divider>
-            <p class="mt-2 text-start">
-              {{ "AJUSTESAPP.PREFERENCIAS.SUBTITLE" | translate }}
-            </p>
-            <div class="mt-3">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><i class="fi fi-rs-meeting me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.HABLAR" | translate }}</span>
-                <ion-checkbox [(ngModel)]="leGustaHablar" (ionChange)="guardarPreferencias()"></ion-checkbox>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><i class="fi fi-rr-music me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.MUSICA" | translate }}</span>
-                <ion-checkbox [(ngModel)]="leGustaMusica" (ionChange)="guardarPreferencias()"></ion-checkbox>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><i class="fi fi-rs-lips-silence me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.SILENCIO" | translate
-                  }}</span>
-                <ion-checkbox [(ngModel)]="leGustaSilencio" (ionChange)="guardarPreferencias()"></ion-checkbox>
-              </div>
-
-              <mat-divider class="my-2"></mat-divider>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><i class="fi fi-rr-paw me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.MASCOTAS" | translate }}</span>
-                <ion-checkbox [(ngModel)]="aceptaMascotas" (ionChange)="guardarPreferencias()"></ion-checkbox>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><i class="fi fi-rr-smoking me-2"></i> {{ "AJUSTESAPP.PREFERENCIAS.FUMAR" | translate }}</span>
-                <ion-checkbox [(ngModel)]="fuma" (ionChange)="guardarPreferencias()"></ion-checkbox>
-              </div>
-            </div>
-          </div>
-        </ion-col>
-
-      </ion-row>
-
-      <div class="d-flex justify-content-center mt-4 mb-4">
-        <button class="btn btn_bg" (click)="logout()">
-          <i class="fi fi-rs-log-out"></i>
-          Cerrar Sesión
-        </button>
-      </div>
-
-      <ion-row class="container d-flex justify-content-center">
-        <!-- Cambio de contraseña -->
-        <ion-col size="12" size-md="4">
-          <div class="box-section-2">
-            <div class="text-center mb-2">
-              <p class="text-center">
-                <strong>{{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}</strong>
-              </p>
-
-              <!-- Contraseña Actual -->
-              <div class="mb-4">
-                <label for="passwordActual" class="form-label">
-                  {{'AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL' | translate}}
-                </label>
-                <input type="password" class="form-control w-10 mb-1" id="passwordActual" [(ngModel)]="passwordActual"
-                  (blur)="comprobarContrasenaActual()" [disabled]="false"
-                  aria-label="Campo para escribir la contraseña actual" />
-                <div class="text-start mb-4">
-                  <a class="small"
-                    href="'../../../forgot-password//forgot-password.page.html">{{'AJUSTESAPP.PASSWORD.FORGOT_PASSWORD'
-                    | translate}}</a>
-                </div>
-                <div *ngIf="isPasswordActualValida === true" class="text-success mt-2">
-                  {{'AJUSTESAPP.PASSWORD.PASSWORD_CONFIRM' | translate}}
-                </div>
-                <div *ngIf="isPasswordActualValida === false" class="text-danger mt-2">
-                  {{'AJUSTESAPP.PASSWORD.PASSWORD_INCORRECTA' | translate}}
-                </div>
-              </div>
-
-              <!-- Nueva contraseña1 -->
-              <div class="mb-3">
-                <label for="nuevaPassword1" class="form-label">
-                  {{'AJUSTESAPP.PASSWORD.NUEVA_CONTRAS' | translate}}
-                </label>
-                <input type="password" class="form-control w-10" id="nuevaPassword1" [(ngModel)]="nuevaPassword1"
-                  [disabled]="!isPasswordActualValida" (input)="validarNuevaPassword()"
-                  aria-label="Campo para escibir la nueva contraseña" />
-              </div>
-
-              <!-- Confirmar nueva contraseña2 -->
-              <div>
-                <label for="nuevaPassword2" class="form-label mb-1">
-                  {{'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate}}
-                </label>
-                <input type="password" class="form-control w-10" id="nuevaPassword2" [(ngModel)]="nuevaPassword2"
-                  [disabled]="!isNuevaPassword1Valida" (input)="validarConfirmacionPassword()"
-                  aria-label="Campo para confirmar la nueva contraseña" />
-              </div>
-              <div *ngIf="errorMensaje" class="text-danger mt-2">
-                {{ errorMensaje }}
-              </div>
-              <div *ngIf="exitoMensaje" class="text-success mt-2">
-                {{ exitoMensaje }}
-              </div>
-
-              <ion-row class="boton_guardar d-flex justify-content-center">
-                <button type="button" class="btn btn_bg" mat-raised-button [disabled]="!isConfirmacionPasswordValida"
-                  (click)="botonCambioPassword()">
-                  {{ "BOTON.CAMBIAR" | translate }}
-                </button>
-              </ion-row>
-            </div>
-          </div>
-        </ion-col>
-
-        <!-- Línea divisoria -->
-        <div class="divider-container-final hide-on-mobile">
-          <mat-divider vertical class="mat-divider-2"></mat-divider>
         </div>
-
-        <ion-col size="12" size-md="4">
-          <div class="box-section-2">
-            <div class="text-center">
-              <p class="text-center">
-                <strong>{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</strong>
-              </p>
-              <div>
-                <p class="mt-4" style="color: red; font-weight: bold; text-align: justify">
-                  {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}
-                </p>
-                <p class="mt-5 mb-4" style="color: red; font-weight: bold; text-align: justify">
-                  {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA2" | translate }}
-                </p>
-                <div class="d-flex justify-content-center">
-                  <button type="button" class="btn btn_bg mt-5" mat-raised-button (click)="modalEliminarUsuario()">
-                    {{ "BOTON.ELIMINAR_CTA" | translate }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ion-col>
-      </ion-row>
-
-      <!-- Mensaje de confirmación de los cambios - pie de página -->
-      <p-toast position="bottom-center"></p-toast>
-      <div class="text-center">
-        <p class="info-text">
-          {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
-          <img class="icon_logo" src="../../../assets/logo/PRIDECAR.png" />
-        </p>
       </div>
 
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="box-section goguay-border">
+          <h3><i class="fi fi-rr-bell me-2"></i>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
+          <mat-divider></mat-divider>
+          <div class="mt-3">
+            <div class="notif-option">
+              <span>Notificaciones Push</span>
+              <ion-toggle [(ngModel)]="notifPush" (ionChange)="guardarAjustes()"></ion-toggle>
+            </div>
+            <div class="notif-option">
+              <span>Correo Electrónico</span>
+              <ion-toggle [(ngModel)]="notifEmail" (ionChange)="guardarAjustes()"></ion-toggle>
+            </div>
+            <div class="notif-option">
+              <span>SMS / Mensajería</span>
+              <ion-toggle [(ngModel)]="notifSMS" (ionChange)="guardarAjustes()"></ion-toggle>
+            </div>
+            <div class="notif-option">
+              <span>Alertas en App</span>
+              <ion-toggle [(ngModel)]="notificacionesActivas" (ionChange)="guardarAjustes()"></ion-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="box-section goguay-border">
+          <h3><i class="fi fi-rr-heart me-2"></i>{{ "AJUSTESAPP.PREFERENCIAS.TITLE" | translate }}</h3>
+          <mat-divider></mat-divider>
+          <div class="mt-3">
+            <div class="pref-row">
+              <label><i class="fi fi-rs-meeting me-2"></i>Hablar</label>
+              <ion-checkbox [(ngModel)]="leGustaHablar" (ionChange)="guardarPreferencias()"></ion-checkbox>
+            </div>
+            <div class="pref-row">
+              <label><i class="fi fi-rs-lips-silence"></i>Ir en silencio</label>
+              <ion-checkbox [(ngModel)]="leGustaSilencio" (ionChange)="guardarPreferencias()"></ion-checkbox>
+            </div>
+            <div class="pref-row">
+              <label><i class="fi fi-rr-music me-2"></i>Música</label>
+              <ion-checkbox [(ngModel)]="leGustaMusica" (ionChange)="guardarPreferencias()"></ion-checkbox>
+            </div>
+            <div class="pref-row">
+              <label><i class="fi fi-rr-paw me-2"></i>Mascotas</label>
+              <ion-checkbox [(ngModel)]="aceptaMascotas" (ionChange)="guardarPreferencias()"></ion-checkbox>
+            </div>
+            <div class="pref-row">
+              <label><i class="fi fi-rr-smoking me-2"></i>Permitir fumar</label>
+              <ion-checkbox [(ngModel)]="fuma" (ionChange)="guardarPreferencias()"></ion-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="box-section goguay-border h-100">
+          <h3><i class="fi fi-rr-lock me-2"></i>{{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}</h3>
+          <mat-divider></mat-divider>
+          <div class="mt-3">
+            <input type="password" class="form-control mb-2" placeholder="Contraseña actual" [(ngModel)]="passwordActual" (blur)="comprobarContrasenaActual()">
+            <input type="password" class="form-control mb-2" placeholder="Nueva contraseña" [(ngModel)]="nuevaPassword1" [disabled]="!isPasswordActualValida" (input)="validarNuevaPassword()">
+            <input type="password" class="form-control mb-3" placeholder="Confirmar nueva contraseña" [(ngModel)]="nuevaPassword2" [disabled]="!isNuevaPassword1Valida" (input)="validarConfirmacionPassword()">
+            <button class="btn btn-goguay w-100" [disabled]="!isConfirmacionPasswordValida" (click)="botonCambioPassword()">Actualizar Contraseña</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="box-section border-danger h-100">
+          <h3 class="text-danger"><i class="fi fi-rr-trash me-2"></i>{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</h3>
+          <mat-divider></mat-divider>
+          <div class="mt-3">
+            <p class="small text-muted">{{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}</p>
+            <button class="btn btn-outline-danger w-100 mt-4" (click)="modalEliminarUsuario()">{{ "BOTON.ELIMINAR_CTA" | translate }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-toast position="bottom-center"></p-toast>
+    <div class="d-flex flex-column align-items-center mt-5 mb-5">
+      <button class="btn btn-logout" (click)="logout()">
+        <i class="fi fi-rs-log-out me-2"></i>Cerrar Sesión
+      </button>
+      <p class="info-text mt-4 opacity-50">
+        {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
+        <img class="icon_logo ms-1" src="../../../assets/logo/PRIDECAR.png" />
+      </p>
     </div>
   </div>
 </ion-content>

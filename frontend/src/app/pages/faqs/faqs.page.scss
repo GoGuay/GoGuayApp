@@ -8,3 +8,37 @@ ion-accordion {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
   color: black;
 }
+
+.titulo-faq {
+  font-weight: 800;
+  color: #333;
+}
+
+.custom-accordion {
+  border-radius: 32px !important;
+  overflow: hidden;
+  background: white;
+  
+  border-left: 5px solid #baffc9; 
+
+  &[value="reservaRayo"] { border-left-color: #ffffba; }
+  &[value="espacioSeguro"] { border-left-color: #ffb3ba; } 
+  &[value="reservaManual"] { border-left-color: #bae1ff; }
+  &[value="identidad"] { border-left-color: #e0baff; }
+
+  ion-item {
+    --background: #b7e0b4;
+    --color: #444;
+    font-weight: 600;
+  }
+}
+
+.text-muted {
+  line-height: 1.5;
+  font-size: 0.95rem;
+  background: #fdfdfd;
+}
+
+strong {
+  color: #222;
+}

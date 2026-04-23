@@ -1,17 +1,7 @@
 <ng-container *ngIf="isLoading; else contenidoReal">
   <div class="container">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <ion-row class="d-flex justify-content-center p-4 columna_scroll">
-            <div class="skeleton-card resultado-viaje mb-3 p-1" *ngFor="let i of [1, 2, 3]">
-              <div class="skeleton-avatar mb-2"></div>
-              <div class="skeleton-line"></div>
-            </div>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <app-spinner></app-spinner>
+    Buscando los mejores trayectos...
   </div>
 </ng-container>
 
@@ -65,7 +55,7 @@
               <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
                 <button class="btn-viaje btn-join">Unirse</button>
                 <button class="btn-viaje btn-chat">
-                  <i class="fi fi-rr-messages"></i> Chat
+                  <i class="fi fi-rr-messages"></i> Contactar
                 </button>
               </ng-container>
 
