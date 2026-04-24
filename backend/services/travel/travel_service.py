@@ -155,10 +155,18 @@ def unirse_viaje():
     if pasajero_existente:
         return jsonify({"error": "El usuario ya está registrado en este viaje"}), 400
 
-    nuevo_pasajero = PasajeroViaje(usuario_id=usuario_id, viaje_id=viaje_id)
+    estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
+
+    nuevo_pasajero = PasajeroViaje(
+        usuario_id=usuario_id, 
+        viaje_id=viaje_id, 
+        estado=estado_inicial
+    )
     db.session.add(nuevo_pasajero)
 
-    viaje.plazas -= 1
+    if viaje.reserva_automatica:
+        viaje.plazas -= 1
+    
     db.session.commit()
 
     pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
@@ -169,31 +177,24 @@ def unirse_viaje():
         return jsonify({"error": "El usuario no existe"}), 404
     
     creador_id = viaje.usuario_id
-    
-    if creador_id != usuario_id: 
-        nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
-        mensaje_texto = f"El usuario {nombre_completo} se ha unido al viaje de {viaje.origen} a {viaje.destino}."
+    if creador_id != usuario_id:
+        usuario_solicitante = nuevo_pasajero.usuario
+        nombre = f"{usuario_solicitante.nombre} {usuario_solicitante.apellidos}"
         
-        notificacion_db = Notificacion(
-            usuario_id=creador_id,
-            viaje_id=viaje_id,
-            mensaje=mensaje_texto
-        )
-        db.session.add(notificacion_db)
+        if viaje.reserva_automatica:
+            msg = f"{nombre} se ha unido automáticamente a tu viaje."
+            titulo = "¡Nuevo pasajero!"
+        else:
+            msg = f"{nombre} ha solicitado una plaza en tu viaje. Revisa la solicitud."
+            titulo = "Nueva solicitud de plaza"
+
+        notif = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=msg)
+        db.session.add(notif)
         db.session.commit()
 
-        enviar_notificacion_push(
-            usuario_id=creador_id,
-            titulo="¡Tienes un nuevo pasajero!",
-            cuerpo=mensaje_texto,
-            data={"viaje_id": str(viaje_id)}
-        )
+        enviar_notificacion_push(usuario_id=creador_id, titulo=titulo, cuerpo=msg, data={"viaje_id": str(viaje_id)})
 
-    return jsonify({
-        "mensaje": "Usuario agregado al viaje correctamente",
-        "viaje": viaje.serialize(),
-        "plazas_restantes": viaje.plazas
-    }), 200
+    return jsonify({"mensaje": "Solicitud procesada", "viaje": viaje.serialize()}), 200
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -236,22 +237,18 @@ def eliminar_viaje(viaje_id):
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
-    # 1. Notificar a los pasajeros ANTES de borrar
     for pasajero in viaje.pasajeros:
         mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor."
         
-        # Guardar en DB para la campana
         notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
         db.session.add(notif_db)
         
-        # Enviar Push al móvil
         enviar_notificacion_push(
             usuario_id=pasajero.usuario_id,
             titulo="Viaje cancelado",
             cuerpo=mensaje_cancelacion
         )
 
-    # 2. Proceder al borrado
     PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
     db.session.delete(viaje)
     db.session.commit()
@@ -272,16 +269,13 @@ def eliminar_pasajero(viaje_id, usuario_id):
     if not pasajero_rel:
         return jsonify({"error": "El pasajero no está en este viaje"}), 404
 
-    # Datos para la notificación
     usuario = pasajero_rel.usuario
     nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
     creador_id = viaje.usuario_id
 
-    # Borramos al pasajero y devolvemos la plaza
     db.session.delete(pasajero_rel)
     viaje.plazas += 1
 
-    # Notificar al creador (si no es él mismo quien se borra, aunque suele ser el pasajero)
     if creador_id != usuario_id:
         mensaje_salida = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje a {viaje.destino}."
         
@@ -411,7 +405,6 @@ def registrar_token():
     if not usuario_id or not token_valor:
         return jsonify({"error": "Faltan datos (usuarioId o token)"}), 400
 
-    # Evitar duplicados: Si el token ya existe para ese usuario, no hacemos nada
     token_existente = TokenPush.query.filter_by(token=token_valor).first()
     
     if not token_existente:
@@ -431,32 +424,38 @@ def registrar_token():
 #   SERVICIO PARA CONFIRMAR UN PASAJERO MANUALMENTE
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
+@travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
 def confirmar_pasajero_manual():
     try:
         data = request.get_json()
     except Exception as e:
-        return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
+        return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
 
     viaje_id = data.get('viaje_id')
     pasajero_id = data.get('pasajero_id')
 
     if not viaje_id or not pasajero_id:
-        return jsonify({"error": "Faltan datos obligatorios (viaje_id y/o pasajero_id)"}), 400
+        return jsonify({"error": "Faltan viaje_id o pasajero_id"}), 400
 
     viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "El viaje no existe"}), 404
 
-    if viaje.plazas <= 0:
-        return jsonify({"error": "Ya no quedan plazas disponibles en este viaje"}), 400
+    solicitud = PasajeroViaje.query.filter_by(
+        usuario_id=pasajero_id, 
+        viaje_id=viaje_id, 
+        estado='pendiente'
+    ).first()
 
-    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=pasajero_id, viaje_id=viaje_id).first()
-    if pasajero_existente:
-        return jsonify({"error": "El usuario ya ha sido aceptado anteriormente"}), 400
+    if not solicitud:
+        return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404
+
+    if viaje.plazas <= 0:
+        return jsonify({"error": "No quedan plazas disponibles"}), 400
 
     try:
-        nuevo_pasajero = PasajeroViaje(usuario_id=pasajero_id, viaje_id=viaje_id)
-        db.session.add(nuevo_pasajero)
+        solicitud.estado = 'aceptado'
+        solicitud.fecha_confirmacion_reserva = datetime.utcnow()
         
         viaje.plazas -= 1
         
@@ -484,4 +483,65 @@ def confirmar_pasajero_manual():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error interno al procesar la confirmación", "detalle": str(e)}), 500
+        return jsonify({"error": "Error al procesar la confirmación", "detalle": str(e)}), 500
+    
+
+#
+# SERVICIO PARA CANCELAR UNA SOLICITUD PENDIENTE DE UN PASAJERO
+#
+@travel_blueprint.route('/api/travel/cancelar_solicitud_manual', methods=['POST'])
+def cancelar_solicitud():
+    data = request.json
+    solicitud = PasajeroViaje.query.filter_by(
+        viaje_id=data['viaje_id'], 
+        usuario_id=data['usuario_id'],
+        estado='pendiente' 
+    ).first()
+    if solicitud:
+        db.session.delete(solicitud)
+        db.session.commit()
+        return jsonify({"mensaje": "Solicitud cancelada"}), 200
+    return jsonify({"error": "No existe la solicitud"}), 404
+
+#
+# SERVICIO PARA OBTENER LAS SOLICITUDES PENDIENTES DE UN USUARIO
+#
+@travel_blueprint.route('/mis_solicitudes/<int:usuario_id>', methods=['GET'])
+def obtener_mis_solicitudes(usuario_id):
+    solicitudes = PasajeroViaje.query.filter(
+        PasajeroViaje.usuario_id == usuario_id,
+        (PasajeroViaje.estado == 'pendiente') | (PasajeroViaje.estado == 'rechazado') | (PasajeroViaje.estado == None)
+    ).options(joinedload(PasajeroViaje.viaje)).all()
+
+    return jsonify([s.viaje.serialize(current_user_id=usuario_id) for s in solicitudes]), 200
+
+#
+# SERVICIO PARA RECHAZAR UNA SOLICITUD PENDIENTE DE UN PASAJERO
+#
+@travel_blueprint.route('/rechazar_pasajero_manual', methods=['POST'])
+def rechazar_pasajero_manual():
+    data = request.get_json()
+    viaje_id = data.get('viaje_id')
+    pasajero_id = data.get('pasajero_id')
+
+    solicitud = PasajeroViaje.query.filter_by(
+        viaje_id=viaje_id, 
+        usuario_id=pasajero_id, 
+        estado='pendiente'
+    ).first()
+
+    if not solicitud:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    solicitud.estado = 'rechazado'
+    db.session.commit()
+
+    viaje = Viaje.query.get(viaje_id)
+    enviar_notificacion_push(
+        usuario_id=pasajero_id,
+        titulo="Solicitud rechazada",
+        cuerpo=f"Lo sentimos, el conductor ha rechazado tu solicitud para el viaje a {viaje.destino}.",
+        data={"viaje_id": str(viaje_id), "tipo": "solicitud_rechazada"}
+    )
+
+    return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200

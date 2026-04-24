@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { AlertController, IonicModule, NavController } from '@ionic/angular';
@@ -20,9 +20,10 @@ import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 import { catchError, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular/standalone';
 import { LoadTravelLineComponent } from "src/app/components/load-travel-line/load-travel-line.component";
+import localeEs from '@angular/common/locales/es';
 
 @Component({
   selector: 'app-mis-viajes',
@@ -44,6 +45,7 @@ export class MisViajesPage implements OnInit {
   misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
+  misSolicitudesPendientes: Viaje[] = [];
 
   pasajero: boolean = false;
   conductor: boolean = false;
@@ -74,56 +76,63 @@ export class MisViajesPage implements OnInit {
     private dialog: MatDialog, private travelService: TravelService,
     private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
     private messageService: MessageService, private popoverCtrl: PopoverController,
-    private alertCtrl: AlertController) { }
+    private alertCtrl: AlertController, public translate: TranslateService) { }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      this.usuarioParams = params;
-      const userId = parseInt(this.usuarioParams.id, 10);
+    ngOnInit() {
+      this.route.queryParams.subscribe((params) => {
+        this.usuarioParams = params;
+        const userId = parseInt(this.usuarioParams.id, 10);
 
-      this.obtenerUsuarioPorID(userId);
-      this.validacionPerilLogeado(userId);
-      this.loadJumbotronSetting();
-      this.cargarTodosLosViajes(userId);
-    });
-  }
+        const cache = localStorage.getItem('userData');
+        if (cache) {
+          this.userData = JSON.parse(cache);
+          this.userLoggedIn = true;
+          this.cargarTodosLosViajes(userId);
+        }
 
+        this.userService.obtenerUsuarioPorID(userId).subscribe({
+          next: (res) => {
+            this.userData = res.usuario ? res : { usuario: res };
+            
+            this.userLoggedIn = true;
+            localStorage.setItem('userData', JSON.stringify(this.userData));
+
+            if (!cache) {
+              this.cargarTodosLosViajes(userId);
+            }
+          },
+          error: (err) => {
+            if (err.status === 401) this.navCtrl.navigateRoot('/login');
+          }
+        });
+      });
+    }
+
+    
   /**
    * Función para cargar todos los viajes del usuario (creados y como acompañante)
    * @param userId Recibe el ID del usuario
    */
   cargarTodosLosViajes(userId: number) {
     this.cargandoViajes = true;
-
+    
+    // Ejecutamos las 3 peticiones de viajes en paralelo
     forkJoin({
-      // Si el usuario no tiene viajes, el servidor podría devolver error. 
-      // Usamos 'of([])' para devolver un array vacío y que forkJoin continúe.
-      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(
-        catchError(() => of([]))
-      ),
-      creados: this.travelService.getViajesUsuario(userId).pipe(
-        catchError(() => of({ viajes: [] }))
-      )
-    }).subscribe(({ acompanante, creados }) => {
-      // Ahora 'acompanante' tendrá datos aunque 'creados' haya fallado
-      this.misViajesAcompanante = acompanante || [];
-      this.misViajesCreados = creados?.viajes || [];
+      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(catchError(() => of([]))),
+      creados: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
+      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ acompanante, creados, solicitudes }) => {
+        this.misViajesAcompanante = acompanante;
+        this.misViajesCreados = creados?.viajes || [];
+        this.misSolicitudesPendientes = solicitudes;
 
-      // Solo recorremos si hay viajes creados
-      if (this.misViajesCreados.length > 0) {
-        this.misViajesCreados.forEach((viaje) => {
-          this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-            viaje.usuario = usuario;
-          });
-        });
-      }
+        this.misViajesCreados.forEach(v => v.usuario = this.userData);
 
-      this.filtrarViajes();
-      this.cargandoViajes = false;
-    }, (error) => {
-      // Este bloque solo se ejecutará si algo falla catastróficamente
-      this.cargandoViajes = false;
-      console.error("Error crítico en la carga de viajes", error);
+        this.filtrarViajes();
+        this.cargandoViajes = false;
+      },
+      error: () => this.cargandoViajes = false
     });
   }
 
@@ -173,17 +182,15 @@ export class MisViajesPage implements OnInit {
       .subscribe((result) => {
         this.misViajesCreados = result.viajes;
         this.misViajesCreados.forEach((viaje) => {
-          this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-            viaje.usuario = usuario;
-          });
+          viaje.usuario = this.userData;
         })
         this.filtrarViajes();
       });
   }
 
   /**
- * Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
- */
+   * Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
+   */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
     this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
@@ -209,11 +216,12 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
- * Función para filtrar los viajes según el filtro seleccionado
- */
+   * Función para filtrar los viajes según el filtro seleccionado
+   */
   filtrarViajes() {
     const acompañante = this.misViajesAcompanante || [];
     const creados = this.misViajesCreados || [];
+    const solicitudes = this.misSolicitudesPendientes || [];
 
     switch (this.filtroViajes) {
       case 'todos':
@@ -232,6 +240,15 @@ export class MisViajesPage implements OnInit {
         this.misViajes = [...acompañante];
         this.conductor = false;
         this.pasajero = true;
+        break;
+
+      case 'solicitudes': 
+        const misViajesConSolicitudes = creados.filter(v => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
+        
+        this.misViajes = [...solicitudes, ...misViajesConSolicitudes];
+        
+        this.conductor = false;
+        this.pasajero = false;
         break;
 
       case 'antiguos':
@@ -523,6 +540,76 @@ export class MisViajesPage implements OnInit {
       }
     });
     */
+  }
+
+
+  /**
+   * Función para que el conductor acepte una solicitud manual.
+   * @param viajeId 
+   * @param pasajeroId El ID del usuario que solicita
+   */
+  aceptarPasajero(viajeId: number, pasajeroId: number) {
+    this.cargandoViajes = true;
+    
+    this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Pasajero aceptado',
+          detail: 'El pasajero ya tiene su plaza confirmada.',
+          life: 3000
+        });
+        this.cargarTodosLosViajes(this.userData.usuario.id);
+      },
+      error: (err) => {
+        this.cargandoViajes = false;
+        console.error('Error al aceptar pasajero', err);
+      }
+    });
+  }
+
+  /**
+   * Función para que el conductor rechace una solicitud manual.
+   */
+  async rechazarPasajero(viajeId: number, pasajeroId: number) {
+    const alert = await this.alertCtrl.create({
+      header: 'Rechazar solicitud',
+      message: '¿Estás seguro de que deseas rechazar a este pasajero?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { 
+          text: 'Rechazar', 
+          role: 'destructive',
+          handler: () => {
+            this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
+              next: () => {
+                this.cargarTodosLosViajes(this.userData.usuario.id);
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async cancelarSolicitud(solicitudId: number) {
+    const alert = await this.alertCtrl.create({
+      header: 'Cancelar Solicitud',
+      message: '¿Estás seguro de que deseas retirar tu solicitud de plaza?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { 
+          text: 'Sí, retirar', 
+          handler: () => {
+            this.travelService.cancelarSolicitudManual(solicitudId).subscribe(() => {
+              this.cargarTodosLosViajes(this.userData.usuario.id);
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
 }

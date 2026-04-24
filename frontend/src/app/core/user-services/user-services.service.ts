@@ -123,6 +123,7 @@ export class UserServicesService {
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(
       `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`,
+      { withCredentials: true }
     );
   }
 

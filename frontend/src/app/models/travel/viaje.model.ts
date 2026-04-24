@@ -19,4 +19,6 @@ export interface Viaje {
   notificaciones?: any;
   preferencias?: [];
   reserva_automatica?: boolean;
+  estado_solicitud_propia?: 'pendiente' | 'aceptado' | 'rechazado' | null;
+  solicitudes_pendientes?: any[] | undefined;
 }

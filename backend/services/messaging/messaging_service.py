@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
-from models import Usuario, Notificacion
+from models import Usuario, Notificacion, PasajeroViaje
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
@@ -255,12 +255,23 @@ def dejar_de_compartir():
 def solicitar_unirse():
     data = request.json
     viaje_id = data.get('viaje_id')
-    emisor_id = data.get('emisor_id')
-    receptor_id = data.get('receptor_id')
+    emisor_id = data.get('emisor_id') 
+    receptor_id = data.get('receptor_id') 
     conv_id = data.get('conversacion_id')
 
+   
+    existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
+    if existente:
+        return jsonify({"error": "Ya has solicitado unirte a este viaje anteriormente"}), 400
+
+    nueva_solicitud = PasajeroViaje(
+        usuario_id=emisor_id,
+        viaje_id=viaje_id,
+        estado='pendiente' 
+    )
+    db.session.add(nueva_solicitud)
+
     texto_solicitud = f"SOLICITUD_UNIRSE_VIAJE:{viaje_id}"
-    
     nuevo_msj = Mensaje(
         conversacion_id=conv_id,
         emisor_id=emisor_id,
@@ -275,10 +286,12 @@ def solicitar_unirse():
         viaje_id=viaje_id,
         conversacion_id=conv_id,
         tipo="mensaje", 
-        mensaje="Alguien ha solicitado unirse a tu viaje.",
+        mensaje="Alguien ha solicitado unirse a tu viaje a través del chat.",
         leida=False
     )
     db.session.add(nueva_notif)
+
+    db.session.commit()
 
     enviar_notificacion_push(
         usuario_id=receptor_id,
@@ -291,5 +304,4 @@ def solicitar_unirse():
         }
     )
     
-    db.session.commit()
-    return jsonify(nuevo_msj.serialize()), 201
+    return jsonify(nuevo_msj.serialize()), 200

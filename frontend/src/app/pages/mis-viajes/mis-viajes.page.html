@@ -48,12 +48,14 @@
     </div>
 
     <ion-segment [(ngModel)]="filtroViajes" (ionChange)="filtrarViajes()" mode="ios" class="mb-4">
+      <ion-segment-button value="solicitudes"><ion-label>Solicitudes</ion-label></ion-segment-button>
       <ion-segment-button value="todos"><ion-label>Todo</ion-label></ion-segment-button>
       <ion-segment-button value="conductor"><ion-label>Soy conductor</ion-label></ion-segment-button>
       <ion-segment-button value="pasajero"><ion-label>Soy pasajero</ion-label></ion-segment-button>
     </ion-segment>
 
     <div *ngIf="cargandoViajes" class="text-center py-5"><app-spinner></app-spinner></div>
+    
     <div *ngIf="!cargandoViajes && misViajes.length === 0" class="sin-viajes-container text-center">
       <p>Aún no tienes viajes en esta categoría.</p>
       <img src="../../../assets/sistema/destino-de-viaje.gif" class="iconSinViajes">
@@ -64,19 +66,56 @@
         <div class="row g-0">
           
           <div class="col-md-9 p-3 col-trayecto">
+            <div *ngIf="userData?.usuario" class="mb-2">
+
+              <h4 *ngIf="filtroViajes === 'solicitudes' && viaje.usuario_id === userData.usuario.id" class="text-secondary small mb-2">
+                Gestión de pasajeros
+              </h4>
+
+              <div *ngIf="viaje.usuario_id === userData?.usuario?.id && 
+                          viaje.solicitudes_pendientes?.length! > 0 && 
+                          !funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" 
+                  class="solicitudes-recibidas-container mb-3">
+                <h5 class="text-primary">
+                  <i class="fi fi-rr-envelope-open-text me-2"></i>
+                  Solicitudes para mi viaje:
+                </h5>
+
+                <div *ngFor="let sol of viaje.solicitudes_pendientes" class="d-flex align-items-center justify-content-between border-bottom py-3 bg-light rounded px-2">
+                  <span>
+                    <i class="fi fi-rr-user me-2"></i>
+                    <strong>{{ sol.nombre }}</strong> quiere unirse
+                  </span>
+                  
+                  <div class="d-flex gap-2">
+                    <button class="btn-aceptar-mini" (click)="aceptarPasajero(viaje.id, sol.id)">
+                      <i class="fi fi-rs-badge-check"></i> Aceptar
+                    </button>
+                    <button class="btn-rechazar-mini" (click)="rechazarPasajero(viaje.id, sol.id)">
+                      <i class="fi fi-rr-cross-circle"></i> Rechazar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="viaje.usuario_id !== userData.usuario.id">
+                <h4 *ngIf="filtroViajes === 'solicitudes'">Mi solicitud de plaza</h4>
+                <span class="badge-solicitud" 
+                      [ngClass]="viaje.estado_solicitud_propia === 'aceptado' ? 'badge-aceptada' : (viaje.estado_solicitud_propia === 'rechazado' ? 'badge-rechazada' : 'badge-pendiente')">
+                  <i class="fi fi-rr-clock me-1"></i> {{ (viaje.estado_solicitud_propia || 'pendiente') | uppercase }}
+                </span>
+              </div>
+
+            </div>
+
             <div class="d-flex justify-content-between align-items-center mb-3">
               <div class="fecha-viaje">
                 <i class="fi fi-rr-calendar me-1"></i>
-                <span>{{ viaje.fecha_salida | date:'EEEE, d MMMM yyyy' }}</span>
+                <span>{{ viaje.fecha_salida | date:'EEEE, d MMMM yyyy' : '' : (translate.currentLang || 'es') | titlecase }}</span>              
               </div>
-              
               <div class="d-flex gap-2 align-items-center">
                 <span [ngClass]="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida) ? 'badge-finalizado' : 'badge-pendiente'">
                   {{ funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida) ? 'Finalizado' : 'Pendiente' }}
-                </span>
-                <span *ngIf="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" 
-                      class="btn-puntuar-mini" (click)="puntuarViaje(viaje)">
-                  <i class="fi fi-rr-star me-1"></i>Puntuar
                 </span>
               </div>
             </div>
@@ -86,11 +125,9 @@
                 <span class="hora">{{ viaje.hora_salida }}</span>
                 <span class="ciudad">{{ viaje.origen || 'Origen' }}</span>
               </div>
-
               <div class="timeline flex-grow-1 mx-3 text-center">
                 <div class="duracion-badge">{{ viaje.duracion_viaje }}</div>
               </div>
-
               <div class="punto-viaje text-end">
                 <span class="hora">{{ viaje.hora_llegada || '--:--' }}</span>
                 <span class="ciudad">{{ viaje.destino }}</span>
@@ -100,27 +137,29 @@
 
           <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
             <div class="acciones-grid">
-              
-              <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar incidente">
+              <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar">
                 <i class="fi fi-rr-triangle-warning"></i>
               </button>
-
-              <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Más detalles">
+              <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles">
                 <i class="fi fi-rr-attention-detail"></i>
               </button>
 
-              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar viaje">
+              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)">
                 <mat-icon>edit</mat-icon>
               </button>
-
-              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar viaje">
+              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)">
                 <mat-icon>delete</mat-icon>
               </button>
 
-              <button *ngIf="!conductor && pasajero" class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Salir del viaje">
-                <mat-icon>logout</mat-icon>
+              <button *ngIf="!conductor && pasajero" 
+                      class="btn-gestion btn-eliminar" (click)="cancelarSolicitud(viaje.id)">
+                <i class="fi fi-rr-exit"></i>
               </button>
 
+              <button *ngIf="!conductor && pasajero && viaje.estado_solicitud_propia === 'aceptado'" 
+                      class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)">
+                <mat-icon>logout</mat-icon>
+              </button>
             </div>
           </div>
 

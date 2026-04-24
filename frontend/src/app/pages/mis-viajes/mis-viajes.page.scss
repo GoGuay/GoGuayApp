@@ -421,6 +421,38 @@ ion-segment-button {
     display: block;
     text-align: left;
   }
+
+  @keyframes marquesina {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(0); } 
+    80% { transform: translateX(-40%); } 
+    100% { transform: translateX(0); } 
+  }
+
+  ion-segment-button.segment-button-checked {
+    flex: 4; 
+    
+    ion-label {
+      font-weight: bold;
+      display: inline-block;
+      text-overflow: clip; 
+      overflow: visible; 
+      white-space: nowrap;
+      animation: marquesina 5s linear infinite;
+      width: auto;
+    }
+  }
+
+  /* Para los botones NO seleccionados mantén los puntos suspensivos */
+  ion-segment-button:not(.segment-button-checked) {
+    flex: 1;
+    ion-label {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis; 
+      animation: none;
+    }
+  }
 }
 
 /* Configuración para PC */
@@ -555,10 +587,33 @@ ion-segment-button {
     &.btn-detalle { background: #e8eaf6; color: #3f51b5; }
     &.btn-editar { background: #e1f5fe; color: #03a9f4; }
     &.btn-eliminar { background: #ffebee; color: #f44336; }
+    &.btn-aceptar { background: #e8f5e9; color: #4caf50; }
 
     &:hover { transform: scale(1.1); }
   }
 }
+
+.btn-aceptar-mini {
+  background: #e8f5e9; 
+  color: #4caf50;
+  border-radius: 35px;
+  padding: 4px
+}
+
+.btn-rechazar-mini {
+  background: #f44336; 
+  color: #fff3e0;
+  border-radius: 35px;
+  padding: 4px
+}
+
+.btn-rechazar-mini:hover {
+  background: #ffb3ba !important; 
+  color: black !important;
+  border-radius: 35px;
+  padding: 4px
+}
+
 
 // --- RESPONSIVE ---
 @media (max-width: 768px) {

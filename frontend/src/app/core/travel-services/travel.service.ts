@@ -218,4 +218,67 @@ export class TravelService {
       tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
     );  
   }
+
+  /**
+   * Función para obtener las solicitudes pendientes de un usuario.
+   * @param usuarioId --> ID del usuario del que se quieren obtener las solicitudes pendientes.
+   * @returns --> Observable con la lista de viajes a los que el usuario 
+   * se ha apuntado pero aún no han sido aceptados o rechazados por el creador del viaje.
+   */
+  getMisSolicitudesPendientes(usuarioId: number): Observable<Viaje[]> {
+    return this.http.get<Viaje[]>(`${this.apiUrl}/travel/mis_solicitudes/${usuarioId}`).pipe(
+      catchError((error) => {
+        console.error('Error al obtener mis solicitudes:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+  
+  /**
+   * Función para cancelar una solicitud manual de un usuario.
+   * @param viajeId --> ID del viaje del que se quiere cancelar la solicitud.
+   * @returns --> Observable con la respuesta del backend.
+   */
+  cancelarSolicitudManual(viajeId: number): Observable<any> {
+    const userDataString = localStorage.getItem('userData');
+    
+    if (!userDataString) {
+      return throwError(() => new Error('No hay datos de usuario logueado.'));
+    }
+
+    const userData = JSON.parse(userDataString);
+    const usuarioId = userData.usuario.id;
+
+    return this.http.post(`${this.apiUrl}/travel/cancelar_solicitud_manual`, { 
+      viaje_id: viajeId, 
+      usuario_id: usuarioId 
+    }).pipe(
+      catchError((error) => {
+        console.error('Error al cancelar solicitud manualmente:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
+    );
+  }
+
+  /**
+   * Función para rechazar un pasajero manualmente.
+   * @param viajeId --> ID del viaje del que se quiere rechazar al pasajero.
+   * @param pasajeroId --> ID del pasajero que se quiere rechazar.
+   * @returns --> Observable con la respuesta del backend.
+   */
+  rechazarPasajeroManual(viajeId: number, pasajeroId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/rechazar_pasajero_manual`, { 
+      viaje_id: viajeId, 
+      pasajero_id: pasajeroId 
+    }).pipe(
+      catchError((error) => {
+        console.error('Error al rechazar pasajero:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+    );
+  }
 }
