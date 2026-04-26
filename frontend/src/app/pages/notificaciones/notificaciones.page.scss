@@ -17,6 +17,10 @@
   border-radius: 4px;
 }
 
+.bg-danger{
+  border-radius: 35px !important;
+}
+
 .notificacion_container {
   width: 80%;
   max-width: 600px;
@@ -67,4 +71,8 @@
 
 .btn-link:hover {
   color: #FFB3BA !important;
+}
+
+.btn{
+  border-radius: 35px !important;
 }

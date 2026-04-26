@@ -424,7 +424,6 @@ def registrar_token():
 #   SERVICIO PARA CONFIRMAR UN PASAJERO MANUALMENTE
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
-@travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
 def confirmar_pasajero_manual():
     try:
         data = request.get_json()

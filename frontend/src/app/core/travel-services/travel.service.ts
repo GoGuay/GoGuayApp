@@ -36,6 +36,14 @@ export class TravelService {
     localStorage.setItem('tempViaje', JSON.stringify(data));
   }
 
+  /**
+   * Función para obtener los datos del viaje almacenados temporalmente.
+   * Primero intenta obtener los datos del viaje del BehaviorSubject.
+   * Si no hay datos en el BehaviorSubject, intenta obtenerlos del localStorage (en caso de que se hayan guardado previamente).
+   * Si encuentra datos en el localStorage, los parsea y los guarda en el BehaviorSubject para que estén disponibles en toda la aplicación.
+   * @returns --> Devuelve los datos del viaje almacenados temporalmente, o null si no hay datos disponibles.
+   * Esta función se llama desde el componente de creación/edición de viaje para cargar los datos del viaje que se están editando, o para recuperar los datos del viaje si el usuario ha navegado fuera del componente y luego ha vuelto.
+   */
   getViajeData() {
     let data = this.viajeDataSubject.getValue();
     if (!data) {
@@ -137,6 +145,11 @@ export class TravelService {
     return this.http.get(`${this.apiUrl}/travel/viajes_como_acompanante/${id_usuario}`);
   }
 
+  /**
+   * Función para obtener los detalles de un viaje específico.
+   * @param viajeID --> ID del viaje del que se quieren obtener los detalles.
+   * @returns --> Observable con los detalles del viaje solicitado.
+   */
   getViaje(viajeID: number) {
     return this.http.get<Viaje>(`${this.apiUrl}/travel/obtener_viaje/${viajeID}`);
   }
@@ -193,21 +206,49 @@ export class TravelService {
     );
   }
 
+  /**
+   * Función para obtener los viajes filtrados según los criterios de búsqueda.
+   * @param params --> Objeto con los parámetros de búsqueda (origen, destino, fecha, etc.)
+   * @returns --> Observable con la lista de viajes que cumplen los criterios de búsqueda.
+   * Si no se pasan parámetros, devuelve todos los viajes.
+   */
   obtenerViajesFiltrados(params: any): Observable<Viaje[]> {
     return this.http.get<Viaje[]>(`${this.apiUrl}/travel/viajes_filtrados`, {
       params,
     });
   }
 
+  /**
+   * Función para guardar la puntuación de un viaje.
+   * Se utiliza para que los usuarios puedan valorar su experiencia en un viaje después de haberlo realizado.
+   * La puntuación se guarda en la Base de Datos y se asocia al viaje y al usuario que la ha dado.
+   * @param puntuacion --> Objeto con la información de la puntuación (viaje_id, usuario_id, puntuacion, comentario, etc.)
+   * @returns --> Observable con la respuesta del backend después de guardar la puntuación.
+   * Esta función se llama desde el componente de valoración de viaje, después de que el usuario haya enviado su valoración.
+   */
   guardarPuntuacion(puntuacion: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/travel/puntuacion`, puntuacion);
   }
 
+  /**
+   * Función para limpiar los datos del viaje almacenados temporalmente.
+   * Elimina los datos del viaje del BehaviorSubject y también del localStorage.
+   * Se llama a esta función después de guardar un viaje para asegurarse de que no quedan datos residuales.
+   * También se puede llamar si el usuario decide cancelar la creación o edición de un viaje, para limpiar cualquier dato temporal que se haya guardado.
+   */
   clearTempViaje() {
     this.viajeDataSubject.next(null);
     localStorage.removeItem('tempViaje');
   }
 
+  /**
+   * Función para confirmar un pasajero manualmente (sin aceptar la solicitud de viaje).
+   * Esta función se utiliza cuando el creador del viaje quiere confirmar a un pasajero que se ha apuntado al viaje, sin necesidad de que el pasajero haya enviado una solicitud formal o sin necesidad de aceptar la solicitud.
+   * Es útil para agilizar el proceso de confirmación en casos donde el creador del viaje ya conoce al pasajero o tiene una relación previa con él.
+   * @param viajeId --> ID del viaje del que se quiere confirmar al pasajero.
+   * @param pasajeroId --> ID del pasajero que se quiere confirmar.
+   * @returns --> Observable con la respuesta del backend y actualización de la lista de viajes.
+   */
   confirmarPasajeroManual(viajeId: number, pasajeroId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/travel/confirmar_pasajero_manual`, { viaje_id: viajeId, pasajero_id: pasajeroId }).pipe(
       catchError((error) => {

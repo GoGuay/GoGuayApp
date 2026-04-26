@@ -58,6 +58,24 @@ export class ChatPage implements OnInit {
     cargandoSolicitud: { [key: number]: boolean } = {};
     solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' } = {};
 
+    mostrarEmojiPicker: boolean = false;
+    listaEmojis = [
+    '😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', 
+    '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', 
+    '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', 
+    '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', 
+    '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', 
+    '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', 
+    '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', 
+    '🤒', '🤕', '🤑', '🤠', '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', 
+    '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', 
+    '😿', '😾', '👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', 
+    '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', 
+    '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️', '💅', '🤳', '💪', 
+    '🦾', '🦵', '🦿', '🦶', '👂', '🦻', '👃', '🧠', '🦷', '🦴', '👀', '👁️', 
+    '👅', '👄', '💋', '🩸'
+    ];
+
     constructor(private route: ActivatedRoute,
         private messagingService: MessagingService,
         private notificacionesService: NotificacionesService,
@@ -73,17 +91,38 @@ export class ChatPage implements OnInit {
         this.marcarComoLeidos();
     }
 
+    ionViewWillEnter() {
+        this.cargarMensajes(); 
+    }
+
     /**
      * Función para cargar los mensajes de la conversación.
      */
     cargarMensajes() {
         this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
             this.mensajes = data;
-
+            
+            console.log("Mensajes cargados:", this.mensajes);
             this.telefonoRecibido = null;
             this.compartiendoMiTelefono = false;
 
             data.forEach((m: Mensaje) => {
+                if (!m.id) return;
+                if (m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')) {
+                    const viajeId = m.texto.split(':')[1];
+                    const pasajeroId = m.emisor_id;
+                    
+                    const mensajeId = m.id as number; 
+
+                    this.travelService.getViaje(Number(viajeId)).subscribe(viaje => {
+                        const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === pasajeroId);
+                        
+                        if (estaAceptado) {
+                            this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                        }
+                    });
+                }
+
                 if (m.texto.includes('TELEFONO USUARIO:')) {
                     if (m.emisor_id === this.usuarioLogueadoId) {
                         this.compartiendoMiTelefono = true;
@@ -139,6 +178,14 @@ export class ChatPage implements OnInit {
         this.navCtrl.navigateBack('/messaging-center', {
             animated: false
         });
+    }
+
+    toggleEmojiPicker() {
+        this.mostrarEmojiPicker = !this.mostrarEmojiPicker;
+    }
+
+    addEmoji(emoji: string) {
+        this.texto += emoji;
     }
 
     /**
@@ -283,6 +330,7 @@ export class ChatPage implements OnInit {
             }, 1000);
         }
     }
+
 
     /**
      * Función para enviar un mensaje del sistema (respuestas a solicitudes de viaje).

@@ -65,46 +65,47 @@ export class VerificacionesPerfilPage implements OnInit {
   sms_enviado: boolean = false;
   codigo_erroneo: boolean = false;
 
+  cargando: boolean = false;
+
   constructor(
     private userService: UserServicesService,
     private route: ActivatedRoute,
     private messageService: MessageService,
   ) {}
 
-  async ngOnInit() {
-    /**
-     * Función para calcular cuando se ha clicado el botón de envío de sms por ultima y cuanto falta para que se vuelva a habilitar
-     */
+async ngOnInit() {
+  this.cargando = true;
+
+  try {
     this.tiempo_restante_sms();
 
-    const token = this.route.snapshot.queryParamMap.get('token');
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (this.userData?.usuario) {
-      this.userLoggedIn = true;
-    }
-    if (this.userData && this.userData.usuario) {
-      this.emailUsuario = this.userData.usuario.email || '';
-      this.telefonoUsuario = this.userData.usuario.telefono || '';
-    }
-    console.log('Token: ', token);
+      if (this.userData?.usuario) {
+        this.userLoggedIn = true;
+        this.emailUsuario = this.userData.usuario.email || '';
+        this.telefonoUsuario = this.userData.usuario.telefono || '';
+      }
 
-    if (token) {
-      this.userService.verificar_email(token).subscribe((verificado) => {
-        console.log(verificado);
+      const token = this.route.snapshot.queryParamMap.get('token');
+      if (token) {
+        const verificado = await lastValueFrom(this.userService.verificar_email(token));
+        this.botonCorreoVerificado = !!verificado;
+        this.cargando = false;
+      }
 
-        if (verificado) {
-          this.botonCorreoVerificado = true;
-          this.obtenerDatosUsuario(this.userData.usuario.id);
-        } else {
-          this.botonCorreoVerificado = false;
-        }
-      });
+      if (this.userData?.usuario?.id) {
+        await this.obtenerDatosUsuario(this.userData.usuario.id);
+      }
+
+    } catch (error) {
+      console.error("Error durante la carga:", error);
+    } finally {
+      this.cargando = false;
     }
-    await this.obtenerDatosUsuario(this.userData.usuario.id);
   }
 
   envio_mail_verificar_correo(email: string) {
-    this.botonCorreoVerificado = true; // deshabilitar el botón inmediatamente
+    this.botonCorreoVerificado = true; 
     if (this.usuario.emailVerificado) {
       this.messageService.add({
         severity: 'error',

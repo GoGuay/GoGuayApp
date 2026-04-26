@@ -76,7 +76,12 @@
 
               <div *ngIf="!cargandoSolicitud[m.id] && solicitudesGestionadas[m.id]" class="mt-2">
                 <ion-item lines="none" class="info-gestion" [color]="solicitudesGestionadas[m.id] === 'aceptada' ? 'success' : 'light'">
-                  <ion-icon slot="start" [name]="solicitudesGestionadas[m.id] === 'aceptada' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+                  <i class="me-3" 
+                    [ngClass]="{
+                      'fi fi-rr-comment-alt-check': solicitudesGestionadas[m.id] === 'aceptada',
+                      'fi fi-rr-cross-circle': solicitudesGestionadas[m.id] !== 'aceptada'
+                    }">
+                  </i>                
                   <ion-label class="ion-text-wrap">
                     <small>
                       {{ solicitudesGestionadas[m.id] === 'aceptada' 
@@ -121,8 +126,27 @@
 </ion-content>
 
 <ion-footer>
-  <div class="input-wrapper d-flex align-items-center p-2 bg-light">
-    <ion-textarea [(ngModel)]="texto" placeholder="Escribe un mensaje..." autoGrow="true" class="chat-textarea me-2"></ion-textarea>
+  <div class="input-wrapper d-flex align-items-end p-2 bg-light position-relative">
+    
+    <button type="button" class="btn-emoji me-2" (click)="toggleEmojiPicker()">
+      <i [ngClass]="{'fi fi-rr-surprise': mostrarEmojiPicker, 'fi fi-rr-smile': !mostrarEmojiPicker}"></i>
+    </button>
+
+    <div class="emoji-picker-container shadow" *ngIf="mostrarEmojiPicker">
+      <div class="emoji-grid">
+        <span *ngFor="let emoji of listaEmojis" (click)="addEmoji(emoji)">
+          {{ emoji }}
+        </span>
+      </div>
+    </div>
+
+    <ion-textarea 
+      [(ngModel)]="texto" 
+      placeholder="Escribe un mensaje..." 
+      autoGrow="true" 
+      class="chat-textarea me-2"
+      (focus)="mostrarEmojiPicker = false"> </ion-textarea>
+    
     <ion-button (click)="enviar()" [disabled]="!texto.trim()">Enviar</ion-button>
   </div>
 </ion-footer>

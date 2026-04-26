@@ -102,7 +102,7 @@ export class MisViajesPage implements OnInit {
             }
           },
           error: (err) => {
-            if (err.status === 401) this.navCtrl.navigateRoot('/login');
+            // if (err.status === 401) this.navCtrl.navigateRoot('/login');
           }
         });
       });

@@ -5,7 +5,13 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
+
+  <div *ngIf="cargando" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <app-spinner></app-spinner>
+    <p class="mt-3">Cargando verificaciones...</p>
+  </div>
+
+  <div class="container" *ngIf="!cargando">
     <div class="d-flex justify-content-center">
       <h1 class="text-center mb-5">{{'VERIFICACION.TITULO' | translate}}</h1>
     </div>
@@ -14,7 +20,7 @@
       <p class="mb-2">{{'VERIFICACION.SUBT_VERIF_BASICA' | translate}}</p>
     </div>
 
-    <!-- 🟢 Tablas -->
+    <!-- Tablas -->
     <div class="container mt-5 mb-5">
       <div
         class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper"
@@ -60,6 +66,8 @@
         </div>
       </div>
     </div>
+
+   
 
     <!-- Correo, teléfono e identidad -->
     <ion-row class="justify-content-between fila_superior">
