@@ -96,7 +96,9 @@ export class ResumenViajeComponent implements OnInit {
       this.ruta_navegacion_origen = params['origin'];
 
       this.currentViajeData = this.travelService.getViajeData();
-      this.obtenerViaje(viajeId);
+      if (viajeId) {
+        this.obtenerViaje(viajeId);
+      }
 
       // Si no hay viajeId y los datos no están completos, redirigir al home
       if (
@@ -171,72 +173,79 @@ export class ResumenViajeComponent implements OnInit {
     const title: string = 'Confirmación de Viaje';
     const message: string = '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
-    this.currentViajeData.usuario = this.userData.usuario; // <- Se añaden todos los datos del usuario que ha creado el viaje.
-    this.currentViajeData.usuario_id = this.userData.usuario.id; // <- Se añade el ID del usuario que ha creado el viaje.
+    this.currentViajeData.usuario_id = this.userData.usuario.id;
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
+
     if (isNaN(this.currentViajeData.plazas)) {
-      this.openError(
-        'Error!',
-        'El número de plazas no es válido. Por favor, verifica los datos.'
-      );
+      this.openError('Error!', 'El número de plazas no es válido.');
       return;
     }
 
-    const fechaSalida = new Date(this.currentViajeData.fecha_salida)
-      .toISOString()
-      .split('T')[0];
-    this.currentViajeData.fecha_salida = fechaSalida;
+    const fechaSalidaRaw = new Date(this.currentViajeData.fecha_salida);
+    this.currentViajeData.fecha_salida = fechaSalidaRaw.toISOString().split('T')[0];
 
-    const duracion = this.calcularDuracionViaje(
-      this.currentViajeData.fecha_salida,
-      this.currentViajeData.hora_salida,
-      this.currentViajeData.hora_llegada
-    );
-
-    if (!duracion) {
-      this.openError('Error!', 'No se pudo calcular la duración del viaje.');
-      return;
+    if (this.currentViajeData.hora_salida === this.currentViajeData.hora_llegada && 
+      this.currentViajeData.tiempoTotal && 
+      this.currentViajeData.tiempoTotal !== '00:00') {
+    
+      console.log('Detectada llegada incorrecta. Reparando...');
+      
+      const [durH, durM] = this.currentViajeData.tiempoTotal.split(':').map(Number);
+      
+      this.currentViajeData.hora_llegada = this.sumarDuracion(
+        this.currentViajeData.hora_salida, 
+        durH, 
+        durM
+      );
     }
 
-    this.currentViajeData.tiempoTotal = duracion;
-    this.currentViajeData.duracion_viaje = duracion;
-    console.log('Resumen viaje: ', this.currentViajeData);
+    console.log('DATOS A GUARDAR:', {
+      salida: this.currentViajeData.hora_salida,
+      llegada: this.currentViajeData.hora_llegada,
+      duracion: this.currentViajeData.duracion_viaje
+    });
 
-    const mensajeConfirmación = this.openHelp(
-      'Confirmar viaje',
-      'Si continuas se va a confirmar el viaje.',
-      true, false, false
-    );
-    this.cargando_viaje = true;
-    mensajeConfirmación.afterClosed().subscribe(() => {
-      this.travelService.guardarViaje(this.currentViajeData).subscribe(
-        (response) => {
-          console.log('Viaje guardado con éxito:', response);
-          this.cargando_viaje = false;
-          const modalExito = this.openHelp(title, message, true, false, true);
-          modalExito.afterClosed().subscribe(() => {
-            const userId = this.userData.usuario.id;
-            this.navCtrl.navigateRoot(`/mis-viajes?id=${userId}`);
-          });
-        },
-        (error) => {
-          this.openError(
-            'Error!',
-            'Error al guardar el viaje. Por favor, inténtalo de nuevo más tarde.'
-          );
-          console.error('Error al guardar el viaje:', error);
-        }
-      );
+    const mensajeConfirmación = this.openHelp('Confirmar viaje', '¿Deseas confirmar el viaje?', true, false, false);
+    
+    mensajeConfirmación.afterClosed().subscribe((res) => {
+      if (res) {
+        this.cargando_viaje = true;
+        this.travelService.guardarViaje(this.currentViajeData).subscribe({
+          next: (response) => {
+            this.cargando_viaje = false;
+            const modalExito = this.openHelp(title, message, true, false, true);
+            modalExito.afterClosed().subscribe(() => {
+              this.navCtrl.navigateRoot(`/mis-viajes?id=${this.userData.usuario.id}`);
+            });
+          },
+          error: (error) => {
+            this.cargando_viaje = false;
+            this.openError('Error!', 'Error al guardar el viaje.');
+          }
+        });
+      }
     });
   }
 
+
+  private sumarDuracion(horaInicio: string, sumarH: number, sumarM: number): string {
+    let [h, m] = horaInicio.split(':').map(Number);
+
+    m += sumarM;
+    h += Math.floor(m / 60);
+    m = m % 60;
+    h = (h + sumarH) % 24;
+
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
   /**
- * Calcula la duración entre la hora de salida y llegada.
- * @param fechaSalida Fecha del viaje en formato 'YYYY-MM-DD'
- * @param horaSalida Hora de salida en formato 'HH:mm'
- * @param horaLlegada Hora de llegada en formato 'HH:mm'
- * @returns Duración del viaje en formato 'HH:mm', o null si hay error.
- */
+   * Calcula la duración entre la hora de salida y llegada.
+   * @param fechaSalida Fecha del viaje en formato 'YYYY-MM-DD'
+   * @param horaSalida Hora de salida en formato 'HH:mm'
+   * @param horaLlegada Hora de llegada en formato 'HH:mm'
+   * @returns Duración del viaje en formato 'HH:mm', o null si hay error.
+   */
   calcularDuracionViaje(fechaSalida: string, horaSalida: string, horaLlegada: string): string | null {
     try {
       if (!fechaSalida || !horaSalida || !horaLlegada) return null;

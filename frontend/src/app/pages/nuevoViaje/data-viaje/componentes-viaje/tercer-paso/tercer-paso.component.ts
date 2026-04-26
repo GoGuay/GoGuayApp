@@ -324,52 +324,45 @@ export class TercerPasoComponent implements OnInit {
         this.isLoadingRoutes = false;
 
         if (status === "OK" && response) {
-          this.routes = response.routes;
-          this.selectedRoute = response;
-          this.directionsRenderer.setDirections(response);
+          if (status === "OK" && response) {
+            this.routes = response.routes;
+            this.selectedRoute = response;
+            this.directionsRenderer.setDirections(response);
+            this.rutaConParadasSeleccionada = true;
 
-          this.rutaConParadasSeleccionada = true;
+            let distanciaTotal = 0;
+            let totalSegundos = 0;
 
-          // Calcula la distancia total y el tiempo total
-          let distanciaTotal = 0;
-          let tiempoTotal = 0;
-
-          // Recorre cada tramo de la ruta (legs)
-          for (let i = 0; i < response.routes[0].legs.length; i++) {
-            const leg = response.routes[0].legs[i];
-
-            // Verifica si 'leg.distance' está definido antes de acceder a su valor
-            if (leg.distance && leg.distance.value) {
-              distanciaTotal += leg.distance.value; // La distancia está en metros
+            for (let i = 0; i < response.routes[0].legs.length; i++) {
+              const leg = response.routes[0].legs[i];
+              distanciaTotal += leg.distance?.value || 0;
+              totalSegundos += leg.duration?.value || 0;
             }
 
-            // Verifica si 'leg.duration' está definido antes de acceder a su valor
-            if (leg.duration && leg.duration.value) {
-              tiempoTotal += leg.duration.value; // El tiempo está en segundos
-            }
+            const distancia = Math.round(distanciaTotal / 1000);
+            const duracionHoras = Math.floor(totalSegundos / 3600);
+            const duracionMinutos = Math.floor((totalSegundos % 3600) / 60);
+            const tiempoTotalFormato = `${duracionHoras.toString().padStart(2, '0')}:${duracionMinutos.toString().padStart(2, '0')}`;
+
+            const datosFrescos = this.travelService.getViajeData();
+            const horaSalida = datosFrescos?.hora_salida || "00:00";
+            
+            const horaLlegadaFormato = this.calcularHoraLlegada(horaSalida, duracionHoras, duracionMinutos);
+            
+            const nuevoViajeData = {
+              ...this.travelService.getViajeData(),
+              distanciaTotal: distancia,
+              tiempoTotal: tiempoTotalFormato,
+              hora_llegada: horaLlegadaFormato
+            };
+            this.travelService.setViajeData(nuevoViajeData);
+
+            localStorage.setItem('rutaConParadas', JSON.stringify({
+              ...nuevoViajeData,
+              waypoints: this.waypoints,
+              selectedRoute: response,
+            }));
           }
-          // Asegurar que la distancia se muestra sin decimales
-          const distancia = Math.round(distanciaTotal / 1000); // Convertimos metros a km y redondeamos
-
-          // Convertimos el tiempo total en horas y minutos
-          const horas = Math.floor(tiempoTotal); // Parte entera de las horas
-          const minutos = Math.round((tiempoTotal - horas) * 60); // Convertimos la parte decimal en minutos
-
-          // Formateamos el tiempo en HH:mm
-          const tiempoTotalFormato = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
-
-          console.log(`Distancia total: ${distancia} km`);
-          console.log(`Tiempo total: ${tiempoTotalFormato} horas`);
-
-          // Guarda la ruta actualizada con los datos de distancia y tiempo
-          localStorage.setItem('rutaConParadas', JSON.stringify({
-            origen: this.origen,
-            destino: this.destino,
-            waypoints: this.waypoints,
-            selectedRoute: response,
-            distanciaTotal: distancia,
-            tiempoTotal: tiempoTotalFormato
-          }));
 
         } else {
           console.error("Error al actualizar la ruta:", status);
@@ -412,7 +405,7 @@ export class TercerPasoComponent implements OnInit {
             this.cargandoSugerencias = false;
           }
         });
-      }, index * 3000);  // 🔥 Retraso de 300ms entre cada petición
+      }, index * 3000);
     });
   }
 
@@ -494,47 +487,39 @@ export class TercerPasoComponent implements OnInit {
     this.rutaConParadasSeleccionada = true;
     this.cargandoSugerencias = false;
 
-    // Calcular distancia y tiempo total
     let distanciaTotal = 0;
-    let tiempoTotal = 0;
+    let totalSegundos = 0;
 
     if (this.selectedRoute.routes[0].legs) {
       this.selectedRoute.routes[0].legs.forEach((leg) => {
-        distanciaTotal += leg.distance?.value || 0; // metros
-        tiempoTotal += leg.duration?.value || 0; // segundos
+        distanciaTotal += leg.distance?.value || 0;
+        totalSegundos += leg.duration?.value || 0; 
       });
     }
 
+    const distancia = Math.round(distanciaTotal / 1000);
+    const duracionHoras = Math.floor(totalSegundos / 3600);
+    const duracionMinutos = Math.floor((totalSegundos % 3600) / 60);
+    const tiempoTotalFormato = `${duracionHoras.toString().padStart(2, '0')}:${duracionMinutos.toString().padStart(2, '0')}`;
 
-    // Asegurar que la distancia se muestra sin decimales
-    const distancia = Math.round(distanciaTotal / 1000); // Convertimos metros a km y redondeamos
+    const datosFrescos = this.travelService.getViajeData();
+    const horaSalida = datosFrescos?.hora_salida || "00:00";
+    
+    const horaLlegadaFormato = this.calcularHoraLlegada(horaSalida, duracionHoras, duracionMinutos);
 
-    // Convertimos el tiempo total en horas y minutos
-    const horas = Math.floor(tiempoTotal); // Parte entera de las horas
-    const minutos = Math.round((tiempoTotal - horas) * 60); // Convertimos la parte decimal en minutos
-
-    // Formateamos el tiempo en HH:mm
-    const tiempoTotalFormato = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
-
-    console.log(`Distancia total: ${distancia} km`);
-    console.log(`Tiempo total: ${tiempoTotalFormato} horas`);
-
-    // Guardar la ruta en el servicio
     const viajeData = {
       ...this.travelService.getViajeData(),
       ruta_seleccionada: this.selectedRoute,
       distanciaTotal: distancia,
-      tiempoTotal: tiempoTotalFormato
+      tiempoTotal: tiempoTotalFormato,
+      hora_llegada: horaLlegadaFormato 
     };
 
     this.travelService.setViajeData(viajeData);
-
-    // Guardar en localStorage
     localStorage.setItem('rutaSeleccionada', JSON.stringify(viajeData));
 
     // this.obtenerCiudadesEnRuta();
 
-    // Desplaza la vista al mapa después de seleccionar la ruta
     setTimeout(() => {
       const mapEl = document.getElementById('mapContainer');
       if (mapEl) {
@@ -602,5 +587,27 @@ export class TercerPasoComponent implements OnInit {
     this.buscarRutas(this.origen, this.destino);
   }
 
+
+  /**
+   * Suma una duración (horas y minutos) a una hora de inicio string "HH:mm"
+   */
+  private calcularHoraLlegada(horaInicio: string, sumarHoras: number, sumarMinutos: number): string {
+    const [horasStr, minutosStr] = horaInicio.split(':');
+    let horas = parseInt(horasStr);
+    let minutos = parseInt(minutosStr);
+
+    minutos += sumarMinutos;
+    horas += Math.floor(minutos / 60);
+    minutos = minutos % 60;
+
+    // Sumar horas
+    horas += sumarHoras;
+    horas = horas % 24;
+
+    const hFinal = horas.toString().padStart(2, '0');
+    const mFinal = minutos.toString().padStart(2, '0');
+
+    return `${hFinal}:${mFinal}`;
+  }
 
 }

@@ -1,5 +1,5 @@
 export interface Mensaje {
-  id?: number;
+  id?: number | undefined;
   emisor_id: number;
   receptor_id: number;
   conversacion_id: number;

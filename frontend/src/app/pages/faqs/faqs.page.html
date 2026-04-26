@@ -2,72 +2,101 @@
 
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
+    <app-jumbotron [title]="'GoGuay: Tu viaje, tu gente, tu libertad.'"
       [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
   </div>
 
   <div class="container mt-4">
     <div class="text-center mb-4">
       <h1 class="titulo-faq">Preguntas Frecuentes</h1>
-      <p>Todo lo que necesitas saber para viajar con tranquilidad.</p>
+      <p>Todo lo que necesitas saber para viajar con GoGuay.</p>
     </div>
 
     <ion-accordion-group class="mb-3">
 
-      <ion-accordion value="espacioSeguro" class="mb-3 shadow-sm">
+      <ion-accordion value="espacioSeguro" class="mb-3 shadow-sm custom-accordion">
         <ion-item slot="header" class="white-header">
-          <ion-label>¿Por qué Prideride es un espacio seguro?</ion-label>
+          <ion-label>¿Por qué GoGuay es un espacio seguro?</ion-label>
         </ion-item>
         <div slot="content" class="p-3 text-muted">
-          Prideride nace para conectar a personas del colectivo LGBTIQ+ y aliados, eliminando el miedo al prejuicio.
-          Verificamos perfiles y fomentamos un sistema de reseñas basado en el respeto y la identidad.
+          <strong>GoGuay</strong> nace para conectar a personas del colectivo LGBTIQ+ y aliados, eliminando el miedo al prejuicio. 
+          Verificamos perfiles y fomentamos un sistema de reseñas basado en el respeto, la identidad y la seguridad mutua.
         </div>
       </ion-accordion>
 
-      <ion-accordion value="publicarViaje" class="mb-3 shadow-sm">
+      <ion-accordion value="reservaRayo" class="mb-3 shadow-sm custom-accordion">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Qué significa el icono del rayo <i class="fi fi-rr-bolt" style="color: #f1c40f;"></i>?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          El rayo indica que el viaje tiene <strong>Reserva Automática</strong>. 
+          Esto significa que no tienes que esperar a que el conductor te acepte; al pulsar en "Unirse", tu plaza queda confirmada al instante. ¡Ideal para viajes de última hora!
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="reservaManual" class="mb-3 shadow-sm custom-accordion">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Cómo funcionan las solicitudes manuales?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          Si el viaje no tiene el rayo, es una solicitud manual. Al pedir tu plaza, se abrirá un chat con el conductor. 
+          Tu reserva quedará "Pendiente" hasta que el conductor revise tu perfil y acepte la solicitud.
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="publicarViaje" class="mb-3 shadow-sm custom-accordion">
         <ion-item slot="header" class="white-header">
           <ion-label>¿Cómo puedo publicar un viaje?</ion-label>
         </ion-item>
         <div slot="content" class="p-3 text-muted">
-          Si tienes coche, pulsa en "Publicar", indica el origen, destino, fecha y el número de plazas disponibles. ¡Tú
-          eliges con quién compartir tu trayecto!
+          Si tienes coche, pulsa en "Publicar", indica origen, destino, fecha y plazas. 
+          Podrás elegir si quieres <strong>reserva automática</strong> (para ahorrar tiempo) o manual (para hablar primero con tus pasajeros).
         </div>
       </ion-accordion>
 
-      <ion-accordion value="reservar" class="mb-3 shadow-sm">
+      <ion-accordion value="identidad" class="mb-3 shadow-sm custom-accordion">
         <ion-item slot="header" class="white-header">
-          <ion-label>¿Cómo reservo una plaza?</ion-label>
+          <ion-label>¿Se respeta mi identidad en la app?</ion-label>
         </ion-item>
         <div slot="content" class="p-3 text-muted">
-          Busca tu destino en el buscador principal, elige el conductor que más te encaje y solicita tu plaza. Una vez
-          aceptada, podrás chatear para concretar el punto de encuentro.
+          Totalmente. En <strong>GoGuay</strong> puedes configurar tu nombre sentido y pronombres. Queremos que te sientas libre de ser quien eres durante todo el trayecto.
         </div>
       </ion-accordion>
 
-      <ion-accordion value="identidad" class="mb-3 shadow-sm">
+      <ion-accordion value="equipaje" class="mb-3 shadow-sm custom-accordion">
         <ion-item slot="header" class="white-header">
-          <ion-label>¿Se respeta mi identidad de género en la app?</ion-label>
+          <ion-label>¿Cuánto equipaje puedo llevar?</ion-label>
         </ion-item>
         <div slot="content" class="p-3 text-muted">
-          Totalmente. En tu perfil puedes configurar tu nombre sentido y pronombres. Queremos que te sientas libre de
-          ser quien eres desde que subes al coche hasta que bajas.
+          El espacio depende del coche del conductor. Al buscar un viaje, revisa los detalles del vehículo o pregunta por el chat si llevas maletas grandes. 
+          <strong>Tip GoGuay:</strong> Intenta viajar ligero para que todxs estéis cómodxs.
         </div>
       </ion-accordion>
 
-      <ion-accordion value="seguridadDatos" class="mb-3 shadow-sm">
+      <ion-accordion value="cancelaciones" class="mb-3 shadow-sm custom-accordion">
         <ion-item slot="header" class="white-header">
-          <ion-label>¿Qué pasa con mis datos personales?</ion-label>
+          <ion-label>¿Qué pasa si tengo que cancelar?</ion-label>
         </ion-item>
         <div slot="content" class="p-3 text-muted">
-          Implementamos cifrado avanzado para proteger tu información. Tus datos de contacto solo se comparten con el
-          conductor/pasajero una vez confirmada la reserva.
+          Sabemos que los planes cambian. Si eres pasajerx, avisa con la mayor antelación posible a través del chat para que el conductor pueda liberar la plaza. 
+          Si eres conductor, intenta no cancelar a menos que sea una emergencia, ya que otras personas dependen de ti para llegar a su destino.
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="pagos" class="mb-3 shadow-sm custom-accordion">
+        <ion-item slot="header" class="white-header">
+          <ion-label>¿Cómo se pagan los gastos del viaje?</ion-label>
+        </ion-item>
+        <div slot="content" class="p-3 text-muted">
+          En <strong>GoGuay</strong> compartimos gastos. El precio que ves en la app es el que debes abonar al conductor. 
+          Recomendamos concretar el método de pago (efectivo o Bizum) a través del chat antes de empezar el trayecto para evitar confusiones.
         </div>
       </ion-accordion>
 
     </ion-accordion-group>
   </div>
 
-  <div class="container d-flex justify-content-center mt-4">
+  <div class="container d-flex justify-content-center mt-4 mb-5">
     <app-ventana-dudas></app-ventana-dudas>
   </div>
 </ion-content>

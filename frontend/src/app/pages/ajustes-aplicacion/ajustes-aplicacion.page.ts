@@ -13,6 +13,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -32,6 +33,9 @@ import { ActivatedRoute } from '@angular/router';
   ],
 })
 export class AjustesAplicacionPage implements OnInit {
+
+  userLoggedIn: boolean = false;
+
   selectedLanguage = 'es';
   mostrarBanner = true;
   notificacionesActivas = true;
@@ -66,6 +70,10 @@ export class AjustesAplicacionPage implements OnInit {
   isLoggedIn: boolean = false;
   numNotificaciones: number = 0;
 
+  notifPush: boolean = true;
+  notifEmail: boolean = true;
+  notifSMS: boolean = false;
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -75,14 +83,21 @@ export class AjustesAplicacionPage implements OnInit {
     private userService: UserServicesService,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private funcionesComunes: FuncionesComunes
   ) { }
 
   ngOnInit() {
+    this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
     this.mostrarJumbotron = savedJumbotronSetting === 'true';
     this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
+    this.notifPush = localStorage.getItem('notifPush') !== 'false';
+    this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
+    this.notifSMS = localStorage.getItem('notifSMS') === 'true';
+
+
     this.darkTheme = localStorage.getItem('darkTheme') === 'true';
 
     // Aplicar el tema al iniciar
@@ -123,10 +138,12 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   guardarAjustes() {
-    localStorage.setItem(
-      'mostrarJumbotron',
-      this.mostrarJumbotron ? 'true' : 'false'
-    );
+    localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron.toString());
+    localStorage.setItem('notificacionesActivas', this.notificacionesActivas.toString());
+    localStorage.setItem('notifPush', this.notifPush.toString());
+    localStorage.setItem('notifEmail', this.notifEmail.toString());
+    localStorage.setItem('notifSMS', this.notifSMS.toString());
+
     this.translate
       .get([
         'AJUSTESAPP.OPCION_BANNER.ALERT_TITULO',
@@ -137,7 +154,7 @@ export class AjustesAplicacionPage implements OnInit {
           severity: 'success',
           summary: translations['AJUSTESAPP.OPCION_BANNER.ALERT_TITULO'],
           detail: translations['AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE'],
-          life: 3000,
+          life: 2000,
         });
       });
   }
@@ -336,28 +353,18 @@ export class AjustesAplicacionPage implements OnInit {
     document.body.classList.toggle('dark', isDark);
   }
 
-  /**
-   * Función para actualizar la selección de notificaciones
-   */
-  actualizarNotificaciones() {
-    localStorage.setItem('notificacionesActivas', this.notificacionesActivas.toString());
-  }
 
   /**
    * Función para obtener las preferencias de viaje del usuario.
    * 
    */
   cargarPreferencias() {
-    // Intentamos cargar desde el usuario de la BD primero, si no, del local
     const usuario = this.userData?.usuario;
     const prefsArray: string[] = usuario?.preferencias || JSON.parse(localStorage.getItem('userPreferences') || '[]');
 
-    // Mapeo inverso: de Array de strings a Booleanos de la UI
     this.leGustaHablar = prefsArray.includes('Hablar');
     this.leGustaMusica = prefsArray.includes('Escuchar música');
     this.leGustaSilencio = prefsArray.includes('Ir en silencio');
-    // Para 'Dormir' podrías añadir otro checkbox si lo necesitas
-
     this.aceptaMascotas = prefsArray.includes('Mascotas');
     this.fuma = prefsArray.includes('Fumar');
   }
@@ -366,7 +373,6 @@ export class AjustesAplicacionPage implements OnInit {
    * 
    */
   guardarPreferencias() {
-    // 1. Construir el array de strings según el Enum del Backend
     const nuevasPreferencias: string[] = [];
 
     if (this.leGustaHablar) nuevasPreferencias.push('Hablar');
@@ -375,16 +381,13 @@ export class AjustesAplicacionPage implements OnInit {
     if (this.aceptaMascotas) nuevasPreferencias.push('Permitir mascotas');
     if (this.fuma) nuevasPreferencias.push('Permitir fumar');
 
-    // 2. Guardar en LocalStorage para persistencia rápida
     localStorage.setItem('userPreferences', JSON.stringify(nuevasPreferencias));
 
-    // 3. Llamada real al Backend (IMPORTANTE)
-    // Asumimos que tu servicio acepta un array de strings en el campo 'preferencias'
+    
     this.userService.actualizarUsuario(this.userData.usuario.id, {
       preferencias: nuevasPreferencias
     }).subscribe({
       next: (usuarioActualizado) => {
-        // Actualizamos el observable y el objeto local
         this.userService.setUsuarioData(usuarioActualizado);
 
         this.messageService.add({

@@ -41,6 +41,11 @@ class EstadoViajeEnum(str, Enum):
     EN_CURSO = "En curso"
     FINALIZADO = "Finalizado"
     CANCELADO = "Cancelado"  
+    
+class EstadoSolicitudEnum(str, Enum):
+    PENDIENTE = "Pendiente"
+    CANCELADA = "Cancelada"
+    FINALIZADA = "Finalizada"
 
 class MotivosCancelacionConductor(str, Enum):
     NO_SE_CANCELA = ""

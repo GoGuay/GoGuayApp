@@ -79,6 +79,102 @@ a {
   color: #B3B5E6 !important;
 }
 
+.box-section {
+  position: relative;
+  background: white;
+  border-radius: 35px;
+  padding: 20px;
+  height: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: none;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Gradiente GoGuay
+.goguay-border {
+  position: relative;
+  border: none;
+  border-radius: 35px; 
+  background-color: #fff;
+  overflow: hidden; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px; 
+    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    
+    border-radius: 35px 0 0 35px; 
+    z-index: 1;
+  }
+}
+
+.notif-option, .pref-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f8f9fa;
+  
+  &:last-child { border-bottom: none; }
+  span, label { font-size: 0.9rem; color: #555; }
+}
+
+.btn-goguay {
+  background: #bae1ff; 
+  color: #1565c0;
+  font-weight: 700;
+  border-radius: 35px;
+  border: none;
+  padding: 10px;
+  &:disabled { opacity: 0.5; }
+}
+
+.btn-outline-danger{
+  border-radius: 35px;
+}
+
+.btn-logout {
+  background: #2d3436;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 35px;
+  font-weight: 600;
+}
+
+.btn-logout:hover {
+  background: #ffb3ba !important;
+  color: black !important;
+}
+
+.custom-select {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.ajustIcon {
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+}
+
+.form-select{
+  border-radius: 35px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
 @media (max-width: 768px) {
   .box-section {
     // height: 225px;
@@ -90,4 +186,26 @@ a {
   .boton_guardar {
     margin-top: 2rem;
   }
+
+  .goguay-border {
+  position: relative;
+  border: none;
+  border-radius: 35px; 
+  background-color: #fff;
+  overflow: hidden; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px; 
+    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    
+    border-radius: 35px 0 0 35px; 
+    z-index: 1;
+  }
+}
 }

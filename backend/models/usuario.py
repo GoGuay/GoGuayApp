@@ -226,6 +226,16 @@ class Usuario(db.Model):
             "updated_at": self.updated_at.isoformat(),
         }
     
+    ## Método para serializar solo los datos públicos del usuario (para mostrar en perfiles de otros usuarios, por ejemplo)
+    def serialize_public(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "apellidos": self.apellidos,
+            "fotoPerfil": self.fotoPerfil,
+            "puntuacion_promedio": self.estrellas_por_opiniones
+        }
+    
 
 
 

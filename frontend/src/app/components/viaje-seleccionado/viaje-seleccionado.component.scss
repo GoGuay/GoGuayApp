@@ -60,6 +60,48 @@ mat-dialog-actions {
   border: 1px solid #4caf50;
 }
 
+.custom-header {
+  height: auto !important;
+  min-height: 64px; 
+
+  ::ng-deep .mat-content {
+    display: flex !important;
+    align-items: center !important;
+    overflow: visible !important;
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.avatar-wrapper {
+  flex-shrink: 0; 
+  
+  .imgPerfilAcordeon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  mat-icon {
+    font-size: 35px;
+    width: 35px;
+    height: 35px;
+  }
+}
+
+.nombre-usuario {
+  white-space: normal !important; 
+  word-break: break-word;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
 @media (max-width: 576px) {
   .modal-infovisible {
     width: auto;

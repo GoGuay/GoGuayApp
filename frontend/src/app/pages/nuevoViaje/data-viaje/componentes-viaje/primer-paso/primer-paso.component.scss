@@ -7,7 +7,7 @@
 :host {
   --mdc-filled-text-field-container-color: white;
   --mat-sys-surface-variant: white;
-  --mat-sys-primary: #e0a667;
+  --mat-sys-primary: #000000;
   // Color componentes de ionic
   --ion-color-success: #e0a667;
   --ion-color-success-shade: #e0a667;
@@ -64,6 +64,34 @@
   }
 }
 
+ion-item {
+    --padding-start: 12px;
+    --inner-padding-end: 12px;
+    --min-height: 48px;
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+
+    &:hover {
+      --background: #fffefe;
+      border-radius: 35px !important;
+      cursor: pointer;
+      transform: translateY(-3px);
+    }
+
+    ion-radio {
+      --color: #666;
+      --color-checked: #E0A667;
+      color: black !important;
+      font-weight: 500;
+    }
+}
+
+.span {
+  font-size: 0.9rem;
+  color: #555;
+  margin-left: 8px;
+}
+
 .contenedor_calendario,
 .contenedor_inputs {
   width: 60%;
@@ -117,15 +145,13 @@ ion-item {
 
 ion-select,
 ion-list {
-  border-radius: 15px;
+  border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
 }
 
 .line {
   border-right: 2px solid #e0a667;
 }
-
-
 
 .info_message {
   font-size: small;

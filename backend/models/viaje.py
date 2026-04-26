@@ -30,7 +30,12 @@ class Viaje(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def serialize(self):
+    def get_estado_para_usuario(self, user_id):
+        if not user_id: return None
+        relacion = next((p for p in self.pasajeros if p.usuario_id == user_id), None)
+        return relacion.estado if relacion else None
+
+    def serialize(self, current_user_id=None):
         return {
             "id": self.id,
             "origen": self.origen,
@@ -54,14 +59,21 @@ class Viaje(db.Model):
             },
             "acompanantes": [
                 {
-                    "id": pasajero.usuario.id, 
-                    "nombre": pasajero.usuario.nombre, 
-                    "apellidos": pasajero.usuario.apellidos, 
-                    "email": pasajero.usuario.email, 
-                    "preferencias": pasajero.usuario.preferencias,
-                    "fotoPerfil": pasajero.usuario.fotoPerfil
+                    "id": p.usuario.id, 
+                    "nombre": p.usuario.nombre, 
+                    "fotoPerfil": p.usuario.fotoPerfil
                 }
-                for pasajero in self.pasajeros
+                for p in self.pasajeros if p.estado == 'aceptado'
             ],
+            "solicitudes_pendientes": [
+                {
+                    "id": p.usuario.id,
+                    "pasajero_viaje_id": p.id, 
+                    "nombre": p.usuario.nombre,
+                    "estado": p.estado
+                }
+                for p in self.pasajeros if p.estado == 'pendiente'
+            ],
+            "estado_solicitud_propia": self.get_estado_para_usuario(current_user_id),
             "created_at": self.created_at.isoformat(),
         }
