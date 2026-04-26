@@ -237,6 +237,8 @@ export class NuevoViajePage implements OnInit {
   }
 
 
+  buscarUbicacion(){}
+  
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
    * 

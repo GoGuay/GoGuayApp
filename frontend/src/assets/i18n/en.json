@@ -63,7 +63,7 @@
     "BOTON_LIMPIAR_ACCES": "Clear all criteria to start a new search",
     "INSTRUCCIONES_BUSQUEDA": "Type at least three characters and use the up and down arrows to navigate through the results and Enter to select."
   },
-  "TITLE": "PrideRide",
+  "TITLE": "GoGuay",
   "Panel de usuario": "User Panel Page",
   "PANELUSUARIO": {
     "PANELUSUARIO": "User Panel",
@@ -469,8 +469,8 @@
   },
   "ANTIGUO DEBAJO": "",
   "NUEVO_VIAJE2": {
-    "TITLE_BTN_BACK": "PrideRide",
-    "ALT_LOGO": "PrideRide Logo",
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "GoGuay Logo",
     "SEARCH_TRAVEL": "Search trip",
     "FROM": "Where does the trip start?",
     "TO": "How far is the trip?",
@@ -738,8 +738,8 @@
     "TRANS_CONCEPTO": "Account transfer"
   },
   "NUEVO_VIAJE": {
-    "TITLE_BTN_BACK": "PrideRide",
-    "ALT_LOGO": "PrideRide Logo",
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "GoGuay Logo",
     "SEARCH_TRAVEL": "Search Trip",
     "FROM": "Where does the trip start?",
     "TO": "Where does the trip end?",

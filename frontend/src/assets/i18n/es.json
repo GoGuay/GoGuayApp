@@ -136,7 +136,7 @@
       "PARA": "para",
       "BUSCAR_VIAJE": "Buscar viaje"
     },
-    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: PrideRide no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
   },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
   "MIPERFIL": {
@@ -487,8 +487,8 @@
   },
   "ANTIGUO DEBAJO": "",
   "NUEVO_VIAJE2": {
-    "TITLE_BTN_BACK": "PrideRide",
-    "ALT_LOGO": "Logotipo de PrideRide",
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "Logotipo de GoGuay",
     "SEARCH_TRAVEL": "Buscar viaje",
     "FROM": "¿Dónde comienza el viaje?",
     "TO": "¿Hasta dónde es el viaje?",
