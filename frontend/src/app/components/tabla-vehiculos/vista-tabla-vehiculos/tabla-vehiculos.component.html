@@ -195,7 +195,7 @@
           <select class="form-select" aria-label="Selección de color" [(ngModel)]="colorSeleccionado"
             [ngModelOptions]="{ standalone: true }" [disabled]="!modeloSeleccionado">
             <option value="" disabled selected>
-              {{ 'VEHICULOS.SELECTOR_COLOR' | translate }}
+              {{ 'MIPERFIL.MIS_VEHICULOS.SELECTOR.COLOR' | translate }}
             </option>
             <option *ngFor="let color of listadoColores" [value]="color">
               {{ color }}
@@ -207,7 +207,7 @@
           <select class="form-select inputs_selectores" aria-label="Selección de color" [(ngModel)]="colorSeleccionado"
             [ngModelOptions]="{ standalone: true }" [disabled]="!modeloSeleccionado">
             <option value="" disabled selected>
-              {{ 'VEHICULOS.SELECTOR_COLOR' | translate }}
+              {{ 'MIPERFIL.MIS_VEHICULOS.SELECTOR.COLOR' | translate }}
             </option>
             <option *ngFor="let color of listColours" [value]="color">
               {{ color }}
@@ -222,7 +222,19 @@
           (click)="guardarVehiculo()">
           {{ 'BOTON.GUARDAR_VEHICULO' | translate }}
         </button>
+        
       </div>
+      
     </ion-row>
+
   </div>
+
 </div>
+
+<div class="mt-3 info text-center" *ngIf="mostrarSelectorVehiculo">
+  <span class="mt-3">{{ 'MIPERFIL.MIS_VEHICULOS.INFO' | translate }}</span>
+    <a href="mailto:gestion.goguay&#64;gmail.com" class="link-item">
+      <i class="fi fi-rr-envelope ms-2"></i> gestion.goguay&#64;gmail.com 
+    </a>
+</div>
+      
