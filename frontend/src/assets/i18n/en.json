@@ -773,5 +773,28 @@
     "QUIENES_SOMOS_SLOGAN": "Your way, your community",
     "BUSCAR_VIAJE_SLOGAN": "Find your ideal trip",
     "MIS_VIAJES_SLOGAN": "Every trip, a new story"
+  },
+  "__Notificaciones app": "Sección Notificaciones de la aplicación",
+  "NOTIFICACIONES": {
+    "TITULO": "Notification Center",
+    "LIMPIAR_TODO": "Clear all",
+    "SIN_NOTIFICACIONES": "You have no notifications.",
+    "CARGANDO": "Loading notifications...",
+    "TIPO": {
+      "SISTEMA": "System",
+      "MENSAJE": "Message",
+      "SOLICITUD": "Request",
+      "VIAJE": "Trip"
+    },
+    "ESTADO": {
+      "NO_LEIDA": "Unread",
+      "LEIDA": "Read"
+    },
+    "ACCIONES": {
+      "MARCAR_LEIDA": "Mark as read",
+      "MARCAR_NO_LEIDA": "Mark as unread",
+      "RESPONDER": "Reply",
+      "ELIMINAR": "Delete"
+    }
   }
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -12,13 +11,14 @@ import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
 import { MatIcon } from "@angular/material/icon";
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-notificaciones',
   templateUrl: './notificaciones.page.html',
   styleUrls: ['./notificaciones.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent, MatIcon]
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent, MatIcon, TranslateModule]
 })
 export class NotificacionesPage implements OnInit {
 

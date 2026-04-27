@@ -36,7 +36,7 @@
             <div class="container">
               <span class="info-item"><strong>Preferencias de viaje: </strong>{{
                 preferenciasViaje}}</span>
-              <span class="info-item"><strong>Usuario verificado: </strong>✅</span>
+              <span class="info-item"><strong>Usuario verificado: </strong><i class="fi fi-rr-badget-check-alt" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"></i></span>
               <span class="info-item"><strong>Puntuación: </strong>{{usuario?.puntuacion_promedio}}</span>
             </div>
           </div>

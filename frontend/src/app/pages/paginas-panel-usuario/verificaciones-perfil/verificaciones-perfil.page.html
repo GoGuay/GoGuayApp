@@ -20,6 +20,10 @@
       <p class="mb-2">{{'VERIFICACION.SUBT_VERIF_BASICA' | translate}}</p>
     </div>
 
+    <div class="text-center" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado">
+      <p class="mb-2 verified-message"><i class="fi fi-rr-badget-check-alt"></i> Actualmente tienes tu perfil verificado.</p>
+    </div>
+
     <!-- Tablas -->
     <div class="container mt-5 mb-5">
       <div

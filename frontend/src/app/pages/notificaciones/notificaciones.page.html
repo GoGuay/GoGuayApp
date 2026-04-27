@@ -3,12 +3,12 @@
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mt-3 px-3">
-      <h1>Centro de notificaciones</h1>
+      <h1>{{ 'NOTIFICACIONES.TITULO' | translate }}</h1>
       <button *ngIf="notificaciones.length > 0" 
               class="btn btn_bg d-flex align-items-center" 
               (click)="borrarTodas()">
         <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">delete_sweep</mat-icon>
-        Limpiar todo
+        {{ 'NOTIFICACIONES.LIMPIAR_TODO' | translate }}
       </button>
     </div>
 
@@ -18,7 +18,7 @@
       </div>
 
       <div *ngIf="notificaciones.length === 0 && !mostrarSpinner" class="text-center mt-4">
-        No tienes notificaciones.
+        {{ 'NOTIFICACIONES.SIN_NOTIFICACIONES' | translate }}
       </div>
 
       <div *ngFor="let n of notificaciones" 
@@ -33,10 +33,10 @@
 
           <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-center">
-              <span class="tipo-texto small fw-bold text-uppercase">{{ n.tipo || 'Sistema' }}</span>
+              <span class="tipo-texto small fw-bold text-uppercase">{{ (n.tipo ? 'NOTIFICACIONES.TIPO.' + n.tipo.toUpperCase() : 'NOTIFICACIONES.TIPO.SISTEMA') | translate }}</span>
               
               <div class="d-flex align-items-center gap-2">
-                <div *ngIf="!n.leida" class="badge bg-danger">No leída</div>
+                <div *ngIf="!n.leida" class="badge bg-danger">{{ 'NOTIFICACIONES.ESTADO.NO_LEIDA' | translate }}</div>
                 
                 <button class="btn btn-link text-muted p-0 d-flex align-items-center justify-content-center" 
                         (click)="borrarUna(n.id)" 
@@ -55,13 +55,13 @@
 
             <div class="d-flex gap-2 mt-2">
               <button class="btn btn-sm btn-outline-secondary" (click)="toggleLeida(n)">
-                Marcar como {{ n.leida ? 'no leída' : 'leída' }}
+                {{ (n.leida ? 'NOTIFICACIONES.ACCIONES.MARCAR_NO_LEIDA' : 'NOTIFICACIONES.ACCIONES.MARCAR_LEIDA') | translate }}
               </button>
 
               <button *ngIf="n.tipo === 'mensaje' && n.conversacion_id" 
                       class="btn btn-sm btn_bg" 
                       (click)="irAlChat(n)">
-                <i class="fi fi-rr-messages me-1"></i> Responder
+                <i class="fi fi-rr-messages me-1"></i> {{ 'NOTIFICACIONES.ACCIONES.RESPONDER' | translate }}
               </button>
             </div>
           </div>

@@ -12,7 +12,7 @@ ion-button {
 
 .logo {
   max-width: 75px;
-  width: 100%;
+  // width: 100%;
   /* Se adapta al contenedor */
   height: auto;
   flex-shrink: 1;
@@ -30,21 +30,28 @@ ion-button {
 }
 
 .opciones {
-  display: flex;
-  flex-wrap: nowrap !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 180px 1fr 1fr;
   width: 100%;
-  justify-content: space-evenly;
+  align-items: center;
+  justify-items: center; 
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .opciones li {
-  width: auto;
-  min-width: fit-content;
-  flex: 0 1 auto;
+  width: 100%; 
   display: flex;
   justify-content: center;
+  align-items: center;
   text-align: center;
-  padding: 0 10px;
-  cursor: pointer;
+  white-space: nowrap; 
+}
+
+.opciones li:nth-child(4) {
+  flex-direction: column;
+  min-width: 180px;
 }
 
 .perfil .nav-link {
@@ -55,7 +62,7 @@ ion-button {
   width: 40px;
   height: 40px;
   border-radius: 35%;
-  mix-blend-mode: multiply; // elimina el fondo blanco del gif
+  mix-blend-mode: multiply;
 }
 
 .caja-icono {
@@ -239,6 +246,7 @@ ul {
 .navbar-diseno .container {
   // max-width: 1200px;
   max-width: 957px;
+  // max-width: 100%;
 }
 
 .opciones .nav-item {
@@ -262,7 +270,6 @@ ul {
   .navbar-collapse {
     justify-content: space-between !important;
   }
-
 
 }
 
@@ -347,10 +354,10 @@ ul {
 
 .mobile-navbar {
   position: relative;
-  width: auto;
+  width: 100%;
 
   .gap-logged-in {
-    margin-left: 30px;
+    margin-left: auto;
     transition: margin 0.3s ease;
   }
 }
