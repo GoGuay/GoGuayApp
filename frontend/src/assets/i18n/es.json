@@ -209,7 +209,7 @@
         "BTN_ELIMINAR_TOOLTIP": "Elimina este vehículo",
         "BTN_GUARDAR_TOOLTIP": "Guarda los nuevos datos del vehículo"
       },
-      "INFO": "Si no encuentras tu vehículo, ponte en contacto con nosotros:"
+      "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:"
     },
     "PREF_VIAJE": {
       "LABEL": "Mis preferencias de viaje",

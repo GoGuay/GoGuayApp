@@ -205,7 +205,7 @@
         "BTN_ELIMINAR_TOOLTIP": "Delete this vehicle",
         "BTN_GUARDAR_TOOLTIP": "Save new vehicle data"
       },
-      "INFO": "If you don't find your vehicle, contact us:"
+      "INFO": "*If you don't find your vehicle, contact us:"
     },
     "PREF_VIAJE": {
       "LABEL": "My trip preferences",
