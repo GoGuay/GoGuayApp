@@ -509,6 +509,9 @@ def rechazar_pasajero_manual():
     return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
 
 
+#
+# SERVICIO PARA NOTIFICAR QUE UN PASAJERO HA LLEGADO AL PUNTO DE ENCUENTRO
+#
 @travel_blueprint.route('/notificar_llegada_pasajero', methods=['POST'])
 def notificar_llegada():
     data = request.get_json()

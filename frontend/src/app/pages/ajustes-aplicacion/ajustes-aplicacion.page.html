@@ -85,6 +85,19 @@
         </div>
       </div>
 
+        <div class="col-12 col-md-12 col-lg-12">
+        <div class="box-section goguay-border h-100">
+          <h3><i class="fi fi-rr-lock me-2"></i> Ajustes visuales</h3>
+          <mat-divider></mat-divider>
+          <div class="mt-3">
+            <div class="notif-option">
+              <span>Mostrar imagen de cabecera</span>
+              <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="mostrarJumbotronChange()"></ion-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col-12 col-md-6">
         <div class="box-section goguay-border h-100">
           <h3><i class="fi fi-rr-lock me-2"></i>{{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}</h3>

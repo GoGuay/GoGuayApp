@@ -91,7 +91,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = savedJumbotronSetting === 'true';
+    this.mostrarJumbotron = savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
     this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
     this.notifPush = localStorage.getItem('notifPush') !== 'false';
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
@@ -343,6 +343,19 @@ export class AjustesAplicacionPage implements OnInit {
     this.darkTheme = event.detail.checked;
     localStorage.setItem('darkTheme', this.darkTheme.toString());
     this.aplicarTema(this.darkTheme);
+  }
+
+  /**
+   * Función para mostrar u ocultar el jumbotron de la home al activar o desactivar la opción en ajustes de aplicación
+   */
+  mostrarJumbotronChange() {
+    localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: 'Se ha cambiado el ajuste de visualización de la cabecera.',
+      life: 2000
+    });
   }
 
   /**

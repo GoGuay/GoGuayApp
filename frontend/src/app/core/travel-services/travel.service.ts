@@ -335,8 +335,6 @@ export class TravelService {
       usuario_id: usuarioId
     };
 
-    // Asumiendo que tu endpoint en el backend es '/notificar_llegada_pasajero'
-    // y que usas el mismo prefijo de URL que el resto de servicios de viajes
     return this.http.post(`${this.apiUrl}/travel/notificar_llegada_pasajero`, body).pipe(
       catchError((error) => {
         console.error('Error al notificar llegada al punto de partida:', error);
