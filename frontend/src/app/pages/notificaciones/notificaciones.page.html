@@ -4,12 +4,20 @@
   <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mt-3 px-3">
       <h1>{{ 'NOTIFICACIONES.TITULO' | translate }}</h1>
-      <button *ngIf="notificaciones.length > 0" 
-              class="btn btn_bg d-flex align-items-center" 
-              (click)="borrarTodas()">
-        <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">delete_sweep</mat-icon>
-        {{ 'NOTIFICACIONES.LIMPIAR_TODO' | translate }}
-      </button>
+      <div class="d-flex gap-2" *ngIf="notificaciones.length > 0">
+        <button *ngIf="haySinLeer" 
+          class="btn btn-outline-secondary d-flex align-items-center" 
+          (click)="marcarTodasComoLeidas()">
+          <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">done_all</mat-icon>
+          <span class="d-none d-sm-inline">{{ 'NOTIFICACIONES.ACCIONES.MARCAR_TODAS_LEIDAS' | translate }}</span>
+        </button>
+
+        <button class="btn btn_bg d-flex align-items-center" 
+          (click)="borrarTodas()">
+          <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">delete_sweep</mat-icon>
+          <span class="d-none d-sm-inline">{{ 'NOTIFICACIONES.LIMPIAR_TODO' | translate }}</span>
+        </button>
+      </div>
     </div>
 
     <div class="lista_notificaciones px-2">
@@ -47,7 +55,16 @@
               </div>
             </div>
             
-            <p class="mb-1 mt-1 text-dark">{{ n.mensaje }}</p>
+            <p class="mb-1 mt-1 text-dark cuerpo-mensaje" [class.expandido]="n.expandido">
+              {{ n.mensaje }}
+            </p>
+
+            <div class="d-md-none" *ngIf="n.mensaje.length > 90">
+              <button class="btn btn-link btn-sm p-0 text-decoration-none fw-bold text-primary" 
+                      (click)="n.expandido = !n.expandido">
+                {{ (n.expandido ? 'NOTIFICACIONES.ACCIONES.LEER_MENOS' : 'NOTIFICACIONES.ACCIONES.LEER_MAS') | translate }}
+              </button>
+            </div>
 
             <div class="text-muted extra-small">
               {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}

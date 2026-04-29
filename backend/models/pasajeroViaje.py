@@ -12,6 +12,8 @@ class PasajeroViaje(db.Model):
     fecha_confirmacion_reserva = db.Column(db.DateTime, default=datetime.utcnow)
     estado = db.Column(db.String(50), default=EstadoSolicitudEnum.PENDIENTE.value)
     fecha_solicitud = db.Column(db.DateTime, default=datetime.utcnow)
+
+    recordatorio_inicio_enviado = db.Column(db.Boolean, default=False)
     
     viaje = db.relationship('Viaje', backref='viaje_pasajero', lazy=True) 
     usuario = db.relationship('Usuario', lazy=True)
@@ -23,5 +25,6 @@ class PasajeroViaje(db.Model):
             "viaje_id": self.viaje_id,
             "fecha_confirmacion_reserva": self.fecha_confirmacion_reserva,
             "estado": self.estado,
-            "fecha_solicitud": self.fecha_solicitud
+            "fecha_solicitud": self.fecha_solicitud,
+            "recordatorio_inicio_enviado": self.recordatorio_inicio_enviado
         }

@@ -532,8 +532,11 @@
     "ACCIONES": {
       "MARCAR_LEIDA": "Marcar como leída",
       "MARCAR_NO_LEIDA": "Marcar como no leída",
+      "MARCAR_TODAS_LEIDAS": "Marcar todo como leído",
       "RESPONDER": "Responder",
-      "ELIMINAR": "Eliminar"
+      "ELIMINAR": "Eliminar",
+      "LEER_MAS": "Leer más",
+      "LEER_MENOS": "Leer menos"
     }
   }
 

@@ -1,17 +1,20 @@
 from dotenv import load_dotenv
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
+
+from services.tareas.tareas import tarea_recordatorio_viajes
 load_dotenv() 
 
 import os
 import secrets
 import logging
-from flask import Flask
+from flask import Flask, app
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from extensions import db
 from admin import setup_admin
+from flask_apscheduler import APScheduler
 
 # Importar la configuración
 from config import Config
@@ -32,6 +35,7 @@ from firebase_admin import credentials
 def create_app():
     app = Flask(__name__)
 
+    # --- CONFIGURACIÓN DE CORREO ---
     app.config['SECRET_KEY'] = 'tu_clave_secreta'
     app.config['MAIL_DEFAULT_SENDER'] = 'noreply@prideride.com'
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -41,16 +45,30 @@ def create_app():
     app.config['MAIL_USE_TLS'] = True
     mail = Mail(app)
 
+    # --- CONFIGURACIÓN DE SCHEDULER (Tareas Automáticas) ---
+    scheduler = APScheduler()
+    app.config['SCHEDULER_API_ENABLED'] = True
 
+    if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        scheduler.init_app(app)
+        scheduler.start()
 
+        # Tarea programada: Se ejecuta cada 1 minuto
+        @scheduler.task('interval', id='recordatorio_viajes_job', minutes=1)
+        def job_recordatorios():
+            tarea_recordatorio_viajes(app)
+            print(f"Tarea de recordatorios ejecutada a las: {os.times()}")
+
+    # --- FIREBASE ---
+    if not firebase_admin._apps:
+        cred = credentials.Certificate("prideride_firebase.json")
+        firebase_admin.initialize_app(cred)
 
 
     app.config.from_object(Config)
-    JWTManager(app)
-
-    cred = credentials.Certificate("prideride_firebase.json")
-    firebase_admin.initialize_app(cred)
     
+    # --- JWT & CORS ---
+    JWTManager(app)
     CORS(app, resources={r"/*": {
         "origins": [
             "http://localhost:4200",
@@ -66,20 +84,20 @@ def create_app():
         "supports_credentials": True
     }})
 
+    # --- BASE DE DATOS & MIGRACIONES ---
     db.init_app(app)
-    
     migrate = Migrate(app, db)
-    
     setup_admin(app)
 
+
+    # --- LOGGING ---
     handler = logging.StreamHandler()
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
-
-   
     app.logger.addHandler(handler)
     app.logger.setLevel(logging.DEBUG)
+
     
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     #       IMPORTACIONES DE LOS DIFERENTES SERVICIOS DE LA API  
@@ -89,6 +107,8 @@ def create_app():
     # --> vehicle_blueprint: Servicio relacionado con los vehículos
     # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
     # --> evento_blueprint: Servicio relacionado con los eventos
+    # --> notifications_blueprint: Servicio relacionado con las notificaciones
+    #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     app.register_blueprint(user_blueprint, url_prefix="/api/user")
     app.register_blueprint(travel_blueprint, url_prefix="/api/travel")

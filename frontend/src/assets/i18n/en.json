@@ -794,8 +794,11 @@
     "ACCIONES": {
       "MARCAR_LEIDA": "Mark as read",
       "MARCAR_NO_LEIDA": "Mark as unread",
+      "MARCAR_TODAS_LEIDAS": "Mark all as read",
       "RESPONDER": "Reply",
-      "ELIMINAR": "Delete"
+      "ELIMINAR": "Delete",
+      "LEER_MAS": "Read more",
+      "LEER_MENOS": "Read less"
     }
   }
 }

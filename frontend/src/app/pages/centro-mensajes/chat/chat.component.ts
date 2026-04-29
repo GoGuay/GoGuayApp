@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,12 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { Subject } from 'rxjs/internal/Subject';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
+import { interval } from 'rxjs/internal/observable/interval';
+import { LISTA_EMOJIS } from 'src/app/models/emojis/emojis.const';
+import { timer } from 'rxjs';
 
 @Component({
     selector: 'app-chat',
@@ -59,36 +65,47 @@ export class ChatPage implements OnInit {
     solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' } = {};
 
     mostrarEmojiPicker: boolean = false;
-    listaEmojis = [
-    '😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', 
-    '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', 
-    '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', 
-    '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', 
-    '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', 
-    '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', 
-    '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', 
-    '🤒', '🤕', '🤑', '🤠', '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', 
-    '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', 
-    '😿', '😾', '👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', 
-    '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', 
-    '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️', '💅', '🤳', '💪', 
-    '🦾', '🦵', '🦿', '🦶', '👂', '🦻', '👃', '🧠', '🦷', '🦴', '👀', '👁️', 
-    '👅', '👄', '💋', '🩸'
-    ];
+    listaEmojis = LISTA_EMOJIS;
+
+    private destroy$ = new Subject<void>();
 
     constructor(private route: ActivatedRoute,
         private messagingService: MessagingService,
         private notificacionesService: NotificacionesService,
         private travelService: TravelService,
-        private navCtrl: NavController) { }
+        private navCtrl: NavController,
+        private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.usuarioLogueadoId = this.userData.usuario.id;
         this.conversacionId = Number(this.route.snapshot.paramMap.get('id'));
 
-        this.cargarMensajes();
-        this.marcarComoLeidos();
+        /**
+         * Configuramos un timer que se ejecuta cada 4 segundos para obtener los mensajes de la conversación actualizada.
+         * Cada vez que obtenemos los mensajes, comprobamos si ha habido cambios en el número de mensajes para evitar recargas innecesarias.
+         * Si ha habido cambios, actualizamos la lista de mensajes, procesamos los mensajes especiales 
+         * (solicitudes de viaje y notificaciones de teléfono) y marcamos los mensajes como leídos.
+         * Si no ha habido cambios, simplemente dejamos la lista de mensajes como está y 
+         * seguimos esperando a la siguiente ejecución del timer.
+         * También gestionamos el estado de carga de la preferencia de compartir teléfono 
+         * para mostrar el indicador de carga mientras se obtiene la información y evitar mostrar opciones incorrectas al usuario.
+         * 
+         */
+        timer(0, 4000)
+            .pipe(
+                takeUntil(this.destroy$),
+                switchMap(() => this.messagingService.getMensajes(this.conversacionId))
+            )
+            .subscribe(data => {
+                if (data.length !== this.mensajes.length) {
+                    this.mensajes = data;
+                    this.procesarMensajesEspeciales(data);
+                    this.marcarComoLeidos(); 
+                    this.cdr.detectChanges(); 
+                }
+                this.cargandoPreferenciaTelefono = false; 
+            });
     }
 
     ionViewWillEnter() {
@@ -101,7 +118,7 @@ export class ChatPage implements OnInit {
     cargarMensajes() {
         this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
             this.mensajes = data;
-            
+            this.cdr.detectChanges();
             console.log("Mensajes cargados:", this.mensajes);
             this.telefonoRecibido = null;
             this.compartiendoMiTelefono = false;
@@ -340,5 +357,58 @@ export class ChatPage implements OnInit {
     enviarMensajeSistema(texto: string, viajeId?: any) {
         this.texto = texto;
         this.enviar(viajeId);
+    }
+
+    /**
+     * Función para procesar mensajes especiales que contienen solicitudes de unirse a un viaje o notificaciones de compartir teléfono.
+     * Para las solicitudes de unirse a un viaje, se verifica si el pasajero 
+     * ya ha sido aceptado en el viaje para mostrar el estado correcto en la interfaz.
+     * Para las notificaciones de compartir teléfono, se actualiza la interfaz 
+     * para mostrar el número de teléfono recibido o la opción de dejar de compartir si el usuario es el emisor.
+     * 
+     * @param mensajes --> Recibe el array de mensajes que se han obtenido de la 
+     * conversación para procesar los mensajes especiales y actualizar la interfaz en consecuencia.
+     * 
+     */
+    private procesarMensajesEspeciales(mensajes: Mensaje[]) {
+        mensajes.forEach((m) => {
+            if (m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')) {
+                const viajeId = Number(m.texto.split(':')[1]);
+                const mensajeId = m.id as number;
+
+                if (this.solicitudesGestionadas[mensajeId]) return;
+
+                this.travelService.getViaje(viajeId).subscribe(viaje => {
+                    if (viaje.acompanantes?.some((p: any) => p.id === m.emisor_id)) {
+                        this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                        this.cdr.detectChanges();
+                    }
+                });
+            }
+            if (m.texto.includes('TELEFONO USUARIO:')) {
+                if (m.emisor_id === this.usuarioLogueadoId) {
+                    this.compartiendoMiTelefono = true;
+                } else {
+                    this.telefonoRecibido = m.texto.split(':')[1].trim();
+                }
+            }
+            this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
+
+            this.cargandoPreferenciaTelefono = false;
+            this.scrollToBottom();
+        });
+    }
+
+    /**
+     * Función que se ejecuta al destruir el componente para limpiar los recursos y evitar fugas de memoria.
+     * En este caso, se completa el Subject destroy$ para finalizar el timer que obtiene 
+     * los mensajes periódicamente y evitar que siga ejecutándose después de salir del chat.
+     * 
+     * Esto es importante para optimizar el rendimiento de la aplicación y 
+     * evitar comportamientos inesperados al seguir intentando actualizar un componente que ya no está activo.
+     */
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }

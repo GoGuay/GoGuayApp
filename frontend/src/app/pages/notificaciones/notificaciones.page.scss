@@ -76,3 +76,35 @@
 .btn{
   border-radius: 35px !important;
 }
+
+
+.cuerpo-mensaje {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-height: 1.4;
+  transition: max-height 0.3s ease-out;
+
+  &.expandido {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+}
+
+@media (min-width: 768px) {
+  .notificacion_container {
+    width: 90%; 
+  }
+  
+  .cuerpo-mensaje {
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+  }
+}
+
+.extra-small {
+  font-size: 0.7rem;
+}
