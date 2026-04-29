@@ -98,9 +98,48 @@
     <div class="d-flex justify-content-center mt-1" *ngIf="!data.viaje.reserva_automatica">
       <span><i class="fi fi-rr-calendar-clock me-2"></i>Tu reserva no se confirmará hasta que el conductor acepte la solicitud.</span>
     </div>
+
+    <div class="acciones-en-curso p-3 mt-3 rounded shadow-sm" *ngIf="viaje.estado_viaje === 'En curso'">
+      <h3 class="text-center"><i class="fi fi-rr-play-alt"></i> Viaje en curso</h3>
+
+      <div class="d-grid gap-2" *ngIf="yaUnido && !conductor">
+        <button mat-raised-button 
+                color="accent" 
+                class="btn-llegada" 
+                (click)="notificarLlegadaPasajero()"
+                [disabled]="pasajeroYaAvisoLlegada">
+          <i class="fi fi-rr-marker me-2"></i>
+          {{ pasajeroYaAvisoLlegada ? 'Ya has avisado al conductor' : 'He llegado al punto de partida' }}
+        </button>
+      </div>
+
+      <div *ngIf="conductor">
+        <p class="small text-muted text-center mb-2">Estado de tus acompañantes:</p>
+        <div class="list-group">
+          <div *ngFor="let acomp of viaje.acompanantes" class="list-group-item d-flex justify-content-between align-items-center border-0 bg-light mb-1 rounded">
+            <span>{{ acomp.nombre }}</span>
+            
+            <div class="d-flex align-items-center">
+              <span *ngIf="acomp.ha_llegado" class="badge bg-success rounded-pill animate__animated animate__pulse animate__infinite">
+                <i class="fi fi-rs-marker"></i> ¡Está aquí!
+              </span>
+
+              <button *ngIf="!acomp.ha_llegado" 
+                      mat-button 
+                      color="primary" 
+                      class="btn-sm fw-bold"
+                      (click)="confirmarLlegadaDesdeConductor(acomp.id)">
+                <i class="fi fi-rr-check-circle me-1"></i> Confirmar llegada
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </mat-dialog-content>
 
-  <mat-dialog-actions>
+
+  <mat-dialog-actions *ngIf="viaje.estado_viaje !== 'En curso'">
     <div class="d-flex justify-content-center mt-4">
       <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)"
         [disabled]="data.viaje.plazas === 0 || yaUnido || conductor || funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">

@@ -17,6 +17,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
+import { MessageService } from 'primeng/api';
 
 
 
@@ -49,6 +50,8 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   conductor: boolean = false;
   userData: Usuario | undefined = {} as Usuario;
 
+  pasajeroYaAvisoLlegada: boolean = false;
+
   constructor(
     private dialogRef: MatDialogRef<ViajeSeleccionadoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { viaje: Viaje },
@@ -57,10 +60,12 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     private usersService: UserServicesService,
     private navCtrl: NavController,
     private cdRef: ChangeDetectorRef,
-    private messagingService: MessagingService
+    private messagingService: MessagingService,
+    private messageService: MessageService
   ) {
     this.preferencias = this.funcionesComunes.validacionPreferencias(this.data.viaje.preferencias ?? []);
     this.viaje = { ...this.data.viaje, acompanantes: this.data.viaje.acompanantes || [] };
+    this.checkSiYaAvisoLlegada();
     this.verificarSiEstaUnido();
     this.validarSiEsConductor(this.data.viaje.usuario_id, this.data.viaje);
   }
@@ -337,4 +342,78 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
       if (res) this.navCtrl.navigateRoot(['/login']);
     });
   }
+
+  /**
+   * Función para comprobar si el pasajero ya ha avisado de su llegada al punto de encuentro. 
+   * Esto se hace para mostrar u ocultar el botón de "Avisar llegada" en función de si el pasajero ya ha avisado o no. 
+   * Esta función se llama tanto en el ngOnInit como cada vez que se actualizan los datos del viaje, 
+   * para asegurarnos de que el estado del botón siempre es correcto.
+   */
+  checkSiYaAvisoLlegada() {
+    if (this.yaUnido && this.userData?.usuario) {
+      const yo = this.viaje.acompanantes?.find((a: any) => a.id === this.userData?.usuario.id);
+      this.pasajeroYaAvisoLlegada = yo?.ha_llegado || false;
+    }
+  }
+
+  /**
+   * Función para que el pasajero notifique al conductor que ya ha llegado al punto de encuentro.
+   * Esto actualizará el estado del viaje y mostrará un mensaje de confirmación al pasajero, 
+   * además de notificar al conductor a través del sistema de mensajería interna.
+   * @returns --> No devuelve nada, pero actualiza el estado del viaje y muestra un mensaje de confirmación.
+   */
+  notificarLlegadaPasajero() {
+    if (!this.userData?.usuario) return;
+
+    const viajeId = this.viaje.id;
+    const usuarioId = this.userData.usuario.id;
+
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, usuarioId).subscribe({
+      next: () => {
+        this.pasajeroYaAvisoLlegada = true;
+        this.cdRef.detectChanges();
+        
+        this.funcionesComunes.openConfirmModal(
+          '¡Aviso enviado!', 
+          'El conductor ha sido notificado de que ya estás en el punto de encuentro.'
+        );
+
+        this.verificarSiEstaUnido();
+      },
+      error: (err) => console.error('Error al notificar llegada:', err)
+    });
+  }
+
+  /**
+   * Función para que el conductor confirme que un acompañante ha llegado al punto de encuentro.
+   * Esto actualizará el estado del viaje y mostrará un mensaje de confirmación al conductor, 
+   * además de notificar al acompañante a través del sistema de mensajería interna.
+   * @param acompId --> ID del acompañante que ha llegado al punto de encuentro y que el conductor va a confirmar su llegada.
+   * @returns --> No devuelve nada, pero actualiza el estado del viaje y muestra un mensaje de confirmación.
+   */
+  confirmarLlegadaDesdeConductor(acompId: number) {
+    const viajeId = this.viaje.id;
+
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, acompId).subscribe({
+      next: () => {
+        const acompanante = this.viaje.acompanantes?.find((acompanante:any) => acompanante.id === acompId);
+        if (acompanante) {
+          acompanante.ha_llegado = true;
+        }
+        
+        this.cdRef.detectChanges();
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Llegada confirmada',
+          detail: `Has marcado que el acompañante ha llegado correctamente.`,
+          life: 2000
+        });
+      },
+      error: (err) => {
+        console.error('Error al confirmar llegada desde conductor:', err);
+      }
+    });
+  }
+
 }

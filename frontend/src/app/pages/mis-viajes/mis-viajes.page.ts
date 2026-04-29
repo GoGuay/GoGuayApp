@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -22,7 +22,6 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular/standalone';
-import { LoadTravelLineComponent } from "src/app/components/load-travel-line/load-travel-line.component";
 import localeEs from '@angular/common/locales/es';
 
 @Component({
@@ -30,7 +29,15 @@ import localeEs from '@angular/common/locales/es';
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatIcon, JumbotronComponent, SpinnerComponent, ToastModule, TranslateModule, LoadTravelLineComponent],
+  imports: [IonicModule, 
+    CommonModule, 
+    FormsModule, 
+    NavbarComponent, 
+    MatIcon, 
+    JumbotronComponent, 
+    SpinnerComponent, 
+    ToastModule, 
+    TranslateModule],
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
@@ -55,9 +62,6 @@ export class MisViajesPage implements OnInit {
   cargando = false;
   mostrarAyuda: boolean = false;
 
-  imgNuevoViaje: string = '../../../assets/sistema/agregar.png';
-  buscarViaje: string = '../../../assets/sistema/busqueda.png';
-
   cargandoViajes: boolean = true;
 
   /**
@@ -76,7 +80,8 @@ export class MisViajesPage implements OnInit {
     private dialog: MatDialog, private travelService: TravelService,
     private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
     private messageService: MessageService, private popoverCtrl: PopoverController,
-    private alertCtrl: AlertController, public translate: TranslateService) { }
+    private alertCtrl: AlertController, public translate: TranslateService,
+    private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
       this.route.queryParams.subscribe((params) => {
@@ -156,15 +161,22 @@ export class MisViajesPage implements OnInit {
     });
   }
 
+  /**
+   * Función para obtener los datos de un usuario a través del servicio, 
+   * devuelve un Observable con la información del usuario
+   * 
+   * @param id_usuario --> Recibe el ID del usuario que está logado
+   * @returns --> Devuelve un Observable con la información del usuario
+   */
   obtenerUsuario(id_usuario: number): Observable<Usuario> {
     return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
   /**
- * Función para validar si el perfil es el del usuario logueado
- * 
- * @param id_usuario Recibe el ID del usuario.
- */
+   * Función para validar si el perfil es el del usuario logueado
+   * 
+   * @param id_usuario Recibe el ID del usuario.
+   */
   validacionPerilLogeado(id_usuario: number) {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (id_usuario === this.userData.usuario.id) {
@@ -175,8 +187,8 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
- * Función para obtener la lista de viajes que ha creado el usuario
- */
+   * Función para obtener la lista de viajes que ha creado el usuario
+   */
   obtenerViajesCreados() {
     this.travelService.getViajesUsuario(this.userData.usuario.id)
       .subscribe((result) => {
@@ -202,10 +214,10 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
- * Función para validar si se puede puntuar un viaje o no.
- * 
- * @param viaje 
- */
+   * Función para validar si se puede puntuar un viaje o no.
+   * 
+   * @param viaje 
+   */
   puedePuntuar(viaje: Viaje): boolean {
     const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
     const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
@@ -327,10 +339,10 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
- * Función para eliminar un viaje.
- * 
- * @param viajeId 
- */
+   * Función para eliminar un viaje.
+   * 
+   * @param viajeId 
+   */
   eliminarViaje(viajeId: number) {
     this.travelService.eliminarViaje(viajeId).subscribe({
       next: () => {
@@ -384,55 +396,87 @@ export class MisViajesPage implements OnInit {
     this.navCtrl.navigateRoot('/nuevo-viaje');
   }
 
+  /**
+   * Función para manejar el cambio de filtro de los viajes, actualiza la lista de viajes mostrados según el filtro seleccionado
+   * y cierra el popover de filtros si está abierto.
+   * @param event --> Recibe el evento del cambio de filtro, que contiene el valor del filtro seleccionado.
+   * @param popover --> Recibe el popover de filtros para poder cerrarlo después de aplicar el filtro.
+   */
   onFiltroChange(event: any, popover: any) {
     this.filtroSeleccionado = event.detail.value;
 
+    const acompanante = this.misViajesAcompanante || [];
+    const creados = this.misViajesCreados || [];
+    const solicitudes = this.misSolicitudesPendientes || [];
+
+    let viajesBase: any[] = [];
+
+    switch (this.filtroViajes) {
+      case 'todos':
+        viajesBase = [...acompanante, ...creados];
+        break;
+      case 'conductor':
+        viajesBase = [...creados];
+        break;
+      case 'pasajero':
+        viajesBase = [...acompanante];
+        break;
+      case 'solicitudes':
+        const misViajesConSoli = creados.filter(v => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
+        viajesBase = [...solicitudes, ...misViajesConSoli];
+        break;
+    }
+
     switch (this.filtroSeleccionado) {
+      case 'en_curso':
+        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'En curso');
+        break;
+      
+      case 'finalizado':
+        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Finalizado');
+        break;
+        
+      case 'cancelado':
+        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Cancelado');
+        break;
+
       case 'horaSalida':
-        this.misViajes.sort((a, b) => (a.hora_salida || '').localeCompare(b.hora_salida || ''));
+        this.misViajes = [...viajesBase].sort((a, b) => (a.hora_salida || '').localeCompare(b.hora_salida || ''));
         break;
 
       case 'recientes':
-        this.misViajes.sort((a, b) => {
-          return new Date(b.fecha_salida).getTime() - new Date(a.fecha_salida).getTime();
-        });
+        this.misViajes = [...viajesBase].sort((a, b) => 
+          new Date(b.fecha_salida).getTime() - new Date(a.fecha_salida).getTime()
+        );
         break;
 
       case 'antiguos':
-        this.misViajes.sort((a, b) => {
-          return new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime();
-        });
+        this.misViajes = [...viajesBase].sort((a, b) => 
+          new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime()
+        );
         break;
 
       case 'precioAsc':
-        this.misViajes.sort((a, b) => {
-          const precioA = a.precio_viaje || 0;
-          const precioB = b.precio_viaje || 0;
-          return precioA - precioB;
-        });
-        break;
-
-      case 'precioDesc':
-        this.misViajes.sort((a, b) => {
-          const precioA = a.precio_viaje || 0;
-          const precioB = b.precio_viaje || 0;
-          return precioB - precioA;
-        });
+        this.misViajes = [...viajesBase].sort((a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0));
         break;
 
       case 'pendientes':
-        this.misViajes.sort((a, b) => {
-          const aFinalizado = this.funcionesComunes.esViajeFinalizado(a.fecha_salida, a.hora_salida);
-          const bFinalizado = this.funcionesComunes.esViajeFinalizado(b.fecha_salida, b.hora_salida);
-          return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
+        this.misViajes = [...viajesBase].sort((a, b) => {
+          const orden: any = { 'En curso': 1, 'Próximo': 2, 'Finalizado': 3, 'Cancelado': 4 };
+          return (orden[a.estado_viaje] || 5) - (orden[b.estado_viaje] || 5);
         });
+        break;
+
+      default:
+        this.misViajes = viajesBase;
         break;
     }
 
-    // Verificamos que popover existe antes de llamar a dismiss (por seguridad)
     if (popover && typeof popover.dismiss === 'function') {
       popover.dismiss();
     }
+    
+    this.cdr.detectChanges();
   }
 
   async reportar(ev: any, viaje: any) {
@@ -593,6 +637,17 @@ export class MisViajesPage implements OnInit {
     await alert.present();
   }
 
+  /**
+   * Función para que el conductor cancele una solicitud manual.
+   * El conductor puede cancelar una solicitud que aún no ha aceptado, retirando la solicitud de plaza del pasajero.
+   * Esto es útil en caso de que el conductor decida que no quiere aceptar a ese pasajero o 
+   * si el pasajero se ha puesto en contacto con el conductor para retirar su solicitud.
+   * 
+   * @param solicitudId --> El ID de la solicitud que se desea cancelar. Este ID corresponde a 
+   * la solicitud pendiente que el pasajero ha hecho para unirse al viaje, y 
+   * que aún no ha sido aceptada por el conductor. Al cancelar esta solicitud, 
+   * se elimina del sistema y el pasajero ya no aparecerá como solicitante para ese viaje.
+   */
   async cancelarSolicitud(solicitudId: number) {
     const alert = await this.alertCtrl.create({
       header: 'Cancelar Solicitud',
@@ -610,6 +665,50 @@ export class MisViajesPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  /**
+   * Función para obtener la clase CSS según el estado del viaje
+   * @param estado --> Estado del viaje (Pendiente, En curso, Finalizado, Cancelado)
+   * @returns --> Devuelve la clase CSS correspondiente al estado del viaje
+   * Si el estado es "Pendiente" o "Próximo", devuelve "badge-proximo"
+   * Si el estado es "En curso", devuelve "badge-en-curso"
+   * Si el estado es "Finalizado", devuelve "badge-finalizado"
+   * Si el estado es "Cancelado", devuelve "badge-cancelado"
+   * Si no se proporciona un estado o no coincide con ninguno de los casos anteriores, devuelve "badge-proximo" por defecto
+   * 
+   * Esta función se utiliza para asignar estilos visuales a los viajes según su estado, facilitando la identificación rápida del estado de cada viaje en la interfaz de usuario.
+   */
+  getClaseEstado(estado?: string): string {
+    if (!estado) return 'badge-proximo';
+
+    switch (estado) {
+      case 'Próximo': 
+      case 'Pendiente': return 'badge-proximo'; 
+      case 'En curso': return 'badge-en-curso';
+      case 'Finalizado': return 'badge-finalizado';
+      case 'Cancelado': return 'badge-cancelado';
+      default: return 'badge-proximo';
+    }
+  }
+
+
+  /**
+   * Función para obtener el icono según el estado del viaje
+   * @param estado --> Estado del viaje (Pendiente, En curso, Finalizado, Cancelado)
+   * @returns --> Devuelve la clase del icono correspondiente al estado del viaje
+   */
+  getIconoEstado(estado?: string): string {
+    if (!estado) return 'fi-rr-calendar-clock me-1';
+
+    switch (estado) {
+      case 'Próximo': 
+      case 'Pendiente': return 'fi-rr-calendar-clock me-1';
+      case 'En curso': return 'fi-rr-play me-1';
+      case 'Finalizado': return 'fi-rr-check me-1';
+      case 'Cancelado': return 'fi-rr-cross-circle me-1';
+      default: return 'fi-rr-info me-1';
+    }
   }
 
 }

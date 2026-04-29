@@ -507,3 +507,27 @@ def rechazar_pasajero_manual():
     )
 
     return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
+
+
+@travel_blueprint.route('/notificar_llegada_pasajero', methods=['POST'])
+def notificar_llegada():
+    data = request.get_json()
+    viaje_id = data.get('viaje_id')
+    usuario_id = data.get('usuario_id')
+
+    solicitud = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    
+    if solicitud:
+        solicitud.ha_llegado = True 
+        db.session.commit()
+
+        viaje = Viaje.query.get(viaje_id)
+        enviar_notificacion_push(
+            usuario_id=viaje.usuario_id,
+            titulo="¡Pasajero en el punto!",
+            cuerpo=f"Tu pasajero ya está en el punto de partida.",
+            data={"viaje_id": str(viaje_id)}
+        )
+        return jsonify({"mensaje": "Llegada notificada"}), 200
+    
+    return jsonify({"error": "No se encontró la reserva"}), 404

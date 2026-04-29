@@ -11,6 +11,7 @@ export interface Viaje {
   duracion_viaje: string;
   precio_viaje?: number;
   ruta_seleccionada?: any;
+  estado_viaje?: 'Pendiente' | 'En curso' | 'Finalizado' | 'Cancelado';
   usuario_id: number;
   created_at: string;
   usuario?: any; 

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import pytz
 
 # Tarea programada para enviar recordatorios a los pasajeros sobre sus viajes próximos a iniciar.
@@ -21,7 +21,28 @@ def tarea_recordatorio_viajes(app):
         ahora = datetime.now(tz)
         
         fecha_actual = ahora.date()
-        
+
+        # --> CAMBIAR ESTADO A "FINALIZADO" SI LA HORA DE LLEGADA YA PASÓ
+        viajes_en_curso = Viaje.query.filter_by(estado_viaje=EstadoViajeEnum.EN_CURSO.value).all()
+        for v in viajes_en_curso:
+            try:
+                h_llegada, m_llegada = map(int, v.hora_llegada.split(':'))
+                h_salida, m_salida = map(int, v.hora_salida.split(':'))
+                
+                fecha_llegada = v.fecha_salida.date()
+
+                if (h_llegada < h_salida) or (h_llegada == h_salida and m_llegada < m_salida):
+                    fecha_llegada += timedelta(days=1)
+
+                momento_llegada = tz.localize(datetime.combine(fecha_llegada, time(h_llegada, m_llegada)))
+
+                if ahora >= momento_llegada:
+                    v.estado_viaje = EstadoViajeEnum.FINALIZADO.value
+                    app.logger.info(f"Viaje {v.id} marcado como FINALIZADO")
+            except Exception as e:
+                app.logger.error(f"Error al finalizar el viaje {v.id}: {e}")
+
+        # --> CAMBIAR ESTADO A "EN CURSO" 
         viajes_a_iniciar = Viaje.query.filter(
             Viaje.estado_viaje == EstadoViajeEnum.PROXIMO.value,
             Viaje.fecha_salida <= fecha_actual
@@ -30,7 +51,7 @@ def tarea_recordatorio_viajes(app):
         for v in viajes_a_iniciar:
             try:
                 h, m = map(int, v.hora_salida.split(':'))
-                momento_salida = tz.localize(datetime.combine(v.fecha_salida.date(), datetime.time(h, m)))
+                momento_salida = tz.localize(datetime.combine(v.fecha_salida.date(), time(h, m)))
 
                 if ahora >= momento_salida:
                     v.estado_viaje = EstadoViajeEnum.EN_CURSO.value

@@ -26,6 +26,8 @@
         <ion-list lines="none">
           <ion-radio-group [value]="filtroSeleccionado" (ionChange)="onFiltroChange($event, filtroPopover)">
             <ion-item><ion-label>En curso</ion-label><ion-radio value="en_curso"></ion-radio></ion-item>
+            <ion-item><ion-label>Finalizado</ion-label><ion-radio value="finalizado"></ion-radio></ion-item>
+            <ion-item><ion-label>Cancelado</ion-label><ion-radio value="cancelado"></ion-radio></ion-item>
             <ion-item><ion-label>Más recientes</ion-label><ion-radio value="recientes"></ion-radio></ion-item>
             <ion-item><ion-label>Más antiguos</ion-label><ion-radio value="antiguos"></ion-radio></ion-item>
             <ion-item><ion-label>Pendientes primero</ion-label><ion-radio value="pendientes"></ion-radio></ion-item>
@@ -56,9 +58,14 @@
 
     <div *ngIf="cargandoViajes" class="text-center py-5"><app-spinner></app-spinner></div>
     
-    <div *ngIf="!cargandoViajes && misViajes.length === 0" class="sin-viajes-container text-center">
+    <div *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes'" class="sin-viajes-container text-center">
       <p>Aún no tienes viajes en esta categoría.</p>
       <img src="../../../assets/sistema/destino-de-viaje.gif" class="iconSinViajes">
+    </div>
+
+    <div *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes'" class="sin-viajes-container text-center">
+      <p>Aún no tienes solicitudes en esta categoría.</p>
+      <img src="../../../assets/sistema/telefono.gif" class="iconSinViajes">
     </div>
 
     <div class="columna_scroll" *ngIf="!cargandoViajes && misViajes.length > 0">
@@ -114,8 +121,9 @@
                 <span>{{ viaje.fecha_salida | date:'EEEE, d MMMM yyyy' : '' : (translate.currentLang || 'es') | titlecase }}</span>              
               </div>
               <div class="d-flex gap-2 align-items-center">
-                <span [ngClass]="funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida) ? 'badge-finalizado' : 'badge-pendiente'">
-                  {{ funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida) ? 'Finalizado' : 'Pendiente' }}
+                <span [ngClass]="getClaseEstado(viaje.estado_viaje ?? '')">
+                  <i class="fi" [ngClass]="getIconoEstado(viaje.estado_viaje ?? '')"></i>
+                  {{ viaje.estado_viaje ?? 'Próximo' }}
                 </span>
               </div>
             </div>
