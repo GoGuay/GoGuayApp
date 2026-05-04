@@ -1,7 +1,11 @@
 <div class="container modal-infovisible mt-2">
   <div class="dialog-header">
-    <h2 mat-dialog-title>Detalles del viaje </h2>
-    <button mat-icon-button (click)="closeDialog()" aria-label="Cerrar ventana de dialogo">
+    <h2 mat-dialog-title>Detalles del viaje</h2>
+    <button
+      mat-icon-button
+      (click)="closeDialog()"
+      aria-label="Cerrar ventana de dialogo"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -9,127 +13,258 @@
   <mat-divider class="mt-2"></mat-divider>
 
   <mat-dialog-content>
-    <div class="info_viaje mb-2" *ngIf="data.viaje.plazas === 0">
-      <p>Este viaje ya no dispone de plazas. 🥴​ </p>
+    <div
+      class="info_viaje mb-2"
+      *ngIf="data.viaje.plazas === 0"
+    >
+      <p>Este viaje ya no dispone de plazas. 🥴​</p>
     </div>
-    <div class="info_viaje mb-2"
-      *ngIf="funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
-      <p>Este viaje ya ha terminado. 🥴​ </p>
+    <div
+      class="info_viaje mb-2"
+      *ngIf="
+        funcionesComunes.esViajeFinalizado(
+          data.viaje.fecha_salida,
+          data.viaje.hora_llegada
+        )
+      "
+    >
+      <p>Este viaje ya ha terminado. 🥴​</p>
     </div>
     <div class="row">
       <div class="col">
-        <h2>Viaje <mat-icon>emoji_transportation</mat-icon></h2>
+        <h2>
+          Viaje
+          <mat-icon>emoji_transportation</mat-icon>
+        </h2>
         <mat-divider class="mb-2"></mat-divider>
-        <p><strong>Origen:</strong> {{ data.viaje.origen }}</p>
-        <p><strong>Destino:</strong> {{ data.viaje.destino }}</p>
-        <p><strong>Fecha de salida:</strong> {{formatData(data.viaje.fecha_salida) }}</p>
-        <p><strong>Hora de salida:</strong> {{ data.viaje.hora_salida }}</p>
-        <p><strong>Hora de llegada (Aprox.):</strong> {{ data.viaje.hora_llegada }}</p>
-        <p><strong>Plazas libres:</strong> {{ data.viaje.plazas }}</p>
-        <p *ngIf="data.viaje.precio_viaje"><strong>Precio:</strong> {{ data.viaje.precio_viaje }} €</p>
-        <p *ngIf="!data.viaje.precio_viaje"><strong>Precio:</strong> Sin precio asignado </p>
+        <p>
+          <strong>Origen:</strong>
+          {{ data.viaje.origen }}
+        </p>
+        <p>
+          <strong>Destino:</strong>
+          {{ data.viaje.destino }}
+        </p>
+        <p>
+          <strong>Fecha de salida:</strong>
+          {{ formatData(data.viaje.fecha_salida) }}
+        </p>
+        <p>
+          <strong>Hora de salida:</strong>
+          {{ data.viaje.hora_salida }}
+        </p>
+        <p>
+          <strong>Hora de llegada (Aprox.):</strong>
+          {{ data.viaje.hora_llegada }}
+        </p>
+        <p>
+          <strong>Plazas libres:</strong>
+          {{ data.viaje.plazas }}
+        </p>
+        <p *ngIf="data.viaje.precio_viaje">
+          <strong>Precio:</strong>
+          {{ data.viaje.precio_viaje }} €
+        </p>
+        <p *ngIf="!data.viaje.precio_viaje">
+          <strong>Precio:</strong>
+          Sin precio asignado
+        </p>
       </div>
 
       <div class="col">
-    <div *ngIf="!conductor">
-      <h2>Conductor</h2>
-      <mat-accordion class="headers-align green-border" multi>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header class="custom-header">
-            <div class="header-content">
-              <div class="avatar-wrapper">
-                <mat-icon *ngIf="!viaje.usuario?.fotoPerfil">account_circle</mat-icon>
-                <img *ngIf="viaje.usuario?.fotoPerfil" class="imgPerfilAcordeon" [src]="viaje.usuario?.fotoPerfil">
-              </div>
-              <span class="nombre-usuario">
-                {{ viaje.usuario?.nombre }} {{ viaje.usuario?.apellidos }}
-              </span>
-            </div>
-          </mat-expansion-panel-header>
-          <p><strong>Nombre:</strong> {{ viaje.usuario?.nombre }} {{ viaje.usuario?.apellidos }}</p>
-          <p><strong>Puntuación:</strong> {{ viaje.usuario?.puntuacion_promedio }}</p>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-
-    <div class="mt-3">
-      <h2>Acompañantes <mat-icon>groups</mat-icon></h2>
-      <mat-divider class="mb-2"></mat-divider>
-
-      <div class="mt-2" *ngIf="viaje.acompanantes?.length === 0">
-        <span>Este viaje aún no tiene acompañantes</span>
-      </div>
-
-      <div class="mt-2" *ngFor="let acomp of viaje.acompanantes">
-        <mat-accordion class="headers-align" multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header class="custom-header">
-              <div class="header-content">
-                <div class="avatar-wrapper">
-                  <mat-icon *ngIf="!acomp.fotoPerfil">account_circle</mat-icon>
-                  <img *ngIf="acomp.fotoPerfil" class="imgPerfilAcordeon" [src]="acomp.fotoPerfil">
+        <div *ngIf="!conductor">
+          <h2>Conductor</h2>
+          <mat-accordion
+            class="headers-align green-border"
+            multi
+          >
+            <mat-expansion-panel>
+              <mat-expansion-panel-header class="custom-header">
+                <div class="header-content">
+                  <div class="avatar-wrapper">
+                    <mat-icon *ngIf="!viaje.usuario?.fotoPerfil">
+                      account_circle
+                    </mat-icon>
+                    <img
+                      *ngIf="viaje.usuario?.fotoPerfil"
+                      class="imgPerfilAcordeon"
+                      [src]="viaje.usuario?.fotoPerfil"
+                    />
+                  </div>
+                  <span class="nombre-usuario">
+                    {{ viaje.usuario?.nombre }} {{ viaje.usuario?.apellidos }}
+                  </span>
                 </div>
-                <span class="nombre-usuario">
-                  {{ acomp.nombre }} {{ acomp.apellidos }}
-                </span>
-              </div>
-            </mat-expansion-panel-header>
-            <p><strong>Puntuación:</strong> {{ acomp.puntuacion_promedio || 0 }}</p>
-            <button mat-raised-button class="btn mb-2" (click)="contactar(acomp.id)" *ngIf="acomp.id !== userData?.usuario?.id"> Enviar mensaje </button>
-            <button mat-raised-button class="btn" (click)="masDetallesUsuario(acomp.id)">Más información</button>
-          </mat-expansion-panel>
-        </mat-accordion>
+              </mat-expansion-panel-header>
+              <p>
+                <strong>Nombre:</strong>
+                {{ viaje.usuario?.nombre }} {{ viaje.usuario?.apellidos }}
+              </p>
+              <p>
+                <strong>Puntuación:</strong>
+                {{ viaje.usuario?.puntuacion_promedio }}
+              </p>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+
+        <div class="mt-3">
+          <h2>
+            Acompañantes
+            <mat-icon>groups</mat-icon>
+          </h2>
+          <mat-divider class="mb-2"></mat-divider>
+
+          <div
+            class="mt-2"
+            *ngIf="viaje.acompanantes?.length === 0"
+          >
+            <span>Este viaje aún no tiene acompañantes</span>
+          </div>
+
+          <div
+            class="mt-2"
+            *ngFor="let acomp of viaje.acompanantes"
+          >
+            <mat-accordion
+              class="headers-align"
+              multi
+            >
+              <mat-expansion-panel>
+                <mat-expansion-panel-header class="custom-header">
+                  <div class="header-content">
+                    <div class="avatar-wrapper">
+                      <mat-icon *ngIf="!acomp.fotoPerfil">
+                        account_circle
+                      </mat-icon>
+                      <img
+                        *ngIf="acomp.fotoPerfil"
+                        class="imgPerfilAcordeon"
+                        [src]="acomp.fotoPerfil"
+                      />
+                    </div>
+                    <span class="nombre-usuario">
+                      {{ acomp.nombre }} {{ acomp.apellidos }}
+                    </span>
+                  </div>
+                </mat-expansion-panel-header>
+                <p>
+                  <strong>Puntuación:</strong>
+                  {{ acomp.puntuacion_promedio || 0 }}
+                </p>
+                <button
+                  mat-raised-button
+                  class="btn mb-2"
+                  (click)="contactar(acomp.id)"
+                  *ngIf="acomp.id !== userData?.usuario?.id"
+                >
+                  Enviar mensaje
+                </button>
+                <button
+                  mat-raised-button
+                  class="btn"
+                  (click)="masDetallesUsuario(acomp.id)"
+                >
+                  Más información
+                </button>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div
+      class="d-flex justify-content-center mb-2 mt-2"
+      *ngIf="data.viaje.reserva_automatica"
+    >
+      <i class="fi fi-rr-bolt bolt-icon"></i>
+      Este viaje tiene reserva automática.
     </div>
 
-    <div class="d-flex justify-content-center mb-2 mt-2" *ngIf="data.viaje.reserva_automatica">
-      <i class="fi fi-rr-bolt bolt-icon"></i> Este viaje tiene reserva automática.
-    </div>
-
-    <div class="d-flex justify-content-center mt-1" *ngIf="data.viaje.usuario_id !== userData?.usuario?.id && !conductor">
-      <button mat-raised-button class="btn mb-2" (click)="contactar(data.viaje.usuario.id)" > 
+    <div
+      class="d-flex justify-content-center mt-1"
+      *ngIf="data.viaje.usuario_id !== userData?.usuario?.id && !conductor"
+    >
+      <button
+        mat-raised-button
+        class="btn mb-2"
+        (click)="contactar(data.viaje.usuario.id)"
+      >
         <i class="fi fi-rr-messages"></i>
         Enviar mensaje a {{ viaje.usuario?.nombre }}
       </button>
+      <div id="paypal-button-container"></div>
     </div>
 
-    <div class="d-flex justify-content-center mt-1" *ngIf="!data.viaje.reserva_automatica">
-      <span><i class="fi fi-rr-calendar-clock me-2"></i>Tu reserva no se confirmará hasta que el conductor acepte la solicitud.</span>
+    <div
+      class="d-flex justify-content-center mt-1"
+      *ngIf="!data.viaje.reserva_automatica"
+    >
+      <span>
+        <i class="fi fi-rr-calendar-clock me-2"></i>
+        Tu reserva no se confirmará hasta que el conductor acepte la solicitud.
+      </span>
     </div>
 
-    <div class="acciones-en-curso p-3 mt-3 rounded shadow-sm" *ngIf="viaje.estado_viaje === 'En curso'">
-      <h3 class="text-center"><i class="fi fi-rr-play-alt"></i> Viaje en curso</h3>
+    <div
+      class="acciones-en-curso p-3 mt-3 rounded shadow-sm"
+      *ngIf="viaje.estado_viaje === 'En curso'"
+    >
+      <h3 class="text-center">
+        <i class="fi fi-rr-play-alt"></i>
+        Viaje en curso
+      </h3>
 
-      <div class="d-grid gap-2" *ngIf="yaUnido && !conductor">
-        <button mat-raised-button 
-                color="accent" 
-                class="btn-llegada" 
-                (click)="notificarLlegadaPasajero()"
-                [disabled]="pasajeroYaAvisoLlegada">
+      <div
+        class="d-grid gap-2"
+        *ngIf="yaUnido && !conductor"
+      >
+        <button
+          mat-raised-button
+          color="accent"
+          class="btn-llegada"
+          (click)="notificarLlegadaPasajero()"
+          [disabled]="pasajeroYaAvisoLlegada"
+        >
           <i class="fi fi-rr-marker me-2"></i>
-          {{ pasajeroYaAvisoLlegada ? 'Ya has avisado al conductor' : 'He llegado al punto de partida' }}
+          {{
+            pasajeroYaAvisoLlegada
+              ? 'Ya has avisado al conductor'
+              : 'He llegado al punto de partida'
+          }}
         </button>
       </div>
 
       <div *ngIf="conductor">
-        <p class="small text-muted text-center mb-2">Estado de tus acompañantes:</p>
+        <p class="small text-muted text-center mb-2">
+          Estado de tus acompañantes:
+        </p>
         <div class="list-group">
-          <div *ngFor="let acomp of viaje.acompanantes" class="list-group-item d-flex justify-content-between align-items-center border-0 bg-light mb-1 rounded">
+          <div
+            *ngFor="let acomp of viaje.acompanantes"
+            class="list-group-item d-flex justify-content-between align-items-center border-0 bg-light mb-1 rounded"
+          >
             <span>{{ acomp.nombre }}</span>
-            
+
             <div class="d-flex align-items-center">
-              <span *ngIf="acomp.ha_llegado" class="badge bg-success rounded-pill animate__animated animate__pulse animate__infinite">
-                <i class="fi fi-rs-marker"></i> ¡Está aquí!
+              <span
+                *ngIf="acomp.ha_llegado"
+                class="badge bg-success rounded-pill animate__animated animate__pulse animate__infinite"
+              >
+                <i class="fi fi-rs-marker"></i>
+                ¡Está aquí!
               </span>
 
-              <button *ngIf="!acomp.ha_llegado" 
-                      mat-button 
-                      color="primary" 
-                      class="btn-sm fw-bold"
-                      (click)="confirmarLlegadaDesdeConductor(acomp.id)">
-                <i class="fi fi-rr-check-circle me-1"></i> Confirmar llegada
+              <button
+                *ngIf="!acomp.ha_llegado"
+                mat-button
+                color="primary"
+                class="btn-sm fw-bold"
+                (click)="confirmarLlegadaDesdeConductor(acomp.id)"
+              >
+                <i class="fi fi-rr-check-circle me-1"></i>
+                Confirmar llegada
               </button>
             </div>
           </div>
@@ -138,21 +273,38 @@
     </div>
   </mat-dialog-content>
 
-
   <mat-dialog-actions *ngIf="viaje.estado_viaje !== 'En curso'">
     <div class="d-flex justify-content-center mt-4">
-      <button mat-raised-button class="btn btn_bg me-3" (click)="unirseAViaje(data.viaje.id)"
-        [disabled]="data.viaje.plazas === 0 || yaUnido || conductor || funcionesComunes.esViajeFinalizado(data.viaje.fecha_salida, data.viaje.hora_llegada)">
+      <button
+        mat-raised-button
+        class="btn btn_bg me-3"
+        (click)="unirseAViaje(data.viaje.id)"
+        [disabled]="
+          data.viaje.plazas === 0 ||
+          yaUnido ||
+          conductor ||
+          funcionesComunes.esViajeFinalizado(
+            data.viaje.fecha_salida,
+            data.viaje.hora_llegada
+          )
+        "
+      >
         <mat-icon>no_crash</mat-icon>
         {{
-        conductor
-        ? 'Tú has creado el viaje'
-        : yaUnido
-        ? 'Ya estás unido'
-        : 'Quiero viajar aquí'
+          conductor
+            ? 'Tú has creado el viaje'
+            : yaUnido
+              ? 'Ya estás unido'
+              : 'Quiero viajar aquí'
         }}
       </button>
-      <button mat-raised-button class="btn" (click)="closeDialog()">Cerrar</button>
+      <button
+        mat-raised-button
+        class="btn"
+        (click)="closeDialog()"
+      >
+        Cerrar
+      </button>
     </div>
   </mat-dialog-actions>
 </div>

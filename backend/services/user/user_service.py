@@ -15,7 +15,7 @@ from flask_jwt_extended import create_access_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum
+from models import Usuario, RolUsuarioEnum, Viaje
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -28,6 +28,7 @@ from twilio.rest import Client
 from sqlalchemy import func
 from datetime import datetime, timezone
 from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 # Nombre único para evitar conflictos
 user_blueprint = Blueprint('user', __name__)
@@ -761,20 +762,37 @@ def create_order():
     if not viaje_id:
         return {"error": "Falta el id del viaje"}, 400
     
-    viaje = db.trips.find_one({"id": viaje_id})
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
     precio_real = viaje.precio_viaje 
     
     token = get_access_token()
+    print ("token:", token)
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     payload = {
         "intent": "CAPTURE",
-        "purchase_units": [{"reference_id": str(viaje_id), "amount": {"currency_code": "EUR", "value": precio_real}}]
+        "purchase_units": [{"reference_id": str(viaje_id), "amount": {"currency_code": "EUR", "value": precio_real}}],
+         "application_context": { 
+            "return_url": "http://localhost:4200/payment-success",
+            "cancel_url": "http://localhost:4200/payment-cancel"
+        }
     }
+
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
-    return response.json() 
+    order = response.json()
+
+    approve_link = next(
+        link["href"] for link in order["links"] if link["rel"] == "approve"
+    )
+
+    return {
+        "order_id": order["id"],
+        "approve_url": approve_link
+    }
 
 
-@user_blueprint.route("/capture-order/{order_id}", methods=['POST'])
+@user_blueprint.route("/capture-order/<order_id>", methods=['POST'])
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
