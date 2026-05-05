@@ -3,17 +3,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { IonContent, IonicModule, NavController } from '@ionic/angular';
-import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
+import { LanguageService } from '../../core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { Usuario } from '../../models/user/usuario.model';
+import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { addIcons } from 'ionicons';
+import { logoPaypal, cardOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -74,6 +76,14 @@ export class AjustesAplicacionPage implements OnInit {
   notifEmail: boolean = true;
   notifSMS: boolean = false;
 
+  segmentoSeleccionado: string = 'app';
+
+  metodoPagoPredeterminado: string = 'paypal';
+  emailPaypal: string = '';
+  numeroTarjeta: string = '';
+  fechaCaducidad: string = '';
+  cvvTarjeta: string = '';
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -85,7 +95,9 @@ export class AjustesAplicacionPage implements OnInit {
     private translate: TranslateService,
     private route: ActivatedRoute,
     private funcionesComunes: FuncionesComunes
-  ) { }
+  ) { 
+    addIcons({ logoPaypal, cardOutline });
+  }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -134,6 +146,7 @@ export class AjustesAplicacionPage implements OnInit {
       .obtenerUsuarioPorID(this.userData.usuario.id)
       .subscribe((respuesta) => {
         this.usuarioBD = respuesta;
+        this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
       });
   }
 
@@ -179,6 +192,10 @@ export class AjustesAplicacionPage implements OnInit {
           life: 3000,
         });
       });
+  }
+
+  onMetodoPagoChange() {
+    console.log("Cambiando a:", this.metodoPagoPredeterminado);
   }
 
   /**
@@ -453,6 +470,25 @@ export class AjustesAplicacionPage implements OnInit {
         this.numNotificaciones = 0;
 
         this.navCtrl.navigateRoot(['/home'], { animated: true });
+      }
+    });
+  }
+
+  guardarMetodoPago() {
+    const datosPago = {
+      metodo_pago_preferido: this.metodoPagoPredeterminado, 
+      paypal_email: this.emailPaypal,
+      tarjeta_numero: this.numeroTarjeta,
+      tarjeta_exp: this.fechaCaducidad
+    };
+
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosPago).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de pago actualizados correctamente'
+        });
       }
     });
   }

@@ -31,6 +31,7 @@ class Usuario(db.Model):
     fecha_nacimiento = db.Column(db.Date)
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
+    metodo_pago_preferido = db.Column(db.String(50), nullable=True, default='paypal')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -222,6 +223,7 @@ class Usuario(db.Model):
             "comunic_terceros":self.comunic_terceros,
             "estado_perfil": self.estado_perfil,
             "puntuaciones": self.estrellas_por_opiniones,
+            "metodo_pago_preferido": self.metodo_pago_preferido,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
