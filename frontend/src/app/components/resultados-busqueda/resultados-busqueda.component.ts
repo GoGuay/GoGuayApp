@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { Viaje } from 'src/app/models/travel/viaje.model';
-import { Usuario } from 'src/app/models/user/usuario.model';
+import { TravelService } from '../../core/travel-services/travel.service';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { MessagingService } from '../../core/menssaging-service/messaging.service';
+import { Viaje } from '../../models/travel/viaje.model';
+import { Usuario } from '../../models/user/usuario.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccionado.component';
 import { catchError, Observable, of, tap } from 'rxjs';
@@ -13,6 +14,8 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
+import { CancelarSolicitudModalComponent } from '../cancelar-solicitud/cancelar-solicitud-modal.compmonent';
+
 
 @Component({
   selector: 'app-resultados-busqueda',
@@ -49,6 +52,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
+    public messagingService: MessagingService
   ) { }
 
   /**
@@ -315,4 +319,119 @@ export class ResultadosBusquedaComponent implements OnInit {
     return `${horas}h ${minutos}min`;
   }
 
+
+  unirseAViaje(viaje: Viaje) {
+    if (!this.userLoggedIn) {
+        this.redirigirAlLogin();
+        return;
+      }
+      
+      this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
+  }
+
+
+  estaUnido(viaje: Viaje): boolean {
+    if (!this.userData?.usuario?.id) return false;
+    return viaje.acompanantes?.some((a: any) => a.id === this.userData?.usuario.id) || false;
+  }
+
+  private solicitudAutomatica(viaje: Viaje) {
+    const title_error = '¡Algo anda mal!';
+    const title_viaje_confirmado = '¡Confirmado!';
+    const message_viaje_confirmado = 'Te has unido al viaje correctamente.';
+
+    if (this.estaUnido(viaje)) {
+      this.funcionesComunes.openConfirmModal(title_error, 'Ya estás unido a este viaje.');
+      return;
+    }
+
+    this.travelService.unirseAViaje(viaje.id).subscribe({
+      next: (viajesActualizados: Viaje[]) => {
+        // Buscamos el viaje actualizado en la respuesta para refrescar la UI local
+        const actualizado = viajesActualizados.find(v => v.id === viaje.id);
+        if (actualizado) {
+          // Actualizamos la referencia en el listado para que cambie el botón
+          Object.assign(viaje, actualizado);
+          this.funcionesComunes.openConfirmModal(title_viaje_confirmado, message_viaje_confirmado);
+        }
+      },
+      error: () => {
+        this.funcionesComunes.openErrorModal(title_error, 'No se pudo procesar la reserva.');
+      }
+    });
+  }
+
+  /**
+   * Solicitud que requiere aprobación (vía Chat)
+   */
+  private enviarSolicitudManual(viaje: Viaje) {
+    const emisorId = this.userData?.usuario.id || 0;
+    const receptorId = viaje.usuario_id;
+
+    this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
+      next: (res) => {
+        const convId = res.conversacion_id;
+        const payload = {
+          viaje_id: viaje.id,
+          emisor_id: emisorId,
+          receptor_id: receptorId,
+          conversacion_id: convId,
+        };
+
+        this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
+          this.funcionesComunes.openConfirmModal(
+            'Solicitud enviada',
+            'El conductor debe aceptar tu solicitud para unirte.'
+          );
+          this.navCtrl.navigateForward(['/chat', convId]);
+        });
+      },
+    });
+  }
+
+  private redirigirAlLogin() {
+    this.funcionesComunes
+      .openConfirmModal('¡Atención!', 'Debes iniciar sesión para realizar esta acción.')
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) this.navCtrl.navigateRoot(['/login']);
+      });
+  }
+
+  contactarConConductor(viaje: Viaje) {
+    const emisorId = this.userData?.usuario?.id;
+    const receptorId = viaje.usuario_id;
+
+    // Validamos si tenemos los IDs necesarios antes de llamar al servicio
+    if (emisorId && receptorId) {
+      this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
+        next: (res) => {
+          this.navCtrl.navigateForward(['/chat', res.conversacion_id]);
+        },
+        error: (err) => console.error('Error al iniciar chat:', err)
+      });
+    } else {
+      // Si no hay emisorId, es que no está logueado
+      this.redirigirAlLogin();
+    }
+  }
+
+  abrirModalCancelacion(viaje: Viaje) {
+    const dialogRef = this.dialog.open(CancelarSolicitudModalComponent, {
+      width: '400px',
+      data: { viaje: viaje },
+      panelClass: 'custom-modal-cancelacion' 
+    });
+
+    dialogRef.afterClosed().subscribe(razon => {
+      if (razon) {
+        this.ejecutarCancelacion(viaje.id, razon);
+      }
+    });
+  }
+
+  private ejecutarCancelacion(viajeId: number, razon: string) {
+    console.log(`Cancelando viaje ${viajeId} por la razón: ${razon}`);
+    
+  }
 }

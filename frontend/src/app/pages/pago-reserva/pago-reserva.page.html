@@ -1,0 +1,62 @@
+<ion-header [translucent]="true" *ngIf="!pagoConfirmado">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/busqueda-viajes"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Volver</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container-full">
+    
+    <!-- ESTADO: CARGANDO -->
+    <div *ngIf="cargando" class="text-center mt-5">
+      <app-spinner></app-spinner>
+      <p>Preparando plataforma de pago...</p>
+    </div>
+
+    <!-- ESTADO: PAGO -->
+    <div *ngIf="!cargando && !pagoConfirmado" class="pago-central">
+      <div class="resumen-viaje card p-3 mb-4 shadow-sm">
+        <h5>Tu viaje a {{ viaje.destino }}</h5>
+        <p class="text-muted"><i class="fi fi-rr-calendar me-2"></i> {{ viaje.fecha_salida | date:'dd/MM/yyyy' }}</p>
+        <div class="precio-total d-flex justify-content-between align-items-center mt-2">
+          <span>Total a pagar:</span>
+          <span class="h3 mb-0 text-primary">{{ viaje.precio_viaje }} €</span>
+        </div>
+      </div>
+
+      <div class="metodos-pago">
+        <p class="text-center small mb-3">Selecciona tu método de pago seguro</p>
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
+
+    <!-- ESTADO: ÉXITO (OPCIONES DE NAVEGACIÓN) -->
+    <div *ngIf="pagoConfirmado" class="exito-container text-center animate__animated animate__zoomIn">
+      <div class="icon-box mb-4">
+        <i class="fi fi-rs-badge-check text-success" style="font-size: 5rem;"></i>
+      </div>
+      
+      <h2 class="fw-bold">¡Reserva completada!</h2>
+      <p class="text-muted px-4" *ngIf="viaje.reserva_automatica">Tu plaza ha sido confirmada y el pago procesado con éxito.</p>
+      <p class="text-muted px-4" *ngIf="!viaje.reserva_automatica">Tu solicitud ha sido enviada al conductor. El pago se encuentra retenido.</p>
+
+      <div class="botones-navegacion mt-5 d-grid gap-3">
+        <button class="btn btn-goguay btn-lg py-3" (click)="irA('/home')">
+          <i class="fi fi-rr-home me-2"></i> Volver a Inicio
+        </button>
+        
+        <button class="btn btn-outline-dark btn-lg py-3" (click)="irA('/mis-viajes')">
+          <i class="fi fi-rr-steering-wheel me-2"></i> Ver Mis Viajes
+        </button>
+
+        <button class="btn btn-link mt-2" (click)="irA('detalles')">
+          Ver detalles del trayecto
+        </button>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,5 +1,5 @@
 import { Usuario } from './../../models/user/usuario.model';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
@@ -9,7 +9,7 @@ import {
   of,
   throwError,
 } from 'rxjs';
-import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
+import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
@@ -122,8 +122,7 @@ export class UserServicesService {
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(
-      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`,
-      { withCredentials: true }
+      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`
     );
   }
 

@@ -164,4 +164,8 @@ export const routes: Routes = [
     path: 'events-admin',
     loadComponent: () => import('./pages/admin/eventos-admin/eventos-admin.page').then((m) => m.EventosAdmin),
   },
+  {
+    path: 'pago-reserva/:id',
+    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+  }
 ];

@@ -1,0 +1,98 @@
+$primary-color: #B3B5E6; 
+$success-color: #B7E0B4;
+$bg-light: #f4f5f8;
+
+.container-full {
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.pago-central {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+
+  .resumen-viaje {
+    border-radius: 16px;
+    border: none;
+    background: white;
+    border-left: 5px solid $primary-color; 
+
+    h5 {
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 5px;
+    }
+
+    .precio-total {
+      padding-top: 15px;
+      border-top: 1px dashed #ddd;
+    }
+  }
+}
+
+.metodos-pago {
+  #paypal-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 150px;
+    width: 100%;
+    
+    div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+  }
+}
+
+.exito-container {
+  width: 100%;
+  max-height: 100%;
+  padding: 20px;
+
+  .icon-box {
+    i {
+      filter: drop-shadow(0 4px 10px rgba($success-color, 0.3));
+    }
+  }
+
+  h2 {
+    color: #1a1a1a;
+    margin-bottom: 15px;
+  }
+
+  .botones-navegacion {
+    max-width: 350px;
+    margin: 0 auto;
+
+    .btn-goguay {
+      background: $primary-color;
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 8px 15px rgba($primary-color, 0.2);
+      transition: transform 0.2s;
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .btn-outline-dark {
+      border-radius: 12px;
+      padding: 12px;
+      border-width: 2px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .pago-central {
+    padding: 10px;
+  }
+}

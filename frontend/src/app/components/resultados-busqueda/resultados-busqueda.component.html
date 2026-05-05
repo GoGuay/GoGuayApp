@@ -53,9 +53,29 @@
               </button>
               
               <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
-                <button class="btn-viaje btn-join">Unirse</button>
-                <button class="btn-viaje btn-chat">
-                  <i class="fi fi-rr-messages"></i> Contactar
+                <button class="btn-viaje btn-join" 
+                        (click)="unirseAViaje(viaje)"
+                        [disabled]="estaUnido(viaje) || viaje.plazas === 0">
+                  
+                  <i class="fi" [ngClass]="estaUnido(viaje) ? 'fi-rr-check' : 'fi-rr-user-add'"></i>
+
+                  {{ 
+                    estaUnido(viaje) 
+                    ? 'Ya unido' 
+                    : (viaje.plazas === 0 
+                        ? 'Completo' 
+                        : (viaje.reserva_automatica ? 'Reservar' : 'Solicitar reserva')) 
+                  }}
+
+                </button>
+                <button class="btn-viaje btn-chat" (click)="contactarConConductor(viaje)" >
+                  <i class="fi fi-rr-messages"></i> Consultar dudas
+                </button>
+              </ng-container>
+
+              <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
+                <button class="btn-viaje btn-cancelar" (click)="abrirModalCancelacion(viaje)">
+                  <i class="fi fi-rr-messages"></i> Cancelar solicitud
                 </button>
               </ng-container>
 

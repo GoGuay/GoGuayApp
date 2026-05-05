@@ -20,17 +20,16 @@ import { Router } from '@angular/router';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Subscription } from 'rxjs';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { Viaje } from 'src/app/models/travel/viaje.model';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { TravelService } from '../../core/travel-services/travel.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { Viaje } from '../../models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { Usuario } from 'src/app/models/user/usuario.model';
+import { Usuario } from '../../models/user/usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
+import { MessagingService } from '../../core/menssaging-service/messaging.service';
 import { MessageService } from 'primeng/api';
-declare var paypal: any;
 
 @Component({
   selector: 'app-viaje-seleccionado',
@@ -102,45 +101,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
       this.yaUnido = false;
     }
     this.cdRef.detectChanges();
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.renderPaypal();
-    }, 300);
-  }
-
-  renderPaypal() {
-    if (typeof paypal === 'undefined') {
-      console.error('PayPal no cargado');
-      return;
-    }
-
-    paypal
-      .Buttons({
-        createOrder: (data: any, actions: any) => {
-          return fetch('http://localhost:5000/api/user/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ viaje_id: this.viaje.id }),
-          })
-            .then((res) => res.json())
-            .then((data) => data.order_id);
-        },
-        onApprove: (data: any, actions: any) => {
-          return fetch(
-            `http://localhost:5000/api/user/capture-order/${data.orderID}`,
-            {
-              method: 'POST',
-            },
-          )
-            .then((res) => res.json())
-            .then((details) => {
-              console.log('Pago completado', details);
-            });
-        },
-      })
-      .render('#paypal-button-container');
   }
 
   ngOnDestroy() {
@@ -223,79 +183,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Función para unirse a un viaje.
-   *
-   * @param viajeID
-   * @returns
-   */
-  unirseAViaje(viajeID: number) {
-    if (!this.userData || !this.userData.usuario) {
-      this.redirigirAlLogin();
-      return;
-    }
 
-    if (this.data.viaje.reserva_automatica) {
-      this.solicitudAutomatica(viajeID);
-    } else {
-      this.enviarSolicitudManual();
-    }
-  }
-
-  /**
-   * Función para enviar una solicitud automática al conductor del viaje (en caso de que el viaje tenga reserva automática).
-   *
-   * @param viajeID --> ID del viaje al que se quiere unir el usuario.
-   * @returns --> No devuelve nada, pero muestra un modal de confirmación o error dependiendo del resultado de la solicitud.
-   */
-  solicitudAutomatica(viajeID: number) {
-    const title_error: string = '¡Algo anda mal!';
-    const message_ya_unico: string = '<p>Ya estás unido a este viaje.</p>';
-    const title_viaje_confirmado: string = '¡Confirmado!';
-    const message_viaje_confirmado: string =
-      'Te has unido al viaje correctamente.';
-    const message_error: string = 'Ya estás unido a este viaje.';
-
-    if (this.yaUnido) {
-      this.funcionesComunes.openConfirmModal(title_error, message_ya_unico);
-      return;
-    }
-
-    this.travelService.unirseAViaje(viajeID).subscribe({
-      next: (response) => {
-        const viajesActualizados = response;
-
-        const viajeActualizado = viajesActualizados.find(
-          (viaje: any) => viaje.id === viajeID,
-        );
-
-        if (viajeActualizado) {
-          this.viaje = viajeActualizado;
-          this.viaje.plazas = viajeActualizado.plazas;
-
-          const dialogRef = this.funcionesComunes.openConfirmModal(
-            title_viaje_confirmado,
-            message_viaje_confirmado,
-          );
-          this.yaUnido = true;
-
-          this.cdRef.detectChanges();
-
-          dialogRef.afterClosed().subscribe(() => {
-            this.obtenerViajesActualizados();
-          });
-        } else {
-          this.funcionesComunes.openErrorModal(
-            title_error,
-            'No se encontró el viaje actualizado.',
-          );
-        }
-      },
-      error: (error) => {
-        this.funcionesComunes.openErrorModal(title_error, message_error);
-      },
-    });
-  }
 
   /**
    * Función para enviar una solicitud manual al conductor del viaje.
@@ -367,58 +255,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     return date.split('T')[0].trim();
   }
 
-  /**
-   * Función para contactar con el conductor o acompañante del viaje a través del sistema de mensajería interna de la aplicación.
-   * @param receptorId
-   * @returns
-   */
-  contactar(receptorId: number) {
-    if (!this.userData || !this.userData.usuario) {
-      this.redirigirAlLogin();
-      return;
-    }
-
-    const emisorId = this.userData.usuario.id;
-
-    if (emisorId === receptorId) {
-      console.warn('No puedes enviarte un mensaje a ti mismo');
-      return;
-    }
-
-    this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
-      next: (res) => {
-        this.closeDialog();
-
-        this.navCtrl.navigateForward(['/chat', res.conversacion_id], {
-          animated: true,
-        });
-      },
-      error: (err) => {
-        console.error('Error al iniciar chat:', err);
-        this.funcionesComunes.openErrorModal(
-          '¡Error!',
-          'No se pudo abrir el chat en este momento.',
-        );
-      },
-    });
-  }
-
-  /**
-   * Función para redirigir al login si el usuario no ha iniciado sesión.
-   */
-  private redirigirAlLogin() {
-    this.closeDialog();
-    this.funcionesComunes
-      .openConfirmModal(
-        '¡Atención!',
-        'Debes iniciar sesión para realizar esta acción.',
-      )
-      .afterClosed()
-      .subscribe((res) => {
-        if (res) this.navCtrl.navigateRoot(['/login']);
-      });
-  }
-
+  
   /**
    * Función para comprobar si el pasajero ya ha avisado de su llegada al punto de encuentro.
    * Esto se hace para mostrar u ocultar el botón de "Avisar llegada" en función de si el pasajero ya ha avisado o no.

@@ -154,18 +154,10 @@
                 </p>
                 <button
                   mat-raised-button
-                  class="btn mb-2"
-                  (click)="contactar(acomp.id)"
-                  *ngIf="acomp.id !== userData?.usuario?.id"
-                >
-                  Enviar mensaje
-                </button>
-                <button
-                  mat-raised-button
                   class="btn"
                   (click)="masDetallesUsuario(acomp.id)"
                 >
-                  Más información
+                  Perfil público
                 </button>
               </mat-expansion-panel>
             </mat-accordion>
@@ -180,21 +172,6 @@
     >
       <i class="fi fi-rr-bolt bolt-icon"></i>
       Este viaje tiene reserva automática.
-    </div>
-
-    <div
-      class="d-flex justify-content-center mt-1"
-      *ngIf="data.viaje.usuario_id !== userData?.usuario?.id && !conductor"
-    >
-      <button
-        mat-raised-button
-        class="btn mb-2"
-        (click)="contactar(data.viaje.usuario.id)"
-      >
-        <i class="fi fi-rr-messages"></i>
-        Enviar mensaje a {{ viaje.usuario?.nombre }}
-      </button>
-      <div id="paypal-button-container"></div>
     </div>
 
     <div
@@ -275,29 +252,6 @@
 
   <mat-dialog-actions *ngIf="viaje.estado_viaje !== 'En curso'">
     <div class="d-flex justify-content-center mt-4">
-      <button
-        mat-raised-button
-        class="btn btn_bg me-3"
-        (click)="unirseAViaje(data.viaje.id)"
-        [disabled]="
-          data.viaje.plazas === 0 ||
-          yaUnido ||
-          conductor ||
-          funcionesComunes.esViajeFinalizado(
-            data.viaje.fecha_salida,
-            data.viaje.hora_llegada
-          )
-        "
-      >
-        <mat-icon>no_crash</mat-icon>
-        {{
-          conductor
-            ? 'Tú has creado el viaje'
-            : yaUnido
-              ? 'Ya estás unido'
-              : 'Quiero viajar aquí'
-        }}
-      </button>
       <button
         mat-raised-button
         class="btn"

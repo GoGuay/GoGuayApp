@@ -35,6 +35,8 @@ from firebase_admin import credentials
 def create_app():
     app = Flask(__name__)
 
+    app.config.from_object(Config)
+
     # --- CONFIGURACIÓN DE CORREO ---
     app.config['SECRET_KEY'] = 'tu_clave_secreta'
     app.config['MAIL_DEFAULT_SENDER'] = 'noreply@prideride.com'
@@ -65,8 +67,6 @@ def create_app():
         firebase_admin.initialize_app(cred)
 
 
-    app.config.from_object(Config)
-    
     # --- JWT & CORS ---
     JWTManager(app)
     CORS(app, resources={r"/*": {
@@ -77,7 +77,8 @@ def create_app():
             "http://127.0.0.1:8100",  
             "https://pride-ride.vercel.app",
             "capacitor://localhost",
-            "ionic://localhost"
+            "ionic://localhost",
+            "*"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],

@@ -4,12 +4,12 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { Evento, Eventos } from '../../models/eventos/eventos';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { TravelService } from '../../core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { EventosServices } from 'src/app/core/eventos-services/eventos-services.service';
+import { EventosServices } from '../../core/eventos-services/eventos-services.service';
 
 @Component({
   selector: 'app-trayectos-populares',
