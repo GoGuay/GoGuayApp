@@ -29,7 +29,22 @@
 
       <div class="metodos-pago">
         <p class="text-center small mb-3">Selecciona tu método de pago seguro</p>
+
         <div id="paypal-button-container"></div>
+
+          <div class="checkbox-container-custom mt-3">
+            <ion-item lines="none" class="ion-no-padding" button="true" detail="false">
+              <ion-checkbox 
+                [(ngModel)]="guardarMetodo" 
+                color="primary" 
+                labelPlacement="end" 
+                justify="start">
+                <ion-label class="small text-muted ps-2">
+                  Guardar este método para futuros viajes
+                </ion-label>
+              </ion-checkbox>
+            </ion-item>
+          </div>
       </div>
     </div>
 

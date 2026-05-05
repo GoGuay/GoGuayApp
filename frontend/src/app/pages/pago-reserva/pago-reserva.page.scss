@@ -35,6 +35,39 @@ $bg-light: #f4f5f8;
 }
 
 .metodos-pago {
+  .checkbox-container-custom {
+    background-color: #f8f9fa; 
+    border-radius: 35px;
+    margin: 0 10px 20px 10px;
+    padding: 5px 20px; 
+    border: 1px solid #eee;
+    display: block !important;
+    visibility: visible !important;
+
+    ion-item {
+      --background: transparent;
+      --min-height: 48px;
+      margin: 0;
+      --border-radius: 35px;
+      --background-hover: rgba(0, 0, 0, 0.04);
+      --ripple-color: rgba(0, 0, 0, 0.1);
+      border-radius: 35px; 
+      overflow: hidden;
+      
+      ion-label {
+        font-size: 0.85rem;
+        opacity: 1;
+        color: #666 !important;
+      }
+
+      ion-checkbox {
+        --size: 20px;
+        --border-radius: 10px;
+        margin-right: 5px;
+      }
+    }
+  }
+
   #paypal-button-container {
     display: flex;
     justify-content: center;
@@ -42,6 +75,8 @@ $bg-light: #f4f5f8;
     flex-direction: column;
     min-height: 150px;
     width: 100%;
+    margin-top: 15px;
+    z-index: 1;
     
     div {
         width: 100% !important;

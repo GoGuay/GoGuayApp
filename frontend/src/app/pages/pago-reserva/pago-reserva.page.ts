@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { MessagingService } from '../../core/menssaging-service/messaging.service';
+import { FormsModule } from '@angular/forms';
 
 declare var paypal: any;
 
@@ -16,8 +17,10 @@ declare var paypal: any;
   styleUrls: ['./pago-reserva.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, IonicModule,
-    SpinnerComponent
+    CommonModule, 
+    IonicModule,
+    SpinnerComponent,
+    FormsModule
 ]
 })
 export class PagoReservaPage implements OnInit {
@@ -26,6 +29,7 @@ export class PagoReservaPage implements OnInit {
   cargando: boolean = true;
   userData: any;
   yaUnido: boolean = false;
+  guardarMetodo: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,6 +59,7 @@ export class PagoReservaPage implements OnInit {
       next: (res) => {
         this.viaje = res;
         this.cargando = false;
+        this.cdRef.detectChanges();
         setTimeout(() => this.renderPaypal(), 150);
       },
       error: () => this.navCtrl.back()
