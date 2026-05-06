@@ -30,7 +30,13 @@
                 {{ sugerencia.descripcion }}
               </li>
             </ul>
+            
           </div>
+
+          <!-- <button type="button" class="btn btn_bg" (click)="buscarUbicacion()">
+            <span><i class="fi fi-rr-marker me-2"></i>Busca mi ubicación</span>
+          </button> -->
+          
 
           <div class="input-container">
             <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon" />
@@ -87,7 +93,7 @@
               </button>
             </div>
           </div>
-          <div class="alert" *ngIf="userLoggedIn">
+          <!-- <div class="alert" *ngIf="userLoggedIn">
             <p>{{ 'NUEVOVIAJE.CARNET_NO_REGISTRADO' | translate }}</p>
             <div class="d-flex justify-content-center">
               <button type="button" class="help_btn d-flex justify-content-center"
@@ -96,7 +102,7 @@
                 <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
         <button type="button" class="btn-publicar ion-activatable ripple-parent circle"
           title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}" (click)="goTo()"

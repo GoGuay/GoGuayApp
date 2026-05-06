@@ -1,4 +1,6 @@
-# notifications_utils.py
+# Código para gestionar las notificaciones push y las operaciones relacionadas con las notificaciones en la aplicación.
+# Incluye funciones para enviar notificaciones push a los usuarios, eliminar notificaciones,
+# obtener notificaciones de un usuario o de un viaje, y marcar notificaciones como leídas.
 from flask import Blueprint, request, jsonify
 from firebase_admin import messaging
 from models import TokenPush, Notificacion
@@ -80,3 +82,48 @@ def eliminar_todas_notificaciones(usuario_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER LAS NOTIFICACIONES DE UN USUARIO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@notifications_blueprint.route('/obtener_notificaciones/<int:usuario_id>', methods=['GET'])
+def obtener_notificaciones(usuario_id):
+    notificaciones = Notificacion.query.filter_by(usuario_id=usuario_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER NOTIFICACIONES DE UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+@notifications_blueprint.route('/obtener_notificaciones_viaje/<int:viaje_id>', methods=['GET'])
+def obtener_notificaciones_viaje(viaje_id):
+    notificaciones = Notificacion.query.filter_by(viaje_id=viaje_id).order_by(Notificacion.fecha.desc()).all()
+    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA MARCAR UNA NOTIFICACIÓN COMO LEÍDA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@notifications_blueprint.route('/marcar_notificacion_leida/<int:notificacion_id>', methods=['PUT'])
+def marcar_notificacion_leida(notificacion_id):
+    notificacion = Notificacion.query.get(notificacion_id)
+    if not notificacion:
+        return jsonify({"error": "Notificación no encontrada"}), 404
+
+    data = request.get_json()
+    if data is None or 'leida' not in data:
+        return jsonify({"error": "Se requiere el campo 'leida' en el cuerpo"}), 400
+
+    notificacion.leida = bool(data['leida'])
+    db.session.commit()
+
+    estado = "leída" if notificacion.leida else "no leída"
+    return jsonify({"message": f"Notificación marcada como {estado}"}), 200
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA MARCAR TODAS LAS NOTIFICACIONES COMO LEÍDAS
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@notifications_blueprint.route('/marcar_todas_leidas/<int:usuario_id>', methods=['PUT'])
+def marcar_todas_leidas(usuario_id):
+    Notificacion.query.filter_by(usuario_id=usuario_id, leida=False).update({Notificacion.leida: True})
+    db.session.commit()
+    return jsonify({"mensaje": "Todas las notificaciones marcadas como leídas"}), 200

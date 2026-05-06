@@ -54,6 +54,7 @@ export class BusquedaViajesPage implements OnInit {
      */
     this.route.queryParams.subscribe((params) => {
       this.busquedaParams = params;
+      console.log('Parámetros de búsqueda recibidos:', this.busquedaParams);
     });
   }
 
@@ -88,7 +89,22 @@ export class BusquedaViajesPage implements OnInit {
     popover.dismiss();
   }
 
+  /**
+   * Función para actualizar los parámetros de búsqueda 
+   * cuando el componente hijo emite un evento con los nuevos parámetros
+   * @param event --> Objeto con los nuevos parámetros de búsqueda
+   */
   actualizarParametrosBusqueda(event: any) {
     this.busquedaParams = event;
+  }
+
+  /**
+   * Función para comprobar si se han recibido parámetros de búsqueda en la URL
+   * @returns --> true si hay parámetros, false si no los hay
+   * Esta función se utiliza para mostrar u ocultar el botón de filtro dependiendo de si hay parámetros de búsqueda o no.
+   */
+  tieneParametros(): boolean {
+    // Comprueba si el objeto tiene alguna clave (propiedad)
+    return Object.keys(this.busquedaParams).length > 0;
   }
 }

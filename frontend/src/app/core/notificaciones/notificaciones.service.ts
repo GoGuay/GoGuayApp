@@ -127,7 +127,7 @@ export class NotificacionesService {
      * @param notificacionId 
      */
     marcarNotificacionComoLeida(notificacionId: number) {
-        this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, {}).subscribe(
+        this.http.put(`${this.apiUrl}/notifications/marcar_notificacion_leida/${notificacionId}`, {}).subscribe(
             () => console.log('Notificación marcada como leída'),
             (error) => console.error('Error al marcar como leída:', error)
         );
@@ -139,7 +139,7 @@ export class NotificacionesService {
      * @returns Lista de notificaciones para el usuario.
      */
     obtenerNotificaciones(usuarioId: number): Observable<any> {
-        return this.http.get(`${this.apiUrl}/travel/obtener_notificaciones/${usuarioId}`).pipe(
+        return this.http.get(`${this.apiUrl}/notifications/obtener_notificaciones/${usuarioId}`).pipe(
             catchError((error) => {
                 console.error('Error al obtener notificaciones:', error);
                 return throwError(() => error);
@@ -154,7 +154,7 @@ export class NotificacionesService {
      * @returns Lista de las notificaciones para el viaje.
      */
     obtenerNotificacionesDeUnViaje(viaje_id: number): Observable<any> {
-        return this.http.get(`${this.apiUrl}/travel/obtener_notificaciones_viaje/${viaje_id}`).pipe(
+        return this.http.get(`${this.apiUrl}/notifications/obtener_notificaciones_viaje/${viaje_id}`).pipe(
             catchError((error) => {
                 console.error('Error al obtener notificaciones del viaje:', error);
                 return throwError(() => error);
@@ -194,7 +194,7 @@ export class NotificacionesService {
      * @param leida Estado booleano: true = leída, false = no leída.
      */
     toggleEstadoNotificacion(notificacionId: number, leida: boolean): Observable<any> {
-        return this.http.put(`${this.apiUrl}/travel/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
+        return this.http.put(`${this.apiUrl}/notifications/marcar_notificacion_leida/${notificacionId}`, { leida }).pipe(
             catchError((error) => {
                 console.error('Error al cambiar estado de la notificación:', error);
                 return throwError(() => error);
@@ -247,6 +247,15 @@ export class NotificacionesService {
      */
     eliminarTodasNotificaciones(usuarioId: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/notifications/eliminar_todas_notificaciones/${usuarioId}`);
+    }
+
+    /**
+     * Función para marcar todas las notificaciones de un usuario como leídas.
+     * @param usuarioId --> ID del usuario cuyas notificaciones se quieren marcar como leídas.
+     * @returns --> Devuelve un Observable con la respuesta del backend.
+     */
+    marcarTodasComoLeidas(usuarioId: number): Observable<any> {
+        return this.http.put(`${this.apiUrl}/notifications/marcar_todas_leidas/${usuarioId}`, {});
     }
 
 }

@@ -6,11 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
-import { NavbarComponent } from "src/app/shared/navbar/navbar.component";
+import { NavbarComponent } from "../../shared/navbar/navbar.component";
 import { IonicModule } from "@ionic/angular";
-import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
+import { MessagingService } from '../../core/menssaging-service/messaging.service';
 import { PopoverController, AlertController } from '@ionic/angular';
-import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { SpinnerComponent } from "../../components/spinner/spinner.component";
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-centro-mensajes',
@@ -27,7 +28,8 @@ import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
         MatSliderModule,
         NavbarComponent,
         IonicModule,
-        SpinnerComponent
+        SpinnerComponent,
+        TranslateModule
     ],
     providers: []
 })
@@ -39,8 +41,12 @@ export class CentroMensajesPage implements OnInit {
     userData: any;
     loadMessages: boolean = false;
 
-    constructor(private messagingService: MessagingService, private navCtrl: NavController, private popoverCtrl: PopoverController,
-        private alertCtrl: AlertController) { }
+    constructor(
+        private messagingService: MessagingService, 
+        private navCtrl: NavController, 
+        private popoverCtrl: PopoverController,
+        private alertCtrl: AlertController,
+        private translate: TranslateService) { }
 
     ngOnInit() {
         this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -132,25 +138,31 @@ export class CentroMensajesPage implements OnInit {
      * @param conv Conversacion a la que se le va a mostrar el menu
      */
     async mostrarMenuAcciones(conv: any) {
+        const tHeader = this.translate.instant('CENTRO_MENSAJES.CHAT_OPCIONES.HEADER');
+        const tDelete = this.translate.instant('CENTRO_MENSAJES.CHAT_OPCIONES.ELIMINAR');
+        const tCancel = this.translate.instant('CENTRO_MENSAJES.CHAT_OPCIONES.CANCELAR');
+        const tRead = this.translate.instant('CENTRO_MENSAJES.CHAT_OPCIONES.LEIDO');
+        const tUnread = this.translate.instant('CENTRO_MENSAJES.CHAT_OPCIONES.NO_LEIDO');
+
         const actionSheet = await this.alertCtrl.create({
-            header: 'Opciones de chat',
+            header: tHeader,
             cssClass: 'custom-alert-chat',
             buttons: [
                 {
-                    text: conv.no_leidos > 0 ? 'Marcar como leído' : 'Marcar como no leído',
+                    text: conv.no_leidos > 0 ? tRead : tUnread,
                     handler: () => {
                         this.alternarEstadoLeido(conv);
                     }
                 },
                 {
-                    text: 'Eliminar conversación',
+                    text: tDelete,
                     role: 'destructive',
                     handler: () => {
                         this.confirmarEliminacion(conv);
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: tCancel,
                     role: 'cancel'
                 }
             ]

@@ -36,5 +36,13 @@ export interface Usuario {
     motivo_bloqueo?: string;
     bloqueado_desde?: Date;
     bloqueado_hasta?: Date;
+    metodo_pago_preferido?: string;
+    paypal_email?: string;
+    tarjeta_numero?: string;
+    tarjeta_exp?: string;
+    metodo_cobro_preferido?: string;
+    cobro_paypal_email?: string;
+    cobro_iban?: string;
+    cobro_titular?: string;
   };
 }

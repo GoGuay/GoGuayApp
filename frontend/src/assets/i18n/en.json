@@ -63,7 +63,7 @@
     "BOTON_LIMPIAR_ACCES": "Clear all criteria to start a new search",
     "INSTRUCCIONES_BUSQUEDA": "Type at least three characters and use the up and down arrows to navigate through the results and Enter to select."
   },
-  "TITLE": "PrideRide",
+  "TITLE": "GoGuay",
   "Panel de usuario": "User Panel Page",
   "PANELUSUARIO": {
     "PANELUSUARIO": "User Panel",
@@ -204,7 +204,8 @@
         "BTN_EDITAR_TOOLTIP": "Edit your vehicle data if they are incorrect",
         "BTN_ELIMINAR_TOOLTIP": "Delete this vehicle",
         "BTN_GUARDAR_TOOLTIP": "Save new vehicle data"
-      }
+      },
+      "INFO": "*If you don't find your vehicle, contact us:"
     },
     "PREF_VIAJE": {
       "LABEL": "My trip preferences",
@@ -398,6 +399,28 @@
       "HABLAR": "I like chatting with my fellow travelers",
       "SILENCIO": "I prefer traveling in silence",
       "FUMAR": "Smoking friendly"
+    },
+    "METODOS_PAGO": {
+      "TITULO": "Payment Methods"
+    },
+    "METODOS_COBRO": {
+      "TITULO": "Payout Preferences"
+    }
+  },
+  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "CENTRO_MENSAJES": {
+    "TITULO": "Message Center",
+    "VACIO_TITULO": "Your inbox is empty",
+    "VACIO_DESC": "Your chats will appear here once you contact other drivers or passengers.",
+    "BUSCAR_BOTON": "Search for a ride",
+    "SEGURIDAD_BOLD": "For your safety:",
+    "SEGURIDAD_TXT": "Keep trip conversations within the app. We cannot guarantee the protection of your data or bookings if you use external apps.",
+    "CHAT_OPCIONES": {
+      "HEADER": "Chat options",
+      "LEIDO": "Mark as read",
+      "NO_LEIDO": "Mark as unread",
+      "ELIMINAR": "Delete conversation",
+      "CANCELAR": "Cancel"
     }
   },
   "Forgot_Password": "Page to send password reset email",
@@ -469,8 +492,8 @@
   },
   "ANTIGUO DEBAJO": "",
   "NUEVO_VIAJE2": {
-    "TITLE_BTN_BACK": "PrideRide",
-    "ALT_LOGO": "PrideRide Logo",
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "GoGuay Logo",
     "SEARCH_TRAVEL": "Search trip",
     "FROM": "Where does the trip start?",
     "TO": "How far is the trip?",
@@ -738,8 +761,8 @@
     "TRANS_CONCEPTO": "Account transfer"
   },
   "NUEVO_VIAJE": {
-    "TITLE_BTN_BACK": "PrideRide",
-    "ALT_LOGO": "PrideRide Logo",
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "GoGuay Logo",
     "SEARCH_TRAVEL": "Search Trip",
     "FROM": "Where does the trip start?",
     "TO": "Where does the trip end?",
@@ -773,5 +796,31 @@
     "QUIENES_SOMOS_SLOGAN": "Your way, your community",
     "BUSCAR_VIAJE_SLOGAN": "Find your ideal trip",
     "MIS_VIAJES_SLOGAN": "Every trip, a new story"
+  },
+  "__Notificaciones app": "Sección Notificaciones de la aplicación",
+  "NOTIFICACIONES": {
+    "TITULO": "Notification Center",
+    "LIMPIAR_TODO": "Clear all",
+    "SIN_NOTIFICACIONES": "You have no notifications.",
+    "CARGANDO": "Loading notifications...",
+    "TIPO": {
+      "SISTEMA": "System",
+      "MENSAJE": "Message",
+      "SOLICITUD": "Request",
+      "VIAJE": "Trip"
+    },
+    "ESTADO": {
+      "NO_LEIDA": "Unread",
+      "LEIDA": "Read"
+    },
+    "ACCIONES": {
+      "MARCAR_LEIDA": "Mark as read",
+      "MARCAR_NO_LEIDA": "Mark as unread",
+      "MARCAR_TODAS_LEIDAS": "Mark all as read",
+      "RESPONDER": "Reply",
+      "ELIMINAR": "Delete",
+      "LEER_MAS": "Read more",
+      "LEER_MENOS": "Read less"
+    }
   }
 }

@@ -47,6 +47,7 @@ class Viaje(db.Model):
             "fecha_salida": self.fecha_salida.isoformat(),
             "duracion_viaje": self.duracion_viaje,
             "ruta_seleccionada": self.ruta_seleccionada,
+            "estado_viaje": self.estado_viaje,
             "usuario_id": self.usuario_id,
             "vehiculo": self.vehiculo,
             "reserva_automatica": self.reserva_automatica,

@@ -3,17 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { IonContent, IonicModule, NavController } from '@ionic/angular';
-import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
+import { LanguageService } from '../../core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { Usuario } from '../../models/user/usuario.model';
+import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { addIcons } from 'ionicons';
+import { logoPaypal, cardOutline, businessOutline } from 'ionicons/icons';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -74,6 +77,19 @@ export class AjustesAplicacionPage implements OnInit {
   notifEmail: boolean = true;
   notifSMS: boolean = false;
 
+  segmentoSeleccionado: string = 'app';
+
+  metodoPagoPredeterminado: string = 'paypal';
+  emailPaypal: string = '';
+  numeroTarjeta: string = '';
+  fechaCaducidad: string = '';
+  cvvTarjeta: string = '';
+
+  metodoCobroPredeterminado: string = 'transferencia';
+  cobroEmailPaypal: string = '';
+  cobroIBAN: string = '';
+  cobroTitular: string = '';
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -84,14 +100,17 @@ export class AjustesAplicacionPage implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private route: ActivatedRoute,
-    private funcionesComunes: FuncionesComunes
-  ) { }
+    private funcionesComunes: FuncionesComunes,
+    private _bottomSheet: MatBottomSheet
+  ) { 
+    addIcons({ logoPaypal, cardOutline, businessOutline });
+  }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = savedJumbotronSetting === 'true';
+    this.mostrarJumbotron = savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
     this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
     this.notifPush = localStorage.getItem('notifPush') !== 'false';
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
@@ -134,6 +153,7 @@ export class AjustesAplicacionPage implements OnInit {
       .obtenerUsuarioPorID(this.userData.usuario.id)
       .subscribe((respuesta) => {
         this.usuarioBD = respuesta;
+        this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
       });
   }
 
@@ -179,6 +199,10 @@ export class AjustesAplicacionPage implements OnInit {
           life: 3000,
         });
       });
+  }
+
+  onMetodoPagoChange() {
+    console.log("Cambiando a:", this.metodoPagoPredeterminado);
   }
 
   /**
@@ -304,6 +328,9 @@ export class AjustesAplicacionPage implements OnInit {
     }
   }
 
+  /**
+   * Función para manejar el botón de cambio de contraseña
+   */
   botonCambioPassword() {
     if (!this.isConfirmacionPasswordValida) return;
     this.userService
@@ -346,6 +373,19 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   /**
+   * Función para mostrar u ocultar el jumbotron de la home al activar o desactivar la opción en ajustes de aplicación
+   */
+  mostrarJumbotronChange() {
+    localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: 'Se ha cambiado el ajuste de visualización de la cabecera.',
+      life: 2000
+    });
+  }
+
+  /**
    * Función para aplicar el tema seleccionado
    * @param isDark 
    */
@@ -368,6 +408,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.aceptaMascotas = prefsArray.includes('Mascotas');
     this.fuma = prefsArray.includes('Fumar');
   }
+
   /**
    * Función para guardar las nuevas preferencias de viaje del usuario.
    * 
@@ -442,6 +483,75 @@ export class AjustesAplicacionPage implements OnInit {
         this.navCtrl.navigateRoot(['/home'], { animated: true });
       }
     });
+  }
+
+  /**
+   * Función para guardar el método de pago preferido del usuario. 
+   * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
+   * 
+   */
+  guardarMetodoPago() {
+    const datosPago = {
+      metodo_pago_preferido: this.metodoPagoPredeterminado, 
+      paypal_email: this.emailPaypal,
+      tarjeta_numero: this.numeroTarjeta,
+      tarjeta_exp: this.fechaCaducidad
+    };
+
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosPago).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de pago actualizados correctamente'
+        });
+      }
+    });
+  }
+
+  /**
+   * Función para guardar el método de cobro preferido del usuario.
+   * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
+   */
+  guardarConfiguracionCobro() {
+    const datosCobro = {
+      metodo_cobro_preferido: this.metodoCobroPredeterminado,
+      cobro_paypal_email: this.cobroEmailPaypal,
+      cobro_iban: this.cobroIBAN,
+      cobro_titular: this.cobroTitular
+    };
+
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de cobro actualizados correctamente'
+        });
+      }
+    });
+  }
+
+  /**
+   * Función para abrir el centro de ayuda al hacer click en la opción del menú. Redirige a la página de centro de ayuda.
+   */
+  irACentroAyuda() {
+    this.navCtrl.navigateForward('/centro-ayuda');
+  }
+
+  /**
+   * Función para abrir la página de términos y condiciones al hacer click en la opción del menú. Redirige a la página de términos y condiciones.
+   */
+  irATerminos() {
+    this.navCtrl.navigateForward('/condiciones-generales');
+  }
+
+
+  /**
+   * Función para abrir la página de valoración de la aplicación al hacer click en la opción del menú. Redirige a la página de encuesta de satisfacción.
+   */
+  valorarApp() {
+    this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 
 }

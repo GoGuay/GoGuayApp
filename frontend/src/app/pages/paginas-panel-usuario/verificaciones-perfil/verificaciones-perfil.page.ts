@@ -1,14 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonRow, IonCol } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { MatDivider } from '@angular/material/divider';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { lastValueFrom, Observable } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { ActivatedRoute } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
@@ -29,7 +28,6 @@ import { MessageService } from 'primeng/api';
     SpinnerComponent,
     ToastModule,
   ],
-
   providers: [MessageService],
 })
 export class VerificacionesPerfilPage implements OnInit {
@@ -73,29 +71,29 @@ export class VerificacionesPerfilPage implements OnInit {
     private messageService: MessageService,
   ) {}
 
-async ngOnInit() {
-  this.cargando = true;
+  async ngOnInit() {
+    this.cargando = true;
 
-  try {
-    this.tiempo_restante_sms();
+    try {
+      this.tiempo_restante_sms();
 
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      if (this.userData?.usuario) {
-        this.userLoggedIn = true;
-        this.emailUsuario = this.userData.usuario.email || '';
-        this.telefonoUsuario = this.userData.usuario.telefono || '';
-      }
+      this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (this.userData?.usuario) {
+          this.userLoggedIn = true;
+          this.emailUsuario = this.userData.usuario.email || '';
+          this.telefonoUsuario = this.userData.usuario.telefono || '';
+        }
 
-      const token = this.route.snapshot.queryParamMap.get('token');
-      if (token) {
-        const verificado = await lastValueFrom(this.userService.verificar_email(token));
-        this.botonCorreoVerificado = !!verificado;
-        this.cargando = false;
-      }
+        const token = this.route.snapshot.queryParamMap.get('token');
+        if (token) {
+          const verificado = await lastValueFrom(this.userService.verificar_email(token));
+          this.botonCorreoVerificado = !!verificado;
+          this.cargando = false;
+        }
 
-      if (this.userData?.usuario?.id) {
-        await this.obtenerDatosUsuario(this.userData.usuario.id);
-      }
+        if (this.userData?.usuario?.id) {
+          await this.obtenerDatosUsuario(this.userData.usuario.id);
+        }
 
     } catch (error) {
       console.error("Error durante la carga:", error);
@@ -104,6 +102,14 @@ async ngOnInit() {
     }
   }
 
+  /**
+   * Función para enviar el correo de verificación al usuario. 
+   * Si el correo ya ha sido verificado, muestra un mensaje de error. 
+   * Si no, envía el correo y desactiva el botón durante 30 minutos para evitar múltiples envíos.
+   * 
+   * @param email --> Recibe el correo del usuario para enviarle el email de verificación
+   * 
+   */
   envio_mail_verificar_correo(email: string) {
     this.botonCorreoVerificado = true; 
     if (this.usuario.emailVerificado) {
@@ -136,6 +142,12 @@ async ngOnInit() {
     }
   }
 
+  /**
+   * Función para obtener los datos de un usuario por su ID. 
+   * Se utiliza para actualizar la información del usuario después de realizar verificaciones o cambios en el perfil.
+   * 
+   * @param id_usuario --> Recibe el ID del usuario que está logado para obtener su información actualizada desde el backend
+   */
   async obtenerDatosUsuario(id_usuario: number) {
     this.usuario = await lastValueFrom(
       this.userService.obtenerUsuarioPorID(id_usuario),
@@ -154,6 +166,15 @@ async ngOnInit() {
       });
   }
 
+  /**
+   * Función para enviar el código de verificación por SMS al número de teléfono del usuario.
+   * El número se formatea con el prefijo internacional +34 antes de enviarlo al backend.
+   * Si el envío es exitoso, se guarda el ID de verificación y se habilitan los inputs para ingresar el código.
+   * Además, se guarda un timestamp en localStorage para controlar el tiempo de espera antes de permitir otro envío.
+   * Después de 10 minutos, se deshabilita la bandera de envío y se limpia el timestamp de localStorage.
+   * 
+   * @param telefono --> Recibe el número de teléfono del usuario al que se le enviará el código de verificación por SMS
+   */
   enviar_sms(telefono: string) {
     const teléfonoConPrefijo = '+34' + telefono;
     this.userService

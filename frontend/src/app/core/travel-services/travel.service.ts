@@ -322,4 +322,24 @@ export class TravelService {
       tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
     );
   }
+
+  /**
+   * Notifica al conductor que el pasajero ha llegado al punto de encuentro.
+   * @param viajeId ID del viaje en curso.
+   * @param usuarioId ID del pasajero que notifica su llegada.
+   * @returns Observable con la respuesta del servidor.
+   */
+  notificarLlegadaPuntoPartida(viajeId: number, usuarioId: number): Observable<any> {
+    const body = {
+      viaje_id: viajeId,
+      usuario_id: usuarioId
+    };
+
+    return this.http.post(`${this.apiUrl}/travel/notificar_llegada_pasajero`, body).pipe(
+      catchError((error) => {
+        console.error('Error al notificar llegada al punto de partida:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

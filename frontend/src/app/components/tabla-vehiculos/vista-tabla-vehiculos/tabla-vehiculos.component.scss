@@ -136,7 +136,15 @@ td.acciones {
   /* Mantiene altura uniforme */
 }
 
+.info {
+  color: #555;
+  font-size: 0.9rem;
+}
 
+a {
+  color: #007bff;
+  text-decoration: none;
+}
 
 /* Hacer que tabla se adapte a pantallas pequeñas */
 @media (max-width: 767px) {

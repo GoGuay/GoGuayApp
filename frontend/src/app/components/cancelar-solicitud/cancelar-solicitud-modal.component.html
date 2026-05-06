@@ -1,0 +1,70 @@
+<div class="modal-cancelacion">
+    <div class="modal-header">
+        <!-- Grupo de la izquierda: Icono + Texto -->
+        <div class="header-title-container">
+            <i class="fi fi-rr-cross-circle me-2"></i>
+            <h2 mat-dialog-title>Cancelar Solicitud</h2>
+        </div>
+
+        <!-- Botón de la derecha -->
+        <button mat-icon-button class="close-button" (click)="onNoClick()" aria-label="Cerrar">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+
+  <mat-dialog-content>
+    <p class="mb-3">
+      ¿Por qué deseas cancelar tu solicitud para el viaje a <strong>{{ data.viaje.destino }}</strong>?
+    </p>
+    
+    <!-- Selector de Motivos -->
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Motivo de la cancelación</mat-label>
+      <mat-select [(ngModel)]="motivoSeleccionado">
+        <!-- Lista si NO está aceptada aún -->
+        <ng-container *ngIf="!esConfirmada">
+          <mat-option *ngFor="let motivo of motivosPendientes" [value]="motivo">
+            {{ motivo }}
+          </mat-option>
+        </ng-container>
+
+        <!-- Lista si YA está confirmada -->
+        <ng-container *ngIf="esConfirmada">
+          <mat-option *ngFor="let motivo of motivosConfirmados" [value]="motivo">
+            {{ motivo }}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Campo de texto abierto si elige "Otros" -->
+    <div *ngIf="motivoSeleccionado === 'Otros motivos'" class="animate__animated animate__fadeIn">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Describe el motivo</mat-label>
+        <textarea 
+          matInput 
+          [(ngModel)]="razonAbierta" 
+          rows="3" 
+          placeholder="Cuéntanos un poco más..."
+          required>
+        </textarea>
+      </mat-form-field>
+    </div>
+
+    <p class="text-muted small" *ngIf="esConfirmada">
+      Nota: Al estar la reserva ya confirmada, el conductor será notificado inmediatamente.
+    </p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="mt-3">
+    <button mat-button (click)="onNoClick()">Volver</button>
+    <button 
+      class="btn btn_bg ms-2"
+      color="warn" 
+      [disabled]="!esFormularioValido"
+      [mat-dialog-close]="resultadoCancelacion">
+      Confirmar Cancelación
+    </button>
+  </mat-dialog-actions>
+</div>

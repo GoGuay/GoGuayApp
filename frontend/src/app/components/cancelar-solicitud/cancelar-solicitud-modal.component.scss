@@ -1,0 +1,84 @@
+.modal-cancelacion {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+
+    .header-title-container {
+      display: flex;
+      align-items: center;
+      
+      i {
+        color: #d9534f;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+      }
+
+      h2 {
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.25rem;
+      }
+    }
+
+    .close-button {
+      margin-right: 1px; 
+      color: #666;
+    }
+  }
+
+  ::ng-deep {
+    .mdc-text-field--outlined {
+      border-radius: 35px !important; 
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+
+      .mdc-notched-outline__leading {
+        border-radius: 35px 0 0 35px !important;
+        width: 25px !important; 
+        border-right: none !important;
+      }
+
+      .mdc-notched-outline__trailing {
+        border-radius: 0 35px 35px 0 !important;
+        border-left: none !important;
+      }
+    }
+
+    .mat-mdc-form-field-infix {
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .mat-mdc-select-value {
+      padding-left: 10px !important;
+    }
+  }
+
+  p {
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  textarea.mat-mdc-input-element {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mdc-text-field--outlined:not(.mdc-text-field--no-label) .mdc-notched-outline__notch {
+    border-top: 1px solid currentColor !important;
+  }
+}

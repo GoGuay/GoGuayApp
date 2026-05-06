@@ -293,43 +293,6 @@ def eliminar_pasajero(viaje_id, usuario_id):
     return jsonify({"mensaje": "Pasajero eliminado y conductor notificado"}), 200
 
 
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA OBTENER LAS NOTIFICACIONES DE UN USUARIO
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/obtener_notificaciones/<int:usuario_id>', methods=['GET'])
-def obtener_notificaciones(usuario_id):
-    notificaciones = Notificacion.query.filter_by(usuario_id=usuario_id).order_by(Notificacion.fecha.desc()).all()
-    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA OBTENER NOTIFICACIONES DE UN VIAJE
-# # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/obtener_notificaciones_viaje/<int:viaje_id>', methods=['GET'])
-def obtener_notificaciones_viaje(viaje_id):
-    notificaciones = Notificacion.query.filter_by(viaje_id=viaje_id).order_by(Notificacion.fecha.desc()).all()
-    return jsonify([notificacion.serialize() for notificacion in notificaciones]), 200
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA MARCAR UNA NOTIFICACIÓN COMO LEÍDA
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/marcar_notificacion_leida/<int:notificacion_id>', methods=['PUT'])
-def marcar_notificacion_leida(notificacion_id):
-    notificacion = Notificacion.query.get(notificacion_id)
-    if not notificacion:
-        return jsonify({"error": "Notificación no encontrada"}), 404
-
-    data = request.get_json()
-    if data is None or 'leida' not in data:
-        return jsonify({"error": "Se requiere el campo 'leida' en el cuerpo"}), 400
-
-    notificacion.leida = bool(data['leida'])
-    db.session.commit()
-
-    estado = "leída" if notificacion.leida else "no leída"
-    return jsonify({"message": f"Notificación marcada como {estado}"}), 200
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA FILTRAR LOS VIAJES
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -544,3 +507,30 @@ def rechazar_pasajero_manual():
     )
 
     return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
+
+
+#
+# SERVICIO PARA NOTIFICAR QUE UN PASAJERO HA LLEGADO AL PUNTO DE ENCUENTRO
+#
+@travel_blueprint.route('/notificar_llegada_pasajero', methods=['POST'])
+def notificar_llegada():
+    data = request.get_json()
+    viaje_id = data.get('viaje_id')
+    usuario_id = data.get('usuario_id')
+
+    solicitud = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    
+    if solicitud:
+        solicitud.ha_llegado = True 
+        db.session.commit()
+
+        viaje = Viaje.query.get(viaje_id)
+        enviar_notificacion_push(
+            usuario_id=viaje.usuario_id,
+            titulo="¡Pasajero en el punto!",
+            cuerpo=f"Tu pasajero ya está en el punto de partida.",
+            data={"viaje_id": str(viaje_id)}
+        )
+        return jsonify({"mensaje": "Llegada notificada"}), 200
+    
+    return jsonify({"error": "No se encontró la reserva"}), 404

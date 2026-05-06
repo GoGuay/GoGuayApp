@@ -118,6 +118,12 @@
 
 }
 
+.acciones-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap; 
+}
 
 .position-relative {
   position: relative;
@@ -237,6 +243,13 @@
   .gifs {
     width: 24px;
     height: 24px;
+  }
+
+  .btn-viaje {
+    flex: 1 1 auto; 
+    justify-content: center;
+    font-size: 0.75rem;
+    padding: 8px 10px;
   }
 }
 
@@ -395,6 +408,7 @@
   &.btn-info-pride { background: #e2e2e2; color: #444; }
   &.btn-join { background: #f3ffaf; color: #444; border: 1px solid #d4e08c; }
   &.btn-chat { background: #2d3436; color: #fff; }
+  &.btn-cancelar { background: #E0B6B6; color: #444; }
 
   &:active { transform: scale(0.95); }
 }

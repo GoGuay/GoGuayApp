@@ -96,10 +96,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/verificar-email/verificar-email.page').then((m) => m.VerificarEmailPage),
   },
   {
-    path: 'encuesta-satisfaccion',
-    loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then((m) => m.EncuestaSatisfaccionPage),
-  },
-  {
     path: 'centro-contacto',
     loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then((m) => m.CentroContactoPage),
   },
@@ -164,4 +160,8 @@ export const routes: Routes = [
     path: 'events-admin',
     loadComponent: () => import('./pages/admin/eventos-admin/eventos-admin.page').then((m) => m.EventosAdmin),
   },
+  {
+    path: 'pago-reserva/:id',
+    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+  }
 ];
