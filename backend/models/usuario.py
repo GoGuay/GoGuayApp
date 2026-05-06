@@ -32,6 +32,14 @@ class Usuario(db.Model):
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
     metodo_pago_preferido = db.Column(db.String(50), nullable=True, default='paypal')
+    paypal_email = db.Column(db.String(250), nullable=True)
+    tarjeta_numero = db.Column(db.String(20), nullable=True) 
+    tarjeta_caducidad = db.Column(db.String(7), nullable=True) 
+    tarjeta_titular = db.Column(db.String(120), nullable=True)
+    metodo_cobro_preferido = db.Column(db.String(50), nullable=True, default='transferencia')
+    cobro_paypal_email = db.Column(db.String(250), nullable=True)
+    cobro_iban = db.Column(db.String(34), nullable=True) 
+    cobro_titular = db.Column(db.String(120), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -200,6 +208,11 @@ class Usuario(db.Model):
                 preferencias = []  # Si no es válido, asignamos un valor por defecto (vacío)
         elif preferencias is None:
             preferencias = [] 
+
+        tarjeta_enmascarada = None
+        if self.tarjeta_numero:
+            tarjeta_enmascarada = f"**** **** **** {self.tarjeta_numero[-4:]}"
+
         return {
             "id": self.id,
             "nombre": self.nombre,
@@ -224,6 +237,16 @@ class Usuario(db.Model):
             "estado_perfil": self.estado_perfil,
             "puntuaciones": self.estrellas_por_opiniones,
             "metodo_pago_preferido": self.metodo_pago_preferido,
+            "paypal_email": self.paypal_email,
+            "tarjeta_info": {
+                "numero": tarjeta_enmascarada,
+                "caducidad": self.tarjeta_caducidad,
+                "titular": self.tarjeta_titular
+            } if self.metodo_pago_preferido == 'tarjeta' else None,
+            "metodo_cobro_preferido": self.metodo_cobro_preferido,
+            "cobro_paypal_email": self.cobro_paypal_email,
+            "cobro_iban": self.cobro_iban,
+            "cobro_titular": self.cobro_titular,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
@@ -238,14 +261,3 @@ class Usuario(db.Model):
             "puntuacion_promedio": self.estrellas_por_opiniones
         }
     
-
-
-
-
-    
-
-    
-
-
-    
-

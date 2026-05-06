@@ -69,7 +69,7 @@ def create_app():
 
     # --- JWT & CORS ---
     JWTManager(app)
-    CORS(app, resources={r"/*": {
+    CORS(app, resources={r"/api/*": { 
         "origins": [
             "http://localhost:4200",
             "http://127.0.0.1:4200",  
@@ -77,8 +77,7 @@ def create_app():
             "http://127.0.0.1:8100",  
             "https://pride-ride.vercel.app",
             "capacitor://localhost",
-            "ionic://localhost",
-            "*"
+            "ionic://localhost"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],

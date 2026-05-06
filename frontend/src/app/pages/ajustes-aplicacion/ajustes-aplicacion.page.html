@@ -157,6 +157,64 @@
             </div>
           </div>
 
+          <!-- SECCIÓN: PREFERENCIAS DE COBRO (Donde recibes dinero) -->
+          <div class="col-12 mt-3">
+            <div class="box-section goguay-border">
+              <h3 class="cobros-title"><i class="fi fi-rr-coins me-2"></i> {{ 'AJUSTESAPP.METODOS_COBRO.TITULO' | translate }}</h3>
+              <mat-divider></mat-divider>
+              
+              <div class="mt-3">
+                <p class="small text-muted mb-3">¿Dónde quieres recibir el dinero de tus viajes compartidos?</p>
+                
+                <ion-radio-group [(ngModel)]="metodoCobroPredeterminado">
+                  
+                  <!-- COBRO PAYPAL -->
+                  <div class="payment-option-card">
+                    <ion-item lines="none" class="rounded-pill-item">
+                      <ion-icon name="logo-paypal" slot="start" class="paypal-icon"></ion-icon>
+                      <ion-label>Recibir en PayPal</ion-label>
+                      <ion-radio slot="end" value="paypal"></ion-radio>
+                    </ion-item>
+                    
+                    <div *ngIf="metodoCobroPredeterminado === 'paypal'" class="p-3 animate__animated animate__fadeIn">
+                      <div class="form-floating mb-2">
+                        <input type="email" class="form-control custom-input" id="cobroPaypalEmail" 
+                              placeholder="correo@ejemplo.com" [(ngModel)]="cobroEmailPaypal">
+                        <label for="cobroPaypalEmail">Email de cobros PayPal</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- COBRO TRANSFERENCIA BANCARIA -->
+                  <div class="payment-option-card mt-2">
+                    <ion-item lines="none" class="rounded-pill-item">
+                      <ion-icon name="business-outline" slot="start" class="bank-icon"></ion-icon>
+                      <ion-label>Transferencia Bancaria (IBAN)</ion-label>
+                      <ion-radio slot="end" value="transferencia"></ion-radio>
+                    </ion-item>
+
+                    <div *ngIf="metodoCobroPredeterminado === 'transferencia'" class="p-3 animate__animated animate__fadeIn">
+                      <div class="form-floating mb-2">
+                        <input type="text" class="form-control custom-input" id="cobroTitular" 
+                              placeholder="Nombre del titular" [(ngModel)]="cobroTitular">
+                        <label for="cobroTitular">Titular de la cuenta</label>
+                      </div>
+                      <div class="form-floating mb-2">
+                        <input type="text" class="form-control custom-input" id="cobroIBAN" 
+                              placeholder="ES00 0000..." [(ngModel)]="cobroIBAN">
+                        <label for="cobroIBAN">Número de cuenta (IBAN)</label>
+                      </div>
+                    </div>
+                  </div>
+                </ion-radio-group>
+
+                <button class="btn btn-goguay w-100 mt-3" (click)="guardarConfiguracionCobro()">
+                  Actualizar Preferencias de Cobro
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- Password -->
           <div class="col-12 col-md-6">
             <div class="box-section goguay-border h-100">
@@ -179,6 +237,43 @@
               <div class="mt-3">
                 <p class="small text-muted">{{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}</p>
                 <button class="btn btn-outline-danger w-100 mt-4" (click)="modalEliminarUsuario()">{{ "BOTON.ELIMINAR_CTA" | translate }}</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN: AYUDA Y LEGAL -->
+          <div class="col-12 mt-3">
+            <div class="box-section goguay-border">
+              <h3><i class="fi fi-rr-interrogation me-2"></i> Soporte y Legal</h3>
+              <mat-divider></mat-divider>
+
+              <div class="list-help mt-3">
+                <!-- Centro de Ayuda -->
+                <div class="help-item" (click)="irACentroAyuda()">
+                  <div class="d-flex align-items-center">
+                    <i class="fi fi-rr-life-ring me-3"></i>
+                    <span>Centro de Ayuda / FAQ</span>
+                  </div>
+                  <i class="fi fi-rr-angle-small-right"></i>
+                </div>
+
+                <!-- Condiciones de Uso -->
+                <div class="help-item" (click)="irATerminos()">
+                  <div class="d-flex align-items-center">
+                    <i class="fi fi-rr-document-signed me-3"></i>
+                    <span>Condiciones Generales de Uso</span>
+                  </div>
+                  <i class="fi fi-rr-angle-small-right"></i>
+                </div>
+
+                <!-- Valorar App -->
+                <div class="help-item rating-item" (click)="valorarApp()">
+                  <div class="d-flex align-items-center">
+                    <i class="fi fi-rr-star me-3"></i>
+                    <span>Valorar GoGuay</span>
+                  </div>
+                  <i class="fi fi-rr-angle-small-right"></i>
+                </div>
               </div>
             </div>
           </div>

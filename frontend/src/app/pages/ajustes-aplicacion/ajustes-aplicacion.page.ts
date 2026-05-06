@@ -15,7 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
-import { logoPaypal, cardOutline } from 'ionicons/icons';
+import { logoPaypal, cardOutline, businessOutline } from 'ionicons/icons';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -84,6 +85,11 @@ export class AjustesAplicacionPage implements OnInit {
   fechaCaducidad: string = '';
   cvvTarjeta: string = '';
 
+  metodoCobroPredeterminado: string = 'transferencia';
+  cobroEmailPaypal: string = '';
+  cobroIBAN: string = '';
+  cobroTitular: string = '';
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -94,9 +100,10 @@ export class AjustesAplicacionPage implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private route: ActivatedRoute,
-    private funcionesComunes: FuncionesComunes
+    private funcionesComunes: FuncionesComunes,
+    private _bottomSheet: MatBottomSheet
   ) { 
-    addIcons({ logoPaypal, cardOutline });
+    addIcons({ logoPaypal, cardOutline, businessOutline });
   }
 
   ngOnInit() {
@@ -321,6 +328,9 @@ export class AjustesAplicacionPage implements OnInit {
     }
   }
 
+  /**
+   * Función para manejar el botón de cambio de contraseña
+   */
   botonCambioPassword() {
     if (!this.isConfirmacionPasswordValida) return;
     this.userService
@@ -398,6 +408,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.aceptaMascotas = prefsArray.includes('Mascotas');
     this.fuma = prefsArray.includes('Fumar');
   }
+
   /**
    * Función para guardar las nuevas preferencias de viaje del usuario.
    * 
@@ -474,6 +485,11 @@ export class AjustesAplicacionPage implements OnInit {
     });
   }
 
+  /**
+   * Función para guardar el método de pago preferido del usuario. 
+   * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
+   * 
+   */
   guardarMetodoPago() {
     const datosPago = {
       metodo_pago_preferido: this.metodoPagoPredeterminado, 
@@ -491,6 +507,51 @@ export class AjustesAplicacionPage implements OnInit {
         });
       }
     });
+  }
+
+  /**
+   * Función para guardar el método de cobro preferido del usuario.
+   * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
+   */
+  guardarConfiguracionCobro() {
+    const datosCobro = {
+      metodo_cobro_preferido: this.metodoCobroPredeterminado,
+      cobro_paypal_email: this.cobroEmailPaypal,
+      cobro_iban: this.cobroIBAN,
+      cobro_titular: this.cobroTitular
+    };
+
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de cobro actualizados correctamente'
+        });
+      }
+    });
+  }
+
+  /**
+   * Función para abrir el centro de ayuda al hacer click en la opción del menú. Redirige a la página de centro de ayuda.
+   */
+  irACentroAyuda() {
+    this.navCtrl.navigateForward('/centro-ayuda');
+  }
+
+  /**
+   * Función para abrir la página de términos y condiciones al hacer click en la opción del menú. Redirige a la página de términos y condiciones.
+   */
+  irATerminos() {
+    this.navCtrl.navigateForward('/condiciones-generales');
+  }
+
+
+  /**
+   * Función para abrir la página de valoración de la aplicación al hacer click en la opción del menú. Redirige a la página de encuesta de satisfacción.
+   */
+  valorarApp() {
+    this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 
 }

@@ -3,10 +3,10 @@ import { Component, OnInit } from "@angular/core";
 import { IonicModule, NavController } from "@ionic/angular";
 import { addIcons } from 'ionicons';
 import { peopleOutline, mailUnreadOutline, eyeOutline, lockClosedOutline, lockOpenOutline } from 'ionicons/icons';
-import { UserServicesService } from "src/app/core/user-services/user-services.service";
+import { UserServicesService } from "../../core/user-services/user-services.service";
 import { NavbarAdmin } from "./shared-admin/navbar-admin/navbar-admin.page";
-import { FuncionesComunes } from "src/app/core/funciones-comunes/funciones-comunes.service";
-import { Usuario } from "src/app/models/user/usuario.model";
+import { FuncionesComunes } from "../../core/funciones-comunes/funciones-comunes.service";
+import { Usuario } from "../../models/user/usuario.model";
 
 @Component({
     selector: 'app-admin',
@@ -64,6 +64,10 @@ export class AdminApp implements OnInit {
     }
 
 
+    /**
+     * Función para cargar los datos del usuario.
+     * 
+     */
     loadUserData(): void {
         const data = localStorage.getItem('userData');
         if (data) {
@@ -71,6 +75,11 @@ export class AdminApp implements OnInit {
         }
     }
 
+    /**
+     * Función para obtener un usuario por su ID
+     * 
+     * @param id_usuario --> ID del usuario.
+     */
     obtenerUsuarioPorID(id_usuario: number) {
         if (!id_usuario) return;
         this.userService.obtenerUsuarioPorID(id_usuario).subscribe({

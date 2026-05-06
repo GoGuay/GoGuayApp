@@ -5,20 +5,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
-import { NavbarComponent } from "src/app/shared/navbar/navbar.component";
+import { NavbarComponent } from "../../../shared/navbar/navbar.component";
 import { IonContent, IonicModule, NavController } from "@ionic/angular";
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
-import { Mensaje } from 'src/app/models/mensajes/mensaje.model';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { MessagingService } from '../../../core/menssaging-service/messaging.service';
+import { Mensaje } from '../../../models/mensajes/mensaje.model';
+import { Usuario } from '../../../models/user/usuario.model';
+import { NotificacionesService } from '../../../core/notificaciones/notificaciones.service';
+import { TravelService } from '../../../core/travel-services/travel.service';
+import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 import { Subject } from 'rxjs/internal/Subject';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { interval } from 'rxjs/internal/observable/interval';
-import { LISTA_EMOJIS } from 'src/app/models/emojis/emojis.const';
+import { addIcons } from 'ionicons';
+import { LISTA_EMOJIS } from '../../../models/emojis/emojis.const';
+import { send } from 'ionicons/icons';
 import { timer } from 'rxjs';
 
 @Component({
@@ -74,7 +76,9 @@ export class ChatPage implements OnInit {
         private notificacionesService: NotificacionesService,
         private travelService: TravelService,
         private navCtrl: NavController,
-        private cdr: ChangeDetectorRef) { }
+        private cdr: ChangeDetectorRef) {
+            addIcons({ send  });
+         }
 
     ngOnInit() {
         this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -348,6 +352,18 @@ export class ChatPage implements OnInit {
         }
     }
 
+
+    /**
+     * Función para poder enviar el texto pulsando la tecla ENTER
+     * 
+     * @param event -> Recibe la información del evento en el textArea del HTML
+     */
+    handleEnter(event: any) {
+        if (event.keyCode === 13 && !event.shiftKey) {
+            event.preventDefault();
+            this.enviar();
+        }
+    }
 
     /**
      * Función para enviar un mensaje del sistema (respuestas a solicitudes de viaje).

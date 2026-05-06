@@ -92,6 +92,40 @@ ion-button[fill="clear"] {
   border-radius: 50%;
 }
 
+.btn-opciones {
+  width: 40px !important;
+  height: 40px !important;
+  
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --margin-top: 0 !important;
+  --margin-bottom: 0 !important;
+  --border-radius: 50% !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::part(native) {
+    border-radius: 50%;
+  }
+
+  .iconoAjustes {
+    font-size: 20px;
+    color: #666;
+    line-height: 1; 
+  }
+}
+
+[slot="end"] {
+  margin-inline-start: 8px; 
+  display: flex;
+  align-items: center;
+  align-self: center; 
+}
+
 .chat_card ion-item {
   --inner-padding-end: 0;
 }

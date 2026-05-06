@@ -395,6 +395,12 @@
       "HABLAR": "Me gusta viajar hablando con los acompañantes",
       "SILENCIO": "Me gusta ir en silencio",
       "FUMAR": "Se permite fumar"
+    },
+    "METODOS_PAGO": {
+      "TITULO": "Métodos de pago"
+    },
+    "METODOS_COBRO": {
+      "TITULO": "Preferencias de cobro"
     }
   },
   "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
@@ -501,6 +507,22 @@
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
   },
+  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "CENTRO_MENSAJES": {
+    "TITULO": "Centro de mensajes",
+    "VACIO_TITULO": "Tu buzón está vacío",
+    "VACIO_DESC": "Aquí aparecerán tus chats cuando contactes con otros conductores o pasajeros.",
+    "BUSCAR_BOTON": "Buscar un viaje",
+    "SEGURIDAD_BOLD": "Por tu seguridad:",
+    "SEGURIDAD_TXT": "Mantén las conversaciones sobre el viaje dentro de la app. No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.",
+    "CHAT_OPCIONES": {
+      "HEADER": "Opciones de chat",
+      "LEIDO": "Marcar como leído",
+      "NO_LEIDO": "Marcar como no leído",
+      "ELIMINAR": "Eliminar conversación",
+      "CANCELAR": "Cancelar"
+    }
+  },  
   "__Eventos_Administracion": "Sección Eventos de Administración",
   "EVENTOS_ADMIN": "",
   "MENSAJES": {

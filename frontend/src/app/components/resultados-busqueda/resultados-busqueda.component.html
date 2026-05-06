@@ -48,37 +48,44 @@
             </div>
 
             <div class="acciones-footer mt-3 d-flex align-items-center gap-2">
+              
+              <!-- Botón Detalle-->
               <button (click)="openDetalleViaje(viaje)" class="btn-viaje btn-info-pride">
                 <i class="fi fi-rr-file-circle-info"></i> Detalle
               </button>
               
+              <!-- Bloque para usuarios que NO son el conductor -->
               <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
-                <button class="btn-viaje btn-join" 
+                
+                <!-- BOTÓN UNIRSE / RESERVAR -->
+                <button *ngIf="!estaUnido(viaje) && !tieneSolicitudPendiente(viaje)"
+                        class="btn-viaje btn-join" 
                         (click)="unirseAViaje(viaje)"
-                        [disabled]="estaUnido(viaje) || viaje.plazas === 0">
-                  
-                  <i class="fi" [ngClass]="estaUnido(viaje) ? 'fi-rr-check' : 'fi-rr-user-add'"></i>
-
-                  {{ 
-                    estaUnido(viaje) 
-                    ? 'Ya unido' 
-                    : (viaje.plazas === 0 
-                        ? 'Completo' 
-                        : (viaje.reserva_automatica ? 'Reservar' : 'Solicitar reserva')) 
-                  }}
-
+                        [disabled]="viaje.plazas === 0">
+                  <i class="fi fi-rr-user-add"></i>
+                  {{ viaje.plazas === 0 ? 'Completo' : (viaje.reserva_automatica ? 'Reservar' : 'Solicitar reserva') }}
                 </button>
-                <button class="btn-viaje btn-chat" (click)="contactarConConductor(viaje)" >
+
+                <!-- INDICADOR YA UNIDO -->
+                <button *ngIf="estaUnido(viaje)" class="btn-viaje btn-join" [disabled]="true">
+                  <i class="fi fi-rr-check"></i> Ya unido
+                </button>
+
+                <!-- BOTÓN CANCELAR -->
+                <button *ngIf="tieneSolicitudPendiente(viaje)" 
+                        class="btn-viaje btn-cancelar" 
+                        (click)="abrirModalCancelacion(viaje)">
+                  <i class="fi fi-rr-cross-circle"></i> Cancelar solicitud
+                </button>
+
+                <!-- Botón Chat -->
+                <button class="btn-viaje btn-chat" (click)="contactarConConductor(viaje)">
                   <i class="fi fi-rr-messages"></i> Consultar dudas
                 </button>
+
               </ng-container>
 
-              <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
-                <button class="btn-viaje btn-cancelar" (click)="abrirModalCancelacion(viaje)">
-                  <i class="fi fi-rr-messages"></i> Cancelar solicitud
-                </button>
-              </ng-container>
-
+              <!-- Icono de rayo para reserva automática -->
               <div *ngIf="viaje.reserva_automatica" class="ms-auto bolt-indicator" title="Reserva inmediata">
                 <i class="fi fi-rr-bolt"></i>
               </div>

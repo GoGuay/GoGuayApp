@@ -4,16 +4,16 @@
 
 <ion-content fullscreen>
     <div class="d-flex justify-content-center">
-        <h1>Centro de mensajes</h1>
+        <h1>{{ 'CENTRO_MENSAJES.TITULO' | translate }}</h1>
     </div>
 
     <app-spinner *ngIf="loadMessages"></app-spinner>
     <div *ngIf="conversaciones.length === 0 && !loadMessages" class="empty-state-container">
         <ion-icon name="chatbubbles-outline" class="empty-icon"></ion-icon>
-        <h3>Tu buzón está vacío</h3>
-        <p>Aquí aparecerán tus chats cuando contactes con otros conductores o pasajeros.</p>
+        <h3>{{ 'CENTRO_MENSAJES.VACIO_TITULO' | translate }}</h3>
+        <p>{{ 'CENTRO_MENSAJES.VACIO_DESC' | translate }}</p>
         <button class="btn btn_bg" (click)="irABuscar()">
-            Buscar un viaje
+            {{ 'CENTRO_MENSAJES.BUSCAR_BOTON' | translate }}
         </button>
     </div>
 
@@ -25,8 +25,8 @@
                     <div class="d-flex align-items-center justify-content-center">
                         <i class="fi fi-rr-shield-check me-2" style="font-size: 20px;"></i>
                         <span>
-                            <strong>Por tu seguridad:</strong> Mantén las conversaciones sobre el viaje dentro de la app.
-                            No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.
+                            <strong>{{ 'CENTRO_MENSAJES.SEGURIDAD_BOLD' | translate }}</strong> 
+                            {{ 'CENTRO_MENSAJES.SEGURIDAD_TXT' | translate }}
                         </span>
                     </div>
                 </div>
@@ -34,24 +34,29 @@
 
             <ion-list>
                 <ion-card class="chat_card" *ngFor="let c of conversaciones" (click)="abrirChat(c)">
-                    <ion-item lines="none" detail="false">
-                        <ion-label>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h2 [class.font-weight-bold]="c.no_leidos > 0">{{ c.otro_usuario_nombre }}</h2>
+                    <ion-item lines="none" detail="false" class="item-chat">
+                        <ion-avatar slot="start" class="avatar-chat">
+                            <img [src]="c.otro_usuario_foto || '../../../assets/user/logOn.gif'">
+                        </ion-avatar>
 
-                                <div class="d-flex align-items-center">
-                                    <ion-badge color="danger" *ngIf="c.no_leidos > 0" class="me-2">
-                                        {{ c.no_leidos }}
-                                    </ion-badge>
-
-                                    <ion-button fill="clear" color="dark" (click)="abrirOpciones($event, c)"
-                                        class="btn-opciones">
-                                        <i class="fi fi-rs-circle-ellipsis-vertical iconoAjustes"></i>
-                                    </ion-button>
-                                </div>
-                            </div>
-                            <p [class.mensaje-nuevo]="c.no_leidos > 0">{{ c.ultimoMensaje }}</p>
+                        <ion-label class="ion-text-wrap">
+                            <h2 [class.font-weight-bold]="c.no_leidos > 0" class="nombre-chat">
+                                {{ c.otro_usuario_nombre }}
+                            </h2>
+                            <p [class.mensaje-nuevo]="c.no_leidos > 0" class="ultimo-mensaje-txt">
+                                {{ c.ultimoMensaje }}
+                            </p>
                         </ion-label>
+
+                        <div slot="end" class="d-flex align-items-center">
+                            <ion-badge color="danger" *ngIf="c.no_leidos > 0" class="me-2">
+                                {{ c.no_leidos }}
+                            </ion-badge>
+
+                            <ion-button fill="clear" color="dark" (click)="abrirOpciones($event, c)" class="btn-opciones">
+                                <i class="fi fi-rs-circle-ellipsis-vertical iconoAjustes"></i>
+                            </ion-button>
+                        </div>
                     </ion-item>
                 </ion-card>
             </ion-list>

@@ -399,6 +399,28 @@
       "HABLAR": "I like chatting with my fellow travelers",
       "SILENCIO": "I prefer traveling in silence",
       "FUMAR": "Smoking friendly"
+    },
+    "METODOS_PAGO": {
+      "TITULO": "Payment Methods"
+    },
+    "METODOS_COBRO": {
+      "TITULO": "Payout Preferences"
+    }
+  },
+  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "CENTRO_MENSAJES": {
+    "TITULO": "Message Center",
+    "VACIO_TITULO": "Your inbox is empty",
+    "VACIO_DESC": "Your chats will appear here once you contact other drivers or passengers.",
+    "BUSCAR_BOTON": "Search for a ride",
+    "SEGURIDAD_BOLD": "For your safety:",
+    "SEGURIDAD_TXT": "Keep trip conversations within the app. We cannot guarantee the protection of your data or bookings if you use external apps.",
+    "CHAT_OPCIONES": {
+      "HEADER": "Chat options",
+      "LEIDO": "Mark as read",
+      "NO_LEIDO": "Mark as unread",
+      "ELIMINAR": "Delete conversation",
+      "CANCELAR": "Cancel"
     }
   },
   "Forgot_Password": "Page to send password reset email",

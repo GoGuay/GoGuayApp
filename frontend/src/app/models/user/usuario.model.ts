@@ -40,5 +40,9 @@ export interface Usuario {
     paypal_email?: string;
     tarjeta_numero?: string;
     tarjeta_exp?: string;
+    metodo_cobro_preferido?: string;
+    cobro_paypal_email?: string;
+    cobro_iban?: string;
+    cobro_titular?: string;
   };
 }

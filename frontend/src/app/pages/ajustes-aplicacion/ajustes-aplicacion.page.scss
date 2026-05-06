@@ -246,6 +246,53 @@ a {
 }
 
 
+.list-help {
+  .help-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: #f4f5f8;
+    }
+
+    i {
+      font-size: 1.2rem;
+      color: $primary-color;
+    }
+
+    span {
+      font-weight: 500;
+      color: #444;
+    }
+
+    .fi-rr-angle-small-right {
+      color: #ccc;
+    }
+  }
+
+  .rating-item {
+    background: rgba($success-color, 0.1);
+    margin-top: 10px;
+    border: 1px dashed $success-color;
+    
+    i { color: #28a745; }
+    
+    &:hover {
+      background: rgba($success-color, 0.2);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .box-section {
     // height: 225px;

@@ -389,6 +389,10 @@ export class ResultadosBusquedaComponent implements OnInit {
     });
   }
 
+  /**
+   * Función para redirigir al usuario al login, mostrando un modal de confirmación.
+   * Si el usuario confirma, se redirige al login. Si cancela, se mantiene en la página actual.
+   */
   private redirigirAlLogin() {
     this.funcionesComunes
       .openConfirmModal('¡Atención!', 'Debes iniciar sesión para realizar esta acción.')
@@ -398,6 +402,13 @@ export class ResultadosBusquedaComponent implements OnInit {
       });
   }
 
+  /**
+   * Función para contactar con el conductor a través del chat, recibiendo el viaje seleccionado.
+   * Si el usuario no está logueado, se redirige al login.
+   * Si el usuario está logueado, se inicia una conversación con el conductor y se redirige al chat.
+   * 
+   * @param viaje --> Viaje seleccionado para contactar con el conductor
+   */
   contactarConConductor(viaje: Viaje) {
     const emisorId = this.userData?.usuario?.id;
     const receptorId = viaje.usuario_id;
@@ -416,6 +427,12 @@ export class ResultadosBusquedaComponent implements OnInit {
     }
   }
 
+  /**
+   * Función para abrir el modal de cancelación de solicitud, 
+   * recibiendo el viaje para el cual se quiere cancelar la solicitud.
+   * 
+   * @param viaje --> Viaje para el cual se quiere cancelar la solicitud
+   */
   abrirModalCancelacion(viaje: Viaje) {
     const dialogRef = this.dialog.open(CancelarSolicitudModalComponent, {
       width: '400px',
@@ -430,8 +447,29 @@ export class ResultadosBusquedaComponent implements OnInit {
     });
   }
 
+  /**
+   * Función para ejecutar la cancelación de una solicitud de viaje, 
+   * recibiendo el ID del viaje y la razón de cancelación proporcionada por el usuario.
+   * 
+   * @param viajeId --> ID del viaje para el cual se quiere cancelar la solicitud
+   * @param razon --> Razón de cancelación proporcionada por el usuario
+   */
   private ejecutarCancelacion(viajeId: number, razon: string) {
     console.log(`Cancelando viaje ${viajeId} por la razón: ${razon}`);
     
+  }
+
+  /**
+   * Función para verificar si el usuario tiene una solicitud pendiente para un viaje específico.
+   * 
+   * @param viaje --> Viaje para el cual se quiere verificar la existencia de una solicitud pendiente
+   * @returns Devuelve true si el usuario tiene una solicitud pendiente para el viaje, false en caso contrario.
+   */
+  tieneSolicitudPendiente(viaje: Viaje): boolean {
+    if (!this.userData?.usuario?.id) return false;
+
+    if (this.estaUnido(viaje)) return false;
+
+    return viaje.solicitudes_pendientes?.some((s: any) => s.usuario_id === this.userData?.usuario.id) || false;
   }
 }
