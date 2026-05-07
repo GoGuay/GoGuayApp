@@ -34,8 +34,16 @@ ion-title {
 
 .contenedor_mapa {
   margin-top: 3%;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 35px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
+  
+  overflow: hidden;
+  mask-image: -webkit-radial-gradient(white, black);
+  
+  google-map {
+    display: block;
+    width: 100%;
+  }
 }
 
 
@@ -47,18 +55,6 @@ ion-alert {
   border-radius: 35px;
 }
 
-.route-option {
-  padding: 10px;
-  margin: 5px 0;
-  background: #f0f0f0;
-  cursor: pointer;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.route-option:hover {
-  background: #F0D7B4;
-}
 
 .btn-banner {
   display: flex;
@@ -74,19 +70,6 @@ ion-alert {
   padding: 8px 16px;
 }
 
-.route-option {
-  padding: 10px;
-  border: 1px solid #B3B5E6;
-  border-radius: 15px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.route-option:hover {
-  background-color: #F0D7B4;
-}
 
 .route-option.selected {
   background-color: #F0D7B4;
@@ -236,4 +219,54 @@ ion-alert {
 .trashBtn {
   border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.route-title {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #333;
+
+  .arrow-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+  }
+}
+
+.route-option {
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 35px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    border-color: #7B61FF;
+  }
+
+  &.selected {
+    background: #fff;
+    border-color: #7B61FF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  }
+}
+
+.dot-origin { width: 10px; height: 10px; background: #7B61FF; border-radius: 50%; }
+.dot-destination { width: 10px; height: 10px; background: #FF4D4D; border-radius: 50%; }
+
+.toll-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #eee;
+  padding: 4px 8px;
+  border-radius: 6px;
 }

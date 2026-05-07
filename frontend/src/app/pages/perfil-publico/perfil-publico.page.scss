@@ -1,260 +1,311 @@
-.caja_perfil {
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+// Paleta PrideRide
+$color-beige: #f0d7b4;
+$color-purple: #b3b5e6;
+$color-green: #b7e0b4;
+$color-dark: #333;
+
+.profile-hero {
   position: relative;
-  height: 700px;
+  height: 280px;
+  margin-bottom: -40px;
+
+  .header-image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    border-radius: 0px 0px 35px 35px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    .img-cabecera {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay-edit {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba($color-beige, 0.8);
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      i { font-size: 1.2rem; color: $color-dark; }
+    }
+  }
+
+  .profile-photo-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    
+    .profile-img-wrapper {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 5px solid white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      position: relative;
+      background: white;
+      cursor: pointer;
+
+      .perfil-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .overlay-edit-profile {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: $color-purple;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        i { font-size: 0.9rem; }
+      }
+    }
+  }
 }
 
-.edit-icon {
-  width: 20px;
-  height: 20px;
+.main-content-perfil {
+  padding: 0 15px;
+  
+  .profile-card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid rgba($color-beige, 0.3);
+    position: relative;
+
+    .user-main-info {
+      margin-bottom: 25px;
+      .user-name {
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        .verified-icon {
+          color: #3897f0;
+          font-size: 1.4rem;
+        }
+      }
+      .user-score {
+        color: #f39c12;
+        font-weight: 600;
+        font-size: 1.1rem;
+        .star-icon { margin-right: 5px; }
+      }
+    }
+
+    .edit-button-container {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      z-index: 10;
+
+      .btn-edit-profile {
+        background-color: transparent;
+        border: 2px solid #b3b5e6; 
+        color: #b3b5e6;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        i {
+          font-size: 1rem;
+        }
+
+        &:hover {
+          background-color: #b3b5e6;
+          color: white;
+          box-shadow: 0 4px 10px rgba(179, 181, 230, 0.3);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+
+    .info-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+
+      .stat-item {
+        background: #fdfaf5;
+        padding: 15px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        i {
+          font-size: 1.5rem;
+          color: $color-purple;
+        }
+
+        .stat-text {
+          display: flex;
+          flex-direction: column;
+          small { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+          span { font-weight: 600; font-size: 0.9rem; color: $color-dark; }
+        }
+      }
+    }
+
+    .bio-section {
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: $color-dark;
+      }
+      .bio-content {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 20px;
+        p {
+          margin: 0;
+          line-height: 1.6;
+          color: #555;
+          font-size: 0.95rem;
+        }
+        .italic { font-style: italic; opacity: 0.7; }
+      }
+    }
+  }
 }
 
-.espacio_cabecera {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  position: relative;
+.separator {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0,0,0,0), rgba($color-beige, 0.7), rgba(0,0,0,0));
+  margin: 30px 0;
 }
 
-.overlay {
+.overlay-loading {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(255,255,255,0.8);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
+
+  .spinner-wrapper {
+    text-align: center;
+    
+    .loading-text {
+      margin-top: 15px;
+      color: #b3b5e6;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+      animation: pulse 1.5s infinite;
+    }
+  }
 }
 
-.img-cabecera {
-  border-radius: 15px 15px 0px 0px;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
-.imagen-perfil {
-  position: absolute;
-  bottom: 490px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 2px solid #f0d7b4;
-  border-radius: 50%;
-  padding: 2px;
-  background-color: #f0d7b4;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.perfil-img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.informacion-usuario {
-  text-align: start;
-  margin-top: 40px;
-}
-
-.info-item {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.botonEditarImgPerfil,
-.botonEditarImgCabecera {
-  position: absolute;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
+.overlay-edit, .overlay-edit-profile {
+  width: 40px !important;  
+  height: 40px !important; 
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  cursor: pointer;
-  background-color: #f0d7b4;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1;    
+  
+  i {
+    line-height: 1;
+    margin: 0;
+  }
 }
 
-.botonEditarImgPerfil {
-  bottom: 565px;
-  left: 52%;
+.overlay-edit {
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.botonEditarImgCabecera {
-  bottom: 510px;
-  left: 98%;
-  transform: translateX(-100%);
+.preferences-full-width {
+  grid-column: 1 / -1; 
 }
 
-.botonEditarImgPerfil mat-icon,
-.botonEditarImgCabecera mat-icon {
-  font-size: 20px;
-}
-
-button {
-  background-color: #f0d7b4;
-}
-
-.mis-viajes-container {
-  max-height: 310px;
-  overflow-y: auto;
-  border-radius: 15px;
-  max-width: 600px;
-}
-
-.mis-viajes-container label {
-  position: sticky;
-  top: 0;
-  background-color: #e9edd5;
-  padding: 5px 0;
-  z-index: 10;
-  display: block;
-}
-
-.mi_viaje_box {
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  background-color: #f0d7b4;
-  border-radius: 15px;
-  padding: 12px;
+.chips-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
 }
 
-.mi_viaje_box p {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.info-viaje {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-}
-
-.botones {
-  display: flex;
-  gap: 10px;
-}
-
-.mi_viaje_box button {
-  margin-left: 12px;
-}
-
-.mas_detalle {
-  color: #b3b5e6;
-}
-
-.eliminar_viaje {
-  color: red;
-}
-
-.viajeFinalizado {
-  color: red;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
-  padding: 2%;
-}
-
-.etiquetaPendiente {
-  background-color: #b7e0b4;
-  border: 1px solid #b3b5e6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  border-radius: 15px;
-  padding: 2%;
-}
-
-.fontSize {
-  font-size: 0.9rem;
-  width: fit-content; /* Hace que el contenedor se ajuste al contenido */
-  max-width: 100%; /* Evita que el texto se desborde del contenedor */
-}
-
-.icon_shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.puntuar {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  border-radius: 15px;
-  background-color: #b3b5e6;
-  padding: 3%;
+.custom-chip {
+  background-color: #b3b5e6; 
   color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(179, 181, 230, 0.3);
+  white-space: nowrap;
 }
 
-.btn_shadow:hover {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+.no-data {
+  font-size: 0.9rem;
+  color: #999;
+  font-style: italic;
+}
+
+.bio-content p {
+  white-space: pre-line;
+}
+
+
+@media (max-width: 768px) {
+  .info-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 576px) {
-  .mi_viaje_box {
-    flex-direction: column;
-    align-items: flex-start;
+  .edit-button-container {
+    position: relative !important;
+    top: 0 !important;
+    right: 0 !important;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
   }
-
-  .info-viaje {
-    flex-direction: column;
-    gap: 6px;
+  
+  .user-main-info {
+    margin-top: 10px;
   }
-
-  .botones {
-    margin-top: 8px;
-  }
-}
-
-.notifications {
-  color: #b7e0b4;
-  width: 20px;
-  height: 20px;
-}
-
-/** MODIFICA EL COLOR PRIMARIO DE IONIC */
-:root {
-  --ion-color-primary: black;
-}
-
-/* Cambiar el color de fondo de la barra de selección */
-ion-segment {
-  --background: #b3b5e6;
-  --color: #e9edd5;
-  border-radius: 15px !important;
-  margin-bottom: 1%;
-}
-
-/* Cambiar el color de texto de los botones de segment (por defecto) */
-ion-segment-button {
-  --color: grey;
-  --background-activated: #f0d7b4 !important;
-  --border-color: #ccc;
-}
-
-.col-puntuar {
-  width: 120px;
-  text-align: center;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.biografia-container {
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 10px;
-  margin-bottom: 15px;
 }

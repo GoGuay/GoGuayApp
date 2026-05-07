@@ -1,68 +1,92 @@
 <app-navbar [origin]="urlParaVolver" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container mt-4 mb-4">
-    <div class="caja_perfil">
-      <!-- Imagen de cabecera dinámica -->
-      <div class="espacio_cabecera">
-        <img class="img-cabecera" [src]="imagenCabeceraSrc" alt="Cabecera" *ngIf="!usuario?.fotoCabecera" />
-        <img class="img-cabecera" [src]="usuario?.fotoCabecera" alt="Cabecera" *ngIf="usuario?.fotoCabecera" />
+  <div class="container-fluid p-0 pb-5 animate__animated animate__fadeIn" *ngIf="!cargando && usuario" >
+    
+    <div class="profile-hero">
+      <div class="header-image-container" (click)="editar_perfil ? fileInputCabecera.click() : null">
+        <img [src]="usuario?.fotoCabecera || imagenCabeceraSrc" alt="Cabecera" class="img-cabecera" />
+        <div class="overlay-edit" *ngIf="editar_perfil">
+          <i class="fi fi-rr-camera"></i>
+        </div>
+        <input type="file" #fileInputCabecera accept="image/*" (change)="onImageChange($event, 'cabecera')" style="display: none" />
       </div>
 
-      <!-- Imagen de perfil dinámica -->
-      <div class="imagen-perfil">
-        <img class="perfil-img" [src]="imagenPerfilSrc" alt="Perfil" *ngIf="!usuario?.fotoPerfil" />
-        <img class="perfil-img" [src]="usuario?.fotoPerfil" alt="Perfil" *ngIf="usuario?.fotoPerfil" />
-      </div>
-
-      <div class="botonEditarImgCabecera" *ngIf="editar_perfil" (click)="fileInputCabecera.click()">
-        <button type="button">
-          <img src="../../../assets/sistema/editar.png" class="edit-icon" />
-        </button>
-        <!-- Input oculto -->
-        <input type="file" #fileInputCabecera accept="image/*" (change)="onImageChange($event)" style="display: none" />
-      </div>
-
-      <!-- Información del usuario -->
-      <div class="informacion-usuario">
-        <div class="row">
-          <div class="col">
-            <div class="container text-end">
-              <span class="info-item"><strong>Nombre: </strong>{{usuario?.nombre}}</span>
-              <span class="info-item"><strong>Apellidos: </strong>{{usuario?.apellidos}}</span>
-            </div>
-          </div>
-          <div class="col">
-            <div class="container">
-              <span class="info-item"><strong>Preferencias de viaje: </strong>{{
-                preferenciasViaje}}</span>
-              <span class="info-item"><strong>Usuario verificado: </strong><i class="fi fi-rr-badget-check-alt" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"></i></span>
-              <span class="info-item"><strong>Puntuación: </strong>{{usuario?.puntuacion_promedio}}</span>
-            </div>
+      <div class="profile-photo-container">
+        <div class="profile-img-wrapper" (click)="editar_perfil ? fileInputPerfil.click() : null">
+          <img [src]="usuario?.fotoPerfil || imagenPerfilSrc" alt="Perfil" class="perfil-img" />
+          <div class="overlay-edit-profile" *ngIf="editar_perfil">
+            <i class="fi fi-rr-edit"></i>
           </div>
         </div>
-        <div class="row">
-          <div class="">
-            <div class="container d-flex justify-content-center">
-              <label class="mb-3 me-3"><strong>Biografía: </strong></label>
-              <br>
-            </div>
-
-            <div class="container d-flex justify-content-center">
-              <div class="biografia-container">
-                <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
-                <p *ngIf="!usuario?.biografia">Aún no tienes biografía.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <input type="file" #fileInputPerfil accept="image/*" (change)="onImageChange($event, 'perfil')" style="display: none" />
       </div>
-      <hr />
     </div>
 
-    <!-- Spinner de carga -->
-    <div class="overlay" *ngIf="cargando">
+    <div class="container main-content-perfil">
+      <div class="profile-card">
+        <div class="edit-button-container" *ngIf="editar_perfil">
+          <button class="btn-edit-profile" (click)="irAEditarPerfil()">
+            <i class="fi fi-rr-edit me-2"></i>
+            Editar perfil
+          </button>
+        </div>
+        
+        <div class="text-center user-main-info">
+          <h2 class="user-name">
+            {{usuario?.nombre}} {{usuario?.apellidos}}
+            <i class="fi fi-rr-badge-check verified-icon" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"></i>
+          </h2>
+          <p class="user-score">
+            <i class="fi fi-rr-star star-icon"></i> {{usuario?.puntuacion_promedio || 'Sin puntuaciones'}}
+          </p>
+        </div>
+
+        <div class="info-stats-grid">
+          <div class="stat-item">
+            <i class="fi fi-rr-shield-check"></i>
+            <div class="stat-text">
+              <small>Estado de cuenta</small>
+              <span [class.text-success]="usuario?.emailVerificado">
+                {{ usuario?.emailVerificado ? 'Verificado' : 'Pendiente' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="stat-item preferences-full-width">
+            <i class="fi fi-rr-settings-sliders"></i>
+            <div class="stat-text">
+              <small>Preferencias de viaje</small>
+              <div class="chips-container" *ngIf="preferenciasViaje.length > 0">
+                <span class="custom-chip" *ngFor="let pref of preferenciasViaje">
+                  {{ pref }}
+                </span>
+              </div>
+              <span class="no-data" *ngIf="preferenciasViaje.length === 0">No definidas</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="separator" />
+
+        <div class="bio-section">
+          <h3><i class="fi fi-rr-info me-2"></i>Sobre mí</h3>
+          <div class="bio-content">
+            <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
+            <p *ngIf="!usuario?.biografia" class="text-muted italic">Este usuario prefiere mantener el misterio... aún no hay biografía.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="overlay-loading" *ngIf="cargando">
+    <div class="spinner-wrapper">
       <app-spinner></app-spinner>
+      <p class="loading-text">Cargando perfil de GoGuay...</p>
     </div>
   </div>
+
 </ion-content>

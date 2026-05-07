@@ -6,8 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatSliderModule } from '@angular/material/slider';
+import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 
 @Component({
   selector: 'app-encuesta-satisfaccion',
@@ -15,8 +15,7 @@ import { MatSliderModule } from '@angular/material/slider';
   styleUrls: ['./encuesta-satisfaccion.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    IonHeader, 
+    IonContent,  
     CommonModule, 
     FormsModule, 
     MatButtonModule, 
@@ -89,5 +88,29 @@ export class EncuestaSatisfaccionPage implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.navCtrl.navigateRoot('/home');
     });
+  }
+
+  getLabelRating(valor: number): string {
+    const labels = ['Pésimo', 'Regular', 'Bueno', '¡Genial!', '¡Excelente!'];
+    return labels[valor - 1];
+  }
+
+  toggleAspect(index: number, tipo: 'positivo' | 'negativo') {
+    const ctrlPos = this.encuestaForm.get(`positivo${index}`);
+    const ctrlNeg = this.encuestaForm.get(`negativo${index}`);
+
+    if (tipo === 'positivo') {
+      const newVal = !ctrlPos?.value;
+      ctrlPos?.setValue(newVal);
+      if (newVal) ctrlNeg?.setValue(false);
+    } else {
+      const newVal = !ctrlNeg?.value;
+      ctrlNeg?.setValue(newVal);
+      if (newVal) ctrlPos?.setValue(false);
+    }
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 }

@@ -257,10 +257,6 @@ a {
     transition: background 0.2s ease;
     border-bottom: 1px solid #f8f9fa;
 
-    &:last-child {
-      border-bottom: none;
-    }
-
     &:hover {
       background-color: #f4f5f8;
     }

@@ -1,124 +1,83 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-
-import { ToastModule } from 'primeng/toast';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject, takeUntil } from 'rxjs';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { MessageService } from 'primeng/api';
-import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { SpinnerComponent } from '../../../../../components/spinner/spinner.component';
+import { TravelService } from '../../../../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-tercer-paso',
   standalone: true,
   imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MatDatepickerModule,
-    MatCardModule,
-    MatInputModule,
-    MatFormFieldModule,
-    GoogleMapsModule,
-    MatButtonModule,
-    ToastModule,
-    MatIconModule,
-    NgxSpinnerModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    SpinnerComponent
+    IonicModule, CommonModule, FormsModule, RouterModule,
+    MatCardModule, GoogleMapsModule, MatButtonModule, 
+    MatIconModule, NgxSpinnerModule, MatProgressSpinnerModule, SpinnerComponent
   ],
   templateUrl: './tercer-paso.component.html',
   styleUrls: ['./tercer-paso.component.scss'],
 })
-export class TercerPasoComponent implements OnInit {
+export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  @ViewChild(GoogleMap) googleMap!: GoogleMap;
   @ViewChild('mapContainer') mapContainer?: ElementRef;
+
   mapCenter = { lat: 40.4168, lng: -3.7038 };
   zoom = 12;
   routes: google.maps.DirectionsRoute[] = [];
   selectedRoute: google.maps.DirectionsResult | null = null;
-
   origen: string = '';
   destino: string = '';
-  hora_seleccionada: string = '';
-  plazas: string = '';
-
   waypoints: google.maps.DirectionsWaypoint[] = [];
 
   private directionsService!: google.maps.DirectionsService;
   private directionsRenderer!: google.maps.DirectionsRenderer;
   private destroy$ = new Subject<void>();
 
-  sugerenciasParadas: any[] = [];
+  isLoadingRoutes = false;
+  isUpdatingRoute = false;
+  rutaConParadasSeleccionada = false;
+  marcaPeajes = true;
+  apiCargada = false;
 
-  /**
-   *  Variables para las validaciones necesarias.
-   */
-  cargandoSugerencias: boolean = false;
-  segundo_paso: boolean = false;
-  tercer_paso: boolean = false;
-  cuarto_paso: boolean = false;
-  isLoadingRoutes: boolean = false;
-  rutaConParadasSeleccionada: boolean = false;
-  isUpdatingRoute: boolean = false;
-  marcaPeajes: boolean = true;
-  clickMapaParada: boolean = true;
-
-  paradasSeleccionadas = new Set<string>();
-
-  @ViewChild(GoogleMap) googleMap!: GoogleMap;
-
-  currentViajeData: any;
-
-  /**
-   * Configuración para mostrar diferentes opciones en el mapa.
-   *
-   */
   mapOptions: google.maps.MapOptions = {
     streetViewControl: false,
     fullscreenControl: false,
+    mapTypeControl: false
   };
 
-  markerOrigin: google.maps.LatLngLiteral | null = null;
-  apiCargada: boolean = false;
-
+  // ESTILO DE RUTA: Violeta sólido sin puntos
   public directionsOptions: google.maps.DirectionsRendererOptions = {
     polylineOptions: {
-      strokeColor: '#B7E0B4', // Tu color personalizado
+      strokeColor: '#7B61FF',
       strokeOpacity: 1.0,
       strokeWeight: 6,
     },
-    suppressMarkers: false, // Mantener marcadores A y B
+    suppressMarkers: false,
+    preserveViewport: false
   };
 
-  constructor(private router: Router,
-    private travelService: TravelService,
-    private messageService: MessageService,
-    private spinner: NgxSpinnerService) {
+  markerOrigin: google.maps.LatLngLiteral | null = null;
 
-  }
+  constructor(private travelService: TravelService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
+    this.validarCargaGoogleMaps();
+    this.escucharCambiosViaje();
+  }
+
+  private validarCargaGoogleMaps() {
     if (typeof google !== 'undefined' && google.maps) {
       this.apiCargada = true;
       this.inicializarServiciosMapas();
     } else {
-      // Si no está, podemos esperar un poco o escuchar un evento de carga
-      // Esta es una solución rápida para desarrollo:
       const checkGoogle = setInterval(() => {
         if (typeof google !== 'undefined' && google.maps) {
           this.apiCargada = true;
@@ -127,487 +86,119 @@ export class TercerPasoComponent implements OnInit {
         }
       }, 500);
     }
+  }
 
+  private escucharCambiosViaje() {
     this.travelService.viajeData$
-      .pipe(takeUntil(this.destroy$)) // Elimina la suscripción al salir del componente.
+      .pipe(takeUntil(this.destroy$))
       .subscribe((viajeData) => {
-        this.selectedRoute = viajeData?.ruta_seleccionada || null;
-        this.currentViajeData = viajeData;
-        const nuevoOrigen = viajeData?.origen || 'Sin especificar';
-        const nuevoDestino = viajeData?.destino || 'Sin especificar';
+        const nuevoOrigen = viajeData?.origen || '';
+        const nuevoDestino = viajeData?.destino || '';
 
-        /**
-         * Hacemos una validación para ejecutar la función solo en caso
-         * de que el origen y el destino estén correctos.
-         * -----------------------------------------------------------
-         */
-        if (
-          nuevoOrigen !== 'Sin especificar' &&
-          nuevoDestino !== 'Sin especificar' &&
-          (nuevoOrigen !== this.origen || nuevoDestino !== this.destino)
-        ) {
+        if (nuevoOrigen && nuevoDestino && (nuevoOrigen !== this.origen || nuevoDestino !== this.destino)) {
           this.origen = nuevoOrigen;
           this.destino = nuevoDestino;
-          this.buscarRutas(this.origen, this.destino);
+          this.buscarRutas(this.origen, this.destino, !this.marcaPeajes);
         }
       });
   }
 
-
   ngAfterViewInit() {
     setTimeout(() => {
-      if (this.googleMap?.googleMap) {
+      if (this.googleMap?.googleMap && this.directionsRenderer) {
         this.directionsRenderer.setMap(this.googleMap.googleMap);
-      } else {
-        console.error('El mapa aún no está disponible.');
       }
-    }, 500);
+    }, 1000);
   }
 
   private inicializarServiciosMapas() {
     this.directionsService = new google.maps.DirectionsService();
-    this.directionsRenderer = new google.maps.DirectionsRenderer({
-      polylineOptions: {
-        strokeColor: '#B7E0B4',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-      },
-      suppressMarkers: false,
-    });
+    this.directionsRenderer = new google.maps.DirectionsRenderer(this.directionsOptions);
   }
 
-  /**
-   * Función para saber si se está marcando la opción "Con peajes" o "Sin peajes"
-   * Cada vez que se cambia la opción se vuelven a buscar las rutas,
-   * pero cambiando la opción que incluya los peajes.
-   *
-   * @param event Información del input seleccionado.
-   */
   onPeajeOptionChange(event: any): void {
-    const evitarPeajes = event.target.id === 'sinPeajes';
-    this.buscarRutas(this.origen, this.destino, evitarPeajes);
-    this.routes = [];
+    this.marcaPeajes = event.target.id === 'peajes';
+    this.buscarRutas(this.origen, this.destino, !this.marcaPeajes);
   }
 
-  /**
-   * Función para obtener el click que se ha realizado en el mapa.
-   * Recibe la ubicación marcada y actualiza la ruta seleccionada.
-   * 
-   * @param event Recibe el click en el mapa de Google
-   */
-  onMapClick(event: google.maps.MapMouseEvent) {
-    if (event.latLng && typeof event.latLng.lat === 'function') {
-      const latLng = event.latLng;
-
-      this.markerOrigin = { lat: latLng.lat(), lng: latLng.lng() };
-
-      this.routes = [];
-      this.selectedRoute = null;
-
-      const geocoder = new google.maps.Geocoder();
-      this.spinner.show();
-
-      geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          this.origen = results[0].formatted_address;
-
-          const currentData = this.travelService.getViajeData();
-          this.travelService.setViajeData({
-            ...currentData,
-            origen: this.origen,
-            coordsOrigen: this.markerOrigin
-          });
-
-          this.buscarRutas(latLng, this.destino, !this.marcaPeajes);
-        } else {
-          this.spinner.hide();
-        }
-      });
-    }
-  }
-
-  /**
-  * Función para buscar rutas.
-  * --------------------------
-  * Esta función utiliza un servicio propio de Google: "directionsService"
-  * Dicho servicio nos devuelve una lista de rutas que van en función de los parámetros que
-  * se le pasan, como pueden ser el origen y el destino.
-  *
-  * @param origen -> Lugar de origen del viaje
-  * @param destino -> Lugar de destino del viaje
-  * @returns Devuelve una lista de rutas sugeridas en función del Origen y Destino
-  */
-  buscarRutas(
-    origen: string | google.maps.LatLng | google.maps.LatLngLiteral,
-    destino: string,
-    evitarPeajes: boolean = false
-  ): void {
-    if (!origen || !destino) {
-      console.error('Faltan datos');
-      return;
-    }
-
+  buscarRutas(origen: any, destino: string, evitarPeajes: boolean = false): void {
+    if (!origen || !destino) return;
     this.isLoadingRoutes = true;
     this.spinner.show();
+    this.rutaConParadasSeleccionada = false;
 
-    const currentViajeData = this.travelService.getViajeData();
-    const fechaSalida = currentViajeData.fecha_salida ? new Date(currentViajeData.fecha_salida) : new Date();
-
-    this.directionsService.route(
-      {
-        origin: origen,
-        destination: destino,
-        travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true,
-        drivingOptions: {
-          departureTime: fechaSalida,
-          trafficModel: google.maps.TrafficModel.OPTIMISTIC,
-        },
-        unitSystem: google.maps.UnitSystem.METRIC,
-        region: 'ES',
-        avoidTolls: evitarPeajes,
-      },
-      (response, status) => {
-        this.spinner.hide();
-        this.isLoadingRoutes = false;
-
-        if (status === 'OK' && response) {
-          // Actualizamos las rutas para el *ngFor de la izquierda
-          this.routes = response.routes;
-
-          // Sincronizamos el marcador de peajes
-          this.marcaPeajes = !response.request.avoidTolls;
-
-          this.directionsRenderer.setOptions({
-            polylineOptions: {
-              strokeColor: '#B7E0B4',
-              strokeWeight: 6,
-              strokeOpacity: 0.9
-            }
-          });
-
-          // Pintamos la ruta en el mapa
-          this.directionsRenderer.setDirections(response);
-
-          // Seleccionamos la primera por defecto para que aparezca la info detallada
-          this.selectRoute(0);
-        } else {
-          console.error('Error de Directions:', status);
-          this.routes = [];
-        }
+    this.directionsService.route({
+      origin: origen,
+      destination: destino,
+      travelMode: google.maps.TravelMode.DRIVING,
+      provideRouteAlternatives: true,
+      avoidTolls: evitarPeajes,
+      region: 'ES'
+    }, (response, status) => {
+      this.spinner.hide();
+      this.isLoadingRoutes = false;
+      if (status === 'OK' && response) {
+        this.routes = response.routes;
+        this.directionsRenderer.setOptions(this.directionsOptions);
+        this.directionsRenderer.setDirections(response);
       }
-    );
-  }
-
-  /**
-   * Función para actualizar la ruta cuando se añade una parada.
-   * 
-   * @returns Devuelve la ruta personalizada
-   */
-  actualizarRuta() {
-    if (!this.origen || !this.destino) {
-      console.error("El origen y destino deben estar definidos.");
-      return;
-    }
-
-    this.isLoadingRoutes = true;
-
-    this.directionsService.route(
-      {
-        origin: this.origen,
-        destination: this.destino,
-        waypoints: this.waypoints,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: true,
-      },
-      (response, status) => {
-        this.isLoadingRoutes = false;
-
-        if (status === "OK" && response) {
-          if (status === "OK" && response) {
-            this.routes = response.routes;
-            this.selectedRoute = response;
-            this.directionsRenderer.setDirections(response);
-            this.rutaConParadasSeleccionada = true;
-
-            let distanciaTotal = 0;
-            let totalSegundos = 0;
-
-            for (let i = 0; i < response.routes[0].legs.length; i++) {
-              const leg = response.routes[0].legs[i];
-              distanciaTotal += leg.distance?.value || 0;
-              totalSegundos += leg.duration?.value || 0;
-            }
-
-            const distancia = Math.round(distanciaTotal / 1000);
-            const duracionHoras = Math.floor(totalSegundos / 3600);
-            const duracionMinutos = Math.floor((totalSegundos % 3600) / 60);
-            const tiempoTotalFormato = `${duracionHoras.toString().padStart(2, '0')}:${duracionMinutos.toString().padStart(2, '0')}`;
-
-            const datosFrescos = this.travelService.getViajeData();
-            const horaSalida = datosFrescos?.hora_salida || "00:00";
-            
-            const horaLlegadaFormato = this.calcularHoraLlegada(horaSalida, duracionHoras, duracionMinutos);
-            
-            const nuevoViajeData = {
-              ...this.travelService.getViajeData(),
-              distanciaTotal: distancia,
-              tiempoTotal: tiempoTotalFormato,
-              hora_llegada: horaLlegadaFormato
-            };
-            this.travelService.setViajeData(nuevoViajeData);
-
-            localStorage.setItem('rutaConParadas', JSON.stringify({
-              ...nuevoViajeData,
-              waypoints: this.waypoints,
-              selectedRoute: response,
-            }));
-          }
-
-        } else {
-          console.error("Error al actualizar la ruta:", status);
-        }
-      }
-    );
-  }
-
-  /**
-   * Función para obtener un listado de ciudades que estén en el 
-   * paso de una ruta seleccionada previamente.
-   * 
-   * @param puntosRuta Devuelve una lista de sugerencias para las paradas.
-   */
-  buscarCiudadesCercanas(puntosRuta: google.maps.LatLng[]) {
-    this.cargandoSugerencias = true;
-    const geocoder = new google.maps.Geocoder();
-    const ciudadesDetectadas: Set<string> = new Set();
-
-    puntosRuta.forEach((punto, index) => {
-      setTimeout(() => {  // Aplica un retraso progresivo para evitar límites
-        geocoder.geocode({ location: punto }, (results, status) => {
-          if (status === "OK" && results?.length) {
-            const ciudad = results.find((r) =>
-              r.types.includes("locality") || r.types.includes("administrative_area_level_2")
-            );
-
-            if (ciudad) {
-              ciudadesDetectadas.add(ciudad.formatted_address);
-            }
-          }
-
-          // Verifica al final de todas las peticiones
-          if (index === puntosRuta.length - 1) {
-            this.sugerenciasParadas = Array.from(ciudadesDetectadas).map((nombre) => ({
-              nombre,
-              distancia: "En la ruta",
-            }));
-
-            this.cargandoSugerencias = false;
-          }
-        });
-      }, index * 3000);
     });
   }
 
-
-  /**
-   * Función para actualizar la lista de sugerencias
-   * de paradas en la ruta preseleccionada. 
-   * 
-   * @returns 
-   */
-  obtenerCiudadesEnRuta() {
-    if (!this.selectedRoute) {
-      console.error('No hay una ruta seleccionada.');
-      return;
-    }
-    const puntosRuta: google.maps.LatLng[] = [];
-    // Recorre todos los segmentos de la ruta
-    this.selectedRoute.routes[0].legs.forEach((leg) => {
-      leg.steps.forEach((step) => {
-        puntosRuta.push(step.start_location);
-        puntosRuta.push(step.end_location);
-      });
-    });
-
-    this.buscarCiudadesCercanas(puntosRuta);
-  }
-
-
-  /**
-   *    Función para poder seleccionar una parada
-   * 
-   * -> Esta función permite seleccionar una parada de la lista de 
-   *    sugerencias que nos devuelve el servicio de Google
-   * -> Y después añade dicha parada a la ruta.
-   * 
-   * @param parada 
-   */
-  seleccionarParada(parada: any) {
-    console.log('Parada seleccionada:', parada);
-
-    // Alternar la selección de la parada
-    if (this.paradasSeleccionadas.has(parada.nombre)) {
-      // Si la parada ya está seleccionada, la deseleccionamos
-      this.paradasSeleccionadas.delete(parada.nombre);
-      this.waypoints = this.waypoints.filter(wp => wp.location !== parada.nombre);
-    } else {
-      // Si la parada no está seleccionada, la agregamos
-      const nuevoWaypoint: google.maps.DirectionsWaypoint = {
-        location: parada.nombre,
-        stopover: true,
-      };
-
-      this.waypoints.push(nuevoWaypoint);
-      this.paradasSeleccionadas.add(parada.nombre);
-    }
-
-    // Actualizar la ruta con las nuevas paradas
-    this.actualizarRuta();
-  }
-
-  /**
-   * Función que se utiliza para seleccionar una ruta
-   * de la lista de rutas sugeridas previamente.
-   *
-   * @param index -> Índice de la ruta seleccionada.
-   */
   selectRoute(index: number): void {
-    if (!this.routes || this.routes.length === 0) {
-      console.error('No hay rutas disponibles.');
-      return;
-    }
-
+    if (!this.routes?.[index]) return;
+    this.rutaConParadasSeleccionada = true; 
     this.selectedRoute = {
       routes: [this.routes[index]],
       request: {} as google.maps.DirectionsRequest,
     } as google.maps.DirectionsResult;
 
+    this.directionsRenderer.setOptions(this.directionsOptions);
     this.directionsRenderer.setDirections(this.selectedRoute);
-    this.rutaConParadasSeleccionada = true;
-    this.cargandoSugerencias = false;
-
-    let distanciaTotal = 0;
-    let totalSegundos = 0;
-
-    if (this.selectedRoute.routes[0].legs) {
-      this.selectedRoute.routes[0].legs.forEach((leg) => {
-        distanciaTotal += leg.distance?.value || 0;
-        totalSegundos += leg.duration?.value || 0; 
-      });
-    }
-
-    const distancia = Math.round(distanciaTotal / 1000);
-    const duracionHoras = Math.floor(totalSegundos / 3600);
-    const duracionMinutos = Math.floor((totalSegundos % 3600) / 60);
-    const tiempoTotalFormato = `${duracionHoras.toString().padStart(2, '0')}:${duracionMinutos.toString().padStart(2, '0')}`;
-
-    const datosFrescos = this.travelService.getViajeData();
-    const horaSalida = datosFrescos?.hora_salida || "00:00";
-    
-    const horaLlegadaFormato = this.calcularHoraLlegada(horaSalida, duracionHoras, duracionMinutos);
-
-    const viajeData = {
-      ...this.travelService.getViajeData(),
-      ruta_seleccionada: this.selectedRoute,
-      distanciaTotal: distancia,
-      tiempoTotal: tiempoTotalFormato,
-      hora_llegada: horaLlegadaFormato 
-    };
-
-    this.travelService.setViajeData(viajeData);
-    localStorage.setItem('rutaSeleccionada', JSON.stringify(viajeData));
-
-    // this.obtenerCiudadesEnRuta();
+    this.procesarMetricasRuta(this.selectedRoute);
 
     setTimeout(() => {
-      const mapEl = document.getElementById('mapContainer');
-      if (mapEl) {
-        mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      document.getElementById('mapContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 250);
   }
 
-  /**
-   * Función para desplazar la vista al elemento HTML especificado.
-   * @param element Elemento HTML al que se quiere desplazar la vista.
-   */
-  scrollToElement(element: HTMLElement) {
-    const rect = element.getBoundingClientRect();
-    const absoluteY = window.pageYOffset + rect.top;
-    const duration = 2000; // Más lenta = más suave
-    const startY = window.scrollY;
-    const distance = absoluteY - startY;
-    const startTime = performance.now();
-
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const scroll = (currentTime: number) => {
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-      const ease = easeOutCubic(progress);
-
-      window.scrollTo(0, startY + distance * ease);
-
-      if (timeElapsed < duration) {
-        requestAnimationFrame(scroll);
-      }
-    };
-
-    requestAnimationFrame(scroll);
-  }
-
-
-
-  /**
-   * Función para eliminar la ruta que se ha seleccionado
-   * 
-   */
   eliminarRutaSeleccionada() {
-    // Eliminar la ruta seleccionada y restablecer los waypoints
-    this.selectedRoute = null;
-    this.waypoints = [];
-    this.paradasSeleccionadas.clear();
-
-    // Limpiar la vista del mapa
-    this.directionsRenderer.setDirections(this.selectedRoute);
-
-    // Eliminar la ruta de la memoria o del servicio
-    localStorage.removeItem('rutaConParadas');
-    this.travelService.setViajeData({
-      ...this.travelService.getViajeData(),
-      ruta_seleccionada: null,
-    });
-
-    // Resetear cualquier estado adicional necesario
     this.rutaConParadasSeleccionada = false;
-    this.sugerenciasParadas = [];
-    this.cargandoSugerencias = false;
-
-    this.buscarRutas(this.origen, this.destino);
+    this.selectedRoute = null;
+    this.directionsRenderer.setDirections({ routes: [] } as any);
+    this.buscarRutas(this.origen, this.destino, !this.marcaPeajes);
   }
 
-
-  /**
-   * Suma una duración (horas y minutos) a una hora de inicio string "HH:mm"
-   */
-  private calcularHoraLlegada(horaInicio: string, sumarHoras: number, sumarMinutos: number): string {
-    const [horasStr, minutosStr] = horaInicio.split(':');
-    let horas = parseInt(horasStr);
-    let minutos = parseInt(minutosStr);
-
-    minutos += sumarMinutos;
-    horas += Math.floor(minutos / 60);
-    minutos = minutos % 60;
-
-    // Sumar horas
-    horas += sumarHoras;
-    horas = horas % 24;
-
-    const hFinal = horas.toString().padStart(2, '0');
-    const mFinal = minutos.toString().padStart(2, '0');
-
-    return `${hFinal}:${mFinal}`;
+  private procesarMetricasRuta(result: google.maps.DirectionsResult) {
+    let dist = 0, seg = 0;
+    result.routes[0].legs.forEach(l => {
+      dist += l.distance?.value || 0;
+      seg += l.duration?.value || 0;
+    });
+    const info = {
+      ...this.travelService.getViajeData(),
+      distanciaTotal: Math.round(dist / 1000),
+      tiempoTotal: `${Math.floor(seg/3600).toString().padStart(2,'0')}:${Math.floor((seg%3600)/60).toString().padStart(2,'0')}`,
+      ruta_seleccionada: result
+    };
+    this.travelService.setViajeData(info);
+    localStorage.setItem('rutaSeleccionada', JSON.stringify(info));
   }
 
+  onMapClick(event: google.maps.MapMouseEvent) {
+    if (event.latLng) {
+      this.markerOrigin = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+      new google.maps.Geocoder().geocode({ location: event.latLng }, (res, stat) => {
+        if (stat === 'OK' && res?.[0]) {
+          this.origen = res[0].formatted_address;
+          this.buscarRutas(this.origen, this.destino, !this.marcaPeajes);
+        }
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

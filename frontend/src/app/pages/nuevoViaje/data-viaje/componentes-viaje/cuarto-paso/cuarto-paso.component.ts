@@ -4,13 +4,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 
 import viajeMock from '../../../../../../assets/mocks/viaje.mock.json'
+import { TravelService } from '../../../../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-cuarto-paso',
@@ -170,11 +170,13 @@ export class CuartoPasoComponent implements OnInit {
   }
 
 
+  /**
+   * Función para sumar cantidad al precio recomendado al usuario
+   */
   sumarCantidad() {
     if (this.precio < this.max) {
       this.precio++;
-    }
-
+    } 
     if (this.precio >= this.max) {
       this.messageService.add({
         severity: 'error',
@@ -185,11 +187,13 @@ export class CuartoPasoComponent implements OnInit {
     }
   }
 
+  /**
+   * Función para restar cantidad al precio recomendado al usuario
+   */
   restarCantidad() {
     if (this.precio > this.min) {
       this.precio--;
-    }
-
+    } 
     if (this.precio <= this.min) {
       this.messageService.add({
         severity: 'error',
@@ -199,6 +203,10 @@ export class CuartoPasoComponent implements OnInit {
       });
     }
   }
+
+  /**
+   * Función para cambiar el color del precio
+   */
   getprecioColor(): string {
     const ratio = this.precio / this.max;
 
@@ -207,6 +215,9 @@ export class CuartoPasoComponent implements OnInit {
     return '#e74c3c';
   }
 
+  /**
+   * Función para mostrar un mensaje de ayuda sobre el precio.
+   */
   ayudaPrecio() {
     this.messageService.add({
       severity: 'warn',

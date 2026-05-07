@@ -1,23 +1,17 @@
-import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, NavController } from '@ionic/angular';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { ActivatedRoute } from '@angular/router';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
-import { ViajeSeleccionadoComponent } from 'src/app/components/viaje-seleccionado/viaje-seleccionado.component';
-import { Viaje } from 'src/app/models/travel/viaje.model';
 import { MatDialog } from '@angular/material/dialog';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
-import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { PuntuacionesComponent } from 'src/app/components/puntuaciones/puntuaciones.component';
-import { Observable } from 'rxjs';
-
+import { Subject, takeUntil } from 'rxjs';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { Usuario } from '../../models/user/usuario.model';
+import { Viaje } from '../../models/travel/viaje.model';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
 
 @Component({
   selector: 'app-perfil-publico',
@@ -28,17 +22,12 @@ import { Observable } from 'rxjs';
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-      useValue: {
-        showDelay: 500,
-        hideDelay: 200,
-        touchGestures: 'auto',
-        position: 'below'
-      }
+      useValue: { showDelay: 500, hideDelay: 200, touchGestures: 'auto', position: 'below' }
     }
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class PerfilPublicoPage implements OnInit {
+export class PerfilPublicoPage implements OnInit, OnDestroy {
 
   userLoggedIn: boolean = false;
   usuarioParams: any = {};
@@ -46,125 +35,82 @@ export class PerfilPublicoPage implements OnInit {
   editar_perfil: boolean = false;
   userData: Usuario = {} as Usuario;
   preferenciasViaje: string[] = [];
+  
+  misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
-  misViajes: Viaje[] = [];
+  
+  // Imágenes
   imagenCabeceraSrc: string = '../../../assets/imgs/bridge1.jpg';
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
-  filtroViajes: string = 'todos';
+  
   cargando = false;
-  pasajero: boolean = false;
-  conductor: boolean = false;
-  notificacionLeida: boolean = false;
-  busquedaParams: any = {};
+  filtroViajes: string = 'todos';
+  notificacionInterval: any;
+  private destroy$ = new Subject<void>();
 
-  urlPrevia: string = '';
   urlParaVolver: string = '';
-
-  private _bottomSheet = inject(MatBottomSheet);
 
   constructor(
     private route: ActivatedRoute,
     public funcionesComunes: FuncionesComunes,
     private userService: UserServicesService,
-    private notificacionesService: NotificacionesService,
-    private travelService: TravelService,
     private dialog: MatDialog,
     private navCtrl: NavController
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-    this.route.queryParams.subscribe((params) => {
+    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.usuarioParams = params;
       const userId = parseInt(this.usuarioParams.id, 10);
-      this.obtenerUsuarioPorID(userId);
-      this.validacionPerilLogeado(userId);
-      this.obtenerViajesComoAcompanante();
-      this.obtenerViajesCreados();
+      
+      this.cargarDatosPerfil(userId);
+      this.urlParaVolver = this.comprobarUrls(localStorage.getItem('url_anterior') || '');
     });
-    this.urlPrevia = localStorage.getItem('url_anterior') || '';
-    this.urlParaVolver = this.comprobarUrls(this.urlPrevia);
-    this.comprobarNotificaciones();
-    /**
-     * Se comprueba cada 10 segundos si el usuario tiene notificaiones
-     * en algún viaje en los que es conductor.
-     */
-    setInterval(() => {
-      this.comprobarNotificaciones();
-    }, 10000);
   }
 
-
-  /**
-   * Función para obtener la url desde la que proviene el usuario.
-   * 
-   * Se va a utilizar para poder permitir regresar a diferentes urls
-   * dependiendo desde donde se acceda a este.
-   * 
-   * 
-   * @param urlAnterior 
-   * @returns 
-   */
-  comprobarUrls(urlAnterior: string): string {
-    switch (urlAnterior) {
-      case '/busqueda-viajes':
-        return '/busqueda-viajes';
-      case '/panel-usuario':
-        return '/panel-usuario';
-      case '/mi-perfil':
-        return '/mi-perfil';
-      default:
-        return '';
-    }
+  ngOnDestroy() {
+    if (this.notificacionInterval) clearInterval(this.notificacionInterval);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
-   * Función para obtener las notificaciones del usuario logado
-   * Además se obtienen las notificaciones pertenecientes a cada viaje.
+   * Función para cargar los datos necesarios del usuario
    * 
-   * 
+   * @param userId --> Recibe el ID del usuario que va a mostrar sus datos
    */
-  comprobarNotificaciones(): void {
-    this.notificacionesService.obtenerNotificaciones(this.usuarioParams.id).subscribe(
-      (notificaciones) => {
-        if (notificaciones && notificaciones.length > 0) {
-          this.notificacionesService.notificacionPendiente = notificaciones;
-          this.notificacionesService.esCreadorDelViaje = true;
-          notificaciones.forEach((notificacion: any) => {
-            this.notificacionesService.obtenerNotificacionesDeUnViaje(notificacion.viaje_id).subscribe(
-              (respuesta) => {
-                if (respuesta[0].leida === true) {
-                  this.notificacionLeida = true;
-                } else {
-                  this.notificacionLeida = false;
-                }
-                const viaje = this.misViajes.find(v => v.id === notificacion.viaje_id);
-                if (viaje) {
-                  viaje.notificaciones = respuesta;
-                }
-              }
-            );
-          });
-        } else {
-          this.notificacionesService.notificacionPendiente = null;
-          this.notificacionesService.esCreadorDelViaje = false;
-        }
+  private cargarDatosPerfil(userId: number) {
+    this.cargando = true; 
+
+    this.userService.obtenerUsuarioPorID(userId).subscribe({
+      next: (resultadoUsuario) => {
+        this.usuario = resultadoUsuario;
+        this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario.preferencias);
+        
+        this.validacionPerilLogeado(userId);
+
+        setTimeout(() => {
+          this.cargando = false;
+        }, 300);
       },
-      (error) => {
-        console.error('Error al obtener notificaciones:', error);
+      error: (error) => {
+        console.error('Error al cargar perfil:', error);
+        this.cargando = false; 
       }
-    );
+    });
   }
 
-
   /**
-   * Función para obtener los datos de un usuario
-   * @param id_usuario Recibe el ID del usuario que está logado
+   * Función para obtener los datos de un usuario.
+   * 
+   * @param id_usuario --> Recibe el id del usuario que se quiere buscar.
    */
   obtenerUsuarioPorID(id_usuario: number) {
+    this.cargando = true;
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
       this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario.preferencias);
@@ -172,227 +118,75 @@ export class PerfilPublicoPage implements OnInit {
   }
 
   /**
-   * Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
-   */
-  obtenerViajesComoAcompanante() {
-    this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesAcompanante = result;
-        this.filtrarViajes();
-      });
-  }
-
-  /**
-   * Función para obtener la lista de viajes que ha creado el usuario
-   */
-  obtenerViajesCreados() {
-    this.travelService.getViajesUsuario(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesCreados = result.viajes;
-        this.misViajesCreados.forEach((viaje) => {
-          this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-            viaje.usuario = usuario;
-          });
-        })
-        this.filtrarViajes();
-      });
-  }
-
-
-  obtenerUsuario(id_usuario: number): Observable<Usuario> {
-    return this.userService.obtenerUsuarioPorID(id_usuario);
-  }
-
-  /**
-   * Función para filtrar los viajes según el filtro seleccionado
-   */
-  filtrarViajes() {
-    if (this.filtroViajes === 'todos') {
-      this.misViajes = [...this.misViajesAcompanante, ...this.misViajesCreados];
-      this.conductor = false;
-      this.pasajero = false;
-    } else if (this.filtroViajes === 'conductor') {
-      this.misViajes = [...this.misViajesCreados];
-      this.conductor = true;  // El usuario es conductor
-      this.pasajero = false;
-    } else if (this.filtroViajes === 'pasajero') {
-      this.misViajes = [...this.misViajesAcompanante];
-      this.conductor = false; // El usuario es pasajero
-      this.pasajero = true;
-    }
-  }
-
-  /**
-   * Función para abrir una modal con los detalles del viaje seleccionado
-   * @param viaje Recibe la información del viaje seleccionado.
-   */
-  openDetalleViaje(viaje: Viaje) {
-    this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-      viaje.usuario = usuario;
-    });
-    this.dialog.open(ViajeSeleccionadoComponent, {
-      data: { viaje }
-    });
-  }
-
-  /**
-   * Función para modificar la imagen de la cabecera
+   * Función para poder cambiar la imagen de cabecera o de perfil.
    * 
-   * @param event Recibe la información del input de la imagen
+   * @param event --> Recibe la información del evento del input seleccionado.
+   * @param tipo --> Recibe un String con el tipo de información para saber a donde pertenece la imagen que se quiere cambiar.
    */
-  onImageChange(event: Event) {
+  onImageChange(event: Event, tipo: 'cabecera' | 'perfil') {
     const input = event.target as HTMLInputElement;
+    if (!input.files || !input.files[0]) return;
+
     this.cargando = true;
-    if (input.files && input.files[0]) {
-      const formData = new FormData();
+    const formData = new FormData();
+    const usuarioId = this.userData.usuario.id;
+
+    if (tipo === 'cabecera') {
       formData.append('imagenCabecera', input.files[0]);
-
-      const usuarioId = this.userData.usuario.id;
-
       this.userService.actualizarImagenCabecera(usuarioId, formData).subscribe({
-        next: (response) => {
-          this.cargando = false;
-          if (response && response.url) {
-            this.imagenCabeceraSrc = response.url;
-          }
-          this.obtenerUsuarioPorID(usuarioId);
-        },
-        error: (error) => {
-          console.error('Error al actualizar la imagen de cabecera:', error);
-        }
+        next: (res) => this.finalizarCargaImagen(res.url, 'cabecera'),
+        error: () => this.cargando = false
       });
-    }
-  }
-
-  /**
-   * Función para modificar la imagen del perfil
-   * 
-   * @param event Recibe la información del input de la imagen
-   */
-  onImageChangePerfil(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.cargando = true;
-    if (input.files && input.files[0]) {
-      const formData = new FormData();
-      formData.append('imagenPerfil', input.files[0]);
-
-      const usuarioId = this.userData.usuario.id;
-
-      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
-        next: (response) => {
-          this.cargando = false;
-          if (response && response.nuevaUrl) {
-            this.imagenPerfilSrc = response.nuevaUrl;
-          }
-          this.obtenerUsuarioPorID(usuarioId);
-        },
-        error: (error) => {
-          console.error('Error al actualizar la imagen del perfil:', error);
-        }
-      });
-    }
-  }
-
-  /**
-   * Función para validar si el perfil es el del usuario logueado
-   * 
-   * @param id_usuario Recibe el ID del usuario.
-   */
-  validacionPerilLogeado(id_usuario: number) {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (id_usuario === this.userData.usuario.id) {
-      this.editar_perfil = true;
     } else {
-      this.editar_perfil = false;
+      formData.append('imagenPerfil', input.files[0]);
+      this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
+        next: (res) => this.finalizarCargaImagen(res.nuevaUrl, 'perfil'),
+        error: () => this.cargando = false
+      });
     }
   }
 
   /**
-   * Función para validar si se puede puntuar un viaje o no.
+   * Función para obtener la información de la imagen
+   */
+  private finalizarCargaImagen(url: string, tipo: 'cabecera' | 'perfil') {
+    this.cargando = false;
+    if (tipo === 'cabecera') this.imagenCabeceraSrc = url;
+    else this.imagenPerfilSrc = url;
+    this.obtenerUsuarioPorID(this.userData.usuario.id);
+  }
+
+  /**
+   * Función para validar el perfil que está visualizando el perfil.
+   * Esto se utiliza para saber si es el propio usuario logado el que está visualizando
+   * la ventana.
+   * Si es así, le aparecen las opciones de edición de la información.
    * 
-   * @param viaje 
+   * @param id_usuario_perfil --> Recibe el ID del usuario.
    */
-  puedePuntuar(viaje: Viaje): boolean {
-    const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
-    const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
-    const esCreador = viaje.usuario_id === this.userData.usuario.id;
-
-    // Solo se puede puntuar si el viaje ha finalizado, si es pasajero (no creador) y si no es el creador
-    return esFinalizado && esPasajero && !esCreador;
+  validacionPerilLogeado(id_usuario_perfil: number) {
+    this.editar_perfil = (id_usuario_perfil === this.userData.usuario.id);
   }
 
   /**
-   * Función para eliminar un viaje.
-   * 
-   * @param viajeId 
+   * Función para comprobar la url desde la que se accede a esta ventana.
+   * Esto se utiliza para poder regresar al mismo punto desde el que se accedió a esta ventana.
+   *  
+   * @param urlAnterior --> Recibe la url desde la que se ha accedido a esta ventana.
    */
-  eliminarViaje(viajeId: number) {
-    this.travelService.eliminarViaje(viajeId).subscribe({
-      next: () => {
-        console.log('Viaje eliminado con éxito.');
-        this.obtenerViajesCreados();
-      },
-      error: (error) => {
-        console.error('Error al eliminar el viaje:', error);
-      }
-    });
+  comprobarUrls(urlAnterior: string): string {
+    const rutasValidas = ['/busqueda-viajes', '/panel-usuario', '/mi-perfil'];
+    return rutasValidas.includes(urlAnterior) ? urlAnterior : '/panel-usuario';
   }
 
-  /**
-   * Función para que un usuario salga de un viaje
-   * @param viajeId ID del viaje
-   */
-  salirDeViaje(viajeId: number) {
-    this.cargando = true;
-    this.travelService.salirDeViaje(viajeId).subscribe({
-      next: () => {
-        this.cargando = false;
-        console.log('El usuario ha salido del viaje con éxito');
-        this.obtenerViajesComoAcompanante();
-        this.obtenerViajesCreados();
-        this.comprobarNotificaciones();
-      },
-      error: (error) => {
-        this.cargando = false;
-        console.error('Error al salir del viaje:', error);
-      }
-    });
-  }
 
   /**
-   * Función para poder leer las notificaciones del viaje
+   * Función para redirigir a la ventana "mi-perfil"
+   * para editar los datos del usuario que se van a mostrar aquí.
    * 
    */
-  leerNotificacion(notificaciones: any): void {
-    this.notificacionesService.leerNotificacion(notificaciones);
+  irAEditarPerfil() {
+    this.navCtrl.navigateForward('/mi-perfil');
   }
 
-  /**
-   * Función para saber si tiene notificaciones pendientes en el viaje.
-   * 
-   * @returns Devuelve las notificaciones que tenga el viaje
-   */
-  tieneNotificacionPendiente(): boolean {
-    return this.notificacionesService.tieneNotificacionPendiente();
-  }
-
-  /**
-   * Función para puntuar un viaje
-   */
-  puntuarViaje() {
-    this._bottomSheet.open(PuntuacionesComponent);
-  }
-
-  /**
-   * Función para poder editar un viaje
-   * @param viaje_id 
-   */
-  editarViaje(viaje_id: number) {
-    const viaje = {
-      id: viaje_id
-    }
-    this.navCtrl.navigateRoot('/resumen-viaje', {
-      queryParams: viaje,
-    });
-  }
 }
