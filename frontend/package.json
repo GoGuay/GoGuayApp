@@ -38,6 +38,7 @@
     "@primeng/themes": "^19.0.5",
     "@types/google.maps": "^3.58.1",
     "cally": "^0.7.2",
+    "chart.js": "^4.5.1",
     "font-awesome": "^4.7.0",
     "ionicons": "^7.0.0",
     "leaflet": "^1.9.4",

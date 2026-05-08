@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { IonicModule, NavController } from "@ionic/angular";
 import { addIcons } from 'ionicons';
 import { peopleOutline, mailUnreadOutline, eyeOutline, lockClosedOutline, lockOpenOutline } from 'ionicons/icons';
@@ -7,6 +7,8 @@ import { UserServicesService } from "../../core/user-services/user-services.serv
 import { NavbarAdmin } from "./shared-admin/navbar-admin/navbar-admin.page";
 import { FuncionesComunes } from "../../core/funciones-comunes/funciones-comunes.service";
 import { Usuario } from "../../models/user/usuario.model";
+import { Chart, registerables } from 'chart.js';
+import { EncuestaService } from "../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service";
 
 @Component({
     selector: 'app-admin',
@@ -16,6 +18,8 @@ import { Usuario } from "../../models/user/usuario.model";
     imports: [CommonModule, IonicModule, NavbarAdmin]
 })
 export class AdminApp implements OnInit {
+    @ViewChild('barCanvas') private barCanvas!: ElementRef;
+    
     listaUsuarios: any[] = [];
     avatar: string = '../../../assets/User-Profile-PNG-Image.png';
 
@@ -41,10 +45,17 @@ export class AdminApp implements OnInit {
     mensajesPendientes = 5;
     usuariosRestringidos = 12;
 
+    barChart: any;
+    listaEncuestas: any[] = [];
+    promedioSatisfaccion: number = 0;
+    totalEncuestas: number = 0;
+
+
     constructor(
         public navCtrl: NavController,
         private userService: UserServicesService,
-        private funcionesComunes: FuncionesComunes) {
+        private funcionesComunes: FuncionesComunes,
+        private encuestaService: EncuestaService) {
 
         addIcons({ peopleOutline, mailUnreadOutline, eyeOutline, lockClosedOutline, lockOpenOutline });
     }
@@ -52,6 +63,8 @@ export class AdminApp implements OnInit {
     ngOnInit() {
         this.loadUserData();
         this.updateTime();
+        this.cargarEncuestas();
+
         setInterval(() => this.updateTime(), 1000);
 
         this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -63,6 +76,8 @@ export class AdminApp implements OnInit {
         this.obtenerUsuariosApp();
     }
 
+    ngAfterViewInit() {
+    }
 
     /**
      * Función para cargar los datos del usuario.
@@ -141,6 +156,87 @@ export class AdminApp implements OnInit {
         const now = new Date();
         this.hours = now.getHours().toString().padStart(2, '0');
         this.minutes = now.getMinutes().toString().padStart(2, '0');
+    }
+
+    cargarEncuestas() {
+        this.encuestaService.getTodasLasEncuestas().subscribe({
+            next: (res) => {
+                this.listaEncuestas = res || [];
+                this.totalEncuestas = this.listaEncuestas.length;
+                this.calcularMetricas();
+                
+                setTimeout(() => {
+                    this.initChart();
+                }, 200);
+            },
+            error: (err) => {
+                console.error("Error al cargar encuestas", err);
+                this.initChart(); 
+            }
+        });
+    }
+
+    calcularMetricas() {
+        if (this.totalEncuestas === 0) return;
+        const suma = this.listaEncuestas.reduce((acc, curr) => acc + curr.calificacion, 0);
+        this.promedioSatisfaccion = parseFloat((suma / this.totalEncuestas).toFixed(1));
+    }
+
+    initChart() {
+        if (!this.barCanvas) return;
+
+        const dataDistribution = [0, 0, 0, 0, 0];
+        
+        if (this.listaEncuestas.length > 0) {
+            this.listaEncuestas.forEach(e => {
+                if (e.calificacion >= 1 && e.calificacion <= 5) {
+                    dataDistribution[e.calificacion - 1]++;
+                }
+            });
+        }
+
+        if (this.barChart) {
+            this.barChart.destroy();
+        }
+
+        this.barChart = new Chart(this.barCanvas.nativeElement, {
+            type: 'bar',
+            data: {
+                labels: ['Pésimo', 'Regular', 'Bueno', 'Genial', 'Excelente'],
+                datasets: [{
+                    label: 'Nº de Valoraciones',
+                    data: dataDistribution,
+                    backgroundColor: ['#ffb7b7', '#f0d7b4', '#b3b5e6', '#b7e0b4', '#7B61FF'],
+                    borderRadius: 10,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: this.totalEncuestas === 0,
+                        text: 'Aún no se han recibido encuestas',
+                        color: '#999',
+                        font: { size: 16, weight: 'normal' },
+                        padding: { top: 100 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: this.totalEncuestas > 5 ? undefined : 5,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    }
+
+    goEncuestas() {
+        this.navCtrl.navigateForward(['/gestion-encuestas']);
     }
 
 }

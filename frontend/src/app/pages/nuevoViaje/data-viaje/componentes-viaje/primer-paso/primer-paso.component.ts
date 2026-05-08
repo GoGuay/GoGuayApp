@@ -9,16 +9,15 @@ import { LOCALE_ID } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { TravelService } from '../../../../../core/travel-services/travel.service';
+import { VehiculosServicesService } from '../../../../../core/vehiculos-services/vehiculos-services.service';
 
 registerLocaleData(localeEs);
 

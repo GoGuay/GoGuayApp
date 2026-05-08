@@ -163,5 +163,9 @@ export const routes: Routes = [
   {
     path: 'pago-reserva/:id',
     loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+  },
+  {
+    path: 'gestion-encuestas',
+    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then(m => m.GestionEncuestasPage)
   }
 ];

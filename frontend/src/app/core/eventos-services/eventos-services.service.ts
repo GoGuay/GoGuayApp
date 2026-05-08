@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, Observable, throwError } from "rxjs";
-import { API_URL_BASE } from "src/app/models/constantes/constantes.model";
-import { Evento } from "src/app/models/eventos/eventos";
+import { API_URL_BASE } from "../../models/constantes/constantes.model";
+import { Evento } from "../../models/eventos/eventos";
 
 @Injectable({ providedIn: 'root' })
 export class EventosServices {

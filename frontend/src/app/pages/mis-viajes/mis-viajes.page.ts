@@ -435,6 +435,10 @@ export class MisViajesPage implements OnInit {
       case 'finalizado':
         this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Finalizado');
         break;
+              
+      case 'proximo':
+        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Próximo');
+        break;
         
       case 'cancelado':
         this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Cancelado');

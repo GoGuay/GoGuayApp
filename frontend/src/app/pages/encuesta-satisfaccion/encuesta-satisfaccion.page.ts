@@ -8,6 +8,28 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
+import { EncuestaService } from '../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service';
+import { 
+  Chart, 
+  BarController, 
+  BarElement, 
+  CategoryScale, 
+  LinearScale, 
+  Tooltip, 
+  Legend,
+  Title
+} from 'chart.js';
+
+
+Chart.register(
+  BarController, 
+  BarElement, 
+  CategoryScale, 
+  LinearScale, 
+  Tooltip, 
+  Legend,
+  Title
+);
 
 @Component({
   selector: 'app-encuesta-satisfaccion',
@@ -36,16 +58,23 @@ export class EncuestaSatisfaccionPage implements OnInit {
 
   encuestaForm: FormGroup;
   aspectos = [
-    { nombre: 'Diseño' },
-    { nombre: 'Facilidad para buscar un viaje' },
-    { nombre: 'Localización de información relevante' },
-    { nombre: 'Comprensión de términos y reglas de uso' }
+    { nombre: 'Diseño y apariencia', icono: 'fi-rr-palette' },
+    { nombre: 'Facilidad para buscar viajes', icono: 'fi-rr-search' },
+    { nombre: 'Uso del Centro de Mensajes', icono: 'fi-rr-comments' }, 
+    { nombre: 'Sensación de seguridad y respeto', icono: 'fi-rr-shield-check' }, 
+    { nombre: 'Comprensión de las normas', icono: 'fi-rr-interrogation' }
   ];
 
   calificacionSeleccionada: number = 0; 
   estrellas = [1, 2, 3, 4, 5];
 
-  constructor(private dialog: MatDialog, private navCtrl: NavController, private fb: FormBuilder) { 
+  constructor(
+    private dialog: MatDialog, 
+    private navCtrl: NavController, 
+    private fb: FormBuilder,
+    private encuestaService: EncuestaService)
+    
+  { 
     this.encuestaForm = this.fb.group({
       recomendacion: [0, Validators.required],
       sugerencias: ['']
@@ -78,16 +107,31 @@ export class EncuestaSatisfaccionPage implements OnInit {
   }
 
   verificarEncuesta() {
-    console.log('Datos de la encuesta:', this.encuestaForm.value);
-    const titulo: string = 'Encuesta realizada correctamente';
-    const mensaje: string = 'Muchas gracias por realizar nuestra encuesta de satisfacción.';
-    const dialogRef = this.dialog.open(HelpModalComponent, {
-      data: { title: titulo, message: mensaje, showAcceptButton: true },
-      disableClose: true
+    if (this.encuestaForm.invalid || this.calificacionSeleccionada === 0) return;
+
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userId = userData?.usuario?.id;
+
+    this.encuestaService.enviarEncuesta(this.encuestaForm.value, userId).subscribe({
+      next: () => {
+        const dialogRef = this.dialog.open(HelpModalComponent, {
+          data: { 
+            title: '¡Gracias!', 
+            message: 'Tu opinión nos ayuda a hacer de PrideRide un lugar más seguro.', 
+            showAcceptButton: true 
+          },
+          disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+          this.navCtrl.navigateRoot('/home');
+        });
+      },
+      error: (err) => {
+        console.error('Error al enviar la encuesta', err);
+      }
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.navCtrl.navigateRoot('/home');
-    });
+  
   }
 
   getLabelRating(valor: number): string {

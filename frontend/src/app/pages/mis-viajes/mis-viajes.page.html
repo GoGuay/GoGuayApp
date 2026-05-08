@@ -27,6 +27,7 @@
           <ion-radio-group [value]="filtroSeleccionado" (ionChange)="onFiltroChange($event, filtroPopover)">
             <ion-item><ion-label>En curso</ion-label><ion-radio value="en_curso"></ion-radio></ion-item>
             <ion-item><ion-label>Finalizado</ion-label><ion-radio value="finalizado"></ion-radio></ion-item>
+            <ion-item><ion-label>Próximos</ion-label><ion-radio value="proximo"></ion-radio></ion-item>
             <ion-item><ion-label>Cancelado</ion-label><ion-radio value="cancelado"></ion-radio></ion-item>
             <ion-item><ion-label>Más recientes</ion-label><ion-radio value="recientes"></ion-radio></ion-item>
             <ion-item><ion-label>Más antiguos</ion-label><ion-radio value="antiguos"></ion-radio></ion-item>
@@ -152,10 +153,10 @@
                 <i class="fi fi-rr-attention-detail"></i>
               </button>
 
-              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)">
+              <button *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button *ngIf="conductor && !pasajero" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)">
+              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)">
                 <mat-icon>delete</mat-icon>
               </button>
 

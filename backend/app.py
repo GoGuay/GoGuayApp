@@ -25,6 +25,7 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.events.events_service import evento_blueprint
 from services.notifications.notifications_utils import notifications_blueprint
+from services.encuesta_satisfaccion.encuesta_satisfaccion import encuesta_bp
 from services.user import user_service
 
 import firebase_admin
@@ -117,6 +118,7 @@ def create_app():
     app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
     app.register_blueprint(evento_blueprint, url_prefix="/api/evento")
     app.register_blueprint(notifications_blueprint, url_prefix="/api/notifications")
+    app.register_blueprint(encuesta_bp, url_prefix="/api/encuesta")
 
  
     user_service.mail = mail
