@@ -1,7 +1,7 @@
 <app-navbar [origin]="'/nuevo-viaje'" [backRoute]="'/nuevo-viaje'" [searchRoute]="'search'"
   [isLoggedIn]="userLoggedIn"></app-navbar>
 <ion-content [fullscreen]="true">
-  <div *ngIf="mostrarJumbotron">
+  <div *ngIf="mostrarJumbotron && !cuarto_paso && !tercer_paso && !segundo_paso">
     <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
       [imageSrc]="'../../assets/folder/jumbo4.jpg'" [helpText]="'JUMBOTRON.HELP'">
     </app-jumbotron>

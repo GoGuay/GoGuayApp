@@ -95,6 +95,91 @@ def crear_viaje():
     }), 201
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA EDITAR UN VIAJE EXISTENTE CON AVISO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/editar_viaje/<int:viaje_id>', methods=['PUT'])
+def editar_viaje(viaje_id):
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
+
+    if 'fecha_salida' in data:
+        fecha_salida_str = data['fecha_salida']
+        formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d']
+        fecha_salida = None
+        for formato in formatos_fecha:
+            try:
+                fecha_salida = datetime.strptime(fecha_salida_str, formato)
+                break
+            except ValueError:
+                continue
+        if fecha_salida:
+            viaje.fecha_salida = fecha_salida
+
+    if 'coche' in data:
+            coche = data.get('coche')
+            vehiculo_id = coche.get('id') if isinstance(coche, dict) else coche
+            usuario_id = data.get('usuario_id', viaje.usuario_id)
+            
+            vehiculo = Vehiculo.query.filter_by(id=vehiculo_id, usuario_id=usuario_id).first()
+            if not vehiculo:
+                return jsonify({"error": "El nuevo vehículo no pertenece al usuario"}), 400
+            viaje.vehiculo = vehiculo_id
+
+    viaje.origen = data.get('origen', viaje.origen)
+    viaje.destino = data.get('destino', viaje.destino)
+    viaje.plazas = int(data.get('plazas', viaje.plazas))
+    viaje.hora_salida = data.get('hora_salida', viaje.hora_salida)
+    viaje.hora_llegada = data.get('hora_llegada', viaje.hora_llegada)
+    viaje.precio_viaje = data.get('precio_viaje', viaje.precio_viaje)
+    viaje.reserva_automatica = data.get('reserva_automatica', viaje.reserva_automatica)
+    
+    if 'ruta_seleccionada' in data:
+        viaje.ruta_seleccionada = data['ruta_seleccionada']
+        viaje.duracion_viaje = data['ruta_seleccionada'].get('tiempoTotal', viaje.duracion_viaje)
+
+    try:
+        db.session.commit()
+
+        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado == 'aceptado']
+        
+        if pasajeros_a_notificar:
+            mensaje_aviso = f"El conductor ha realizado cambios en el viaje de {viaje.origen} a {viaje.destino}. Revisa los nuevos detalles."
+            titulo_notif = "Cambios en tu viaje"
+
+            for pasajero in pasajeros_a_notificar:
+                nueva_notif = Notificacion(
+                    usuario_id=pasajero.usuario_id,
+                    viaje_id=viaje.id,
+                    mensaje=mensaje_aviso
+                )
+                db.session.add(nueva_notif)
+                
+                enviar_notificacion_push(
+                    usuario_id=pasajero.usuario_id,
+                    titulo=titulo_notif,
+                    cuerpo=mensaje_aviso,
+                    data={"viaje_id": str(viaje.id), "tipo": "viaje_editado"}
+                )
+            
+            db.session.commit()
+
+        return jsonify({
+            "mensaje": "Viaje actualizado y acompañantes notificados",
+            "viaje": viaje.serialize()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error en la actualización", "detalle": str(e)}), 500
+    
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LA LISTA DE VIAJES DE UN USUARIO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

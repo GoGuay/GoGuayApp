@@ -8,7 +8,7 @@
   <div class="resumen-content" *ngIf="isDesktop || (!isDesktop && mostrarResumenMobile)">
     <div class="container" id="resumen_viaje">
       <div class="d-flex justify-content-center">
-        <i class="fi fi-rr-marker me-1"></i>
+        <i class="fi fi-rr-marker me-1 colours"></i>
         <ion-label>RESUMEN DEL VIAJE</ion-label>
       </div>
 
@@ -18,7 +18,7 @@
             <!-- Columna izquierda -->
             <div class="col-md-6 col-12">
               <ul>
-                <li>
+                <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
                   <strong>Lugar de origen: </strong>
                   <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
@@ -35,7 +35,7 @@
                 </li>
 
                 <!-- Selección de destino  -->
-                <li>
+                <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
                   <strong>Lugar de destino: </strong>
                   <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
@@ -52,7 +52,7 @@
                 </li>
 
                 <!-- Selección de coches  -->
-                <li>
+                <li class="colours">
                   <i class="fi fi-rr-car me-1"></i>
                   <strong>Coche seleccionado: </strong>
 
@@ -89,7 +89,7 @@
             <!-- Columna derecha -->
             <div class="col-md-6 col-12">
               <ul>
-                <li>
+                <li class="colours">
                   <i class="fi fi-rs-users-alt me-1"></i>
                   <strong>Plazas disponibles: </strong>
 
@@ -117,14 +117,14 @@
                     </ul>
                   </div>
                 </li>
-                <li>
+                <li class="colours">
                   <i class="fi fi-rr-calendar me-1"></i>
                   <strong>Fecha de salida: </strong>
                   <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
                   <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
                     class="form-control selectDate" />
                 </li>
-                <li>
+                <li class="colours">
                   <i class="fi fi-rr-calendar-clock me-1"></i>
                   <strong>Hora de salida: </strong>
                   <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>

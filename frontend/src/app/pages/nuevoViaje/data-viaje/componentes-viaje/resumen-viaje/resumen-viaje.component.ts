@@ -214,14 +214,22 @@ export class ResumenViajeComponent implements OnInit {
    * Una vez confirmado el mensaje, se reenvía a la ventana home.
    */
   confirmarViaje() {
-    const title: string = 'Confirmación de Viaje';
-    const message: string = '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
+    const esEdicion = this.ruta_navegacion_origen === 'mis-viajes';
+    const title = esEdicion ? 'Actualizar Viaje' : 'Confirmación de Viaje';
+    const message = esEdicion 
+      ? '<p>Los cambios se han guardado correctamente y se ha notificado a tus acompañantes.</p>' 
+      : '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
     this.currentViajeData.usuario_id = this.userData.usuario.id;
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
-
     this.currentViajeData.origen = this.origen || this.currentViajeData.origen;
     this.currentViajeData.destino = this.destino || this.currentViajeData.destino;
+
+    if (this.editableFields.coche) {
+      this.currentViajeData.coche = { id: this.editableFields.coche.id };
+    } else if (this.currentViajeData.vehiculo && !this.currentViajeData.coche) {
+      this.currentViajeData.coche = { id: this.currentViajeData.vehiculo };
+    }
 
     if (isNaN(this.currentViajeData.plazas)) {
       this.openError('Error!', 'El número de plazas no es válido.');
@@ -231,47 +239,30 @@ export class ResumenViajeComponent implements OnInit {
     const fechaSalidaRaw = new Date(this.currentViajeData.fecha_salida);
     this.currentViajeData.fecha_salida = fechaSalidaRaw.toISOString().split('T')[0];
 
-    if (this.currentViajeData.hora_salida === this.currentViajeData.hora_llegada && 
-      this.currentViajeData.tiempoTotal && 
-      this.currentViajeData.tiempoTotal !== '00:00') {
-    
-      console.log('Detectada llegada incorrecta. Reparando...');
-      
-      const [durH, durM] = this.currentViajeData.tiempoTotal.split(':').map(Number);
-      
-      this.currentViajeData.hora_llegada = this.sumarDuracion(
-        this.currentViajeData.hora_salida, 
-        durH, 
-        durM
-      );
-    }
-
-    if (!this.currentViajeData.ruta_seleccionada) {
-      this.currentViajeData.ruta_seleccionada = {};
-    }
-
-    console.log('DATOS A GUARDAR:', {
-      salida: this.currentViajeData.hora_salida,
-      llegada: this.currentViajeData.hora_llegada,
-      duracion: this.currentViajeData.duracion_viaje
-    });
-
-    const mensajeConfirmación = this.openHelp('Confirmar viaje', '¿Deseas confirmar el viaje?', true, false, false);
+    const pregunta = esEdicion ? '¿Deseas guardar los cambios realizados?' : '¿Deseas confirmar el viaje?';
+    const mensajeConfirmación = this.openHelp(title, pregunta, true, false, false);
     
     mensajeConfirmación.afterClosed().subscribe((res) => {
       if (res) {
         this.cargando_viaje = true;
-        this.travelService.guardarViaje(this.currentViajeData).subscribe({
+
+        const peticion = esEdicion 
+          ? this.travelService.editarViaje(this.currentViajeData.id, this.currentViajeData)
+          : this.travelService.guardarViaje(this.currentViajeData);
+
+        peticion.subscribe({
           next: (response) => {
             this.cargando_viaje = false;
-            const modalExito = this.openHelp(title, message, true, false, true);
+            const modalExito = this.openHelp(title, message, true, false, !esEdicion);
+            
             modalExito.afterClosed().subscribe(() => {
               this.navCtrl.navigateRoot(`/mis-viajes?id=${this.userData.usuario.id}`);
             });
           },
           error: (error) => {
             this.cargando_viaje = false;
-            this.openError('Error!', 'Error al guardar el viaje.');
+            console.error("Error en la operación:", error);
+            this.openError('Error!', 'No se han podido procesar los datos del viaje.');
           }
         });
       }
@@ -387,11 +378,13 @@ export class ResumenViajeComponent implements OnInit {
         this.currentViajeData.origen = this.origen;
       } else if (field === 'destino') {
         this.currentViajeData.destino = this.destino;
+      } else if (field === 'coche') {
+        this.currentViajeData.vehiculo = this.editableFields.coche.id;
+        this.nombreVehiculo = `${this.editableFields.coche.marca} ${this.editableFields.coche.modelo}`;
       } else {
         this.currentViajeData[field] = this.editableFields[field];
       }
 
-      // Si cambió el trayecto, recalculamos la ruta para obtener la nueva duración
       if (field === 'origen' || field === 'destino') {
         this.recalcularRuta();
       }
@@ -460,18 +453,20 @@ export class ResumenViajeComponent implements OnInit {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK && result) {
-          this.currentViajeData.ruta_seleccionada = result;
+          const duracionTexto = result.routes[0]?.legs[0]?.duration?.text || 'No especificado';
+          
+          this.currentViajeData.ruta_seleccionada = {
+            ...result,
+            tiempoTotal: duracionTexto 
+          };
           
           if (this.directionsRenderer) {
             this.directionsRenderer.setDirections(result);
           }
 
-          const nuevaDuracion = result.routes[0]?.legs[0]?.duration?.text;
-          if (nuevaDuracion) {
-            this.calcularHoraLlegada(this.currentViajeData.hora_salida, nuevaDuracion);
-          }
+          this.calcularHoraLlegada(this.currentViajeData.hora_salida, duracionTexto);
         } else {
-          this.currentViajeData.ruta_seleccionada = { routes: [] };
+          this.currentViajeData.ruta_seleccionada = { routes: [], tiempoTotal: 'No especificado' };
           console.error('Error al recalcular ruta:', status);
         }
       }

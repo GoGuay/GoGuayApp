@@ -136,7 +136,6 @@ export class CuartoPasoComponent implements OnInit {
 
     this.travelService.setViajeData(viajeDataFinal);
 
-    localStorage.setItem('viajeData', JSON.stringify(viajeDataFinal));
     this.navCtrl.navigateRoot(['/resumen-viaje']);
   }
 

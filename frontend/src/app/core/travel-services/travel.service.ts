@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-import { Viaje } from 'src/app/models/travel/viaje.model';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
-import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
+import { API_URL_BASE } from '../../models/constantes/constantes.model';
+import { Viaje } from '../../models/travel/viaje.model';
 
 @Injectable({
   providedIn: 'root',
@@ -73,6 +73,27 @@ export class TravelService {
 
     this.clearTempViaje();
     return this.http.post(this.apiUrl + '/travel/crear_viaje', viajeData);
+  }
+
+  /**
+   * Función para editar un viaje existente en la Base de Datos.
+   * @param viajeId ID del viaje que se va a modificar.
+   * @param viajeData Objeto con los datos actualizados del viaje.
+   * @returns Observable con la respuesta del servidor.
+   */
+  editarViaje(viajeId: number, viajeData: any): Observable<any> {
+    this.clearTempViaje();
+
+    return this.http.put(`${this.apiUrl}/travel/editar_viaje/${viajeId}`, viajeData).pipe(
+      catchError((error) => {
+        console.error('Error al editar el viaje:', error);
+        return throwError(() => error);
+      }),
+      switchMap(() => this.obtenerTodosLosViajes()),
+      tap((viajesActualizados) => {
+        this.viajeDataSubject.next(viajesActualizados);
+      })
+    );
   }
 
   /**
