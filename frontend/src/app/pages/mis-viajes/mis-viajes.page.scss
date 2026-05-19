@@ -168,6 +168,58 @@ ion-segment-button {
   justify-content: center;
   padding: 0;
   line-height: 1;
+    &:hover::after {
+    content: attr(data-name);
+    position: absolute;
+    top: 46px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    pointer-events: none;
+    animation: fadeInTooltip 0.15s ease-out forwards;
+  }
+}
+
+.btn-puntuar {
+  background-color: #E0B6B6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+    &:hover::after {
+      content: attr(data-name); 
+      position: absolute;
+      top: 46px; 
+      left: 50%;
+      transform: translateX(-50%); 
+      
+      /* Diseño del texto */
+      background-color: #333333;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap; 
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      opacity: 1;
+      pointer-events: none; 
+      animation: fadeInTooltip 0.15s ease-out forwards;
+    }
 }
 
 .btn_bg i {
@@ -177,6 +229,12 @@ ion-segment-button {
 }
 
 .btn_bg_report i {
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.btn-puntuar i {
   font-size: 20px;
   line-height: 1;
   vertical-align: middle;
@@ -619,6 +677,7 @@ ion-segment-button {
   gap: 8px;
 
   .btn-gestion {
+    position: relative;
     border: none;
     width: 38px;
     height: 38px;
@@ -637,6 +696,32 @@ ion-segment-button {
     &.btn-aceptar { background: #e8f5e9; color: #4caf50; }
 
     &:hover { transform: scale(1.1); }
+    @media (min-width: 769px) {
+      &::after {
+        content: attr(data-name);
+        position: absolute;
+        top: 44px; 
+        left: 50%;
+        transform: translateX(-50%); 
+        background-color: #333333;
+        color: #ffffff;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap; 
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+      }
+
+      &:hover::after {
+        opacity: 1;
+        transform: translate(-50%, 2px);
+      }
+    }
+  
   }
 }
 
@@ -676,11 +761,35 @@ ion-segment-button {
 
   .acciones-grid {
     justify-content: space-around;
+    row-gap: 32px; 
+    column-gap: 12px;
+    padding-bottom: 15px; 
+
     .btn-gestion {
-        width: 45px;
-        height: 45px;
+      width: 45px;
+      height: 45px;
+      margin-bottom: 5px; 
+
+      &::after {
+        content: attr(data-name);
+        position: absolute;
+        top: 50px; 
+        left: 50%;
+        transform: translateX(-50%);
+        color: #555555; 
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 1; 
+      }
     }
   }
 
   .punto-viaje .hora { font-size: 1.1rem; }
+}
+
+@keyframes fadeInTooltip {
+  from { opacity: 0; transform: translate(-50%, -4px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }

@@ -8,8 +8,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Viaje } from 'src/app/models/travel/viaje.model';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { Viaje } from '../../models/travel/viaje.model';
+import { TravelService } from '../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-puntuaciones',
@@ -25,6 +25,7 @@ export class PuntuacionesComponent implements OnInit {
   nombre_usuario: string;
   usuario_votado: boolean = false;
   creador_del_viaje: boolean = false;
+  cargando_puntuacion: boolean = false;
 
   private _bottomSheetRef = inject<MatBottomSheetRef<PuntuacionesComponent>>(MatBottomSheetRef);
 
@@ -36,6 +37,7 @@ export class PuntuacionesComponent implements OnInit {
 
     this.puntuacionForm = this.fb.group({
       recomendacion: [0, Validators.required],
+      comentario_texto: ['']
     });
 
     this.viaje = this.data.viaje;
@@ -49,7 +51,6 @@ export class PuntuacionesComponent implements OnInit {
       this.creador_del_viaje = true;
     }
 
-    console.log('Datos del conductor:', this.viaje);
   }
 
   ngOnInit() { }
@@ -69,22 +70,12 @@ export class PuntuacionesComponent implements OnInit {
     }
   }
 
-  verificarEncuesta() {
-    console.log('Datos de la encuesta:', this.puntuacionForm.value);
-    const titulo: string = 'Encuesta realizada correctamente';
-    const mensaje: string = 'Muchas gracias por realizar nuestra encuesta de satisfacción.';
-
-  }
-
   /**
    * Puntua el viaje realizado
    */
   puntuarViaje() {
 
-    if (this.creador_del_viaje) {
-      console.error("No puedes puntuar tu propio viaje");
-      return;
-    }
+    if (this.creador_del_viaje) return;
 
     if (this.calificacionSeleccionada === 0) {
       console.error("Debes seleccionar al menos una estrella");
@@ -96,18 +87,22 @@ export class PuntuacionesComponent implements OnInit {
 
     const dataPuntuacion = {
       puntuacion: this.calificacionSeleccionada,
-      comentario: this.puntuacionForm.value.recomendacion_texto || '',
+      comentario: this.puntuacionForm.value.comentario_texto || '',
       usuario_id: this.viaje.usuario_id,
       evaluador_id: evaluadorId,
       viaje_id: this.viaje.id
     };
 
+    this.cargando_puntuacion = true;
+
     this.travelService.guardarPuntuacion(dataPuntuacion).subscribe({
       next: (res) => {
         console.log('Puntuación guardada con éxito', res);
-        this._bottomSheetRef.dismiss(true);
+        this.cargando_puntuacion = false;
+        this._bottomSheetRef.dismiss(true); 
       },
       error: (err) => {
+        this.cargando_puntuacion = false;
         console.error('Error al guardar la puntuación', err);
       }
     });

@@ -18,6 +18,9 @@
   width: 600px;
   border-radius: 15px;
 }
+.title {
+  color: #000;
+}
 
 .bg {
   background-color: #e9edd5;
@@ -80,6 +83,7 @@
 .nota{
   font-size: 0.7rem;
   margin-right: 0.5rem;
+  color: #eee !important;
 }
 
 @keyframes collapseAndFade {
