@@ -110,7 +110,10 @@ $color-dark: #333;
         color: #f39c12;
         font-weight: 600;
         font-size: 1.1rem;
-        .star-icon { margin-right: 5px; }
+        .star-icon { 
+          margin-right: 5px;
+          color: #f39c12;
+         }
       }
     }
 

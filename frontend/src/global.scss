@@ -729,3 +729,34 @@ mat-timepicker-content {
   height: 24px;
   pointer-events: none;
 }
+
+/*** CONFIGURACIÓN PARA EL BANNER DE COOKIES */
+.cc-window .cc-btn {
+  border-radius: 35px !important; 
+  padding: 8px 24px !important;   
+  font-weight: 600 !important;   
+  transition: transform 0.2s ease, background-color 0.2s ease !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+.cc-window.cc-banner {
+  border-radius: 35px 35px 0 0 !important; 
+  box-shadow: 0 -4px 35px rgba(0, 0, 0, 0.08) !important;
+  padding: 18px 24px !important;
+}
+
+.cc-window .cc-link {
+  color: #6c71c4 !important;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cc-window .cc-deny {
+  color: black !important;
+  text-decoration: none;
+  font-weight: 600;
+}
