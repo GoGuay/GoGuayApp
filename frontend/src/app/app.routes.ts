@@ -133,6 +133,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then((m) => m.MisViajesPage),
   },
   {
+    path: 'detalles-viaje/:id',
+    loadComponent: () => import('./pages/mis-viajes/detalles-viaje/detalles-viaje.page').then((m) => m.DetallesViajePage),
+  },
+  {
     path: 'messaging-center',
     loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.component').then((m) => m.CentroMensajesPage),
   },
