@@ -4,7 +4,8 @@
 
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje
+from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
@@ -373,23 +374,46 @@ def eliminar_viaje(viaje_id):
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
+    data = request.get_json() if request.is_json else {}
+    motivo = data.get('motivo_cancelacion', 'No especificado')
+
+    ids_pasajeros_afectados = []
+    
     for pasajero in viaje.pasajeros:
-        mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor."
-        
-        notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
-        db.session.add(notif_db)
-        
-        enviar_notificacion_push(
-            usuario_id=pasajero.usuario_id,
-            titulo="Viaje cancelado",
-            cuerpo=mensaje_cancelacion
-        )
+        if pasajero.estado in ['aceptado', 'accepted', 'pendiente']:
+            ids_pasajeros_afectados.append(pasajero.usuario_id)
+            
+            mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
+            
+            notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
+            db.session.add(notif_db)
+            
+            enviar_notificacion_push(
+                usuario_id=pasajero.usuario_id,
+                titulo="Viaje cancelado por el conductor",
+                cuerpo=mensaje_cancelacion,
+                data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
+            )
+            
+            pasajero.estado = 'cancelado'
 
-    PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
-    db.session.delete(viaje)
-    db.session.commit()
+    viaje.estado_viaje = 'Cancelado'
 
-    return jsonify({"mensaje": "Viaje eliminado correctamente y pasajeros notificados"}), 200
+    nueva_cancelacion = Cancelacion(
+        viaje_id=viaje.id,
+        cancelado_por_id=viaje.usuario_id,
+        pasajeros_afectados=ids_pasajeros_afectados,
+        motivo_cancelacion_cond=motivo,
+        motivo_cancelacion_pasaj=MotivosCancelacionPasajero.NO_SE_CANCELA.value 
+    )
+    db.session.add(nueva_cancelacion)
+
+    try:
+        db.session.commit()
+        return jsonify({"mensaje": "Viaje cancelado correctamente, motivos registrados y pasajeros notificados"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al procesar la cancelación", "detalle": str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -403,30 +427,49 @@ def eliminar_pasajero(viaje_id, usuario_id):
 
     pasajero_rel = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
     if not pasajero_rel:
-        return jsonify({"error": "El pasajero no está en este viaje"}), 404
+        return jsonify({"error": "El pasajero no está registrado en este viaje"}), 404
+
+    data = request.get_json() if request.is_json else {}
+    motivo = data.get('motivo_cancelacion', 'No especificado')
 
     usuario = pasajero_rel.usuario
     nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
     creador_id = viaje.usuario_id
 
-    db.session.delete(pasajero_rel)
-    viaje.plazas += 1
+    # Si estaba aceptado, devolvemos la plaza al coche
+    if pasajero_rel.estado in ['aceptado', 'accepted']:
+        viaje.plazas += 1
+
+    nueva_cancelacion = Cancelacion(
+        viaje_id=viaje_id,
+        cancelado_por_id=usuario_id,
+        pasajeros_afectados=[usuario_id],
+        motivo_cancelacion_cond=MotivosCancelacionConductor.NO_SE_CANCELA.value,
+        motivo_cancelacion_pasaj=motivo
+    )
+    db.session.add(nueva_cancelacion)
+
+    pasajero_rel.estado = 'cancelado'
 
     if creador_id != usuario_id:
-        mensaje_salida = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje a {viaje.destino}."
+        mensaje_salida = f"El pasajero {nombre_completo} se ha dado de baja en tu viaje a {viaje.destino}. Motivo: {motivo}"
         
         notificacion = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=mensaje_salida)
         db.session.add(notificacion)
 
         enviar_notificacion_push(
             usuario_id=creador_id,
-            titulo="Baja en tu viaje",
+            titulo="Baja de pasajero en tu viaje",
             cuerpo=mensaje_salida,
-            data={"viaje_id": str(viaje_id)}
+            data={"viaje_id": str(viaje_id), "tipo": "baja_pasajero"}
         )
 
-    db.session.commit()
-    return jsonify({"mensaje": "Pasajero eliminado y conductor notificado"}), 200
+    try:
+        db.session.commit()
+        return jsonify({"mensaje": "Participación cancelada y conductor notificado con el motivo"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al procesar la baja", "detalle": str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #

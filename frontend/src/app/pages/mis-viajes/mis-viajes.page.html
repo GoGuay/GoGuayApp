@@ -161,12 +161,15 @@
               <button *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar" data-name="Eliminar">
+              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado' && viaje.estado_viaje != 'Cancelado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar" data-name="Eliminar">
                 <mat-icon>delete</mat-icon>
               </button>
 
-              <button *ngIf="!conductor && pasajero" 
-                      class="btn-gestion btn-eliminar" (click)="cancelarSolicitud(viaje.id)" matTooltip="Cancelar solicitud" data-name="Cancelar solicitud">
+              <button *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'" 
+                      class="btn-gestion btn-eliminar" 
+                      (click)="cancelarSolicitud(viaje)" 
+                      matTooltip="Cancelar solicitud" 
+                      data-name="Cancelar solicitud">
                 <i class="fi fi-rr-exit"></i>
               </button>
 

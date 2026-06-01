@@ -363,4 +363,16 @@ export class TravelService {
       })
     );
   }
+
+  eliminarViajeConMotivo(viajeId: number, motivo: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`, {
+      body: { motivo_cancelacion: motivo }
+    });
+  }
+
+  salirDeViajeConMotivo(viajeId: number, usuarioId: number, motivo: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`, {
+      body: { motivo_cancelacion: motivo }
+    });
+  }
 }

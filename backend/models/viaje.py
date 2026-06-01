@@ -38,7 +38,6 @@ class Viaje(db.Model):
     def serialize(self, current_user_id=None):
         ya_puntuado = False
         if current_user_id:
-            # Asumiendo que importas o tienes acceso al modelo Puntuacion
             from models import Puntuacion 
             existe = Puntuacion.query.filter_by(viaje_id=self.id, evaluador_id=current_user_id).first()
             ya_puntuado = existe is not None
