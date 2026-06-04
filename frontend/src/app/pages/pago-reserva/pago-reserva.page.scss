@@ -126,6 +126,14 @@ $bg-light: #f4f5f8;
   }
 }
 
+.custom-toolbar-goguay {
+  --background: #f0d7b4; 
+  --color: #ffffff; 
+  ion-back-button {
+    --color: #000000;
+  }
+}
+
 @media (max-width: 576px) {
   .pago-central {
     padding: 10px;

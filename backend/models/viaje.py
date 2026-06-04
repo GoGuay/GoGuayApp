@@ -23,10 +23,10 @@ class Viaje(db.Model):
     vehiculo = db.Column(db.Integer, nullable=False)
     reserva_automatica = db.Column(db.Boolean, nullable=False, default=False)
 
-    pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True)  # Cambiar el backref a 'viaje_pasajero'
-
-  
+    pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True) 
     usuario = db.relationship('Usuario', backref='viajes')
+
+    historial_cambios = db.relationship('HistorialCambiosViaje', backref='viaje', lazy=True, cascade="all, delete-orphan")
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -36,6 +36,12 @@ class Viaje(db.Model):
         return relacion.estado if relacion else None
 
     def serialize(self, current_user_id=None):
+        ya_puntuado = False
+        if current_user_id:
+            from models import Puntuacion 
+            existe = Puntuacion.query.filter_by(viaje_id=self.id, evaluador_id=current_user_id).first()
+            ya_puntuado = existe is not None
+
         return {
             "id": self.id,
             "origen": self.origen,
@@ -76,5 +82,7 @@ class Viaje(db.Model):
                 for p in self.pasajeros if p.estado == 'pendiente'
             ],
             "estado_solicitud_propia": self.get_estado_para_usuario(current_user_id),
+            "historial_cambios": [h.serialize() for h in self.historial_cambios],
+            "ya_puntuado": ya_puntuado,
             "created_at": self.created_at.isoformat(),
         }

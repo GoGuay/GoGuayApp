@@ -19,7 +19,6 @@ import { eye, lockClosed } from 'ionicons/icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -28,6 +27,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
+import { GoogleServices } from '../../core/google-services/google-services.service';
 
 @Component({
   selector: 'app-buscador',

@@ -1,5 +1,5 @@
 <ng-container *ngIf="isLoading; else contenidoReal">
-  <div class="container">
+  <div class="container buscando-container">
     <app-spinner></app-spinner>
     Buscando los mejores trayectos...
   </div>
@@ -11,9 +11,9 @@
       <ion-icon name="search-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
       <p class="mt-3 text-muted">Introduce origen, destino y fecha para encontrar viajes disponibles.</p>
     </div>
-    <div *ngIf="listado_viajes.length === 0 && isLoading" class="d-flex justify-content-center align-content-center">
+    <div *ngIf="listado_viajes.length === 0 && isLoading" class="d-flex justify-content-center align-content-center buscando-container">
       <app-spinner></app-spinner>
-      Buscando los mejores trayectos...
+      <span> Buscando los mejores trayectos... </span>
     </div>
 
     <div class="columna_scroll" *ngIf="listado_viajes.length > 0">

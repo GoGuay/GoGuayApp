@@ -117,7 +117,7 @@ export class EncuestaSatisfaccionPage implements OnInit {
         const dialogRef = this.dialog.open(HelpModalComponent, {
           data: { 
             title: '¡Gracias!', 
-            message: 'Tu opinión nos ayuda a hacer de PrideRide un lugar más seguro.', 
+            message: 'Tu opinión nos ayuda a hacer de GoGuay un lugar más seguro.', 
             showAcceptButton: true 
           },
           disableClose: true

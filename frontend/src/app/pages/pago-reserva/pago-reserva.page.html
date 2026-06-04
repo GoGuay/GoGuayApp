@@ -1,5 +1,5 @@
 <ion-header [translucent]="true" *ngIf="!pagoConfirmado">
-  <ion-toolbar>
+  <ion-toolbar class="custom-toolbar-goguay">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/busqueda-viajes"></ion-back-button>
     </ion-buttons>
@@ -10,13 +10,13 @@
 <ion-content class="ion-padding">
   <div class="container-full">
     
-    <!-- ESTADO: CARGANDO -->
+    <!-- CARGANDO -->
     <div *ngIf="cargando" class="text-center mt-5">
       <app-spinner></app-spinner>
       <p>Preparando plataforma de pago...</p>
     </div>
 
-    <!-- ESTADO: PAGO -->
+    <!-- PAGO -->
     <div *ngIf="!cargando && !pagoConfirmado" class="pago-central">
       <div class="resumen-viaje card p-3 mb-4 shadow-sm">
         <h5>Tu viaje a {{ viaje.destino }}</h5>
@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <!-- ESTADO: ÉXITO (OPCIONES DE NAVEGACIÓN) -->
+    <!-- OPCIONES DE NAVEGACIÓN -->
     <div *ngIf="pagoConfirmado" class="exito-container text-center animate__animated animate__zoomIn">
       <div class="icon-box mb-4">
         <i class="fi fi-rs-badge-check text-success" style="font-size: 5rem;"></i>

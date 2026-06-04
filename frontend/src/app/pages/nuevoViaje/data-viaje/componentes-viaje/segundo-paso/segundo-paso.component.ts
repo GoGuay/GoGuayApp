@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { TravelService } from '../../../../../core/travel-services/travel.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { FuncionesComunes } from '../../../../../core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from "../../../../../components/spinner/spinner.component";
 
 @Component({

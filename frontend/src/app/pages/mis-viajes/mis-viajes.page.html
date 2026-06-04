@@ -146,27 +146,35 @@
 
           <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
             <div class="acciones-grid">
-              <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar">
+              <button *ngIf="pasajero && viaje.estado_viaje === 'Finalizado' && !viaje.ya_puntuado" class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje" data-name="Puntuar">
+                <i class="fi fi-rr-survey-xmark"></i>
+              </button>
+
+              <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar" data-name="Reportar">
                 <i class="fi fi-rr-triangle-warning"></i>
               </button>
-              <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles">
+
+              <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles" data-name="Detalles">
                 <i class="fi fi-rr-attention-detail"></i>
               </button>
 
-              <button *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)">
+              <button *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)">
+              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado' && viaje.estado_viaje != 'Cancelado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar" data-name="Eliminar">
                 <mat-icon>delete</mat-icon>
               </button>
 
-              <button *ngIf="!conductor && pasajero" 
-                      class="btn-gestion btn-eliminar" (click)="cancelarSolicitud(viaje.id)">
+              <button *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'" 
+                      class="btn-gestion btn-eliminar" 
+                      (click)="cancelarSolicitud(viaje)" 
+                      matTooltip="Cancelar solicitud" 
+                      data-name="Cancelar solicitud">
                 <i class="fi fi-rr-exit"></i>
               </button>
 
               <button *ngIf="!conductor && pasajero && viaje.estado_solicitud_propia === 'aceptado'" 
-                      class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)">
+                      class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Salir del viaje" data-name="Salir del viaje">
                 <mat-icon>logout</mat-icon>
               </button>
             </div>

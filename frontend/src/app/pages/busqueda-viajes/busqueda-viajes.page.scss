@@ -18,6 +18,10 @@
   height: 130px;
 }
 
+i{
+  color: #000;
+}
+
 /**
 *
 *   Ajustes para el buscador
@@ -46,6 +50,7 @@
   height: 45px;
   font-weight: 600;
   text-transform: none;
+  color: #000 !important;
 }
 
 /* Centrado del grid y límites de ancho para pantallas grandes */

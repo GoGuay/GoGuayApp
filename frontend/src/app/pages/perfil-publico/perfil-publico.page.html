@@ -38,7 +38,7 @@
             <i class="fi fi-rr-badge-check verified-icon" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"></i>
           </h2>
           <p class="user-score">
-            <i class="fi fi-rr-star star-icon"></i> {{usuario?.puntuacion_promedio || 'Sin puntuaciones'}}
+            <i class="fi fi-rr-star star-icon"></i> {{usuario?.puntuaciones || 'Sin puntuaciones'}}
           </p>
         </div>
 

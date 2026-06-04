@@ -7,15 +7,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { TravelService } from '../../../core/travel-services/travel.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { NavbarComponent } from '../../../shared/navbar/navbar.component';
+import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 import { Location } from '@angular/common';
 import { debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, tap } from 'rxjs';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
+import { GoogleServices } from '../../../core/google-services/google-services.service';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -99,7 +99,8 @@ export class NuevoViajePage implements OnInit {
     private cdr: ChangeDetectorRef,
     private location: Location,
     private googleService: GoogleServices,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private travelService: TravelService
   ) {
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
@@ -221,9 +222,13 @@ export class NuevoViajePage implements OnInit {
    * @param event Recibe la información del input
    */
   buscarSugerenciasOrigen(event: Event) {
-    const contenidoInput = (event.target as HTMLInputElement).value;
     this.cargandoOrigen = true;
-    this.buscadorOrigen$.next(contenidoInput);
+    this.funcionesComunes.obtenerSugerenciasOrigen(event)
+      .finally(() => {
+        console.log("Búsqueda de sugerencias completada");
+        this.cargandoOrigen = false;
+        this.cdr.detectChanges(); // fuerza render del componente
+      });
   }
 
   /**
@@ -232,8 +237,12 @@ export class NuevoViajePage implements OnInit {
    * @param event Recibe la información del input
    */
   buscarSugerenciasDestino(event: Event) {
-    const contenidoInput = (event.target as HTMLInputElement).value;
-    this.buscadorDestino$.next(contenidoInput);
+    this.cargandoDestino = true;
+    this.funcionesComunes.obtenerSugerenciasDestino(event)
+      .finally(() => {
+        this.cargandoDestino = false;
+        this.cdr.detectChanges();
+      });
   }
 
 
@@ -246,12 +255,15 @@ export class NuevoViajePage implements OnInit {
    */
   seleccionarLocalidadOrigen(localidad: any) {
     this.origen = localidad.display_name.split(',')[0].trim();
+    this.ultimaLocalidadValidaOrigen = localidad; 
+
     const viajeData = {
-      ...this.viajesService.getViajeData(),
+      ...this.travelService.getViajeData(),
       origen: this.origen,
     };
-    this.viajesService.setViajeData(viajeData);
+    this.travelService.setViajeData(viajeData);
     this.funcionesComunes.sugerenciasOrigen = [];
+    this.indiceActivoOrigen = -1;
   }
 
 
@@ -262,12 +274,15 @@ export class NuevoViajePage implements OnInit {
    */
   seleccionarLocalidadDestino(localidad: any) {
     this.destino = localidad.display_name.split(',')[0].trim();
+    this.ultimaLocalidadValidaDestino = localidad; 
+
     const viajeData = {
-      ...this.viajesService.getViajeData(),
+      ...this.travelService.getViajeData(),
       destino: this.destino,
     };
-    this.viajesService.setViajeData(viajeData);
+    this.travelService.setViajeData(viajeData);
     this.funcionesComunes.sugerenciasDestino = [];
+    this.indiceActivoDestino = -1;
   }
 
   /**

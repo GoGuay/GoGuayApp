@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule, registerLocaleData } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { AlertController, IonicModule, NavController } from '@ionic/angular';
@@ -10,11 +10,10 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PuntuacionesComponent } from '../../components/puntuaciones/puntuaciones.component';
 import { forkJoin, Observable } from 'rxjs';
 import { UserServicesService } from '../../core/user-services/user-services.service';
-import { ViajeSeleccionadoComponent } from '../../components/viaje-seleccionado/viaje-seleccionado.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { TravelService } from '../../core/travel-services/travel.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
 import { catchError, of } from 'rxjs';
@@ -22,14 +21,14 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular/standalone';
-import localeEs from '@angular/common/locales/es';
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, 
+  imports: [
+    IonicModule, 
     CommonModule, 
     FormsModule, 
     NavbarComponent, 
@@ -37,7 +36,8 @@ import localeEs from '@angular/common/locales/es';
     JumbotronComponent, 
     SpinnerComponent, 
     ToastModule, 
-    TranslateModule],
+    TranslateModule
+  ],
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
@@ -81,39 +81,72 @@ export class MisViajesPage implements OnInit {
     private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
     private messageService: MessageService, private popoverCtrl: PopoverController,
     private alertCtrl: AlertController, public translate: TranslateService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private router: Router) { }
 
     ngOnInit() {
       this.route.queryParams.subscribe((params) => {
         this.usuarioParams = params;
-        const userId = parseInt(this.usuarioParams.id, 10);
+        let finalUserId: number | null = null;
 
         const cache = localStorage.getItem('userData');
         if (cache) {
           this.userData = JSON.parse(cache);
           this.userLoggedIn = true;
-          this.cargarTodosLosViajes(userId);
+          
+          const cachedId = this.userData.id || (this.userData.usuario ? this.userData.usuario.id : null);
+          if (cachedId) {
+            finalUserId = Number(cachedId);
+          }
         }
 
-        this.userService.obtenerUsuarioPorID(userId).subscribe({
-          next: (res) => {
-            this.userData = res.usuario ? res : { usuario: res };
-            
-            this.userLoggedIn = true;
-            localStorage.setItem('userData', JSON.stringify(this.userData));
-
-            if (!cache) {
-              this.cargarTodosLosViajes(userId);
-            }
-          },
-          error: (err) => {
-            // if (err.status === 401) this.navCtrl.navigateRoot('/login');
+        if (this.usuarioParams && this.usuarioParams.id) {
+          const urlId = parseInt(this.usuarioParams.id, 10);
+          if (!isNaN(urlId)) {
+            finalUserId = urlId;
           }
-        });
+        }
+
+        if (finalUserId && !isNaN(finalUserId)) {
+          this.cargarTodosLosViajes(finalUserId);
+          this.recuperarUsuarioServidor(finalUserId, !!cache);
+        } else {
+          console.warn('No se detectó un ID de usuario válido en la inicialización.');
+          this.cargandoViajes = false;
+        }
       });
     }
 
     
+    /**
+     * Función para recuperar los datos del usuario desde el servidor, 
+     * actualizando la información en la aplicación y en localStorage.
+     * 
+     * Si ya teníamos datos en caché, solo actualizamos la información 
+     * del usuario sin recargar los viajes, para evitar llamadas innecesarias al servidor.
+     * Si no teníamos datos en caché, después de recuperar la información del usuario, 
+     * forzamos la carga de los viajes para asegurarnos de que tenemos la información más actualizada.
+     * 
+     * @param userId Recibe el ID del usuario para recuperar su información desde el servidor.
+     * @param tieneCache Indica si ya teníamos datos del usuario en caché, para decidir si recargamos los viajes o no.
+     */
+    private recuperarUsuarioServidor(userId: number, tieneCache: boolean) {
+    this.userService.obtenerUsuarioPorID(userId).subscribe({
+      next: (res) => {
+        this.userData = res.usuario ? res : { usuario: res };
+        this.userLoggedIn = true;
+        localStorage.setItem('userData', JSON.stringify(this.userData));
+
+        if (!tieneCache) {
+          this.cargarTodosLosViajes(userId);
+        }
+      },
+      error: (err) => {
+        console.error('Error al actualizar el usuario desde el servidor:', err);
+      }
+    });
+  }
+  
   /**
    * Función para cargar todos los viajes del usuario (creados y como acompañante)
    * @param userId Recibe el ID del usuario
@@ -330,11 +363,12 @@ export class MisViajesPage implements OnInit {
    * @param viaje Recibe la información del viaje seleccionado.
    */
   openDetalleViaje(viaje: Viaje) {
-    this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-      viaje.usuario = usuario;
-    });
-    this.dialog.open(ViajeSeleccionadoComponent, {
-      data: { viaje }
+    this.travelService.setViajeData(viaje);
+
+    // 2. Redirigimos a la nueva página inyectando el ID en la ruta 
+    // y pasando el objeto entero en el "state" por seguridad
+    this.router.navigate([`/detalles-viaje/${viaje.id}`], {
+      state: { viaje: viaje }
     });
   }
 
@@ -343,35 +377,155 @@ export class MisViajesPage implements OnInit {
    * 
    * @param viajeId 
    */
-  eliminarViaje(viajeId: number) {
-    this.travelService.eliminarViaje(viajeId).subscribe({
-      next: () => {
-        console.log('Viaje eliminado con éxito.');
-        this.obtenerViajesCreados();
-      },
-      error: (error) => {
-        console.error('Error al eliminar el viaje:', error);
-      }
+  async eliminarViaje(viajeId: number) {
+    const alertMotivos = await this.alertCtrl.create({
+      header: 'Cancelar Viaje',
+      subHeader: 'Por favor, selecciona el motivo de la cancelación para registrarlo en tu perfil:',
+      cssClass: 'custom-alert-chat',
+      inputs: [
+        { type: 'radio', label: 'Avería o coche en taller', value: 'Avería o coche en taller', checked: true },
+        { type: 'radio', label: 'Enfermedad', value: 'Enfermedad' },
+        { type: 'radio', label: 'Problema personal', value: 'Problema personal' },
+        { type: 'radio', label: 'Cambios de plan o anulación del viaje', value: 'Cambios de plan o anulación del viaje' },
+        { type: 'radio', label: 'Se ha publicado el viaje por error', value: 'Se ha publicado el viaje por error' },
+        { type: 'radio', label: 'Otros motivos...', value: 'OTROS' }
+      ],
+      buttons: [
+        { text: 'Volver', role: 'cancel' },
+        {
+          text: 'Continuar',
+          handler: async (motivo) => {
+            if (!motivo) return;
+
+            if (motivo === 'OTROS') {
+              this.mostrarInputAbiertoCancelacion(viajeId, 'conductor');
+            } else {
+              this.ejecutarCancelacionConductor(viajeId, motivo);
+            }
+          }
+        }
+      ]
     });
+
+    await alertMotivos.present();
   }
 
   /**
    * Función para que un usuario salga de un viaje
    * @param viajeId ID del viaje
    */
-  salirDeViaje(viajeId: number) {
+  async salirDeViaje(viajeId: number) {
+    const alertMotivosAcompanante = await this.alertCtrl.create({
+      header: 'Darse de baja',
+      subHeader: '¿Por qué necesitas cancelar tu plaza?',
+      cssClass: 'custom-alert-chat',
+      inputs: [
+        { type: 'radio', label: 'Enfermedad', value: 'Enfermedad', checked: true },
+        { type: 'radio', label: 'Problema personal', value: 'Problema personal' },
+        { type: 'radio', label: 'Cambios de plan o anulación', value: 'Cambios de plan o anulación del viaje' },
+        { type: 'radio', label: 'Reserva por error', value: 'Se ha dado el botón de reserva por error' },
+        { type: 'radio', label: 'El conductor no aparece (15 min)', value: 'Tras 15 minutos en el punto de encuentro, el conductor no aparece' },
+        { type: 'radio', label: 'El conductor no responde', value: 'Se ha intentado contactar con el conductor pero no responde' },
+        { type: 'radio', label: 'Cambio de condiciones incómodo', value: 'Se ha cambiado el punto de encuentro y la hora y no me viene bien' },
+        { type: 'radio', label: 'Otra forma de viaje encontrada', value: 'He encontrado otra forma para hacer el viaje' },
+        { type: 'radio', label: 'Otros motivos...', value: 'OTROS' }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Continuar',
+          handler: async (motivo) => {
+            if (!motivo) return;
+
+            if (motivo === 'OTROS') {
+              this.mostrarInputAbiertoCancelacion(viajeId, 'pasajero');
+            } else {
+              this.ejecutarCancelacionPasajero(viajeId, motivo);
+            }
+          }
+        }
+      ]
+    });
+
+    await alertMotivosAcompanante.present();
+  }
+
+  /**
+   * Función para mostrar un input abierto para especificar el motivo de la cancelación
+   * @param viajeId ID del viaje
+   * @param rol Rol del usuario (conductor o pasajero)
+   */
+  private async mostrarInputAbiertoCancelacion(viajeId: number, rol: 'conductor' | 'pasajero') {
+    const alertAbierto = await this.alertCtrl.create({
+      header: 'Especificar motivo',
+      message: 'Por favor, escribe brevemente la razón de la cancelación:',
+      cssClass: 'custom-alert-chat',
+      inputs: [
+        { name: 'motivoEspecifico', type: 'text', placeholder: 'Escribe aquí tu motivo...' }
+      ],
+      buttons: [
+        { text: 'Atrás', role: 'cancel' },
+        {
+          text: 'Confirmar',
+          role: 'destructive',
+          handler: (data) => {
+            const motivoFinal = data.motivoEspecifico?.trim() || "Otros motivos";
+            if (rol === 'conductor') {
+              this.ejecutarCancelacionConductor(viajeId, motivoFinal);
+            } else {
+              this.ejecutarCancelacionPasajero(viajeId, motivoFinal);
+            }
+          }
+        }
+      ]
+    });
+    await alertAbierto.present();
+  }
+
+  /**
+   * Función para ejecutar la cancelación de un viaje como conductor
+   * @param viajeId ID del viaje
+   * @param motivo Motivo de la cancelación
+   */
+  private ejecutarCancelacionConductor(viajeId: number, motivo: string) {
+    this.cargandoViajes = true;
+    this.travelService.eliminarViajeConMotivo(viajeId, motivo).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Viaje Cancelado',
+          detail: 'El trayecto ha sido anulado y penalizado en tu historial de fiabilidad.',
+          life: 3500
+        });
+        this.obtenerViajesCreados();
+      },
+      error: (err) => {
+        this.cargandoViajes = false;
+        console.error('Error al tramitar la baja del viaje en el servidor:', err);
+      }
+    });
+  }
+
+  /**
+   * Función para ejecutar la cancelación de un viaje como pasajero
+   * @param viajeId ID del viaje
+   * @param motivo Motivo de la cancelación
+   */
+  private ejecutarCancelacionPasajero(viajeId: number, motivo: string) {
     this.cargando = true;
-    this.travelService.salirDeViaje(viajeId).subscribe({
+    this.travelService.salirDeViajeConMotivo(viajeId, this.userData.usuario.id, motivo).subscribe({
       next: () => {
         this.cargando = false;
-        console.log('El usuario ha salido del viaje con éxito');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Baja del viaje',
+          detail: 'Has liberado tu plaza con éxito.',
+          life: 3000
+        });
         this.obtenerViajesComoAcompanante();
         this.obtenerViajesCreados();
       },
-      error: (error) => {
-        this.cargando = false;
-        console.error('Error al salir del viaje:', error);
-      }
+      error: () => this.cargando = false
     });
   }
 
@@ -652,7 +806,20 @@ export class MisViajesPage implements OnInit {
    * que aún no ha sido aceptada por el conductor. Al cancelar esta solicitud, 
    * se elimina del sistema y el pasajero ya no aparecerá como solicitante para ese viaje.
    */
-  async cancelarSolicitud(solicitudId: number) {
+  async cancelarSolicitud(viaje: Viaje) {
+    const esFinalizado = viaje.estado_viaje === 'Finalizado' || 
+      this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
+
+    if (esFinalizado) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Acción no permitida',
+        detail: 'No puedes cancelar una solicitud de un viaje que ya ha finalizado.',
+        life: 4000
+      });
+      return;
+    }
+
     const alert = await this.alertCtrl.create({
       header: 'Cancelar Solicitud',
       message: '¿Estás seguro de que deseas retirar tu solicitud de plaza?',
@@ -661,8 +828,19 @@ export class MisViajesPage implements OnInit {
         { 
           text: 'Sí, retirar', 
           handler: () => {
-            this.travelService.cancelarSolicitudManual(solicitudId).subscribe(() => {
-              this.cargarTodosLosViajes(this.userData.usuario.id);
+            this.travelService.cancelarSolicitudManual(viaje.id).subscribe({
+              next: () => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Solicitud retirada',
+                  detail: 'Tu solicitud ha sido cancelada correctamente.',
+                  life: 3000
+                });
+                this.cargarTodosLosViajes(this.userData.usuario.id);
+              },
+              error: (err) => {
+                console.error('Error al cancelar la solicitud:', err);
+              }
             });
           }
         }

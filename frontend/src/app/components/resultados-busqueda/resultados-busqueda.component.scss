@@ -407,10 +407,14 @@
   
   &.btn-info-pride { background: #e2e2e2; color: #444; }
   &.btn-join { background: #f3ffaf; color: #444; border: 1px solid #d4e08c; }
-  &.btn-chat { background: #2d3436; color: #fff; }
+  &.btn-chat { background: #539494; color: #fff; }
   &.btn-cancelar { background: #E0B6B6; color: #444; }
 
   &:active { transform: scale(0.95); }
+}
+
+.buscando-container {
+  color: black
 }
 
 .bolt-indicator {

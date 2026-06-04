@@ -31,6 +31,7 @@ import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { IonicModule } from '@ionic/angular';
+import { radio } from 'ionicons/icons';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -40,18 +41,18 @@ const cookieConfig: NgcCookieConsentConfig = {
   theme: 'block',
   palette: {
     popup: {
-      background: '#000',
-      text: '#fff',
+      background: '#B7E0B4',
+      text: '#000',
     },
     button: {
-      background: '#f1d600',
-      text: '#000',
+      background: '#b3b5e6',
+      text: '#000'
     },
   },
   type: 'opt-in',
   content: {
     message:
-      'PrideRide utiliza cookies propias con el objetivo de optimizar su visita.',
+      'GoGuay utiliza cookies propias con el objetivo de optimizar su visita.',
     allow: 'Aceptar',
     deny: 'Rechazar',
     link: 'Cookies.',

@@ -22,4 +22,5 @@ export interface Viaje {
   reserva_automatica?: boolean;
   estado_solicitud_propia?: 'pendiente' | 'aceptado' | 'rechazado' | null;
   solicitudes_pendientes?: any[] | undefined;
+  ya_puntuado?: boolean;
 }
