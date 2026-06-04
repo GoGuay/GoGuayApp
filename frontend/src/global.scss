@@ -2,14 +2,49 @@
 // For more information: https://material.angular.io/guide/theming
 @use "@angular/material" as mat;
 @use "./animations.scss" as *;
-@import "./animations.scss";
-@import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
+@use "./animations.scss";
+@use '@angular/cdk/a11y-prebuilt.css';
+@use "@ionic/angular/css/core.css";
+@use "@ionic/angular/css/normalize.css";
+
+
+
+
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+
+
+@use "@ionic/angular/css/structure.css";
+@use "@ionic/angular/css/typography.css";
+@use "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@use "@ionic/angular/css/padding.css";
+@use "@ionic/angular/css/float-elements.css";
+@use "@ionic/angular/css/text-alignment.css";
+@use "@ionic/angular/css/text-transformation.css";
+@use "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @use "@ionic/angular/css/palettes/dark.always.css"; */
+/* @use "@ionic/angular/css/palettes/dark.class.css"; */
+@use "@ionic/angular/css/palettes/dark.system.css";
 @import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
-@import '@angular/cdk/a11y-prebuilt.css';
-@import "@ionic/angular/css/core.css";
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
 
 html {
   @include mat.theme((color: (theme-type: light,
@@ -27,44 +62,6 @@ html {
   font-weight: normal;
   font-style: normal;
 }
-
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
-@import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
 
 html,
 body {
@@ -595,7 +592,7 @@ span:focus {
 }
 
 /********************************************
-    CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+    CONFIGURACIÓN PARA EL SELECTOR DE HORA
 *********************************************/
 /* Redondear el contenedor principal del Timepicker */
 .mat-timepicker-panel {
@@ -634,7 +631,7 @@ mat-timepicker-content {
 }
 
 /********************************************
-  FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA 
+  FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA
 *********************************************/
 
 .list-group-item.active {
