@@ -1,5 +1,6 @@
 export interface Usuario {
   access_token?: string;
+  refresh_token?: string | undefined;
   usuario: {
     id: number;
     nombre: string;

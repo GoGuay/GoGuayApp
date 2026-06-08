@@ -31,99 +31,119 @@ def buscar_localidad():
     query = request.args.get('q', '')
 
     patron_letras = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]'
-    
-    #Si la longitud es menor de 3 se devuelve la lista vacía, sin error. 
     if len(query) < 3 or not re.match(patron_letras, query):
         return jsonify([]), 200
 
-    url = 'https://places.googleapis.com/v1/places:autocomplete'   
-    payload = {
+    url_autocomplete = 'https://places.googleapis.com/v1/places:autocomplete'   
+    payload_autocomplete = {
         "input": query,
         "languageCode": "es",
         "includedRegionCodes": ["es"],
-        "includedPrimaryTypes": ["locality"]
+        "includedPrimaryTypes": ["(cities)"]
     }
-    headers = {
+    headers_autocomplete = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': googleapykey,
-        'X-Goog-FieldMask': 'suggestions.placePrediction.text,suggestions.placePrediction.placeId'
+        'X-Goog-FieldMask': 'suggestions.placePrediction.placeId,suggestions.placePrediction.structuredFormat'
     }
 
-
     try:        
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(url_autocomplete, json=payload_autocomplete, headers=headers_autocomplete)
         response.raise_for_status()  
         data = response.json()  
-        print('DATA ORIGEN: ', data)
 
-
-        # Extraer las predicciones de la respuesta
         localidades = []
+        descripciones_vistas = set()
+
         for item in data.get('suggestions', []):
-            print ('item: ', item)
             prediction = item.get('placePrediction')
+            if not prediction:
+                continue
 
-            if prediction:
-                texto_completo = prediction.get('text', {}).get('text', '')
-                partes = [p.strip() for p in texto_completo.split(',')]
-                partes_sin_pais = [p for p in partes if p.lower() != 'españa']
+            place_id = prediction['placeId']
+            structured = prediction.get('structuredFormat', {})
+            municipio = structured.get('mainText', {}).get('text', '').strip()
+            
+            # PASO 2: Como ya ampliamos la cuota, llamamos a los detalles de cada PlaceId sin miedo al 429
+            url_details = f'https://places.googleapis.com/v1/places/{place_id}?languageCode=es'
+            headers_details = {
+                'Content-Type': 'application/json',
+                'X-Goog-Api-Key': googleapykey,
+                'X-Goog-FieldMask': 'addressComponents,formattedAddress'
+            }
 
-                if len(partes_sin_pais) >=2:
-                    ciudad = partes_sin_pais[0]
-                    provincia = partes_sin_pais[1]
-                    descripcion = f"{ciudad} ({provincia})"
-                elif len (partes_sin_pais) == 1:
-                    descripcion = partes_sin_pais[0]
-                else:
-                    descripcion = texto_completo
+            provincia_real = None
+            formatted_address = None
+            try:
+                resp_details = requests.get(url_details, headers=headers_details)
+                if resp_details.status_code == 200:
+                    details_data = resp_details.json()
+                    address_components = details_data.get('addressComponents', [])
+                    formatted_address = details_data.get('formattedAddress', '')
+                    
+                    # Buscamos de forma infalible el tipo que representa a la provincia
+                    for component in address_components:
+                        types = component.get('types', [])
+                        if 'administrative_area_level_2' in types:
+                            provincia_real = component.get('longText')
+                            break
+                    if not provincia_real:
+                        for component in address_components:
+                            types = component.get('types', [])
+                            if 'administrative_area_level_1' in types:
+                                provincia_real = component.get('longText')
+                                break   
+                   
+
+            except Exception as detail_err:
+                print(f"Error recuperando detalle para {place_id}: {detail_err}")
+
+            if not provincia_real and formatted_address:
+                partes_address = [p.strip() for p in formatted_address.split(',') if p.strip()]
                 
+                
+                if partes_address and partes_address[-1].lower() in ['españa', 'spain']:
+                    partes_address.pop()
+                
+                
+                if partes_address:
+                    provincia_real = partes_address[-1]
 
+            # PASO 3: Construimos la descripción combinando Municipio + Provincia
+            if provincia_real:
+                provincia_limpia = (provincia_real
+                             .replace('Province of ', '')
+                             .replace('Provincia de ', '')
+                             .replace('Provincia d\'', '')
+                             .strip())
+                provincia_limpia = re.sub(r'\d+', '', provincia_limpia).strip()
+                
+                if municipio.lower() == provincia_limpia.lower():
+                    descripcion = municipio
+                else:
+                    descripcion = f"{municipio}, {provincia_limpia}"
+            else:
+                secundario = structured.get('secondaryText', {}).get('text', '').strip()
+                secundario_limpio = secundario.replace(', España', '').replace('España', '').strip()
+                if secundario_limpio:
+                    descripcion = f"{municipio}, {secundario_limpio}"
+                else:
+                    descripcion = municipio
+
+            # Control de duplicados antes de enviar a Angular
+            if descripcion not in descripciones_vistas:
+                descripciones_vistas.add(descripcion)
                 localidades.append({
                     'descripcion': descripcion,
-                    'place_id': prediction['placeId']
-        })
-        
+                    'place_id': place_id
+                })            
+                
         return jsonify(localidades), 200
+    
     except requests.exceptions.RequestException as e:   
-        print(f"Error en Google API: {e.response.text if e.response else e}")     
+        print(f"Error en Google API Autocomplete: {e.response.text if e.response else e}")     
         return jsonify({'error': str(e)}), 500
     
-
-#Vinculada a la función anterior, devuelve la provincia según el municipio escogido
-def detalle_localidad(place_id):
-        url = f'https://places.googleapis.com/v1/places/{place_id}'
-
-        headers = {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': googleapykey,
-            'X-Goog-FieldMask': 'addressComponents'
-        }
-
-        respuesta = requests.get(url, headers=headers)
-        
-
-        try:
-
-            if respuesta.status_code == 200:
-                data = respuesta.json()
-                address_components = data.get('addressComponents',[])
-                print ('Address Component: ', address_components)
-
-                provincia = None
-                for component in address_components:
-                    if 'administrative_area_level_2' in component.get('types', []):
-                        provincia = component.get('longtext')
-                        break
-
-                return provincia
-            else:
-                print(f"Error en detalle_localidad: {respuesta.status_code} - {respuesta.text}")
-                return None
-        except Exception as e:
-            print(f"Excepción en detalle_localidad: {str(e)}")
-            return None
-
-
 
 
 

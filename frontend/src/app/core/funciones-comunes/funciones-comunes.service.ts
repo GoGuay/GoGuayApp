@@ -3,12 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { CARS, Coches, COLORES, COLOURS } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../vehiculos-services/vehiculos-services.service';
 import { lastValueFrom } from 'rxjs';
 import { UserServicesService } from '../user-services/user-services.service';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { GoogleServices } from '../google-services/google-services.service';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +34,7 @@ export class FuncionesComunes {
     private vehicleService: VehiculosServicesService,
     private userService: UserServicesService,
     private router: Router,
+    private googleService: GoogleServices,
   ) {
     this.loadUserData();
   }
@@ -86,21 +87,23 @@ export class FuncionesComunes {
     console.log('preferencias: ', preferencias);
     if (!preferencias || !Array.isArray(preferencias)) return [];
 
-    return preferencias.map((pref: any) => {
-      switch (pref.toString().toLowerCase()) {
-        case 'silencio':
-        case 'silence':
-          return 'Prefiere viajar en silencio';
-        case 'dormir':
-          return 'Prefiere ir durmiendo';
-        case 'escuchar música':
-          return 'Prefiere ir escuchando música';
-        case 'hablar':
-          return 'Prefiere ir hablando';
-        default:
-          return pref; // Si no coincide, devuelve el valor original
-      }
-    }).filter(p => p !== ''); // Elimina elementos vacíos si los hubiera
+    return preferencias
+      .map((pref: any) => {
+        switch (pref.toString().toLowerCase()) {
+          case 'silencio':
+          case 'silence':
+            return 'Prefiere viajar en silencio';
+          case 'dormir':
+            return 'Prefiere ir durmiendo';
+          case 'escuchar música':
+            return 'Prefiere ir escuchando música';
+          case 'hablar':
+            return 'Prefiere ir hablando';
+          default:
+            return pref; // Si no coincide, devuelve el valor original
+        }
+      })
+      .filter((p) => p !== ''); // Elimina elementos vacíos si los hubiera
   }
 
   /**
@@ -143,34 +146,16 @@ export class FuncionesComunes {
    */
   private sugerenciasTimeout: any;
 
-  obtenerSugerenciasOrigen(evento: Event): Promise<void> {
-    return new Promise((resolve, reject) => {
-      clearTimeout(this.sugerenciasTimeout); // Cancelar timeout anterior si el usuario sigue escribiendo
+  obtenerSugerenciasOrigen(evento: Event): Observable<any> {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
 
-      const contenidoInput = (evento.target as HTMLInputElement).value;
-
-      if (contenidoInput.length > 2) {
-        this.sugerenciasTimeout = setTimeout(() => {
-          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              this.sugerenciasOrigen = data.filter(
-                (item: any) => item.address && (item.address.city || item.address.town || item.address.village) && item.address.country_code === 'es',
-              );
-              resolve();
-            })
-            .catch((error) => {
-              console.error('Error al obtener sugerencias de origen:', error);
-              reject(error);
-            });
-        }, 500); // Esperamos 500 ms antes de hacer la petición
-      } else {
-        this.sugerenciasOrigen = [];
-        resolve();
-      }
-    });
+    if (contenidoInput.trim().length >= 3) {
+      // Retornamos el Observable directamente
+      return this.googleService.obtenerLocalidad(contenidoInput);
+    } else {
+      // Retornamos un Observable de un array vacío si no llega a 3 caracteres
+      return of([]);
+    }
   }
 
   /**
@@ -181,34 +166,14 @@ export class FuncionesComunes {
    */
   private sugerenciasDestinoTimeout: any;
 
-  obtenerSugerenciasDestino(evento: Event): Promise<void> {
-    return new Promise((resolve, reject) => {
-      clearTimeout(this.sugerenciasDestinoTimeout);
+  obtenerSugerenciasDestino(evento: Event): Observable<any> {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
 
-      const contenidoInput = (evento.target as HTMLInputElement).value;
-
-      if (contenidoInput.length > 2) {
-        this.sugerenciasDestinoTimeout = setTimeout(() => {
-          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${contenidoInput}&addressdetails=1&limit=5&countrycodes=ES`;
-
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              this.sugerenciasDestino = data.filter(
-                (item: any) => item.address && (item.address.city || item.address.town || item.address.village) && item.address.country_code === 'es',
-              );
-              resolve();
-            })
-            .catch((error) => {
-              console.error('Error al obtener sugerencias de destino:', error);
-              reject(error);
-            });
-        }, 500);
-      } else {
-        this.sugerenciasDestino = [];
-        resolve();
-      }
-    });
+    if (contenidoInput.trim().length >= 3) {
+      return this.googleService.obtenerLocalidad(contenidoInput);
+    } else {
+      return of([]);
+    }
   }
 
   /**
@@ -244,7 +209,9 @@ export class FuncionesComunes {
    * @param id_usuario
    */
   obtenerDatosUsuario(id_usuario: number) {
-    this.usuario = lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
+    this.usuario = lastValueFrom(
+      this.userService.obtenerUsuarioPorID(id_usuario),
+    );
   }
 
   /******************************************
@@ -273,8 +240,10 @@ export class FuncionesComunes {
   editarVehiculo(vehiculo: any): any {
     console.log('Vehiculo modificado: ', vehiculo);
 
-    this.vehicleService.editarVehiculo(vehiculo.id, vehiculo).subscribe((resultado) => {
-      console.log('Resultado: ', resultado);
-    });
+    this.vehicleService
+      .editarVehiculo(vehiculo.id, vehiculo)
+      .subscribe((resultado) => {
+        console.log('Resultado: ', resultado);
+      });
   }
 }

@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,9 +19,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
-import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { Location } from '@angular/common';
-import { debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, tap } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { GoogleServices } from '../../../core/google-services/google-services.service';
 
 @Component({
@@ -34,7 +49,7 @@ import { GoogleServices } from '../../../core/google-services/google-services.se
     MatDialogModule,
     MatTooltipModule,
     ToastModule,
-    SpinnerComponent
+    SpinnerComponent,
   ],
 })
 export class NuevoViajePage implements OnInit {
@@ -80,7 +95,6 @@ export class NuevoViajePage implements OnInit {
   selectOption(valor: string) {
     this.plazas = valor;
     this.isOpen = false;
-    // Aquí puedes disparar la lógica que necesites al cambiar
   }
 
   // Opcional: Cerrar si el usuario hace click fuera
@@ -100,7 +114,7 @@ export class NuevoViajePage implements OnInit {
     private location: Location,
     private googleService: GoogleServices,
     private elementRef: ElementRef,
-    private travelService: TravelService
+    private travelService: TravelService,
   ) {
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
@@ -119,13 +133,13 @@ export class NuevoViajePage implements OnInit {
       });
 
     /**
-         * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
-         * Con el pipe establecemos unos filtros para que los resultados sean mejores.
-         * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
-         * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
-         * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
-         * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
-         */
+     * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
+     * Con el pipe establecemos unos filtros para que los resultados sean mejores.
+     * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
+     * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
+     * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
+     * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
+     */
     this.buscadorOrigen$
       .pipe(
         debounceTime(400),
@@ -157,11 +171,13 @@ export class NuevoViajePage implements OnInit {
       )
       .subscribe((respuesta: any) => {
         this.sugerenciasOrigen = respuesta;
+        this.cargandoOrigen = false;
+        this.cdr.detectChanges();
       });
 
     /**
-   * CEREBRO BUSQUEDA LOCALIDAD DESTINO: Funciona igual que la de origen
-   */
+     * CEREBRO BUSQUEDA LOCALIDAD DESTINO: Funciona igual que la de origen
+     */
     this.buscadorDestino$
       .pipe(
         debounceTime(400),
@@ -183,8 +199,9 @@ export class NuevoViajePage implements OnInit {
       )
       .subscribe((respuesta: any) => {
         this.sugerenciasDestino = respuesta;
+        this.cargandoDestino = false;
+        this.cdr.detectChanges();
       });
-
   }
 
   ngOnInit() {
@@ -204,101 +221,105 @@ export class NuevoViajePage implements OnInit {
     };
 
     if (!this.userLoggedIn) {
-      this.funcionesComunes.openConfirmModal(this.title_help_carnet, this.message_help_auth);
+      this.funcionesComunes.openConfirmModal(
+        this.title_help_carnet,
+        this.message_help_auth,
+      );
     } else {
       /**
        * Se almacena temporalmente los datos del viaje.
        */
       this.viajesService.setViajeData(viajeData);
       this.navCtrl.navigateRoot('/data-viaje', { replaceUrl: true });
-
     }
   }
 
-
-  /**
-   * Función para buscar la lista de sugerencias para el origen.
-   * 
-   * @param event Recibe la información del input
-   */
   buscarSugerenciasOrigen(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const texto = inputElement.value;
+
+    this.estaEnOrigen = true;
+    this.estaEnDestino = false;
     this.cargandoOrigen = true;
-    this.funcionesComunes.obtenerSugerenciasOrigen(event)
-      .finally(() => {
-        console.log("Búsqueda de sugerencias completada");
-        this.cargandoOrigen = false;
-        this.cdr.detectChanges(); // fuerza render del componente
-      });
+
+    if (texto && texto.length >= 3) {
+      this.buscadorOrigen$.next(texto);
+    } else {
+      this.sugerenciasOrigen = [];
+      this.cargandoOrigen = false;
+    }
   }
 
   /**
-   * Función para buscar la lista de sugerencias para el destino.
-   * 
-   * @param event Recibe la información del input
+   * Función para empujar el texto de destino al flujo reactivo de Google
    */
   buscarSugerenciasDestino(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const texto = inputElement.value;
+
+    this.estaEnOrigen = false;
+    this.estaEnDestino = true;
     this.cargandoDestino = true;
-    this.funcionesComunes.obtenerSugerenciasDestino(event)
-      .finally(() => {
-        this.cargandoDestino = false;
-        this.cdr.detectChanges();
-      });
+
+    if (texto && texto.length >= 3) {
+      this.buscadorDestino$.next(texto);
+    } else {
+      this.sugerenciasDestino = [];
+      this.cargandoDestino = false;
+    }
   }
+  buscarUbicacion() {}
 
-
-  buscarUbicacion(){}
-  
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadOrigen(localidad: any) {
-    this.origen = localidad.display_name.split(',')[0].trim();
-    this.ultimaLocalidadValidaOrigen = localidad; 
+    this.origen = localidad.descripcion.split(',')[0].trim();
+    this.ultimaLocalidadValidaOrigen = localidad;
 
     const viajeData = {
       ...this.travelService.getViajeData(),
       origen: this.origen,
     };
     this.travelService.setViajeData(viajeData);
-    this.funcionesComunes.sugerenciasOrigen = [];
+    this.sugerenciasOrigen = [];
     this.indiceActivoOrigen = -1;
   }
 
-
   /**
    * Función para guardar la información de la localidad de destino seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadDestino(localidad: any) {
-    this.destino = localidad.display_name.split(',')[0].trim();
-    this.ultimaLocalidadValidaDestino = localidad; 
+    this.destino = localidad.descripcion.split(',')[0].trim();
+    this.ultimaLocalidadValidaDestino = localidad;
 
     const viajeData = {
       ...this.travelService.getViajeData(),
       destino: this.destino,
     };
     this.travelService.setViajeData(viajeData);
-    this.funcionesComunes.sugerenciasDestino = [];
+    this.sugerenciasDestino = [];
     this.indiceActivoDestino = -1;
   }
 
   /**
- *
- * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
- * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
- * @param index --> si es -1 el usuario pulsó la tecla estando dentro del input. Si es 0,1,2...significa que el usuario ya esta navegando en la lista de sugerencias.
- *
- * Condicional sugerencias: si el tipo es origen, elige sugerenciasOrigen. Si no es ese tipo, coge sugerenciasDestino. Si el array de sugerencias es 0 sale de la función.
- * Condicional indiceActual: si el tipo es origen indiceActual pasa a valer lo que esté en la definición de indiceActivoOrigen (-1), si no pasa a valor lo que tenga indiceActivoDestino (-1).
- * Si el evento es tecla abajo:
- *  -event.preventDefault --> indicamos que somos nosotros quienes vamos a manejar con la tecla, impedimos la accion natural que tiene el navegador.
- *  - Si indiceActual es menor que el array de sugerencias -1 (para igual el tamaño del array al número del índice), le sumamos 1 indiceActual y llamamos a actualizarIndiceyFoco
- * Si el evento es tecla arriba:
- *  -
- */
+   *
+   * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
+   * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
+   * @param index --> si es -1 el usuario pulsó la tecla estando dentro del input. Si es 0,1,2...significa que el usuario ya esta navegando en la lista de sugerencias.
+   *
+   * Condicional sugerencias: si el tipo es origen, elige sugerenciasOrigen. Si no es ese tipo, coge sugerenciasDestino. Si el array de sugerencias es 0 sale de la función.
+   * Condicional indiceActual: si el tipo es origen indiceActual pasa a valer lo que esté en la definición de indiceActivoOrigen (-1), si no pasa a valor lo que tenga indiceActivoDestino (-1).
+   * Si el evento es tecla abajo:
+   *  -event.preventDefault --> indicamos que somos nosotros quienes vamos a manejar con la tecla, impedimos la accion natural que tiene el navegador.
+   *  - Si indiceActual es menor que el array de sugerencias -1 (para igual el tamaño del array al número del índice), le sumamos 1 indiceActual y llamamos a actualizarIndiceyFoco
+   * Si el evento es tecla arriba:
+   *  -
+   */
   manejarNavegacionTeclado(
     event: KeyboardEvent,
     tipo: 'origen' | 'destino',
@@ -428,5 +449,4 @@ export class NuevoViajePage implements OnInit {
   goBack() {
     this.location.back();
   }
-
 }

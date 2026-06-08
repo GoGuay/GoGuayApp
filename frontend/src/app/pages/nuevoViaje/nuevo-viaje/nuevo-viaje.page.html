@@ -1,4 +1,8 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
   <ion-row class="primera-seccion">
@@ -7,88 +11,181 @@
         <div class="contenido_formulario">
           <label class="text-start">Origen:</label>
           <div class="input-container mb-4">
-            <img src="../../../../assets/sistema/marcador.png" class="marcador-icon input-icon" />
-            <input #inputOrigen id="input-origen" autocomplete="off" spellcheck="false" [(ngModel)]="origen"
-              (input)="buscarSugerenciasOrigen($event)" (blur)="estaEnOrigen = false; validarSeleccion('origen')"
-              (focus)="estaEnOrigen = true" placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}"
-              class="input-viaje form-control" name="origen" role="combobox" aria-autocomplete="list"
-              aria-haspopup="listbox" aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="sugerenciasOrigen.length > 0" [attr.aria-controls]="
-                  sugerenciasOrigen.length > 0
+            <img
+              src="../../../../assets/sistema/marcador.png"
+              class="marcador-icon input-icon"
+            />
+            <input
+              #inputOrigen
+              id="input-origen"
+              autocomplete="off"
+              spellcheck="false"
+              [(ngModel)]="origen"
+              (input)="buscarSugerenciasOrigen($event)"
+              (blur)="estaEnOrigen = false; validarSeleccion('origen')"
+              (focus)="estaEnOrigen = true"
+              placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}"
+              class="input-viaje form-control"
+              name="origen"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-describedby="instrucciones-busqueda"
+              [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+              [attr.aria-controls]="sugerenciasOrigen.length > 0
                     ? 'lista-origen-resultados'
                     : null
-                " />
-            <div *ngIf="cargandoOrigen" class="spinner-container">
+                "
+            />
+            <div
+              *ngIf="cargandoOrigen"
+              class="spinner-container"
+            >
               <app-spinner></app-spinner>
             </div>
-            <ul *ngIf="!cargandoOrigen && funcionesComunes.sugerenciasOrigen.length > 0"
-              class="list-group lista_sugerencias">
-              <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sugerencia)"
-                [ngClass]="{'list-group-item': true}">
-                {{ sugerencia.display_name }}
+            <ul
+              *ngIf="!cargandoOrigen && sugerenciasOrigen.length > 0"
+              class="list-group lista_sugerencias"
+            >
+              <li
+                *ngFor="let sugerencia of sugerenciasOrigen"
+                (click)="seleccionarLocalidadOrigen(sugerencia)"
+                [ngClass]="{'list-group-item': true}"
+              >
+                {{ sugerencia.descripcion }}
               </li>
             </ul>
           </div>
 
           <div class="input-container">
-            <button type="button" class="btn btn_bg mb-4" (click)="buscarUbicacion()">
-              <span><i class="fi fi-rr-marker me-2"></i>Busca mi ubicación</span>
-            </button> 
+            <button
+              type="button"
+              class="btn btn_bg mb-4"
+              (click)="buscarUbicacion()"
+            >
+              <span>
+                <i class="fi fi-rr-marker me-2"></i>
+                Busca mi ubicación
+              </span>
+            </button>
           </div>
-
 
           <label class="text-start">Destino:</label>
           <div class="input-container">
-            <img src="../../../../assets/sistema/viaje-en-coche.png" class="marcador-icon input-icon" />
-            <input #inputDestino id="input-destino" [(ngModel)]="destino"
-              (blur)="estaEnDestino = false; validarSeleccion('destino')" (focus)="estaEnDestino = true"
-              (input)="buscarSugerenciasDestino($event)" (keydown)="manejarNavegacionTeclado($event, 'destino')"
-              autocomplete="off" spellcheck="false" placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}"
-              class="input-viaje form-control" name="destino" role="combobox" aria-autocomplete="list"
-              aria-haspopup="listbox" aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="sugerenciasDestino.length > 0" [attr.aria-controls]="
+            <img
+              src="../../../../assets/sistema/viaje-en-coche.png"
+              class="marcador-icon input-icon"
+            />
+            <input
+              #inputDestino
+              id="input-destino"
+              [(ngModel)]="destino"
+              (blur)="estaEnDestino = false; validarSeleccion('destino')"
+              (focus)="estaEnDestino = true"
+              (input)="buscarSugerenciasDestino($event)"
+              (keydown)="manejarNavegacionTeclado($event, 'destino')"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}"
+              class="input-viaje form-control"
+              name="destino"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-describedby="instrucciones-busqueda"
+              [attr.aria-expanded]="sugerenciasDestino.length > 0"
+              [attr.aria-controls]="
                   sugerenciasDestino.length > 0
                     ? 'lista-destino-resultados'
                     : null
-                " />
+                "
+            />
             <!-- Spinner de carga -->
-            <div *ngIf="cargandoDestino" class="spinner-container">
+            <div
+              *ngIf="cargandoDestino"
+              class="spinner-container"
+            >
               <app-spinner></app-spinner>
             </div>
 
-            <ul *ngIf="!cargandoDestino && funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-              <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
-                [ngClass]="{'list-group-item': true}">
-                {{ sugerencia.display_name }}
+            <ul
+              *ngIf="!cargandoDestino && sugerenciasDestino.length > 0"
+              class="list-group lista_sugerencias"
+            >
+              <li
+                *ngFor="let sugerencia of sugerenciasDestino"
+                (click)="seleccionarLocalidadDestino(sugerencia)"
+                [ngClass]="{'list-group-item': true}"
+              >
+                {{ sugerencia.descripcion }}
               </li>
             </ul>
-
           </div>
 
           <!-- SELECTOR DE PLAZAS  -->
-           <label class="text-start mt-4">Plazas disponibles:</label>
-          <div class="select-container custom-dropdown  mb-3" (click)="toggleDropdown()" [class.open]="isOpen">
-            <img src="../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios" />
+          <label class="text-start mt-4">Plazas disponibles:</label>
+          <div
+            class="select-container custom-dropdown mb-3"
+            (click)="toggleDropdown()"
+            [class.open]="isOpen"
+          >
+            <img
+              src="../../../../assets/sistema/usuarios-alt.png"
+              class="select-icon"
+              alt="icono usuarios"
+            />
 
             <div class="selected-value">
               {{ plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
             </div>
 
-            <ul class="custom-options" *ngIf="isOpen">
-              <li (click)="selectOption('1')" [class.selected]="plazas === '1'">1</li>
-              <li (click)="selectOption('2')" [class.selected]="plazas === '2'">2</li>
-              <li (click)="selectOption('3')" [class.selected]="plazas === '3'">3</li>
-              <li (click)="selectOption('4')" [class.selected]="plazas === '4'">4</li>
+            <ul
+              class="custom-options"
+              *ngIf="isOpen"
+            >
+              <li
+                (click)="selectOption('1')"
+                [class.selected]="plazas === '1'"
+              >
+                1
+              </li>
+              <li
+                (click)="selectOption('2')"
+                [class.selected]="plazas === '2'"
+              >
+                2
+              </li>
+              <li
+                (click)="selectOption('3')"
+                [class.selected]="plazas === '3'"
+              >
+                3
+              </li>
+              <li
+                (click)="selectOption('4')"
+                [class.selected]="plazas === '4'"
+              >
+                4
+              </li>
             </ul>
           </div>
 
-          <div class="alert" *ngIf="!userLoggedIn">
+          <div
+            class="alert"
+            *ngIf="!userLoggedIn"
+          >
             <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
             <div class="d-flex justify-content-center">
-              <button type="button" class="help_btn d-flex justify-content-center"
+              <button
+                type="button"
+                class="help_btn d-flex justify-content-center"
                 title="Ayuda para iniciar sesión / registrarse"
-                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
-                <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
+                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
+              >
+                <img
+                  src="../../../../assets/sistema/interrogatorio.png"
+                  class="marcador-icon input-icon"
+                />
               </button>
             </div>
           </div>
@@ -103,9 +200,13 @@
             </div>
           </div> -->
         </div>
-        <button type="button" class="btn-publicar ion-activatable ripple-parent circle"
-          title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}" (click)="goTo()"
-          matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}">
+        <button
+          type="button"
+          class="btn-publicar ion-activatable ripple-parent circle"
+          title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}"
+          (click)="goTo()"
+          matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}"
+        >
           {{ 'BOTON.PUBLICAR_VIAJE' | translate }}
           <ion-ripple-effect></ion-ripple-effect>
         </button>
@@ -118,16 +219,36 @@
       <h2>{{ 'CENTRODEAYUDA.TITULO' | translate }}</h2>
       <p>{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
       <div class="d-flex justify-content-center">
-        <button type="button" mat-raised-button class="btn_bg" routerLink="/centro-ayuda">
-          <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
+        <button
+          type="button"
+          mat-raised-button
+          class="btn_bg"
+          routerLink="/centro-ayuda"
+        >
+          <img
+            src="../../../../assets/sistema/interrogatorio.png"
+            class="marcador-icon input-icon"
+          />
           {{ 'BOTON.CENTROAYUDA' | translate }}
         </button>
       </div>
     </div>
   </ion-row>
-  <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-ajustes fab-buscar">
-    <ion-fab-button aria-label="Ir atrás" (click)="goBack()">
-      <img [src]="irAtrasImg" alt="Ir atrás" style="width: 24px; height: 24px" />
+  <ion-fab
+    vertical="bottom"
+    horizontal="start"
+    slot="fixed"
+    class="fab-ajustes fab-buscar"
+  >
+    <ion-fab-button
+      aria-label="Ir atrás"
+      (click)="goBack()"
+    >
+      <img
+        [src]="irAtrasImg"
+        alt="Ir atrás"
+        style="width: 24px; height: 24px"
+      />
     </ion-fab-button>
   </ion-fab>
 </ion-content>

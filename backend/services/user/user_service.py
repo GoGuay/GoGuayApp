@@ -11,7 +11,7 @@ from itsdangerous import SignatureExpired, BadSignature
 import nexmo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
@@ -168,11 +168,23 @@ def login():
         return jsonify({'Error': 'Contraseña incorrecta'}), 401
 
     access_token = create_access_token(identity=str(usuario.id))
+    refresh_token = create_refresh_token(identity=usuario.id)
 
     return jsonify({
         'usuario': usuario.serialize(),
-        'access_token': access_token
+        'access_token': access_token,
+        "refresh_token": refresh_token,
     }), 200
+
+# Para generar un token de refresco -- para que la sesión no se bloquee a los 15 minutos que es la duración del token "normal"
+@user_blueprint.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    usuario_id = get_jwt_identity()
+    nuevo_access_token = create_access_token(identity=usuario_id)
+
+    return jsonify({"access_token": nuevo_access_token}), 200
+
 
 
 ## #OBTENER TODOS LOS USUARIOS ##

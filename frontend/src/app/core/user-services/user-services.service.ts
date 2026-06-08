@@ -1,5 +1,9 @@
 import { Usuario } from './../../models/user/usuario.model';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
@@ -122,10 +126,9 @@ export class UserServicesService {
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(
-      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`
+      `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`,
     );
   }
-
 
   obtenerUsuarioPorID_busqueda_viajes(usuarioId: number): Observable<any> {
     return this.http.get<Usuario>(
@@ -172,6 +175,10 @@ export class UserServicesService {
       tap((response) => {
         if (response && response.access_token) {
           localStorage.setItem('access_token', response.access_token);
+          if (response.refresh_token) {
+            localStorage.setItem('refresh_token', response.refresh_token);
+          }
+
           console.log('Token detectado y guardado en localStorage');
         }
       }),

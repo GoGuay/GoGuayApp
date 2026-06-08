@@ -6,17 +6,22 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
 import { ChangeDetectorRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { FuncionesComunes } from '../../../../../core/funciones-comunes/funciones-comunes.service';
-import { SpinnerComponent } from "../../../../../components/spinner/spinner.component";
+import { SpinnerComponent } from '../../../../../components/spinner/spinner.component';
 
 @Component({
   selector: 'app-segundo-paso',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, MatButtonModule, SpinnerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    MatButtonModule,
+    SpinnerComponent,
+  ],
   templateUrl: './segundo-paso.component.html',
   styleUrls: ['./segundo-paso.component.scss'],
 })
 export class SegundoPasoComponent implements OnInit {
-
   origen: string = '';
   destino: string = '';
   plazas: string = '';
@@ -34,7 +39,11 @@ export class SegundoPasoComponent implements OnInit {
 
   currentViajeData: any;
 
-  constructor(private travelService: TravelService, private cdr: ChangeDetectorRef, public funcionesComunes: FuncionesComunes) { }
+  constructor(
+    private travelService: TravelService,
+    private cdr: ChangeDetectorRef,
+    public funcionesComunes: FuncionesComunes,
+  ) {}
 
   ngOnInit() {
     const currentViajeData = this.travelService.getViajeData();
@@ -44,10 +53,9 @@ export class SegundoPasoComponent implements OnInit {
     this.hora_seleccionada = currentViajeData.hora_salida || '';
   }
 
-
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadOrigen(localidad: any) {
@@ -60,10 +68,9 @@ export class SegundoPasoComponent implements OnInit {
     this.funcionesComunes.sugerenciasOrigen = [];
   }
 
-
   /**
    * Función para guardar la información de la localidad de destino seleccionada.
-   * 
+   *
    * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
    */
   seleccionarLocalidadDestino(localidad: any) {
@@ -75,7 +82,6 @@ export class SegundoPasoComponent implements OnInit {
     this.travelService.setViajeData(viajeData);
     this.funcionesComunes.sugerenciasDestino = [];
   }
-
 
   getUserLocationWithLeaflet() {
     if (navigator.geolocation) {
@@ -89,10 +95,14 @@ export class SegundoPasoComponent implements OnInit {
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
 
           fetch(url)
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
               if (data && data.address) {
-                let city = data.address.city || data.address.town || data.address.village || '';
+                let city =
+                  data.address.city ||
+                  data.address.town ||
+                  data.address.village ||
+                  '';
                 if (city) {
                   this.origen = city;
                   const viajeData = {
@@ -106,35 +116,54 @@ export class SegundoPasoComponent implements OnInit {
                 }
               }
             })
-            .catch(error => console.error('Error al obtener la ubicación con Leaflet:', error));
+            .catch((error) =>
+              console.error(
+                'Error al obtener la ubicación con Leaflet:',
+                error,
+              ),
+            );
         },
         (error) => {
           console.error('Error de geolocalización:', error.message);
-        }
+        },
       );
     } else {
-      console.error("La geolocalización no está soportada por este navegador.");
+      console.error('La geolocalización no está soportada por este navegador.');
     }
   }
 
-
   buscarSugerenciasOrigen(event: Event) {
     this.cargandoOrigen = true;
-    this.funcionesComunes.obtenerSugerenciasOrigen(event)
-      .finally(() => {
-        console.log("Búsqueda de sugerencias completada");
+
+    this.funcionesComunes.obtenerSugerenciasOrigen(event).subscribe({
+      next: (resultados: any) => {
+        this.sugerenciasOrigen = resultados;
         this.cargandoOrigen = false;
-        this.cdr.detectChanges(); // fuerza render del componente
-      });
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error en la búsqueda de origen:', error);
+        this.cargandoOrigen = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   buscarSugerenciasDestino(event: Event) {
     this.cargandoDestino = true;
-    this.funcionesComunes.obtenerSugerenciasDestino(event)
-      .finally(() => {
+
+    this.funcionesComunes.obtenerSugerenciasDestino(event).subscribe({
+      next: (resultados: any) => {
+        this.sugerenciasDestino = resultados;
+
         this.cargandoDestino = false;
         this.cdr.detectChanges();
-      });
+      },
+      error: (error: any) => {
+        console.error('Error en la búsqueda de destino:', error);
+        this.cargandoDestino = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
-
 }
