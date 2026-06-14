@@ -108,7 +108,7 @@ $bg-light: #f4f5f8;
     .btn-goguay {
       background: $primary-color;
       color: white;
-      border-radius: 12px;
+      border-radius: 35px;
       font-weight: 600;
       box-shadow: 0 8px 15px rgba($primary-color, 0.2);
       transition: transform 0.2s;
@@ -119,7 +119,8 @@ $bg-light: #f4f5f8;
     }
 
     .btn-outline-dark {
-      border-radius: 12px;
+      border-radius: 35px;
+      box-shadow: 0 8px 15px rgba($primary-color, 0.2);
       padding: 12px;
       border-width: 2px;
     }

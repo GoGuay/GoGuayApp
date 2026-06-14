@@ -772,20 +772,38 @@ def create_order():
     viaje_id = data.get('viaje_id')
 
     if not viaje_id:
-        return {"error": "Falta el id del viaje"}, 400
+        return jsonify({"error": "Falta el id del viaje"}), 400
     
     viaje = db.session.query(Viaje).options(
         joinedload(Viaje.usuario)
     ).filter(Viaje.id == viaje_id).first()
-    precio_real = viaje.precio_viaje 
+    
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+        
+    email_conductor = viaje.creador.cobro_paypal_email or "goguay_empresa@business.example.com"
+    
+    precio_formateado = f"{viaje.precio_viaje:.2f}"
     
     token = get_access_token()
-    print ("token:", token)
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
     payload = {
         "intent": "CAPTURE",
-        "purchase_units": [{"reference_id": str(viaje_id), "amount": {"currency_code": "EUR", "value": precio_real}}],
-         "application_context": { 
+        "purchase_units": [{
+            "reference_id": str(viaje_id),
+            "amount": {
+                "currency_code": "EUR", 
+                "value": precio_formateado
+            },
+            "payee": {
+                "email_address": email_conductor  
+            },
+            "description": f"Reserva de plaza en GoGuay - Destino {viaje.destino}"
+        }],
+        "application_context": { 
+            "shipping_preference": "NO_SHIPPING", 
+            "user_action": "PAY_NOW",
             "return_url": "http://localhost:4200/payment-success",
             "cancel_url": "http://localhost:4200/payment-cancel"
         }
@@ -794,19 +812,33 @@ def create_order():
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
     order = response.json()
 
-    approve_link = next(
-        link["href"] for link in order["links"] if link["rel"] == "approve"
-    )
+    if response.status_code not in [200, 201]:
+        print("DETALLE DE ERROR EN PAYPAL API:", order)
+        return jsonify({"error": "Error al comunicarse con la pasarela", "detalle": order}), response.status_code
 
-    return {
-        "order_id": order["id"],
-        "approve_url": approve_link
-    }
+    try:
+        approve_link = next(
+            link["href"] for link in order["links"] if link["rel"] == "approve"
+        )
+        return jsonify({
+            "order_id": order["id"],
+            "approve_url": approve_link
+        }), 200
+    except KeyError:
+        return jsonify({"error": "No se pudo generar el enlace de aprobación", "detalle": order}), 500
 
-
+# Captura el pago de la orden creada en PayPal
+# 
 @user_blueprint.route("/capture-order/<order_id>", methods=['POST'])
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
-    return response.json()
+    
+    capture_data = response.json()
+    
+    if response.status_code not in [200, 201]:
+        print(f"❌ Error al capturar la orden {order_id}:", capture_data)
+        return jsonify(capture_data), response.status_code
+        
+    return jsonify(capture_data), 200
