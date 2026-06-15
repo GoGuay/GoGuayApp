@@ -26,6 +26,11 @@
   }
 }
 
+ul,
+li {
+  list-style: none;
+}
+
 .mis-viajes-container label {
   position: sticky;
   top: 0;
@@ -169,20 +174,21 @@ ion-segment-button {
   justify-content: center;
   padding: 0;
   line-height: 1;
-    &:hover::after {
+
+  &:hover::after {
     content: attr(data-name);
     position: absolute;
-    top: 46px; 
+    top: 46px;
     left: 50%;
-    transform: translateX(-50%); 
-    
+    transform: translateX(-50%);
+
     background-color: #333333;
     color: #ffffff;
     font-size: 0.72rem;
     font-weight: 600;
     padding: 3px 8px;
     border-radius: 6px;
-    white-space: nowrap; 
+    white-space: nowrap;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     opacity: 1;
     pointer-events: none;
@@ -201,26 +207,27 @@ ion-segment-button {
   justify-content: center;
   padding: 0;
   line-height: 1;
-    &:hover::after {
-      content: attr(data-name); 
-      position: absolute;
-      top: 46px; 
-      left: 50%;
-      transform: translateX(-50%); 
-      
-      /* Diseño del texto */
-      background-color: #333333;
-      color: #ffffff;
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 6px;
-      white-space: nowrap; 
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      opacity: 1;
-      pointer-events: none; 
-      animation: fadeInTooltip 0.15s ease-out forwards;
-    }
+
+  &:hover::after {
+    content: attr(data-name);
+    position: absolute;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Diseño del texto */
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    pointer-events: none;
+    animation: fadeInTooltip 0.15s ease-out forwards;
+  }
 }
 
 .btn_bg i {
@@ -387,9 +394,17 @@ ion-segment-button {
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 576px) {
@@ -529,20 +544,31 @@ ion-segment-button {
   }
 
   @keyframes marquesina {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(0); } 
-    80% { transform: translateX(-40%); } 
-    100% { transform: translateX(0); } 
+    0% {
+      transform: translateX(0);
+    }
+
+    20% {
+      transform: translateX(0);
+    }
+
+    80% {
+      transform: translateX(-40%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
   }
 
   ion-segment-button.segment-button-checked {
-    flex: 4; 
-    
+    flex: 4;
+
     ion-label {
       font-weight: bold;
       display: inline-block;
-      text-overflow: clip; 
-      overflow: visible; 
+      text-overflow: clip;
+      overflow: visible;
       white-space: nowrap;
       animation: marquesina 5s linear infinite;
       width: auto;
@@ -552,10 +578,11 @@ ion-segment-button {
   /* Para los botones NO seleccionados mantén los puntos suspensivos */
   ion-segment-button:not(.segment-button-checked) {
     flex: 1;
+
     ion-label {
       display: block;
       overflow: hidden;
-      text-overflow: ellipsis; 
+      text-overflow: ellipsis;
       animation: none;
     }
   }
@@ -598,7 +625,7 @@ ion-segment-button {
   overflow: hidden;
   transition: transform 0.2s ease;
 
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -625,11 +652,15 @@ ion-segment-button {
   font-size: 0.85rem;
   font-weight: 600;
   color: #666;
-  i { color: #888; }
+
+  i {
+    color: #888;
+  }
 }
 
 // Badges de Estado
-.badge-pendiente, .badge-finalizado {
+.badge-pendiente,
+.badge-finalizado {
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.7rem;
@@ -637,8 +668,15 @@ ion-segment-button {
   text-transform: uppercase;
 }
 
-.badge-pendiente { background: #fff9c4; color: #fbc02d; }
-.badge-finalizado { background: #e8f5e9; color: #4caf50; }
+.badge-pendiente {
+  background: #fff9c4;
+  color: #fbc02d;
+}
+
+.badge-finalizado {
+  background: #e8f5e9;
+  color: #4caf50;
+}
 
 .btn-puntuar-mini {
   font-size: 0.75rem;
@@ -646,13 +684,26 @@ ion-segment-button {
   color: #5c6bc0;
   cursor: pointer;
   text-decoration: underline;
-  &:hover { color: #3f51b5; }
+
+  &:hover {
+    color: #3f51b5;
+  }
 }
 
 
 .punto-viaje {
-  .hora { display: block; font-size: 1.3rem; font-weight: 800; color: #333; }
-  .ciudad { font-size: 0.85rem; color: #777; font-weight: 500; }
+  .hora {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #333;
+  }
+
+  .ciudad {
+    font-size: 0.85rem;
+    color: #777;
+    font-weight: 500;
+  }
 }
 
 .duracion-badge {
@@ -687,30 +738,55 @@ ion-segment-button {
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
-    
-    i, mat-icon { font-size: 18px; }
 
-    &.btn-report { background: #fff3e0; color: #ff9800; }
-    &.btn-detalle { background: #e8eaf6; color: #3f51b5; }
-    &.btn-editar { background: #e1f5fe; color: #03a9f4; }
-    &.btn-eliminar { background: #ffebee; color: #f44336; }
-    &.btn-aceptar { background: #e8f5e9; color: #4caf50; }
+    i,
+    mat-icon {
+      font-size: 18px;
+    }
 
-    &:hover { transform: scale(1.1); }
+    &.btn-report {
+      background: #fff3e0;
+      color: #ff9800;
+    }
+
+    &.btn-detalle {
+      background: #e8eaf6;
+      color: #3f51b5;
+    }
+
+    &.btn-editar {
+      background: #e1f5fe;
+      color: #03a9f4;
+    }
+
+    &.btn-eliminar {
+      background: #ffebee;
+      color: #f44336;
+    }
+
+    &.btn-aceptar {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
     @media (min-width: 769px) {
       &::after {
         content: attr(data-name);
         position: absolute;
-        top: 44px; 
+        top: 44px;
         left: 50%;
-        transform: translateX(-50%); 
+        transform: translateX(-50%);
         background-color: #333333;
         color: #ffffff;
         font-size: 0.68rem;
         font-weight: 600;
         padding: 3px 8px;
         border-radius: 6px;
-        white-space: nowrap; 
+        white-space: nowrap;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         opacity: 0;
         pointer-events: none;
@@ -722,26 +798,26 @@ ion-segment-button {
         transform: translate(-50%, 2px);
       }
     }
-  
+
   }
 }
 
 .btn-aceptar-mini {
-  background: #e8f5e9; 
+  background: #e8f5e9;
   color: #4caf50;
   border-radius: 35px;
   padding: 4px
 }
 
 .btn-rechazar-mini {
-  background: #f44336; 
+  background: #f44336;
   color: #fff3e0;
   border-radius: 35px;
   padding: 4px
 }
 
 .btn-rechazar-mini:hover {
-  background: #ffb3ba !important; 
+  background: #ffb3ba !important;
   color: black !important;
   border-radius: 35px;
   padding: 4px
@@ -754,7 +830,7 @@ ion-segment-button {
     border-right: none;
     border-bottom: 1px dashed #efefef;
   }
-  
+
   .side-management {
     border-radius: 0 0 16px 16px;
     padding: 15px !important;
@@ -762,35 +838,44 @@ ion-segment-button {
 
   .acciones-grid {
     justify-content: space-around;
-    row-gap: 32px; 
+    row-gap: 32px;
     column-gap: 12px;
-    padding-bottom: 15px; 
+    padding-bottom: 15px;
 
     .btn-gestion {
       width: 45px;
       height: 45px;
-      margin-bottom: 5px; 
+      margin-bottom: 5px;
 
       &::after {
         content: attr(data-name);
         position: absolute;
-        top: 50px; 
+        top: 50px;
         left: 50%;
         transform: translateX(-50%);
-        color: #555555; 
+        color: #555555;
         font-size: 0.68rem;
         font-weight: 700;
         white-space: nowrap;
         pointer-events: none;
-        opacity: 1; 
+        opacity: 1;
       }
     }
   }
 
-  .punto-viaje .hora { font-size: 1.1rem; }
+  .punto-viaje .hora {
+    font-size: 1.1rem;
+  }
 }
 
 @keyframes fadeInTooltip {
-  from { opacity: 0; transform: translate(-50%, -4px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }

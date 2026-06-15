@@ -1,0 +1,881 @@
+.mis-viajes-container {
+  max-height: 310px;
+  overflow-y: auto;
+  border-radius: 15px;
+  max-width: 600px;
+}
+
+.mis-viajes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .btn-ayuda {
+    background: var(--ion-color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 1.2rem;
+  }
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+.mis-viajes-container label {
+  position: sticky;
+  top: 0;
+  background-color: #e9edd5;
+  padding: 5px 0;
+  z-index: 10;
+  display: block;
+}
+
+.mi_viaje_box {
+  position: relative;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  background-color: #f0d7b4;
+  border-radius: 15px;
+  padding: 12px;
+  width: 100%;
+  z-index: 1;
+}
+
+.mi_viaje_box p {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.info-viaje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.botones {
+  display: flex;
+  gap: 10px;
+}
+
+.mi_viaje_box button {
+  margin-left: 12px;
+}
+
+.mas_detalle {
+  color: black;
+}
+
+.eliminar_viaje {
+  color: red;
+}
+
+.viajeFinalizado {
+  background-color: #ffb3ba;
+  border: 1px solid #b3b5e6;
+  color: red;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
+}
+
+.etiquetaPendiente {
+  background-color: #b7e0b4;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
+}
+
+.viajeApuntuar {
+  position: relative;
+  background-color: #b7e0b4;
+  border: 1px solid #b3b5e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 15px;
+  padding: 2%;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  z-index: 10;
+}
+
+.viajeApuntuar:hover {
+  background-color: #00997a;
+  color: white;
+  cursor: pointer;
+}
+
+.fontSize {
+  font-size: 0.9rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+ion-segment {
+  --background: #b3b5e6;
+  --color: #000000;
+  border-radius: 35px !important;
+  margin-bottom: 1%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* Cambiar el color de texto de los botones de segment (por defecto) */
+ion-segment-button {
+  --color: #000000;
+  --color-checked: #000000;
+  --indicator-color: #F0D7B4;
+  --border-radius: 35px;
+}
+
+.col-puntuar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+
+.btn_bg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn_bg_report {
+  background-color: #E0B6B6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+
+  &:hover::after {
+    content: attr(data-name);
+    position: absolute;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    pointer-events: none;
+    animation: fadeInTooltip 0.15s ease-out forwards;
+  }
+}
+
+.btn-puntuar {
+  background-color: #E0B6B6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+
+  &:hover::after {
+    content: attr(data-name);
+    position: absolute;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Diseño del texto */
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    pointer-events: none;
+    animation: fadeInTooltip 0.15s ease-out forwards;
+  }
+}
+
+.btn_bg i {
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.btn_bg_report i {
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.btn-puntuar i {
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ayuda-explicacion {
+  background-color: #eaf4fc;
+  border-left: 4px solid #007bff;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.ayuda-explicacion-wrapper {
+  position: relative;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.btn-cerrar-ayuda {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #b7e0b4;
+  color: black;
+  border-radius: 50%;
+  border: none;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    background-color: #00997a;
+    transform: scale(1.05);
+  }
+
+  mat-icon {
+    font-size: 22px;
+  }
+}
+
+.ayuda-explicacion-hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1rem;
+}
+
+.sin-viajes-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  gap: 12px;
+}
+
+.iconSinViajes {
+  height: 60px;
+  width: 60px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.mi_viaje_box span,
+.mi_viaje_box button {
+  word-break: break-word;
+}
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.65);
+  z-index: 9999;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-reporte-movil {
+  position: absolute;
+  top: 7px;
+  left: 85%;
+  z-index: 10;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.badge-proximo {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #1976d2;
+}
+
+.badge-en-curso {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #2e7d32;
+  animation: pulse 2s infinite; // Efecto de latido para "En vivo"
+}
+
+.badge-finalizado {
+  background-color: #f5f5f5;
+  color: #616161;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #9e9e9e;
+}
+
+.badge-cancelado {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #c62828;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 576px) {
+  .mi_viaje_box {
+    flex-direction: column !important;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .mi_viaje_box .info-contenedor {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .mi_viaje_box .estado-contenedor {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .mi_viaje_box .botones {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: -3.5rem;
+  }
+
+  .info-viaje {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .botones {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .col-puntuar {
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  ion-segment-button {
+    --color: #000000;
+    --color-checked: #000000;
+    --indicator-color: #F0D7B4;
+    font-size: 0.9rem;
+  }
+
+  .btn_bg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .btn_bg i {
+    font-size: 18px;
+  }
+
+  .sin-viajes-container {
+    padding: 1rem;
+    height: auto;
+    min-height: 50vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .mi_viaje_box {
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    background-color: #f0d7b4;
+    border-radius: 15px;
+    padding: 12px;
+    width: 100%;
+    height: 150px;
+  }
+
+  /* La fila de cada viaje */
+  .mi_viaje_box .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* ---- Destino y Fecha lado a lado ---- */
+  .mi_viaje_box .row>div:nth-child(1),
+  .mi_viaje_box .row>div:nth-child(2) {
+    width: 48%;
+    margin: 0;
+  }
+
+  /* ---- Estado debajo ---- */
+  .mi_viaje_box .row>div:nth-child(3) {
+    width: 100%;
+    order: 2;
+    text-align: center;
+  }
+
+  /* ---- Botones al final, centrados ---- */
+  .mi_viaje_box .row>div:nth-child(4) {
+    width: 100%;
+    order: 3;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Centrar el contenedor interno de botones */
+  .mi_viaje_box .botones {
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Ajuste de botones para móvil */
+  .btn_bg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .btn_bg i {
+    font-size: 18px;
+  }
+
+  /* Evitar que los textos de info-viaje rompan la línea completa */
+  .info-viaje {
+    display: block;
+    text-align: left;
+  }
+
+  @keyframes marquesina {
+    0% {
+      transform: translateX(0);
+    }
+
+    20% {
+      transform: translateX(0);
+    }
+
+    80% {
+      transform: translateX(-40%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  ion-segment-button.segment-button-checked {
+    flex: 4;
+
+    ion-label {
+      font-weight: bold;
+      display: inline-block;
+      text-overflow: clip;
+      overflow: visible;
+      white-space: nowrap;
+      animation: marquesina 5s linear infinite;
+      width: auto;
+    }
+  }
+
+  /* Para los botones NO seleccionados mantén los puntos suspensivos */
+  ion-segment-button:not(.segment-button-checked) {
+    flex: 1;
+
+    ion-label {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      animation: none;
+    }
+  }
+}
+
+/* Configuración para PC */
+@media (min-width: 768px) {
+  .btn-reporte-movil {
+    position: static;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    margin-right: 8px;
+    order: -1;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .botones {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .info-viaje {
+    margin-left: 15px;
+  }
+}
+
+// Contenedor de la Card principal
+.mis-viajes-card {
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    border-radius: 16px 0 0 16px;
+    z-index: 1;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.col-trayecto {
+  border-right: 1px dashed #efefef;
+  padding-left: 20px !important;
+}
+
+.fecha-viaje {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+
+  i {
+    color: #888;
+  }
+}
+
+// Badges de Estado
+.badge-pendiente,
+.badge-finalizado {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.badge-pendiente {
+  background: #fff9c4;
+  color: #fbc02d;
+}
+
+.badge-finalizado {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.btn-puntuar-mini {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #5c6bc0;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: #3f51b5;
+  }
+}
+
+
+.punto-viaje {
+  .hora {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #333;
+  }
+
+  .ciudad {
+    font-size: 0.85rem;
+    color: #777;
+    font-weight: 500;
+  }
+}
+
+.duracion-badge {
+  font-size: 0.7rem;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #999;
+  display: inline-block;
+  margin-bottom: -10px;
+}
+
+// Lado de Acciones
+.side-management {
+  background-color: #fafafa;
+  border-radius: 0 16px 16px 0;
+}
+
+.acciones-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .btn-gestion {
+    position: relative;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    i,
+    mat-icon {
+      font-size: 18px;
+    }
+
+    &.btn-report {
+      background: #fff3e0;
+      color: #ff9800;
+    }
+
+    &.btn-detalle {
+      background: #e8eaf6;
+      color: #3f51b5;
+    }
+
+    &.btn-editar {
+      background: #e1f5fe;
+      color: #03a9f4;
+    }
+
+    &.btn-eliminar {
+      background: #ffebee;
+      color: #f44336;
+    }
+
+    &.btn-aceptar {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    @media (min-width: 769px) {
+      &::after {
+        content: attr(data-name);
+        position: absolute;
+        top: 44px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333333;
+        color: #ffffff;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+      }
+
+      &:hover::after {
+        opacity: 1;
+        transform: translate(-50%, 2px);
+      }
+    }
+
+  }
+}
+
+.btn-aceptar-mini {
+  background: #e8f5e9;
+  color: #4caf50;
+  border-radius: 35px;
+  padding: 4px
+}
+
+.btn-rechazar-mini {
+  background: #f44336;
+  color: #fff3e0;
+  border-radius: 35px;
+  padding: 4px
+}
+
+.btn-rechazar-mini:hover {
+  background: #ffb3ba !important;
+  color: black !important;
+  border-radius: 35px;
+  padding: 4px
+}
+
+
+// --- RESPONSIVE ---
+@media (max-width: 768px) {
+  .col-trayecto {
+    border-right: none;
+    border-bottom: 1px dashed #efefef;
+  }
+
+  .side-management {
+    border-radius: 0 0 16px 16px;
+    padding: 15px !important;
+  }
+
+  .acciones-grid {
+    justify-content: space-around;
+    row-gap: 32px;
+    column-gap: 12px;
+    padding-bottom: 15px;
+
+    .btn-gestion {
+      width: 45px;
+      height: 45px;
+      margin-bottom: 5px;
+
+      &::after {
+        content: attr(data-name);
+        position: absolute;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #555555;
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 1;
+      }
+    }
+  }
+
+  .punto-viaje .hora {
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes fadeInTooltip {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

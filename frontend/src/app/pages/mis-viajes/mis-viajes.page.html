@@ -1,38 +1,71 @@
 <ion-header [translucent]="true">
-  <app-navbar [origin]="urlParaVolver" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+  <app-navbar
+    [origin]="urlParaVolver"
+    [searchRoute]="'newTravel'"
+    [isLoggedIn]="userLoggedIn"
+  ></app-navbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'JUMBOTRON.MIS_VIAJES_SLOGAN' | translate" [imageSrc]="'../../assets/folder/jumbo.jpg'" [helpText]="'JUMBOTRON.HELP'">
-    </app-jumbotron>
+    <app-jumbotron
+      [title]="'JUMBOTRON.MIS_VIAJES_SLOGAN' | translate"
+      [imageSrc]="'../../assets/folder/jumbo.jpg'"
+      [helpText]="'JUMBOTRON.HELP'"
+    ></app-jumbotron>
   </div>
 
-  <div class="mis-viajes-header mt-2 ms-2 me-2">
-    <h1>Mis viajes:</h1>
+  <div class="container-fluid">
+    <div class="d-flex justify-content-center">
+      <h1>Mis viajes</h1>
+    </div>
+    <div class="d-flex justify-content-center">
+      <ul>
+        <li>Ver todos tus viajes pasados y futuros.</li>
+        <li>Filtrar por viajes como conductor o pasajero.</li>
+        <li>Editar o eliminar tus viajes si eres el conductor.</li>
+      </ul>
+    </div>
+
     <div class="buttons-header">
-      <button class="btn btn_bg me-2 mb-2" id="open-filter">
+      <button
+        class="btn btn_bg me-2 mb-2"
+        id="open-filter"
+      >
         <i class="fi fi-rr-filter"></i>
-      </button>
-      <button class="btn btn_bg" (click)="toggleAyuda()" aria-label="Ayuda">
-        <i class="fi fi-rs-interrogation"></i>
       </button>
     </div>
   </div>
 
-  <ion-popover #filtroPopover trigger="open-filter" triggerAction="click" mode="ios">
+  <ion-popover
+    #filtroPopover
+    trigger="open-filter"
+    triggerAction="click"
+    mode="ios"
+  >
     <ng-template>
       <ion-content class="ion-padding">
         <ion-list lines="none">
-          <ion-radio-group [value]="filtroSeleccionado" (ionChange)="onFiltroChange($event, filtroPopover)">
-            <ion-item><ion-label>En curso</ion-label><ion-radio value="en_curso"></ion-radio></ion-item>
-            <ion-item><ion-label>Finalizado</ion-label><ion-radio value="finalizado"></ion-radio></ion-item>
-            <ion-item><ion-label>Próximos</ion-label><ion-radio value="proximo"></ion-radio></ion-item>
-            <ion-item><ion-label>Cancelado</ion-label><ion-radio value="cancelado"></ion-radio></ion-item>
-            <ion-item><ion-label>Más recientes</ion-label><ion-radio value="recientes"></ion-radio></ion-item>
-            <ion-item><ion-label>Más antiguos</ion-label><ion-radio value="antiguos"></ion-radio></ion-item>
-            <ion-item><ion-label>Pendientes primero</ion-label><ion-radio value="pendientes"></ion-radio></ion-item>
-            <ion-item><ion-label>{{ 'BUSQUEDA.PRECIO_ASC' | translate }}</ion-label><ion-radio value="precioAsc"></ion-radio></ion-item>
+          <ion-radio-group
+            [value]="filtroSeleccionado"
+            (ionChange)="onFiltroChange($event, filtroPopover)"
+          >
+            <ion-item>
+              <ion-label>En curso</ion-label>
+              <ion-radio value="en_curso"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>Finalizados/Cancelados</ion-label>
+              <ion-radio value="finalizado"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>Próximos</ion-label>
+              <ion-radio value="proximo"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>Borrar todos los filtros</ion-label>
+              <ion-radio value="en_curso"></ion-radio>
+            </ion-item>
           </ion-radio-group>
         </ion-list>
       </ion-content>
@@ -40,148 +73,81 @@
   </ion-popover>
 
   <div class="container mt-4 mb-5">
-    <div [ngClass]="{'ayuda-explicacion-wrapper ayuda-explicacion rounded mb-3': true, 'ayuda-explicacion-hidden': !mostrarAyuda}">
-      <h5>¿Qué puedes hacer aquí?</h5>
-      <ul>
-        <li>Ver todos tus viajes pasados y futuros.</li>
-        <li>Filtrar por viajes como conductor o pasajero.</li>
-        <li>Editar o eliminar tus viajes si eres el conductor.</li>
-      </ul>
-      <button *ngIf="mostrarAyuda" class="btn-cerrar-ayuda" (click)="toggleAyuda()"><mat-icon>close</mat-icon></button>
-    </div>
-
-    <ion-segment [(ngModel)]="filtroViajes" (ionChange)="filtrarViajes()" mode="ios" class="mb-4">
-      <ion-segment-button value="solicitudes"><ion-label>Solicitudes</ion-label></ion-segment-button>
-      <ion-segment-button value="todos"><ion-label>Todo</ion-label></ion-segment-button>
-      <ion-segment-button value="conductor"><ion-label>Soy conductor</ion-label></ion-segment-button>
-      <ion-segment-button value="pasajero"><ion-label>Soy pasajero</ion-label></ion-segment-button>
+    <ion-segment
+      [(ngModel)]="filtroViajes"
+      (ionChange)="filtrarViajes()"
+      mode="ios"
+      class="mb-4"
+    >
+      <ion-segment-button value="solicitudes">
+        <ion-label>Solicitudes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="todos">
+        <ion-label>Todo</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="conductor">
+        <ion-label>Soy conductor</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pasajero">
+        <ion-label>Soy pasajero</ion-label>
+      </ion-segment-button>
     </ion-segment>
-
-    <div *ngIf="cargandoViajes" class="text-center py-5"><app-spinner></app-spinner></div>
-    
-    <div *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes'" class="sin-viajes-container text-center">
-      <p>Aún no tienes viajes en esta categoría.</p>
-      <img src="../../../assets/sistema/destino-de-viaje.gif" class="iconSinViajes">
-    </div>
-
-    <div *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes'" class="sin-viajes-container text-center">
-      <p>Aún no tienes solicitudes en esta categoría.</p>
-      <img src="../../../assets/sistema/telefono.gif" class="iconSinViajes">
-    </div>
-
-    <div class="columna_scroll" *ngIf="!cargandoViajes && misViajes.length > 0">
-      <div *ngFor="let viaje of misViajes" class="card viaje-card mis-viajes-card mb-4 shadow-sm">
-        <div class="row g-0">
-          
-          <div class="col-md-9 p-3 col-trayecto">
-            <div *ngIf="userData?.usuario" class="mb-2">
-
-              <h4 *ngIf="filtroViajes === 'solicitudes' && viaje.usuario_id === userData.usuario.id" class="text-secondary small mb-2">
-                Gestión de pasajeros
-              </h4>
-
-              <div *ngIf="viaje.usuario_id === userData?.usuario?.id && 
-                          viaje.solicitudes_pendientes?.length! > 0 && 
-                          !funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)" 
-                  class="solicitudes-recibidas-container mb-3">
-                <h5 class="text-primary">
-                  <i class="fi fi-rr-envelope-open-text me-2"></i>
-                  Solicitudes para mi viaje:
-                </h5>
-
-                <div *ngFor="let sol of viaje.solicitudes_pendientes" class="d-flex align-items-center justify-content-between border-bottom py-3 bg-light rounded px-2">
-                  <span>
-                    <i class="fi fi-rr-user me-2"></i>
-                    <strong>{{ sol.nombre }}</strong> quiere unirse
-                  </span>
-                  
-                  <div class="d-flex gap-2">
-                    <button class="btn-aceptar-mini" (click)="aceptarPasajero(viaje.id, sol.id)">
-                      <i class="fi fi-rs-badge-check"></i> Aceptar
-                    </button>
-                    <button class="btn-rechazar-mini" (click)="rechazarPasajero(viaje.id, sol.id)">
-                      <i class="fi fi-rr-cross-circle"></i> Rechazar
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div *ngIf="viaje.usuario_id !== userData.usuario.id">
-                <h4 *ngIf="filtroViajes === 'solicitudes'">Mi solicitud de plaza</h4>
-                <span class="badge-solicitud" 
-                      [ngClass]="viaje.estado_solicitud_propia === 'aceptado' ? 'badge-aceptada' : (viaje.estado_solicitud_propia === 'rechazado' ? 'badge-rechazada' : 'badge-pendiente')">
-                  <i class="fi fi-rr-clock me-1"></i> {{ (viaje.estado_solicitud_propia || 'pendiente') | uppercase }}
-                </span>
-              </div>
-
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="fecha-viaje">
-                <i class="fi fi-rr-calendar me-1"></i>
-                <span>{{ viaje.fecha_salida | date:'EEEE, d MMMM yyyy' : '' : (translate.currentLang || 'es') | titlecase }}</span>              
-              </div>
-              <div class="d-flex gap-2 align-items-center">
-                <span [ngClass]="getClaseEstado(viaje.estado_viaje ?? '')">
-                  <i class="fi" [ngClass]="getIconoEstado(viaje.estado_viaje ?? '')"></i>
-                  {{ viaje.estado_viaje ?? 'Próximo' }}
-                </span>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center justify-content-between trayecto-container">
-              <div class="punto-viaje">
-                <span class="hora">{{ viaje.hora_salida }}</span>
-                <span class="ciudad">{{ viaje.origen || 'Origen' }}</span>
-              </div>
-              <div class="timeline flex-grow-1 mx-3 text-center">
-                <div class="duracion-badge">{{ viaje.duracion_viaje }}</div>
-              </div>
-              <div class="punto-viaje text-end">
-                <span class="hora">{{ viaje.hora_llegada || '--:--' }}</span>
-                <span class="ciudad">{{ viaje.destino }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
-            <div class="acciones-grid">
-              <button *ngIf="pasajero && viaje.estado_viaje === 'Finalizado' && !viaje.ya_puntuado" class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje" data-name="Puntuar">
-                <i class="fi fi-rr-survey-xmark"></i>
-              </button>
-
-              <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar" data-name="Reportar">
-                <i class="fi fi-rr-triangle-warning"></i>
-              </button>
-
-              <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles" data-name="Detalles">
-                <i class="fi fi-rr-attention-detail"></i>
-              </button>
-
-              <button *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'" class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button *ngIf="!pasajero  && viaje.estado_viaje != 'Finalizado' && viaje.estado_viaje != 'Cancelado'" class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar" data-name="Eliminar">
-                <mat-icon>delete</mat-icon>
-              </button>
-
-              <button *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'" 
-                      class="btn-gestion btn-eliminar" 
-                      (click)="cancelarSolicitud(viaje)" 
-                      matTooltip="Cancelar solicitud" 
-                      data-name="Cancelar solicitud">
-                <i class="fi fi-rr-exit"></i>
-              </button>
-
-              <button *ngIf="!conductor && pasajero && viaje.estado_solicitud_propia === 'aceptado'" 
-                      class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Salir del viaje" data-name="Salir del viaje">
-                <mat-icon>logout</mat-icon>
-              </button>
-            </div>
-          </div>
-
-        </div>
+    <div class="d-flex justify-content-center">
+      <div class="notif-option me-5">
+        <span>Viajes en curso</span>
+        <ion-toggle
+          (ionChange)="onFiltroChange($event, filtroPopover)"
+        ></ion-toggle>
       </div>
+      <div class="notif-option me-5">
+        <span>Próximos viajes</span>
+        <ion-toggle
+          (ionChange)="onFiltroChange($event, filtroPopover)"
+        ></ion-toggle>
+      </div>
+      <div class="notif-option me-5">
+        <span>Viajes finalizados / anulados</span>
+        <ion-toggle
+          (ionChange)="onFiltroChange($event, filtroPopover)"
+        ></ion-toggle>
+      </div>
+    </div>
+
+    <div
+      *ngIf="cargandoViajes"
+      class="text-center py-5"
+    >
+      <app-spinner></app-spinner>
+    </div>
+
+    <div
+      *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes'"
+      class="sin-viajes-container text-center"
+    >
+      <p>Aún no tienes viajes en esta categoría.</p>
+      <img
+        src="../../../assets/sistema/destino-de-viaje.gif"
+        class="iconSinViajes"
+      />
+    </div>
+
+    <div
+      *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes'"
+      class="sin-viajes-container text-center"
+    >
+      <p>Aún no tienes solicitudes en esta categoría.</p>
+      <img
+        src="../../../assets/sistema/telefono.gif"
+        class="iconSinViajes"
+      />
+    </div>
+
+    <div
+      class="columna_scroll"
+      *ngIf="!cargandoViajes && misViajes.length > 0"
+    >
+      <!--Contenedor del viaje con los detalles-->
+      <tarjeta-viaje></tarjeta-viaje>
     </div>
 
     <p-toast position="bottom-center"></p-toast>

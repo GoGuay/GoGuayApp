@@ -246,15 +246,17 @@ def actualizar_usuario(user_id):
     8. commit: guarda en base de datos los cambios.
     9 Devuelve la información de los cambios en formato json.
     """
+    
     current_user_id = get_jwt_identity()
+    print('current_user_id: ', current_user_id)
 
-    if current_user_id != user_id:
+    if int(current_user_id) != user_id:
         return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     
     usuario = Usuario.query.get_or_404(user_id)
     data = request.json
 
-    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros']:
+    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros', 'paypal_email', 'tarjeta_info', 'metodo_cobro_preferido', 'cobro_paypal_email', 'cobro_iban',  'cobro_titular' ]:
         if key in data and data[key] is not None:  
             if key == 'fecha_nacimiento' and data[key]:
                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  
@@ -768,6 +770,16 @@ def get_access_token():
 # Recibe los datos del viaje con el precio de este. 
 @user_blueprint.route("/create-order", methods=['POST'])
 def create_order():
+    """
+    1. Obtenemos los datos en el json desde el front y sacamos el viaje_id. Si no lo hay, se devuelve error y sale.
+    2. Accede a la bd (tabla Viaje) y mediante el id se obtiene el viaje en concreto, el usuario que lo ha creado y todos los datos del viaje.
+    3. Si no se encuentra el viaje, devuelve un error y sale. 
+    4. Obtenemos el email de paypal que tenga el conductor del viaje y lo guardamos en email_conductor, si no lo tuviese el dinero pasa temporalmente al email de la empresa. 
+    5. Se guarda en precio_formateado el precio del viaje con dos decimales. 
+    6. Se obtiene el token del acceso  paypal, se guarda en token
+    7. headers --> configuración necesaria para la petición a paypal. 
+    8. payload - Petición que vamos a hacer a paypal. 
+    """
     data = request.get_json()
     viaje_id = data.get('viaje_id')
 
@@ -781,7 +793,7 @@ def create_order():
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
         
-    email_conductor = viaje.creador.cobro_paypal_email or "goguay_empresa@business.example.com"
+    email_conductor = viaje.creador.paypal_email or "goguay_empresa@business.example.com"
     
     precio_formateado = f"{viaje.precio_viaje:.2f}"
     

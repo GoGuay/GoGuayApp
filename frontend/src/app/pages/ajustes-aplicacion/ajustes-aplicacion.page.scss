@@ -1,4 +1,4 @@
-$primary-color: #B3B5E6; 
+$primary-color: #B3B5E6;
 $success-color: #B7E0B4;
 $bg-light: #f4f5f8;
 
@@ -31,9 +31,7 @@ $bg-light: #f4f5f8;
   margin-top: 2rem;
 }
 
-.btn_bg {
-  background-color: #E0B6B6 !important;
-}
+
 
 .btn-primary {
   background-color: #007bff;
@@ -106,9 +104,9 @@ a {
 .goguay-border {
   position: relative;
   border: none;
-  border-radius: 35px; 
+  border-radius: 35px;
   background-color: #fff;
-  overflow: hidden; 
+  overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
   &::before {
@@ -117,36 +115,47 @@ a {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 6px; 
+    width: 6px;
     background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
-    
-    border-radius: 35px 0 0 35px; 
+
+    border-radius: 35px 0 0 35px;
     z-index: 1;
   }
 }
 
-.notif-option, .pref-row {
+.notif-option,
+.pref-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #f8f9fa;
-  
-  &:last-child { border-bottom: none; }
-  span, label { font-size: 0.9rem; color: #555; }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span,
+  label {
+    font-size: 0.9rem;
+    color: #555;
+  }
 }
 
 .btn-goguay {
-  background: #bae1ff; 
+  background: #bae1ff;
   color: #1565c0;
   font-weight: 700;
   border-radius: 35px;
   border: none;
   padding: 10px;
-  &:disabled { opacity: 0.5; }
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
-.btn-outline-danger{
+.btn-outline-danger {
   border-radius: 35px;
 }
 
@@ -175,7 +184,7 @@ a {
   vertical-align: middle;
 }
 
-.form-select{
+.form-select {
   border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
@@ -188,7 +197,7 @@ a {
   padding: 4px;
 
   ion-segment-button {
-    --indicator-color: #B3B5E6; 
+    --indicator-color: #B3B5E6;
     --color: #666;
     --color-checked: #000;
     font-weight: 600;
@@ -196,7 +205,8 @@ a {
   }
 }
 
-.notif-option, .pref-row {
+.notif-option,
+.pref-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -211,7 +221,7 @@ a {
 
 .payment-option-card {
   border: 1px solid #eeeeee00;
-  border-radius: 35px; 
+  border-radius: 35px;
   background: #fdfdfd;
   transition: all 0.2s ease;
 
@@ -234,8 +244,14 @@ a {
       font-size: 24px; // Tamaño estándar
       visibility: visible !important;
       opacity: 1 !important;
-      &.paypal-icon { color: #003087; }
-      &.card-icon { color: #444; }
+
+      &.paypal-icon {
+        color: #003087;
+      }
+
+      &.card-icon {
+        color: #444;
+      }
     }
 
     ion-label {
@@ -280,9 +296,11 @@ a {
     background: rgba($success-color, 0.1);
     margin-top: 10px;
     border: 1px dashed $success-color;
-    
-    i { color: #28a745; }
-    
+
+    i {
+      color: #28a745;
+    }
+
     &:hover {
       background: rgba($success-color, 0.2);
     }
@@ -302,24 +320,24 @@ a {
   }
 
   .goguay-border {
-  position: relative;
-  border: none;
-  border-radius: 35px; 
-  background-color: #fff;
-  overflow: hidden; 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    border: none;
+    border-radius: 35px;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 6px; 
-    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
-    
-    border-radius: 35px 0 0 35px; 
-    z-index: 1;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+
+      border-radius: 35px 0 0 35px;
+      z-index: 1;
+    }
   }
-}
 }

@@ -1,16 +1,26 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container py-4">
-    
     <h1 class="text-center mb-2">
       {{ "AJUSTESAPP.TITULO" | translate }}
-      <img class="ajustIcon" src="../../../assets/sistema/ajustes.gif" />
+      <img
+        class="ajustIcon"
+        src="../../../assets/sistema/ajustes.gif"
+      />
     </h1>
 
     <!-- Selector de Pestañas -->
     <div class="segment-wrapper mb-4">
-      <ion-segment [(ngModel)]="segmentoSeleccionado" mode="ios" class="custom-segment">
+      <ion-segment
+        [(ngModel)]="segmentoSeleccionado"
+        mode="ios"
+        class="custom-segment"
+      >
         <ion-segment-button value="app">
           <ion-label>Ajustes de App</ion-label>
         </ion-segment-button>
@@ -22,18 +32,36 @@
 
     <!-- Contenido dinámico según el segmento -->
     <div [ngSwitch]="segmentoSeleccionado">
-
       <!-- PESTAÑA 1: AJUSTES DE APP -->
-      <div *ngSwitchCase="'app'" class="animate__animated animate__fadeIn">
+      <div
+        *ngSwitchCase="'app'"
+        class="animate__animated animate__fadeIn"
+      >
         <div class="row g-4">
           <!-- Idioma -->
           <div class="col-12 col-md-6 col-lg-4">
             <div class="box-section goguay-border h-100">
-              <h3><i class="fi fi-rr-world me-2"></i>{{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}</h3>
+              <h3>
+                <i class="fi fi-rr-world me-2"></i>
+                {{ "AJUSTESAPP.OPCION_IDIOMA.TITULO" | translate }}
+              </h3>
               <mat-divider></mat-divider>
-              <select class="form-select mt-3 custom-select" (change)="changeLanguage($event)">
-                <option value="es" [selected]="selectedLanguage === 'es'">Español</option>
-                <option value="en" [selected]="selectedLanguage === 'en'">English</option>
+              <select
+                class="form-select mt-3 custom-select"
+                (change)="changeLanguage($event)"
+              >
+                <option
+                  value="es"
+                  [selected]="selectedLanguage === 'es'"
+                >
+                  Español
+                </option>
+                <option
+                  value="en"
+                  [selected]="selectedLanguage === 'en'"
+                >
+                  English
+                </option>
               </select>
             </div>
           </div>
@@ -41,40 +69,58 @@
           <!-- Notificaciones -->
           <div class="col-12 col-md-6 col-lg-4">
             <div class="box-section goguay-border h-100">
-              <h3><i class="fi fi-rr-bell me-2"></i>{{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}</h3>
+              <h3>
+                <i class="fi fi-rr-bell me-2"></i>
+                {{ "AJUSTESAPP.OPCION_NOTIFICACION.TITULO" | translate }}
+              </h3>
               <mat-divider></mat-divider>
               <div class="mt-3">
-                <div class="notif-option"><span>Push</span><ion-toggle [(ngModel)]="notifPush" (ionChange)="guardarAjustes()"></ion-toggle></div>
-                <div class="notif-option"><span>Email</span><ion-toggle [(ngModel)]="notifEmail" (ionChange)="guardarAjustes()"></ion-toggle></div>
-                <div class="notif-option"><span>SMS</span><ion-toggle [(ngModel)]="notifSMS" (ionChange)="guardarAjustes()"></ion-toggle></div>
-                <div class="notif-option"><span>App Alertas</span><ion-toggle [(ngModel)]="notificacionesActivas" (ionChange)="guardarAjustes()"></ion-toggle></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Preferencias -->
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="box-section goguay-border h-100">
-              <h3><i class="fi fi-rr-heart me-2"></i>{{ "AJUSTESAPP.PREFERENCIAS.TITLE" | translate }}</h3>
-              <mat-divider></mat-divider>
-              <div class="mt-3">
-                <div class="pref-row"><label><i class="fi fi-rs-meeting me-2"></i>Hablar</label><ion-checkbox [(ngModel)]="leGustaHablar" (ionChange)="guardarPreferencias()"></ion-checkbox></div>
-                <div class="pref-row"><label><i class="fi fi-rs-lips-silence me-2"></i>Silencio</label><ion-checkbox [(ngModel)]="leGustaSilencio" (ionChange)="guardarPreferencias()"></ion-checkbox></div>
-                <div class="pref-row"><label><i class="fi fi-rr-music me-2"></i>Música</label><ion-checkbox [(ngModel)]="leGustaMusica" (ionChange)="guardarPreferencias()"></ion-checkbox></div>
-                <div class="pref-row"><label><i class="fi fi-rr-paw me-2"></i>Mascotas</label><ion-checkbox [(ngModel)]="aceptaMascotas" (ionChange)="guardarPreferencias()"></ion-checkbox></div>
-                <div class="pref-row"><label><i class="fi fi-rr-smoking me-2"></i>Fumar</label><ion-checkbox [(ngModel)]="fuma" (ionChange)="guardarPreferencias()"></ion-checkbox></div>
+                <div class="notif-option">
+                  <span>Notificaciones móvil</span>
+                  <ion-toggle
+                    [(ngModel)]="notifPush"
+                    (ionChange)="guardarAjustes()"
+                  ></ion-toggle>
+                </div>
+                <div class="notif-option">
+                  <span>Email</span>
+                  <ion-toggle
+                    [(ngModel)]="notifEmail"
+                    (ionChange)="guardarAjustes()"
+                  ></ion-toggle>
+                </div>
+                <div class="notif-option">
+                  <span>SMS</span>
+                  <ion-toggle
+                    [(ngModel)]="notifSMS"
+                    (ionChange)="guardarAjustes()"
+                  ></ion-toggle>
+                </div>
+                <div class="notif-option">
+                  <span>Alertas en app</span>
+                  <ion-toggle
+                    [(ngModel)]="notificacionesActivas"
+                    (ionChange)="guardarAjustes()"
+                  ></ion-toggle>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Visuales -->
-          <div class="col-12">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="box-section goguay-border">
-              <h3><i class="fi fi-rr-picture me-2"></i>Ajustes visuales</h3>
+              <h3>
+                <i class="fi fi-rr-picture me-2"></i>
+                Ajustes visuales
+              </h3>
               <mat-divider></mat-divider>
               <div class="notif-option mt-3">
                 <span>Mostrar imagen de cabecera</span>
-                <ion-toggle [(ngModel)]="mostrarJumbotron" (ionChange)="mostrarJumbotronChange()"></ion-toggle>
+                <ion-toggle
+                  [(ngModel)]="mostrarJumbotron"
+                  (ionChange)="mostrarJumbotronChange()"
+                ></ion-toggle>
               </div>
             </div>
           </div>
@@ -82,65 +128,123 @@
       </div>
 
       <!-- PESTAÑA 2: AJUSTES DE CUENTA -->
-      <div *ngSwitchCase="'cuenta'" class="animate__animated animate__fadeIn">
+      <div
+        *ngSwitchCase="'cuenta'"
+        class="animate__animated animate__fadeIn"
+      >
         <div class="row g-4">
-
           <!-- Métodos de Pago  -->
           <div class="col-12">
             <div class="box-section goguay-border">
-              <h3><i class="fi fi-rr-wallet me-2"></i> {{ 'AJUSTESAPP.METODOS_PAGO.TITULO' | translate }}</h3>
+              <h3>
+                <i class="fi fi-rr-wallet me-2"></i>
+                {{ 'AJUSTESAPP.METODOS_PAGO.TITULO' | translate }}
+              </h3>
               <mat-divider></mat-divider>
-              
+
               <div class="mt-3">
-                <ion-radio-group [(ngModel)]="metodoPagoPredeterminado" (ionChange)="onMetodoPagoChange()">
-                  
+                <ion-radio-group
+                  [(ngModel)]="metodoPagoPredeterminado"
+                  (ionChange)="onMetodoPagoChange()"
+                >
                   <!-- OPCIÓN PAYPAL -->
                   <div class="payment-option-card">
-                    <ion-item lines="none" class="rounded-pill-item">
-                      <ion-icon name="logo-paypal" slot="start" class="paypal-icon"></ion-icon>
+                    <ion-item
+                      lines="none"
+                      class="rounded-pill-item"
+                    >
+                      <ion-icon
+                        name="logo-paypal"
+                        slot="start"
+                        class="paypal-icon"
+                      ></ion-icon>
                       <ion-label>PayPal</ion-label>
-                      <ion-radio slot="end" value="paypal"></ion-radio>
+                      <ion-radio
+                        slot="end"
+                        value="paypal"
+                      ></ion-radio>
                     </ion-item>
-                    
+
                     <!-- Detalles PayPal -->
-                    <div *ngIf="metodoPagoPredeterminado === 'paypal'" class="p-3 animate__animated animate__fadeIn">
+                    <div
+                      *ngIf="metodoPagoPredeterminado === 'paypal'"
+                      class="p-3 animate__animated animate__fadeIn"
+                    >
                       <div class="form-floating mb-2">
-                        <input type="email" class="form-control custom-input" id="paypalEmail" 
-                              placeholder="correo@ejemplo.com" [(ngModel)]="emailPaypal">
-                        <label for="paypalEmail">Correo electrónico de PayPal</label>
+                        <input
+                          type="email"
+                          class="form-control custom-input"
+                          id="paypalEmail"
+                          placeholder="correo@ejemplo.com"
+                          [(ngModel)]="emailPaypal"
+                        />
+                        <label for="paypalEmail">
+                          Correo electrónico de PayPal
+                        </label>
                       </div>
                     </div>
                   </div>
 
                   <!-- OPCIÓN TARJETA -->
                   <div class="payment-option-card mt-2">
-                    <ion-item lines="none" class="rounded-pill-item">
-                      <ion-icon name="card-outline" slot="start" class="card-icon"></ion-icon>
+                    <ion-item
+                      lines="none"
+                      class="rounded-pill-item"
+                    >
+                      <ion-icon
+                        name="card-outline"
+                        slot="start"
+                        class="card-icon"
+                      ></ion-icon>
                       <ion-label>Tarjeta Bancaria</ion-label>
-                      <ion-radio slot="end" value="tarjeta"></ion-radio>
+                      <ion-radio
+                        slot="end"
+                        value="tarjeta"
+                      ></ion-radio>
                     </ion-item>
 
                     <!-- Detalles Tarjeta -->
-                    <div *ngIf="metodoPagoPredeterminado === 'tarjeta'" class="p-3 animate__animated animate__fadeIn">
+                    <div
+                      *ngIf="metodoPagoPredeterminado === 'tarjeta'"
+                      class="p-3 animate__animated animate__fadeIn"
+                    >
                       <div class="row g-2">
                         <div class="col-12">
                           <div class="form-floating mb-2">
-                            <input type="text" class="form-control custom-input" id="cardNum" 
-                                  placeholder="0000 0000 0000 0000" [(ngModel)]="numeroTarjeta" maxlength="19">
+                            <input
+                              type="text"
+                              class="form-control custom-input"
+                              id="cardNum"
+                              placeholder="0000 0000 0000 0000"
+                              [(ngModel)]="numeroTarjeta"
+                              maxlength="19"
+                            />
                             <label for="cardNum">Número de tarjeta</label>
                           </div>
                         </div>
                         <div class="col-6">
                           <div class="form-floating mb-2">
-                            <input type="text" class="form-control custom-input" id="cardExp" 
-                                  placeholder="MM/AA" [(ngModel)]="fechaCaducidad" maxlength="5">
+                            <input
+                              type="text"
+                              class="form-control custom-input"
+                              id="cardExp"
+                              placeholder="MM/AA"
+                              [(ngModel)]="fechaCaducidad"
+                              maxlength="5"
+                            />
                             <label for="cardExp">Caducidad (MM/AA)</label>
                           </div>
                         </div>
                         <div class="col-6">
                           <div class="form-floating mb-2">
-                            <input type="password" class="form-control custom-input" id="cardCVV" 
-                                  placeholder="123" [(ngModel)]="cvvTarjeta" maxlength="4">
+                            <input
+                              type="password"
+                              class="form-control custom-input"
+                              id="cardCVV"
+                              placeholder="123"
+                              [(ngModel)]="cvvTarjeta"
+                              maxlength="4"
+                            />
                             <label for="cardCVV">CVV / CVC</label>
                           </div>
                         </div>
@@ -150,7 +254,10 @@
                 </ion-radio-group>
 
                 <!-- Botón para guardar estos datos específicos -->
-                <button class="btn btn-goguay w-100 mt-3" (click)="guardarMetodoPago()">
+                <button
+                  class="btn btn_bg w-100 mt-3 btn"
+                  (click)="guardarMetodoPago()"
+                >
                   Guardar Datos de Pago
                 </button>
               </div>
@@ -160,55 +267,105 @@
           <!-- SECCIÓN: PREFERENCIAS DE COBRO (Donde recibes dinero) -->
           <div class="col-12 mt-3">
             <div class="box-section goguay-border">
-              <h3 class="cobros-title"><i class="fi fi-rr-coins me-2"></i> {{ 'AJUSTESAPP.METODOS_COBRO.TITULO' | translate }}</h3>
+              <h3 class="cobros-title">
+                <i class="fi fi-rr-coins me-2"></i>
+                {{ 'AJUSTESAPP.METODOS_COBRO.TITULO' | translate }}
+              </h3>
               <mat-divider></mat-divider>
-              
+
               <div class="mt-3">
-                <p class="small text-muted mb-3">¿Dónde quieres recibir el dinero de tus viajes compartidos?</p>
-                
+                <p class="small text-muted mb-3">
+                  ¿Dónde quieres recibir el dinero de tus viajes compartidos?
+                </p>
+
                 <ion-radio-group [(ngModel)]="metodoCobroPredeterminado">
-                  
                   <!-- COBRO PAYPAL -->
                   <div class="payment-option-card">
-                    <ion-item lines="none" class="rounded-pill-item">
-                      <ion-icon name="logo-paypal" slot="start" class="paypal-icon"></ion-icon>
+                    <ion-item
+                      lines="none"
+                      class="rounded-pill-item"
+                    >
+                      <ion-icon
+                        name="logo-paypal"
+                        slot="start"
+                        class="paypal-icon"
+                      ></ion-icon>
                       <ion-label>Recibir en PayPal</ion-label>
-                      <ion-radio slot="end" value="paypal"></ion-radio>
+                      <ion-radio
+                        slot="end"
+                        value="paypal"
+                      ></ion-radio>
                     </ion-item>
-                    
-                    <div *ngIf="metodoCobroPredeterminado === 'paypal'" class="p-3 animate__animated animate__fadeIn">
+
+                    <div
+                      *ngIf="metodoCobroPredeterminado === 'paypal'"
+                      class="p-3 animate__animated animate__fadeIn"
+                    >
                       <div class="form-floating mb-2">
-                        <input type="email" class="form-control custom-input" id="cobroPaypalEmail" 
-                              placeholder="correo@ejemplo.com" [(ngModel)]="cobroEmailPaypal">
-                        <label for="cobroPaypalEmail">Email de cobros PayPal</label>
+                        <input
+                          type="email"
+                          class="form-control custom-input"
+                          id="cobroPaypalEmail"
+                          placeholder="correo@ejemplo.com"
+                          [(ngModel)]="cobroEmailPaypal"
+                        />
+                        <label for="cobroPaypalEmail">
+                          Email de cobros PayPal
+                        </label>
                       </div>
                     </div>
                   </div>
 
                   <!-- COBRO TRANSFERENCIA BANCARIA -->
                   <div class="payment-option-card mt-2">
-                    <ion-item lines="none" class="rounded-pill-item">
-                      <ion-icon name="business-outline" slot="start" class="bank-icon"></ion-icon>
+                    <ion-item
+                      lines="none"
+                      class="rounded-pill-item"
+                    >
+                      <ion-icon
+                        name="business-outline"
+                        slot="start"
+                        class="bank-icon"
+                      ></ion-icon>
                       <ion-label>Transferencia Bancaria (IBAN)</ion-label>
-                      <ion-radio slot="end" value="transferencia"></ion-radio>
+                      <ion-radio
+                        slot="end"
+                        value="transferencia"
+                      ></ion-radio>
                     </ion-item>
 
-                    <div *ngIf="metodoCobroPredeterminado === 'transferencia'" class="p-3 animate__animated animate__fadeIn">
+                    <div
+                      *ngIf="metodoCobroPredeterminado === 'transferencia'"
+                      class="p-3 animate__animated animate__fadeIn"
+                    >
                       <div class="form-floating mb-2">
-                        <input type="text" class="form-control custom-input" id="cobroTitular" 
-                              placeholder="Nombre del titular" [(ngModel)]="cobroTitular">
+                        <input
+                          type="text"
+                          class="form-control custom-input"
+                          id="cobroTitular"
+                          placeholder="Nombre del titular"
+                          [(ngModel)]="cobroTitular"
+                        />
                         <label for="cobroTitular">Titular de la cuenta</label>
                       </div>
                       <div class="form-floating mb-2">
-                        <input type="text" class="form-control custom-input" id="cobroIBAN" 
-                              placeholder="ES00 0000..." [(ngModel)]="cobroIBAN">
+                        <input
+                          type="text"
+                          class="form-control custom-input"
+                          id="cobroIBAN"
+                          placeholder="ES00 0000..."
+                          [(ngModel)]="cobroIBAN"
+                        />
                         <label for="cobroIBAN">Número de cuenta (IBAN)</label>
                       </div>
                     </div>
                   </div>
                 </ion-radio-group>
 
-                <button class="btn btn-goguay w-100 mt-3" (click)="guardarConfiguracionCobro()">
+                <button
+                  class="btn btn_bg w-100 mt-3"
+                  (click)="guardarConfiguracionCobro()"
+                >
                   Actualizar Preferencias de Cobro
                 </button>
               </div>
@@ -218,13 +375,42 @@
           <!-- Password -->
           <div class="col-12 col-md-6">
             <div class="box-section goguay-border h-100">
-              <h3><i class="fi fi-rr-lock me-2"></i>{{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}</h3>
+              <h3>
+                <i class="fi fi-rr-lock me-2"></i>
+                {{ 'AJUSTESAPP.PASSWORD.TITULO' | translate }}
+              </h3>
               <mat-divider></mat-divider>
               <div class="mt-3">
-                <input type="password" class="form-control mb-2" placeholder="Contraseña actual" [(ngModel)]="passwordActual" (blur)="comprobarContrasenaActual()">
-                <input type="password" class="form-control mb-2" placeholder="Nueva contraseña" [(ngModel)]="nuevaPassword1" [disabled]="!isPasswordActualValida" (input)="validarNuevaPassword()">
-                <input type="password" class="form-control mb-3" placeholder="Confirmar nueva contraseña" [(ngModel)]="nuevaPassword2" [disabled]="!isNuevaPassword1Valida" (input)="validarConfirmacionPassword()">
-                <button class="btn btn-goguay w-100" [disabled]="!isConfirmacionPasswordValida" (click)="botonCambioPassword()">Actualizar Contraseña</button>
+                <input
+                  type="password"
+                  class="form-control mb-2"
+                  placeholder="Contraseña actual"
+                  [(ngModel)]="passwordActual"
+                  (blur)="comprobarContrasenaActual()"
+                />
+                <input
+                  type="password"
+                  class="form-control mb-2"
+                  placeholder="Nueva contraseña"
+                  [(ngModel)]="nuevaPassword1"
+                  [disabled]="!isPasswordActualValida"
+                  (input)="validarNuevaPassword()"
+                />
+                <input
+                  type="password"
+                  class="form-control mb-3"
+                  placeholder="Confirmar nueva contraseña"
+                  [(ngModel)]="nuevaPassword2"
+                  [disabled]="!isNuevaPassword1Valida"
+                  (input)="validarConfirmacionPassword()"
+                />
+                <button
+                  class="btn btn_bg w-100"
+                  [disabled]="!isConfirmacionPasswordValida"
+                  (click)="botonCambioPassword()"
+                >
+                  Actualizar Contraseña
+                </button>
               </div>
             </div>
           </div>
@@ -232,11 +418,21 @@
           <!-- Eliminar Cuenta -->
           <div class="col-12 col-md-6">
             <div class="box-section border-danger h-100">
-              <h3 class="text-danger"><i class="fi fi-rr-trash me-2"></i>{{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}</h3>
+              <h3 class="text-danger">
+                <i class="fi fi-rr-trash me-2"></i>
+                {{ "AJUSTESAPP.ELIMINARCTA.TITULO" | translate }}
+              </h3>
               <mat-divider></mat-divider>
               <div class="mt-3">
-                <p class="small text-muted">{{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}</p>
-                <button class="btn btn-outline-danger w-100 mt-4" (click)="modalEliminarUsuario()">{{ "BOTON.ELIMINAR_CTA" | translate }}</button>
+                <p class="small text-muted">
+                  {{ "AJUSTESAPP.ELIMINARCTA.INFO_ELIMINAR_CTA"| translate }}
+                </p>
+                <button
+                  class="btn btn-outline-danger w-100 mt-4"
+                  (click)="modalEliminarUsuario()"
+                >
+                  {{ "BOTON.ELIMINAR_CTA" | translate }}
+                </button>
               </div>
             </div>
           </div>
@@ -244,12 +440,18 @@
           <!-- SECCIÓN: AYUDA Y LEGAL -->
           <div class="col-12 mt-3">
             <div class="box-section goguay-border">
-              <h3><i class="fi fi-rr-interrogation me-2"></i> Soporte y Legal</h3>
+              <h3>
+                <i class="fi fi-rr-interrogation me-2"></i>
+                Soporte y Legal
+              </h3>
               <mat-divider></mat-divider>
 
               <div class="list-help mt-3">
                 <!-- Centro de Ayuda -->
-                <div class="help-item" (click)="irACentroAyuda()">
+                <div
+                  class="help-item"
+                  (click)="irACentroAyuda()"
+                >
                   <div class="d-flex align-items-center">
                     <i class="fi fi-rr-life-ring me-3"></i>
                     <span>Centro de Ayuda / FAQ</span>
@@ -258,7 +460,10 @@
                 </div>
 
                 <!-- Condiciones de Uso -->
-                <div class="help-item" (click)="irATerminos()">
+                <div
+                  class="help-item"
+                  (click)="irATerminos()"
+                >
                   <div class="d-flex align-items-center">
                     <i class="fi fi-rr-document-signed me-3"></i>
                     <span>Condiciones Generales de Uso</span>
@@ -267,7 +472,10 @@
                 </div>
 
                 <!-- Valorar App -->
-                <div class="help-item rating-item" (click)="valorarApp()">
+                <div
+                  class="help-item rating-item"
+                  (click)="valorarApp()"
+                >
                   <div class="d-flex align-items-center">
                     <i class="fi fi-rr-star me-3"></i>
                     <span>Valorar GoGuay</span>
@@ -280,21 +488,28 @@
 
           <!-- Botón Logout -->
           <div class="col-12 text-center mt-5">
-            <button class="btn btn-logout" (click)="logout()">
-              <i class="fi fi-rs-log-out me-2"></i>Cerrar Sesión
+            <button
+              class="btn btn-logout"
+              (click)="logout()"
+            >
+              <i class="fi fi-rs-log-out me-2"></i>
+              Cerrar Sesión
             </button>
           </div>
         </div>
       </div>
-
-    </div> <!-- Fin NgSwitch -->
+    </div>
+    <!-- Fin NgSwitch -->
 
     <p-toast position="bottom-center"></p-toast>
-    
+
     <div class="footer-info text-center mt-5 mb-5">
       <p class="info-text opacity-50">
         {{ "AJUSTESAPP.DERECHOS_TXT" | translate }}
-        <img class="icon_logo ms-1" src="../../../assets/logo/PRIDECAR.png" />
+        <img
+          class="icon_logo ms-1"
+          src="../../../assets/logo/PRIDECAR.png"
+        />
       </p>
     </div>
   </div>
