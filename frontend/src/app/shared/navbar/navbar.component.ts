@@ -10,18 +10,18 @@ import { IonMenuButton, IonHeader } from '@ionic/angular/standalone';
 
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Usuario } from 'src/app/models/user/usuario.model';
+import { Usuario } from '../../models/user/usuario.model';
 import { CommonModule } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
-import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { LanguageService } from '../../core/lenguajes/languaje.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { NotificacionesService } from 'src/app/core/notificaciones/notificaciones.service';
+import { NotificacionesService } from '../../core/notificaciones/notificaciones.service';
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef } from '@angular/core';
-import { MessagingService } from 'src/app/core/menssaging-service/messaging.service';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { MessagingService } from '../../core/menssaging-service/messaging.service';
+import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 
 
