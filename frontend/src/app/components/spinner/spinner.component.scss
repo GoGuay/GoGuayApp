@@ -4,17 +4,26 @@
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column; 
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  z-index: 10;
+  z-index: 999; 
+
+  background-color: rgba(255, 255, 255, 0.7); 
+  backdrop-filter: blur(4px); 
+  -webkit-backdrop-filter: blur(4px); 
+
+  animation: fadeInOverlay 0.2s ease-in-out;
 }
 
 .spinner {
   width: 60px;
   height: 60px;
   animation: colorCycle 2s infinite;
+  
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 @keyframes colorCycle {
@@ -25,4 +34,17 @@
   66% { fill: #bae1ff; }  
   83% { fill: #e0baff; }  
   100% { fill: #ffb3ba; } 
+}
+
+@keyframes fadeInOverlay {
+  from {
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
 }

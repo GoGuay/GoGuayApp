@@ -1,7 +1,6 @@
 <ng-container *ngIf="isLoading; else contenidoReal">
   <div class="container buscando-container">
     <app-spinner></app-spinner>
-    Buscando los mejores trayectos...
   </div>
 </ng-container>
 
@@ -13,7 +12,6 @@
     </div>
     <div *ngIf="listado_viajes.length === 0 && isLoading" class="d-flex justify-content-center align-content-center buscando-container">
       <app-spinner></app-spinner>
-      <span> Buscando los mejores trayectos... </span>
     </div>
 
     <div class="columna_scroll" *ngIf="listado_viajes.length > 0">

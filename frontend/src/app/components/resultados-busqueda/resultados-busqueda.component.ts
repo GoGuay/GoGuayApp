@@ -95,12 +95,14 @@ export class ResultadosBusquedaComponent implements OnInit {
 
       this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
       next: (viajes) => {
-        this.listado_viajes = viajes.map(viaje => {
-          return {
-            ...viaje,
-            duracion_calculada: this.calcularDuracion(viaje.hora_salida, viaje.hora_llegada)
-          };
-        });
+        this.listado_viajes = viajes
+          .filter(viaje => viaje.estado_viaje !== 'Finalizado')
+          .map(viaje => {
+            return {
+              ...viaje,
+              duracion_calculada: this.calcularDuracion(viaje.hora_salida, viaje.hora_llegada)
+            };
+          });
         this.cargarUsuariosParaViajes(this.listado_viajes);
       },
       error: (err) => {
@@ -181,7 +183,7 @@ export class ResultadosBusquedaComponent implements OnInit {
   obtenerListaViajes() {
     this.isLoading = true;
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
-      this.listado_viajes = viajes;
+      this.listado_viajes = viajes.filter(v => v.estado_viaje !== 'Finalizado');
 
       const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 

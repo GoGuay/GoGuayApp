@@ -31,7 +31,7 @@
 }
 
 .line {
-  border-right: none !important; // Por defecto en móviles NO se muestra ninguna línea
+  border-right: none !important; 
   border-bottom: none;
 }
 
@@ -83,7 +83,6 @@
 
 /* ========================== */
 
-
 .digit-input {
   width: 40px;
   height: 40px;
@@ -104,8 +103,6 @@
 .file-input {
   display: none;
 }
-
-
 
 .upload-button {
   display: flex;
@@ -194,8 +191,6 @@
   width: 195px;
 }
 
-
-
 .fila-datos .col-nombre-apellidos ion-col,
 .fila-datos .col-pronombre ion-col {
   flex: 1;
@@ -205,10 +200,6 @@
 .contenedor_tabla {
   width: 400px;
 }
-
-
-
-
 
 /* Estilos específicos para móviles */
 @media (max-width: 576px) {
@@ -261,14 +252,12 @@
     justify-content: space-between;
   }
 
-  /* Pronombre y género lado a lado ocupando ~50% del ancho */
   .fila-selectores .col-pronombre,
   .fila-selectores .col-genero {
     flex: 0 0 50%;
     max-width: 100%;
   }
 
-  /* Orientación más pequeña y centrada */
   .col-orientacion {
     flex: 0 0 70%;
     max-width: 70%;
@@ -278,7 +267,6 @@
     align-items: center;
   }
 
-  /* Centrar el label de orientación y su tooltip */
   .col-orientacion label {
     display: flex;
     flex-direction: column;
@@ -289,7 +277,6 @@
   }
 
 
-  /* Select ocupando todo el ancho de su columna */
   .fila-selectores select {
     width: 100% !important;
     font-size: 0.8rem !important;
