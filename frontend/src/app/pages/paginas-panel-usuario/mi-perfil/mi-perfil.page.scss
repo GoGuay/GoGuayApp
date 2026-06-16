@@ -30,6 +30,10 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
+.line {
+  border-right: none !important; // Por defecto en móviles NO se muestra ninguna línea
+  border-bottom: none;
+}
 
 /* Imagen redonda */
 .img_profile {
@@ -78,15 +82,6 @@
 }
 
 /* ========================== */
-
-/* === Nombre, apellidos y selectores === */
-
-
-
-
-
-/* ========================== */
-
 
 
 .digit-input {
@@ -300,13 +295,20 @@
     font-size: 0.8rem !important;
   }
 
-
-
+  .line {
+    border-right: none !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
 
   .mat-divider-mobile {
     display: none;
   }
+}
 
-
-
+@media (min-width: 992px) {
+  .line {
+    border-right: 2px dashed rgba(224, 166, 103, 0.4) !important;
+  }
 }
