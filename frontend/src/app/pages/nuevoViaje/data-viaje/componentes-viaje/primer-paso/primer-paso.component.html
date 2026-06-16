@@ -1,122 +1,134 @@
-<ion-grid>
+<ion-grid class="primer-paso-grid">
   <ion-row>
-    <!-- Columna izquierda: Fecha y hora -->
     <ion-col class="line" size="12" size-xl="6">
-      <h1 class="d-flex justify-content-center">ELIGE LA FECHA DEL VIAJE</h1>
+      <h1 class="d-flex justify-content-center section-title">ELIGE LA FECHA DEL VIAJE</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
-          <ion-datetime presentation="date" locale="es-ES" [min]="hoy" [(ngModel)]="fecha_seleccionada"
-            (ionChange)="onDateChange($event)"></ion-datetime>
+          <ion-datetime presentation="date" 
+                        locale="es-ES" 
+                        firstDayOfWeek="1" 
+                        [min]="hoy" 
+                        [(ngModel)]="fecha_seleccionada"
+                        (ionChange)="onDateChange($event)" 
+                        class="custom-calendar-box">
+          </ion-datetime>
         </div>
-        <p class="mt-2">Fecha seleccionada: {{ getFormattedDate() }}</p>
+        <p class="mt-3 text-center date-feedback">Fecha seleccionada: <strong>{{ getFormattedDate() }}</strong></p>
       </div>
 
-      <div class="contenedor_seccion">
-        <h1 class="d-flex justify-content-center">HORA DE SALIDA</h1>
+      <div class="contenedor_seccion mt-4">
+        <h1 class="d-flex justify-content-center section-title">HORA DE SALIDA</h1>
         <div class="contenedor_hora">
-          <!-- Selector de hora para escritorio -->
-          <div *ngIf="isDesktop">
-            <mat-form-field appearance="fill" class="custom-time-field">
+          
+          <div *ngIf="isDesktop" class="w-100">
+            <mat-form-field appearance="fill" class="custom-time-field w-100">
               <mat-label>Selecciona la hora</mat-label>
-              <input matInput [(ngModel)]="hora_seleccionada" [matTimepicker]="minutesPicker"
-                (ngModelChange)="onTimeChange($event)" />
+              <input matInput 
+                    [(ngModel)]="hora_seleccionada" 
+                    [matTimepicker]="minutesPicker"
+                    (ngModelChange)="onTimeChange($event)" /> 
               <mat-timepicker-toggle matIconSuffix [for]="minutesPicker" />
-              <mat-timepicker interval="1min" #minutesPicker />
+              <mat-timepicker interval="15min" #minutesPicker />
             </mat-form-field>
-
-            <p *ngIf="invalid_date" class="error-text">Formato de hora inválido</p>
           </div>
 
-          <!-- Selector de hora para móvil -->
-          <div *ngIf="!isDesktop">
-            <ion-item lines="none">
+          <div *ngIf="!isDesktop" class="w-100 text-center">
+            <ion-item lines="none" class="time-button-item">
               <ion-datetime-button datetime="timePicker"></ion-datetime-button>
-              <ion-modal [keepContentsMounted]="true">
+              <ion-modal [keepContentsMounted]="true" mode="ios" class="custom-modal-time">
                 <ng-template>
-                  <ion-datetime id="timePicker" presentation="time" (ionChange)="onTimeChange($event)"
-                    class="custom-datetime"></ion-datetime>
+                  <ion-content>
+                    <ion-datetime id="timePicker" presentation="time" minuteValues="0,15,30,45" 
+                      (ionChange)="onTimeChange($event)" class="custom-datetime"></ion-datetime>
+                  </ion-content>
                 </ng-template>
               </ion-modal>
             </ion-item>
           </div>
         </div>
-        <p class="d-flex justify-content-center mt-1">Hora seleccionada: {{ getTime() }}</p>
+
+        <p *ngIf="invalid_date" class="error-text text-center mt-2">
+          <i class="fi fi-rr-cross-circle me-1"></i> Por normativa, debes publicar con al menos 1 hora de antelación.
+        </p>
+        <p *ngIf="!invalid_date" class="d-flex justify-content-center time-feedback mt-2">
+          Hora seleccionada: <strong>{{ getTime() }}</strong>
+        </p>
       </div>
     </ion-col>
 
-    <!-- Columna derecha: Número de plazas y coche -->
     <ion-col size="12" size-xl="6">
-      <h1 class="d-flex justify-content-center">NÚMERO DE PLAZAS LIBRES</h1>
-      <span class="d-flex justify-content-center span">Selecciona el número de pasajeros que pueden viajar contigo:</span>
-      <div class="select-container custom-dropdown mt-4 mb-3" (click)="toggleDropdown()" [class.open]="isOpen">
+      <h1 class="d-flex justify-content-center section-title">NÚMERO DE PLAZAS LIBRES</h1>
+      <span class="d-flex justify-content-center span sub-text">Selecciona el número de pasajeros que pueden viajar contigo:</span>
+      
+      <div class="select-container custom-dropdown mt-3 mb-4" (click)="toggleDropdown()" [class.open]="isOpen">
         <img src="../../../../../../assets/sistema/usuarios-alt.png" class="select-icon" alt="icono usuarios" />
-
         <div class="selected-value">
           {{ plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
         </div>
-
         <ul class="custom-options" *ngIf="isOpen">
-          <li (click)="selectOption('1')" [class.selected]="plazas === '1'">1</li>
-          <li (click)="selectOption('2')" [class.selected]="plazas === '2'">2</li>
-          <li (click)="selectOption('3')" [class.selected]="plazas === '3'">3</li>
-          <li (click)="selectOption('4')" [class.selected]="plazas === '4'">4</li>
+          <li (click)="selectOption('1'); $event.stopPropagation()" [class.selected]="plazas === '1'">1</li>
+          <li (click)="selectOption('2'); $event.stopPropagation()" [class.selected]="plazas === '2'">2</li>
+          <li (click)="selectOption('3'); $event.stopPropagation()" [class.selected]="plazas === '3'">3</li>
+          <li (click)="selectOption('4'); $event.stopPropagation()" [class.selected]="plazas === '4'">4</li>
         </ul>
       </div>
 
       <div class="contenedor_seccion">
-        <h1 class="d-flex justify-content-center">COCHE PARA VIAJAR</h1>
+        <h1 class="d-flex justify-content-center section-title">COCHE PARA VIAJAR</h1>
         <div class="contenedor_inputs">
           <ng-container *ngIf="userData?.usuario?.vehiculos?.length > 0; else sinVehiculos">
-            <ion-list class="scrollable-list">
+            <ion-list class="scrollable-list custom-goguay-list" lines="none">
               <ion-radio-group [(ngModel)]="cocheSeleccionado" [compareWith]="compareVehiculos">
                 <ion-item *ngFor="let coche of userData?.usuario?.vehiculos; trackBy: trackByVehiculo"
-                  (click)="seleccionarCoche(coche)">
-                  <ion-label>
-                    <img class="colorCoche" [src]="mostrarColorCoche(coche.color)" />
-                    {{ coche.marca }} {{ coche.modelo }}
+                  (click)="seleccionarCoche(coche)" class="goguay-list-item">
+                  <ion-label class="d-flex align-items-center">
+                    <img class="colorCoche me-3" [src]="mostrarColorCoche(coche.color)" alt="Color vehículo" />
+                    <span class="car-info-text">{{ coche.marca }} {{ coche.modelo }}</span>
                   </ion-label>
-                  <ion-radio slot="end" [value]="coche"></ion-radio>
+                  <ion-radio slot="end" [value]="coche" mode="ios"></ion-radio>
                 </ion-item>
               </ion-radio-group>
             </ion-list>
-            <div class="d-flex flex-column align-items-center mt-3">
-              <p class="mb-2">¿Quieres añadir otro coche?</p>
-              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">
-                Añadir vehículo
+            
+            <div class="d-flex flex-column align-items-center mt-3 alternate-add-box">
+              <p class="mb-2 text-muted small">¿Quieres añadir otro coche?</p>
+              <button type="button" class="btn-goguay-mini" (click)="irARegistrarVehiculo()">
+                <i class="fi fi-rr-plus me-1"></i> Añadir vehículo
               </button>
             </div>
           </ng-container>
 
           <ng-template #sinVehiculos>
-            <div class="mensaje-sin-vehiculos">
-              <p>No tienes vehículos registrados, por favor, registra tu vehículo para poder publicar el viaje.</p>
-              <button type="button" mat-raised-button class="btn_bg" (click)="irARegistrarVehiculo()">Añadir
-                vehículo</button>
+            <div class="mensaje-sin-vehiculos p-3 text-center card shadow-sm rounded-3">
+              <p class="text-muted">No tienes vehículos registrados. Es obligatorio registrar uno para publicar el viaje.</p>
+              <button type="button" class="btn btn-goguay mt-2" (click)="irARegistrarVehiculo()">
+                Añadir vehículo
+              </button>
             </div>
           </ng-template>
         </div>
 
         <div class="contenedor_inputs mt-4">
-          <h1 class="d-flex justify-content-center">MODO DE RESERVA</h1>
-          <ion-list class="reserva-list">
-            <ion-radio-group [value]="reservaAutomatica" (ionChange)="seleccionarTipoReserva($event.detail.value)">
+          <h1 class="d-flex justify-content-center section-title">MODO DE RESERVA</h1>
+          <ion-list class="reserva-list custom-goguay-list" lines="none">
+            <ion-radio-group [value]="reservaAutomatica">
 
-              <ion-item (click)="seleccionarTipoReserva(false)">
-                <ion-label>
-                  <h2>Aceptación manual</h2>
-                  <p>Tú decides quién viaja contigo aceptando cada solicitud.</p>
+              <ion-item (click)="seleccionarTipoReserva(false)" class="goguay-list-item py-1">
+                <ion-radio slot="start" [value]="false" mode="ios"></ion-radio>
+                <ion-label class="ms-2">
+                  <h2 class="fw-bold mb-0">Aceptación manual</h2>
+                  <p class="text-muted small mb-0">Tú decides quién viaja contigo aceptando cada solicitud.</p>
                 </ion-label>
-                <ion-radio slot="start" [value]="false"></ion-radio>
-                <ion-icon name="hand-right-outline" slot="end" color="primary"></ion-icon>
+                <ion-icon name="hand-right-outline" slot="end" color="primary" class="fs-4"></ion-icon>
               </ion-item>
 
-              <ion-item (click)="seleccionarTipoReserva(true)">
-                <ion-label>
-                  <h2>Reserva automática</h2>
-                  <p>Las plazas se reservan al instante sin tu intervención.</p>
+              <ion-item (click)="seleccionarTipoReserva(true)" class="goguay-list-item py-1 mt-2">
+                <ion-radio slot="start" [value]="true" mode="ios"></ion-radio>
+                <ion-label class="ms-2">
+                  <h2 class="fw-bold mb-0">Reserva automática</h2>
+                  <p class="text-muted small mb-0">Las plazas se reservan al instante sin tu intervención.</p>
                 </ion-label>
-                <ion-radio slot="start" [value]="true"></ion-radio>
-                <ion-icon name="flash-outline" slot="end" color="warning"></ion-icon>
+                <ion-icon name="flash-outline" slot="end" color="warning" class="fs-4"></ion-icon>
               </ion-item>
 
             </ion-radio-group>
@@ -126,10 +138,9 @@
     </ion-col>
   </ion-row>
 
-  <div class="d-flex justify-content-center align-items-center mt-3">
-    <span class="info_message"><i class="fi fi-rr-info me-1"></i>Recuerda que debes introducir todos los datos para
-      poder
-      continuar.</span>
+  <div class="d-flex justify-content-center align-items-center mt-4 mb-3">
+    <span class="info_message text-secondary text-center">
+      <i class="fi fi-rr-info-todo me-1 text-primary"></i> Recuerda que debes introducir todos los datos para poder continuar.
+    </span>
   </div>
-
 </ion-grid>

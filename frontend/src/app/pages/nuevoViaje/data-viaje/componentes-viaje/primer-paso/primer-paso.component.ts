@@ -51,6 +51,7 @@ export class PrimerPasoComponent implements OnInit {
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
+  horaMinimaPermitida: Date | null = null;
 
   origen: string = '';
   destino: string = '';
@@ -66,6 +67,7 @@ export class PrimerPasoComponent implements OnInit {
   reservaAutomatica: boolean = false;
 
   hoy: string = new Date().toISOString();
+  
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;
@@ -114,7 +116,12 @@ export class PrimerPasoComponent implements OnInit {
 
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
-    this.hora_seleccionada = date.toLocaleTimeString([], {
+
+    this.calcularHoraMinima();
+
+    const fechaConMargen = new Date(date.getTime() + 65 * 60 * 1000);
+
+    this.hora_seleccionada = fechaConMargen.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -134,6 +141,7 @@ export class PrimerPasoComponent implements OnInit {
       this.plazas = viajeData.plazas || '';
       this.cocheSeleccionado = viajeData.coche || '';
       this.reservaAutomatica = viajeData.reserva_automatica ?? false;
+      this.calcularHoraMinima();
     }
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
@@ -168,6 +176,41 @@ export class PrimerPasoComponent implements OnInit {
     return (this.fecha_seleccionada = fechaMasUnDia.toISOString().split('T')[0]);
   }
 
+  calcularHoraMinima() {
+    if (!this.fecha_seleccionada) {
+      this.horaMinimaPermitida = null;
+      return;
+    }
+
+    const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
+    const fechaHoy = new Date().toDateString();
+
+    if (fechaViaje === fechaHoy) {
+      const ahora = new Date();
+      this.horaMinimaPermitida = new Date(ahora.getTime() + 60 * 60 * 1000);
+    } else {
+      this.horaMinimaPermitida = null;
+    }
+  }
+
+  filtroHora = (time: Date | null): boolean => {
+    if (!time) return true;
+    
+    if (!this.fecha_seleccionada) return true;
+    const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
+    const fechaHoy = new Date().toDateString();
+    if (fechaViaje !== fechaHoy) return true;
+
+    const ahora = new Date();
+    const limiteMinimo = new Date(ahora.getTime() + 60 * 60 * 1000);
+
+    const horaCelda = new Date();
+    horaCelda.setHours(time.getHours(), time.getMinutes(), 0, 0);
+
+    return horaCelda >= limiteMinimo;
+  };
+
+
   /**
    * Función para obtener la lista de vehículos de un usuario.   *
    */
@@ -181,8 +224,13 @@ export class PrimerPasoComponent implements OnInit {
     if (id) {
       this.vehiculosServicesService.obtenerVehiculosUsuario(id).subscribe({
         next: (resultado) => {
-          if (resultado && resultado.vehiculos) {
+          if (resultado && resultado.vehiculos && resultado.vehiculos.length > 0) {
             this.userData.usuario.vehiculos = [...resultado.vehiculos];
+            
+            if (!this.cocheSeleccionado) {
+              this.cocheSeleccionado = resultado.vehiculos[0];
+              this.guardaDatosDelViajeEnServicio('coche', this.cocheSeleccionado);
+            }
           }
           usuarioLocal.usuario.vehiculos = resultado.vehiculos;
           localStorage.setItem('userData', JSON.stringify(usuarioLocal));
@@ -241,11 +289,21 @@ export class PrimerPasoComponent implements OnInit {
     return this.hora_seleccionada ? this.hora_seleccionada : 'Ninguna hora seleccionada.';
   }
 
+  /**
+   * Función para manejar el cambio de fecha.
+   * @param event -> Recibe la información del evento en el input de la selección de fecha.
+   */
   onDateChange(event: any) {
     this.fecha_seleccionada = event.detail.value;
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
+    
+    this.calcularHoraMinima();
+    
+    if (this.hora_seleccionada) {
+      this.validarHoraSeleccionadaConContexto();
+    }
   }
-
+  
   /**
    * Función para seleccionar la hora.
    * ---------------------------------
@@ -257,28 +315,85 @@ export class PrimerPasoComponent implements OnInit {
    * @param event -> Recibe la información del evento en el input de la selección de hora.
    */
   onTimeChange(event: any) {
+    if (!event) return;
+    
     let timeValue: Date;
 
-    if (this.isDesktop) {
-      timeValue = new Date(event);
-    } else {
+    if (event instanceof Date) {
+      timeValue = event;
+    } else if (event.detail && event.detail.value) {
       timeValue = new Date(event.detail.value);
+    } else {
+      timeValue = new Date(event);
     }
 
     if (isNaN(timeValue.getTime())) {
       this.invalid_date = true;
       this.hora_seleccionada = '';
-    } else {
-      this.invalid_date = false;
-      this.hora_seleccionada = timeValue.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      this.guardaDatosDelViajeEnServicio('hora_salida', '');
+      return;
     }
 
+    const horasSeleccionadas = timeValue.getHours();
+    const minutosSeleccionados = timeValue.getMinutes();
+
+    if (this.fecha_seleccionada) {
+      const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
+      const fechaHoy = new Date().toDateString();
+
+      if (fechaViaje === fechaHoy) {
+        const ahora = new Date();
+        
+        const horaPropuesta = new Date();
+        horaPropuesta.setHours(horasSeleccionadas, minutosSeleccionados, 0, 0);
+
+        const limiteMinimo = new Date(ahora.getTime() + 60 * 60 * 1000);
+
+        if (horaPropuesta < limiteMinimo) {
+          this.invalid_date = true;
+          this.hora_seleccionada = ''; 
+          this.guardaDatosDelViajeEnServicio('hora_salida', '');
+          return;
+        }
+      }
+    }
+
+    this.invalid_date = false;
+    const horasString = String(horasSeleccionadas).padStart(2, '0');
+    const minutosString = String(minutosSeleccionados).padStart(2, '0');
+    
+    this.hora_seleccionada = `${horasString}:${minutosString}`;
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
   }
 
+  /**
+   * Función para validar la hora seleccionada con el contexto de la fecha.
+   */
+  private validarHoraSeleccionadaConContexto() {
+    if (!this.hora_seleccionada || !this.horaMinimaPermitida) {
+      this.invalid_date = false;
+      return;
+    }
+
+    const [horas, minutos] = this.hora_seleccionada.split(':').map(Number);
+    const propuesta = new Date();
+    propuesta.setHours(horas, minutos, 0, 0);
+
+    if (propuesta < this.horaMinimaPermitida) {
+      this.invalid_date = true;
+      this.hora_seleccionada = '';
+      this.guardaDatosDelViajeEnServicio('hora_salida', '');
+    } else {
+      this.invalid_date = false;
+      this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
+    }
+  }
+
+  /**
+   * Función para mostrar el color del coche seleccionado.
+   * @param color --> Recibe el color del coche.
+   * @returns Devuelve la ruta de la imagen del color del coche.
+   */
   mostrarColorCoche(color: string): string {
     const blanco: string = '../../../../../../assets/ColoresCoches/Blanco.png';
     const negro: string = '../../../../../../assets/ColoresCoches/Negro.png';
