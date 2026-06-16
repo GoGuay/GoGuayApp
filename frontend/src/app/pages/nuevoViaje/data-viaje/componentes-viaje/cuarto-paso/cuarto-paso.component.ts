@@ -1,26 +1,22 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-
-import viajeMock from '../../../../../../assets/mocks/viaje.mock.json'
+import { MessageService } from 'primeng/api';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { TravelService } from '../../../../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-cuarto-paso',
   standalone: true,
-  imports: [MatButtonModule, FormsModule, MatIcon, MatTooltipModule, CommonModule, ToastModule],
+  imports: [MatButtonModule, FormsModule, MatTooltipModule, CommonModule, ToastModule],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
       useValue: {
-        showDelay: 500,
+        showDelay: 400,
         hideDelay: 200,
         touchGestures: 'auto',
         position: 'below'
@@ -33,100 +29,133 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
 })
 export class CuartoPasoComponent implements OnInit {
 
-  tercer_paso: boolean = false;
-  cuarto_paso: boolean = false;
-
-  initialValue = 5;
-  precio = this.initialValue;
+  precio = 5;
+  
   min: number = 0;
-  max = this.initialValue * 2;
+  max: number = 0;
 
   precioMinRecomendado = 0;
   precioMaxRecomendado = 0;
 
-  viajeMock: any = viajeMock;
-
-  constructor(private travelService: TravelService, private messageService: MessageService, private navCtrl: NavController) { }
+  constructor(
+    private travelService: TravelService, 
+    private messageService: MessageService, 
+    private navCtrl: NavController
+  ) { }
 
   ngOnInit() {
     const viajeData = this.travelService.getViajeData();
 
-    const distanciaKm = viajeData.ruta_seleccionada.routes[0].legs[0].distance.value / 1000;
-
-    this.calcularLimites(distanciaKm);
-    this.initialValue = this.calcularPrecioRecomendado(distanciaKm);
-    this.precio = this.initialValue;
-    this.max = this.initialValue * 2;
-
-    // Rango recomendado para mostrar al usuario
-    this.precioMinRecomendado = Math.round(distanciaKm * 0.03);
-    this.precioMaxRecomendado = Math.round(distanciaKm * 0.12);
-  }
-
-
-  calcularPrecioRecomendado(
-    distanciaKm: number,
-    consumo: number = 6,
-    precioGasolina: number = 1.55,
-    plazas: number = 3
-  ) {
-    // 1. Coste total del viaje
-    const costeViaje = (distanciaKm / 100) * consumo * precioGasolina;
-
-    // 2. Coste por pasajero
-    let precio = costeViaje / plazas;
-
-    // 3. Margen tipo BlaBlaCar
-    precio *= 1.15;
-
-    // 4. Límites basados en distancia
-    const minimo = distanciaKm * 0.03;
-    const maximo = distanciaKm * 0.12;
-
-    // 5. Clamp
-    precio = Math.max(minimo, Math.min(maximo, precio));
-
-    // 6. Redondeo
-    return Math.round(precio);
-  }
-
-  calcularLimites(distanciaKm: number) {
-    this.min = distanciaKm * 0.03;
-    this.max = distanciaKm * 0.12;
-  }
-
-  onCuartoPasoBack() {
-    this.tercer_paso = true;
-    this.cuarto_paso = false;
-  }
-
-  onCuartoPasoComplete() {
-    const errores: string[] = [];
-    const viajeData = this.travelService.getViajeData();
-
-    if (!viajeData) {
-      errores.push('viajeData');
-    } else {
-      if (!viajeData.origen) errores.push('No hay un lugar de origen seleccionado');
-      if (!viajeData.destino) errores.push('No hay un lugar de destino seleccionado');
-      if (!viajeData.hora_salida) errores.push('No hay una hora de salida seleccionada');
-      if (!viajeData.ruta_seleccionada?.routes?.[0].legs?.[0]?.duration?.text) {
-        errores.push('No hay una ruta seleccionada.');
-      }
-    }
-
-    if (errores.length > 0) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Datos incompletos',
-        detail: `Faltan los siguientes datos del viaje: ${errores.join(', ')}`,
-        life: 3000
-      });
+    if (!viajeData?.ruta_seleccionada?.routes?.[0]?.legs?.[0]) {
+      this.navCtrl.navigateRoot(['/nuevo-viaje']);
       return;
     }
 
-    let horaEnRutaSeleccionada = viajeData.ruta_seleccionada?.routes?.[0].legs?.[0]?.duration?.text
-    let hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, horaEnRutaSeleccionada);
+    const leg = viajeData.ruta_seleccionada.routes[0].legs[0];
+    const distanciaKm = leg.distance.value / 1000;
+    const numPlazas = Number(viajeData.plazas) || 3;
+
+    this.calcularLimites(distanciaKm);
+    this.precio = this.calcularPrecioRecomendado(distanciaKm, 6, 1.55, numPlazas);
+
+    this.precioMinRecomendado = Math.round(this.min);
+    this.precioMaxRecomendado = Math.round(this.max);
+  }
+
+  /**
+   * Calcula el precio recomendado basado en la distancia, consumo y número de plazas
+   */
+  calcularPrecioRecomendado(distanciaKm: number, consumo: number, precioGasolina: number, plazas: number): number {
+    const costeViaje = (distanciaKm / 100) * consumo * precioGasolina;
+    let precioSugerido = (costeViaje / plazas) * 1.15;
+    
+    precioSugerido = Math.max(this.min, Math.min(this.max, precioSugerido));
+    return Math.round(precioSugerido) || 5;
+  }
+
+  /**
+   * Calcula los límites del precio basados en la distancia
+   */
+  calcularLimites(distanciaKm: number) {
+    this.min = Math.max(2, Math.round(distanciaKm * 0.04));
+    this.max = Math.round(distanciaKm * 0.14);
+  }
+
+  /**
+   * Suma una unidad al precio
+   */
+  sumarCantidad() {
+    if (this.precio < 99) { 
+      this.precio++;
+      this.comprobarUmbralesPrecio();
+    }
+  }
+
+  /**
+   * Resta una unidad al precio
+   */
+  restarCantidad() {
+    if (this.precio > 1) { 
+      this.precio--;
+      this.comprobarUmbralesPrecio();
+    }
+  }
+
+  /**
+   * Lanza mensajes de aviso sin bloquear la interacción si el precio es muy elevado o muy bajo
+   */
+  private comprobarUmbralesPrecio() {
+    if (this.precio > this.max) {
+      this.messageService.add({
+        key: 'precioToast',
+        severity: 'warn',
+        summary: 'Precio elevado',
+        detail: `Has superado el precio recomendado (${this.max}€). Podría costarte encontrar pasajeros.`,
+        life: 2500
+      });
+    } else if (this.precio < this.min) {
+      this.messageService.add({
+        key: 'precioToast',
+        severity: 'info',
+        summary: 'Precio económico',
+        detail: `Estás por debajo del mínimo recomendado (${this.min}€). ¡Un chollo para los pasajeros!`,
+        life: 2500
+      });
+    }
+  }
+
+  /**
+   * Devuelve el color del precio según su valor
+   */
+  getprecioColor(): string {
+    if (this.precio < this.min) {
+      return '#3498db'; 
+    } else if (this.precio <= this.max) {
+      return '#e0a667'; 
+    } else {
+      return '#eb445a'; 
+    }
+  }
+
+  /**
+   * Maneja la finalización del cuarto paso
+   */
+  onCuartoPasoComplete(): boolean {
+    const viajeData = this.travelService.getViajeData();
+    const durationText = viajeData?.ruta_seleccionada?.routes?.[0]?.legs?.[0]?.duration?.text;
+
+    if (!viajeData?.hora_salida || !durationText) {
+      this.messageService.add({
+        key: 'precioToast',
+        severity: 'error',
+        summary: 'Error de sincronización',
+        detail: 'Faltan parámetros del itinerario. Regresa al paso anterior.',
+        life: 3000
+      });
+      return false;
+    }
+
+    const hora_llegada = this.calcularHoraLlegada(viajeData.hora_salida, durationText);
 
     const viajeDataFinal = {
       ...viajeData,
@@ -135,94 +164,50 @@ export class CuartoPasoComponent implements OnInit {
     };
 
     this.travelService.setViajeData(viajeDataFinal);
-
-    this.navCtrl.navigateRoot(['/resumen-viaje']);
+    console.log('Precio inyectado con éxito en el servicio:', viajeDataFinal);
+    
+    return true; 
   }
 
-
+  /**
+   * Calcula la hora de llegada basada en la hora de salida y la duración del viaje
+   */
   calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
     try {
       let [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
       let salidaDate = new Date();
-      salidaDate.setHours(horasSalida, minutosSalida, 0);
+      salidaDate.setHours(horasSalida, minutosSalida, 0, 0);
 
-      let duracionHoras = 0;
-      let duracionMinutos = 0;
+      let totalMinutosDuracion = 0;
 
-      const duracionMatch = duracion_viaje.match(/(\d+)h\s*(\d+)?min?/);
-      if (duracionMatch) {
-        duracionHoras = Number(duracionMatch[1]) || 0;
-        duracionMinutos = Number(duracionMatch[2]) || 0;
-      }
+      const horasMatch = duracion_viaje.match(/(\d+)\s*h/);
+      const minutosMatch = duracion_viaje.match(/(\d+)\s*min/);
 
-      let llegadaDate = new Date(salidaDate);
-      llegadaDate.setHours(llegadaDate.getHours() + duracionHoras);
-      llegadaDate.setMinutes(llegadaDate.getMinutes() + duracionMinutos);
+      if (horasMatch) totalMinutosDuracion += Number(horasMatch[1]) * 60;
+      if (minutosMatch) totalMinutosDuracion += Number(minutosMatch[1]);
+
+      let llegadaDate = new Date(salidaDate.getTime() + totalMinutosDuracion * 60 * 1000);
 
       return llegadaDate.toLocaleTimeString('es-ES', {
         hour: '2-digit',
         minute: '2-digit',
       });
     } catch (error) {
+      console.error('Error calculando hora de llegada:', error);
       return null;
     }
   }
 
-
   /**
-   * Función para sumar cantidad al precio recomendado al usuario
-   */
-  sumarCantidad() {
-    if (this.precio < this.max) {
-      this.precio++;
-    } 
-    if (this.precio >= this.max) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Precio demasiado alto',
-        detail: `El precio máximo razonable para este viaje es de ${Math.round(this.max)}€.`,
-        life: 3000
-      });
-    }
-  }
-
-  /**
-   * Función para restar cantidad al precio recomendado al usuario
-   */
-  restarCantidad() {
-    if (this.precio > this.min) {
-      this.precio--;
-    } 
-    if (this.precio <= this.min) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Precio demasiado bajo',
-        detail: `El precio mínimo recomendado para este viaje es de ${Math.round(this.min)}€.`,
-        life: 3000
-      });
-    }
-  }
-
-  /**
-   * Función para cambiar el color del precio
-   */
-  getprecioColor(): string {
-    const ratio = this.precio / this.max;
-
-    if (ratio <= 0.33) return '#3498db';
-    if (ratio <= 0.66) return '#AAD1A7';
-    return '#e74c3c';
-  }
-
-  /**
-   * Función para mostrar un mensaje de ayuda sobre el precio.
+   * Muestra información de ayuda sobre la estrategia de precios
    */
   ayudaPrecio() {
     this.messageService.add({
-      severity: 'warn',
-      summary: 'Precio por plaza',
-      detail: `Selecciona un precio justo para tu viaje. Los precios razonables atraen más pasajeros.`,
-      life: 3000
+      key: 'precioToast',
+      severity: 'info',
+      summary: 'Estrategia de precios',
+      detail: 'El precio se calcula según la distancia del trayecto y el coste medio de combustible dividido entre las plazas.',
+      life: 5000
     });
   }
 }

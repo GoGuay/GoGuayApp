@@ -88,6 +88,8 @@ export class NuevoViajePage implements OnInit {
   @ViewChild('inputOrigen') inputOrigen!: ElementRef;
   @ViewChild('inputDestino') inputDestino!: ElementRef;
 
+  mapCenter: { lat: number; lng: number } = { lat: 40.4168, lng: -3.7038 };
+
   toggleDropdown() {
     this.isOpen = !this.isOpen;
   }
@@ -268,7 +270,56 @@ export class NuevoViajePage implements OnInit {
       this.cargandoDestino = false;
     }
   }
-  buscarUbicacion() {}
+
+
+  buscarUbicacion() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.mapCenter = { lat, lng };
+
+          // Llamada a Nominatim para obtener la dirección inversa
+          const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.address) {
+                let city =
+                  data.address.city ||
+                  data.address.town ||
+                  data.address.village ||
+                  '';
+                if (city) {
+                  this.origen = city;
+                  const viajeData = {
+                    ...this.travelService.getViajeData(),
+                    origen: this.origen,
+                  };
+                  this.travelService.setViajeData(viajeData);
+                  this.cdr.detectChanges();
+                } else {
+                  console.log('No se pudo obtener la ciudad.');
+                }
+              }
+            })
+            .catch((error) =>
+              console.error(
+                'Error al obtener la ubicación con Leaflet:',
+                error,
+              ),
+            );
+        },
+        (error) => {
+          console.error('Error de geolocalización:', error.message);
+        },
+      );
+    } else {
+      console.error('La geolocalización no está soportada por este navegador.');
+    }
+  }
 
   /**
    * Función para guardar la información de la localidad de origen seleccionada.
@@ -407,6 +458,7 @@ export class NuevoViajePage implements OnInit {
       }
     }
   }
+
   validarSeleccion(tipo: 'origen' | 'destino') {
     setTimeout(() => {
       if (tipo === 'origen') {
@@ -446,6 +498,7 @@ export class NuevoViajePage implements OnInit {
       }
     }, 250);
   }
+
   goBack() {
     this.location.back();
   }

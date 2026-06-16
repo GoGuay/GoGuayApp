@@ -1,91 +1,165 @@
-.btn-banner {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+
+.badge-step {
+  display: inline-block;
+  background-color: rgba(224, 166, 103, 0.15);
+  color: #e0a667;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 30px;
+  letter-spacing: 0.5px;
 }
 
-.btn-banner button {
+.main-step-title {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.recommendation-box {
+  max-width: 440px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+}
+
+.recommend-tag {
+  background-color: #e2f4e0;
+  color: #2f7528;
+  border-radius: 12px;
+  padding: 6px 14px;
   font-size: 0.9rem;
-  padding: 8px 16px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  
+  strong {
+    margin-left: 4px;
+    font-weight: 700;
+  }
 }
 
+.recommend_info {
+  color: #777777;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
 
-.input-container {
+.price-counter-wrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #f6f6f6;
+  padding: 20px 40px;
+  border-radius: 40px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
   position: relative;
+  min-width: 340px;
 }
 
-.input-viaje {
-  display: block;
-  width: 20%; 
-  padding: 10px 10px 10px 30px; 
-  margin: 20px 0;
-  border: 1px solid #ccc;
-  border-radius: 35px;
-  font-size: 1rem;
-  box-sizing: border-box; 
+.price-display-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 140px;
 }
 
-.input-viaje::-webkit-outer-spin-button,
-.input-viaje::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.font_precio {
+  font-size: 5.5rem !important; 
+  font-weight: 800;
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: -2px;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1;
+  color: inherit !important; 
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-
-/* Alineación del símbolo del euro */
-.currency-symbol {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  color: #333;
+.currency-label {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-left: 2px;
+  transition: color 0.3s ease;
+  color: inherit !important; 
+  transition: color 0.3s ease;
 }
 
-.help-icon {
-  margin-left: 10px; 
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.font_precio{
-  font-size: 150px;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  transition: color 0.3s ease-in-out;
-}
-
+// Botones de acción circulares (+ y -)
 .precio_btn {
-  font-size: 150px;
-  background: transparent;
+  background: #ffffff;
+  color: #333333;
+  border: 1px solid #eeeeee;
   cursor: pointer;
-  border: none;
-  width: 100px;
-  height: 100px;
-  border-radius: 100%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover:not(:disabled) {
+    background-color: #111111;
+    color: #ffffff;
+    border-color: #111111;
+    transform: scale(1.08);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: #f7f7f7;
+    color: #cccccc;
+    border-color: #eeeeee;
+    cursor: not-allowed;
+  }
 }
 
-.currency{
-  font-size: 110px;
+// Icono flotante de consulta superior derecha
+.help-icon-wrapper {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ffffff;
+  color: #a0a0a0;
+  border: 1px solid #ebebeb;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #e0a667;
+    border-color: #e0a667;
+    background-color: rgba(224, 166, 103, 0.04);
+  }
 }
 
-.recommend{
-  background-color: #AAD1A7;
-  border-radius: 15px;
-  padding: 5px;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.recommend_info{
-  padding: 5px;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+// Ajustes responsive para pantallas móviles pequeñas
+@media (max-width: 400px) {
+  .price-counter-wrapper {
+    min-width: 100%;
+    padding: 20px;
+  }
+  .font_precio {
+    font-size: 4.2rem !important;
+  }
+  .currency-label {
+    font-size: 1.8rem;
+  }
 }

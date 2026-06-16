@@ -1,5 +1,6 @@
 <app-navbar [origin]="'/nuevo-viaje'" [backRoute]="'/nuevo-viaje'" [searchRoute]="'search'"
   [isLoggedIn]="userLoggedIn"></app-navbar>
+
 <ion-content [fullscreen]="true">
   <div *ngIf="mostrarJumbotron && !cuarto_paso && !tercer_paso && !segundo_paso">
     <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
@@ -7,12 +8,8 @@
     </app-jumbotron>
   </div>
 
-
-  <!-- RESUMEN DEL VIAJE -->
   <app-resumen-dinamico></app-resumen-dinamico>
 
-  <!-- PRIMER PASO PARA CREAR UN VIAJE
-   Pantalla de seleccion de fecha, coche seleccionado y numero de plazas ofertadas-->
   <div class="container" id="primer_paso" *ngIf="primer_paso">
     <app-primer-paso></app-primer-paso>
     <div class="d-flex justify-content-center mt-3 mb-3">
@@ -23,12 +20,9 @@
     </div>
   </div>
 
-  <!-- SEGUNDO PASO PARA CREAR UN VIAJE
-   Selección de origen y destino -->
   <div class="container" id="segundo_paso" *ngIf="segundo_paso">
     <app-segundo-paso></app-segundo-paso>
     <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">
-      <!-- Botón Atrás -->
       <button type="button" mat-raised-button class="btn_bg" (click)="onSegundoPasoBack()">
         Atrás
       </button>
@@ -38,11 +32,9 @@
     </div>
   </div>
 
-  <!-- TERCER PASO PARA CREAR UN VIAJE -->
   <div *ngIf="tercer_paso">
     <app-tercer-paso></app-tercer-paso>
     <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">
-      <!-- Botón Atrás -->
       <button type="button" mat-raised-button class="btn_bg" (click)="onTercerPasoBack()">
         Atrás
       </button>
@@ -52,9 +44,17 @@
     </div>
   </div>
 
-  <div *ngIf="cuarto_paso">
+  <div class="container" *ngIf="cuarto_paso">
     <p-toast position="bottom-center"></p-toast>
-    <app-cuarto-paso></app-cuarto-paso>
+    <app-cuarto-paso #pasoPrecio></app-cuarto-paso>
+    
+    <div class="d-flex justify-content-center mt-4 mb-3 btn-banner">
+      <button type="button" mat-raised-button class="btn_bg" (click)="onCuartoPasoBack()">Atrás</button>
+      
+      <button type="button" mat-raised-button class="btn_bg" (click)="publicarViajeFinal(pasoPrecio)">
+        Publicar Viaje
+      </button>
+    </div>
   </div>
 
 </ion-content>

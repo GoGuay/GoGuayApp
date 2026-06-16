@@ -55,7 +55,7 @@
       z-index: 2;
 
       &.origin { background: #e3f2fd; color: #2196f3; }
-      &.destination { background: #7B61FF; color: white; }
+      &.destination { background: #b3b5e6; color: black; }
     }
 
     .timeline-content {
@@ -90,7 +90,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #7B61FF;
+      color: #b3b5e6;
       font-size: 1.2rem;
     }
 
@@ -103,13 +103,13 @@
 }
 
 .price-section {
-  background: #7B61FF;
+  background: #b3b5e6;
   border-radius: 25px;
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  color: black;
 
   .price-label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; }
   .price-value {
@@ -128,8 +128,8 @@
 }
 
 .btn-primary-custom {
-  background: #7B61FF !important;
-  color: white !important;
+  background: #b3b5e6 !important;
+  color: black !important;
   border-radius: 35px !important;
   padding: 12px 30px !important;
   font-weight: 700 !important;
@@ -164,7 +164,7 @@
   background: #f8f9ff;
   border: 1px solid #e0e4ff;
 
-  i { font-size: 1.5rem; color: #7B61FF; }
+  i { font-size: 1.5rem; color: #b3b5e6; }
   p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.4; }
 
   &.edit-note {
@@ -197,7 +197,7 @@ select.form-select {
   transition: all 0.3s ease;
 
   &:focus {
-    border-color: #7B61FF !important;
+    border-color: #b3b5e6 !important;
     box-shadow: 0 4px 12px rgba(123, 97, 255, 0.15) !important;
     outline: none;
   }
@@ -260,8 +260,8 @@ button,
   border: none;
   
   &:hover {
-    background: #7B61FF;
-    color: white;
+    background: #b3b5e6;
+    color: black;
   }
 }
 
@@ -276,7 +276,7 @@ button,
   outline: none;
   
   &:focus {
-    border-color: #7B61FF;
+    border-color: #b3b5e6;
     box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1);
   }
 }
@@ -320,7 +320,7 @@ button,
 
   &:hover {
     background: white;
-    color: #7B61FF;
+    color: #b3b5e6;
     transform: scale(1.1);
   }
 }

@@ -87,28 +87,17 @@ export class ResumenViajeComponent implements OnInit {
       this.userLoggedIn = false;
     }
 
+    this.actualizarInformacion();
+
     this.route.queryParams.subscribe(params => {
       const viajeId = params['id'];
       this.ruta_navegacion_origen = params['origin'];
 
-      this.currentViajeData = this.travelService.getViajeData();
       if (viajeId) {
         this.obtenerViaje(viajeId);
       }
 
-      // Si no hay viajeId y los datos no están completos, redirigir al home
-      if (
-        !viajeId &&
-        (
-          !this.currentViajeData ||
-          !this.currentViajeData?.coche ||
-          !this.currentViajeData?.destino ||
-          !this.currentViajeData?.fecha_salida ||
-          !this.currentViajeData?.hora_salida ||
-          !this.currentViajeData?.origen ||
-          !this.currentViajeData?.plazas
-        )
-      ) {
+      if (!viajeId && (!this.currentViajeData || !this.currentViajeData?.origen)) {
         this.navCtrl.navigateRoot('/home');
         return;
       }
@@ -505,9 +494,17 @@ export class ResumenViajeComponent implements OnInit {
     this.travelService.viajeData$
       .pipe(takeUntil(this.destroy$))
       .subscribe((viajeData) => {
-        this.currentViajeData = viajeData ?? {};
-        this.origen = this.currentViajeData?.origen || '';
-        // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
+        if (viajeData) {
+          this.currentViajeData = { ...viajeData };
+          this.origen = this.currentViajeData?.origen || '';
+          this.destino = this.currentViajeData?.destino || '';
+          
+          this.editableFields.precio_viaje = this.currentViajeData?.precio_viaje || 0;
+          
+          if (this.currentViajeData?.coche && this.vehiculosUsuario.length > 0) {
+            this.setInitialCoche();
+          }
+        }
       });
   }
 
