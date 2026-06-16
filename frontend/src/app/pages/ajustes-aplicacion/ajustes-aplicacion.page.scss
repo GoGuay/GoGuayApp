@@ -157,6 +157,12 @@ a {
 
 .btn-outline-danger {
   border-radius: 35px;
+  border: 1px solid #E0B6B6;
+}
+
+.btn-outline-danger:hover {
+  background: #E0B6B6 !important;
+  color: black;
 }
 
 .btn-logout {
@@ -168,7 +174,7 @@ a {
 }
 
 .btn-logout:hover {
-  background: #ffb3ba !important;
+  background: #E0B6B6 !important;
   color: black !important;
 }
 

@@ -703,17 +703,19 @@ def comprobarpwactual():
     4. Hace el print de la contraseña hasheada. 
     5. check_password_hash -->  toma la contraseña que escribió el usuario, le aplica el mismo algoritmo de cifrado y comprueba si el resultado coincide con el hash guardado (usuario.password). Si coinciden devuelve un True (el usuario ha acreaditado quien es), si no devuelve un false y devuelve un código de estado (no autorizado) 
     """
-    id = request.json.get('id')
-    password = request.json.get('password')
-    # print(f"id: {id}")
-    # print(f"Password ingresada: {password}")
+    data = request.get_json()
+    id_usuario = data.get('id')
+    password = data.get('password', '').strip()
 
-    usuario = Usuario.query.filter_by(id=id).first()
+    usuario = Usuario.query.filter_by(id=id_usuario).first()
 
     if usuario is None:
         return jsonify({'error:': 'usuario no encontrado'}), 404
     
-    print (f"Hash de contraseña almacenada: {usuario.password}")
+    print("\n========== SPRINT DE DIAGNÓSTICO ==========")
+    print(f"Contraseña limpia recibida del front: '{password}'")
+    print(f"Hash real en tu Base de Datos: '{usuario.password}'")
+    print("===========================================\n")
 
     if check_password_hash(usuario.password, password):
         return jsonify({'isValid': True}), 200

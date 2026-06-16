@@ -236,6 +236,9 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
+  /**
+   * Función para empujar el texto de origen al flujo reactivo de Google
+   */
   buscarSugerenciasOrigen(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const texto = inputElement.value;
@@ -272,7 +275,12 @@ export class NuevoViajePage implements OnInit {
   }
 
 
+  /**
+   * Función para obtener la ubicación actual del usuario y buscar la ciudad correspondiente usando Nominatim.
+   * Se actualiza el campo de origen con la ciudad obtenida.
+   */
   buscarUbicacion() {
+    this.cargandoOrigen = true;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -299,6 +307,7 @@ export class NuevoViajePage implements OnInit {
                     origen: this.origen,
                   };
                   this.travelService.setViajeData(viajeData);
+                  this.cargandoOrigen = false;
                   this.cdr.detectChanges();
                 } else {
                   console.log('No se pudo obtener la ciudad.');

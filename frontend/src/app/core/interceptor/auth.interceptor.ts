@@ -34,6 +34,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
    */
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 && req.headers.get('X-Skip-Interceptor') === 'true') {
+        /**
+         * Si la respuesta es 401 y la solicitud tiene el encabezado 'X-Skip-Interceptor', se lanza un error sin intentar refrescar el token.
+         * Esta condición se ha añadido para evitar errores en la comprobación de la contraseña actual del usuario, 
+         * ya que esta solicitud no requiere autenticación y no debería ser interceptada por el interceptor de autenticación.
+         */
+        return throwError(() => error);
+      }
+    
       if (error.status === 401) {
         const refreshToken = localStorage.getItem('refresh_token');
         const rememberMe = localStorage.getItem('remember_me') === 'true';

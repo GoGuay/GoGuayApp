@@ -37,10 +37,7 @@
                     : null
                 "
             />
-            <div
-              *ngIf="cargandoOrigen"
-              class="spinner-container"
-            >
+            <div *ngIf="cargandoOrigen" class="spinner-container spinner-input-inline">
               <app-spinner></app-spinner>
             </div>
             <ul
@@ -60,7 +57,7 @@
           <div class="input-container">
             <button
               type="button"
-              class="btn btn_bg mb-4"
+              class="btn btn_bg mb-3"
               (click)="buscarUbicacion()"
             >
               <span>
@@ -101,10 +98,7 @@
                 "
             />
             <!-- Spinner de carga -->
-            <div
-              *ngIf="cargandoDestino"
-              class="spinner-container"
-            >
+            <div *ngIf="cargandoDestino" class="spinner-container spinner-input-inline">
               <app-spinner></app-spinner>
             </div>
 
@@ -189,16 +183,6 @@
               </button>
             </div>
           </div>
-          <!-- <div class="alert" *ngIf="userLoggedIn">
-            <p>{{ 'NUEVOVIAJE.CARNET_NO_REGISTRADO' | translate }}</p>
-            <div class="d-flex justify-content-center">
-              <button type="button" class="help_btn d-flex justify-content-center"
-                title="{{'NUEVOVIAJE.AYUDA_TOOLTIP' | translate}}"
-                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_carnet)">
-                <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" />
-              </button>
-            </div>
-          </div> -->
         </div>
         <button
           type="button"

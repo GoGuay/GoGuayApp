@@ -43,7 +43,6 @@ export class AjustesAplicacionPage implements OnInit {
   notificacionesActivas = true;
   theme = 'light';
   mostrarJumbotron = true;
-  password: string = '';
 
   email: string = '';
   userData: Usuario = {} as Usuario;
@@ -57,6 +56,7 @@ export class AjustesAplicacionPage implements OnInit {
   isPasswordActualValida: boolean | null = null;
   isNuevaPassword1Valida: boolean = false;
   isConfirmacionPasswordValida: boolean = false;
+  interactuoConPassword: boolean = false;
   errorMensaje: string = '';
   exitoMensaje: string = '';
 
@@ -235,7 +235,8 @@ export class AjustesAplicacionPage implements OnInit {
     this.navCtrl.navigateRoot(['/'], {});
   }
 
-  /**FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
+  /**
+   * FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
    * Si no hay contraseña actual escrita, corta la función y deja todo en deshabilitado.
    * Si hay contraseña actual, llama al servicio para comprobar si la contraseña es la correcta del usuario.
    * Si el backend responde correctamente , actualiza el estado de isPasswordActualValida con true o false.
@@ -246,28 +247,29 @@ export class AjustesAplicacionPage implements OnInit {
    *
    */
   comprobarContrasenaActual() {
-    if (!this.passwordActual) {
+
+    if (!this.passwordActual || this.passwordActual.length < 6) { 
       this.isPasswordActualValida = false;
       this.errorMensaje = '';
       return;
     }
 
     this.userService
-      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual)
+      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual.trim())
       .subscribe({
         next: (res) => {
           this.isPasswordActualValida = res.isValid;
 
           if (res.isValid) {
             this.errorMensaje = '';
-            console.log('✅ Contraseña actual verificada correctamente');
+            console.log('Contraseña actual verificada correctamente');
           } else {
             this.translate
               .get('AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL_INCO')
               .subscribe((translation) => {
-                this.errorMensaje = '❌ ' + translation;
+                this.errorMensaje = translation;
               });
-            console.log('❌ Contraseña actual incorrecta');
+            console.log('Contraseña actual incorrecta');
           }
           this.nuevaPassword1 = '';
           this.nuevaPassword2 = '';

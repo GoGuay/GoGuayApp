@@ -81,7 +81,7 @@ def create_app():
             "ionic://localhost"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "X-Skip-Interceptor"],
         "supports_credentials": True
     }})
 
