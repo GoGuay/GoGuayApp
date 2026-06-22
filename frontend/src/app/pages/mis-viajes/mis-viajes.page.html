@@ -26,51 +26,7 @@
         <li>Editar o eliminar tus viajes si eres el conductor.</li>
       </ul>
     </div>
-
-    <div class="buttons-header">
-      <button
-        class="btn btn_bg me-2 mb-2"
-        id="open-filter"
-      >
-        <i class="fi fi-rr-filter"></i>
-      </button>
-    </div>
   </div>
-
-  <ion-popover
-    #filtroPopover
-    trigger="open-filter"
-    triggerAction="click"
-    mode="ios"
-  >
-    <ng-template>
-      <ion-content class="ion-padding">
-        <ion-list lines="none">
-          <ion-radio-group
-            [value]="filtroSeleccionado"
-            (ionChange)="onFiltroChange($event, filtroPopover)"
-          >
-            <ion-item>
-              <ion-label>En curso</ion-label>
-              <ion-radio value="en_curso"></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>Finalizados/Cancelados</ion-label>
-              <ion-radio value="finalizado"></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>Próximos</ion-label>
-              <ion-radio value="proximo"></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>Borrar todos los filtros</ion-label>
-              <ion-radio value="en_curso"></ion-radio>
-            </ion-item>
-          </ion-radio-group>
-        </ion-list>
-      </ion-content>
-    </ng-template>
-  </ion-popover>
 
   <div class="container mt-4 mb-5">
     <ion-segment
@@ -96,19 +52,22 @@
       <div class="notif-option me-5">
         <span>Viajes en curso</span>
         <ion-toggle
-          (ionChange)="onFiltroChange($event, filtroPopover)"
+          [checked]="filtrosEstados['en_curso']"
+          (ionChange)="onFiltroChange($event, 'en_curso')"
         ></ion-toggle>
       </div>
       <div class="notif-option me-5">
         <span>Próximos viajes</span>
         <ion-toggle
-          (ionChange)="onFiltroChange($event, filtroPopover)"
+          [checked]="filtrosEstados['proximos_viajes']"
+          (ionChange)="onFiltroChange($event, 'proximos_viajes')"
         ></ion-toggle>
       </div>
       <div class="notif-option me-5">
         <span>Viajes finalizados / anulados</span>
         <ion-toggle
-          (ionChange)="onFiltroChange($event, filtroPopover)"
+          [checked]="filtrosEstados['finalizados_anulados']"
+          (ionChange)="onFiltroChange($event, 'finalizados_anulados')"
         ></ion-toggle>
       </div>
     </div>
@@ -147,7 +106,7 @@
       *ngIf="!cargandoViajes && misViajes.length > 0"
     >
       <!--Contenedor del viaje con los detalles-->
-      <tarjeta-viaje></tarjeta-viaje>
+      <tarjeta-viaje [viajesFiltrados]="misViajes"></tarjeta-viaje>
     </div>
 
     <p-toast position="bottom-center"></p-toast>

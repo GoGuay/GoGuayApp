@@ -8,7 +8,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
@@ -51,6 +51,9 @@ export class TarjetaViajeComponent implements OnInit {
   conductor: boolean = false;
   filtroSeleccionado: string = 'horaSalida';
   cargando = false;
+
+  //Para poder pasar los datos del componente padre
+  @Input() viajesFiltrados!: Viaje[];
 
   constructor(
     public funcionesComunes: FuncionesComunes,

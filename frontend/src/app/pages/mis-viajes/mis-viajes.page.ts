@@ -57,6 +57,7 @@ export class MisViajesPage implements OnInit {
 
   pasajero: boolean = false;
   conductor: boolean = false;
+  solicitudesPendientes: boolean = false;
 
   preferenciasViaje: string[] = [];
 
@@ -73,6 +74,13 @@ export class MisViajesPage implements OnInit {
 
   mostrarJumbotron = true;
   filtroSeleccionado: string = 'horaSalida';
+
+  // para mantener el estado de los toggles
+  filtrosEstados: { [key: string]: boolean } = {
+    en_curso: false,
+    proximos_viajes: true,
+    finalizados_anulados: false,
+  };
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -165,22 +173,26 @@ export class MisViajesPage implements OnInit {
 
     // Ejecutamos las 3 peticiones de viajes en paralelo
     forkJoin({
-      acompanante: this.travelService
+      pasajero: this.travelService
         .getViajesComoAcompañante(userId)
         .pipe(catchError(() => of([]))),
-      creados: this.travelService
+      conductor: this.travelService
         .getViajesUsuario(userId)
         .pipe(catchError(() => of({ viajes: [] }))),
-      solicitudes: this.travelService
+      solicitudesPendientes: this.travelService
         .getMisSolicitudesPendientes(userId)
         .pipe(catchError(() => of([]))),
     }).subscribe({
-      next: ({ acompanante, creados, solicitudes }) => {
-        this.misViajesAcompanante = acompanante;
-        this.misViajesCreados = creados?.viajes || [];
-        this.misSolicitudesPendientes = solicitudes;
+      next: ({ pasajero, conductor, solicitudesPendientes }) => {
+        this.misViajesAcompanante = pasajero;
+        this.misViajesCreados = conductor?.viajes || [];
+        this.misSolicitudesPendientes = solicitudesPendientes;
 
         this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+
+        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
+        this.filtrosEstados['proximos_viajes'] = true;
+        this.filtrosEstados['finalizados_anulados'] = false;
 
         this.filtrarViajes();
         this.cargandoViajes = false;
@@ -286,75 +298,88 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para filtrar los viajes según el filtro seleccionado de la tabla
+   * Función auxiliar para comprobar si el usuario tiene algún viaje en curso actualmente
    */
-  filtrarViajes() {
-    const acompañante = this.misViajesAcompanante || [];
-    const creados = this.misViajesCreados || [];
-    const solicitudes = this.misSolicitudesPendientes || [];
+  hayViajeEnCurso(): boolean {
+    const pasajero = this.misViajesAcompanante || [];
+    const conductor = this.misViajesCreados || [];
+    const todasLasFuentes = [...pasajero, ...conductor];
 
+    return todasLasFuentes.some((v) => v.estado_viaje === 'En Curso');
+  }
+
+  aplicarFiltrosCombinados() {
+    const filtroPasajero = this.misViajesAcompanante || [];
+    const filtroConductor = this.misViajesCreados || [];
+    const filtroSolicitudesPendientes = this.misSolicitudesPendientes || [];
+    let viajesBase: Viaje[] = [];
+
+    //Filtramos por Conductor, Pasajero, todos o solicitudes pendientes de aprobar
     switch (this.filtroViajes) {
       case 'todos':
-        this.misViajes = [...acompañante, ...creados];
+        viajesBase = [...filtroPasajero, ...filtroConductor];
         this.conductor = false;
         this.pasajero = false;
-        break;
-
-      case 'conductor':
-        this.misViajes = [...creados];
-        this.conductor = true;
-        this.pasajero = false;
+        this.solicitudesPendientes = false;
         break;
 
       case 'pasajero':
-        this.misViajes = [...acompañante];
+        viajesBase = [...filtroPasajero];
         this.conductor = false;
+        this.solicitudesPendientes = false;
         this.pasajero = true;
         break;
 
-      case 'solicitudes':
-        const misViajesConSolicitudes = creados.filter(
-          (v) =>
-            v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0,
-        );
-
-        this.misViajes = [...solicitudes, ...misViajesConSolicitudes];
-
-        this.conductor = false;
+      case 'conductor':
+        viajesBase = [...filtroConductor];
+        this.conductor = true;
+        this.solicitudesPendientes = false;
         this.pasajero = false;
         break;
 
-      case 'antiguos':
-        this.misViajes.sort((a, b) => {
-          return (
-            new Date(a.fecha_salida).getTime() -
-            new Date(b.fecha_salida).getTime()
-          );
-        });
-        break;
-
-      case 'pendientes':
-        this.misViajes.sort((a, b) => {
-          const aFinalizado = this.funcionesComunes.esViajeFinalizado(
-            a.fecha_salida,
-            a.hora_salida,
-          );
-          const bFinalizado = this.funcionesComunes.esViajeFinalizado(
-            b.fecha_salida,
-            b.hora_salida,
-          );
-          return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
-        });
+      case 'solicitudes':
+        viajesBase = [...filtroSolicitudesPendientes];
+        this.conductor = false;
+        this.pasajero = false;
+        this.solicitudesPendientes = true;
         break;
 
       default:
-        this.misViajes = [];
+        viajesBase = [];
         break;
     }
-    this.onFiltroChange(
-      { detail: { value: this.filtroSeleccionado } },
-      { dismiss: () => {} },
-    );
+    //Filtrar por en_curso_ proximos, finalizados_anulados
+    const { en_curso, proximos_viajes, finalizados_anulados } =
+      this.filtrosEstados;
+
+    // Si hay al menos un toggle activado, filtramos por esos estados.
+    // Si no hay ninguno activado, por defecto se muestran todos los del segmento activo.
+    if (en_curso || proximos_viajes || finalizados_anulados) {
+      viajesBase = viajesBase.filter((v) => {
+        if (en_curso && v.estado_viaje === 'En Curso') {
+          return true;
+        }
+        if (proximos_viajes && v.estado_viaje === 'Próximo') return true;
+        if (
+          finalizados_anulados &&
+          (v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado')
+        )
+          return true;
+        return false;
+      });
+    }
+    // Asignamos el resultado final a la lista que renderiza el HTML
+    this.misViajes = viajesBase;
+
+    // Forzamos la detección de cambios en Angular para refrescar la interfaz
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Función para filtrar los viajes según el filtro seleccionado de la tabla
+   */
+  filtrarViajes() {
+    this.aplicarFiltrosCombinados();
   }
 
   /**
@@ -379,68 +404,31 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para manejar el cambio de filtro de los viajes, actualiza la lista de viajes mostrados según el filtro seleccionado
-   * y cierra el popover de filtros si está abierto.
-   * @param event --> Recibe el evento del cambio de filtro, que contiene el valor del filtro seleccionado.
-   * @param popover --> Recibe el popover de filtros para poder cerrarlo después de aplicar el filtro.
+   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
    */
-  onFiltroChange(event: any, popover: any) {
-    this.filtroSeleccionado = event.detail.value;
+  onFiltroChange(event: any, valorFiltro: string) {
+    const checked = event.detail.checked;
 
-    const acompanante = this.misViajesAcompanante || [];
-    const creados = this.misViajesCreados || [];
-    const solicitudes = this.misSolicitudesPendientes || [];
+    //Si el estado en el TS ya coincide con el evento, no hacemos nada (evita bucles)
+    if (this.filtrosEstados[valorFiltro] === checked) return;
 
-    let viajesBase: any[] = [];
+    // Actualizamos el estado del toggle actual
+    this.filtrosEstados[valorFiltro] = checked;
 
-    switch (this.filtroViajes) {
-      case 'todos':
-        viajesBase = [...acompanante, ...creados];
-        break;
-      case 'conductor':
-        viajesBase = [...creados];
-        break;
-      case 'pasajero':
-        viajesBase = [...acompanante];
-        break;
-      case 'solicitudes':
-        const misViajesConSoli = creados.filter(
-          (v) =>
-            v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0,
-        );
-        viajesBase = [...solicitudes, ...misViajesConSoli];
-        break;
+    //Si está marcado finalizados_anulados: busca si hay viaje en curso para dejarlo en true y mostrarlo y pone proximos viajes en false. Si no está marcado finalizados_anulados, pone proximos viajes en true y si hay en curso tambien. Si no está marcado finalizados_anulados, lo pone en false.
+    if (valorFiltro === 'finalizados_anulados') {
+      if (checked) {
+        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
+        this.filtrosEstados['proximos_viajes'] = false;
+      } else {
+        this.filtrosEstados['proximos_viajes'] = true;
+        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
+      }
+    } else {
+      if (checked) {
+        this.filtrosEstados['finalizados_anulados'] = false;
+      }
     }
-
-    switch (this.filtroSeleccionado) {
-      case 'en_curso':
-        this.misViajes = viajesBase.filter(
-          (v) => v.estado_viaje === 'En curso',
-        );
-        break;
-
-      case 'finalizado':
-        this.misViajes = viajesBase.filter(
-          (v) =>
-            v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado',
-        );
-        break;
-
-      case 'proximo':
-        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Próximo');
-        break;
-
-      default:
-        this.misViajes = viajesBase.filter(
-          (v) => v.estado_viaje === 'Finalizado',
-        );
-        break;
-    }
-
-    if (popover && typeof popover.dismiss === 'function') {
-      popover.dismiss();
-    }
-
-    this.cdr.detectChanges();
+    this.aplicarFiltrosCombinados();
   }
 }

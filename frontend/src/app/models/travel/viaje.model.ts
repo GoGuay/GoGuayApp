@@ -1,4 +1,4 @@
-import { Usuario } from "../user/usuario.model";
+import { Usuario } from '../user/usuario.model';
 
 export interface Viaje {
   id: number;
@@ -11,10 +11,15 @@ export interface Viaje {
   duracion_viaje: string;
   precio_viaje?: number;
   ruta_seleccionada?: any;
-  estado_viaje?: 'Pendiente' | 'En curso' | 'Finalizado' | 'Cancelado';
+  estado_viaje?:
+    | 'Pendiente'
+    | 'En Curso'
+    | 'Finalizado'
+    | 'Cancelado'
+    | 'Próximo';
   usuario_id: number;
   created_at: string;
-  usuario?: any; 
+  usuario?: any;
   usuario_creador?: any;
   acompanantes?: any;
   notificaciones?: any;
