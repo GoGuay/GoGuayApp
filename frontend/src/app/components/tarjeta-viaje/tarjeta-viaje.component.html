@@ -1,6 +1,7 @@
 <div
   *ngFor="let viaje of viajesFiltrados"
-  class="card viaje-card mis-viajes-card mb-4 shadow-sm"
+  class="card viaje-card mis-viajes-card mb-5 shadow-sm"
+  [ngClass]="{ 'viaje-en-curso-real': viaje.enCursoReal }"
 >
   <div class="row g-0">
     <div class="col-md-9 p-3 col-trayecto">

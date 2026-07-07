@@ -23,9 +23,10 @@ export interface Viaje {
   usuario_creador?: any;
   acompanantes?: any;
   notificaciones?: any;
-  preferencias?: [];
+  preferencias?: any[];
   reserva_automatica?: boolean;
   estado_solicitud_propia?: 'pendiente' | 'aceptado' | 'rechazado' | null;
   solicitudes_pendientes?: any[] | undefined;
   ya_puntuado?: boolean;
+  enCursoReal?: boolean;
 }

@@ -31,7 +31,7 @@
   <div class="container mt-4 mb-5">
     <ion-segment
       [(ngModel)]="filtroViajes"
-      (ionChange)="filtrarViajes()"
+      (ionChange)="aplicarFiltrosCombinados()"
       mode="ios"
       class="mb-4"
     >
@@ -48,11 +48,12 @@
         <ion-label>Soy pasajero</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mb-3">
       <div class="notif-option me-5">
         <span>Viajes en curso</span>
         <ion-toggle
           [checked]="filtrosEstados['en_curso']"
+          [disabled]="HayAlgunViajeEnCursoReal()"
           (ionChange)="onFiltroChange($event, 'en_curso')"
         ></ion-toggle>
       </div>

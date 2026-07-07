@@ -26,6 +26,49 @@
   }
 }
 
+
+
+.viaje-en-curso-real {
+  border: 2px solid rgb(12, 230, 219) !important;
+  box-shadow: 0 0 15px rgba(12, 230, 219, 0.4) !important;
+  position: relative;
+  animation: pulsoEfecto 1s infinite ease-in-out;
+  -webkit-animation: pulsoEfecto 2.5s infinite ease-in-out;
+  animation: pulsoEfecto 2.5s infinite ease-in-out;
+
+
+
+}
+
+@keyframes pulsoEfecto {
+  0% {
+    box-shadow: 0 0 4px rgba(12, 230, 219, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 18px rgba(12, 230, 219, 0.7);
+  }
+
+  100% {
+    box-shadow: 0 0 4px rgba(12, 230, 219, 0.2);
+  }
+}
+
+@-webkit-keyframes pulsoEfecto {
+  0% {
+    -webkit-box-shadow: 0 0 4px rgba(12, 230, 219, 0.2);
+  }
+
+  50% {
+    -webkit-box-shadow: 0 0 18px rgba(12, 230, 219, 0.7);
+  }
+
+  100% {
+    -webkit-box-shadow: 0 0 4px rgba(12, 230, 219, 0.2);
+  }
+}
+
+
 ul,
 li {
   list-style: none;

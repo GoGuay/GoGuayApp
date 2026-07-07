@@ -1,27 +1,33 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { AlertController, IonicModule, NavController } from '@ionic/angular';
-import { Viaje } from '../../models/travel/viaje.model';
-import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
-import { Usuario } from '../../models/user/usuario.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, Observable, catchError, of } from 'rxjs';
+
+// Ionic & Angular Material
+import { PopoverController } from '@ionic/angular/standalone';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { PuntuacionesComponent } from '../../components/puntuaciones/puntuaciones.component';
-import { forkJoin, Observable } from 'rxjs';
-import { UserServicesService } from '../../core/user-services/user-services.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { TravelService } from '../../core/travel-services/travel.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { JumbotronComponent } from '../jumbotron/jumbotron.component';
-import { SpinnerComponent } from '../../components/spinner/spinner.component';
-import { catchError, of } from 'rxjs';
+import { AlertController, IonicModule, NavController } from '@ionic/angular';
+
+// PrimeNG & Traducciones
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PopoverController } from '@ionic/angular/standalone';
+
+// Componentes y Modelos Propios
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { JumbotronComponent } from '../jumbotron/jumbotron.component';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { TarjetaViajeComponent } from 'src/app/components/tarjeta-viaje/tarjeta-viaje.component';
+import { Viaje } from '../../models/travel/viaje.model';
+import { Usuario } from '../../models/user/usuario.model';
+
+// Servicios Core
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { TravelService } from '../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-mis-viajes',
@@ -33,7 +39,6 @@ import { TarjetaViajeComponent } from 'src/app/components/tarjeta-viaje/tarjeta-
     CommonModule,
     FormsModule,
     NavbarComponent,
-    MatIcon,
     JumbotronComponent,
     SpinnerComponent,
     ToastModule,
@@ -43,59 +48,48 @@ import { TarjetaViajeComponent } from 'src/app/components/tarjeta-viaje/tarjeta-
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
-  /**
-   * Parámetros para navbar
-   */
+  // Estado de sesión y navegación
   userLoggedIn: boolean = false;
   urlParaVolver: string = '';
 
-  filtroViajes: string = 'todos';
+  // Datos del Usuario
+  userData: any = {} as Usuario;
+  usuarioParams: any = {};
+  preferenciasViaje: string[] = [];
+
+  // Universo de Datos de Viajes
   misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
   misSolicitudesPendientes: Viaje[] = [];
 
+  // Filtros activos por pestaña/segmento
+  filtroViajes: string = 'todos';
+  filtroSeleccionado: string = 'horaSalida';
   pasajero: boolean = false;
   conductor: boolean = false;
   solicitudesPendientes: boolean = false;
 
-  preferenciasViaje: string[] = [];
-
-  cargando = false;
-  mostrarAyuda: boolean = false;
-
-  cargandoViajes: boolean = true;
-
-  /**
-   * Datos del usuario
-   */
-  userData: any = {} as Usuario;
-  usuarioParams: any = {};
-
-  mostrarJumbotron = true;
-  filtroSeleccionado: string = 'horaSalida';
-
-  // para mantener el estado de los toggles
+  // Estado de los Toggles de visualización
   filtrosEstados: { [key: string]: boolean } = {
     en_curso: false,
     proximos_viajes: true,
     finalizados_anulados: false,
   };
 
+  // Banderas de control de interfaz
+  mostrarAyuda: boolean = false;
+  cargandoViajes: boolean = true;
+  mostrarJumbotron = true;
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private navCtrl: NavController,
     private userService: UserServicesService,
-    private dialog: MatDialog,
     private travelService: TravelService,
     private route: ActivatedRoute,
-    private _bottomSheet: MatBottomSheet,
-    private messageService: MessageService,
-    private popoverCtrl: PopoverController,
-    private alertCtrl: AlertController,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -136,6 +130,12 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
+   * ==========================================
+   * COMUNICACIÓN CON EL SERVIDOR (API)
+   * ==========================================
+   */
+
+  /**
    * Función para recuperar los datos del usuario desde el servidor,
    * actualizando la información en la aplicación y en localStorage.
    *
@@ -171,7 +171,6 @@ export class MisViajesPage implements OnInit {
   cargarTodosLosViajes(userId: number) {
     this.cargandoViajes = true;
 
-    // Ejecutamos las 3 peticiones de viajes en paralelo
     forkJoin({
       pasajero: this.travelService
         .getViajesComoAcompañante(userId)
@@ -190,25 +189,22 @@ export class MisViajesPage implements OnInit {
 
         this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
 
-        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
-        this.filtrosEstados['proximos_viajes'] = true;
-        this.filtrosEstados['finalizados_anulados'] = false;
+        const hayEnCursoReal = this.HayAlgunViajeEnCursoReal();
+        if (hayEnCursoReal) {
+          this.filtrosEstados['en_curso'] = true;
+          this.filtrosEstados['proximos_viajes'] = true;
+          this.filtrosEstados['finalizados_anulados'] = false;
+        } else {
+          this.filtrosEstados['en_curso'] = false;
+          this.filtrosEstados['proximos_viajes'] = true;
+          this.filtrosEstados['finalizados_anulados'] = false;
+        }
 
-        this.filtrarViajes();
+        this.aplicarFiltrosCombinados();
         this.cargandoViajes = false;
       },
       error: () => (this.cargandoViajes = false),
     });
-  }
-
-  /**
-   * Función para cargar la configuración del jumbotron desde localStorage
-   * Si no hay configuración guardada, se muestra por defecto
-   */
-  loadJumbotronSetting() {
-    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron =
-      jumbotronSetting === null ? true : jumbotronSetting === 'true';
   }
 
   /**
@@ -238,20 +234,6 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para validar si el perfil es el del usuario logueado
-   *
-   * @param id_usuario Recibe el ID del usuario.
-   */
-  validacionPerilLogeado(id_usuario: number) {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (id_usuario === this.userData.usuario.id) {
-      // this.editar_perfil = true;
-    } else {
-      // this.editar_perfil = false;
-    }
-  }
-
-  /**
    * Función para obtener la lista de viajes que ha creado el usuario
    */
   obtenerViajesCreados() {
@@ -262,7 +244,7 @@ export class MisViajesPage implements OnInit {
         this.misViajesCreados.forEach((viaje) => {
           viaje.usuario = this.userData;
         });
-        this.filtrarViajes();
+        this.aplicarFiltrosCombinados();
       });
   }
 
@@ -276,8 +258,57 @@ export class MisViajesPage implements OnInit {
       .subscribe((result) => {
         this.misViajesAcompanante = result;
         this.cargandoViajes = false;
-        this.filtrarViajes();
+        this.aplicarFiltrosCombinados();
       });
+  }
+
+  /**
+   * ==========================================
+   * LOGICA DE NEGOCIO, FILTROS Y EVALUACIÓN
+   * ==========================================
+   */
+
+  /**
+   * Comprueba si hay un viaje en curso en el día actual, entre la hora de salida y llegada del viaje.
+   * @param viaje
+   * @returns
+   */
+  esViajeEnCurso(viaje: Viaje): boolean {
+    if (!viaje.fecha_salida || !viaje.hora_salida || !viaje.hora_llegada) {
+      return false;
+    }
+    const ahora = new Date();
+    const fechaViaje = new Date(viaje.fecha_salida);
+
+    const esHoy =
+      ahora.getFullYear() === fechaViaje.getFullYear() &&
+      ahora.getMonth() === fechaViaje.getMonth() &&
+      ahora.getDate() === fechaViaje.getDate();
+
+    if (!esHoy) return false;
+
+    const [horaDeSalida, minutosDeSalida] = viaje.hora_salida
+      .split(':')
+      .map(Number);
+    const [horaDeLlegada, minutosDeLlegada] = viaje.hora_llegada
+      .split(':')
+      .map(Number);
+    const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+    const minutosSalida = horaDeSalida * 60 + minutosDeSalida;
+    const minutosLlegada = horaDeLlegada * 60 + minutosDeLlegada;
+
+    return minutosAhora >= minutosSalida && minutosAhora <= minutosLlegada;
+  }
+
+  /**
+   * Comprueba si en el universo total de viajes hay uno ocurriendo hoy y ahora
+   */
+  HayAlgunViajeEnCursoReal(): boolean {
+    const pool = [
+      ...(this.misViajesAcompanante || []),
+      ...(this.misViajesCreados || []),
+    ];
+    return pool.some((v) => this.esViajeEnCurso(v));
   }
 
   /**
@@ -298,14 +329,52 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función auxiliar para comprobar si el usuario tiene algún viaje en curso actualmente
+   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
    */
-  hayViajeEnCurso(): boolean {
-    const pasajero = this.misViajesAcompanante || [];
-    const conductor = this.misViajesCreados || [];
-    const todasLasFuentes = [...pasajero, ...conductor];
+  onFiltroChange(event: any, valorFiltro: string) {
+    const checked = event.detail.checked;
+    const hayEnCurso = this.HayAlgunViajeEnCursoReal();
 
-    return todasLasFuentes.some((v) => v.estado_viaje === 'En Curso');
+    //Si el estado en el TS ya coincide con el evento, no hacemos nada (evita bucles)
+    if (this.filtrosEstados[valorFiltro] === checked) return;
+
+    // --- REGLA 1: VIAJE EN CURSO ---
+    if (valorFiltro === 'en_curso') {
+      if (hayEnCurso) {
+        // Si hay un viaje en curso, DEBE permanecer activo. Si intentan apagarlo, lo forzamos a true.
+        this.filtrosEstados['en_curso'] = true;
+      } else {
+        // Si no hay viaje en curso, DEBE permanecer desactivado. Si intentan encenderlo, lo forzamos a false.
+        this.filtrosEstados['en_curso'] = false;
+      }
+      this.cdr.detectChanges(); // Refresca los toggles en el HTML
+      this.aplicarFiltrosCombinados();
+      return;
+    }
+
+    // --- REGLA 2: EXCLUSIVIDAD ENTRE PRÓXIMOS Y FINALIZADOS ---
+    if (valorFiltro === 'proximos_viajes') {
+      if (checked) {
+        this.filtrosEstados['proximos_viajes'] = true;
+        this.filtrosEstados['finalizados_anulados'] = false; // Apaga el contrario
+      } else {
+        // Si intentan apagarlo, obligamos a que se encienda el otro (nunca ambos apagados)
+        this.filtrosEstados['proximos_viajes'] = false;
+        this.filtrosEstados['finalizados_anulados'] = true;
+      }
+    }
+
+    if (valorFiltro === 'finalizados_anulados') {
+      if (checked) {
+        this.filtrosEstados['finalizados_anulados'] = true;
+        this.filtrosEstados['proximos_viajes'] = false; // Apaga el contrario
+      } else {
+        // Si intentan apagarlo, obligamos a que se encienda el otro
+        this.filtrosEstados['finalizados_anulados'] = false;
+        this.filtrosEstados['proximos_viajes'] = true;
+      }
+    }
+    this.aplicarFiltrosCombinados();
   }
 
   aplicarFiltrosCombinados() {
@@ -313,6 +382,9 @@ export class MisViajesPage implements OnInit {
     const filtroConductor = this.misViajesCreados || [];
     const filtroSolicitudesPendientes = this.misSolicitudesPendientes || [];
     let viajesBase: Viaje[] = [];
+
+    const poolTotalViajes = [...filtroPasajero, ...filtroConductor];
+    poolTotalViajes.forEach((v) => ((v as any).enCursoReal = false));
 
     //Filtramos por Conductor, Pasajero, todos o solicitudes pendientes de aprobar
     switch (this.filtroViajes) {
@@ -368,6 +440,23 @@ export class MisViajesPage implements OnInit {
         return false;
       });
     }
+
+    const viajesParaAnclar = poolTotalViajes.filter((v) =>
+      this.esViajeEnCurso(v),
+    );
+
+    if (viajesParaAnclar.length > 0) {
+      viajesParaAnclar.forEach((v) => ((v as any).enCursoReal = true));
+    }
+
+    // Inyectamos los viajes que cumplen la condición al principio de la lista
+    viajesParaAnclar.forEach((viajeAnclado) => {
+      // Lo eliminamos de su posición original (si es que ya existía por los filtros) para evitar duplicados
+      viajesBase = viajesBase.filter((v) => v.id !== viajeAnclado.id);
+      // Lo añadimos al PRINCIPIO de la lista filtrada
+      viajesBase.unshift(viajeAnclado);
+    });
+
     // Asignamos el resultado final a la lista que renderiza el HTML
     this.misViajes = viajesBase;
 
@@ -376,11 +465,10 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para filtrar los viajes según el filtro seleccionado de la tabla
+   * ==========================================
+   * NAVEGACIÓN Y AJUSTES VISUALES
+   * ==========================================
    */
-  filtrarViajes() {
-    this.aplicarFiltrosCombinados();
-  }
 
   /**
    * Función para mostrar/ocultar la ayuda
@@ -401,34 +489,5 @@ export class MisViajesPage implements OnInit {
    */
   goToNuevoViaje() {
     this.navCtrl.navigateRoot('/nuevo-viaje');
-  }
-
-  /**
-   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
-   */
-  onFiltroChange(event: any, valorFiltro: string) {
-    const checked = event.detail.checked;
-
-    //Si el estado en el TS ya coincide con el evento, no hacemos nada (evita bucles)
-    if (this.filtrosEstados[valorFiltro] === checked) return;
-
-    // Actualizamos el estado del toggle actual
-    this.filtrosEstados[valorFiltro] = checked;
-
-    //Si está marcado finalizados_anulados: busca si hay viaje en curso para dejarlo en true y mostrarlo y pone proximos viajes en false. Si no está marcado finalizados_anulados, pone proximos viajes en true y si hay en curso tambien. Si no está marcado finalizados_anulados, lo pone en false.
-    if (valorFiltro === 'finalizados_anulados') {
-      if (checked) {
-        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
-        this.filtrosEstados['proximos_viajes'] = false;
-      } else {
-        this.filtrosEstados['proximos_viajes'] = true;
-        this.filtrosEstados['en_curso'] = this.hayViajeEnCurso();
-      }
-    } else {
-      if (checked) {
-        this.filtrosEstados['finalizados_anulados'] = false;
-      }
-    }
-    this.aplicarFiltrosCombinados();
   }
 }
