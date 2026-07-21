@@ -112,7 +112,41 @@
           <span class="ciudad">{{ viaje.origen || 'Origen' }}</span>
         </div>
         <div class="timeline flex-grow-1 mx-3 text-center">
-          <div class="duracion-badge">{{ viaje.duracion_viaje }}</div>
+          <div>
+            <ion-row>
+              <ion-col>
+                <ion-avatar>
+                  <img
+                    alt=""
+                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                  />
+                </ion-avatar>
+              </ion-col>
+              <ion-col
+                class="d-flex justify-content-center align-items-center gap-2 flex-wrap"
+              >
+                <ion-avatar>
+                  <img
+                    alt=""
+                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                  />
+                </ion-avatar>
+                <ion-avatar>
+                  <img
+                    alt=""
+                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                  />
+                </ion-avatar>
+                <ion-avatar>
+                  <img
+                    alt=""
+                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                  />
+                </ion-avatar>
+              </ion-col>
+            </ion-row>
+          </div>
+          <!-- <div class="duracion-badge">{{ viaje.duracion_viaje }}</div> -->
         </div>
         <div class="punto-viaje text-end">
           <span class="hora">{{ viaje.hora_llegada || '--:--' }}</span>
@@ -124,7 +158,7 @@
     <div
       class="col-md-3 side-management p-3 d-flex flex-column justify-content-center"
     >
-      <div class="acciones-grid">
+      <div class="acciones-grid d-grid gap-2">
         <button
           *ngIf="
             pasajero &&
@@ -135,8 +169,10 @@
           (click)="puntuarViaje(viaje)"
           matTooltip="Puntuar viaje"
           data-name="Puntuar"
+          aria-label="Puntuar viaje"
         >
           <i class="fi fi-rr-survey-xmark"></i>
+          <span class="btn-text">Puntuar</span>
         </button>
 
         <button
@@ -144,8 +180,10 @@
           (click)="reportar($event, viaje)"
           matTooltip="Reportar"
           data-name="Reportar"
+          aria-label="Reportar viaje"
         >
           <i class="fi fi-rr-triangle-warning"></i>
+          <span class="btn-text">Reportar</span>
         </button>
 
         <button
@@ -153,18 +191,26 @@
           (click)="openDetalleViaje(viaje)"
           matTooltip="Detalles"
           data-name="Detalles"
+          aria-label="Ver detalles del viaje"
         >
           <i class="fi fi-rr-attention-detail"></i>
+          <span class="btn-text">Detalles</span>
         </button>
 
         <button
-          *ngIf="!pasajero && viaje.estado_viaje != 'Finalizado'"
+          *ngIf="
+            !pasajero &&
+            viaje.estado_viaje != 'Finalizado' &&
+            viaje.estado_viaje != 'Cancelado'
+          "
           class="btn-gestion btn-editar"
           (click)="editarViaje(viaje.id)"
           matTooltip="Editar"
           data-name="Editar"
+          aria-label="Editar viaje"
         >
           <mat-icon>edit</mat-icon>
+          <span class="btn-text">Editar</span>
         </button>
         <button
           *ngIf="
@@ -176,8 +222,10 @@
           (click)="eliminarViaje(viaje.id)"
           matTooltip="Eliminar"
           data-name="Eliminar"
+          aria-label="Eliminar viaje"
         >
           <mat-icon>delete</mat-icon>
+          <span class="btn-text">Eliminar</span>
         </button>
 
         <button
@@ -186,8 +234,10 @@
           (click)="cancelarSolicitud(viaje)"
           matTooltip="Cancelar solicitud"
           data-name="Cancelar solicitud"
+          aria-label="Cancelar solicitud de viaje"
         >
           <i class="fi fi-rr-exit"></i>
+          <span class="btn-text">Cancelar</span>
         </button>
 
         <button
@@ -200,8 +250,10 @@
           (click)="salirDeViaje(viaje.id)"
           matTooltip="Salir del viaje"
           data-name="Salir del viaje"
+          aria-label="Salir del viaje"
         >
           <mat-icon>logout</mat-icon>
+          <span class="btn-text">Salir</span>
         </button>
       </div>
     </div>

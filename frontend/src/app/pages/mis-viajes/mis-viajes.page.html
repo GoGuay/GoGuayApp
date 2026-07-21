@@ -7,7 +7,11 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="mostrarJumbotron">
+  <div
+    *ngIf="mostrarJumbotron"
+    role="region"
+    aria-label="Información principal"
+  >
     <app-jumbotron
       [title]="'JUMBOTRON.MIS_VIAJES_SLOGAN' | translate"
       [imageSrc]="'../../assets/folder/jumbo.jpg'"
@@ -15,78 +19,141 @@
     ></app-jumbotron>
   </div>
 
-  <div class="container-fluid">
-    <div class="d-flex justify-content-center">
-      <h1>Mis viajes</h1>
-    </div>
-    <div class="d-flex justify-content-center">
-      <ul>
-        <li>Ver todos tus viajes pasados y futuros.</li>
-        <li>Filtrar por viajes como conductor o pasajero.</li>
-        <li>Editar o eliminar tus viajes si eres el conductor.</li>
+  <main
+    class="container-fluid"
+    id="main-content"
+  >
+    <section
+      class="text-center my-3"
+      aria-labelledby="titulo-mis-viajes"
+    >
+      <h1 id="titulo-mis-viajes">Mis viajes</h1>
+      <p
+        class="visually-hidden"
+        id="desc-mis-viajes"
+      >
+        En esta sección puedes gestionar tus viajes pasados y futuros, filtrar
+        por rol como conductor o pasajero, y administrar tus publicaciones.
+      </p>
+
+      <ul class="list-unstyled d-inline-block text-start">
+        <li>
+          <i
+            class="bi bi-check2"
+            aria-hidden="true"
+          ></i>
+          Ver todos tus viajes pasados y futuros.
+        </li>
+        <li>
+          <i
+            class="bi bi-check2"
+            aria-hidden="true"
+          ></i>
+          Filtrar por viajes como conductor o pasajero.
+        </li>
+        <li>
+          <i
+            class="bi bi-check2"
+            aria-hidden="true"
+          ></i>
+          Editar o eliminar tus viajes si eres el conductor.
+        </li>
       </ul>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <div class="container mt-4 mb-5">
-    <ion-segment
-      [(ngModel)]="filtroViajes"
-      (ionChange)="aplicarFiltrosCombinados()"
-      mode="ios"
-      class="mb-4"
-    >
-      <ion-segment-button value="solicitudes">
-        <ion-label>Solicitudes</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="todos">
-        <ion-label>Todo</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="conductor">
-        <ion-label>Soy conductor</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="pasajero">
-        <ion-label>Soy pasajero</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-    <div class="d-flex justify-content-center mb-3">
-      <div class="notif-option me-5">
-        <span>Viajes en curso</span>
-        <ion-toggle
-          [checked]="filtrosEstados['en_curso']"
-          [disabled]="!HayAlgunViajeEnCursoReal()"
-          (ionChange)="onFiltroChange($event, 'en_curso')"
-        ></ion-toggle>
+    <nav aria-label="Filtro de categorías de viajes">
+      <ion-segment
+        [(ngModel)]="filtroViajes"
+        (ionChange)="aplicarFiltrosCombinados()"
+        mode="ios"
+        class="mb-4"
+        aria-label="Seleccionar categoría de viajes"
+      >
+        <ion-segment-button value="solicitudes">
+          <ion-label>Solicitudes</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="todos">
+          <ion-label>Todos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="conductor">
+          <ion-label>Soy conductor</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="pasajero">
+          <ion-label>Soy pasajero</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </nav>
+
+    <fieldset class="border-0 p-0 m-0 mb-3">
+      <legend class="visually-hidden">Filtrar por estado del viaje</legend>
+      <div class="d-flex justify-content-center flex-wrap gap-4">
+        <div class="notif-option d-flex align-items-center">
+          <span
+            id="lbl-en-curso"
+            class="me-2"
+          >
+            Viajes en curso
+          </span>
+          <ion-toggle
+            [checked]="filtrosEstados['en_curso']"
+            [disabled]="!HayAlgunViajeEnCursoReal()"
+            (ionChange)="onFiltroChange($event, 'en_curso')"
+            aria-labelledby="lbl-en-curso"
+          ></ion-toggle>
+        </div>
+
+        <div class="notif-option d-flex align-items-center">
+          <span
+            id="lbl-proximos"
+            class="me-2"
+          >
+            Próximos viajes
+          </span>
+          <ion-toggle
+            [checked]="filtrosEstados['proximos_viajes']"
+            (ionChange)="onFiltroChange($event, 'proximos_viajes')"
+            aria-labelledby="lbl-proximos"
+          ></ion-toggle>
+        </div>
+
+        <div class="notif-option d-flex align-items-center">
+          <span
+            id="lbl-finalizados"
+            class="me-2"
+          >
+            Viajes finalizados / anulados
+          </span>
+          <ion-toggle
+            [checked]="filtrosEstados['finalizados_anulados']"
+            (ionChange)="onFiltroChange($event, 'finalizados_anulados')"
+            aria-labelledby="lbl-finalizados"
+          ></ion-toggle>
+        </div>
       </div>
-      <div class="notif-option me-5">
-        <span>Próximos viajes</span>
-        <ion-toggle
-          [checked]="filtrosEstados['proximos_viajes']"
-          (ionChange)="onFiltroChange($event, 'proximos_viajes')"
-        ></ion-toggle>
-      </div>
-      <div class="notif-option me-5">
-        <span>Viajes finalizados / anulados</span>
-        <ion-toggle
-          [checked]="filtrosEstados['finalizados_anulados']"
-          (ionChange)="onFiltroChange($event, 'finalizados_anulados')"
-        ></ion-toggle>
-      </div>
-    </div>
+    </fieldset>
 
     <div
       *ngIf="cargandoViajes"
       class="text-center py-5"
+      aria-live="polite"
+      aria-busy="true"
     >
       <app-spinner></app-spinner>
+      <span class="visually-hidden">Cargando la lista de viajes...</span>
     </div>
 
     <div
       *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes'"
       class="sin-viajes-container text-center"
+      role="status"
+      aria-live="polite"
     >
       <p>Aún no tienes viajes en esta categoría.</p>
       <img
         src="../../../assets/sistema/destino-de-viaje.gif"
+        alt="Ilustración que indica que no hay viajes registrados"
         class="iconSinViajes"
       />
     </div>
@@ -94,17 +161,21 @@
     <div
       *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes'"
       class="sin-viajes-container text-center"
+      role="status"
+      aria-live="polite"
     >
       <p>Aún no tienes solicitudes en esta categoría.</p>
       <img
         src="../../../assets/sistema/telefono.gif"
         class="iconSinViajes"
+        alt="Ilustración que indica que no hay solicitudes pendientes"
       />
     </div>
 
     <div
       class="columna_scroll"
       *ngIf="!cargandoViajes && misViajes.length > 0"
+      aria-label="Resultados de viajes"
     >
       <!--Contenedor del viaje con los detalles-->
       <tarjeta-viaje [viajesFiltrados]="misViajes"></tarjeta-viaje>
