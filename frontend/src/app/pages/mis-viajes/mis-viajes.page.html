@@ -53,7 +53,7 @@
         <span>Viajes en curso</span>
         <ion-toggle
           [checked]="filtrosEstados['en_curso']"
-          [disabled]="HayAlgunViajeEnCursoReal()"
+          [disabled]="!HayAlgunViajeEnCursoReal()"
           (ionChange)="onFiltroChange($event, 'en_curso')"
         ></ion-toggle>
       </div>

@@ -331,23 +331,35 @@ export class MisViajesPage implements OnInit {
   /**
    * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
    */
+  /**
+   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
+   */
   onFiltroChange(event: any, valorFiltro: string) {
     const checked = event.detail.checked;
     const hayEnCurso = this.HayAlgunViajeEnCursoReal();
 
-    //Si el estado en el TS ya coincide con el evento, no hacemos nada (evita bucles)
-    if (this.filtrosEstados[valorFiltro] === checked) return;
-
-    // --- REGLA 1: VIAJE EN CURSO ---
+    // --- REGLA 1: VIAJE EN CURSO (BLOQUEADO SI NO HAY VIAJES EN CURSO) ---
     if (valorFiltro === 'en_curso') {
-      if (hayEnCurso) {
-        // Si hay un viaje en curso, DEBE permanecer activo. Si intentan apagarlo, lo forzamos a true.
-        this.filtrosEstados['en_curso'] = true;
-      } else {
-        // Si no hay viaje en curso, DEBE permanecer desactivado. Si intentan encenderlo, lo forzamos a false.
-        this.filtrosEstados['en_curso'] = false;
+      if (!hayEnCurso && checked) {
+        // Si NO hay viaje en curso y el usuario intenta activarlo:
+        // Revertimos el estado en el siguiente ciclo para forzar a Ionic a refrescar el UI
+        setTimeout(() => {
+          this.filtrosEstados = { ...this.filtrosEstados, en_curso: false };
+          this.cdr.detectChanges();
+        }, 0);
+        return;
       }
-      this.cdr.detectChanges(); // Refresca los toggles en el HTML
+
+      if (hayEnCurso && !checked) {
+        // Si SÍ hay un viaje en curso, no dejamos que lo desactive
+        setTimeout(() => {
+          this.filtrosEstados = { ...this.filtrosEstados, en_curso: true };
+          this.cdr.detectChanges();
+        }, 0);
+        return;
+      }
+
+      this.filtrosEstados['en_curso'] = hayEnCurso;
       this.aplicarFiltrosCombinados();
       return;
     }
@@ -356,9 +368,9 @@ export class MisViajesPage implements OnInit {
     if (valorFiltro === 'proximos_viajes') {
       if (checked) {
         this.filtrosEstados['proximos_viajes'] = true;
-        this.filtrosEstados['finalizados_anulados'] = false; // Apaga el contrario
+        this.filtrosEstados['finalizados_anulados'] = false;
       } else {
-        // Si intentan apagarlo, obligamos a que se encienda el otro (nunca ambos apagados)
+        // Garantizamos que al menos uno de los dos principales esté activo
         this.filtrosEstados['proximos_viajes'] = false;
         this.filtrosEstados['finalizados_anulados'] = true;
       }
@@ -367,13 +379,15 @@ export class MisViajesPage implements OnInit {
     if (valorFiltro === 'finalizados_anulados') {
       if (checked) {
         this.filtrosEstados['finalizados_anulados'] = true;
-        this.filtrosEstados['proximos_viajes'] = false; // Apaga el contrario
+        this.filtrosEstados['proximos_viajes'] = false;
       } else {
-        // Si intentan apagarlo, obligamos a que se encienda el otro
         this.filtrosEstados['finalizados_anulados'] = false;
         this.filtrosEstados['proximos_viajes'] = true;
       }
     }
+
+    // Clonamos el objeto para forzar la detección de cambios de Angular
+    this.filtrosEstados = { ...this.filtrosEstados };
     this.aplicarFiltrosCombinados();
   }
 
@@ -386,7 +400,7 @@ export class MisViajesPage implements OnInit {
     const poolTotalViajes = [...filtroPasajero, ...filtroConductor];
     poolTotalViajes.forEach((v) => ((v as any).enCursoReal = false));
 
-    //Filtramos por Conductor, Pasajero, todos o solicitudes pendientes de aprobar
+    // 1. Filtrar por tipo (Todos, Pasajero, Conductor, Solicitudes)
     switch (this.filtroViajes) {
       case 'todos':
         viajesBase = [...filtroPasajero, ...filtroConductor];
@@ -420,27 +434,37 @@ export class MisViajesPage implements OnInit {
         viajesBase = [];
         break;
     }
-    //Filtrar por en_curso_ proximos, finalizados_anulados
+
+    // 2. Filtrar por estado (En Curso, Próximos, Finalizados/Anulados)
     const { en_curso, proximos_viajes, finalizados_anulados } =
       this.filtrosEstados;
 
-    // Si hay al menos un toggle activado, filtramos por esos estados.
-    // Si no hay ninguno activado, por defecto se muestran todos los del segmento activo.
     if (en_curso || proximos_viajes || finalizados_anulados) {
       viajesBase = viajesBase.filter((v) => {
-        if (en_curso && v.estado_viaje === 'En Curso') {
+        const esEnCurso =
+          this.esViajeEnCurso(v) || v.estado_viaje === 'En Curso';
+
+        if (en_curso && esEnCurso) {
           return true;
         }
-        if (proximos_viajes && v.estado_viaje === 'Próximo') return true;
+
+        if (proximos_viajes && !esEnCurso && v.estado_viaje === 'Próximo') {
+          return true;
+        }
+
         if (
           finalizados_anulados &&
+          !esEnCurso &&
           (v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado')
-        )
+        ) {
           return true;
+        }
+
         return false;
       });
     }
 
+    // 3. Anclar viajes en curso al principio
     const viajesParaAnclar = poolTotalViajes.filter((v) =>
       this.esViajeEnCurso(v),
     );
@@ -449,18 +473,12 @@ export class MisViajesPage implements OnInit {
       viajesParaAnclar.forEach((v) => ((v as any).enCursoReal = true));
     }
 
-    // Inyectamos los viajes que cumplen la condición al principio de la lista
     viajesParaAnclar.forEach((viajeAnclado) => {
-      // Lo eliminamos de su posición original (si es que ya existía por los filtros) para evitar duplicados
       viajesBase = viajesBase.filter((v) => v.id !== viajeAnclado.id);
-      // Lo añadimos al PRINCIPIO de la lista filtrada
       viajesBase.unshift(viajeAnclado);
     });
 
-    // Asignamos el resultado final a la lista que renderiza el HTML
     this.misViajes = viajesBase;
-
-    // Forzamos la detección de cambios en Angular para refrescar la interfaz
     this.cdr.detectChanges();
   }
 
