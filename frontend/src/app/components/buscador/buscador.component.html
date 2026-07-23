@@ -50,9 +50,15 @@
                 id="input-origen"
                 type="text"
                 class="form-control text-start"
-                [(ngModel)]="origen"
-                (blur)="estaEnOrigen = false; validarSeleccion('origen')"
-                (focus)="estaEnOrigen = true"
+                [(ngModel)]="origenCtrl.valorTexto"
+                (blur)="
+                  origenCtrl.estaActivo = false;
+                  buscadorLocalidadesService.validarSeleccion(
+                    origenCtrl,
+                    inputOrigen
+                  )
+                "
+                (focus)="origenCtrl.estaActivo = true"
                 (input)="obtenerSugerenciasOrigen($event)"
                 (keydown)="manejarNavegacionTeclado($event, 'origen')"
                 autocomplete="off"
@@ -62,32 +68,38 @@
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
                 aria-describedby="instrucciones-busqueda"
-                [attr.aria-expanded]="sugerenciasOrigen.length > 0"
+                [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
                 [attr.aria-controls]="
-                  sugerenciasOrigen.length > 0
+                  origenCtrl.sugerencias.length > 0
                     ? 'lista-origen-resultados'
                     : null
                 "
                 [attr.aria-activedescendant]="
-                  indiceActivoOrigen >= 0
-                    ? 'opt-orig-' + indiceActivoOrigen
+                  origenCtrl.indiceActivo >= 0
+                    ? 'opt-orig-' + origenCtrl.indiceActivo
                     : null
                 "
               />
 
               <ul
                 id="lista-origen-resultados"
-                *ngIf="sugerenciasOrigen.length > 0"
+                *ngIf="origenCtrl.sugerencias.length > 0"
                 class="list-group lista_sugerencias"
                 role="listbox"
                 aria-live="polite"
               >
                 <li
                   [id]="'opt-orig-' + i"
-                  *ngFor="let localidad of sugerenciasOrigen; let i = index"
+                  *ngFor="
+                    let localidad of origenCtrl.sugerencias;
+                    let i = index
+                  "
                   class="list-group-item"
-                  (click)="seleccionarLocalidadOrigen(localidad)"
-                  [class.active]="i === indiceActivoOrigen"
+                  (mousedown)="
+                    $event.preventDefault();
+                    seleccionarLocalidadOrigen(localidad)
+                  "
+                  [class.active]="i === origenCtrl.indiceActivo"
                   role="option"
                   tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
@@ -119,9 +131,15 @@
                 id="input-destino"
                 type="text"
                 class="form-control text-start"
-                [(ngModel)]="destino"
-                (blur)="estaEnDestino = false; validarSeleccion('destino')"
-                (focus)="estaEnDestino = true"
+                [(ngModel)]="destinoCtrl.valorTexto"
+                (blur)="
+                  destinoCtrl.estaActivo = false;
+                  buscadorLocalidadesService.validarSeleccion(
+                    destinoCtrl,
+                    inputDestino
+                  )
+                "
+                (focus)="destinoCtrl.estaActivo = true"
                 (input)="obtenerSugerenciasDestino($event)"
                 (keydown)="manejarNavegacionTeclado($event, 'destino')"
                 autocomplete="off"
@@ -131,9 +149,9 @@
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
                 aria-describedby="instrucciones-busqueda"
-                [attr.aria-expanded]="sugerenciasDestino.length > 0"
+                [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
                 [attr.aria-controls]="
-                  sugerenciasDestino.length > 0
+                  destinoCtrl.sugerencias.length > 0
                     ? 'lista-destino-resultados'
                     : null
                 "
@@ -145,7 +163,7 @@
               />
 
               <ul
-                *ngIf="sugerenciasDestino.length > 0"
+                *ngIf="destinoCtrl.sugerencias.length > 0"
                 class="list-group lista_sugerencias"
                 id="lista-destino-resultados"
                 role="listbox"
@@ -153,11 +171,17 @@
               >
                 <li
                   [id]="'opt-dest-' + i"
-                  *ngFor="let localidad of sugerenciasDestino; let i = index"
+                  *ngFor="
+                    let localidad of destinoCtrl.sugerencias;
+                    let i = index
+                  "
                   class="list-group-item"
                   [class.active]="i === indiceActivoDestino"
                   (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
-                  (click)="seleccionarLocalidadDestino(localidad)"
+                  (mousedown)="
+                    $event.preventDefault();
+                    seleccionarLocalidadDestino(localidad)
+                  "
                   role="option"
                   tabindex="-1"
                   (keyup.enter)="seleccionarLocalidadDestino(localidad)"

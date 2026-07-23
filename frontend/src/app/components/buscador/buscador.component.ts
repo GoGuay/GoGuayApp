@@ -28,6 +28,8 @@ import {
 } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import { GoogleServices } from '../../core/google-services/google-services.service';
+import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
+import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
 
 @Component({
   selector: 'app-buscador',
@@ -49,8 +51,9 @@ import { GoogleServices } from '../../core/google-services/google-services.servi
   styleUrls: ['./buscador.component.scss'],
 })
 export class BuscadorComponent implements OnInit {
-  origen: string = '';
-  destino: string = '';
+  // Objetos centralizados de Origen y Destino
+  origenCtrl: ControlLocalidad;
+  destinoCtrl: ControlLocalidad;
   plazas: string = '';
   fecha_ida: Date = new Date();
   fecha_vuelta: Date | null = null;
@@ -86,78 +89,34 @@ export class BuscadorComponent implements OnInit {
     private navCtrl: NavController,
     private messageService: MessageService,
     private googleService: GoogleServices,
+    public buscadorLocalidadesService: BuscadorLocalidadesService,
   ) {
     addIcons({ eye, lockClosed });
 
-    /**
-     * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
-     * Con el pipe establecemos unos filtros para que los resultados sean mejores.
-     * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
-     * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
-     * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
-     * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
-     */
-    this.buscadorOrigen$
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        filter(() => this.estaEnOrigen),
-        filter((texto) => {
-          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
-          return regexLetra.test(texto);
-        }),
-        switchMap((texto) => {
-          const termino = texto.toLowerCase().trim();
-          if (this.cacheConsultas[termino]) {
-            return of(this.cacheConsultas[termino]);
-          }
-          if (texto.length >= 3) {
-            return this.googleService
-              .obtenerLocalidad(texto)
-              .pipe(
-                tap(
-                  (resultados) => (this.cacheConsultas[termino] = resultados),
-                ),
-              );
-          } else {
-            this.sugerenciasOrigen = [];
-            return [];
-          }
-        }),
-        filter(() => this.estaEnOrigen),
-      )
-      .subscribe((respuesta: any) => {
-        this.sugerenciasOrigen = respuesta;
-      });
+    // Inicialización de controles de origen y destino
+    this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
+    this.destinoCtrl = this.buscadorLocalidadesService.crearEstadoControl();
 
-    /**
-     * CEREBRO BUSQUEDA LOCALIDAD DESTINO: Funciona igual que la de origen
-     */
-    this.buscadorDestino$
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        filter(() => this.estaEnDestino),
-        filter((texto) => {
-          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
-          return regexLetra.test(texto);
-        }),
-        switchMap((texto) => {
-          if (texto.length >= 3) {
-            return this.googleService.obtenerLocalidad(texto);
-          } else {
-            this.sugerenciasDestino = [];
-            return [];
-          }
-        }),
-        filter(() => this.estaEnDestino),
-      )
-      .subscribe((respuesta: any) => {
-        this.sugerenciasDestino = respuesta;
-      });
+    this.buscadorLocalidadesService.inicializarBuscador(this.origenCtrl);
+    this.buscadorLocalidadesService.inicializarBuscador(this.destinoCtrl);
   }
 
   ngOnInit() {}
+
+  // Getters auxiliares para mantener compatibilidad con el HTML existente
+  get origen(): string {
+    return this.origenCtrl.valorTexto;
+  }
+  set origen(val: string) {
+    this.origenCtrl.valorTexto = val;
+  }
+
+  get destino(): string {
+    return this.destinoCtrl.valorTexto;
+  }
+  set destino(val: string) {
+    this.destinoCtrl.valorTexto = val;
+  }
 
   /**
    * Lógica para el texto del botón del calendario ( Hoy / Mañana / Fecha)
@@ -198,12 +157,12 @@ export class BuscadorComponent implements OnInit {
    * Función para limpiar los campos de búsqueda (botón Limpiar Búsqueda)
    */
   limpiarBusqueda() {
-    this.origen = '';
-    this.destino = '';
+    this.origenCtrl.valorTexto = '';
+    this.destinoCtrl.valorTexto = '';
     this.plazas = '';
     this.fecha_ida = new Date();
-    this.sugerenciasOrigen = [];
-    this.sugerenciasDestino = [];
+    this.buscadorLocalidadesService.limpiarSugerencias(this.origenCtrl);
+    this.buscadorLocalidadesService.limpiarSugerencias(this.destinoCtrl);
     this.inputOrigen.nativeElement.focus();
   }
 
@@ -217,7 +176,8 @@ export class BuscadorComponent implements OnInit {
    */
   obtenerSugerenciasOrigen(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.buscadorOrigen$.next(contenidoInput);
+    this.origenCtrl.valorTexto = contenidoInput;
+    this.origenCtrl.buscador$.next(contenidoInput);
   }
 
   /**
@@ -226,89 +186,100 @@ export class BuscadorComponent implements OnInit {
    */
   obtenerSugerenciasDestino(evento: Event) {
     const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.buscadorDestino$.next(contenidoInput);
+    this.destinoCtrl.valorTexto = contenidoInput;
+    this.destinoCtrl.buscador$.next(contenidoInput);
   }
 
   /**
-   * Función para guardar la información de la localidad de origen seleccionada.   *
-   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+   * LLama al servicio de buscadorLocalidades y a la función seleccionarLocalidad, le pasa el origen, la localidad que recibe por parámetro de entrara y el inputOrigen
+   * @param localidad
    */
   seleccionarLocalidadOrigen(localidad: any) {
-    this.origen = localidad.descripcion.split(',')[0].trim();
-    this.ultimaLocalidadValidaOrigen = localidad;
-    this.sugerenciasOrigen = [];
-    this.indiceActivoOrigen = -1;
-    this.inputOrigen.nativeElement.focus();
+    this.buscadorLocalidadesService.seleccionarLocalidad(
+      this.origenCtrl,
+      localidad,
+      this.inputOrigen,
+    );
   }
 
-  /**
-   * Función para guardar la información de la localidad de destino seleccionada.   *
-   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
-   */
   seleccionarLocalidadDestino(localidad: any) {
-    this.destino = localidad.descripcion.split(',')[0].trim();
-    this.ultimaLocalidadValidaDestino = localidad;
-    this.sugerenciasDestino = [];
-    this.indiceActivoDestino = -1;
-    this.inputDestino.nativeElement.focus();
+    this.buscadorLocalidadesService.seleccionarLocalidad(
+      this.destinoCtrl,
+      localidad,
+      this.inputDestino,
+    );
   }
 
-  /**
-   *
-   * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
-   * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
-   * @param index --> si es -1 el usuario pulsó la tecla estando dentro del input. Si es 0,1,2...significa que el usuario ya esta navegando en la lista de sugerencias.
-   *
-   * Condicional sugerencias: si el tipo es origen, elige sugerenciasOrigen. Si no es ese tipo, coge sugerenciasDestino. Si el array de sugerencias es 0 sale de la función.
-   * Condicional indiceActual: si el tipo es origen indiceActual pasa a valer lo que esté en la definición de indiceActivoOrigen (-1), si no pasa a valor lo que tenga indiceActivoDestino (-1).
-   * Si el evento es tecla abajo:
-   *  -event.preventDefault --> indicamos que somos nosotros quienes vamos a manejar con la tecla, impedimos la accion natural que tiene el navegador.
-   *  - Si indiceActual es menor que el array de sugerencias -1 (para igual el tamaño del array al número del índice), le sumamos 1 indiceActual y llamamos a actualizarIndiceyFoco
-   * Si el evento es tecla arriba:
-   *  -
-   */
+  limpiarSugerencias(
+    tipo: 'origen' | 'destino',
+    devolverFoco: boolean = false,
+  ) {
+    const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
+    const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
+
+    this.buscadorLocalidadesService.limpiarSugerencias(
+      control,
+      inputRef,
+      devolverFoco,
+    );
+  }
+
+  buscar() {
+    if (!this.origen || this.origen.trim() === '') {
+      this.inputOrigen.nativeElement.focus();
+      return;
+    }
+
+    if (!this.destino || this.destino.trim() === '') {
+      this.inputDestino.nativeElement.focus();
+      return;
+    }
+    const params = {
+      origen: this.origen,
+      destino: this.destino,
+      plazas: this.plazas,
+      fecha_ida: this.fecha_ida,
+      ...(this.fecha_vuelta && { fecha_vuelta: this.fecha_vuelta }),
+    };
+
+    this.onSearch.emit(params);
+    this.navCtrl.navigateForward('/busqueda-viajes', { queryParams: params });
+  }
+
+  onFechaIdaChange(evento: any) {
+    const fechaSeleccionada = evento.value;
+    this.fecha_ida = fechaSeleccionada;
+
+    // Actualizamos el límite mínimo de la vuelta para que coincida con la ida
+    this.fechaMinimaVuelta = fechaSeleccionada;
+
+    // Si el usuario ya había elegido una vuelta y ahora es inválida (anterior a la nueva ida)
+    // la reseteamos a null para que sea opcional otra vez
+    if (this.fecha_vuelta && this.fecha_vuelta < fechaSeleccionada) {
+      this.fecha_vuelta = null;
+    }
+  }
+
+  //NAVEGACIÓN DEL TECLADO
+
   manejarNavegacionTeclado(
     event: KeyboardEvent,
     tipo: 'origen' | 'destino',
     index: number = -1,
   ) {
-    const sugerencias =
-      tipo === 'origen' ? this.sugerenciasOrigen : this.sugerenciasDestino;
-    let indiceActual =
-      tipo === 'origen' ? this.indiceActivoOrigen : this.indiceActivoDestino;
+    const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
+    const selector =
+      tipo === 'origen'
+        ? '.lista_sugerencias_origen'
+        : '.lista_sugerencias_destino';
+    const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
 
-    if (sugerencias.length === 0) return;
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      if (indiceActual < sugerencias.length - 1) {
-        indiceActual++;
-        this.actualizarIndiceYFoco(tipo, indiceActual);
-      }
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      if (indiceActual > 0) {
-        indiceActual--;
-        this.actualizarIndiceYFoco(tipo, indiceActual);
-      } else {
-        this.actualizarIndiceYFoco(tipo, -1);
-        const input = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
-        input.nativeElement.focus();
-      }
-    } else if (event.key === 'Enter') {
-      // Si hay algo seleccionado en la lista, lo elegimos
-      if (indiceActual !== -1) {
-        event.preventDefault();
-        const seleccionada = sugerencias[indiceActual];
-        if (tipo === 'origen') {
-          this.seleccionarLocalidadOrigen(seleccionada);
-        } else {
-          this.seleccionarLocalidadDestino(seleccionada);
-        }
-      }
-    } else if (event.key === 'Escape') {
-      this.limpiarSugerencias(tipo);
-    }
+    this.buscadorLocalidadesService.manejarNavegacionTeclado(
+      event,
+      control,
+      selector,
+      inputRef,
+    );
   }
 
   private actualizarIndiceYFoco(
@@ -332,50 +303,6 @@ export class BuscadorComponent implements OnInit {
         (elementos[nuevoIndice] as HTMLElement)?.focus();
       }, 10);
     }
-  }
-
-  limpiarSugerencias(
-    tipo: 'origen' | 'destino',
-    devolverFoco: boolean = false,
-  ) {
-    if (tipo === 'origen') {
-      this.sugerenciasOrigen = [];
-      this.indiceActivoOrigen = -1;
-      this.buscadorOrigen$.next('');
-      if (devolverFoco) {
-        this.inputOrigen.nativeElement.focus();
-      }
-    } else {
-      this.sugerenciasDestino = [];
-      this.indiceActivoDestino = -1;
-      this.buscadorDestino$.next('');
-      if (devolverFoco) {
-        this.inputDestino.nativeElement.focus();
-      }
-    }
-  }
-
-  buscar() {
-    if (!this.origen || this.origen.trim() === '') {
-      this.inputOrigen.nativeElement.focus();
-      return;
-    }
-
-    if (!this.destino || this.destino.trim() === '') {
-      this.inputDestino.nativeElement.focus();
-      return;
-    }
-    const params = {
-      origen: this.origen,
-      destino: this.destino,
-      plazas: this.plazas,
-      fecha_ida: this.fecha_ida,
-      // Esto solo añade la propiedad si fecha_vuelta no es null
-      ...(this.fecha_vuelta && { fecha_vuelta: this.fecha_vuelta }),
-    };
-
-    this.onSearch.emit(params);
-    this.navCtrl.navigateForward('/busqueda-viajes', { queryParams: params });
   }
 
   validarSeleccion(tipo: 'origen' | 'destino') {
@@ -416,19 +343,5 @@ export class BuscadorComponent implements OnInit {
         }
       }
     }, 250);
-  }
-
-  onFechaIdaChange(evento: any) {
-    const fechaSeleccionada = evento.value;
-    this.fecha_ida = fechaSeleccionada;
-
-    // Actualizamos el límite mínimo de la vuelta para que coincida con la ida
-    this.fechaMinimaVuelta = fechaSeleccionada;
-
-    // Si el usuario ya había elegido una vuelta y ahora es inválida (anterior a la nueva ida)
-    // la reseteamos a null para que sea opcional otra vez
-    if (this.fecha_vuelta && this.fecha_vuelta < fechaSeleccionada) {
-      this.fecha_vuelta = null;
-    }
   }
 }

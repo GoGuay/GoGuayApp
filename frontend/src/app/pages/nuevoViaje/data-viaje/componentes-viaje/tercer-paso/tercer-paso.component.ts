@@ -24,7 +24,7 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
 interface RutaExtendida {
   route: google.maps.DirectionsRoute;
   tienePeajes: boolean;
-  resultCompleto: google.maps.DirectionsResult; // Necesario para pintar el render en el mapa
+  resultCompleto: google.maps.DirectionsResult;
 }
 
 @Component({
@@ -51,7 +51,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   mapCenter = { lat: 40.4168, lng: -3.7038 };
   zoom = 12;
-  
+
   rutasCombinadas: RutaExtendida[] = [];
   indiceRutaSeleccionada: number = -1;
 
@@ -71,6 +71,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     mapTypeControl: false,
   };
 
+  //Sobreescribe la linea que pinta google en los mapas.
   public directionsOptions: google.maps.DirectionsRendererOptions = {
     polylineOptions: {
       strokeColor: '#7B61FF',
@@ -161,7 +162,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         provideRouteAlternatives: true,
         avoidTolls: false,
         region: 'ES',
-      })
+      }),
     );
 
     const reqSinPeajes = from(
@@ -172,7 +173,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         provideRouteAlternatives: true,
         avoidTolls: true,
         region: 'ES',
-      })
+      }),
     );
 
     forkJoin([reqConPeajes, reqSinPeajes]).subscribe({
@@ -182,26 +183,50 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const listaTemporal: RutaExtendida[] = [];
 
+        const evaluarPeaje = (
+          route: google.maps.DirectionsRoute,
+          solicitadoSinPeaje: boolean,
+        ): boolean => {
+          if (solicitadoSinPeaje) return false;
+          if ((route as any).hasTolls != undefined) {
+            return (route as any).hasTolls;
+          }
+          return route.legs.some((leg) =>
+            leg.steps.some(
+              (step) =>
+                step.instructions.toLowerCase().includes('peaje') ||
+                step.instructions.toLowerCase().includes('toll'),
+            ),
+          );
+        };
+
         if (resCon && resCon.routes) {
           resCon.routes.forEach((route) => {
             listaTemporal.push({
               route,
-              tienePeajes: true,
-              resultCompleto: resCon
+              tienePeajes: evaluarPeaje(route, false),
+              resultCompleto: resCon,
             });
           });
         }
 
         if (resSin && resSin.routes) {
           resSin.routes.forEach((routeSin) => {
-            const esDuplicada = listaTemporal.some(
-              (r) => r.route.legs[0].distance?.value === routeSin.legs[0].distance?.value
-            );
+            const esDuplicada = listaTemporal.some((r) => {
+              const mismaDistancia =
+                Math.abs(
+                  (r.route.legs[0].distance?.value || 0) -
+                    (routeSin.legs[0].distance?.value || 0),
+                ) < 100;
+              const mismoResumen = r.route.summary === routeSin.summary;
+              return mismaDistancia && mismoResumen;
+            });
+
             if (!esDuplicada) {
               listaTemporal.push({
                 route: routeSin,
                 tienePeajes: false,
-                resultCompleto: resSin
+                resultCompleto: resSin,
               });
             }
           });
@@ -217,7 +242,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         console.error('Error cargando rutas combinadas:', err);
         this.spinner.hide();
         this.isLoadingRoutes = false;
-      }
+      },
     });
   }
 
@@ -226,13 +251,13 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   selectRoute(index: number): void {
     if (!this.rutasCombinadas?.[index]) return;
-    
+
     this.indiceRutaSeleccionada = index;
     const rutaElegida = this.rutasCombinadas[index];
 
     const singleRouteResult: google.maps.DirectionsResult = {
       ...rutaElegida.resultCompleto,
-      routes: [rutaElegida.route]
+      routes: [rutaElegida.route],
     };
 
     this.directionsRenderer.setOptions(this.directionsOptions);
@@ -240,8 +265,12 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.procesarMetricasRuta(rutaElegida.route, singleRouteResult);
   }
 
-  private procesarMetricasRuta(route: google.maps.DirectionsRoute, resultCompleto: google.maps.DirectionsResult) {
-    let dist = 0, seg = 0;
+  private procesarMetricasRuta(
+    route: google.maps.DirectionsRoute,
+    resultCompleto: google.maps.DirectionsResult,
+  ) {
+    let dist = 0,
+      seg = 0;
     route.legs.forEach((l) => {
       dist += l.distance?.value || 0;
       seg += l.duration?.value || 0;
@@ -250,10 +279,14 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     const info = {
       ...this.travelService.getViajeData(),
       distanciaTotal: Math.round(dist / 1000),
-      tiempoTotal: `${Math.floor(seg / 3600).toString().padStart(2, '0')}:${Math.floor((seg % 3600) / 60).toString().padStart(2, '0')}`,
+      tiempoTotal: `${Math.floor(seg / 3600)
+        .toString()
+        .padStart(2, '0')}:${Math.floor((seg % 3600) / 60)
+        .toString()
+        .padStart(2, '0')}`,
       ruta_seleccionada: resultCompleto,
     };
-    
+
     this.travelService.setViajeData(info);
     localStorage.setItem('rutaSeleccionada', JSON.stringify(info));
   }
