@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -368,9 +369,9 @@ export class UserServicesService {
         id,
         password,
       },
-      { 
-        headers: { 'X-Skip-Interceptor': 'true' } 
-      }
+      {
+        headers: { 'X-Skip-Interceptor': 'true' },
+      },
     );
   }
 
@@ -413,5 +414,34 @@ export class UserServicesService {
     return this.http.get(`${this.apiUrl}/user/comprobacion_token`, {
       params: { token },
     });
+  }
+
+  /**
+   * Función para autenticar con Google.
+   * Envía el token recibido desde el SDK de Google al servidor para verificar/crear la sesión.
+   * @param idToken Token JWT entregado por Google en el cliente.
+   * @returns Observable con los datos de respuesta del backend.
+   */
+  loginConGoogle(idToken: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.apiUrl}/user/google-login`, { token: idToken })
+      .pipe(
+        tap((response) => {
+          // Si el usuario ya existía y el servidor nos devuelve un token de acceso, lo guardamos
+          if (response && response.access_token) {
+            localStorage.setItem('access_token', response.access_token);
+            if (response.refresh_token) {
+              localStorage.setItem('refresh_token', response.refresh_token);
+            }
+            if (response.usuario) {
+              this.setUsuarioData({ usuario: response.usuario });
+            }
+          }
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al realizar login con Google:', error);
+          return throwError(() => error);
+        }),
+      );
   }
 }

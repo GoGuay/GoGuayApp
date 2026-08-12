@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, AfterViewInit } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -12,10 +12,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { environment } from 'src/environments/environment';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+declare const google: any;
 
 @Component({
   selector: 'app-registro',
@@ -31,7 +32,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
-export class RegistroComponent implements OnInit {
+export class RegistroComponent implements OnInit, AfterViewInit {
   // ------------------------------------------------------------------
   // 1. PROPIEDADES Y ESTADOS
   // ------------------------------------------------------------------
@@ -66,6 +67,7 @@ export class RegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
+    private ngZone: NgZone,
 
     /**
      * Con el formBuilder creamos un grupo de formularios.
@@ -114,6 +116,10 @@ export class RegistroComponent implements OnInit {
 
   ngOnInit() {
     this.configurarEscalera();
+  }
+
+  ngAfterViewInit(): void {
+    this.inicializarBotonGoogle();
   }
 
   // ------------------------------------------------------------------
@@ -682,5 +688,61 @@ export class RegistroComponent implements OnInit {
         this.formulario2.get('orientacion')?.enable();
       }
     }
+  }
+
+  // ------------------------------------------------------------------
+  // 5. AUTENTICACIÓN Y GOOGLE (MÉTODOS PRIVADOS)
+  // ------------------------------------------------------------------
+  private inicializarBotonGoogle(): void {
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (response: any) =>
+          this.procesarLoginGoogle(response.credential),
+      });
+
+      const contenedor = document.getElementById('btnGoogleContainer');
+      if (contenedor) {
+        google.accounts.id.renderButton(contenedor, {
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          locale: 'es',
+        });
+      }
+    }
+  }
+
+  private procesarLoginGoogle(idToken: string): void {
+    this.ngZone.run(() => {
+      this.userService.loginConGoogle(idToken).subscribe({
+        next: (res: any) => {
+          if (res.usuarioExiste) {
+            // Usuario registrado -> Iniciar sesión y redirigir
+            this.navCtrl.navigateRoot('/home');
+          } else {
+            // Usuario nuevo -> Cargar datos y pasar al Paso 2
+            this.prepararRegistroDesdeGoogle(res.datosGoogle);
+          }
+        },
+        error: (err) => {
+          console.error('Error al autenticar con Google:', err);
+        },
+      });
+    });
+  }
+
+  private prepararRegistroDesdeGoogle(datosGoogle: any): void {
+    this.formulario1.patchValue({ email: datosGoogle.email });
+
+    if (datosGoogle.nombre) {
+      this.formulario2.get('nombre')?.setValue(datosGoogle.nombre);
+    }
+    if (datosGoogle.apellidos) {
+      this.formulario2.get('apellidos')?.setValue(datosGoogle.apellidos);
+    }
+
+    this.pasoActual = 2;
+    this.paso1 = false;
   }
 }
