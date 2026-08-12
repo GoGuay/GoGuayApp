@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -14,7 +20,14 @@ import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatButtonModule,
+    TranslateModule,
+    FormsModule,
+  ],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -51,14 +64,12 @@ export class RegistroComponent implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private translate: TranslateService /**
      * Con el formBuilder creamos un grupo de formularios.
-     * El formulario 1 va a tener dos campos:
+     * El formulario 1 va a tener:
      *  -email: se inicializa vacio (''), required indica que es obligatorio. Pattern comprueba que tenga el formato REGEX correcto
-     *  -fecha_nacimiento: el campo esta vacío, y deshabilitado por defecto. required: obligatorio.
      */,
   ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
-      fecha_nacimiento: [{ value: '', disabled: true }, Validators.required],
     });
 
     /**
@@ -69,11 +80,18 @@ export class RegistroComponent implements OnInit {
      * - Validación Teléfono: Expresión regular para exactamente 9 números.
      */
     this.formulario2 = this.fb.group({
-      nombre: ['', Validators.required],
+      fecha_nacimiento: ['', Validators.required],
+      nombre: [{ value: '', disabled: true }, Validators.required],
       apellidos: [{ value: '', disabled: true }, Validators.required],
-      telefono: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-      genero: [{ value: '', disabled: true }, Validators.required],
-      orientacion: [{ value: '', disabled: true }, Validators.required],
+      telefono: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.pattern(/^[0-9]{9}$/)],
+      ],
+      genero: [{ value: 'NO_RESPONDE', disabled: true }, Validators.required],
+      orientacion: [
+        { value: 'NO_RESPONDE', disabled: true },
+        Validators.required,
+      ],
     });
 
     /**
@@ -85,7 +103,14 @@ export class RegistroComponent implements OnInit {
      */
     this.formulario3 = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$'),
+          ],
+        ],
         confirmarPassword: ['', Validators.required], // Asegúrate de que solo sea ''
       },
       { validators: this.passwordMatchValidator },
@@ -106,14 +131,19 @@ export class RegistroComponent implements OnInit {
    * Si habilitar es true y si el campo esta deshabilitado entonces ponemos el campo en habilitado y con el emitEvent:false le indicamos que ese cambio se quede ahí y no lo propague al resto del formulario para que no haya errores.
    * Si habilitar es false y el campo está habilitado: ponemos el campo en deshabilitado y no propagamos ese cambio y seteamos el control borrando su contenido.Esto sirve por si el usuario borra algo que hubiese escrito, por ejemplo.
    */
-  private gestionarControl(form: FormGroup, name: string, habilitar: boolean) {
+  private gestionarControl(
+    form: FormGroup,
+    name: string,
+    habilitar: boolean,
+    defaultValue: any = '',
+  ) {
     const control = form.get(name);
     if (habilitar) {
       if (control?.disabled) control.enable({ emitEvent: false });
     } else {
       if (control?.enabled) {
         control.disable({ emitEvent: false });
-        control.setValue('', { emitEvent: false });
+        control.setValue(defaultValue, { emitEvent: false });
       }
     }
   }
@@ -125,30 +155,75 @@ export class RegistroComponent implements OnInit {
    *
    */
   private configurarEscalera() {
-    this.formulario2.get('nombre')?.valueChanges.subscribe((val) => {
-      this.gestionarControl(this.formulario2, 'apellidos', !!val);
+    // 1. Fecha de Nacimiento -> Nombre
+    this.formulario2.get('fecha_nacimiento')?.valueChanges.subscribe(() => {
+      // Evalúa el formato y mayoría de edad (actualiza this.fechaValida)
+      this.validarFechaCompleta();
+      this.gestionarControl(this.formulario2, 'nombre', this.fechaValida);
     });
 
-    this.formulario2.get('apellidos')?.valueChanges.subscribe((val) => {
-      this.gestionarControl(this.formulario2, 'telefono', !!val);
+    // 2. Nombre -> Apellidos
+    this.formulario2.get('nombre')?.valueChanges.subscribe(() => {
+      const controlNombre = this.formulario2.get('nombre');
+      this.gestionarControl(
+        this.formulario2,
+        'apellidos',
+        !!controlNombre?.valid,
+      );
     });
 
-    this.formulario2.get('telefono')?.valueChanges.subscribe(() => {
-      const control = this.formulario2.get('telefono');
-      // Solo habilitar género si el teléfono cumple el patrón (9 dígitos)
-      this.gestionarControl(this.formulario2, 'genero', !!control?.valid);
+    // 3. Apellidos -> Teléfono
+    this.formulario2.get('apellidos')?.valueChanges.subscribe(() => {
+      const controlApellidos = this.formulario2.get('apellidos');
+      this.gestionarControl(
+        this.formulario2,
+        'telefono',
+        !!controlApellidos?.valid,
+      );
     });
 
-    this.formulario2.get('genero')?.valueChanges.subscribe((val) => {
-      this.gestionarControl(this.formulario2, 'orientacion', !!val);
+    // 4. Teléfono -> Género
+    this.formulario2.get('telefono')?.valueChanges.subscribe((val) => {
+      const controlTel = this.formulario2.get('telefono');
+
+      // Si no tiene 9 dígitos exactos, bloqueamos Género y Orientación inmediatamente
+      if (!controlTel?.valid || val?.length !== 9) {
+        this.telefonoValido = false;
+        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
+        this.gestionarControl(
+          this.formulario2,
+          'orientacion',
+          false,
+          'NO_RESPONDE',
+        );
+      }
+    });
+
+    // 5. Género -> Orientación
+    this.formulario2.get('genero')?.valueChanges.subscribe(() => {
+      const controlGenero = this.formulario2.get('genero');
+      const generoValidoYHabilitado =
+        !!controlGenero?.enabled && !!controlGenero?.valid;
+
+      this.gestionarControl(
+        this.formulario2,
+        'orientacion',
+        generoValidoYHabilitado,
+        'NO_RESPONDE',
+      );
     });
   }
-
   // Getter de validación corregido para el Paso 2
   get isPaso2Valido(): boolean {
     // getRawValue permite obtener los valores aunque estén deshabilitados
     const values = this.formulario2.getRawValue();
-    const todoLleno = values.nombre && values.apellidos && values.telefono && values.genero && values.orientacion;
+    const todoLleno =
+      values.fecha_nacimiento &&
+      values.nombre &&
+      values.apellidos &&
+      values.telefono &&
+      values.genero &&
+      values.orientacion;
     return !!(todoLleno && this.formulario2.valid);
   }
 
@@ -161,12 +236,6 @@ export class RegistroComponent implements OnInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-  get validarEmailYFecha() {
-    const emailValido = this.formulario1.get('email')?.valid ?? false;
-    const fechaNacimientoValida = this.formulario1.get('fecha_nacimiento')?.valid ?? false;
-    return emailValido && fechaNacimientoValida && this.fechaValida;
-  }
-
   botonMostrarPassword_1() {
     this.mostrarPassword1 = !this.mostrarPassword1;
   }
@@ -176,37 +245,22 @@ export class RegistroComponent implements OnInit {
 
   // Función que se llama cuando hay un cambio en los inputs o checkboxes
   onInputChange() {
-    this.botonHabilitadoContacto = this.formulario1.valid && this.fechaValida;
+    const emailControl = this.formulario1.get('email');
+    if (emailControl?.hasError('emailRepetido')) {
+      const errors = { ...emailControl.errors };
+      delete errors['emailRepetido'];
+      emailControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+    this.botonHabilitadoContacto = this.formulario1.valid && this.emailValido;
   }
 
   // Función para avanzar al siguiente formulario
   siguientePaso() {
-    if (this.pasoActual === 1 && this.formulario1.valid) {
-      const fechaValor = this.formulario1.get('fecha_nacimiento')?.value;
-      if (!fechaValor || fechaValor.length !== 10) {
-        // No avanzar si fecha incompleta
-        return;
-      }
-
-      // Parsear fecha dd/mm/yyyy a Date
-      const partes = fechaValor.split('-');
-      if (partes.length !== 3) {
-        return; // Formato inválido
-      }
-      const dia = parseInt(partes[0], 10);
-      const mes = parseInt(partes[1], 10) - 1; // Enero = 0
-      const anio = parseInt(partes[2], 10);
-
-      const fechaSeleccionada = new Date(anio, mes, dia);
-      const validacion = this.validacionEdad(fechaSeleccionada);
-
-      if (validacion) {
-        this.pasoActual++;
-        this.paso1 = false;
-
-        this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
-      }
-    } else if (this.pasoActual === 2 && this.formulario2.valid) {
+    if (this.pasoActual === 1 && this.formulario1.valid && this.emailValido) {
+      this.pasoActual++;
+      this.paso1 = false;
+      this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
+    } else if (this.pasoActual === 2 && this.isPaso2Valido) {
       this.pasoActual++;
       this.paso1 = false;
       this.guardaDatosDelUsuarioEnServicio(this.formulario2.getRawValue());
@@ -245,7 +299,11 @@ export class RegistroComponent implements OnInit {
 
   // Función para registrar al usuario
   registrar() {
-    if (this.formulario1.valid && this.formulario2.valid && this.formulario3.valid) {
+    if (
+      this.formulario1.valid &&
+      this.formulario2.valid &&
+      this.formulario3.valid
+    ) {
       const datosRegistro = {
         ...this.formulario1.value,
         ...this.formulario2.value,
@@ -300,7 +358,9 @@ export class RegistroComponent implements OnInit {
   }
 
   validarFechaCompleta() {
-    const fechaControl = this.formulario1.get('fecha_nacimiento');
+    const fechaControl = this.formulario2.get('fecha_nacimiento');
+    if (!fechaControl) return;
+    fechaControl.markAsTouched();
     const fechaValor = fechaControl?.value;
 
     if (!fechaValor || fechaValor.length !== 10) {
@@ -330,7 +390,11 @@ export class RegistroComponent implements OnInit {
 
     const fechaSeleccionada = new Date(anio, mes, dia);
 
-    if (fechaSeleccionada.getFullYear() !== anio || fechaSeleccionada.getMonth() !== mes || fechaSeleccionada.getDate() !== dia) {
+    if (
+      fechaSeleccionada.getFullYear() !== anio ||
+      fechaSeleccionada.getMonth() !== mes ||
+      fechaSeleccionada.getDate() !== dia
+    ) {
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
       this.fechaValida = false;
@@ -349,7 +413,7 @@ export class RegistroComponent implements OnInit {
 
   //Función para validad la EDAD del usuario por la fecha de nacimiento
   validacionEdad(fechaSeleccionada: Date): boolean {
-    const fechaControl = this.formulario1.get('fecha_nacimiento');
+    const fechaControl = this.formulario2.get('fecha_nacimiento');
 
     // Si no hay fecha seleccionada, retornamos false
     if (!fechaControl?.value) return false;
@@ -416,14 +480,11 @@ export class RegistroComponent implements OnInit {
     this.userService.verificarEmailExistente(email.toLowerCase()).subscribe({
       next: (existe) => {
         const emailCtrl = this.formulario1.get('email');
-        const fechaCtrl = this.formulario1.get('fecha_nacimiento');
         if (existe) {
           emailCtrl?.setErrors({ emailRepetido: true });
           this.emailValido = false;
-          fechaCtrl?.disable();
         } else {
           this.emailValido = true;
-          fechaCtrl?.enable();
         }
       },
     });
@@ -434,28 +495,53 @@ export class RegistroComponent implements OnInit {
    * @param telefono
    */
   comprobarTelefonoRegistrado(telefono: string) {
+    const control = this.formulario2.get('telefono');
+    if (!control || control.invalid || telefono.length !== 9) return;
+
     this.userService.verificarTelefonoExistente(telefono).subscribe({
       next: (existe: boolean) => {
-        const control = this.formulario2.get('telefono');
-        if (control) {
-          if (existe) {
-            control.setErrors({ ...control.errors, telefonoRepetido: true });
-            this.telefonoValido = false;
-          } else {
-            if (control.errors?.['telefonoRepetido']) {
-              const { telefonoRepetido, ...rest } = control.errors;
-              control.setErrors(Object.keys(rest).length > 0 ? rest : null);
-            }
-            if (!control.errors) {
-              this.telefonoValido = true;
-              this.escucharCambiosFormulario2('telefono');
-            }
+        if (existe) {
+          control.setErrors({ ...control.errors, telefonoRepetido: true });
+          this.telefonoValido = false;
+          this.gestionarControl(
+            this.formulario2,
+            'genero',
+            false,
+            'NO_RESPONDE',
+          );
+          this.gestionarControl(
+            this.formulario2,
+            'orientacion',
+            false,
+            'NO_RESPONDE',
+          );
+        } else {
+          if (control.errors?.['telefonoRepetido']) {
+            const { telefonoRepetido, ...rest } = control.errors;
+            control.setErrors(Object.keys(rest).length > 0 ? rest : null);
           }
-          this.actualizarEstadoBoton();
+
+          if (control.valid) {
+            this.telefonoValido = true;
+            this.gestionarControl(
+              this.formulario2,
+              'genero',
+              true,
+              'NO_RESPONDE',
+            );
+          }
         }
+        this.actualizarEstadoBoton();
       },
-      error: (err: any) => {
-        console.error('Error al verificar el teléfono:', err);
+      error: () => {
+        this.telefonoValido = false;
+        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
+        this.gestionarControl(
+          this.formulario2,
+          'orientacion',
+          false,
+          'NO_RESPONDE',
+        );
       },
     });
   }
@@ -464,7 +550,7 @@ export class RegistroComponent implements OnInit {
    * Función para comprobar si podemos continuar en el formulario
    */
   actualizarEstadoBoton() {
-    this.botonHabilitadoContacto = this.emailValido && this.fechaValida;
+    this.botonHabilitadoContacto = this.emailValido;
     this.botonHabilitadoTelefono = this.telefonoValido;
   }
 
@@ -522,52 +608,6 @@ export class RegistroComponent implements OnInit {
     }
   }
 
-  /**
-   * Función para avanzar entre los inputs con la tecla "Tab"
-   * @param event
-   * @param idSiguiente
-   */
-  // enfocarSiguiente(event: any, idSiguiente: string) {
-  //   event.preventDefault(); // detiene el tab por defecto
-  //   const siguiente = document.getElementById(idSiguiente);
-  //   if (siguiente) siguiente.focus();
-  // }
-
-  /**
-   * Si hay nuevaPassword y además es diferente a la actual, habilitamos isNuevaPassword1 y reseteamos el mensaje de error.
-   * De lo contrario, dejamos de nuevoesNuevaPasswor1 en false y lanzamos mensaje de error.
-   * Resetea el campo de nuevaPassword2 para que "obligue" al usuario a escribir algo y valida de nuevo.
-   */
-  // validarNuevaPassword() {
-  //   if (this.password) {
-  //     this.isNuevaPassword1Valida = true;
-  //     this.errorMensaje = '';
-  //   } else {
-  //     this.isNuevaPassword1Valida = false;
-  //     this.translate.get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL').subscribe((translation) => {
-  //       this.errorMensaje = translation;
-  //     });
-  //   }
-  //   this.confirmarPassword = '';
-  //   this.isConfirmacionPasswordValida = false;
-  // }
-
-  /**
-   * Si hay nuevaPassword2 y además es igual que la nuevaPassword1 pone la confirmación en true
-   * DE lo contrario deja la confirmación en false y lanza un mensaje de error
-   */
-  // validarConfirmacionPassword() {
-  //   if (this.confirmarPassword && this.confirmarPassword === this.password) {
-  //     this.isNuevaPassword1Valida = true;
-  //     this.errorMensaje = '';
-  //   } else {
-  //     this.isNuevaPassword1Valida = false;
-  //     this.translate.get('AJUSTESAPP.PASSWORD.NO_COINCIDEN').subscribe((translation) => {
-  //       this.errorMensaje = translation;
-  //     });
-  //   }
-  // }
-
   // Este es el validador que sustituye a tus funciones manuales
   passwordMatchValidator(g: FormGroup) {
     const pass = g.get('password')?.value;
@@ -593,7 +633,10 @@ export class RegistroComponent implements OnInit {
       const passwordControl = this.formulario3.get('password');
 
       // CASO: TAB hacia ADELANTE y el campo NO es válido
-      if (!event.shiftKey && (passwordControl?.invalid || !passwordControl?.value)) {
+      if (
+        !event.shiftKey &&
+        (passwordControl?.invalid || !passwordControl?.value)
+      ) {
         // Detenemos el salto al input de "Confirmar Password"
         event.preventDefault();
 
@@ -623,7 +666,9 @@ export class RegistroComponent implements OnInit {
 
         // Ahora que Angular sabe que está habilitado, esperamos al DOM
         setTimeout(() => {
-          const campoFecha = document.getElementById('fnacimiento') as HTMLInputElement;
+          const campoFecha = document.getElementById(
+            'fnacimiento',
+          ) as HTMLInputElement;
           if (campoFecha) {
             campoFecha.focus();
             campoFecha.click();

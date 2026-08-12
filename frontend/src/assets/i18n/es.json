@@ -233,7 +233,11 @@
         "OBLIGATORIO": "El correo es obligatorio.",
         "FORMATO": "El formato del correo no es correcto.",
         "YAEXISTE": "Este correo ya está registrado."
-      },
+      }
+    },
+    "FORM2": {
+      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
       "FNACIMIENTO": {
         "LABEL": "Fecha de nacimiento",
         "AYUDA": "Campo para introducir tu fecha de nacimiento",
@@ -241,11 +245,7 @@
         "OBLIGATORIA": "La fecha de nacimiento es obligatoria.",
         "MENOR_EDAD": "Debes tener más de 18 años para usar este servicio.",
         "SUPERIORACTUAL": "No puedes elegir una fecha superior a la actual."
-      }
-    },
-    "FORM2": {
-      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
-      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      },
       "LABEL_NOMBRE": "Nombre",
       "LABEL_APELLIDOS": "Apellidos",
       "TELEFONO": {
@@ -254,8 +254,12 @@
         "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
         "YAEXISTE": "Este teléfono ya nos consta registrado."
       },
-      "GÉNERO": {},
-      "ORIENTACION": {}
+      "GÉNERO": {
+        "LABEL": "Género"
+      },
+      "ORIENTACION": {
+        "LABEL": "Orientación"
+      }
     },
     "FORM3": {
       "TITULO": "ALGO IMPORTANTE: TU CONTRASEÑA",
@@ -507,7 +511,7 @@
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
   },
-  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "__CENTRO DE MENSAJES": "Centro de mensajes",
   "CENTRO_MENSAJES": {
     "TITULO": "Centro de mensajes",
     "VACIO_TITULO": "Tu buzón está vacío",
@@ -522,7 +526,7 @@
       "ELIMINAR": "Eliminar conversación",
       "CANCELAR": "Cancelar"
     }
-  },  
+  },
   "__Eventos_Administracion": "Sección Eventos de Administración",
   "EVENTOS_ADMIN": "",
   "MENSAJES": {
@@ -561,5 +565,4 @@
       "LEER_MENOS": "Leer menos"
     }
   }
-
 }
