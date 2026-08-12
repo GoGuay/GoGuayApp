@@ -10,12 +10,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NavController } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
-import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-registro',
@@ -32,53 +32,54 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./registro.component.scss'],
 })
 export class RegistroComponent implements OnInit {
+  // ------------------------------------------------------------------
+  // 1. PROPIEDADES Y ESTADOS
+  // ------------------------------------------------------------------
   pasoActual: number = 1;
+  paso1: boolean = true;
+
   formulario1: FormGroup;
   formulario2: FormGroup;
   formulario3: FormGroup;
-  paso1: boolean = true;
 
-  fechaNacimiento: string = '';
   botonHabilitadoContacto: boolean = false;
   botonHabilitadoTelefono: boolean = false;
+
   emailValido: boolean = false;
   telefonoValido: boolean = false;
   fechaValida: boolean = false;
-  hoy: string = new Date().toISOString();
+
   mostrarPassword1: boolean = false;
   mostrarPassword2: boolean = false;
 
-  /**
-   * Expresión regular estándar para la validación de correos electrónicos.
-   * Verifica que el formato sea 'usuario@dominio.extension', permitiendo caracteres alfanuméricos y símbolos permitidos, y obligando a una extensión de dominio válida (ej: .com, .es).
-   */
-  EMAIL_REGEX =
+  cargandoTelefono: boolean = false;
+
+  /** Regex estándar para emails con extensión (.com, .es, etc.) */
+  readonly EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  //CONSTRUCTOR: Inyección de dependencias y validación de los formularios
+  // ------------------------------------------------------------------
+  // 2. CONSTRUCTOR Y CICLO DE VIDA
+  // ------------------------------------------------------------------
   constructor(
     private fb: FormBuilder,
     private userService: UserServicesService,
     private navCtrl: NavController,
     private dialog: MatDialog,
-    private funcionesComunes: FuncionesComunes,
-    private translate: TranslateService /**
+
+    /**
      * Con el formBuilder creamos un grupo de formularios.
      * El formulario 1 va a tener:
      *  -email: se inicializa vacio (''), required indica que es obligatorio. Pattern comprueba que tenga el formato REGEX correcto
-     */,
+     */
+
+    // Formulario 1: Email
   ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
     });
 
-    /**
-     * Inicialización del Formulario 2: Datos Personales.
-     * * @description
-     * Define los controles para la segunda pantalla del registro.
-     * - Regla de flujo: Solo el nombre está activo inicialmente.
-     * - Validación Teléfono: Expresión regular para exactamente 9 números.
-     */
+    // Formulario 2: Datos Personales
     this.formulario2 = this.fb.group({
       fecha_nacimiento: ['', Validators.required],
       nombre: [{ value: '', disabled: true }, Validators.required],
@@ -94,13 +95,7 @@ export class RegistroComponent implements OnInit {
       ],
     });
 
-    /**
-     * Inicialización del formuarlio 3: Contraseña.
-     * * @description
-     * Contraseña segura: mínimo 6 dígitos. Pattern: debe llevar al menos una mayúscula y al menos un nº o carácter especial.
-     * confirmarPassword: campo en blanco y obligatorio.
-     * passwordMatchValidator: es un validador de formulario. Compara las 2 contraseñas. Si no son idénticas marca el formulario como inválido.
-     */
+    // Formulario 3: Contraseña
     this.formulario3 = this.fb.group(
       {
         password: [
@@ -121,101 +116,10 @@ export class RegistroComponent implements OnInit {
     this.configurarEscalera();
   }
 
-  /**
-   *
-   * @param form --> recibe el nombre del formulario
-   * @param name --> recibe el nombre del campo
-   * @param habilitar --> booleano que indica si se debe habilitar (true) o deshabilitar (false)
-   * * @description
-   * Guardamos en control el nombre del campo a tratar (nombre, apellidos, etc)
-   * Si habilitar es true y si el campo esta deshabilitado entonces ponemos el campo en habilitado y con el emitEvent:false le indicamos que ese cambio se quede ahí y no lo propague al resto del formulario para que no haya errores.
-   * Si habilitar es false y el campo está habilitado: ponemos el campo en deshabilitado y no propagamos ese cambio y seteamos el control borrando su contenido.Esto sirve por si el usuario borra algo que hubiese escrito, por ejemplo.
-   */
-  private gestionarControl(
-    form: FormGroup,
-    name: string,
-    habilitar: boolean,
-    defaultValue: any = '',
-  ) {
-    const control = form.get(name);
-    if (habilitar) {
-      if (control?.disabled) control.enable({ emitEvent: false });
-    } else {
-      if (control?.enabled) {
-        control.disable({ emitEvent: false });
-        control.setValue(defaultValue, { emitEvent: false });
-      }
-    }
-  }
-
-  /**
-   * Gestiona la lógica de desbloqueo en escalera de los inputs: Escucha los cambios de valor de cada input y habilita el siguiente. Empieza a funcionar directamente en el formulario2, ya que en el formulario1 actua la función comprobarEmailRegistrado.
-   * En el formulario2 se suscribe a los cambios que tenga el campo 'nombre'. Cuando detecta algún cambio llama a la función gestionarControl y le dice que en el formulario2 habilite el campo 'apellidos'.
-   *
-   *
-   */
-  private configurarEscalera() {
-    // 1. Fecha de Nacimiento -> Nombre
-    this.formulario2.get('fecha_nacimiento')?.valueChanges.subscribe(() => {
-      // Evalúa el formato y mayoría de edad (actualiza this.fechaValida)
-      this.validarFechaCompleta();
-      this.gestionarControl(this.formulario2, 'nombre', this.fechaValida);
-    });
-
-    // 2. Nombre -> Apellidos
-    this.formulario2.get('nombre')?.valueChanges.subscribe(() => {
-      const controlNombre = this.formulario2.get('nombre');
-      this.gestionarControl(
-        this.formulario2,
-        'apellidos',
-        !!controlNombre?.valid,
-      );
-    });
-
-    // 3. Apellidos -> Teléfono
-    this.formulario2.get('apellidos')?.valueChanges.subscribe(() => {
-      const controlApellidos = this.formulario2.get('apellidos');
-      this.gestionarControl(
-        this.formulario2,
-        'telefono',
-        !!controlApellidos?.valid,
-      );
-    });
-
-    // 4. Teléfono -> Género
-    this.formulario2.get('telefono')?.valueChanges.subscribe((val) => {
-      const controlTel = this.formulario2.get('telefono');
-
-      // Si no tiene 9 dígitos exactos, bloqueamos Género y Orientación inmediatamente
-      if (!controlTel?.valid || val?.length !== 9) {
-        this.telefonoValido = false;
-        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
-        this.gestionarControl(
-          this.formulario2,
-          'orientacion',
-          false,
-          'NO_RESPONDE',
-        );
-      }
-    });
-
-    // 5. Género -> Orientación
-    this.formulario2.get('genero')?.valueChanges.subscribe(() => {
-      const controlGenero = this.formulario2.get('genero');
-      const generoValidoYHabilitado =
-        !!controlGenero?.enabled && !!controlGenero?.valid;
-
-      this.gestionarControl(
-        this.formulario2,
-        'orientacion',
-        generoValidoYHabilitado,
-        'NO_RESPONDE',
-      );
-    });
-  }
-  // Getter de validación corregido para el Paso 2
+  // ------------------------------------------------------------------
+  // 3. GETTERS
+  // ------------------------------------------------------------------
   get isPaso2Valido(): boolean {
-    // getRawValue permite obtener los valores aunque estén deshabilitados
     const values = this.formulario2.getRawValue();
     const todoLleno =
       values.fecha_nacimiento &&
@@ -224,10 +128,9 @@ export class RegistroComponent implements OnInit {
       values.telefono &&
       values.genero &&
       values.orientacion;
-    return !!(todoLleno && this.formulario2.valid);
+    return !!(todoLleno && this.formulario2.valid && !this.cargandoTelefono);
   }
 
-  // Getter para la fecha actual
   get fechaMaxima() {
     const hoy = new Date();
     const dd = String(hoy.getDate()).padStart(2, '0');
@@ -236,23 +139,9 @@ export class RegistroComponent implements OnInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-  botonMostrarPassword_1() {
-    this.mostrarPassword1 = !this.mostrarPassword1;
-  }
-  botonMostrarPassword_2() {
-    this.mostrarPassword2 = !this.mostrarPassword2;
-  }
-
-  // Función que se llama cuando hay un cambio en los inputs o checkboxes
-  onInputChange() {
-    const emailControl = this.formulario1.get('email');
-    if (emailControl?.hasError('emailRepetido')) {
-      const errors = { ...emailControl.errors };
-      delete errors['emailRepetido'];
-      emailControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
-    }
-    this.botonHabilitadoContacto = this.formulario1.valid && this.emailValido;
-  }
+  // ------------------------------------------------------------------
+  // 4. FLUJO DE NAVEGACIÓN PASO A PASO
+  // ------------------------------------------------------------------
 
   // Función para avanzar al siguiente formulario
   siguientePaso() {
@@ -268,16 +157,6 @@ export class RegistroComponent implements OnInit {
       this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
       this.mostrarContrato();
     }
-  }
-
-  guardaDatosDelUsuarioEnServicio(datos: any) {
-    const usuarioDataTemp = this.userService.getUsuarioData() || {};
-
-    const datosUsuario = {
-      ...usuarioDataTemp,
-      ...datos,
-    };
-    this.userService.setUsuarioData(datosUsuario);
   }
 
   // Función para retroceder al formulario anterior
@@ -297,60 +176,212 @@ export class RegistroComponent implements OnInit {
     this.navCtrl.navigateRoot('/registro/resumen-registro');
   }
 
-  // Función para registrar al usuario
-  registrar() {
-    if (
-      this.formulario1.valid &&
-      this.formulario2.valid &&
-      this.formulario3.valid
-    ) {
-      const datosRegistro = {
-        ...this.formulario1.value,
-        ...this.formulario2.value,
-        ...this.formulario3.value,
-      };
-
-      this.userService.registrarUsuario(datosRegistro).subscribe({
-        next: (response) => {
-          const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
-          const message: string = `
-          <p>Tu usuario ha sido creado correctamente.</p>
-          <p>Accede a la ventana de acceso de la aplicación para
-            <br>
-            <a class="text-center" href="/login">iniciar sesión</a>
-          </p>
-        `;
-          this.openHelp(title, message);
-          this.navCtrl.navigateRoot('/home');
-        },
-        error: (err) => {
-          const title = 'Error!';
-          const message = err.error.error;
-          this.openError(title, message);
-        },
-      });
-    }
-  }
-
-  // Función para mostrar ventana modal de error
-  openError(title: string, message: string) {
-    this.dialog.open(ModalErrorComponent, {
-      data: { title, message },
-      panelClass: 'dialog-animate',
-    });
-  }
-
-  // Función para mostrar ventana modal con confirmación
-  openHelp(title: string, message: string) {
-    this.dialog.open(HelpModalComponent, {
-      data: { title, message },
-      panelClass: 'dialog-animate',
-    });
-  }
-
   // Función para volver al home
   volverAlHome() {
     this.navCtrl.navigateRoot('/home');
+  }
+
+  guardaDatosDelUsuarioEnServicio(datos: any) {
+    const usuarioDataTemp = this.userService.getUsuarioData() || {};
+
+    const datosUsuario = {
+      ...usuarioDataTemp,
+      ...datos,
+    };
+    this.userService.setUsuarioData(datosUsuario);
+  }
+
+  // ------------------------------------------------------------------
+  // 5. LÓGICA DE ESCALERA Y CONTROLES REACTIVOS
+  // ------------------------------------------------------------------
+  private gestionarControl(
+    form: FormGroup,
+    name: string,
+    habilitar: boolean,
+    defaultValue: any = '',
+  ) {
+    const control = form.get(name);
+    if (habilitar) {
+      if (control?.disabled) control.enable({ emitEvent: false });
+    } else {
+      if (control?.enabled) {
+        control.disable({ emitEvent: false });
+        control.setValue(defaultValue, { emitEvent: false });
+      }
+    }
+  }
+
+  private configurarEscalera() {
+    this.formulario2.get('fecha_nacimiento')?.valueChanges.subscribe(() => {
+      this.validarFechaCompleta();
+      this.gestionarControl(this.formulario2, 'nombre', this.fechaValida);
+    });
+    this.formulario2.get('nombre')?.valueChanges.subscribe(() => {
+      const controlNombre = this.formulario2.get('nombre');
+      this.gestionarControl(
+        this.formulario2,
+        'apellidos',
+        !!controlNombre?.valid,
+      );
+    });
+
+    this.formulario2.get('apellidos')?.valueChanges.subscribe(() => {
+      const controlApellidos = this.formulario2.get('apellidos');
+      this.gestionarControl(
+        this.formulario2,
+        'telefono',
+        !!controlApellidos?.valid,
+      );
+    });
+
+    this.formulario2.get('telefono')?.valueChanges.subscribe((val) => {
+      const controlTel = this.formulario2.get('telefono');
+
+      if (!controlTel?.valid || val?.length !== 9) {
+        this.telefonoValido = false;
+        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
+        this.gestionarControl(
+          this.formulario2,
+          'orientacion',
+          false,
+          'NO_RESPONDE',
+        );
+      }
+    });
+
+    this.formulario2.get('genero')?.valueChanges.subscribe(() => {
+      const controlGenero = this.formulario2.get('genero');
+      const generoValidoYHabilitado =
+        !!controlGenero?.enabled && !!controlGenero?.valid;
+
+      this.gestionarControl(
+        this.formulario2,
+        'orientacion',
+        generoValidoYHabilitado,
+        'NO_RESPONDE',
+      );
+    });
+  }
+
+  // ------------------------------------------------------------------
+  // 6. VALIDACIONES PERSONALIZADAS Y API
+  // ------------------------------------------------------------------
+
+  validarCampo(controlName: string, formulario: FormGroup) {
+    const control = formulario.get(controlName);
+    if (!control) return;
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
+
+    if (controlName === 'email') {
+      if (control.invalid) {
+        this.emailValido = false;
+      } else {
+        this.comprobarEmailRegistrado(control.value);
+      }
+    }
+    if (controlName === 'telefono') {
+      if (control.invalid) {
+        this.telefonoValido = false;
+      } else {
+        this.comprobarTelefonoRegistrado(control.value);
+      }
+    }
+  }
+
+  comprobarEmailRegistrado(email: string) {
+    const control = this.formulario1.get('email');
+
+    if (!control || control.invalid || !email) {
+      this.emailValido = false;
+      return;
+    }
+
+    this.userService.verificarEmailExistente(email).subscribe({
+      next: (existe: boolean) => {
+        if (existe) {
+          control.setErrors({ ...control.errors, emailRepetido: true });
+          this.emailValido = false;
+        } else {
+          if (control.errors?.['emailRepetido']) {
+            const { emailRepetido, ...rest } = control.errors;
+            control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+          }
+
+          if (control.valid) {
+            this.emailValido = true;
+          }
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al verificar el correo:', err);
+        this.emailValido = false;
+      },
+    });
+  }
+
+  comprobarTelefonoRegistrado(telefono: string) {
+    const control = this.formulario2.get('telefono');
+    if (!control || control.invalid || telefono.length !== 9) return;
+
+    this.cargandoTelefono = true;
+    this.telefonoValido = false;
+
+    this.userService.verificarTelefonoExistente(telefono).subscribe({
+      next: (existe: boolean) => {
+        this.cargandoTelefono = false;
+        if (existe) {
+          control.setErrors({ ...control.errors, telefonoRepetido: true });
+          this.telefonoValido = false;
+          this.gestionarControl(
+            this.formulario2,
+            'genero',
+            false,
+            'NO_RESPONDE',
+          );
+          this.gestionarControl(
+            this.formulario2,
+            'orientacion',
+            false,
+            'NO_RESPONDE',
+          );
+        } else {
+          if (control.errors?.['telefonoRepetido']) {
+            const { telefonoRepetido, ...rest } = control.errors;
+            control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+          }
+
+          if (control.valid) {
+            this.telefonoValido = true;
+            this.gestionarControl(
+              this.formulario2,
+              'genero',
+              true,
+              'NO_RESPONDE',
+            );
+            this.gestionarControl(
+              this.formulario2,
+              'orientacion',
+              true,
+              'NO_RESPONDE',
+            );
+          }
+        }
+        this.actualizarEstadoBoton();
+      },
+      error: () => {
+        this.cargandoTelefono = false;
+        this.telefonoValido = false;
+        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
+        this.gestionarControl(
+          this.formulario2,
+          'orientacion',
+          false,
+          'NO_RESPONDE',
+        );
+      },
+    });
   }
 
   onFechaChange() {
@@ -376,7 +407,7 @@ export class RegistroComponent implements OnInit {
       this.fechaValida = false;
       return;
     }
-    // Parsear manualmente el día, mes y año
+
     const partes = fechaValor.split('-');
     if (partes.length !== 3) {
       fechaControl?.setErrors({ invalidDateFormat: true });
@@ -401,7 +432,6 @@ export class RegistroComponent implements OnInit {
       return;
     }
 
-    // Validar si el usuario tiene 18 años o más
     const edadValida = this.validacionEdad(fechaSeleccionada);
     this.fechaValida = edadValida;
     if (edadValida) {
@@ -470,81 +500,25 @@ export class RegistroComponent implements OnInit {
     }
   }
 
-  /**
-   * Función para comprobar si un email ya se encuentra registrado previamente
-   * @param email
-   */
-  comprobarEmailRegistrado(email: string) {
-    if (this.formulario1.get('email')?.invalid) return;
+  passwordMatchValidator(g: FormGroup) {
+    const pass = g.get('password')?.value;
+    const conf = g.get('confirmarPassword')?.value;
 
-    this.userService.verificarEmailExistente(email.toLowerCase()).subscribe({
-      next: (existe) => {
-        const emailCtrl = this.formulario1.get('email');
-        if (existe) {
-          emailCtrl?.setErrors({ emailRepetido: true });
-          this.emailValido = false;
-        } else {
-          this.emailValido = true;
-        }
-      },
-    });
+    if (!conf) {
+      return null;
+    }
+
+    if (pass !== conf) {
+      g.get('confirmarPassword')?.setErrors({ noCoincide: true });
+      return { mismatch: true };
+    }
+
+    return null;
   }
 
-  /**
-   * Función para comprobar si un telefono ya se encuentra registrado previamente
-   * @param telefono
-   */
-  comprobarTelefonoRegistrado(telefono: string) {
-    const control = this.formulario2.get('telefono');
-    if (!control || control.invalid || telefono.length !== 9) return;
-
-    this.userService.verificarTelefonoExistente(telefono).subscribe({
-      next: (existe: boolean) => {
-        if (existe) {
-          control.setErrors({ ...control.errors, telefonoRepetido: true });
-          this.telefonoValido = false;
-          this.gestionarControl(
-            this.formulario2,
-            'genero',
-            false,
-            'NO_RESPONDE',
-          );
-          this.gestionarControl(
-            this.formulario2,
-            'orientacion',
-            false,
-            'NO_RESPONDE',
-          );
-        } else {
-          if (control.errors?.['telefonoRepetido']) {
-            const { telefonoRepetido, ...rest } = control.errors;
-            control.setErrors(Object.keys(rest).length > 0 ? rest : null);
-          }
-
-          if (control.valid) {
-            this.telefonoValido = true;
-            this.gestionarControl(
-              this.formulario2,
-              'genero',
-              true,
-              'NO_RESPONDE',
-            );
-          }
-        }
-        this.actualizarEstadoBoton();
-      },
-      error: () => {
-        this.telefonoValido = false;
-        this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
-        this.gestionarControl(
-          this.formulario2,
-          'orientacion',
-          false,
-          'NO_RESPONDE',
-        );
-      },
-    });
-  }
+  // ------------------------------------------------------------------
+  // 7. MÉTODOS Y ACCIONES DE INTERFAZ / EVENTOS
+  // ------------------------------------------------------------------
 
   /**
    * Función para comprobar si podemos continuar en el formulario
@@ -554,26 +528,128 @@ export class RegistroComponent implements OnInit {
     this.botonHabilitadoTelefono = this.telefonoValido;
   }
 
-  validarCampo(controlName: string, formulario: FormGroup) {
-    const control = formulario.get(controlName);
-    if (control) {
-      control.markAsTouched();
-      control.markAsDirty();
-      control.updateValueAndValidity();
+  botonMostrarPassword_1() {
+    this.mostrarPassword1 = !this.mostrarPassword1;
+  }
+  botonMostrarPassword_2() {
+    this.mostrarPassword2 = !this.mostrarPassword2;
+  }
 
-      if (controlName === 'email') {
-        this.comprobarEmailRegistrado(control.value);
-      } else {
-        this.emailValido = false;
-        this.formulario1.get('fecha_nacimiento')?.disable();
-        this.botonHabilitadoContacto = false;
+  onEmailInput() {
+    const control = this.formulario1.get('email');
+    if (!control) return;
+
+    if (control.hasError('emailRepetido')) {
+      const { emailRepetido, ...rest } = control.errors || {};
+      control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+    }
+
+    if (control.valid && control.value) {
+      this.comprobarEmailRegistrado(control.value);
+    } else {
+      this.emailValido = false;
+    }
+  }
+
+  // Función que se llama cuando hay un cambio en los inputs o checkboxes
+  onInputChange() {
+    const emailControl = this.formulario1.get('email');
+    if (emailControl?.hasError('emailRepetido')) {
+      const errors = { ...emailControl.errors };
+      delete errors['emailRepetido'];
+      emailControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+    this.botonHabilitadoContacto = this.formulario1.valid && this.emailValido;
+  }
+
+  // Función para registrar al usuario
+  registrar() {
+    if (
+      this.formulario1.valid &&
+      this.formulario2.valid &&
+      this.formulario3.valid
+    ) {
+      const datosRegistro = {
+        ...this.formulario1.value,
+        ...this.formulario2.value,
+        ...this.formulario3.value,
+      };
+
+      this.userService.registrarUsuario(datosRegistro).subscribe({
+        next: (response) => {
+          const title: string = `¡Bienvenido! ${response.usuario.nombre}`;
+          const message: string = `
+          <p>Tu usuario ha sido creado correctamente.</p>
+          <p>Accede a la ventana de acceso de la aplicación para
+            <br>
+            <a class="text-center" href="/login">iniciar sesión</a>
+          </p>
+        `;
+          this.openHelp(title, message);
+          this.navCtrl.navigateRoot('/home');
+        },
+        error: (err) => {
+          const title = 'Error!';
+          const message = err.error.error;
+          this.openError(title, message);
+        },
+      });
+    }
+  }
+
+  // Función para mostrar ventana modal de error
+  openError(title: string, message: string) {
+    this.dialog.open(ModalErrorComponent, {
+      data: { title, message },
+      panelClass: 'dialog-animate',
+    });
+  }
+
+  // Función para mostrar ventana modal con confirmación
+  openHelp(title: string, message: string) {
+    this.dialog.open(HelpModalComponent, {
+      data: { title, message },
+      panelClass: 'dialog-animate',
+    });
+  }
+
+  manejarTabPassword(event: KeyboardEvent) {
+    if (event.key === 'Tab') {
+      const passwordControl = this.formulario3.get('password');
+      if (
+        !event.shiftKey &&
+        (passwordControl?.invalid || !passwordControl?.value)
+      ) {
+        event.preventDefault();
+        const btnAtras = document.getElementById('btnAtras');
+
+        if (btnAtras) {
+          setTimeout(() => {
+            btnAtras.focus();
+          }, 0);
+        }
       }
+    }
+  }
 
-      if (controlName === 'telefono') {
-        this.comprobarTelefonoRegistrado(control.value);
-      } else {
-        this.telefonoValido = false;
-        this.botonHabilitadoTelefono = false;
+  saltarAFecha(event: KeyboardEvent) {
+    if (event.key === 'Tab' && !event.shiftKey) {
+      const emailControl = this.formulario1.get('email');
+      const fechaControl = this.formulario1.get('fecha_nacimiento');
+
+      if (emailControl?.valid) {
+        event.preventDefault();
+        fechaControl?.enable();
+
+        setTimeout(() => {
+          const campoFecha = document.getElementById(
+            'fnacimiento',
+          ) as HTMLInputElement;
+          if (campoFecha) {
+            campoFecha.focus();
+            campoFecha.click();
+          }
+        }, 50);
       }
     }
   }
@@ -604,76 +680,6 @@ export class RegistroComponent implements OnInit {
       const controlGenero = this.formulario2.get('genero');
       if (controlGenero?.valid) {
         this.formulario2.get('orientacion')?.enable();
-      }
-    }
-  }
-
-  // Este es el validador que sustituye a tus funciones manuales
-  passwordMatchValidator(g: FormGroup) {
-    const pass = g.get('password')?.value;
-    const conf = g.get('confirmarPassword')?.value;
-
-    // Si el campo de confirmar está vacío, no ponemos error todavía
-    if (!conf) {
-      return null;
-    }
-
-    if (pass !== conf) {
-      g.get('confirmarPassword')?.setErrors({ noCoincide: true });
-      return { mismatch: true };
-    }
-
-    // Si coinciden, limpiamos los errores
-    return null;
-  }
-
-  manejarTabPassword(event: KeyboardEvent) {
-    // Solo actuamos si se presiona Tab
-    if (event.key === 'Tab') {
-      const passwordControl = this.formulario3.get('password');
-
-      // CASO: TAB hacia ADELANTE y el campo NO es válido
-      if (
-        !event.shiftKey &&
-        (passwordControl?.invalid || !passwordControl?.value)
-      ) {
-        // Detenemos el salto al input de "Confirmar Password"
-        event.preventDefault();
-
-        // Buscamos el botón Atrás
-        const btnAtras = document.getElementById('btnAtras');
-
-        if (btnAtras) {
-          // Usamos un pequeño timeout para asegurar que el foco se asiente
-          setTimeout(() => {
-            btnAtras.focus();
-          }, 0);
-        }
-      }
-    }
-  }
-
-  saltarAFecha(event: KeyboardEvent) {
-    if (event.key === 'Tab' && !event.shiftKey) {
-      const emailControl = this.formulario1.get('email');
-      const fechaControl = this.formulario1.get('fecha_nacimiento');
-
-      if (emailControl?.valid) {
-        event.preventDefault();
-
-        // Habilitamos el control en el formulario de Angular
-        fechaControl?.enable();
-
-        // Ahora que Angular sabe que está habilitado, esperamos al DOM
-        setTimeout(() => {
-          const campoFecha = document.getElementById(
-            'fnacimiento',
-          ) as HTMLInputElement;
-          if (campoFecha) {
-            campoFecha.focus();
-            campoFecha.click();
-          }
-        }, 50);
       }
     }
   }

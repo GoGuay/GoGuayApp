@@ -142,7 +142,7 @@ def verificar_telefono_existente():
     if not telefono:
         return jsonify({"Error": "Teléfono no encontrado"}), 400
     existe = Usuario.query.filter_by(telefono=telefono).first() is not None
-    return jsonify ({"Ya existe teléfono": existe}), 200
+    return jsonify({"existe": existe}), 200
 
 
 ## LOGIN DEL USUARIO AL SISTEMA ##
