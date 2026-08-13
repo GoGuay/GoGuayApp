@@ -55,6 +55,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   cargandoTelefono: boolean = false;
 
+  esGoogle: boolean = false;
+
   /** Regex estándar para emails con extensión (.com, .es, etc.) */
   readonly EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -152,14 +154,21 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   // Función para avanzar al siguiente formulario
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid && this.emailValido) {
+      this.formulario1.markAllAsTouched();
       this.pasoActual++;
       this.paso1 = false;
       this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
     } else if (this.pasoActual === 2 && this.isPaso2Valido) {
-      this.pasoActual++;
-      this.paso1 = false;
+      this.formulario2.markAllAsTouched();
       this.guardaDatosDelUsuarioEnServicio(this.formulario2.getRawValue());
+      if (this.esGoogle) {
+        this.mostrarContrato();
+      } else {
+        this.pasoActual++;
+        this.paso1 = false;
+      }
     } else if (this.pasoActual === 3 && this.formulario3.valid) {
+      this.formulario3.markAllAsTouched();
       this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
       this.mostrarContrato();
     }
@@ -189,6 +198,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   guardaDatosDelUsuarioEnServicio(datos: any) {
     const usuarioDataTemp = this.userService.getUsuarioData() || {};
+    console.log('usuarioDataTemp: ', usuarioDataTemp);
 
     const datosUsuario = {
       ...usuarioDataTemp,
@@ -205,6 +215,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     name: string,
     habilitar: boolean,
     defaultValue: any = '',
+    resetearValor: boolean = false,
   ) {
     const control = form.get(name);
     if (habilitar) {
@@ -212,7 +223,9 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     } else {
       if (control?.enabled) {
         control.disable({ emitEvent: false });
-        control.setValue(defaultValue, { emitEvent: false });
+        if (resetearValor) {
+          control.setValue(defaultValue, { emitEvent: false });
+        }
       }
     }
   }
@@ -220,7 +233,15 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   private configurarEscalera() {
     this.formulario2.get('fecha_nacimiento')?.valueChanges.subscribe(() => {
       this.validarFechaCompleta();
-      this.gestionarControl(this.formulario2, 'nombre', this.fechaValida);
+      if (!this.esGoogle) {
+        this.gestionarControl(
+          this.formulario2,
+          'nombre',
+          this.fechaValida,
+          '',
+          false,
+        );
+      }
     });
     this.formulario2.get('nombre')?.valueChanges.subscribe(() => {
       const controlNombre = this.formulario2.get('nombre');
@@ -228,6 +249,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         this.formulario2,
         'apellidos',
         !!controlNombre?.valid,
+        '',
+        false,
       );
     });
 
@@ -237,6 +260,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         this.formulario2,
         'telefono',
         !!controlApellidos?.valid,
+        '',
+        false,
       );
     });
 
@@ -447,7 +472,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     }
   }
 
-  //Función para validad la EDAD del usuario por la fecha de nacimiento
+  //Función para validar la EDAD del usuario por la fecha de nacimiento
   validacionEdad(fechaSeleccionada: Date): boolean {
     const fechaControl = this.formulario2.get('fecha_nacimiento');
 
@@ -570,15 +595,18 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   // Función para registrar al usuario
   registrar() {
-    if (
-      this.formulario1.valid &&
-      this.formulario2.valid &&
-      this.formulario3.valid
-    ) {
+    const esValido = this.esGoogle
+      ? this.formulario1.valid && this.formulario2.valid
+      : this.formulario1.valid &&
+        this.formulario2.valid &&
+        this.formulario3.valid;
+
+    if (esValido) {
       const datosRegistro = {
         ...this.formulario1.value,
         ...this.formulario2.value,
-        ...this.formulario3.value,
+        ...(this.esGoogle ? {} : this.formulario3.value),
+        es_google: this.esGoogle,
       };
 
       this.userService.registrarUsuario(datosRegistro).subscribe({
@@ -596,7 +624,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           const title = 'Error!';
-          const message = err.error.error;
+          const message =
+            err.error.error || 'Ocurrió un error al registrar el usuario';
           this.openError(title, message);
         },
       });
@@ -733,14 +762,25 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   }
 
   private prepararRegistroDesdeGoogle(datosGoogle: any): void {
+    console.log('DatosGoogle: ', datosGoogle);
+
+    this.esGoogle = true;
     this.formulario1.patchValue({ email: datosGoogle.email });
+    this.emailValido = true;
+    this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
 
     if (datosGoogle.nombre) {
-      this.formulario2.get('nombre')?.setValue(datosGoogle.nombre);
+      const controlNombre = this.formulario2.get('nombre');
+      controlNombre?.enable();
+      controlNombre?.setValue(datosGoogle.nombre);
     }
     if (datosGoogle.apellidos) {
-      this.formulario2.get('apellidos')?.setValue(datosGoogle.apellidos);
+      const controlApellidos = this.formulario2.get('apellidos');
+      controlApellidos?.enable();
+      controlApellidos?.setValue(datosGoogle.apellidos);
     }
+    this.validarCampo('fecha_nacimiento', this.formulario2);
+    this.validarCampo('telefono', this.formulario2);
 
     this.pasoActual = 2;
     this.paso1 = false;

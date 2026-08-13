@@ -254,7 +254,6 @@
             required
             formControlName="telefono"
             autocomplete="tel"
-            (blur)="validarCampo('telefono', formulario2)"
             (input)="validarCampo('telefono', formulario2)"
           />
           <!-- Mensajes de Error Teléfono -->
@@ -541,6 +540,7 @@
     <div class="d-flex justify-content-center mb-3">
       <!-- Botón Atrás -->
       <button
+        *ngIf="!esGoogle"
         id="btnAtras"
         type="button"
         class="btn btn_bg_secondary"
@@ -554,7 +554,7 @@
         type="button"
         id="btnSiguiente"
         class="btn btn_bg ms-3"
-        *ngIf="pasoActual === 2"
+        *ngIf="pasoActual === 2 && !esGoogle"
         [disabled]="!isPaso2Valido"
         (click)="siguientePaso()"
       >
@@ -566,16 +566,18 @@
   <!-- Botón Finalizar Registro (solo Paso 3) -->
   <div
     *ngIf="
-      pasoActual === 3 &&
-      formulario1.valid &&
-      formulario2.valid &&
-      formulario3.valid
+      (pasoActual === 3 &&
+        formulario1.valid &&
+        formulario2.valid &&
+        formulario3.valid) ||
+      (pasoActual === 2 && esGoogle)
     "
     class="d-flex justify-content-center"
   >
     <button
       type="button"
       class="btn_bg btn mt-3 mb-3"
+      [class.disabled]="esGoogle ? !isPaso2Valido : !formulario3.valid"
       (click)="siguientePaso()"
     >
       {{ 'REGISTRO.BOTONES.FINALIZAR_REGISTRO' | translate }}

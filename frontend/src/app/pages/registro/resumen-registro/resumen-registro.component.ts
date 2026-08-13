@@ -5,16 +5,30 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from '../../../core/user-services/user-services.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ModalController } from '@ionic/angular/standalone';
-import { ContratoRegistroComponent } from "../contrato-registro-final/contrato-registro.component";
+import { ContratoRegistroComponent } from '../contrato-registro-final/contrato-registro.component';
 
 @Component({
   selector: 'app-resumen-registro',
-  imports: [ReactiveFormsModule, IonicModule, MatIconModule, CommonModule, FormsModule, TranslateModule, ContratoRegistroComponent],
+  imports: [
+    ReactiveFormsModule,
+    IonicModule,
+    MatIconModule,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    ContratoRegistroComponent,
+  ],
   templateUrl: './resumen-registro.component.html',
   styleUrl: './resumen-registro.component.scss',
-  standalone: true
+  standalone: true,
 })
 export class ResumenRegistroComponent implements OnInit {
   //Variables para almacenar los datos del usuario
@@ -52,9 +66,29 @@ export class ResumenRegistroComponent implements OnInit {
     password: 'formulario3',
   };
 
-  generos: string[] = ['H_CIS', 'M_CIS', 'TRANS', 'NO_BINARIO', 'INTER', 'NO_FLUIDO', 'OTRO', 'NO_RESPONDE'];
+  generos: string[] = [
+    'H_CIS',
+    'M_CIS',
+    'TRANS',
+    'NO_BINARIO',
+    'INTER',
+    'NO_FLUIDO',
+    'OTRO',
+    'NO_RESPONDE',
+  ];
 
-  orientaciones: string[] = ['GAY', 'LESBIANA', 'BISEXUAL', 'PANSEXUAL', 'ASEXUAL', 'DEMISEXUAL', 'QUEER', 'HETEROSEXUAL', 'OTRO', 'NO_RESPONDE'];
+  orientaciones: string[] = [
+    'GAY',
+    'LESBIANA',
+    'BISEXUAL',
+    'PANSEXUAL',
+    'ASEXUAL',
+    'DEMISEXUAL',
+    'QUEER',
+    'HETEROSEXUAL',
+    'OTRO',
+    'NO_RESPONDE',
+  ];
 
   @ViewChild('seccionCondiciones') seccionCondiciones!: ElementRef;
 
@@ -63,8 +97,8 @@ export class ResumenRegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private translateService: TranslateService,
-    private modalCtrl: ModalController
-  ) { }
+    private modalCtrl: ModalController,
+  ) {}
 
   ngOnInit() {
     //Obtenemos los datos del usuario guardados en caché
@@ -83,12 +117,18 @@ export class ResumenRegistroComponent implements OnInit {
 
     this.formularioResumen = this.fb.group({
       // Valor inicial + Validadores
-      email: [this.email, [Validators.required, Validators.pattern(EMAIL_REGEX)]],
+      email: [
+        this.email,
+        [Validators.required, Validators.pattern(EMAIL_REGEX)],
+      ],
       // Asegúrate de incluir los validadores para el resto de campos
       fecha_de_nacimiento: [this.fecha_de_nacimiento, Validators.required],
       nombre: [this.nombre, Validators.required],
       apellidos: [this.apellidos, Validators.required],
-      telefono: [this.telefono, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+      telefono: [
+        this.telefono,
+        [Validators.required, Validators.pattern(/^[0-9]{9}$/)],
+      ],
       genero: [this.genero, Validators.required],
       orientacion: [this.orientacion, Validators.required],
     });
@@ -136,7 +176,10 @@ export class ResumenRegistroComponent implements OnInit {
           const { emailRepetido, ...rest } = control.errors;
           control.setErrors(Object.keys(rest).length > 0 ? rest : null);
         }
-        if (controlName === 'telefono' && control.errors?.['telefonoRepetido']) {
+        if (
+          controlName === 'telefono' &&
+          control.errors?.['telefonoRepetido']
+        ) {
           const { telefonoRepetido, ...rest } = control.errors;
           control.setErrors(Object.keys(rest).length > 0 ? rest : null);
         }
@@ -361,7 +404,11 @@ export class ResumenRegistroComponent implements OnInit {
 
     const fechaSeleccionada = new Date(anio, mes, dia);
 
-    if (fechaSeleccionada.getFullYear() !== anio || fechaSeleccionada.getMonth() !== mes || fechaSeleccionada.getDate() !== dia) {
+    if (
+      fechaSeleccionada.getFullYear() !== anio ||
+      fechaSeleccionada.getMonth() !== mes ||
+      fechaSeleccionada.getDate() !== dia
+    ) {
       fechaControl?.setErrors({ invalidDate: true });
 
       this.fechaValida = false;
@@ -443,7 +490,7 @@ export class ResumenRegistroComponent implements OnInit {
     setTimeout(() => {
       this.seccionCondiciones.nativeElement.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'start',
       });
     }, 100);
   }
@@ -461,16 +508,16 @@ export class ResumenRegistroComponent implements OnInit {
     }, 300);
   }
 
-
   /**
    * Función para finalizar el registro del usuario.,
    * Los datos que el usuario ha introducido se guardan en caché
    * y además se envían a BBDD.
    * Después de compeltar el proceso, se le redirige al Home de la aplicación.
-   * 
+   *
    */
   finalizarRegistro() {
     const datosRegistro = this.userService.getUsuarioData();
+    console.log('datosRegistro: ', datosRegistro);
 
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
@@ -479,7 +526,7 @@ export class ResumenRegistroComponent implements OnInit {
         this.navCtrl.navigateRoot('/home');
       },
       error: (err) => {
-        console.error("Error al registrar", err);
+        console.error('Error al registrar', err);
       },
     });
   }
