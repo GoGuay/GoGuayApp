@@ -722,8 +722,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   // ------------------------------------------------------------------
   // 5. AUTENTICACIÓN Y GOOGLE (MÉTODOS PRIVADOS)
   // ------------------------------------------------------------------
-  private inicializarBotonGoogle(): void {
-    if (typeof google !== 'undefined') {
+  private inicializarBotonGoogle(intentos = 0): void {
+    if (typeof google !== 'undefined' && google?.accounts?.id) {
       google.accounts.id.initialize({
         client_id: environment.googleClientId,
         callback: (response: any) =>
@@ -735,10 +735,14 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         google.accounts.id.renderButton(contenedor, {
           theme: 'outline',
           size: 'large',
-          text: 'continue_with',
+          text: 'signup_with',
           locale: 'es',
         });
       }
+    } else if (intentos < 10) {
+      setTimeout(() => this.inicializarBotonGoogle(intentos + 1), 200);
+    } else {
+      console.error('No se pudo cargar la API de Google Identity');
     }
   }
 
@@ -774,7 +778,10 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     this.formulario1.patchValue({ email: datosGoogle.email });
     this.emailValido = true;
     this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
-
+    const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
+    if (foto) {
+      this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
+    }
     if (datosGoogle.nombre) {
       const controlNombre = this.formulario2.get('nombre');
       controlNombre?.enable();

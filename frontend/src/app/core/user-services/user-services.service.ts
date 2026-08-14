@@ -126,8 +126,15 @@ export class UserServicesService {
    * @returns Observable del objeto Usuario.
    */
   obtenerUsuarioPorID(usuarioId: number): Observable<any> {
-    return this.http.get<Usuario>(
+    const token = localStorage.getItem('access_token');
+    console.log('Token: ', token);
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.get(
       `${this.apiUrl}/user/obtener_usuario_por_id/${usuarioId}`,
+      { headers },
     );
   }
 

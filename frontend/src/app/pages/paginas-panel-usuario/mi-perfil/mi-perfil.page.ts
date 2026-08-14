@@ -36,7 +36,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
     ToastModule,
     MatTooltipModule,
     SpinnerComponent,
-    MatDivider
+    MatDivider,
   ],
 
   providers: [MessageService],
@@ -65,7 +65,9 @@ export class MiPerfilPage implements OnInit {
   emailEditado: string = '';
   telefonoEditado: string = '';
   isOpen = false;
-  edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
+  edad: number = this.funcionesUsuario.calcularEdad(
+    this.fechaNacimientoEditada,
+  );
   lang: string = this.languageService.getLanguage() || 'es'; // Variable para almacenar el lenguaje seleccionado.
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
@@ -89,7 +91,7 @@ export class MiPerfilPage implements OnInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {
     this.loadUserData();
     this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
@@ -135,7 +137,7 @@ export class MiPerfilPage implements OnInit {
         });
         this.cdr.detectChanges();
 
-        this.route.queryParams.subscribe(params => {
+        this.route.queryParams.subscribe((params) => {
           this.vengoDeViaje = params['from'] === 'newTravel';
         });
       }
@@ -169,22 +171,28 @@ export class MiPerfilPage implements OnInit {
    */
   detectarIdioma_traducirTexto(textoATraducir: string) {
     this.spinnerActivo = true;
-    this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
-      console.log('resultado: ', resultado);
-      if (this.lang !== resultado.idioma) {
-        this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
-          console.log('resultadoTraduccion: ', resultadoTraduccion);
-          this.bioEditada = resultadoTraduccion.texto_traducido;
-          this.spinnerActivo = false;
-        });
-      }
-    });
+    this.googleService
+      .detectarIdiomaTexto(textoATraducir)
+      .subscribe((resultado: any) => {
+        console.log('resultado: ', resultado);
+        if (this.lang !== resultado.idioma) {
+          this.googleService
+            .traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma)
+            .subscribe((resultadoTraduccion: any) => {
+              console.log('resultadoTraduccion: ', resultadoTraduccion);
+              this.bioEditada = resultadoTraduccion.texto_traducido;
+              this.spinnerActivo = false;
+            });
+        }
+      });
   }
 
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-      this.userData.usuario = resultadoUsuario;
-    });
+    this.userService
+      .obtenerUsuarioPorID(id_usuario)
+      .subscribe((resultadoUsuario) => {
+        this.userData.usuario = resultadoUsuario;
+      });
   }
 
   loadUserData(): void {
@@ -193,7 +201,12 @@ export class MiPerfilPage implements OnInit {
 
   checkScreenSize() {
     this.isDesktop = window.innerWidth > 576;
-    console.log('Tamaño detectado:', window.innerWidth, 'isDesktop:', this.isDesktop);
+    console.log(
+      'Tamaño detectado:',
+      window.innerWidth,
+      'isDesktop:',
+      this.isDesktop,
+    );
     this.cdr.detectChanges();
   }
 
@@ -206,13 +219,19 @@ export class MiPerfilPage implements OnInit {
 
     // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
-    const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
-    const pronombreChanged = this.pronombreEditado !== this.userData.usuario?.pronombre;
+    const apellidosChanged =
+      this.apellidosEditados !== this.userData.usuario?.apellidos;
+    const pronombreChanged =
+      this.pronombreEditado !== this.userData.usuario?.pronombre;
     const generoChanged = this.generoEditado !== this.userData.usuario.genero;
-    const orientacionChanged = this.orientacionEditada !== this.userData.usuario.orientacion;
-    const fechaNacimientoChanged = this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
+    const orientacionChanged =
+      this.orientacionEditada !== this.userData.usuario.orientacion;
+    const fechaNacimientoChanged =
+      this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
-    const preferenciasChanged = JSON.stringify(this.preferenciasSeleccionadas) !== JSON.stringify(this.userData.usuario.preferencias);
+    const preferenciasChanged =
+      JSON.stringify(this.preferenciasSeleccionadas) !==
+      JSON.stringify(this.userData.usuario.preferencias);
 
     //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
@@ -293,23 +312,25 @@ export class MiPerfilPage implements OnInit {
     };
     console.log('Objeto modificado: ', nuevoUsuario);
 
-    this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe(
-      (response) => {
-        console.log('Datos actualizado con exito', response);
-        this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-        localStorage.setItem('userData', JSON.stringify(this.userData));
-        this.funcionesUsuario.obtenerUsuario();
-        this.botonHabilitado = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Datos guardados',
-          detail: 'Se han guardado correctamente los datos',
-        });
-      },
-      (error) => {
-        console.error('Error al actualizar los datos', error);
-      },
-    );
+    this.userService
+      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
+      .subscribe(
+        (response) => {
+          console.log('Datos actualizado con exito', response);
+          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+          this.funcionesUsuario.obtenerUsuario();
+          this.botonHabilitado = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Datos guardados',
+            detail: 'Se han guardado correctamente los datos',
+          });
+        },
+        (error) => {
+          console.error('Error al actualizar los datos', error);
+        },
+      );
   }
 
   /**
@@ -327,7 +348,9 @@ export class MiPerfilPage implements OnInit {
         this.preferenciasSeleccionadas.push(valor);
       }
     } else {
-      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter((pref) => pref !== valor);
+      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
+        (pref) => pref !== valor,
+      );
     }
 
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
@@ -423,12 +446,17 @@ export class MiPerfilPage implements OnInit {
    * : ../../assets/user... --> asigna la imagen de perfil genérica
    */
   private actualizarFotoPerfil(usuario: Usuario['usuario'] | null) {
-    this.imagenPerfilUsuario = usuario?.fotoPerfil ? usuario.fotoPerfil : '../../../assets/user/logOn.gif';
+    console.log('usuario: ', usuario);
+
+    this.imagenPerfilUsuario = usuario?.fotoPerfil
+      ? usuario.fotoPerfil
+      : '../../../assets/user/logOn.gif';
   }
 
   modalEliminarFotoPerfil(usuario: any) {
     const titulo: string = '¡ATENCIÓN: Vas a eliminar tu foto de perfil!';
-    const mensaje: string = '¿Estás seguro que deseas eliminar tu foto de perfil?';
+    const mensaje: string =
+      '¿Estás seguro que deseas eliminar tu foto de perfil?';
 
     const dialogRef = this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje, showAcceptButton: true },
