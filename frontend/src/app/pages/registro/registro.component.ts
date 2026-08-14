@@ -746,11 +746,13 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     this.ngZone.run(() => {
       this.userService.loginConGoogle(idToken).subscribe({
         next: (res: any) => {
-          if (res.usuarioExiste) {
-            // Usuario registrado -> Iniciar sesión y redirigir
+          if (res.usuarioExistente) {
+            if (res.usuario) {
+              localStorage.setItem('userData', JSON.stringify(res.usuario));
+              this.userService.actualizarEstadoUsuario(res.usuario);
+            }
             this.navCtrl.navigateRoot('/home');
           } else {
-            // Usuario nuevo -> Cargar datos y pasar al Paso 2
             this.prepararRegistroDesdeGoogle(res.datosGoogle);
           }
         },
@@ -763,6 +765,10 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   private prepararRegistroDesdeGoogle(datosGoogle: any): void {
     console.log('DatosGoogle: ', datosGoogle);
+    if (!datosGoogle) {
+      console.warn('No se recibieron datosGoogle para precargar');
+      return;
+    }
 
     this.esGoogle = true;
     this.formulario1.patchValue({ email: datosGoogle.email });

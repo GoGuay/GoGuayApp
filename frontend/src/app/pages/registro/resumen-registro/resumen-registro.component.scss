@@ -17,7 +17,8 @@
   gap: 8px;
 }
 
-a {
+/* Enlaces generales de la app (excluyendo terminos-link) */
+a:not(.terminos-link) {
   color: #B3B5E6 !important;
   font-weight: bold;
 }
@@ -146,6 +147,92 @@ select {
 .form-label {
   white-space: nowrap;
 }
+
+/* ==========================================================================
+   ESTILOS DE LA VENTANA MODAL Y CHECKBOX DE CONDICIONES
+   ========================================================================== */
+
+/* Fondo oscuro que cubre toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.65);
+  /* Fondo oscuro semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  /* Asegura que se dibuje por encima de todo */
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+/* Estilo para el texto principal del Checkbox */
+.texto-condiciones,
+label[for="checkCondiciones"] {
+  font-weight: bold !important;
+  color: #1a1a1a !important;
+  /* Negro visible y nítido */
+  opacity: 1 !important;
+}
+
+/* Fuerza el color azul sobre el enlace de condiciones sobreescribiendo Ionic/Bootstrap */
+a.terminos-link,
+.form-check a.terminos-link {
+  color: #0d6efd !important;
+  /* Azul intenso de alta visibilidad */
+  text-decoration: underline !important;
+  font-weight: bold !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:active {
+    color: #0d6efd !important;
+    text-decoration: underline !important;
+  }
+}
+
+/* Evita que el checkbox desactivado atenúe la etiqueta o el enlace */
+.form-check-input:disabled~.texto-condiciones,
+.form-check-input:disabled~label {
+  opacity: 1 !important;
+  color: #1a1a1a !important;
+}
+
+/* Formato y dimensiones de la caja modal flotante */
+app-contrato-registro {
+  display: block;
+  width: 100%;
+  max-width: 650px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================================================== */
 
 @media (max-width: 576px) {
   [slot="content"] {
