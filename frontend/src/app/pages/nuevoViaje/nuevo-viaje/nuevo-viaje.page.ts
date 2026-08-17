@@ -31,6 +31,8 @@ import {
   tap,
 } from 'rxjs';
 import { GoogleServices } from '../../../core/google-services/google-services.service';
+import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
+import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -56,8 +58,8 @@ export class NuevoViajePage implements OnInit {
   userLoggedIn: boolean = false;
   isOpen: boolean = false;
 
-  origen: string = '';
-  destino: string = '';
+  origenCtrl: ControlLocalidad;
+  destinoCtrl: ControlLocalidad;
   plazas: string = '';
   hora_seleccionada: string = '';
 
@@ -114,10 +116,16 @@ export class NuevoViajePage implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private location: Location,
-    private googleService: GoogleServices,
     private elementRef: ElementRef,
     private travelService: TravelService,
+    public buscadorLocalidadesService: BuscadorLocalidadesService,
   ) {
+    // Inicialización de controles de origen y destino
+    this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
+    this.destinoCtrl = this.buscadorLocalidadesService.crearEstadoControl();
+
+    this.buscadorLocalidadesService.inicializarBuscador(this.origenCtrl);
+    this.buscadorLocalidadesService.inicializarBuscador(this.destinoCtrl);
     this.translate
       .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
       .subscribe((traduccion: string) => {
@@ -133,81 +141,25 @@ export class NuevoViajePage implements OnInit {
       .subscribe((traduccion: string) => {
         this.message_help_auth = traduccion;
       });
-
-    /**
-     * CEREBRO DE BÚSQUEDA DE LOCALIDAD ORIGEN
-     * Con el pipe establecemos unos filtros para que los resultados sean mejores.
-     * debounceTime --> espera a que el usuario deje de escribir por 400 milisegundos.
-     * disctingUntilChanged --> permite detectar si ha habido cambios reales desde el ultimo dato que se le ha pasado.
-     * switchMap(texto) --> recibe lo que el usuario está escribiendo, pero si hay una petición a la API en curso y el usuario ha escrito algo más,
-     * corta esa 1ª petición y se centra en la segunda, por lo tanto solo tiene una llamada a la API a la vez y no varias.
-     */
-    this.buscadorOrigen$
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        filter(() => this.estaEnOrigen),
-        filter((texto) => {
-          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
-          return regexLetra.test(texto);
-        }),
-        switchMap((texto) => {
-          const termino = texto.toLowerCase().trim();
-          if (this.cacheConsultas[termino]) {
-            return of(this.cacheConsultas[termino]);
-          }
-          if (texto.length >= 3) {
-            return this.googleService
-              .obtenerLocalidad(texto)
-              .pipe(
-                tap(
-                  (resultados) => (this.cacheConsultas[termino] = resultados),
-                ),
-              );
-          } else {
-            this.sugerenciasOrigen = [];
-            return [];
-          }
-        }),
-        filter(() => this.estaEnOrigen),
-      )
-      .subscribe((respuesta: any) => {
-        this.sugerenciasOrigen = respuesta;
-        this.cargandoOrigen = false;
-        this.cdr.detectChanges();
-      });
-
-    /**
-     * CEREBRO BUSQUEDA LOCALIDAD DESTINO: Funciona igual que la de origen
-     */
-    this.buscadorDestino$
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        filter(() => this.estaEnDestino),
-        filter((texto) => {
-          const regexLetra = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
-          return regexLetra.test(texto);
-        }),
-        switchMap((texto) => {
-          if (texto.length >= 3) {
-            return this.googleService.obtenerLocalidad(texto);
-          } else {
-            this.sugerenciasDestino = [];
-            return [];
-          }
-        }),
-        filter(() => this.estaEnDestino),
-      )
-      .subscribe((respuesta: any) => {
-        this.sugerenciasDestino = respuesta;
-        this.cargandoDestino = false;
-        this.cdr.detectChanges();
-      });
   }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+  }
+
+  // Getters auxiliares para mantener compatibilidad con el HTML existente
+  get origen(): string {
+    return this.origenCtrl.valorTexto;
+  }
+  set origen(val: string) {
+    this.origenCtrl.valorTexto = val;
+  }
+
+  get destino(): string {
+    return this.destinoCtrl.valorTexto;
+  }
+  set destino(val: string) {
+    this.destinoCtrl.valorTexto = val;
   }
 
   /**
@@ -237,43 +189,24 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   * Función para empujar el texto de origen al flujo reactivo de Google
+   * Obtiene una lista de sugerencias de búsqueda en la ciudad de destino.
+   * @param evento
    */
-  buscarSugerenciasOrigen(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const texto = inputElement.value;
-
-    this.estaEnOrigen = true;
-    this.estaEnDestino = false;
-    this.cargandoOrigen = true;
-
-    if (texto && texto.length >= 3) {
-      this.buscadorOrigen$.next(texto);
-    } else {
-      this.sugerenciasOrigen = [];
-      this.cargandoOrigen = false;
-    }
+  obtenerSugerenciasOrigen(evento: Event) {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
+    this.origenCtrl.valorTexto = contenidoInput;
+    this.origenCtrl.buscador$.next(contenidoInput);
   }
 
   /**
-   * Función para empujar el texto de destino al flujo reactivo de Google
+   * Obtiene una lista de sugerencias de búsqueda en la ciudad de destino.
+   * @param evento
    */
-  buscarSugerenciasDestino(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const texto = inputElement.value;
-
-    this.estaEnOrigen = false;
-    this.estaEnDestino = true;
-    this.cargandoDestino = true;
-
-    if (texto && texto.length >= 3) {
-      this.buscadorDestino$.next(texto);
-    } else {
-      this.sugerenciasDestino = [];
-      this.cargandoDestino = false;
-    }
+  obtenerSugerenciasDestino(evento: Event) {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
+    this.destinoCtrl.valorTexto = contenidoInput;
+    this.destinoCtrl.buscador$.next(contenidoInput);
   }
-
 
   /**
    * Función para obtener la ubicación actual del usuario y buscar la ciudad correspondiente usando Nominatim.
@@ -301,10 +234,10 @@ export class NuevoViajePage implements OnInit {
                   data.address.village ||
                   '';
                 if (city) {
-                  this.origen = city;
+                  this.origenCtrl = city;
                   const viajeData = {
                     ...this.travelService.getViajeData(),
-                    origen: this.origen,
+                    origen: this.origenCtrl,
                   };
                   this.travelService.setViajeData(viajeData);
                   this.cargandoOrigen = false;
@@ -331,39 +264,23 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   * Función para guardar la información de la localidad de origen seleccionada.
-   *
-   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
+   * LLama al servicio de buscadorLocalidades y a la función seleccionarLocalidad, le pasa el origen, la localidad que recibe por parámetro de entrara y el inputOrigen
+   * @param localidad
    */
   seleccionarLocalidadOrigen(localidad: any) {
-    this.origen = localidad.descripcion.split(',')[0].trim();
-    this.ultimaLocalidadValidaOrigen = localidad;
-
-    const viajeData = {
-      ...this.travelService.getViajeData(),
-      origen: this.origen,
-    };
-    this.travelService.setViajeData(viajeData);
-    this.sugerenciasOrigen = [];
-    this.indiceActivoOrigen = -1;
+    this.buscadorLocalidadesService.seleccionarLocalidad(
+      this.origenCtrl,
+      localidad,
+      this.inputOrigen,
+    );
   }
 
-  /**
-   * Función para guardar la información de la localidad de destino seleccionada.
-   *
-   * @param localidad -> Recibe la localidad seleccionada en la lista de sugerencias.
-   */
   seleccionarLocalidadDestino(localidad: any) {
-    this.destino = localidad.descripcion.split(',')[0].trim();
-    this.ultimaLocalidadValidaDestino = localidad;
-
-    const viajeData = {
-      ...this.travelService.getViajeData(),
-      destino: this.destino,
-    };
-    this.travelService.setViajeData(viajeData);
-    this.sugerenciasDestino = [];
-    this.indiceActivoDestino = -1;
+    this.buscadorLocalidadesService.seleccionarLocalidad(
+      this.destinoCtrl,
+      localidad,
+      this.inputDestino,
+    );
   }
 
   /**

@@ -18,38 +18,69 @@
             <input
               #inputOrigen
               id="input-origen"
+              type="text"
+              class="input-viaje form-control"
+              [(ngModel)]="origenCtrl.valorTexto"
+              (blur)="
+                  origenCtrl.estaActivo = false;
+                  buscadorLocalidadesService.validarSeleccion(
+                    origenCtrl,
+                    inputOrigen
+                  )
+                "
+              (focus)="origenCtrl.estaActivo = true"
+              (input)="obtenerSugerenciasOrigen($event)"
+              (keydown)="manejarNavegacionTeclado($event, 'origen')"
               autocomplete="off"
               spellcheck="false"
-              [(ngModel)]="origen"
-              (input)="buscarSugerenciasOrigen($event)"
-              (blur)="estaEnOrigen = false; validarSeleccion('origen')"
-              (focus)="estaEnOrigen = true"
-              placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}"
-              class="input-viaje form-control"
-              name="origen"
+              [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
               role="combobox"
               aria-autocomplete="list"
               aria-haspopup="listbox"
               aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="sugerenciasOrigen.length > 0"
-              [attr.aria-controls]="sugerenciasOrigen.length > 0
+              [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
+              [attr.aria-controls]="
+                  origenCtrl.sugerencias.length > 0
                     ? 'lista-origen-resultados'
                     : null
                 "
+              [attr.aria-activedescendant]="
+                  origenCtrl.indiceActivo >= 0
+                    ? 'opt-orig-' + origenCtrl.indiceActivo
+                    : null
+                "
             />
-            <div *ngIf="cargandoOrigen" class="spinner-container spinner-input-inline">
+            <div
+              *ngIf="cargandoOrigen"
+              class="spinner-container spinner-input-inline"
+            >
               <app-spinner></app-spinner>
             </div>
             <ul
-              *ngIf="!cargandoOrigen && sugerenciasOrigen.length > 0"
+              id="lista-origen-resultados"
+              *ngIf="origenCtrl.sugerencias.length > 0"
               class="list-group lista_sugerencias"
+              role="listbox"
+              aria-live="polite"
             >
               <li
-                *ngFor="let sugerencia of sugerenciasOrigen"
-                (click)="seleccionarLocalidadOrigen(sugerencia)"
-                [ngClass]="{'list-group-item': true}"
+                [id]="'opt-orig-' + i"
+                *ngFor="
+                    let localidad of origenCtrl.sugerencias;
+                    let i = index
+                  "
+                class="list-group-item"
+                (mousedown)="
+                    $event.preventDefault();
+                    seleccionarLocalidadOrigen(localidad)
+                  "
+                [class.active]="i === origenCtrl.indiceActivo"
+                role="option"
+                tabindex="-1"
+                (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
               >
-                {{ sugerencia.descripcion }}
+                {{ localidad.descripcion }}
               </li>
             </ul>
           </div>
@@ -76,42 +107,71 @@
             <input
               #inputDestino
               id="input-destino"
-              [(ngModel)]="destino"
-              (blur)="estaEnDestino = false; validarSeleccion('destino')"
-              (focus)="estaEnDestino = true"
-              (input)="buscarSugerenciasDestino($event)"
+              type="text"
+              class="input-viaje form-control"
+              [(ngModel)]="destinoCtrl.valorTexto"
+              (blur)="
+                  destinoCtrl.estaActivo = false;
+                  buscadorLocalidadesService.validarSeleccion(
+                    destinoCtrl,
+                    inputDestino
+                  )
+                "
+              (focus)="destinoCtrl.estaActivo = true"
+              (input)="obtenerSugerenciasDestino($event)"
               (keydown)="manejarNavegacionTeclado($event, 'destino')"
               autocomplete="off"
               spellcheck="false"
-              placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}"
-              class="input-viaje form-control"
-              name="destino"
+              [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
               role="combobox"
               aria-autocomplete="list"
               aria-haspopup="listbox"
               aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="sugerenciasDestino.length > 0"
+              [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
               [attr.aria-controls]="
-                  sugerenciasDestino.length > 0
+                  destinoCtrl.sugerencias.length > 0
                     ? 'lista-destino-resultados'
+                    : null
+                "
+              [attr.aria-activedescendant]="
+                  indiceActivoDestino >= 0
+                    ? 'opt-dest-' + indiceActivoDestino
                     : null
                 "
             />
             <!-- Spinner de carga -->
-            <div *ngIf="cargandoDestino" class="spinner-container spinner-input-inline">
+            <div
+              *ngIf="cargandoDestino"
+              class="spinner-container spinner-input-inline"
+            >
               <app-spinner></app-spinner>
             </div>
 
             <ul
-              *ngIf="!cargandoDestino && sugerenciasDestino.length > 0"
+              *ngIf="destinoCtrl.sugerencias.length > 0"
               class="list-group lista_sugerencias"
+              id="lista-destino-resultados"
+              role="listbox"
+              aria-live="polite"
             >
               <li
-                *ngFor="let sugerencia of sugerenciasDestino"
-                (click)="seleccionarLocalidadDestino(sugerencia)"
-                [ngClass]="{'list-group-item': true}"
+                [id]="'opt-dest-' + i"
+                *ngFor="
+                    let localidad of destinoCtrl.sugerencias;
+                    let i = index
+                  "
+                class="list-group-item"
+                [class.active]="i === indiceActivoDestino"
+                (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
+                (mousedown)="
+                    $event.preventDefault();
+                    seleccionarLocalidadDestino(localidad)
+                  "
+                role="option"
+                tabindex="-1"
+                (keyup.enter)="seleccionarLocalidadDestino(localidad)"
               >
-                {{ sugerencia.descripcion }}
+                {{ localidad.descripcion }}
               </li>
             </ul>
           </div>

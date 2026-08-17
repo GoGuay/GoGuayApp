@@ -87,8 +87,6 @@ export class BuscadorComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     private navCtrl: NavController,
-    private messageService: MessageService,
-    private googleService: GoogleServices,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
   ) {
     addIcons({ eye, lockClosed });
@@ -165,10 +163,6 @@ export class BuscadorComponent implements OnInit {
     this.buscadorLocalidadesService.limpiarSugerencias(this.destinoCtrl);
     this.inputOrigen.nativeElement.focus();
   }
-
-  /**
-   * INTERACCIÓN DE BÚSQUEDA Y TECLADO
-   */
 
   /**
    * Obtiene una lista de sugerencias de búsqueda en la ciudad de origen.
