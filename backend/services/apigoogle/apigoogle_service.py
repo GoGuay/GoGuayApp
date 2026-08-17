@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from google.cloud import translate
 import re
+from concurrent.futures import ThreadPoolExecutor
 
 
 
@@ -48,102 +49,98 @@ def buscar_localidad():
     }
 
     try:        
-        response = requests.post(url_autocomplete, json=payload_autocomplete, headers=headers_autocomplete)
+        response = requests.post(url_autocomplete, json=payload_autocomplete, headers=headers_autocomplete, timeout=3.0)
         response.raise_for_status()  
         data = response.json()  
 
+        suggestions = data.get('suggestions', [])
+        if not suggestions:
+            return jsonify([]), 200
+
+        # MÚLTIPLES HILOS (PARALELO): Se ejecutan todas las consultas a la vez utilizando la librería estándar de Python
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            resultados = list(executor.map(lambda item: obtener_detalle_localidad(item, googleapykey), suggestions))
+
+        # Filtrar duplicados y elementos nulos
         localidades = []
         descripciones_vistas = set()
 
-        for item in data.get('suggestions', []):
-            prediction = item.get('placePrediction')
-            if not prediction:
-                continue
+        for res in resultados:
+            if res and res['descripcion'] not in descripciones_vistas:
+                descripciones_vistas.add(res['descripcion'])
+                localidades.append(res)
 
-            place_id = prediction['placeId']
-            structured = prediction.get('structuredFormat', {})
-            municipio = structured.get('mainText', {}).get('text', '').strip()
-            
-            # PASO 2: Como ya ampliamos la cuota, llamamos a los detalles de cada PlaceId sin miedo al 429
-            url_details = f'https://places.googleapis.com/v1/places/{place_id}?languageCode=es'
-            headers_details = {
-                'Content-Type': 'application/json',
-                'X-Goog-Api-Key': googleapykey,
-                'X-Goog-FieldMask': 'addressComponents,formattedAddress'
-            }
-
-            provincia_real = None
-            formatted_address = None
-            try:
-                resp_details = requests.get(url_details, headers=headers_details)
-                if resp_details.status_code == 200:
-                    details_data = resp_details.json()
-                    address_components = details_data.get('addressComponents', [])
-                    formatted_address = details_data.get('formattedAddress', '')
-                    
-                    # Buscamos de forma infalible el tipo que representa a la provincia
-                    for component in address_components:
-                        types = component.get('types', [])
-                        if 'administrative_area_level_2' in types:
-                            provincia_real = component.get('longText')
-                            break
-                    if not provincia_real:
-                        for component in address_components:
-                            types = component.get('types', [])
-                            if 'administrative_area_level_1' in types:
-                                provincia_real = component.get('longText')
-                                break   
-                   
-
-            except Exception as detail_err:
-                print(f"Error recuperando detalle para {place_id}: {detail_err}")
-
-            if not provincia_real and formatted_address:
-                partes_address = [p.strip() for p in formatted_address.split(',') if p.strip()]
-                
-                
-                if partes_address and partes_address[-1].lower() in ['españa', 'spain']:
-                    partes_address.pop()
-                
-                
-                if partes_address:
-                    provincia_real = partes_address[-1]
-
-            # PASO 3: Construimos la descripción combinando Municipio + Provincia
-            if provincia_real:
-                provincia_limpia = (provincia_real
-                             .replace('Province of ', '')
-                             .replace('Provincia de ', '')
-                             .replace('Provincia d\'', '')
-                             .strip())
-                provincia_limpia = re.sub(r'\d+', '', provincia_limpia).strip()
-                
-                if municipio.lower() == provincia_limpia.lower():
-                    descripcion = municipio
-                else:
-                    descripcion = f"{municipio}, {provincia_limpia}"
-            else:
-                secundario = structured.get('secondaryText', {}).get('text', '').strip()
-                secundario_limpio = secundario.replace(', España', '').replace('España', '').strip()
-                if secundario_limpio:
-                    descripcion = f"{municipio}, {secundario_limpio}"
-                else:
-                    descripcion = municipio
-
-            # Control de duplicados antes de enviar a Angular
-            if descripcion not in descripciones_vistas:
-                descripciones_vistas.add(descripcion)
-                localidades.append({
-                    'descripcion': descripcion,
-                    'place_id': place_id
-                })            
-                
         return jsonify(localidades), 200
     
     except requests.exceptions.RequestException as e:   
         print(f"Error en Google API Autocomplete: {e.response.text if e.response else e}")     
         return jsonify({'error': str(e)}), 500
+
+
+def obtener_detalle_localidad(item, api_key):
+    """Función individual que se ejecuta en un hilo secundario."""
+    prediction = item.get('placePrediction')
+    if not prediction or not prediction.get('placeId'):
+        return None
+
+    place_id = prediction['placeId']
+    structured = prediction.get('structuredFormat', {})
+    municipio = structured.get('mainText', {}).get('text', '').strip()
     
+    region_limpia = None
+
+    # Consulta de detalles
+    url_details = f'https://places.googleapis.com/v1/places/{place_id}'
+    headers_details = {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': api_key,
+        'X-Goog-FieldMask': 'addressComponents'
+    }
+
+    try:
+        resp = requests.get(url_details, headers=headers_details, params={'languageCode': 'es'}, timeout=2.0)
+        if resp.status_code == 200:
+            components = resp.json().get('addressComponents', [])
+            provincia = None
+            ccaa = None
+
+            for comp in components:
+                types = comp.get('types', [])
+                if 'administrative_area_level_2' in types:
+                    provincia = comp.get('longText') or comp.get('shortText')
+                elif 'administrative_area_level_1' in types:
+                    ccaa = comp.get('longText') or comp.get('shortText')
+
+            region_limpia = provincia or ccaa
+    except Exception:
+        pass
+
+    # Fallback si falla la llamada de detalle
+    if not region_limpia:
+        secundario = structured.get('secondaryText', {}).get('text', '').strip()
+        if secundario:
+            partes = [p.strip() for p in secundario.split(',') if p.strip()]
+            partes_filtradas = [p for p in partes if p.lower() not in ['españa', 'spain']]
+            print ('Partes filtraodas: ', partes_filtradas)
+            if partes_filtradas:
+                region_limpia = partes_filtradas[0]
+
+    # Limpieza de prefijos
+    if region_limpia:
+        region_limpia = (region_limpia
+                         .replace('Province of ', '')
+                         .replace('Provincia de ', '')
+                         .replace('Provincia d\'', '')
+                         .replace('Provincia d’', '')
+                         .strip())
+        region_limpia = re.sub(r'\d+', '', region_limpia).strip()
+
+    descripcion = f"{municipio}, {region_limpia}"       
+
+    return {
+        'descripcion': descripcion,
+        'place_id': place_id
+    }
 
 
 
