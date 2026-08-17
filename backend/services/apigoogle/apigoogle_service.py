@@ -89,44 +89,49 @@ def obtener_detalle_localidad(item, api_key):
     
     region_limpia = None
 
-    # Consulta de detalles
-    url_details = f'https://places.googleapis.com/v1/places/{place_id}'
-    headers_details = {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': api_key,
-        'X-Goog-FieldMask': 'addressComponents'
-    }
+    # 1. Intentar extraer del texto secundario del autocompletado
+    secundario = structured.get('secondaryText', {})
+    secundario_texto = secundario.get('text', '') if isinstance(secundario, dict) else str(secundario)
 
-    try:
-        resp = requests.get(url_details, headers=headers_details, params={'languageCode': 'es'}, timeout=2.0)
-        if resp.status_code == 200:
-            components = resp.json().get('addressComponents', [])
-            provincia = None
-            ccaa = None
+    if secundario_texto:
+        partes = [p.strip() for p in secundario_texto.split(',') if p.strip()]
+        partes_filtradas = [p for p in partes if p.lower() not in ['españa', 'spain']]
+        if partes_filtradas:
+            region_limpia = partes_filtradas[0]
+        elif partes:
+            # Si solo venía "España", guardamos temporalmente el texto secundario
+            region_limpia = partes[0]
 
-            for comp in components:
-                types = comp.get('types', [])
-                if 'administrative_area_level_2' in types:
-                    provincia = comp.get('longText') or comp.get('shortText')
-                elif 'administrative_area_level_1' in types:
-                    ccaa = comp.get('longText') or comp.get('shortText')
+    # 2. Si no hay una región clara o es solo "España", intentamos la API de detalles
+    if not region_limpia or region_limpia.lower() in ['españa', 'spain']:
+        url_details = f'https://places.googleapis.com/v1/places/{place_id}'
+        headers_details = {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': api_key,
+            'X-Goog-FieldMask': 'addressComponents'
+        }
+    
+        try:
+            resp = requests.get(url_details, headers=headers_details, params={'languageCode': 'es'}, timeout=3.5)
+            if resp.status_code == 200:
+                components = resp.json().get('addressComponents', [])
+                provincia = ''
+                ccaa = ''
 
-            region_limpia = provincia or ccaa
-    except Exception:
-        pass
+                for comp in components:
+                    types = comp.get('types', [])
+                    if 'administrative_area_level_2' in types:
+                        provincia = comp.get('longText') or comp.get('shortText')
+                    elif 'administrative_area_level_1' in types:
+                        ccaa = comp.get('longText') or comp.get('shortText')
 
-    # Fallback si falla la llamada de detalle
-    if not region_limpia:
-        secundario = structured.get('secondaryText', {}).get('text', '').strip()
-        if secundario:
-            partes = [p.strip() for p in secundario.split(',') if p.strip()]
-            partes_filtradas = [p for p in partes if p.lower() not in ['españa', 'spain']]
-            print ('Partes filtraodas: ', partes_filtradas)
-            if partes_filtradas:
-                region_limpia = partes_filtradas[0]
-
-    # Limpieza de prefijos
-    if region_limpia:
+                if provincia or ccaa:
+                    region_limpia = provincia or ccaa
+        except Exception as e:
+            print(f"Advertencia en detalles de localidad: {e}")
+    
+    # 3. Limpieza de prefijos y números
+    if region_limpia and isinstance(region_limpia, str):
         region_limpia = (region_limpia
                          .replace('Province of ', '')
                          .replace('Provincia de ', '')
@@ -134,8 +139,12 @@ def obtener_detalle_localidad(item, api_key):
                          .replace('Provincia d’', '')
                          .strip())
         region_limpia = re.sub(r'\d+', '', region_limpia).strip()
+    
+    # 4. Fallback de seguridad absoluto (Evita rotundamente el None)
+    if not region_limpia or str(region_limpia).lower() in ['none', 'None', '', 'españa', 'spain']:
+        region_limpia = secundario_texto if secundario_texto else "España"
 
-    descripcion = f"{municipio}, {region_limpia}"       
+    descripcion = f"{municipio}, {region_limpia}" 
 
     return {
         'descripcion': descripcion,
@@ -143,6 +152,8 @@ def obtener_detalle_localidad(item, api_key):
     }
 
 
+
+   
 
 # Función para detectar el idioma en el que viene el texto de un input #
 # Cogemos los datos que vienen del json, concretamente lo que vienen en el campo 'texto'. 
