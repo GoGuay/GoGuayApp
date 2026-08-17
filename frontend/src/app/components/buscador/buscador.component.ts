@@ -19,15 +19,8 @@ import { eye, lockClosed } from 'ionicons/icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+
 import { of, Subject } from 'rxjs';
-import { GoogleServices } from '../../core/google-services/google-services.service';
 import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
 
@@ -51,6 +44,8 @@ import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/bu
   styleUrls: ['./buscador.component.scss'],
 })
 export class BuscadorComponent implements OnInit {
+  @ViewChild('inputOrigen') inputOrigen!: ElementRef;
+  @ViewChild('inputDestino') inputDestino!: ElementRef;
   // Objetos centralizados de Origen y Destino
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
@@ -70,16 +65,7 @@ export class BuscadorComponent implements OnInit {
   private ultimaLocalidadValidaOrigen: any = null;
   private ultimaLocalidadValidaDestino: any = null;
 
-  @ViewChild('inputOrigen') inputOrigen!: ElementRef;
-  @ViewChild('inputDestino') inputDestino!: ElementRef;
-
   @Output() onSearch = new EventEmitter<any>();
-
-  private buscadorOrigen$ = new Subject<string>();
-  private buscadorDestino$ = new Subject<string>();
-
-  //Variable para guardar una búsqueda en caché. Para saber si ya ha sido buscada previamente o no.
-  private cacheConsultas: { [key: string]: any[] } = {};
 
   estaEnOrigen: boolean = false;
   estaEnDestino: boolean = false;
@@ -162,26 +148,6 @@ export class BuscadorComponent implements OnInit {
     this.buscadorLocalidadesService.limpiarSugerencias(this.origenCtrl);
     this.buscadorLocalidadesService.limpiarSugerencias(this.destinoCtrl);
     this.inputOrigen.nativeElement.focus();
-  }
-
-  /**
-   * Obtiene una lista de sugerencias de búsqueda en la ciudad de origen.
-   * @param evento
-   */
-  obtenerSugerenciasOrigen(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.origenCtrl.valorTexto = contenidoInput;
-    this.origenCtrl.buscador$.next(contenidoInput);
-  }
-
-  /**
-   * Obtiene una lista de sugerencias de búsqueda en la ciudad de destino.
-   * @param evento
-   */
-  obtenerSugerenciasDestino(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.destinoCtrl.valorTexto = contenidoInput;
-    this.destinoCtrl.buscador$.next(contenidoInput);
   }
 
   /**

@@ -29,7 +29,12 @@
                   )
                 "
               (focus)="origenCtrl.estaActivo = true"
-              (input)="obtenerSugerenciasOrigen($event)"
+              (input)="
+                  buscadorLocalidadesService.obtenerSugerencias(
+                    origenCtrl,
+                    $event
+                  )
+                "
               (keydown)="manejarNavegacionTeclado($event, 'origen')"
               autocomplete="off"
               spellcheck="false"
@@ -72,12 +77,13 @@
                 class="list-group-item"
                 (mousedown)="
                     $event.preventDefault();
-                    seleccionarLocalidadOrigen(localidad)
+                   buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)
                   "
                 [class.active]="i === origenCtrl.indiceActivo"
                 role="option"
                 tabindex="-1"
-                (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                (click)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
+                (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
                 (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
               >
                 {{ localidad.descripcion }}
@@ -118,7 +124,12 @@
                   )
                 "
               (focus)="destinoCtrl.estaActivo = true"
-              (input)="obtenerSugerenciasDestino($event)"
+              (input)="
+                  buscadorLocalidadesService.obtenerSugerencias(
+                    destinoCtrl,
+                    $event
+                  )
+                "
               (keydown)="manejarNavegacionTeclado($event, 'destino')"
               autocomplete="off"
               spellcheck="false"
@@ -165,11 +176,12 @@
                 (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
                 (mousedown)="
                     $event.preventDefault();
-                    seleccionarLocalidadDestino(localidad)
+                    buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)
                   "
                 role="option"
                 tabindex="-1"
-                (keyup.enter)="seleccionarLocalidadDestino(localidad)"
+                (click)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
+                (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
               >
                 {{ localidad.descripcion }}
               </li>

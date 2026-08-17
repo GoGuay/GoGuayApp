@@ -88,7 +88,7 @@ export class BuscadorLocalidadesService {
   seleccionarLocalidad(
     control: ControlLocalidad,
     localidad: any,
-    elementRef?: ElementRef,
+    elementRefInput?: ElementRef | HTMLInputElement,
   ): void {
     control.buscandoSeleccion = true;
     control.ultimaLocalidadValida = localidad;
@@ -97,10 +97,13 @@ export class BuscadorLocalidadesService {
       : '';
     control.sugerencias = [];
     control.indiceActivo = -1;
-    if (elementRef) {
-      elementRef.nativeElement.focus();
+    if (elementRefInput) {
+      const el =
+        'nativeElement' in elementRefInput
+          ? elementRefInput.nativeElement
+          : elementRefInput;
+      el.focus();
     }
-    // Liberamos la bandera tras un pequeño delay
     setTimeout(() => {
       control.buscandoSeleccion = false;
     }, 250);
@@ -209,5 +212,11 @@ export class BuscadorLocalidadesService {
     } else if (event.key === 'Escape') {
       this.limpiarSugerencias(control, elementRefInput, true);
     }
+  }
+
+  obtenerSugerencias(control: ControlLocalidad, evento: Event): void {
+    const contenidoInput = (evento.target as HTMLInputElement).value;
+    control.valorTexto = contenidoInput;
+    control.buscador$.next(contenidoInput);
   }
 }

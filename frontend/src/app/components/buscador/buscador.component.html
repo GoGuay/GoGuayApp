@@ -59,7 +59,12 @@
                   )
                 "
                 (focus)="origenCtrl.estaActivo = true"
-                (input)="obtenerSugerenciasOrigen($event)"
+                (input)="
+                  buscadorLocalidadesService.obtenerSugerencias(
+                    origenCtrl,
+                    $event
+                  )
+                "
                 (keydown)="manejarNavegacionTeclado($event, 'origen')"
                 autocomplete="off"
                 spellcheck="false"
@@ -140,7 +145,12 @@
                   )
                 "
                 (focus)="destinoCtrl.estaActivo = true"
-                (input)="obtenerSugerenciasDestino($event)"
+                (input)="
+                  buscadorLocalidadesService.obtenerSugerencias(
+                    destinoCtrl,
+                    $event
+                  )
+                "
                 (keydown)="manejarNavegacionTeclado($event, 'destino')"
                 autocomplete="off"
                 spellcheck="false"

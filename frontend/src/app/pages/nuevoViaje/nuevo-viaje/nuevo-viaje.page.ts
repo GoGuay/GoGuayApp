@@ -189,26 +189,6 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   * Obtiene una lista de sugerencias de búsqueda en la ciudad de destino.
-   * @param evento
-   */
-  obtenerSugerenciasOrigen(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.origenCtrl.valorTexto = contenidoInput;
-    this.origenCtrl.buscador$.next(contenidoInput);
-  }
-
-  /**
-   * Obtiene una lista de sugerencias de búsqueda en la ciudad de destino.
-   * @param evento
-   */
-  obtenerSugerenciasDestino(evento: Event) {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    this.destinoCtrl.valorTexto = contenidoInput;
-    this.destinoCtrl.buscador$.next(contenidoInput);
-  }
-
-  /**
    * Función para obtener la ubicación actual del usuario y buscar la ciudad correspondiente usando Nominatim.
    * Se actualiza el campo de origen con la ciudad obtenida.
    */
@@ -264,26 +244,6 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   * LLama al servicio de buscadorLocalidades y a la función seleccionarLocalidad, le pasa el origen, la localidad que recibe por parámetro de entrara y el inputOrigen
-   * @param localidad
-   */
-  seleccionarLocalidadOrigen(localidad: any) {
-    this.buscadorLocalidadesService.seleccionarLocalidad(
-      this.origenCtrl,
-      localidad,
-      this.inputOrigen,
-    );
-  }
-
-  seleccionarLocalidadDestino(localidad: any) {
-    this.buscadorLocalidadesService.seleccionarLocalidad(
-      this.destinoCtrl,
-      localidad,
-      this.inputDestino,
-    );
-  }
-
-  /**
    *
    * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
    * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
@@ -297,49 +257,6 @@ export class NuevoViajePage implements OnInit {
    * Si el evento es tecla arriba:
    *  -
    */
-  manejarNavegacionTeclado(
-    event: KeyboardEvent,
-    tipo: 'origen' | 'destino',
-    index: number = -1,
-  ) {
-    const sugerencias =
-      tipo === 'origen' ? this.sugerenciasOrigen : this.sugerenciasDestino;
-    let indiceActual =
-      tipo === 'origen' ? this.indiceActivoOrigen : this.indiceActivoDestino;
-
-    if (sugerencias.length === 0) return;
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      if (indiceActual < sugerencias.length - 1) {
-        indiceActual++;
-        this.actualizarIndiceYFoco(tipo, indiceActual);
-      }
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      if (indiceActual > 0) {
-        indiceActual--;
-        this.actualizarIndiceYFoco(tipo, indiceActual);
-      } else {
-        this.actualizarIndiceYFoco(tipo, -1);
-        const input = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
-        input.nativeElement.focus();
-      }
-    } else if (event.key === 'Enter') {
-      // Si hay algo seleccionado en la lista, lo elegimos
-      if (indiceActual !== -1) {
-        event.preventDefault();
-        const seleccionada = sugerencias[indiceActual];
-        if (tipo === 'origen') {
-          this.seleccionarLocalidadOrigen(seleccionada);
-        } else {
-          this.seleccionarLocalidadDestino(seleccionada);
-        }
-      }
-    } else if (event.key === 'Escape') {
-      this.limpiarSugerencias(tipo);
-    }
-  }
 
   private actualizarIndiceYFoco(
     tipo: 'origen' | 'destino',
@@ -383,6 +300,26 @@ export class NuevoViajePage implements OnInit {
         this.inputDestino.nativeElement.focus();
       }
     }
+  }
+
+  manejarNavegacionTeclado(
+    event: KeyboardEvent,
+    tipo: 'origen' | 'destino',
+    index: number = -1,
+  ) {
+    const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
+    const selector =
+      tipo === 'origen'
+        ? '.lista_sugerencias_origen'
+        : '.lista_sugerencias_destino';
+    const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
+
+    this.buscadorLocalidadesService.manejarNavegacionTeclado(
+      event,
+      control,
+      selector,
+      inputRef,
+    );
   }
 
   validarSeleccion(tipo: 'origen' | 'destino') {

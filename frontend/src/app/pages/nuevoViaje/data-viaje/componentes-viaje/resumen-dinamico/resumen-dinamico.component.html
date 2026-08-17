@@ -1,18 +1,38 @@
 <div class="container resumen-container">
-  <div *ngIf="!isDesktop" class="d-flex justify-content-center mb-2 d-md-none">
-    <button type="button" mat-stroked-button class="btn-toggle-resumen" (click)="toggleResumenMobile()">
-      <i class="fi" [ngClass]="mostrarResumenMobile ? 'fi-rr-eye-crossed' : 'fi-rr-eye'"></i>
+  <div
+    *ngIf="!isDesktop"
+    class="d-flex justify-content-center mb-2 d-md-none"
+  >
+    <button
+      type="button"
+      mat-stroked-button
+      class="btn-toggle-resumen"
+      (click)="toggleResumenMobile()"
+    >
+      <i
+        class="fi"
+        [ngClass]="mostrarResumenMobile ? 'fi-rr-eye-crossed' : 'fi-rr-eye'"
+      ></i>
       {{ mostrarResumenMobile ? 'Ocultar resumen' : 'Ver resumen del viaje' }}
     </button>
   </div>
-  <div class="resumen-content" *ngIf="isDesktop || (!isDesktop && mostrarResumenMobile)">
-    <div class="container" id="resumen_viaje">
+  <div
+    class="resumen-content"
+    *ngIf="isDesktop || (!isDesktop && mostrarResumenMobile)"
+  >
+    <div
+      class="container"
+      id="resumen_viaje"
+    >
       <div class="d-flex justify-content-center">
         <i class="fi fi-rr-marker me-1 colours"></i>
         <ion-label>RESUMEN DEL VIAJE</ion-label>
       </div>
 
-      <div class="ion-padding" slot="content">
+      <div
+        class="ion-padding"
+        slot="content"
+      >
         <div class="container d-flex justify-content-center dialog-animate">
           <div class="row w-100">
             <!-- Columna izquierda -->
@@ -20,16 +40,94 @@
               <ul>
                 <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
-                  <strong>Lugar de origen: </strong>
-                  <span *ngIf="!editandoViaje">{{ currentViajeData?.origen }}</span>
-                  <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="origen"
-                    name="origen" [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasOrigen($event)"
-                    placeholder="Busca tu lugar de origen" />
+                  <strong>Lugar de origen:</strong>
+                  <span *ngIf="!editandoViaje">
+                    {{ currentViajeData?.origen }}
+                  </span>
+                  <input
+                    *ngIf="editandoViaje"
+                    #inputOrigen
+                    id="input-origen"
+                    type="text"
+                    class="input-viaje form-control"
+                    [(ngModel)]="origenCtrl.valorTexto"
+                    (blur)="
+                      origenCtrl.estaActivo = false;
+                      buscadorLocalidadesService.validarSeleccion(
+                        origenCtrl,
+                        inputOrigen
+                      )
+                    "
+                    (focus)="origenCtrl.estaActivo = true"
+                    (input)="
+                      buscadorLocalidadesService.obtenerSugerencias(
+                        origenCtrl,
+                        $event
+                      )
+                    "
+                    (keydown)="manejarNavegacionTeclado($event, 'origen')"
+                    autocomplete="off"
+                    spellcheck="false"
+                    [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-haspopup="listbox"
+                    aria-describedby="instrucciones-busqueda"
+                    [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
+                    [attr.aria-controls]="
+                      origenCtrl.sugerencias.length > 0
+                        ? 'lista-origen-resultados'
+                        : null
+                    "
+                    [attr.aria-activedescendant]="
+                      origenCtrl.indiceActivo >= 0
+                        ? 'opt-orig-' + origenCtrl.indiceActivo
+                        : null
+                    "
+                  />
 
-                  <ul *ngIf="sugerenciasOrigen.length > 2" class="list-group lista_sugerencias">
-                    <li *ngFor="let localidad of sugerenciasOrigen; let i = index" [ngClass]="{'list-group-item': true}"
-                      (click)="seleccionarLocalidadOrigen(localidad)">
-                      {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
+                  <ul
+                    id="lista-origen-resultados"
+                    *ngIf="origenCtrl.sugerencias.length > 0"
+                    class="list-group lista_sugerencias"
+                    role="listbox"
+                    aria-live="polite"
+                  >
+                    <li
+                      [id]="'opt-orig-' + i"
+                      *ngFor="
+                        let localidad of origenCtrl.sugerencias;
+                        let i = index
+                      "
+                      class="list-group-item"
+                      (mousedown)="
+                        $event.preventDefault();
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          origenCtrl,
+                          localidad,
+                          inputOrigen
+                        )
+                      "
+                      [class.active]="i === origenCtrl.indiceActivo"
+                      role="option"
+                      tabindex="-1"
+                      (click)="
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          origenCtrl,
+                          localidad,
+                          inputOrigen
+                        )
+                      "
+                      (keyup.enter)="
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          origenCtrl,
+                          localidad,
+                          inputOrigen
+                        )
+                      "
+                      (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
+                    >
+                      {{ localidad.descripcion }}
                     </li>
                   </ul>
                 </li>
@@ -37,16 +135,94 @@
                 <!-- Selección de destino  -->
                 <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
-                  <strong>Lugar de destino: </strong>
-                  <span *ngIf="!editandoViaje">{{ currentViajeData?.destino }}</span>
-                  <input *ngIf="editandoViaje" type="text" class="input-viaje form-control" [(ngModel)]="destino"
-                    name="origen" [ngModelOptions]="{ standalone: true }" (input)="obtenerSugerenciasDestino($event)"
-                    placeholder="Busca tu lugar de destino" />
+                  <strong>Lugar de destino:</strong>
+                  <span *ngIf="!editandoViaje">
+                    {{ currentViajeData?.destino }}
+                  </span>
+                  <input
+                    *ngIf="editandoViaje"
+                    #inputDestino
+                    id="input-destino"
+                    type="text"
+                    class="input-viaje form-control"
+                    [(ngModel)]="destinoCtrl.valorTexto"
+                    (blur)="
+                      destinoCtrl.estaActivo = false;
+                      buscadorLocalidadesService.validarSeleccion(
+                        destinoCtrl,
+                        inputDestino
+                      )
+                    "
+                    (focus)="destinoCtrl.estaActivo = true"
+                    (input)="
+                      buscadorLocalidadesService.obtenerSugerencias(
+                        destinoCtrl,
+                        $event
+                      )
+                    "
+                    (keydown)="manejarNavegacionTeclado($event, 'destino')"
+                    autocomplete="off"
+                    spellcheck="false"
+                    [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-haspopup="listbox"
+                    aria-describedby="instrucciones-busqueda"
+                    [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
+                    [attr.aria-controls]="
+                      destinoCtrl.sugerencias.length > 0
+                        ? 'lista-destino-resultados'
+                        : null
+                    "
+                    [attr.aria-activedescendant]="
+                      indiceActivoDestino >= 0
+                        ? 'opt-dest-' + indiceActivoDestino
+                        : null
+                    "
+                  />
 
-                  <ul *ngIf="sugerenciasDestino.length > 2" class="list-group lista_sugerencias">
-                    <li *ngFor="let localidad of sugerenciasDestino; let i = index"
-                      [ngClass]="{'list-group-item': true}" (click)="seleccionarLocalidadDestino(localidad)">
-                      {{ localidad.descripcion.split(',')[0].trim() }} - {{ localidad.provincia }}
+                  <ul
+                    *ngIf="destinoCtrl.sugerencias.length > 0"
+                    class="list-group lista_sugerencias"
+                    id="lista-destino-resultados"
+                    role="listbox"
+                    aria-live="polite"
+                  >
+                    <li
+                      [id]="'opt-dest-' + i"
+                      *ngFor="
+                        let localidad of destinoCtrl.sugerencias;
+                        let i = index
+                      "
+                      class="list-group-item"
+                      [class.active]="i === indiceActivoDestino"
+                      (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
+                      (mousedown)="
+                        $event.preventDefault();
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          destinoCtrl,
+                          localidad,
+                          inputDestino
+                        )
+                      "
+                      role="option"
+                      tabindex="-1"
+                      (click)="
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          destinoCtrl,
+                          localidad,
+                          inputDestino
+                        )
+                      "
+                      (keyup.enter)="
+                        buscadorLocalidadesService.seleccionarLocalidad(
+                          destinoCtrl,
+                          localidad,
+                          inputDestino
+                        )
+                      "
+                    >
+                      {{ localidad.descripcion }}
                     </li>
                   </ul>
                 </li>
@@ -54,31 +230,53 @@
                 <!-- Selección de coches  -->
                 <li class="colours">
                   <i class="fi fi-rr-car me-1"></i>
-                  <strong>Coche seleccionado: </strong>
+                  <strong>Coche seleccionado:</strong>
 
                   <span *ngIf="!editandoViaje">
-                    {{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo }}
+                    {{ currentViajeData?.coche?.marca }}
+                    {{ currentViajeData?.coche?.modelo }}
                   </span>
 
-                  <div *ngIf="editandoViaje" class="select-container custom-dropdown-car mt-2 mb-2"
-                    (click)="toggleDropdownCoche()" [class.open]="isOpenCoche">
-
-                    <img src="../../../../../../assets/sistema/viaje-en-coche.png" class="select-icon"
-                      alt="icono coche" />
+                  <div
+                    *ngIf="editandoViaje"
+                    class="select-container custom-dropdown-car mt-2 mb-2"
+                    (click)="toggleDropdownCoche()"
+                    [class.open]="isOpenCoche"
+                  >
+                    <img
+                      src="../../../../../../assets/sistema/viaje-en-coche.png"
+                      class="select-icon"
+                      alt="icono coche"
+                    />
 
                     <div class="selected-value">
-                      {{ currentViajeData?.coche ? (currentViajeData.coche.marca + ' ' + currentViajeData.coche.modelo)
-                      : 'Selecciona un coche' }}
+                      {{
+                        currentViajeData?.coche
+                          ? currentViajeData.coche.marca +
+                            ' ' +
+                            currentViajeData.coche.modelo
+                          : 'Selecciona un coche'
+                      }}
                     </div>
 
-                    <ul class="custom-options" *ngIf="isOpenCoche">
-                      <li *ngFor="let coche of userData?.usuario?.vehiculos"
+                    <ul
+                      class="custom-options"
+                      *ngIf="isOpenCoche"
+                    >
+                      <li
+                        *ngFor="let coche of userData?.usuario?.vehiculos"
                         (click)="selectCoche(coche); $event.stopPropagation()"
-                        [class.selected]="currentViajeData?.coche?.id === coche.id">
+                        [class.selected]="
+                          currentViajeData?.coche?.id === coche.id
+                        "
+                      >
                         {{ coche.marca }} {{ coche.modelo }}
-                        <small style="opacity: 0.7;">({{ coche.color }})</small>
+                        <small style="opacity: 0.7">({{ coche.color }})</small>
                       </li>
-                      <li *ngIf="userData?.usuario?.vehiculos?.length === 0" class="disabled">
+                      <li
+                        *ngIf="userData?.usuario?.vehiculos?.length === 0"
+                        class="disabled"
+                      >
                         No tienes coches registrados
                       </li>
                     </ul>
@@ -91,59 +289,115 @@
               <ul>
                 <li class="colours">
                   <i class="fi fi-rs-users-alt me-1"></i>
-                  <strong>Plazas disponibles: </strong>
+                  <strong>Plazas disponibles:</strong>
 
-                  <span *ngIf="!editandoViaje">{{ currentViajeData?.plazas }}</span>
+                  <span *ngIf="!editandoViaje">
+                    {{ currentViajeData?.plazas }}
+                  </span>
 
-                  <div *ngIf="editandoViaje" class="select-container custom-dropdown mt-2 mb-2"
-                    (click)="toggleDropdown()" [class.open]="isOpen">
-
-                    <img src="../../../../../../assets/sistema/usuarios-alt.png" class="select-icon"
-                      alt="icono usuarios" />
+                  <div
+                    *ngIf="editandoViaje"
+                    class="select-container custom-dropdown mt-2 mb-2"
+                    (click)="toggleDropdown()"
+                    [class.open]="isOpen"
+                  >
+                    <img
+                      src="../../../../../../assets/sistema/usuarios-alt.png"
+                      class="select-icon"
+                      alt="icono usuarios"
+                    />
 
                     <div class="selected-value">
-                      {{ currentViajeData?.plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
+                      {{
+                        currentViajeData?.plazas ||
+                          ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate)
+                      }}
                     </div>
 
-                    <ul class="custom-options" *ngIf="isOpen">
-                      <li (click)="selectOption('1'); $event.stopPropagation()"
-                        [class.selected]="currentViajeData?.plazas === '1'">1</li>
-                      <li (click)="selectOption('2'); $event.stopPropagation()"
-                        [class.selected]="currentViajeData?.plazas === '2'">2</li>
-                      <li (click)="selectOption('3'); $event.stopPropagation()"
-                        [class.selected]="currentViajeData?.plazas === '3'">3</li>
-                      <li (click)="selectOption('4'); $event.stopPropagation()"
-                        [class.selected]="currentViajeData?.plazas === '4'">4</li>
+                    <ul
+                      class="custom-options"
+                      *ngIf="isOpen"
+                    >
+                      <li
+                        (click)="selectOption('1'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '1'"
+                      >
+                        1
+                      </li>
+                      <li
+                        (click)="selectOption('2'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '2'"
+                      >
+                        2
+                      </li>
+                      <li
+                        (click)="selectOption('3'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '3'"
+                      >
+                        3
+                      </li>
+                      <li
+                        (click)="selectOption('4'); $event.stopPropagation()"
+                        [class.selected]="currentViajeData?.plazas === '4'"
+                      >
+                        4
+                      </li>
                     </ul>
                   </div>
                 </li>
                 <li class="colours">
                   <i class="fi fi-rr-calendar me-1"></i>
-                  <strong>Fecha de salida: </strong>
+                  <strong>Fecha de salida:</strong>
                   <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
-                  <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
-                    class="form-control selectDate" />
+                  <input
+                    *ngIf="editandoViaje"
+                    type="date"
+                    [(ngModel)]="currentViajeData.fecha_salida"
+                    class="form-control selectDate"
+                  />
                 </li>
                 <li class="colours">
                   <i class="fi fi-rr-calendar-clock me-1"></i>
-                  <strong>Hora de salida: </strong>
-                  <span *ngIf="!editandoViaje">{{ currentViajeData?.hora_salida }}</span>
-                  <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
-                    class="form-control selecthour" />
+                  <strong>Hora de salida:</strong>
+                  <span *ngIf="!editandoViaje">
+                    {{ currentViajeData?.hora_salida }}
+                  </span>
+                  <input
+                    *ngIf="editandoViaje"
+                    type="time"
+                    [(ngModel)]="currentViajeData.hora_salida"
+                    class="form-control selecthour"
+                  />
                 </li>
               </ul>
             </div>
             <div class="container d-flex justify-content-center">
-              <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg"
-                (click)="toggleEditarViaje()">
-                <i class="fi fi-rr-edit me-1"></i> Modificar viaje
+              <button
+                *ngIf="!editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg"
+                (click)="toggleEditarViaje()"
+              >
+                <i class="fi fi-rr-edit me-1"></i>
+                Modificar viaje
               </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2"
-                (click)="guardarCambios()">
+              <button
+                *ngIf="editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg me-2"
+                (click)="guardarCambios()"
+              >
                 Guardar
               </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg_cancel"
-                (click)="cancelarEdicion()">
+              <button
+                *ngIf="editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg_cancel"
+                (click)="cancelarEdicion()"
+              >
                 Cancelar
               </button>
             </div>
@@ -152,6 +406,4 @@
       </div>
     </div>
   </div>
-
-
 </div>
