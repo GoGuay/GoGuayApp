@@ -94,11 +94,16 @@ export class MiPerfilPage implements OnInit {
     private router: Router,
   ) {
     this.loadUserData();
-    this.fechaNacimientoEditada = this.userData.usuario.fecha_nacimiento || '';
+    if (!this.userData || !this.userData.usuario) {
+      this.navCtrl.navigateRoot('/login');
+      return;
+    }
+    const usr = this.userData?.usuario;
+    this.fechaNacimientoEditada = usr?.fecha_nacimiento || '';
     this.lang = this.translate.currentLang;
-    this.emailEditado = this.userData.usuario.email || '';
-    this.telefonoEditado = this.userData.usuario.telefono || '';
-    this.comunComerciales = this.userData.usuario.comunic_comerciales || false;
+    this.emailEditado = usr?.email || '';
+    this.telefonoEditado = usr?.telefono || '';
+    this.comunComerciales = usr?.comunic_comerciales || false;
   }
 
   ngOnInit() {
