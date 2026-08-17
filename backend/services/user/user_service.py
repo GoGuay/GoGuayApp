@@ -6,9 +6,10 @@
 from datetime import datetime
 import random
 import requests
-from flask import Blueprint, jsonify, render_template,  request
+from flask import Blueprint, jsonify, render_template,  request, current_app
 from itsdangerous import SignatureExpired, BadSignature
 import nexmo
+import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token, create_refresh_token
@@ -28,6 +29,12 @@ from twilio.rest import Client
 from sqlalchemy import func
 from datetime import datetime, timezone
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from jwt import PyJWKClient
+
+
+GOOGLE_CERTS_URL = 'https://www.googleapis.com/oauth2/v3/certs'
 
 
 # Nombre único para evitar conflictos
@@ -52,10 +59,13 @@ PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
 PAYPAL_API = os.getenv('PAYPAL_API')
 
+##Configuración Token Google
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+
 
 ## --- RUTAS DE USUARIO --- ##
 
-## CREAR NUEVO USUARIO ##
+## CREAR NUEVO USUARIO - REGISTRO MANUAL ##
 @user_blueprint.route('/registro', methods=['POST'])
 def crear_usuario():
     """
@@ -70,17 +80,27 @@ def crear_usuario():
     """
     data = request.json
 
-    campos_obligatorios = ['nombre', 'apellidos', 'email', 'password']
+    campos_obligatorios = ['nombre', 'apellidos', 'email', 'fecha_nacimiento', 'telefono']
     for campo in campos_obligatorios:
-        if campo not in data:
+        if not data.get(campo):
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
+    
+    es_registro_google = str(data.get('es_google', False)).lower() in ['true', '1']
+    password_raw = data.get('password')
+
+    if not es_registro_google and not password_raw:
+        return jsonify({"error": "La contraseña es obligatoria para el registro por la web"})
 
     email_normalizado = data['email'].lower()
-
     if Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first():
         return jsonify({"error": "El correo electrónico ya existe"}), 400
 
-    codificar_password = generate_password_hash(data['password'])
+    codificar_password = generate_password_hash(password_raw) if password_raw else None
+
+    try:
+        fecha_nac = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d')
+    except (ValueError, TypeError):
+        return jsonify({"error": "El formato de la fecha de nacimiento no es válido. Usa YYYY-MM-DD"}), 400
 
     nuevo_usuario = Usuario(
         nombre=data['nombre'],
@@ -88,31 +108,90 @@ def crear_usuario():
         email=email_normalizado,
         password=codificar_password,
         telefono=data.get('telefono'),
+        fotoPerfil=data.get('fotoPerfil'),
         orientacion=data.get('orientacion'),
         genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
-        fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
+        fecha_nacimiento=fecha_nac
     )
-
-    db.session.add(nuevo_usuario)
-    db.session.commit()
+    try:
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error": f"Error al guardar en la base de datos: {str(e)}"}), 500
 
     
-    access_token = create_access_token(identity=nuevo_usuario.id)
+    access_token = create_access_token(identity=str(nuevo_usuario.id))
 
-    salt = 'email-verify'
-    token = serializer.dumps(nuevo_usuario.email, salt=salt)
-    link_verificacion = f"http://localhost:4200/verificar-email/{token}"
-    msg = Message("Bienvenidx a GoGuay",recipients=[nuevo_usuario.email])
-    msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
-    mail.send(msg)
-    nuevo_usuario.id
+    try:
+        salt = 'email-verify'
+        token = serializer.dumps(nuevo_usuario.email, salt=salt)
+        link_verificacion = f"http://localhost:4200/verificar-email/{token}"
+        msg = Message("Bienvenidx a GoGuay", recipients=[nuevo_usuario.email])
+        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
+
     return jsonify({
         "mensaje": "Nuevo usuario creado correctamente",
         "access_token": access_token,
         "usuario": nuevo_usuario.serialize()
     }), 201
+
+
+## CREAR NUEVO USUARIO - REGISTRO POR BOTÓN DE GOOGLE ##
+@user_blueprint.route('/google-login', methods=['POST'])
+def login_google():
+    """
+    1.Recibe el idTolen enviado desde el frontend tras pulsar el botón de Google
+    2. Valida el token usando la librería de google.
+    3. Extrae la información del perfil (email, nombre, apellidos)
+    4. Comprueba si el correo ya está registrado en la base de datos:
+        - Si existe inicia sesión directamente y devuelve el token de acceso JWT
+        - Si no existe: Devuelve los datos para que el frontend redirija el flujo de registro. 
+    """
+    data = request.json or {}
+    id_token_google = data.get('idToken') or data.get('token')
+    if not id_token_google:
+        return jsonify({"error": "falta el token de Google"}), 400
+    
+    try:
+        id_info = id_token.verify_oauth2_token(
+            id_token_google,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID
+        )
+        email = id_info.get('email', '').lower()
+        nombre = id_info.get('given_name', id_info.get('name',''))
+        apellidos = id_info.get('family_name', '')
+        foto_perfil = id_info.get('picture')
+
+        usuario_existente = Usuario.query.filter(Usuario.email.ilike(email)).first()
+
+        if usuario_existente:
+            access_token = create_access_token(identity=str(usuario_existente.id))
+            return jsonify({
+                "usuarioExistente": True,
+                "mensaje": "Inicio de sesión correcto",
+                "access_token": access_token,
+                "usuario": usuario_existente.serialize()
+            }),200
+        else:                   
+            return jsonify({
+                "usuarioExistente": False,
+                "datosGoogle": {
+                    "email": email,
+                    "nombre": nombre,
+                    "apellidos": apellidos,
+                    "foto_perfil": foto_perfil
+                }
+            }),200
+    except ValueError:
+            return jsonify({"error": "Token de Google inválido o expirado"}), 401
+    except Exception as e:
+            return jsonify({"error": f"Error en la verificación de Google: {str(e)}"}),500
 
 
 ## COMPOBAR SI YA EXISTE UN MAIL DURANTE EL REGISTRO ##
@@ -168,7 +247,7 @@ def login():
         return jsonify({'Error': 'Contraseña incorrecta'}), 401
 
     access_token = create_access_token(identity=str(usuario.id))
-    refresh_token = create_refresh_token(identity=usuario.id)
+    refresh_token = create_refresh_token(identity=str(usuario.id))
 
     return jsonify({
         'usuario': usuario.serialize(),
@@ -181,7 +260,7 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     usuario_id = get_jwt_identity()
-    nuevo_access_token = create_access_token(identity=usuario_id)
+    nuevo_access_token = create_access_token(identity=str(usuario_id))
 
     return jsonify({"access_token": nuevo_access_token}), 200
 
@@ -232,9 +311,9 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     return jsonify(usuario.serialize_public()), 200
 
 ## EDITAR INFORMACIÓN DE UN USUAURIO ##
-@user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
+@user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
-def actualizar_usuario(user_id):
+def actualizar_usuario(usuario_id):
     """
     1. Con el método PUT actualizamos un recurso que ya existe.
     2. get_or_404(user_id) --> busca al usuario por ID, si lo encuentra lo guarda en usuario, si no devuelve error y para la función. Equivale a "if usuario is None"
@@ -250,10 +329,10 @@ def actualizar_usuario(user_id):
     current_user_id = get_jwt_identity()
     print('current_user_id: ', current_user_id)
 
-    if int(current_user_id) != user_id:
+    if int(current_user_id) != usuario_id:
         return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     
-    usuario = Usuario.query.get_or_404(user_id)
+    usuario = Usuario.query.get_or_404(usuario_id)
     data = request.json
 
     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros', 'paypal_email', 'tarjeta_info', 'metodo_cobro_preferido', 'cobro_paypal_email', 'cobro_iban',  'cobro_titular' ]:
@@ -357,7 +436,7 @@ def reducir_imagen(imagen, max_size=10485760):
 
 
 ## ACTUALIZAR IMAGEN DE PERFIL ##
-@user_blueprint.route('/actualizar_imagen_perfil/<int:user_id>', methods=['PUT'])
+@user_blueprint.route('/actualizar_imagen_perfil/<int:usuario_id>', methods=['PUT'])
 def actualizar_imagen_perfil(user_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
@@ -393,7 +472,7 @@ def actualizar_imagen_perfil(user_id):
 
 
 ## ELIMINAR IMAGEN DE PERFIL ##
-@user_blueprint.route('/eliminar_imagen_perfil/<int:user_id>', methods=['DELETE'])
+@user_blueprint.route('/eliminar_imagen_perfil/<int:usuario_id>', methods=['DELETE'])
 def eliminar_imagen_perfil(user_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
@@ -421,7 +500,7 @@ def eliminar_imagen_perfil(user_id):
 
 
 ## CLOUDINARY -- ACTUALIZAR IMAGEN DE CABECERA - Componente: Perfil pùblico ##
-@user_blueprint.route('/actualizar_imagen_cabecera/<int:user_id>', methods=['PUT'])
+@user_blueprint.route('/actualizar_imagen_cabecera/<int:usuario_id>', methods=['PUT'])
 def actualizar_imagen_cabecera(user_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario (404 si no existe).
@@ -856,3 +935,5 @@ def capture_order(order_id: str):
         return jsonify(capture_data), response.status_code
         
     return jsonify(capture_data), 200
+
+

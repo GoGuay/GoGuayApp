@@ -24,6 +24,14 @@ select {
   box-sizing: border-box;
 }
 
+.position-relative .btn:hover,
+.position-relative .btn:focus,
+.position-relative .btn:active {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
 
 
 

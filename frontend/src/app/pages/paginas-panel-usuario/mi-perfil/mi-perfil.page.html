@@ -1,46 +1,88 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
     <div class="d-flex justify-content-center">
       <h1>{{'MIPERFIL.TITULO' | translate}}</h1>
     </div>
-    <p class="d-flex justify-content-center mb-4">{{'MIPERFIL.DESCRIPCION' | translate}}</p>
+    <p class="d-flex justify-content-center mb-4">
+      {{'MIPERFIL.DESCRIPCION' | translate}}
+    </p>
 
     <!-- Modificación de datos personales -->
     <ion-row class="d-flex justify-content-center">
-      <ion-col class="line" size="12" size-md="6" >
-        <h4 class="text-center mb-3">{{'MIPERFIL.INFO_PERSONAL.TITULO' | translate}}</h4>
+      <ion-col
+        class="line"
+        size="12"
+        size-md="6"
+      >
+        <h4 class="text-center mb-3">
+          {{'MIPERFIL.INFO_PERSONAL.TITULO' | translate}}
+        </h4>
         <div class="container text-center">
           <!-- === Fila 1: botones + imagen centrada === -->
-          <div class="row align-items-center justify-content-center mb-3 fila-foto">
+          <div
+            class="row align-items-center justify-content-center mb-3 fila-foto"
+          >
             <!-- Botón agregar foto -->
             <div class="col-auto">
-              <button type="button" class="btn btn_bg boton"
-                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate" (click)="fileInputPerfil.click()">
-                <img class="edit_btn" src="../../../../assets/sistema/mas.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate" />
+              <button
+                type="button"
+                class="btn btn_bg boton"
+                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
+                (click)="fileInputPerfil.click()"
+              >
+                <img
+                  class="edit_btn"
+                  src="../../../../assets/sistema/mas.png"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
+                />
               </button>
-              <input type="file" #fileInputPerfil accept="image/*" (change)="subirFotoPerfil($event)"
-                style="display: none" />
+              <input
+                type="file"
+                #fileInputPerfil
+                accept="image/*"
+                (change)="subirFotoPerfil($event)"
+                style="display: none"
+              />
             </div>
             <!-- Imagen centrada -->
             <div class="col-auto">
               <div class="img_container">
-                <img class="img_profile" [src]="imagenPerfilUsuario"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.ALT_IMG_PERFIL' | translate" />
-                <div class="overlay" *ngIf="cargando">
+                <img
+                  class="img_profile"
+                  [src]="imagenPerfilUsuario"
+                  referrerpolicy="no-referrer"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.ALT_IMG_PERFIL' | translate"
+                />
+                <div
+                  class="overlay"
+                  *ngIf="cargando"
+                >
                   <app-spinner></app-spinner>
                 </div>
               </div>
             </div>
             <!-- Botón eliminar foto -->
-            <div class="col-auto" *ngIf="!perfilSinFoto">
-              <button type="button" class="btn btn_bg boton btn_delete"
+            <div
+              class="col-auto"
+              *ngIf="!perfilSinFoto"
+            >
+              <button
+                type="button"
+                class="btn btn_bg boton btn_delete"
                 [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
-                (click)="modalEliminarFotoPerfil(userData.usuario)">
-                <img class="edit_btn" src="../../../../assets/sistema/cruz.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate" />
+                (click)="modalEliminarFotoPerfil(userData.usuario)"
+              >
+                <img
+                  class="edit_btn"
+                  src="../../../../assets/sistema/cruz.png"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
+                />
               </button>
             </div>
           </div>
@@ -48,11 +90,15 @@
           <!-- === Fila 2: botón "Así me ven los demás" === -->
           <div class="row justify-content-center mb-4">
             <div class="col-auto">
-              <button type="button" class="btn btn_bg ver-perfil-btn"
+              <button
+                type="button"
+                class="btn btn_bg ver-perfil-btn"
                 matTooltip="{{ 'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate }}"
                 [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate"
-                (click)="verPerfilPublico()">
-                {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' | translate}}
+                (click)="verPerfilPublico()"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' |
+                translate}}
               </button>
             </div>
           </div>
@@ -61,14 +107,36 @@
         <ion-row class="fila-datos">
           <ion-col class="col_nombre_apellidos">
             <div class="mb-3">
-              <label for="nombre" class="form-label">{{'MIPERFIL.INFO_PERSONAL.LABEL_NOMBRE' | translate}}</label>
-              <input type="text" class="form-control w-100" id="nombre" [(ngModel)]="nombreEditado" name="nombre"
-                (ngModelChange)="onInputChange()" />
+              <label
+                for="nombre"
+                class="form-label"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.LABEL_NOMBRE' | translate}}
+              </label>
+              <input
+                type="text"
+                class="form-control w-100"
+                id="nombre"
+                [(ngModel)]="nombreEditado"
+                name="nombre"
+                (ngModelChange)="onInputChange()"
+              />
             </div>
             <div class="mb-3">
-              <label for="apellidos" class="form-label">{{'MIPERFIL.INFO_PERSONAL.LABEL_APELLIDOS' | translate}}</label>
-              <input type="text" class="form-control" id="apellidos" [(ngModel)]="apellidosEditados" name="apellidos"
-                (ngModelChange)="onInputChange()" />
+              <label
+                for="apellidos"
+                class="form-label"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.LABEL_APELLIDOS' | translate}}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="apellidos"
+                [(ngModel)]="apellidosEditados"
+                name="apellidos"
+                (ngModelChange)="onInputChange()"
+              />
             </div>
           </ion-col>
         </ion-row>
@@ -76,105 +144,242 @@
         <ion-row class="fila-selectores">
           <ion-col class="col-pronombre">
             <div class="mb-3">
-              <label for="pronombre" class="form-label pronombre">
+              <label
+                for="pronombre"
+                class="form-label pronombre"
+              >
                 {{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL' | translate}}
-                <span tabindex="0" class="ms-2 text-primary" role="button" (click)="presentPopover($event)"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate" matTooltipPosition="above"
-                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate">
-                  <i class="bi-question-circle" aria-hidden="true"></i>
+                <span
+                  tabindex="0"
+                  class="ms-2 text-primary"
+                  role="button"
+                  (click)="presentPopover($event)"
+                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate"
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate"
+                >
+                  <i
+                    class="bi-question-circle"
+                    aria-hidden="true"
+                  ></i>
                 </span>
-                <ion-popover *ngIf="!isDesktop" #popover [isOpen]="isOpen" (didDismiss)="isOpen = false">
+                <ion-popover
+                  *ngIf="!isDesktop"
+                  #popover
+                  [isOpen]="isOpen"
+                  (didDismiss)="isOpen = false"
+                >
                   <ng-template>
-                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' |
-                      translate}}</ion-content>
+                    <ion-content class="ion-padding">
+                      {{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}
+                    </ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
-              <select id="pronombre" class="form-select col-pronombre form-control" [(ngModel)]="pronombreEditado"
-                name="pronombre" (ngModelChange)="onInputChange()" aria-describedby="pronombreAyuda">
-                <option selected disabled>{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate }}</option>
+              <select
+                id="pronombre"
+                class="form-select col-pronombre form-control"
+                [(ngModel)]="pronombreEditado"
+                name="pronombre"
+                (ngModelChange)="onInputChange()"
+                aria-describedby="pronombreAyuda"
+              >
+                <option
+                  selected
+                  disabled
+                >
+                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' |
+                  translate }}
+                </option>
                 <option value="Él / He / Him">Él / He / Him</option>
                 <option value="Ella / She / Her">Ella / She / Her</option>
                 <option value="Elle / They / Them">Elle / They / Them</option>
-                <option value="Otros">{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS' | translate }}</option>
-                <option value="No uso ninguno">{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO' | translate }}</option>
-                <option value="Prefiero no responder">{{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO' | translate
-                  }}</option>
+                <option value="Otros">
+                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS' | translate }}
+                </option>
+                <option value="No uso ninguno">
+                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO' | translate }}
+                </option>
+                <option value="Prefiero no responder">
+                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO' |
+                  translate }}
+                </option>
               </select>
-              <span id="pronombreAyuda" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.AYUDA_PRONOMBRE' | translate
-                }}</span>
+              <span
+                id="pronombreAyuda"
+                class="visually-hidden"
+              >
+                {{ 'MIPERFIL.INFO_PERSONAL.AYUDA_PRONOMBRE' | translate }}
+              </span>
             </div>
           </ion-col>
 
           <!-- Selector de género -->
           <ion-col>
             <div class="mb-3">
-              <label for="genero" class="form-label">
+              <label
+                for="genero"
+                class="form-label"
+              >
                 {{'MIPERFIL.INFO_PERSONAL.GENERO.LABEL'| translate}}
-                <span tabindex="0" role="button" class="ms-2 text-primary col-genero"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate" matTooltipPosition="above"
-                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate">
+                <span
+                  tabindex="0"
+                  role="button"
+                  class="ms-2 text-primary col-genero"
+                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate"
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate"
+                >
                   <i class="bi-question-circle"></i>
                 </span>
-                <ion-popover *ngIf="!isDesktop" #popover [isOpen]="isOpen" (didDismiss)="isOpen = false">
+                <ion-popover
+                  *ngIf="!isDesktop"
+                  #popover
+                  [isOpen]="isOpen"
+                  (didDismiss)="isOpen = false"
+                >
                   <ng-template>
-                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate}}</ion-content>
+                    <ion-content class="ion-padding">
+                      {{'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate}}
+                    </ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
 
-              <select id="genero" class="form-select col-genero form-control" [(ngModel)]="generoEditado" name="genero"
-                (ngModelChange)="onInputChange()" aria-describedby="generoAyuda">
-                <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}</option>
-                <option value="H_CIS">{{ 'SELECTOR_GENERO.H_CIS' | translate }}</option>
-                <option value="M_CIS">{{ 'SELECTOR_GENERO.M_CIS' | translate }}</option>
-                <option value="TRANS">{{ 'SELECTOR_GENERO.TRANS' | translate }}</option>
-                <option value="NO_BINARIO">{{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}</option>
-                <option value="INTERGENERO">{{ 'SELECTOR_GENERO.INTER' | translate }}</option>
-                <option value="NO_FLUIDO">{{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}</option>
-                <option value="OTRO">{{ 'SELECTOR_GENERO.OTRO' | translate }}</option>
-                <option value="NO_RESPONDE">{{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}</option>
+              <select
+                id="genero"
+                class="form-select col-genero form-control"
+                [(ngModel)]="generoEditado"
+                name="genero"
+                (ngModelChange)="onInputChange()"
+                aria-describedby="generoAyuda"
+              >
+                <option
+                  value=""
+                  selected
+                  disabled
+                  hidden
+                >
+                  {{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}
+                </option>
+                <option value="H_CIS">
+                  {{ 'SELECTOR_GENERO.H_CIS' | translate }}
+                </option>
+                <option value="M_CIS">
+                  {{ 'SELECTOR_GENERO.M_CIS' | translate }}
+                </option>
+                <option value="TRANS">
+                  {{ 'SELECTOR_GENERO.TRANS' | translate }}
+                </option>
+                <option value="NO_BINARIO">
+                  {{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}
+                </option>
+                <option value="INTERGENERO">
+                  {{ 'SELECTOR_GENERO.INTER' | translate }}
+                </option>
+                <option value="NO_FLUIDO">
+                  {{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}
+                </option>
+                <option value="OTRO">
+                  {{ 'SELECTOR_GENERO.OTRO' | translate }}
+                </option>
+                <option value="NO_RESPONDE">
+                  {{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}
+                </option>
               </select>
-              <span id="generoAyuda" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.GENERO.AYUDA' | translate
-                }}</span>
+              <span
+                id="generoAyuda"
+                class="visually-hidden"
+              >
+                {{ 'MIPERFIL.INFO_PERSONAL.GENERO.AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
 
           <!-- Selector de orientación -->
           <ion-col class="col-orientacion">
             <div class="mb-3">
-              <label for="orientacion" class="form-label">
+              <label
+                for="orientacion"
+                class="form-label"
+              >
                 {{'MIPERFIL.INFO_PERSONAL.ORIENTACION.LABEL' | translate}}
-                <span tabindex="0" role="button" class="ms-2 text-primary"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'| translate" matTooltipPosition="above">
+                <span
+                  tabindex="0"
+                  role="button"
+                  class="ms-2 text-primary"
+                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'| translate"
+                  matTooltipPosition="above"
+                >
                   <i class="bi-question-circle"></i>
                 </span>
-                <ion-popover *ngIf="!isDesktop" #popover [isOpen]="isOpen" (didDismiss)="isOpen = false">
+                <ion-popover
+                  *ngIf="!isDesktop"
+                  #popover
+                  [isOpen]="isOpen"
+                  (didDismiss)="isOpen = false"
+                >
                   <ng-template>
-                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'|
-                      translate}}</ion-content>
+                    <ion-content class="ion-padding">
+                      {{'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'| translate}}
+                    </ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
-              <select id="orientacion" [(ngModel)]="orientacionEditada" name="orientacion"
-                class="form-select col-orientacion form-control" (ngModelChange)="onInputChange()"
-                aria-describedby="orientacionAyuda">
+              <select
+                id="orientacion"
+                [(ngModel)]="orientacionEditada"
+                name="orientacion"
+                class="form-select col-orientacion form-control"
+                (ngModelChange)="onInputChange()"
+                aria-describedby="orientacionAyuda"
+              >
                 >
-                <option value="" selected disabled hidden>{{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
+                <option
+                  value=""
+                  selected
+                  disabled
+                  hidden
+                >
+                  {{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
                 </option>
-                <option value="GAY">{{ 'SELECTOR_ORIENTACION.GAY' | translate }}</option>
-                <option value="LESBIANA">{{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}</option>
-                <option value="BISEXUAL">{{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}</option>
-                <option value="PANSEXUAL">{{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}</option>
-                <option value="ASEXUAL">{{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}</option>
-                <option value="DEMISEXUAL">{{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}</option>
-                <option value="QUEER">{{ 'SELECTOR_ORIENTACION.QUEER' | translate }}</option>
-                <option value="HETEROSEXUAL">{{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}</option>
-                <option value="OTRO">{{ 'SELECTOR_ORIENTACION.OTRO' | translate }}</option>
-                <option value="NO_RESPONDE">{{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}</option>
+                <option value="GAY">
+                  {{ 'SELECTOR_ORIENTACION.GAY' | translate }}
+                </option>
+                <option value="LESBIANA">
+                  {{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}
+                </option>
+                <option value="BISEXUAL">
+                  {{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}
+                </option>
+                <option value="PANSEXUAL">
+                  {{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}
+                </option>
+                <option value="ASEXUAL">
+                  {{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}
+                </option>
+                <option value="DEMISEXUAL">
+                  {{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}
+                </option>
+                <option value="QUEER">
+                  {{ 'SELECTOR_ORIENTACION.QUEER' | translate }}
+                </option>
+                <option value="HETEROSEXUAL">
+                  {{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}
+                </option>
+                <option value="OTRO">
+                  {{ 'SELECTOR_ORIENTACION.OTRO' | translate }}
+                </option>
+                <option value="NO_RESPONDE">
+                  {{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}
+                </option>
               </select>
-              <span id="orientacionAyuda" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.ORIENTACION.AYUDA' |
-                translate }}</span>
+              <span
+                id="orientacionAyuda"
+                class="visually-hidden"
+              >
+                {{ 'MIPERFIL.INFO_PERSONAL.ORIENTACION.AYUDA' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
@@ -185,35 +390,83 @@
             <ion-row>
               <ion-col class="col_fecha_edad">
                 <div class="mb-3">
-                  <label for="fnacimiento" class="form-label">{{'MIPERFIL.INFO_PERSONAL.LABEL_FECHANACIMIENTO' |
-                    translate}}</label>
-                  <input type="date" class="form-control w-100" id="fnacimiento" [(ngModel)]="fechaNacimientoEditada"
-                    name="fnacimiento" (ngModelChange)="actualizarEdad()" (ngModelChange)="onInputChange()"
-                    aria-describedby="fechaNacimientoHelp" />
-                  <small id="fechaNacimientoHelp" class="visually-hidden">{{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' |
-                    translate }}</small>
+                  <label
+                    for="fnacimiento"
+                    class="form-label"
+                  >
+                    {{'MIPERFIL.INFO_PERSONAL.LABEL_FECHANACIMIENTO' |
+                    translate}}
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control w-100"
+                    id="fnacimiento"
+                    [(ngModel)]="fechaNacimientoEditada"
+                    name="fnacimiento"
+                    (ngModelChange)="actualizarEdad()"
+                    (ngModelChange)="onInputChange()"
+                    aria-describedby="fechaNacimientoHelp"
+                  />
+                  <small
+                    id="fechaNacimientoHelp"
+                    class="visually-hidden"
+                  >
+                    {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
+                  </small>
                 </div>
                 <div class="mb-3">
-                  <label for="edad" class="form-label">{{ 'MIPERFIL.INFO_PERSONAL.LABEL_EDAD' | translate }}</label>
+                  <label
+                    for="edad"
+                    class="form-label"
+                  >
+                    {{ 'MIPERFIL.INFO_PERSONAL.LABEL_EDAD' | translate }}
+                  </label>
 
-                  <input type="text" id="edad" class="form-control" [value]="edad" readonly />
+                  <input
+                    type="text"
+                    id="edad"
+                    class="form-control"
+                    [value]="edad"
+                    readonly
+                  />
                 </div>
               </ion-col>
             </ion-row>
 
             <!-- Sobre tí -->
             <div class="mb-3">
-              <label for="bio" class="form-label">{{'MIPERFIL.INFO_PERSONAL.LABEL_SOBRETI' | translate}}</label>
-              <textarea class="form-control bio" id="bio" rows="5" maxlength="250"
-                placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}" [(ngModel)]="bioEditada"
-                name="bio" aria-describedby="bioHelp" (ngModelChange)="onInputChange()"></textarea>
+              <label
+                for="bio"
+                class="form-label"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.LABEL_SOBRETI' | translate}}
+              </label>
+              <textarea
+                class="form-control bio"
+                id="bio"
+                rows="5"
+                maxlength="250"
+                placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}"
+                [(ngModel)]="bioEditada"
+                name="bio"
+                aria-describedby="bioHelp"
+                (ngModelChange)="onInputChange()"
+              ></textarea>
 
-              <div [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
-                style="text-align: right; font-size: 0.8rem; margin-top: 5px">
-                {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
+              <div
+                [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
+                style="text-align: right; font-size: 0.8rem; margin-top: 5px"
+              >
+                {{ bioEditada.length || 0 }} / 250 {{
+                'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
               <app-spinner *ngIf="spinnerActivo"></app-spinner>
-              <span id="bioHelp" class="visually-hidden">{{ 'MIPERFIL.INFO_PERSONAL.AYUDA_SOBRETI' | translate }}</span>
+              <span
+                id="bioHelp"
+                class="visually-hidden"
+              >
+                {{ 'MIPERFIL.INFO_PERSONAL.AYUDA_SOBRETI' | translate }}
+              </span>
             </div>
           </ion-col>
         </ion-row>
@@ -221,13 +474,24 @@
 
       <!-- <mat-divider vertical="" class="ms-4 mat-divider-mobile"></mat-divider> -->
 
-      <ion-col size="12" size-md="5" class="mx-md-5">
+      <ion-col
+        size="12"
+        size-md="5"
+        class="mx-md-5"
+      >
         <!-- Tabla vehiculos -->
         <ion-row class="d-flex justify-content-center">
           <div>
             <app-tabla-vehiculos />
-            <div *ngIf="vengoDeViaje" class="d-flex justify-content-center mt-3">
-              <button type="button" class="btn btn_bg" (click)="volverAViaje()">
+            <div
+              *ngIf="vengoDeViaje"
+              class="d-flex justify-content-center mt-3"
+            >
+              <button
+                type="button"
+                class="btn btn_bg"
+                (click)="volverAViaje()"
+              >
                 <i class="fi fi-rr-undo"></i>
                 Volver a la creación del viaje
               </button>
@@ -239,72 +503,138 @@
         <ion-row class="d-flex justify-content-center mt-4">
           <fieldset class="mb-2">
             <!-- Legend para lectores de pantalla -->
-            <legend class="visually-hidden">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</legend>
+            <legend class="visually-hidden">
+              {{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}
+            </legend>
 
-            <h4 class="text-center mb-4">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</h4>
+            <h4 class="text-center mb-4">
+              {{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}
+            </h4>
 
-            <div role="group" aria-labelledby="preferencias-label">
-              <label id="preferencias-label" class="form-label mb-3"><strong>{{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' |
-                  translate
-                  }}</strong></label>
+            <div
+              role="group"
+              aria-labelledby="preferencias-label"
+            >
+              <label
+                id="preferencias-label"
+                class="form-label mb-3"
+              >
+                <strong>
+                  {{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' | translate }}
+                </strong>
+              </label>
 
               <!-- HABLAR -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate "
-                  (change)="onCheckboxChange('talk', $event)" [checked]="preferenciasSeleccionadas.includes('talk')"
-                  id="pref-talk" />
-                <label class="form-check-label" for="pref-talk">{{ 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate
-                  }}</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate "
+                  (change)="onCheckboxChange('talk', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('talk')"
+                  id="pref-talk"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-talk"
+                >
+                  {{ 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate }}
+                </label>
               </div>
 
               <!-- MÚSICA -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate "
-                  (change)="onCheckboxChange('music', $event)" [checked]="preferenciasSeleccionadas.includes('music')"
-                  id="pref-music" />
-                <label class="form-check-label" for="pref-music">{{ 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate
-                  }}</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate "
+                  (change)="onCheckboxChange('music', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('music')"
+                  id="pref-music"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-music"
+                >
+                  {{ 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate }}
+                </label>
               </div>
 
               <!-- DORMIR -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate "
-                  (change)="onCheckboxChange('sleep', $event)" [checked]="preferenciasSeleccionadas.includes('sleep')"
-                  id="pref-sleep" />
-                <label class="form-check-label" for="pref-sleep">{{ 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate
-                  }}</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate "
+                  (change)="onCheckboxChange('sleep', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('sleep')"
+                  id="pref-sleep"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-sleep"
+                >
+                  {{ 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate }}
+                </label>
               </div>
 
               <!-- SILENCIO -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox"
+                <input
+                  class="form-check-input"
+                  type="checkbox"
                   [value]=" 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate "
                   (change)="onCheckboxChange('Silencio', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('Silencio')" id="pref-silence" />
-                <label class="form-check-label" for="pref-silence">{{ 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate
-                  }}</label>
+                  [checked]="preferenciasSeleccionadas.includes('Silencio')"
+                  id="pref-silence"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-silence"
+                >
+                  {{ 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate }}
+                </label>
               </div>
 
               <mat-divider class="mb-1 mt-2"></mat-divider>
-              <label class="mb-2"><strong>Otras preferencias de viaje</strong></label>
+              <label class="mb-2">
+                <strong>Otras preferencias de viaje</strong>
+              </label>
 
               <!-- MASCOTAS -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox"
+                <input
+                  class="form-check-input"
+                  type="checkbox"
                   [value]=" 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate "
                   (change)="onCheckboxChange('Mascotas', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('Mascotas')" id="pref-silence" />
-                <label class="form-check-label" for="pref-pets">{{ 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate
-                  }}</label>
+                  [checked]="preferenciasSeleccionadas.includes('Mascotas')"
+                  id="pref-silence"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-pets"
+                >
+                  {{ 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate }}
+                </label>
               </div>
 
               <!-- FUMAR -->
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" [value]=" 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate "
-                  (change)="onCheckboxChange('Fumar', $event)" [checked]="preferenciasSeleccionadas.includes('Fumar')"
-                  id="pref-silence" />
-                <label class="form-check-label" for="pref-smoke">{{ 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate
-                  }}</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [value]=" 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate "
+                  (change)="onCheckboxChange('Fumar', $event)"
+                  [checked]="preferenciasSeleccionadas.includes('Fumar')"
+                  id="pref-silence"
+                />
+                <label
+                  class="form-check-label"
+                  for="pref-smoke"
+                >
+                  {{ 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate }}
+                </label>
               </div>
             </div>
           </fieldset>
@@ -315,8 +645,14 @@
     <ion-row class="d-flex justify-content-center ms-1 mt-5 mb-3">
       <div>
         <p-toast position="bottom-center"></p-toast>
-        <button type="button" class="btn btn_bg" [attr.aria-label]="'MIPERFIL.BTN_GUARDAR_HELP' | translate"
-          mat-raised-button [disabled]="!botonHabilitado" (click)="editarDatos()">
+        <button
+          type="button"
+          class="btn btn_bg"
+          [attr.aria-label]="'MIPERFIL.BTN_GUARDAR_HELP' | translate"
+          mat-raised-button
+          [disabled]="!botonHabilitado"
+          (click)="editarDatos()"
+        >
           {{'MIPERFIL.BTN_GUARDAR' | translate}}
         </button>
       </div>

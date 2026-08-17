@@ -17,6 +17,12 @@ import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
+export interface LoginResponse {
+  access_token: string;
+  refresh_token?: string;
+  usuario: any;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -177,20 +183,25 @@ export class UserServicesService {
    * @param password Contraseña del usuario.
    * @returns Observable con los datos del usuario.
    */
-  login(email: string, password: string): Observable<Usuario> {
+  login(email: string, password: string): Observable<LoginResponse> {
     const loginData = { email, password };
-    return this.http.post<Usuario>(`${this.apiUrl}/user/login`, loginData).pipe(
-      tap((response) => {
-        if (response && response.access_token) {
-          localStorage.setItem('access_token', response.access_token);
-          if (response.refresh_token) {
-            localStorage.setItem('refresh_token', response.refresh_token);
-          }
 
-          console.log('Token detectado y guardado en localStorage');
-        }
-      }),
-    );
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/user/login`, loginData)
+      .pipe(
+        tap((response) => {
+          console.log('Respuesta del login normal:', response);
+          if (response && response.access_token) {
+            localStorage.setItem('access_token', response.access_token);
+
+            if (response.refresh_token) {
+              localStorage.setItem('refresh_token', response.refresh_token);
+            }
+
+            console.log('Token detectado y guardado en localStorage');
+          }
+        }),
+      );
   }
 
   /**
@@ -429,12 +440,15 @@ export class UserServicesService {
    * @param idToken Token JWT entregado por Google en el cliente.
    * @returns Observable con los datos de respuesta del backend.
    */
-  loginConGoogle(idToken: string): Observable<any> {
+  loginConGoogle(idToken: string): Observable<LoginResponse> {
     return this.http
-      .post<any>(`${this.apiUrl}/user/google-login`, { token: idToken })
+      .post<LoginResponse>(`${this.apiUrl}/user/google-login`, {
+        token: idToken,
+      })
       .pipe(
         tap((response) => {
-          // Si el usuario ya existía y el servidor nos devuelve un token de acceso, lo guardamos
+          console.log('Respuesta del login google:', response);
+
           if (response && response.access_token) {
             localStorage.setItem('access_token', response.access_token);
             if (response.refresh_token) {

@@ -402,6 +402,13 @@ export class ResumenRegistroComponent implements OnInit {
 
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
+        if (response && response.access_token) {
+          localStorage.setItem('access_token', response.access_token);
+          if (response.refresh_token) {
+            localStorage.setItem('refresh_token', response.refresh_token);
+          }
+        }
+
         localStorage.setItem('userData', JSON.stringify(response.usuario));
         this.userService.actualizarEstadoUsuario(response.usuario);
         this.navCtrl.navigateRoot('/home');

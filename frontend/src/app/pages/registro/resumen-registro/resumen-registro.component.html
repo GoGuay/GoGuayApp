@@ -376,7 +376,7 @@
         class="form-check-label mb-0 fw-bold texto-condiciones"
         for="checkCondiciones"
       >
-        Al registrarte, reconoces haber leído, entendido y aceptado nuestras
+        {{ 'REGISTRO.RESUMEN_REGISTRO.ACEPTAR_CONDICIONES_TEXTO' | translate }}
         <a
           (click)="abrirModalCondiciones()"
           class="terminos-link"
@@ -391,7 +391,7 @@
   @if (!condicionesAceptadas) {
     <div class="d-flex justify-content-center m-4">
       <p class="text-center mb-2 text-muted">
-        Debes abrir y leer las condiciones hasta el final para poder continuar.
+        {{ 'REGISTRO.RESUMEN_REGISTRO.DEBES_BAJAR' | translate }}
       </p>
     </div>
   }
@@ -404,7 +404,7 @@
       (click)="finalizarRegistro()"
       [disabled]="!condicionesAceptadas || formularioResumen.invalid"
     >
-      Finalizar y Crear Cuenta
+      {{ 'REGISTRO.BOTONES2.FINALIZAR_CREAR' | translate }}
     </button>
 
     <button
@@ -412,7 +412,7 @@
       routerLink="/home"
       class="btn btn_bg_secondary"
     >
-      Rechazar y salir
+      {{ 'REGISTRO.BOTONES2.RECHAZAR' | translate }}
     </button>
   </div>
 </div>

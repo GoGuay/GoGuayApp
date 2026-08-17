@@ -222,6 +222,7 @@
   },
   "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
   "REGISTRO": {
+    "OBLIGATORIO": "Obligatorio",
     "FORM1": {
       "BIENVENIDE": "BIENVENIDE",
       "SUBTITULO": "Aquí puedes empezar a registrarte",
@@ -233,7 +234,8 @@
         "OBLIGATORIO": "El correo es obligatorio.",
         "FORMATO": "El formato del correo no es correcto.",
         "YAEXISTE": "Este correo ya está registrado."
-      }
+      },
+      "SILOPREFIERES": "O si lo prefieres"
     },
     "FORM2": {
       "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
@@ -273,6 +275,9 @@
         "FORMATO": "El formato de la contraseña no es correcto."
       }
     },
+    "BOTONES": {
+      "ATRAS_PASO": "Atrás (Paso {{paso}}"
+    },
     "RESUMEN_REGISTRO": {
       "TUS_DATOS": "Estos son los datos que nos has facilitado.",
       "INFO": "No te preocupes si alguno es incorrecto: puedes modificarlo pulsando el icono del lápiz",
@@ -285,17 +290,19 @@
         "GENERO": "Género",
         "ORIENTACION": "Orientación"
       },
-      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado nuestras Normas y condiciones del Servicio.",
+      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado las Condiciones del Servicio.",
+      "DEBES_BAJAR": "Debes abrir y leer las condiciones hasta el final para poder continuar.",
       "BOTONES": {
         "ACEPTAR": "Aceptar y registrar",
         "RECHAZAR": "Rechazar y salir"
       },
       "SELECCIONA": "Selecciona una opción"
     },
-    "BOTONES": {
-      "ATRAS": "Atrás",
+    "BOTONES2": {
       "SIGUIENTE": "Siguiente",
-      "FINALIZAR_REGISTRO": "Finalizar registro"
+      "FINALIZAR_REGISTRO": "Finalizar registro",
+      "FINALIZAR_CREAR": "Finalizar y crear cuenta",
+      "RECHAZAR": "Rechazar y salir"
     }
   },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",

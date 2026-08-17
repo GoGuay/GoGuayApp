@@ -20,7 +20,7 @@ class Viaje(db.Model):
     ruta_seleccionada = db.Column(db.JSON, nullable=False)
     estado_viaje = db.Column(db.String(50), nullable=True, default=EstadoViajeEnum.PROXIMO.value)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    vehiculo = db.Column(db.Integer, nullable=False)
+    vehiculo = db.Column(db.Integer, db.ForeignKey('vehiculos.id'), nullable=False)
     reserva_automatica = db.Column(db.Boolean, nullable=False, default=False)
 
     pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True) 

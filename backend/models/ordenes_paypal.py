@@ -8,7 +8,7 @@ class Ordenes_Paypal(db.Model):
     viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id'), nullable=False)
     pasajero_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     conductor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    paypal_order_id = db.Column(db.Float, nullable=False)
+    paypal_order_id = db.Column(db.String(100), nullable=False)    
     importe_fijado =db.Column(db.Float, nullable=False)
     gastos_gestion = db.Column(db.Float, nullable=False)
     importe_total =  db.Column(db.Float, nullable=False)
