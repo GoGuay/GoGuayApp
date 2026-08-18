@@ -45,13 +45,17 @@ export class UserServicesService {
    * usuarioSource --> es otro BehaviorSubject para almacenar el usuario logueado actual
    * Se inicializa con los datos guardados en el localStorage bajo la clave 'userData' si existen o 'null' si no hay datos
    */
-  // Cambia la inicialización por una función más segura
   private getInitialUser(): Usuario['usuario'] | null {
     const data = localStorage.getItem('userData');
     if (!data) return null;
     try {
       const parsed = JSON.parse(data);
-      return parsed?.usuario || null;
+      if (parsed?.usuario) {
+        return parsed.usuario;
+      } else if (parsed?.id) {
+        return parsed;
+      }
+      return null;
     } catch (e) {
       console.error('Error al parsear userData inicial:', e);
       return null;
@@ -90,13 +94,20 @@ export class UserServicesService {
    * @param data
    */
   setUsuarioData(data: any) {
-    this.usuarioDataSubject.next(data);
-    if (data === null) {
+    if (!data) {
+      localStorage.removeItem('userData');
+      this.usuarioDataSubject.next(null);
       this.usuarioSource.next(null);
       this.userData = {} as Usuario;
-    } else if (data.usuario) {
-      this.usuarioSource.next(data.usuario);
+      return;
     }
+    const usuarioFinal = data.usuario ? data.usuario : data;
+    const objetoParaGuardar = data.usuario ? data : { usuario: data };
+
+    localStorage.setItem('userData', JSON.stringify(objetoParaGuardar));
+    this.usuarioDataSubject.next(objetoParaGuardar);
+    this.usuarioSource.next(usuarioFinal);
+    this.userData = objetoParaGuardar as Usuario;
   }
 
   /**

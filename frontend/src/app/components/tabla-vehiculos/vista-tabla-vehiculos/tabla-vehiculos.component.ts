@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule, Platform } from '@ionic/angular';
@@ -7,7 +13,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { HelpModalComponent } from '../../help-modal/help-modal.component';
-import { DialogConfig, DialogRef } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import {
   CARS,
@@ -17,7 +22,7 @@ import {
 } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../../../core/vehiculos-services/vehiculos-services.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -40,6 +45,7 @@ import { MessageService } from 'primeng/api';
   ],
 })
 export class TablaVehiculosComponent implements OnInit {
+  @Output() vehiculoAnadidoExito = new EventEmitter<any>();
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
   modificandoMarca: boolean = false;
@@ -63,7 +69,7 @@ export class TablaVehiculosComponent implements OnInit {
     private userService: UserServicesService,
     private platform: Platform,
     private messageService: MessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
     this.loadUserData();
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -83,49 +89,53 @@ export class TablaVehiculosComponent implements OnInit {
    */
   guardarVehiculo() {
     this.loadUserData();
+    if (!this.userData || !this.userData.usuario) {
+      console.error('No se pudieron cargar los datos del usuario.');
+      const usuarioLocal = localStorage.getItem('userData');
+      if (usuarioLocal) {
+        this.userData = JSON.parse(usuarioLocal);
+      } else {
+        return;
+      }
+    }
     const nuevoCoche: Coches = {
       marca: this.marcaSeleccionada,
       modelo: this.modeloSeleccionado,
       color: this.colorSeleccionado,
+      usuario_id: this.userData.usuario.id,
     };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
 
     this.vehiculosServicesService
       .anadirVehiculo(nuevoCoche)
       .subscribe((resultado: any) => {
         console.log('Vehiculo guardado correctamente:', resultado);
-        if (
-          resultado.vehiculos_usuario &&
-          resultado.vehiculos_usuario.length > 0
-        ) {
-          this.vehiculos_usuario = [...resultado.vehiculos_usuario];
-        } else {
-          console.error(
-            'No se recibieron vehículos actualizados desde el backend.'
-          );
-        }
+
+        const cocheGuardado =
+          resultado.vehiculo ||
+          resultado.vehiculos_usuario?.[
+            resultado.vehiculos_usuario.length - 1
+          ] ||
+          nuevoCoche;
 
         this.userService
           .obtenerUsuarioPorID(this.userData.usuario.id)
           .subscribe((usuarioActualizado) => {
-            localStorage.setItem('userData', JSON.stringify(this.userData));
             this.userData = usuarioActualizado;
-            // this.botonAnadirVehiculo();
-            // this.botonAnadirVehiculo();
-            console.log('Usuario actualizado:', this.userData);
+            this.userService.setUsuarioData(usuarioActualizado);
+            this.vehiculoAnadidoExito.emit(cocheGuardado);
             this.translate
               .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
               .subscribe((vehiculoGuardadoMessage: string) => {
                 this.messageService.add({
                   severity: 'success',
-                  summary: vehiculoGuardadoMessage, // Título traducido
-                  detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'), // Detalles traducidos
+                  summary: vehiculoGuardadoMessage,
+                  detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'),
                 });
               });
+
             this.marcaSeleccionada = '';
             this.modeloSeleccionado = '';
             this.colorSeleccionado = '';
-
             this.mostrarSelectorVehiculo = false;
 
             this.cdr.detectChanges();
@@ -138,15 +148,27 @@ export class TablaVehiculosComponent implements OnInit {
    * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
-    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userDataString = localStorage.getItem('userData');
+    if (!userDataString) return;
+
+    const usuario = JSON.parse(userDataString);
+    if (!usuario?.usuario?.id) return;
+
     this.vehiculosServicesService
       .obtenerVehiculosUsuario(usuario.usuario.id)
-      .subscribe((resultado) => {
-        console.log('Vehículos: ', resultado.vehiculos);
-        this.funcionesUsuario.vehiculos_usuario = resultado.vehiculos;
+      .subscribe({
+        next: (resultado: any) => {
+          const listaVehiculos = resultado?.vehiculos || [];
+          console.log('Vehículos: ', listaVehiculos);
+
+          this.funcionesUsuario.vehiculos_usuario = listaVehiculos;
+        },
+        error: (err) => {
+          console.error('Error al obtener los vehículos:', err);
+          this.funcionesUsuario.vehiculos_usuario = [];
+        },
       });
   }
-
   /**
    * Poner los campos del vehículo en editables (selectores e input)
    * @param vehiculo
@@ -212,8 +234,15 @@ export class TablaVehiculosComponent implements OnInit {
       .eliminarVehiculo(vehiculo.id, vehiculo)
       .subscribe((resultado) => {
         this.vehiculos_usuario = this.vehiculos_usuario.filter(
-          (coche) => coche.id !== vehiculo.id
+          (coche) => coche.id !== vehiculo.id,
         );
+        const userDataActual =
+          this.userService.getUsuarioData() ||
+          JSON.parse(localStorage.getItem('userData') || '{}');
+        if (userDataActual && userDataActual.usuario) {
+          userDataActual.usuario.vehiculos = this.vehiculos_usuario;
+          this.userService.setUsuarioData(userDataActual);
+        }
         this.cdr.detectChanges();
         this.obtenerVehiculos();
         this.mostrarSelectorVehiculo = false;
@@ -317,7 +346,7 @@ export class TablaVehiculosComponent implements OnInit {
    */
   filtrarModelos() {
     const coche = this.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
+      (vehiculo) => vehiculo.marca === this.marcaSeleccionada,
     );
     this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
     this.modeloSeleccionado = '';

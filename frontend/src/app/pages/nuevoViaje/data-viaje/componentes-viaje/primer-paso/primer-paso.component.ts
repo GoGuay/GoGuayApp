@@ -1,10 +1,15 @@
-import { Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatIcon } from '@angular/material/icon';
 import { IonicModule, Platform } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-
 import { LOCALE_ID } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -18,6 +23,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { TravelService } from '../../../../../core/travel-services/travel.service';
 import { VehiculosServicesService } from '../../../../../core/vehiculos-services/vehiculos-services.service';
+import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 registerLocaleData(localeEs);
 
@@ -34,7 +41,8 @@ registerLocaleData(localeEs);
     MatInputModule,
     CommonModule,
     MatButtonModule,
-    TranslateModule
+    TranslateModule,
+    TablaVehiculosComponent,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -48,7 +56,8 @@ export class PrimerPasoComponent implements OnInit {
   isOpen: boolean = false;
 
   private destroy$ = new Subject<void>();
-  private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
+  private readonly _adapter =
+    inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
   hora_seleccionada: string | null = null;
   horaMinimaPermitida: Date | null = null;
@@ -58,7 +67,7 @@ export class PrimerPasoComponent implements OnInit {
   viajeros: string = '';
   hora_salida: string = '';
   plazas: string = '';
-  cocheSeleccionado: string = '';
+  cocheSeleccionado: any = null;
 
   isDesktop: boolean = true;
 
@@ -67,7 +76,6 @@ export class PrimerPasoComponent implements OnInit {
   reservaAutomatica: boolean = false;
 
   hoy: string = new Date().toISOString();
-  
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;
@@ -87,16 +95,16 @@ export class PrimerPasoComponent implements OnInit {
     }
   }
 
-
   constructor(
     private travelService: TravelService,
     private platform: Platform,
     private vehiculosServicesService: VehiculosServicesService,
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private userService: UserServicesService,
+    private cdr: ChangeDetectorRef,
   ) {
     this._adapter.setLocale('es-ES');
-
   }
 
   @HostListener('window:resize', ['$event'])
@@ -105,12 +113,16 @@ export class PrimerPasoComponent implements OnInit {
   }
 
   ngOnInit() {
-    const datosUsuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
+    const datosUsuarioLocal = JSON.parse(
+      localStorage.getItem('userData') || '{}',
+    );
+    console.log('datosUsuarioLocal: ', datosUsuarioLocal);
+
     if (datosUsuarioLocal) {
       this.userData = datosUsuarioLocal;
     }
 
-    this.checkScreenSize();  // -> Para que sepa si es desktop o no al iniciar
+    this.checkScreenSize();
 
     this.obtenerVehiculos();
 
@@ -133,13 +145,34 @@ export class PrimerPasoComponent implements OnInit {
     });
 
     const viajeData = this.travelService.getViajeData();
+    console.log(
+      '[PrimerPaso] Datos del viaje obtenidos al iniciar:',
+      viajeData,
+    );
+    console.log(
+      '[PrimerPaso] Coche seleccionado actualmente:',
+      this.cocheSeleccionado,
+    );
 
     if (viajeData) {
       this.sumarUnDiaAFecha(viajeData.fecha_salida);
       this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
       this.viajeros = viajeData.viajeros || '0';
       this.plazas = viajeData.plazas || '';
-      this.cocheSeleccionado = viajeData.coche || '';
+      const cocheEnServicio = viajeData.coche;
+      const existeVehiculo =
+        cocheEnServicio &&
+        this.userData?.usuario?.vehiculos?.some(
+          (v: any) => v.id === cocheEnServicio.id,
+        );
+
+      if (existeVehiculo) {
+        this.cocheSeleccionado = cocheEnServicio;
+      } else {
+        this.cocheSeleccionado = null;
+        this.guardaDatosDelViajeEnServicio('coche', null);
+      }
+
       this.reservaAutomatica = viajeData.reserva_automatica ?? false;
       this.calcularHoraMinima();
     }
@@ -153,10 +186,35 @@ export class PrimerPasoComponent implements OnInit {
         if (viajeData) {
           this.cocheSeleccionado = viajeData.coche || '';
           this.plazas = viajeData.plazas || '';
-          this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
-          this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
+          this.fecha_seleccionada =
+            viajeData.fecha_salida || this.fecha_seleccionada;
+          this.hora_seleccionada =
+            viajeData.hora_salida || this.hora_seleccionada;
         }
       });
+  }
+
+  ionViewWillEnter() {
+    this.cargarDatosUsuarioActuales();
+  }
+
+  cargarDatosUsuarioActuales() {
+    this.userService.usuario$.subscribe((usuario) => {
+      if (usuario) {
+        this.userData = { usuario: usuario };
+
+        if (this.cocheSeleccionado) {
+          const existe = usuario.vehiculos?.some(
+            (v: any) => v.id === this.cocheSeleccionado.id,
+          );
+          if (!existe) {
+            this.cocheSeleccionado = null;
+          }
+        }
+
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   /**
@@ -173,7 +231,9 @@ export class PrimerPasoComponent implements OnInit {
     }
     const fechaOriginal = new Date(fechaDATE);
     const fechaMasUnDia = new Date(fechaOriginal.getTime() + 86400000);
-    return (this.fecha_seleccionada = fechaMasUnDia.toISOString().split('T')[0]);
+    return (this.fecha_seleccionada = fechaMasUnDia
+      .toISOString()
+      .split('T')[0]);
   }
 
   calcularHoraMinima() {
@@ -195,7 +255,7 @@ export class PrimerPasoComponent implements OnInit {
 
   filtroHora = (time: Date | null): boolean => {
     if (!time) return true;
-    
+
     if (!this.fecha_seleccionada) return true;
     const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
     const fechaHoy = new Date().toDateString();
@@ -210,12 +270,13 @@ export class PrimerPasoComponent implements OnInit {
     return horaCelda >= limiteMinimo;
   };
 
-
   /**
    * Función para obtener la lista de vehículos de un usuario.   *
    */
   obtenerVehiculos() {
     const data = localStorage.getItem('userData');
+    console.log('data: ', data);
+
     if (!data) return;
 
     const usuarioLocal = JSON.parse(data);
@@ -224,18 +285,25 @@ export class PrimerPasoComponent implements OnInit {
     if (id) {
       this.vehiculosServicesService.obtenerVehiculosUsuario(id).subscribe({
         next: (resultado) => {
-          if (resultado && resultado.vehiculos && resultado.vehiculos.length > 0) {
+          if (
+            resultado &&
+            resultado.vehiculos &&
+            resultado.vehiculos.length > 0
+          ) {
             this.userData.usuario.vehiculos = [...resultado.vehiculos];
-            
+
             if (!this.cocheSeleccionado) {
               this.cocheSeleccionado = resultado.vehiculos[0];
-              this.guardaDatosDelViajeEnServicio('coche', this.cocheSeleccionado);
+              this.guardaDatosDelViajeEnServicio(
+                'coche',
+                this.cocheSeleccionado,
+              );
             }
           }
           usuarioLocal.usuario.vehiculos = resultado.vehiculos;
           localStorage.setItem('userData', JSON.stringify(usuarioLocal));
         },
-        error: (err) => console.error('Error cargando vehículos:', err)
+        error: (err) => console.error('Error cargando vehículos:', err),
       });
     }
   }
@@ -286,7 +354,9 @@ export class PrimerPasoComponent implements OnInit {
    * @returns Devuelve la hora seleccionada.
    */
   getTime(): string {
-    return this.hora_seleccionada ? this.hora_seleccionada : 'Ninguna hora seleccionada.';
+    return this.hora_seleccionada
+      ? this.hora_seleccionada
+      : 'Ninguna hora seleccionada.';
   }
 
   /**
@@ -296,14 +366,14 @@ export class PrimerPasoComponent implements OnInit {
   onDateChange(event: any) {
     this.fecha_seleccionada = event.detail.value;
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
-    
+
     this.calcularHoraMinima();
-    
+
     if (this.hora_seleccionada) {
       this.validarHoraSeleccionadaConContexto();
     }
   }
-  
+
   /**
    * Función para seleccionar la hora.
    * ---------------------------------
@@ -316,7 +386,7 @@ export class PrimerPasoComponent implements OnInit {
    */
   onTimeChange(event: any) {
     if (!event) return;
-    
+
     let timeValue: Date;
 
     if (event instanceof Date) {
@@ -343,7 +413,7 @@ export class PrimerPasoComponent implements OnInit {
 
       if (fechaViaje === fechaHoy) {
         const ahora = new Date();
-        
+
         const horaPropuesta = new Date();
         horaPropuesta.setHours(horasSeleccionadas, minutosSeleccionados, 0, 0);
 
@@ -351,7 +421,7 @@ export class PrimerPasoComponent implements OnInit {
 
         if (horaPropuesta < limiteMinimo) {
           this.invalid_date = true;
-          this.hora_seleccionada = ''; 
+          this.hora_seleccionada = '';
           this.guardaDatosDelViajeEnServicio('hora_salida', '');
           return;
         }
@@ -361,7 +431,7 @@ export class PrimerPasoComponent implements OnInit {
     this.invalid_date = false;
     const horasString = String(horasSeleccionadas).padStart(2, '0');
     const minutosString = String(minutosSeleccionados).padStart(2, '0');
-    
+
     this.hora_seleccionada = `${horasString}:${minutosString}`;
     this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
   }
@@ -398,7 +468,8 @@ export class PrimerPasoComponent implements OnInit {
     const blanco: string = '../../../../../../assets/ColoresCoches/Blanco.png';
     const negro: string = '../../../../../../assets/ColoresCoches/Negro.png';
     const rojo: string = '../../../../../../assets/ColoresCoches/Rojo.png';
-    const amarillo: string = '../../../../../../assets/ColoresCoches/Amarillo.png';
+    const amarillo: string =
+      '../../../../../../assets/ColoresCoches/Amarillo.png';
     const verde: string = '../../../../../../assets/ColoresCoches/Verde.png';
     const gris: string = '../../../../../../assets/ColoresCoches/Gris.png';
     const dorado: string = '../../../../../../assets/ColoresCoches/Dorado.png';
@@ -451,7 +522,9 @@ export class PrimerPasoComponent implements OnInit {
    * Función para redirigir a la ventana del perfil para añadir coche.
    */
   irARegistrarVehiculo() {
-    this.router.navigate(['/mi-perfil'], { queryParams: { from: 'newTravel' } });
+    this.router.navigate(['/mi-perfil'], {
+      queryParams: { from: 'newTravel' },
+    });
   }
 
   /**
@@ -499,5 +572,50 @@ export class PrimerPasoComponent implements OnInit {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  manejarVehiculoCreadoDesdeViaje(nuevoCoche: any) {
+    if (!this.userData.usuario.vehiculos) {
+      this.userData.usuario.vehiculos = [];
+    }
+    this.userData.usuario.vehiculos.push(nuevoCoche);
+    this.cocheSeleccionado = nuevoCoche;
+  }
+
+  cargarUsuarioYVehiculos() {
+    const usuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
+
+    if (usuarioLocal?.usuario?.id) {
+      this.userService
+        .obtenerUsuarioPorID(usuarioLocal.usuario.id)
+        .subscribe((usuarioActualizado) => {
+          this.userData = usuarioActualizado;
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+          console.log(
+            'Vehículos actuales del usuario:',
+            this.userData.usuario.vehiculos,
+          );
+          console.log(
+            'Coche actualmente seleccionado:',
+            this.cocheSeleccionado,
+          );
+          if (
+            this.cocheSeleccionado &&
+            !this.userData.usuario.vehiculos.some(
+              (v: any) => v.id === this.cocheSeleccionado.id,
+            )
+          ) {
+            console.log('¡El coche seleccionado ya no existe! Limpiando...');
+            this.cocheSeleccionado = null;
+            this.guardaDatosDelViajeEnServicio('coche', null);
+          } else if (
+            !this.cocheSeleccionado &&
+            this.userData.usuario.vehiculos.length > 0
+          ) {
+            this.cocheSeleccionado = this.userData.usuario.vehiculos[0];
+            this.guardaDatosDelViajeEnServicio('coche', this.cocheSeleccionado);
+          }
+        });
+    }
   }
 }

@@ -1,6 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
 import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { Viaje } from '../../models/travel/viaje.model';
@@ -24,7 +31,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService,
-  ) { }
+  ) {}
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -32,6 +39,7 @@ export class TravelService {
    * @param data (datos del viaje)
    */
   setViajeData(data: any) {
+    console.log('[TravelService] Guardando nuevo tempViaje:', data);
     this.viajeDataSubject.next(data);
     localStorage.setItem('tempViaje', JSON.stringify(data));
   }
@@ -46,10 +54,28 @@ export class TravelService {
    */
   getViajeData() {
     let data = this.viajeDataSubject.getValue();
+    console.log(
+      '[TravelService] getViajeData - Valor en BehaviorSubject:',
+      data,
+    );
     if (!data) {
       const saved = localStorage.getItem('tempViaje');
       if (saved) {
         data = JSON.parse(saved);
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString && data && data.coche) {
+          const userData = JSON.parse(userDataString);
+          const vehiculosUsuario = userData?.usuario?.vehiculos || [];
+          const existe = vehiculosUsuario.some(
+            (v: any) => v.id === data.coche.id,
+          );
+
+          if (!existe) {
+            data.coche = null;
+            localStorage.setItem('tempViaje', JSON.stringify(data));
+          }
+        }
+
         this.viajeDataSubject.next(data);
       }
     }
@@ -84,16 +110,18 @@ export class TravelService {
   editarViaje(viajeId: number, viajeData: any): Observable<any> {
     this.clearTempViaje();
 
-    return this.http.put(`${this.apiUrl}/travel/editar_viaje/${viajeId}`, viajeData).pipe(
-      catchError((error) => {
-        console.error('Error al editar el viaje:', error);
-        return throwError(() => error);
-      }),
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => {
-        this.viajeDataSubject.next(viajesActualizados);
-      })
-    );
+    return this.http
+      .put(`${this.apiUrl}/travel/editar_viaje/${viajeId}`, viajeData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al editar el viaje:', error);
+          return throwError(() => error);
+        }),
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) => {
+          this.viajeDataSubject.next(viajesActualizados);
+        }),
+      );
   }
 
   /**
@@ -132,7 +160,9 @@ export class TravelService {
     const userDataString = localStorage.getItem('userData');
 
     if (!userDataString) {
-      return throwError(() => new Error('No hay datos de usuario en el almacenamiento local.'));
+      return throwError(
+        () => new Error('No hay datos de usuario en el almacenamiento local.'),
+      );
     }
 
     const userData = JSON.parse(userDataString);
@@ -143,16 +173,20 @@ export class TravelService {
       viaje_id: viajeId,
     };
 
-    return this.http.post(`${this.apiUrl}/travel/unirse_viaje`, requestBody).pipe(
-      catchError((error) => {
-        console.error('Error al unirse al viaje:', error);
-        return throwError(() => error);
-      }),
-      // Una vez el usuario se ha unido correctamente, obtenemos los viajes actualizados
-      // y notificamos a los suscriptores
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
-    );
+    return this.http
+      .post(`${this.apiUrl}/travel/unirse_viaje`, requestBody)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al unirse al viaje:', error);
+          return throwError(() => error);
+        }),
+        // Una vez el usuario se ha unido correctamente, obtenemos los viajes actualizados
+        // y notificamos a los suscriptores
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
@@ -163,7 +197,9 @@ export class TravelService {
    * @returns Devuelve la lista de viajes.
    */
   getViajesComoAcompañante(id_usuario: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/travel/viajes_como_acompanante/${id_usuario}`);
+    return this.http.get(
+      `${this.apiUrl}/travel/viajes_como_acompanante/${id_usuario}`,
+    );
   }
 
   /**
@@ -172,7 +208,9 @@ export class TravelService {
    * @returns --> Observable con los detalles del viaje solicitado.
    */
   getViaje(viajeID: number) {
-    return this.http.get<Viaje>(`${this.apiUrl}/travel/obtener_viaje/${viajeID}`);
+    return this.http.get<Viaje>(
+      `${this.apiUrl}/travel/obtener_viaje/${viajeID}`,
+    );
   }
 
   /**
@@ -181,14 +219,18 @@ export class TravelService {
    * @returns Observable con la respuesta del backend.
    */
   eliminarViaje(viajeId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`).pipe(
-      catchError((error) => {
-        console.error('Error al eliminar el viaje:', error);
-        return throwError(() => error);
-      }),
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
-    );
+    return this.http
+      .delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al eliminar el viaje:', error);
+          return throwError(() => error);
+        }),
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
@@ -201,30 +243,44 @@ export class TravelService {
     const userDataString = localStorage.getItem('userData');
 
     if (!userDataString) {
-      return throwError(() => new Error('No hay datos de usuario en el almacenamiento local.'));
+      return throwError(
+        () => new Error('No hay datos de usuario en el almacenamiento local.'),
+      );
     }
 
     const userData = JSON.parse(userDataString);
     const usuarioId = userData.usuario.id;
 
-    return this.http.delete(`${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`, { withCredentials: true }).pipe(
-      catchError((error) => {
-        console.error('Error al salir del viaje:', error);
-        return throwError(() => error);
-      }),
-      switchMap((response: any) => {
-        if (response.mensaje === 'Pasajero eliminado correctamente del viaje') {
-          // Guarda la notificación si el usuario actual NO es el creador del viaje
-          if (response.creador_id !== usuarioId) {
-            this.notificacionesService.notificacionPendiente = response.aviso_enviado;
+    return this.http
+      .delete(
+        `${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`,
+        { withCredentials: true },
+      )
+      .pipe(
+        catchError((error) => {
+          console.error('Error al salir del viaje:', error);
+          return throwError(() => error);
+        }),
+        switchMap((response: any) => {
+          if (
+            response.mensaje === 'Pasajero eliminado correctamente del viaje'
+          ) {
+            // Guarda la notificación si el usuario actual NO es el creador del viaje
+            if (response.creador_id !== usuarioId) {
+              this.notificacionesService.notificacionPendiente =
+                response.aviso_enviado;
+            }
+            return this.obtenerTodosLosViajes();
+          } else {
+            return throwError(
+              () => new Error('No se pudo eliminar el pasajero del viaje.'),
+            );
           }
-          return this.obtenerTodosLosViajes();
-        } else {
-          return throwError(() => new Error('No se pudo eliminar el pasajero del viaje.'));
-        }
-      }),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
-    );
+        }),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
@@ -270,32 +326,44 @@ export class TravelService {
    * @param pasajeroId --> ID del pasajero que se quiere confirmar.
    * @returns --> Observable con la respuesta del backend y actualización de la lista de viajes.
    */
-  confirmarPasajeroManual(viajeId: number, pasajeroId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/travel/confirmar_pasajero_manual`, { viaje_id: viajeId, pasajero_id: pasajeroId }).pipe(
-      catchError((error) => {
-        console.error('Error al confirmar pasajero manualmente:', error);
-        return throwError(() => error);
-      }),
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
-    );  
+  confirmarPasajeroManual(
+    viajeId: number,
+    pasajeroId: number,
+  ): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl}/travel/confirmar_pasajero_manual`, {
+        viaje_id: viajeId,
+        pasajero_id: pasajeroId,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Error al confirmar pasajero manualmente:', error);
+          return throwError(() => error);
+        }),
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
    * Función para obtener las solicitudes pendientes de un usuario.
    * @param usuarioId --> ID del usuario del que se quieren obtener las solicitudes pendientes.
-   * @returns --> Observable con la lista de viajes a los que el usuario 
+   * @returns --> Observable con la lista de viajes a los que el usuario
    * se ha apuntado pero aún no han sido aceptados o rechazados por el creador del viaje.
    */
   getMisSolicitudesPendientes(usuarioId: number): Observable<Viaje[]> {
-    return this.http.get<Viaje[]>(`${this.apiUrl}/travel/mis_solicitudes/${usuarioId}`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener mis solicitudes:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .get<Viaje[]>(`${this.apiUrl}/travel/mis_solicitudes/${usuarioId}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al obtener mis solicitudes:', error);
+          return throwError(() => error);
+        }),
+      );
   }
-  
+
   /**
    * Función para cancelar una solicitud manual de un usuario.
    * @param viajeId --> ID del viaje del que se quiere cancelar la solicitud.
@@ -303,7 +371,7 @@ export class TravelService {
    */
   cancelarSolicitudManual(viajeId: number): Observable<any> {
     const userDataString = localStorage.getItem('userData');
-    
+
     if (!userDataString) {
       return throwError(() => new Error('No hay datos de usuario logueado.'));
     }
@@ -311,17 +379,21 @@ export class TravelService {
     const userData = JSON.parse(userDataString);
     const usuarioId = userData.usuario.id;
 
-    return this.http.post(`${this.apiUrl}/travel/cancelar_solicitud_manual`, { 
-      viaje_id: viajeId, 
-      usuario_id: usuarioId 
-    }).pipe(
-      catchError((error) => {
-        console.error('Error al cancelar solicitud manualmente:', error);
-        return throwError(() => error);
-      }),
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
-    );
+    return this.http
+      .post(`${this.apiUrl}/travel/cancelar_solicitud_manual`, {
+        viaje_id: viajeId,
+        usuario_id: usuarioId,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Error al cancelar solicitud manualmente:', error);
+          return throwError(() => error);
+        }),
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
@@ -331,17 +403,21 @@ export class TravelService {
    * @returns --> Observable con la respuesta del backend.
    */
   rechazarPasajeroManual(viajeId: number, pasajeroId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/travel/rechazar_pasajero_manual`, { 
-      viaje_id: viajeId, 
-      pasajero_id: pasajeroId 
-    }).pipe(
-      catchError((error) => {
-        console.error('Error al rechazar pasajero:', error);
-        return throwError(() => error);
-      }),
-      switchMap(() => this.obtenerTodosLosViajes()),
-      tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
-    );
+    return this.http
+      .post(`${this.apiUrl}/travel/rechazar_pasajero_manual`, {
+        viaje_id: viajeId,
+        pasajero_id: pasajeroId,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Error al rechazar pasajero:', error);
+          return throwError(() => error);
+        }),
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) =>
+          this.viajeDataSubject.next(viajesActualizados),
+        ),
+      );
   }
 
   /**
@@ -350,29 +426,44 @@ export class TravelService {
    * @param usuarioId ID del pasajero que notifica su llegada.
    * @returns Observable con la respuesta del servidor.
    */
-  notificarLlegadaPuntoPartida(viajeId: number, usuarioId: number): Observable<any> {
+  notificarLlegadaPuntoPartida(
+    viajeId: number,
+    usuarioId: number,
+  ): Observable<any> {
     const body = {
       viaje_id: viajeId,
-      usuario_id: usuarioId
+      usuario_id: usuarioId,
     };
 
-    return this.http.post(`${this.apiUrl}/travel/notificar_llegada_pasajero`, body).pipe(
-      catchError((error) => {
-        console.error('Error al notificar llegada al punto de partida:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .post(`${this.apiUrl}/travel/notificar_llegada_pasajero`, body)
+      .pipe(
+        catchError((error) => {
+          console.error(
+            'Error al notificar llegada al punto de partida:',
+            error,
+          );
+          return throwError(() => error);
+        }),
+      );
   }
 
   eliminarViajeConMotivo(viajeId: number, motivo: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`, {
-      body: { motivo_cancelacion: motivo }
+      body: { motivo_cancelacion: motivo },
     });
   }
 
-  salirDeViajeConMotivo(viajeId: number, usuarioId: number, motivo: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`, {
-      body: { motivo_cancelacion: motivo }
-    });
+  salirDeViajeConMotivo(
+    viajeId: number,
+    usuarioId: number,
+    motivo: string,
+  ): Observable<any> {
+    return this.http.delete(
+      `${this.apiUrl}/travel/eliminar_pasajero/${viajeId}/${usuarioId}`,
+      {
+        body: { motivo_cancelacion: motivo },
+      },
+    );
   }
 }

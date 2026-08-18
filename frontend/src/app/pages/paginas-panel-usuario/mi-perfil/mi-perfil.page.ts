@@ -44,7 +44,7 @@ import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 export class MiPerfilPage implements OnInit {
   @ViewChild('popover') popover!: HTMLIonPopoverElement;
   userLoggedIn: boolean = false;
-  userData: Usuario = {} as Usuario;
+  userData: any = {} as Usuario;
   fechaNacimiento: string = '';
   editandoVehiculo: boolean = false;
   datosActualizados: any = {};
@@ -94,16 +94,25 @@ export class MiPerfilPage implements OnInit {
     private router: Router,
   ) {
     this.loadUserData();
-    if (!this.userData || !this.userData.usuario) {
+    const usr =
+      this.userData?.usuario || (this.userData?.id ? this.userData : null);
+    if (!usr) {
+      console.warn(
+        'MiPerfil - No se encontró un usuario válido en el storage, redirigiendo al login.',
+      );
       this.navCtrl.navigateRoot('/login');
       return;
     }
-    const usr = this.userData?.usuario;
-    this.fechaNacimientoEditada = usr?.fecha_nacimiento || '';
+    if (!this.userData.usuario && this.userData.id) {
+      this.userData = { usuario: this.userData };
+    }
+
+    const usuarioValido = this.userData.usuario;
+    this.fechaNacimientoEditada = usuarioValido?.fecha_nacimiento || '';
     this.lang = this.translate.currentLang;
-    this.emailEditado = usr?.email || '';
-    this.telefonoEditado = usr?.telefono || '';
-    this.comunComerciales = usr?.comunic_comerciales || false;
+    this.emailEditado = usuarioValido?.email || '';
+    this.telefonoEditado = usuarioValido?.telefono || '';
+    this.comunComerciales = usuarioValido?.comunic_comerciales || false;
   }
 
   ngOnInit() {
@@ -133,11 +142,9 @@ export class MiPerfilPage implements OnInit {
 
         this.userLoggedIn = !!usuario.email;
 
-        //Llama una función propia del translate de Angular, y le pasa a la variable "lang" el nuevo idioma seleccionado.
         this.translate.onLangChange.subscribe((idiomaCambiado) => {
           this.lang = idiomaCambiado.lang;
           console.log('El idioma ha cambiado a:', this.lang);
-          //LLama a la función que detecta y traduce lo que tenga la variable local "bioEditada", que el texto del usuario
           this.detectarIdioma_traducirTexto(this.bioEditada);
         });
         this.cdr.detectChanges();
