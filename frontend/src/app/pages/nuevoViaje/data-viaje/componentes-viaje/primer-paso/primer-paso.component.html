@@ -163,74 +163,12 @@
         <h1 class="d-flex justify-content-center section-title">
           COCHE PARA VIAJAR
         </h1>
-        <div class="contenedor_inputs">
-          <ng-container
-            *ngIf="userData?.usuario?.vehiculos?.length > 0; else sinVehiculos"
-          >
-            <ion-list
-              class="scrollable-list custom-goguay-list"
-              lines="none"
-            >
-              <ion-radio-group
-                [(ngModel)]="cocheSeleccionado"
-                [compareWith]="compareVehiculos"
-              >
-                <ion-item
-                  *ngFor="
-                    let coche of userData?.usuario?.vehiculos;
-                    trackBy: trackByVehiculo
-                  "
-                  (click)="seleccionarCoche(coche)"
-                  class="goguay-list-item"
-                >
-                  <ion-label class="d-flex align-items-center">
-                    <img
-                      class="colorCoche me-3"
-                      [src]="mostrarColorCoche(coche.color)"
-                      alt="Color vehículo"
-                    />
-                    <span class="car-info-text">
-                      {{ coche.marca }} {{ coche.modelo }}
-                    </span>
-                  </ion-label>
-                  <ion-radio
-                    slot="end"
-                    [value]="coche"
-                    mode="ios"
-                  ></ion-radio>
-                </ion-item>
-              </ion-radio-group>
-            </ion-list>
-
-            <div
-              class="d-flex flex-column align-items-center mt-3 alternate-add-box"
-            >
-              <p class="mb-2 text-muted small">¿Quieres añadir otro coche?</p>
-              <button
-                type="button"
-                class="btn-goguay-mini"
-                (click)="irARegistrarVehiculo()"
-              >
-                <i class="fi fi-rr-plus me-1"></i>
-                Añadir vehículo
-              </button>
-            </div>
-          </ng-container>
-
-          <ng-template #sinVehiculos>
-            <div
-              class="mensaje-sin-vehiculos p-3 text-center card shadow-sm rounded-3"
-            >
-              <p class="text-muted">
-                No tienes vehículos registrados. Es obligatorio registrar uno
-                para publicar el viaje.
-              </p>
-              <app-tabla-vehiculos
-                (vehiculoAnadidoExito)="manejarVehiculoCreadoDesdeViaje($event)"
-              ></app-tabla-vehiculos>
-            </div>
-          </ng-template>
-        </div>
+        <app-tabla-vehiculos
+          [modoSeleccion]="true"
+          [vehiculos]="userData?.usuario?.vehiculos"
+          [(cocheSeleccionado)]="cocheSeleccionado"
+          (irARegistrarVehiculo)="irARegistrarVehiculo()"
+        ></app-tabla-vehiculos>
 
         <div class="contenedor_inputs mt-4">
           <h1 class="d-flex justify-content-center section-title">

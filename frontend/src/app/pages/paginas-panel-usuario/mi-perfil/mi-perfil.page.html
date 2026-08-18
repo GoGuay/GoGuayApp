@@ -480,24 +480,14 @@
         class="mx-md-5"
       >
         <!-- Tabla vehiculos -->
-        <ion-row class="d-flex justify-content-center">
-          <div>
-            <app-tabla-vehiculos />
-            <div
-              *ngIf="vengoDeViaje"
-              class="d-flex justify-content-center mt-3"
-            >
-              <button
-                type="button"
-                class="btn btn_bg"
-                (click)="volverAViaje()"
-              >
-                <i class="fi fi-rr-undo"></i>
-                Volver a la creación del viaje
-              </button>
-            </div>
-          </div>
-        </ion-row>
+        <app-tabla-vehiculos
+          [modoSeleccion]="false"
+          [vehiculos]="userData?.usuario?.vehiculos || userData?.vehiculos"
+          [mostrarSelectorVehiculo]="mostrarSelectorVehiculo"
+          (eliminarVehiculo)="modalEliminarVehiculo($event)"
+          (irARegistrarVehiculo)="botonAnadirVehiculo()"
+          (vehiculoAnadidoExito)="actualizarListaVehiculos($event)"
+        ></app-tabla-vehiculos>
 
         <!-- Preferencias -->
         <ion-row class="d-flex justify-content-center mt-4">

@@ -460,56 +460,6 @@ export class PrimerPasoComponent implements OnInit {
   }
 
   /**
-   * Función para mostrar el color del coche seleccionado.
-   * @param color --> Recibe el color del coche.
-   * @returns Devuelve la ruta de la imagen del color del coche.
-   */
-  mostrarColorCoche(color: string): string {
-    const blanco: string = '../../../../../../assets/ColoresCoches/Blanco.png';
-    const negro: string = '../../../../../../assets/ColoresCoches/Negro.png';
-    const rojo: string = '../../../../../../assets/ColoresCoches/Rojo.png';
-    const amarillo: string =
-      '../../../../../../assets/ColoresCoches/Amarillo.png';
-    const verde: string = '../../../../../../assets/ColoresCoches/Verde.png';
-    const gris: string = '../../../../../../assets/ColoresCoches/Gris.png';
-    const dorado: string = '../../../../../../assets/ColoresCoches/Dorado.png';
-    const marron: string = '../../../../../../assets/ColoresCoches/Marrón.png';
-    const morado: string = '../../../../../../assets/ColoresCoches/Morado.png';
-    const beige: string = '../../../../../../assets/ColoresCoches/Beige.png';
-    const perla: string = '../../../../../../assets/ColoresCoches/Perla.png';
-    const otro: string = '../../../../../../assets/ColoresCoches/Otros.png';
-
-    switch (color) {
-      case 'blanco':
-        return blanco;
-      case 'negro':
-        return negro;
-      case 'rojo':
-        return rojo;
-      case 'amarillo':
-        return amarillo;
-      case 'verde':
-        return verde;
-      case 'gris':
-        return gris;
-      case 'dorado':
-        return dorado;
-      case 'marron':
-        return marron;
-      case 'morado':
-        return morado;
-      case 'beige':
-        return beige;
-      case 'perla':
-        return perla;
-      case 'otro':
-        return otro;
-      default:
-        return '';
-    }
-  }
-
-  /**
    * Función para seleccionar el coche con el que quiere realizar el viaje.
    * @param coche --> Recibe la información del coche seleccionado.
    */
@@ -544,17 +494,6 @@ export class PrimerPasoComponent implements OnInit {
    */
   compareVehiculos(coche1: any, coche2: any) {
     return coche1 && coche2 ? coche1.id === coche2.id : coche1 === coche2;
-  }
-
-  /**
-   * Función para trackear el vehículo.
-   *
-   * @param index -> Índice del vehículo.
-   * @param coche -> Vehículo a trackear.
-   * @returns Devuelve el id del vehículo.
-   */
-  trackByVehiculo(index: number, coche: any) {
-    return coche.id;
   }
 
   /**

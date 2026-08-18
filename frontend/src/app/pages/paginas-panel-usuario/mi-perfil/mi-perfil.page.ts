@@ -19,6 +19,8 @@ import { HelpModalComponent } from '../../../components/help-modal/help-modal.co
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
+import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
+import { CARS, COLORES } from 'src/app/models/vehiculos/marcas_modelos.model';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -48,11 +50,11 @@ export class MiPerfilPage implements OnInit {
   fechaNacimiento: string = '';
   editandoVehiculo: boolean = false;
   datosActualizados: any = {};
-
+  mostrarSelectorVehiculo: boolean = false;
   isMobileWeb: boolean = false;
   isDesktop: boolean = true;
   botonHabilitado: boolean = false;
-
+  vehiculos_usuario: any[] = [];
   nombreEditado: string = '';
   apellidosEditados: string = '';
   pronombreEditado: string = '';
@@ -68,6 +70,9 @@ export class MiPerfilPage implements OnInit {
   edad: number = this.funcionesUsuario.calcularEdad(
     this.fechaNacimientoEditada,
   );
+  marcaSeleccionada: string = '';
+  modeloSeleccionado: string = '';
+  colorSeleccionado: string = '';
   lang: string = this.languageService.getLanguage() || 'es'; // Variable para almacenar el lenguaje seleccionado.
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
   imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
@@ -78,12 +83,19 @@ export class MiPerfilPage implements OnInit {
 
   vengoDeViaje: boolean = false;
 
+  modificandoMarca: boolean = false;
+
+  listadoCoches = CARS;
+  listadoColores: string[] = COLORES;
+  modelosFiltrados: string[] = [];
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private languageService: LanguageService,
     private userService: UserServicesService,
     private googleService: GoogleServices,
     public funcionesUsuario: FuncionesUsuario,
+    private vehiculosServicesService: VehiculosServicesService,
     private platform: Platform,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
@@ -496,5 +508,223 @@ export class MiPerfilPage implements OnInit {
 
   volverAViaje() {
     this.router.navigate(['/data-viaje']);
+  }
+
+  /**
+   * Función para eliminar un vehículo del usuario
+   * @param vehiculo
+   */
+  eliminarVehiculo(vehiculo: any): any {
+    this.vehiculosServicesService
+      .eliminarVehiculo(vehiculo.id, vehiculo)
+      .subscribe({
+        next: (resultado) => {
+          // 1. Actualizamos el array local de vehículos de forma segura
+          if (this.userData?.usuario?.vehiculos) {
+            this.userData.usuario.vehiculos =
+              this.userData.usuario.vehiculos.filter(
+                (coche: any) => coche.id !== vehiculo.id,
+              );
+          }
+
+          // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
+          const userDataActual =
+            this.userService.getUsuarioData() ||
+            JSON.parse(localStorage.getItem('userData') || '{}');
+
+          if (!this.userData.usuario && this.userData.id) {
+            this.userData = { usuario: this.userData };
+          }
+
+          if (userDataActual && userDataActual.usuario) {
+            userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
+            localStorage.setItem('userData', JSON.stringify(userDataActual));
+
+            // Si tu servicio tiene un método de actualización de estado, úsalo:
+            if (typeof this.userService.setUsuarioData === 'function') {
+              this.userService.setUsuarioData(userDataActual);
+            }
+          }
+          if (this.userData?.usuario?.id) {
+            this.userService
+              .obtenerUsuarioPorID(this.userData.usuario.id)
+              .subscribe((usuarioActualizado) => {
+                this.userData = usuarioActualizado;
+                localStorage.setItem('userData', JSON.stringify(this.userData));
+                this.cdr.detectChanges();
+              });
+          }
+          this.cdr.detectChanges();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Vehículo eliminado',
+            detail: 'El vehículo se ha eliminado correctamente.',
+          });
+        },
+        error: (err) => {
+          console.error('Error al eliminar el vehículo en backend:', err);
+        },
+      });
+  }
+
+  modalEliminarVehiculo(cocheAEliminar: any) {
+    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
+    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
+    const dialogRef = this.dialog.open(HelpModalComponent, {
+      data: { title: titulo, message: mensaje, showAcceptButton: true },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((confirmar) => {
+      if (confirmar) {
+        this.eliminarVehiculo(cocheAEliminar);
+      }
+    });
+  }
+
+  /**
+   * Función para obtener la lista de vehículos de un usuario.   *
+   */
+  obtenerVehiculos() {
+    const userDataString = localStorage.getItem('userData');
+    if (!userDataString) return;
+
+    const usuario = JSON.parse(userDataString);
+    if (!usuario?.usuario?.id) return;
+
+    this.vehiculosServicesService
+      .obtenerVehiculosUsuario(usuario.usuario.id)
+      .subscribe({
+        next: (resultado: any) => {
+          const listaVehiculos = resultado?.vehiculos || [];
+          console.log('Vehículos: ', listaVehiculos);
+
+          this.funcionesUsuario.vehiculos_usuario = listaVehiculos;
+        },
+        error: (err) => {
+          console.error('Error al obtener los vehículos:', err);
+          this.funcionesUsuario.vehiculos_usuario = [];
+        },
+      });
+  }
+
+  filtrarModelosEditando(coche: any) {
+    if (!coche.marca) return;
+    const vehiculo = this.listadoCoches.find((c) => c.marca === coche.marca);
+    this.modelosFiltrados = vehiculo.modelos;
+
+    if (
+      this.modelosFiltrados.length > 0 &&
+      !this.modelosFiltrados.includes(coche.modelo)
+    ) {
+      this.modeloSeleccionado = this.modelosFiltrados[0];
+    }
+  }
+
+  /**
+   * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
+   * @param vehiculo
+   */
+  guardarVehiculoEditado(vehiculo: any) {
+    console.log('Guardando cambios en el vehículo: ', vehiculo);
+    vehiculo.editandoVehiculo = false;
+    this.funcionesComunes.editarVehiculo(vehiculo);
+    this.cdr.detectChanges();
+    if (this.modificandoMarca) {
+      this.modificandoMarca = false;
+    }
+    this.translate
+      .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
+      .subscribe((vehiculoGuardadoMessage: string) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: vehiculoGuardadoMessage,
+          detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'),
+        });
+      });
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.mostrarSelectorVehiculo = false;
+  }
+
+  /**
+   * Función para mostrar las imágenes de colores de los coches
+   * según el color que se tenga seleccionado del coche.   *
+   * @param color
+   * @returns
+   */
+  mostrarColorCoche(color: string): string {
+    const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
+    const negro: string = '../../../assets/ColoresCoches/Negro.png';
+    const rojo: string = '../../../assets/ColoresCoches/Rojo.png';
+    const amarillo: string = '../../../assets/ColoresCoches/Amarillo.png';
+    const verde: string = '../../../assets/ColoresCoches/Verde.png';
+    const gris: string = '../../../assets/ColoresCoches/Gris.png';
+    const dorado: string = '../../../assets/ColoresCoches/Dorado.png';
+    const marron: string = '../../../assets/ColoresCoches/Marrón.png';
+    const morado: string = '../../../assets/ColoresCoches/Morado.png';
+    const beige: string = '../../../assets/ColoresCoches/Beige.png';
+    const perla: string = '../../../assets/ColoresCoches/Perla.png';
+    const otro: string = '../../../assets/ColoresCoches/Otros.png';
+
+    switch (color) {
+      case 'blanco':
+        return blanco;
+      case 'negro':
+        return negro;
+      case 'rojo':
+        return rojo;
+      case 'amarillo':
+        return amarillo;
+      case 'verde':
+        return verde;
+      case 'gris':
+        return gris;
+      case 'dorado':
+        return dorado;
+      case 'marron':
+        return marron;
+      case 'morado':
+        return morado;
+      case 'beige':
+        return beige;
+      case 'perla':
+        return perla;
+      case 'otro':
+        return otro;
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Para mostrar (o no) el selector de marca, modelo y color de coche
+   */
+  botonAnadirVehiculo() {
+    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
+  }
+
+  actualizarListaVehiculos(usuarioActualizado: any) {
+    // Comprobamos si el backend devuelve el objeto envuelto en { usuario: { ... } } o plano
+    if (usuarioActualizado && usuarioActualizado.usuario) {
+      this.userData = usuarioActualizado;
+    } else if (
+      usuarioActualizado &&
+      (usuarioActualizado.id || usuarioActualizado.vehiculos)
+    ) {
+      // Si viene plano, lo reestructuramos para mantener la compatibilidad con el HTML del padre
+      this.userData = {
+        ...(this.userData || {}),
+        usuario: usuarioActualizado,
+      };
+    } else {
+      this.userData = usuarioActualizado;
+    }
+
+    // Sincronizamos el localStorage con el objeto completo actualizado
+    localStorage.setItem('userData', JSON.stringify(this.userData));
+
+    this.mostrarSelectorVehiculo = false;
+    this.cdr.detectChanges();
   }
 }
