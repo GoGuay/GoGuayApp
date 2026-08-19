@@ -221,14 +221,14 @@
                 for="genero"
                 class="form-label"
               >
-                {{'MIPERFIL.INFO_PERSONAL.GENERO.LABEL'| translate}}
+                {{'SELECTOR_GENERO.LABEL'| translate}}
                 <span
                   tabindex="0"
                   role="button"
                   class="ms-2 text-primary col-genero"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate"
+                  [matTooltip]="'SELECTOR_GENEROINFO' | translate"
                   matTooltipPosition="above"
-                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate"
+                  [attr.aria-label]="'SELECTOR_GENERO.INFO' | translate"
                 >
                   <i class="bi-question-circle"></i>
                 </span>
@@ -240,7 +240,7 @@
                 >
                   <ng-template>
                     <ion-content class="ion-padding">
-                      {{'MIPERFIL.INFO_PERSONAL.GENERO.INFO' | translate}}
+                      {{'SELECTOR_GENERO.INFO' | translate}}
                     </ion-content>
                   </ng-template>
                 </ion-popover>
@@ -260,7 +260,7 @@
                   disabled
                   hidden
                 >
-                  {{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}
+                  {{ 'SELECTOR_GENERO.SELECCIONA' | translate }}
                 </option>
                 <option value="H_CIS">
                   {{ 'SELECTOR_GENERO.H_CIS' | translate }}
@@ -291,7 +291,7 @@
                 id="generoAyuda"
                 class="visually-hidden"
               >
-                {{ 'MIPERFIL.INFO_PERSONAL.GENERO.AYUDA' | translate }}
+                {{ 'SELECTOR_GENERO.AYUDA' | translate }}
               </span>
             </div>
           </ion-col>
@@ -303,12 +303,12 @@
                 for="orientacion"
                 class="form-label"
               >
-                {{'MIPERFIL.INFO_PERSONAL.ORIENTACION.LABEL' | translate}}
+                {{'SELECTOR_ORIENTACION.LABEL' | translate}}
                 <span
                   tabindex="0"
                   role="button"
                   class="ms-2 text-primary"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'| translate"
+                  [matTooltip]="'SELECTOR_ORIENTACION.INFO'| translate"
                   matTooltipPosition="above"
                 >
                   <i class="bi-question-circle"></i>
@@ -321,7 +321,7 @@
                 >
                   <ng-template>
                     <ion-content class="ion-padding">
-                      {{'MIPERFIL.INFO_PERSONAL.ORIENTACION.INFO'| translate}}
+                      {{'SELECTOR_ORIENTACION.INFO'| translate}}
                     </ion-content>
                   </ng-template>
                 </ion-popover>
@@ -341,7 +341,7 @@
                   disabled
                   hidden
                 >
-                  {{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
+                  {{ 'SELECTOR_ORIENTACION.SELECCIONA' | translate }}
                 </option>
                 <option value="GAY">
                   {{ 'SELECTOR_ORIENTACION.GAY' | translate }}
@@ -378,7 +378,7 @@
                 id="orientacionAyuda"
                 class="visually-hidden"
               >
-                {{ 'MIPERFIL.INFO_PERSONAL.ORIENTACION.AYUDA' | translate }}
+                {{ 'SELECTOR_ORIENTACION.AYUDA' | translate }}
               </span>
             </div>
           </ion-col>
@@ -587,7 +587,9 @@
 
               <mat-divider class="mb-1 mt-2"></mat-divider>
               <label class="mb-2">
-                <strong>Otras preferencias de viaje</strong>
+                <strong>
+                  {{ 'MIPERFIL.PREF_VIAJE.LABEL_OTRAS' | translate }}
+                </strong>
               </label>
 
               <!-- MASCOTAS -->
@@ -595,7 +597,7 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  [value]=" 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate "
+                  [value]=" 'MIPERFIL.PREF_VIAJE.MASCOTAS' | translate "
                   (change)="onCheckboxChange('Mascotas', $event)"
                   [checked]="preferenciasSeleccionadas.includes('Mascotas')"
                   id="pref-silence"
@@ -604,7 +606,7 @@
                   class="form-check-label"
                   for="pref-pets"
                 >
-                  {{ 'AJUSTESAPP.PREFERENCIAS.MASCOTAS' | translate }}
+                  {{ 'MIPERFIL.PREF_VIAJE.MASCOTAS' | translate }}
                 </label>
               </div>
 
@@ -613,7 +615,7 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  [value]=" 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate "
+                  [value]=" 'MIPERFIL.PREF_VIAJE.FUMAR'| translate "
                   (change)="onCheckboxChange('Fumar', $event)"
                   [checked]="preferenciasSeleccionadas.includes('Fumar')"
                   id="pref-silence"
@@ -622,7 +624,7 @@
                   class="form-check-label"
                   for="pref-smoke"
                 >
-                  {{ 'AJUSTESAPP.PREFERENCIAS.FUMAR' | translate }}
+                  {{'MIPERFIL.PREF_VIAJE.FUMAR' | translate }}
                 </label>
               </div>
             </div>
@@ -642,7 +644,7 @@
           [disabled]="!botonHabilitado"
           (click)="editarDatos()"
         >
-          {{'MIPERFIL.BTN_GUARDAR' | translate}}
+          {{'BOTON.GUARDAR' | translate}}
         </button>
       </div>
     </ion-row>

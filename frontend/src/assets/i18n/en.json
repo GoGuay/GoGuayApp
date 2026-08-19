@@ -1,22 +1,24 @@
 {
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
-    "LABEL": "Gender you identify with",
-    "INFO": "It is a person's internal and individual experience, expressed through identity, clothing, or behavior. It is not related to the sex assigned at birth and is not limited only to man or woman.",
-    "SELECCIONA": "Select your gender",
-    "H_CIS": "Cisgender Man",
-    "M_CIS": "Cisgender Woman",
-    "TRANS": "Transsexual",
-    "NO_BINARIO": "Non-binary",
+    "LABEL": "Gender You Identify With",
+    "INFO": "It Is A Person's Internal And Individual Experience, Expressed Through Identity, Clothing, Or Behavior. It Is Not Related To Sex Assigned At Birth And Is Not Limited Only To Man Or Woman.",
+    "SELECCIONA": "Select Your Gender",
+    "AYUDA": "Options Are Shown To Choose Your Gender",
+    "H_CIS": "Cis Man",
+    "M_CIS": "Cis Woman",
+    "TRANS": "Transgender",
+    "NO_BINARIO": "Non-Binary",
     "INTER": "Intergender",
-    "NO_FLUIDO": "Non-fluid",
+    "NO_FLUIDO": "Genderfluid",
     "OTRO": "Other",
-    "NO_RESPONDE": "Prefer not to answer"
+    "NO_RESPONDE": "Prefer Not To Answer"
   },
   "SELECTOR_ORIENTACION": {
-    "LABEL": "What is your sexual orientation?",
-    "INFO": "It is the emotional, romantic, and/or sexual attraction felt towards other people.",
-    "SELECCIONA": "Select your orientation",
+    "LABEL": "What Is Your Sexual Orientation?",
+    "INFO": "It Is The Emotional, Romantic, And/Or Sexual Attraction Felt Toward Other People.",
+    "AYUDA": "Options Are Shown To Choose Your Orientation",
+    "SELECCIONA": "Select Your Orientation",
     "GAY": "Gay",
     "LESBIANA": "Lesbian",
     "BISEXUAL": "Bisexual",
@@ -26,13 +28,72 @@
     "QUEER": "Queer",
     "HETEROSEXUAL": "Heterosexual",
     "OTRO": "Other",
-    "NO_RESPONDE": "Prefer not to answer"
+    "NO_RESPONDE": "Prefer Not To Answer"
+  },
+  "__MiPerfil": "My Profile Component - /mi-perfil --------- FINALIZADO agosto 2026",
+  "MIPERFIL": {
+    "TITULO": "My profile",
+    "DESCRIPCION": "In this section you can view and modify your personal information, as well as add your vehicles and travel preferences",
+    "BTN_GUARDAR_HELP": "Saves any modification made to your profile",
+    "INFO_PERSONAL": {
+      "TITULO": "Personal information",
+      "BTN_ANADIR_FOTO": "Add or change profile picture",
+      "ALT_IMG_PERFIL": "Your profile picture is shown here",
+      "BTN_ELIMINAR_FOTO": "Delete profile picture",
+      "BTN_PERFIL_PUBLICO": "Here you can view your public profile",
+      "BTN_PERFIL_PUBLICO_TEXTO": "This is how others see me",
+      "LABEL_NOMBRE": "Name",
+      "LABEL_APELLIDOS": "Last names",
+      "PRONOMBRE": {
+        "LABEL": "Pronoun",
+        "INFO": "Word we use to refer to a person without saying their name. Each person can choose the pronouns they feel comfortable with, such as he, she, or they.",
+        "AYUDA": "Options are shown to choose your pronoun",
+        "ESCOGE_OPCION": "Choose your pronoun",
+        "OPC_OTROS": "Others",
+        "OPC_NOUSO": "I don't use any",
+        "OPC_NORESPONDO": "Prefer not to answer"
+      },
+      "LABEL_FECHANACIMIENTO": "Date of birth",
+      "LABEL_EDAD": "Age",
+      "LABEL_SOBRETI": "About you",
+      "PLACEHOLDER_SOBRETI": "Here you can tell us whatever you want about yourself!",
+      "AYUDA_SOBRETI": "Area for you to write free text",
+      "CARACTERES": "Characters used"
+    },
+    "PREF_VIAJE": {
+      "LABEL": "My travel preferences",
+      "SUBTITULO": "When traveling I prefer...",
+      "OPC_HABLAR": "Talking",
+      "OPC_MUSICA": "Listening to music",
+      "OPC_DORMIR": "Sleeping",
+      "OPC_SILENCIO": "Traveling in silence",
+      "LABEL_OTRAS": "Other travel preferences",
+      "MASCOTAS": "Pets allowed / I can travel with my pet",
+      "FUMAR": "Smoking allowed"
+    }
+  },
+  "TABLA_VEHICULOS": {
+    "TITULO": "My vehicles",
+    "SIN_VEHICULOS": "No vehicles added",
+    "BTN_ANADIR_VEHICULO": "Add vehicle",
+    "BTN_AYUDA_ANADIR_VEHICULO": "To add a new vehicle",
+    "ADVERTENCIA_MODIFICACION": "Remember that if you change the brand, you must also modify the model",
+    "ANADIR_OTRO": "Do you want to add another vehicle?",
+    "BOTÓN_EDITAR_HELP": "Edit {{marca}} {{modelo}} vehicle in {{color}}",
+    "BOTON_ELIMINAR_HELP": "Delete {{marca}} {{modelo}} vehicle in {{color}}",
+    "SELECTOR": {
+      "MARCA": "Brand",
+      "AYUDA_MARCA": "Vehicle brand selector",
+      "MODELO": "Model",
+      "AYUDA_MODELO": "Vehicle model selector",
+      "COLOR": "Color",
+      "AYUDA_COLOR": "Vehicle color selector"
+    },
+    "INFO": "*If you cannot find your vehicle, please contact us:"
   },
   "BOTON": {
-    "ANADIR_VEHICULO": "Add vehicle",
     "GUARDAR": "Save",
     "VERIF_TU_IDENTIDAD": "Verify your identity",
-    "GUARDAR_VEHICULO": "Save vehicle",
     "CONFIRMAR_CODIGO_TFNO": "Confirm code",
     "ELEGIR_ARCHIVOS": "Choose files",
     "CAMBIAR": "Change!",
@@ -45,6 +106,7 @@
     "PUBLICAR_VIAJE": "Post your trip",
     "CENTROAYUDA": "Visit our help center"
   },
+
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
   "BUSCADOR": {
     "TITULO": "Are you looking for a trip?",
@@ -124,98 +186,7 @@
       "BOTON": "Check here"
     }
   },
-  "__MiPerfil": "My Profile Component - /mi-perfil --------- FINISHED OCTOBER 2025",
-  "MIPERFIL": {
-    "TITULO": "My Profile",
-    "DESCRIPCION": "In this section you can view and modify your personal information, as well as add your vehicles and trip preferences",
-    "BTN_GUARDAR": "Save",
-    "BTN_GUARDAR_HELP": "Save any modifications made to your profile",
-    "INFO_PERSONAL": {
-      "TITULO": "Personal Information",
-      "BTN_ANADIR_FOTO": "Add or change profile photo",
-      "ALT_IMG_PERFIL": "Your profile image is shown here",
-      "BTN_ELIMINAR_FOTO": "Delete profile photo",
-      "BTN_PERFIL_PUBLICO": "Here you can view your public profile",
-      "BTN_PERFIL_PUBLICO_TEXTO": "How others see me",
-      "LABEL_NOMBRE": "Name",
-      "LABEL_APELLIDOS": "Last Name",
-      "PRONOMBRE": {
-        "LABEL": "Pronoun",
-        "INFO": "Word we use to refer to a person without saying their name. Everyone can choose the pronouns they feel comfortable with, such as he, she, or they.",
-        "AYUDA": "Options are shown to choose your pronoun",
-        "ESCOGE_OPCION": "Choose your pronoun",
-        "OPC_OTROS": "Others",
-        "OPC_NOUSO": "I don't use any",
-        "OPC_NORESPONDO": "Prefer not to say"
-      },
-      "GENERO": {
-        "LABEL": "Gender",
-        "INFO": "It is the identity by which a person feels recognized. It can be male, female, non-binary, among others. It does not always have to match the sex assigned at birth.",
-        "AYUDA": "Options are shown to choose your gender",
-        "ESCOGE_OPCION": "Choose your gender",
-        "OPC_HOMBRECIS": "Cis Man",
-        "OPC_MUJERCIS": "Cis Woman",
-        "OPC_TRANSEXUAL": "Transsexual",
-        "OPC_NOBINARIO": "Non-Binary",
-        "OPC_INTERGENERO": "Intergender",
-        "OPC_NOFLUIDO": "Non-fluid",
-        "OPC_OTROS": "Others",
-        "OPC_NORESPONDO": "Prefer not to say"
-      },
-      "ORIENTACION": {
-        "LABEL": "Orientation",
-        "INFO": "About who you are attracted to or with whom you want to form affective or sexual bonds.",
-        "AYUDA": "Options are shown to choose your orientation",
-        "ESCOGE_OPCION": "Choose your orientation",
-        "OPC_GAY": "Gay",
-        "OPC_LESBIANA": "Lesbian",
-        "OPC_BISEXUAL": "Bisexual",
-        "OPC_PANSEXUAL": "Pansexual",
-        "OPC_ASEXUAL": "Asexual",
-        "OPC_DEMISEXUAL": "Demisexual",
-        "OPC_QUEER": "Queer",
-        "OPC_OTROS": "Others",
-        "OPC_NORESPONDO": "Prefer not to say"
-      },
-      "LABEL_FECHANACIMIENTO": "Date of birth",
-      "LABEL_EDAD": "Age",
-      "LABEL_SOBRETI": "About you",
-      "PLACEHOLDER_SOBRETI": "Here you can tell us whatever you want about yourself!",
-      "AYUDA_SOBRETI": "Area where you can write free text"
-    },
-    "MIS_VEHICULOS": {
-      "TITULO": "My vehicles",
-      "SIN_VEHICULOS": "You have no vehicles added",
-      "BTN_ANADIR_VEHICULO": "Add vehicle",
-      "BTN_AYUDA_ANADIR_VEHICULO": "To add a new vehicle",
-      "ADVERTENCIA_MODIFICACION": "Remember that if you change the brand, you must also modify the model",
-      "SELECTOR": {
-        "MARCA": "Brand",
-        "AYUDA_MARCA": "Vehicle brand selector",
-        "MODELO": "Model",
-        "AYUDA_MODELO": "Vehicle model selector",
-        "COLOR": "Color"
-      },
-      "TABLA": {
-        "COL_MARCA": "Brand",
-        "COL_MODELO": "Brand",
-        "COL_COLOR": "Brand",
-        "COL_OPCIONES": "Brand",
-        "BTN_EDITAR_TOOLTIP": "Edit your vehicle data if they are incorrect",
-        "BTN_ELIMINAR_TOOLTIP": "Delete this vehicle",
-        "BTN_GUARDAR_TOOLTIP": "Save new vehicle data"
-      },
-      "INFO": "*If you don't find your vehicle, contact us:"
-    },
-    "PREF_VIAJE": {
-      "LABEL": "My trip preferences",
-      "SUBTITULO": "When traveling I prefer...",
-      "OPC_HABLAR": "Talking",
-      "OPC_MUSICA": "Listening to music",
-      "OPC_DORMIR": "Sleeping",
-      "OPC_SILENCIO": "Going in silence"
-    }
-  },
+
   "__Registro": "Components that make up user Registration ----- FINISHED NOVEMBER 2025",
   "REGISTRO": {
     "FORM1": {
@@ -407,7 +378,7 @@
       "TITULO": "Payout Preferences"
     }
   },
-  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "__CENTRO DE MENSAJES": "Centro de mensajes",
   "CENTRO_MENSAJES": {
     "TITULO": "Message Center",
     "VACIO_TITULO": "Your inbox is empty",

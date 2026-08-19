@@ -4,6 +4,7 @@
     "LABEL": "Género con el que te identificas",
     "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
     "SELECCIONA": "Selecciona tu género",
+    "AYUDA": "Se muestran las opciones para elegir tu género",
     "H_CIS": "Hombre Cis",
     "M_CIS": "Mujer Cis",
     "TRANS": "Transexual",
@@ -16,6 +17,7 @@
   "SELECTOR_ORIENTACION": {
     "LABEL": "¿Cuál es tu orientación sexual?",
     "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
+    "AYUDA": "Se muestran las opciones para elegir tu orientación",
     "SELECCIONA": "Selecciona tu orientación",
     "GAY": "Gay",
     "LESBIANA": "Lesbiana",
@@ -28,11 +30,72 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
+  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
+  "MIPERFIL": {
+    "TITULO": "Mi perfil",
+    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+    "BTN_GUARDAR": "Guardar",
+    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
+    "INFO_PERSONAL": {
+      "TITULO": "Información personal",
+      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
+      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
+      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
+      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
+      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
+      "LABEL_NOMBRE": "Nombre",
+      "LABEL_APELLIDOS": "Apellidos",
+      "PRONOMBRE": {
+        "LABEL": "Pronombre",
+        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
+        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
+        "ESCOGE_OPCION": "Escoge tu pronombre",
+        "OPC_OTROS": "Otros",
+        "OPC_NOUSO": "No uso ninguno",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
+      "LABEL_EDAD": "Edad",
+      "LABEL_SOBRETI": "Sobre ti",
+      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
+      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
+      "CARACTERES": "Caracteres usados"
+    },
+
+    "PREF_VIAJE": {
+      "LABEL": "Mis preferencias de viaje",
+      "SUBTITULO": "Cuando viajo prefiero...",
+      "OPC_HABLAR": "Hablar",
+      "OPC_MUSICA": "Escuchar música",
+      "OPC_DORMIR": "Dormir",
+      "OPC_SILENCIO": "Ir en silencio",
+      "LABEL_OTRAS": "Otras preferencias de viaje",
+      "MASCOTAS": "Admito mascotas / Puedo ir con mi mascota",
+      "FUMAR": "Se puede fumar"
+    }
+  },
+  "TABLA_VEHICULOS": {
+    "TITULO": "Mis vehículos",
+    "SIN_VEHICULOS": "No tienes vehículos añadidos",
+    "BTN_ANADIR_VEHICULO": "Añadir vehículo",
+    "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
+    "ADVERTENCIA_MODIFICACION": "Recuerda que si cambiar la marca, debes modificar también el modelo",
+    "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
+    "BOTÓN_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "BOTON_ELIMINAR_HELP": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "SELECTOR": {
+      "MARCA": "Marca",
+      "AYUDA_MARCA": "Selector de marca del vehículo",
+      "MODELO": "Modelo",
+      "AYUDA_MODELO": "Selector de modelo del vehículo",
+      "COLOR": "Color",
+      "AYUDA_COLOR": "Selector del color del vehículo"
+    },
+    "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:"
+  },
   "BOTON": {
-    "ANADIR_VEHICULO": "Añadir vehículo",
     "GUARDAR": "Guardar",
     "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
-    "GUARDAR_VEHICULO": "Guardar vehículo",
     "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
     "ELEGIR_ARCHIVOS": "Elegir archivos",
     "CAMBIAR": "Cambiar!",
@@ -138,88 +201,7 @@
     },
     "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
   },
-  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
-  "MIPERFIL": {
-    "TITULO": "Mi perfil",
-    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
-    "BTN_GUARDAR": "Guardar",
-    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
-    "INFO_PERSONAL": {
-      "TITULO": "Información personal",
-      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
-      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
-      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
-      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
-      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
-      "LABEL_NOMBRE": "Nombre",
-      "LABEL_APELLIDOS": "Apellidos",
-      "PRONOMBRE": {
-        "LABEL": "Pronombre",
-        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
-        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
-        "ESCOGE_OPCION": "Escoge tu pronombre",
-        "OPC_OTROS": "Otros",
-        "OPC_NOUSO": "No uso ninguno",
-        "OPC_NORESPONDO": "Prefiero no responder"
-      },
-      "ORIENTACION": {
-        "LABEL": "Orientación",
-        "INFO": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales.",
-        "AYUDA": "Se muestran las opciones para elegir tu orientación",
-        "ESCOGE_OPCION": "Escoge tu orientación",
-        "OPC_GAY": "Gay",
-        "OPC_LESBIANA": "Lesbiana",
-        "OPC_BISEXUAL": "Bisexual",
-        "OPC_PANSEXUAL": "Pansexual",
-        "OPC_ASEXUAL": "Asexual",
-        "OPC_DEMISEXUAL": "Demisexual",
-        "OPC_QUEER": "Queer",
-        "OPC_OTROS": "Otros",
-        "OPC_NORESPONDO": "Prefiero no responder"
-      },
-      "GENERO": {
-        "LABEL": "Género"
-      },
-      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
-      "LABEL_EDAD": "Edad",
-      "LABEL_SOBRETI": "Sobre ti",
-      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
-      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
-      "CARACTERES": "Caracteres usados"
-    },
-    "MIS_VEHICULOS": {
-      "TITULO": "Mis vehículos",
-      "SIN_VEHICULOS": "No tienes vehículos añadidos",
-      "BTN_ANADIR_VEHICULO": "Añadir vehículo",
-      "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
-      "ADVERTENCIA_MODIFICACION": "Recuerda que si cambiar la marca, debes modificar también el modelo",
-      "SELECTOR": {
-        "MARCA": "Marca",
-        "AYUDA_MARCA": "Selector de marca del vehículo",
-        "MODELO": "Modelo",
-        "AYUDA_MODELO": "Selector de modelo del vehículo",
-        "COLOR": "Color"
-      },
-      "TABLA": {
-        "COL_MARCA": "Marca",
-        "COL_MODELO": "Marca",
-        "COL_COLOR": "Marca",
-        "COL_OPCIONES": "Marca",
-        "BTN_EDITAR_TOOLTIP": "Edita los datos de tu vehículo si están erróneos",
-        "BTN_ELIMINAR_TOOLTIP": "Elimina este vehículo",
-        "BTN_GUARDAR_TOOLTIP": "Guarda los nuevos datos del vehículo"
-      },
-      "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:"
-    },
-    "PREF_VIAJE": {
-      "LABEL": "Mis preferencias de viaje",
-      "SUBTITULO": "Cuando viajo prefiero...",
-      "OPC_HABLAR": "Hablar",
-      "OPC_MUSICA": "Escuchar música",
-      "OPC_DORMIR": "Dormir",
-      "OPC_SILENCIO": "Ir en silencio"
-    }
-  },
+
   "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
   "REGISTRO": {
     "OBLIGATORIO": "Obligatorio",
