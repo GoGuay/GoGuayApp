@@ -2,6 +2,10 @@
   overflow-x: auto;
 }
 
+.error_menor {
+  white-space: nowrap;
+}
+
 #resumen_datos_registro {
   margin-top: 2%;
   margin-bottom: 2%;
@@ -148,6 +152,12 @@ select {
   white-space: nowrap;
 }
 
+div.error-container span {
+  color: #dc3545 !important;
+  min-width: unset !important;
+  display: block !important;
+}
+
 /* ==========================================================================
    ESTILOS DE LA VENTANA MODAL Y CHECKBOX DE CONDICIONES
    ========================================================================== */
@@ -228,7 +238,11 @@ app-contrato-registro {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
+
 }
+
+
 
 /* ==========================================================================
    MEDIA QUERIES (RESPONSIVE)
@@ -247,16 +261,27 @@ app-contrato-registro {
   ul {
     padding: 0;
     margin: 0 auto;
-    width: fit-content;
+    width: 100%;
     text-align: left;
   }
 
   li {
-    justify-content: center;
+    justify-content: space-between;
     white-space: nowrap;
   }
 
   li strong {
     white-space: nowrap;
+  }
+
+  .error_menor {
+    white-space: nowrap;
+  }
+
+  .botones_editar {
+    display: flex;
+    align-items: center;
+    margin-left: auto !important;
+    padding-left: 10px;
   }
 }

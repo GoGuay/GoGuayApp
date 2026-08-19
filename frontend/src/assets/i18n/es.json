@@ -240,6 +240,8 @@
     "FORM2": {
       "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
       "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "NOMBRE_OBLIGATORIO": "El nombre es obligatorio",
+      "APELLIDOS_OBLIGATORIO": "El apellido es obligatorio",
       "FNACIMIENTO": {
         "LABEL": "Fecha de nacimiento",
         "AYUDA": "Campo para introducir tu fecha de nacimiento",
@@ -253,7 +255,7 @@
       "TELEFONO": {
         "LABEL": "Teléfono",
         "OBLIGATORIO": "El número de teléfono es obligatorio",
-        "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
+        "FORMATO": "Formato incorrecto: debe contener 9 dígitos numéricos.",
         "YAEXISTE": "Este teléfono ya nos consta registrado."
       },
       "GÉNERO": {

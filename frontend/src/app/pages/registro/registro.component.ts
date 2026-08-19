@@ -425,9 +425,13 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     fechaControl.markAsTouched();
     const fechaValor = fechaControl?.value;
 
-    if (!fechaValor || fechaValor.length !== 10) {
-      fechaControl?.setErrors({ incompleteDate: true });
-      this.botonHabilitadoContacto = false;
+    if (
+      !fechaValor ||
+      fechaValor.length !== 10 ||
+      fechaValor.includes('a') ||
+      fechaValor.includes('A')
+    ) {
+      fechaControl?.setErrors({ fechalimite: true });
       this.fechaValida = false;
       return;
     }

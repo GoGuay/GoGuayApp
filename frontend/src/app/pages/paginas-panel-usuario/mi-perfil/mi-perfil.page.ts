@@ -621,33 +621,6 @@ export class MiPerfilPage implements OnInit {
   }
 
   /**
-   * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
-   * @param vehiculo
-   */
-  guardarVehiculoEditado(vehiculo: any) {
-    console.log('Guardando cambios en el vehículo: ', vehiculo);
-    vehiculo.editandoVehiculo = false;
-    this.funcionesComunes.editarVehiculo(vehiculo);
-    this.cdr.detectChanges();
-    if (this.modificandoMarca) {
-      this.modificandoMarca = false;
-    }
-    this.translate
-      .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
-      .subscribe((vehiculoGuardadoMessage: string) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: vehiculoGuardadoMessage,
-          detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'),
-        });
-      });
-    this.marcaSeleccionada = '';
-    this.modeloSeleccionado = '';
-    this.colorSeleccionado = '';
-    this.mostrarSelectorVehiculo = false;
-  }
-
-  /**
    * Función para mostrar las imágenes de colores de los coches
    * según el color que se tenga seleccionado del coche.   *
    * @param color

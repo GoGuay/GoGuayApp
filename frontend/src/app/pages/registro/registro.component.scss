@@ -71,3 +71,11 @@ select.ng-invalid.ng-touched {
   text-align: center;
   width: 100%;
 }
+
+@media (max-width: 576px) {
+
+  .text-danger {
+    white-space: normal !important;
+    word-break: break-word;
+  }
+}

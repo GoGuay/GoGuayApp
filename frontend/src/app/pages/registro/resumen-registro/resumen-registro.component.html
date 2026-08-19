@@ -26,229 +26,257 @@
       </ion-item>
 
       <div
-        class="ion-padding"
+        class="ion-padding px-0 px-md-5"
         slot="content"
       >
-        <div class="container dialog-animate">
-          <div class="row w-100">
+        <div class="container dialog-animate px-0 px-md-3">
+          <div class="row w-100 m-0">
             <form [formGroup]="formularioResumen">
-              <div class="row w-100 g-5 d-flex justify-content-center">
+              <div class="row w-100 g-4 g-md-5 d-flex justify-content-center">
                 <!-- Columna 1: Datos Personales Principales -->
-                <div class="col-12 col-md-5">
-                  <ul>
+                <div class="col-12 col-md-5 px-1 px-md-3">
+                  <ul class="list-unstyled p-0">
                     @for (campo of camposColumna1; track campo) {
-                      <li class="d-flex align-items-center mb-2">
-                        <i
-                          [ngClass]="{
-                            'fi fi-rr-at': campo === 'email',
-                            'fi fi-rr-cake-birthday':
-                              campo === 'fecha_de_nacimiento',
-                            'fi fi-rr-id-card':
-                              campo === 'nombre' || campo === 'apellidos',
-                            'fi fi-rr-phone-call': campo === 'telefono',
-                          }"
-                          class="me-1"
-                        ></i>
+                      <li class="d-flex flex-column mb-3">
+                        <!-- Fila principal con posiciones controladas -->
+                        <div
+                          class="d-flex align-items-center w-100 position-relative"
+                        >
+                          <i
+                            [ngClass]="{
+                              'fi fi-rr-at': campo === 'email',
+                              'fi fi-rr-cake-birthday':
+                                campo === 'fecha_de_nacimiento',
+                              'fi fi-rr-id-card':
+                                campo === 'nombre' || campo === 'apellidos',
+                              'fi fi-rr-phone-call': campo === 'telefono',
+                            }"
+                            class="me-2 flex-shrink-0"
+                          ></i>
 
-                        <strong class="me-1">
-                          {{ transformToTitleCase(campo) }}:
-                        </strong>
+                          <strong class="me-2 text-nowrap flex-shrink-0">
+                            {{ transformToTitleCase(campo) }}:
+                          </strong>
 
-                        <div class="flex-grow-1">
-                          @if (!editando[campo]) {
-                            <span>
+                          <!-- Contenedor con ancho estático estricto para fecha o flexible para el resto -->
+                          <div class="flex-grow-1 min-width-0 d-flex">
+                            @if (!editando[campo]) {
+                              <span class="text-truncate d-block">
+                                @if (campo === 'fecha_de_nacimiento') {
+                                  {{
+                                    getValorCampo(campo) | date: 'dd/MM/yyyy'
+                                  }}
+                                } @else {
+                                  {{ getValorCampo(campo) }}
+                                }
+                              </span>
+                            } @else {
+                              <!-- Campo Fecha de Nacimiento -->
                               @if (campo === 'fecha_de_nacimiento') {
-                                {{ getValorCampo(campo) | date: 'dd/MM/yyyy' }}
-                              } @else {
-                                {{ getValorCampo(campo) }}
+                                <input
+                                  type="date"
+                                  class="form-control form-control-sm w-100"
+                                  id="fnacimiento"
+                                  [formControlName]="campo"
+                                  min="1930-01-01"
+                                  [max]="fechaMaxima"
+                                  autocomplete="bday"
+                                  aria-describedby="fnacimientoHelp"
+                                  (change)="onFechaChange()"
+                                  required
+                                />
+                                <span
+                                  id="fnacimientoHelp"
+                                  class="visually-hidden"
+                                >
+                                  {{
+                                    'REGISTRO.FORM1.FNACIMIENTO.AYUDA'
+                                      | translate
+                                  }}
+                                </span>
                               }
-                            </span>
-                          } @else {
-                            <!-- Campo Fecha de Nacimiento -->
-                            @if (campo === 'fecha_de_nacimiento') {
-                              <input
-                                type="date"
-                                class="form-control form-control-sm"
-                                [formControlName]="campo"
-                                min="1930-01-01"
-                                [max]="fechaMaxima"
-                                aria-describedby="fnacimientoHelp"
-                                (change)="onFechaChange()"
-                              />
-                              <span
-                                id="fnacimientoHelp"
-                                class="visually-hidden"
-                              >
-                                {{
-                                  'REGISTRO.FORM1.FNACIMIENTO.AYUDA' | translate
-                                }}
-                              </span>
 
-                              @if (campoInvalidYTouched(campo)) {
-                                <div class="text-danger posicion_error">
-                                  @if (tieneError(campo, 'fechalimite')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.FNACIMIENTO.INCORRECTA'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError(campo, 'required')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.FNACIMIENTO.OBLIGATORIA'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError(campo, 'menorDeEdad')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.FNACIMIENTO.MENOR_EDAD'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError(campo, 'fechaFutura')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.FNACIMIENTO.SUPERIORACTUAL'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                </div>
+                              <!-- Campo Email -->
+                              @if (campo === 'email') {
+                                <input
+                                  type="email"
+                                  id="email"
+                                  name="email"
+                                  inputmode="email"
+                                  autocomplete="email"
+                                  class="form-control form-control-sm w-100"
+                                  [formControlName]="campo"
+                                  aria-describedby="emailHelp"
+                                  (input)="validarCampo('email')"
+                                />
+                                <span
+                                  id="emailHelp"
+                                  class="visually-hidden"
+                                >
+                                  {{
+                                    'REGISTRO.FORM1.CORREO.AYUDA' | translate
+                                  }}
+                                </span>
                               }
-                            }
 
-                            <!-- Campo Email -->
-                            @if (campo === 'email') {
-                              <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                inputmode="email"
-                                autocomplete="email"
-                                class="form-control form-control-sm"
-                                [formControlName]="campo"
-                                aria-describedby="emailHelp"
-                                (input)="validarCampo('email')"
-                              />
-                              <span
-                                id="emailHelp"
-                                class="visually-hidden"
-                              >
-                                {{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}
-                              </span>
-
-                              @if (campoInvalidYTouched('email')) {
-                                <div class="text-danger posicion_error">
-                                  @if (tieneError('email', 'required')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.CORREO.OBLIGATORIO'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError('email', 'pattern')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.CORREO.FORMATO'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError('email', 'emailRepetido')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM1.CORREO.YAEXISTE'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                </div>
-                              }
-                            }
-
-                            <!-- Campos de Texto Generales (Nombre, Apellidos, Teléfono) -->
-                            @if (
-                              campo !== 'fecha_de_nacimiento' &&
-                              campo !== 'email'
-                            ) {
-                              <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                [formControlName]="campo"
-                                (input)="
-                                  campo === 'telefono'
-                                    ? validarCampo('telefono')
-                                    : null
-                                "
-                              />
-
+                              <!-- Campos de Texto Generales (Nombre, Apellidos, Teléfono) -->
                               @if (
-                                campo === 'telefono' &&
-                                campoInvalidYTouched('telefono')
+                                campo !== 'fecha_de_nacimiento' &&
+                                campo !== 'email'
                               ) {
-                                <div class="text-danger posicion_error">
-                                  @if (tieneError('telefono', 'required')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM2.TELEFONO.OBLIGATORIO'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (tieneError('telefono', 'pattern')) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM2.TELEFONO.FORMATO'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                  @if (
-                                    tieneError('telefono', 'telefonoRepetido')
-                                  ) {
-                                    <span>
-                                      {{
-                                        'REGISTRO.FORM2.TELEFONO.YAEXISTE'
-                                          | translate
-                                      }}
-                                    </span>
-                                  }
-                                </div>
+                                <input
+                                  type="text"
+                                  class="form-control form-control-sm w-100"
+                                  [formControlName]="campo"
+                                  (input)="
+                                    campo === 'telefono'
+                                      ? validarCampo('telefono')
+                                      : null
+                                  "
+                                />
                               }
                             }
-                          }
+                          </div>
+
+                          <!-- Acciones de edición con margen izquierdo fijo -->
+                          <div class="botones_editar">
+                            @if (!editando[campo]) {
+                              <i
+                                class="fi fi-rr-pencil ms-1 ms-md-2 icon-btn"
+                                style="cursor: pointer"
+                                (click)="activarEdicion(campo)"
+                              ></i>
+                            } @else {
+                              @if (hayCambio(campo)) {
+                                <button
+                                  type="button"
+                                  class="btn btn-link p-0 me-1 me-md-2 text-dark"
+                                  (click)="guardar(campo)"
+                                >
+                                  <i class="fi fi-rs-disk"></i>
+                                </button>
+                              }
+                              <button
+                                type="button"
+                                class="btn btn-link p-0 text-dark"
+                                (click)="desactivarEdicion(campo)"
+                              >
+                                <i class="fi fi-rr-circle-xmark"></i>
+                              </button>
+                            }
+                          </div>
                         </div>
 
-                        <!-- Acciones de edición -->
-                        @if (!editando[campo]) {
-                          <i
-                            class="fi fi-rr-pencil ms-2 me-1 icon-btn"
-                            style="cursor: pointer"
-                            (click)="activarEdicion(campo)"
-                          ></i>
-                        } @else {
-                          @if (hayCambio(campo)) {
-                            <button
-                              type="button"
-                              class="btn btn-link p-0 me-1"
-                              (click)="guardar(campo)"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
-                          <button
-                            type="button"
-                            class="btn btn-link p-0"
-                            (click)="desactivarEdicion(campo)"
+                        <!-- Mensajes de error en línea independiente -->
+                        @if (campoInvalidYTouched(campo)) {
+                          <div
+                            class="text-danger small mt-1 w-100 ps-2 ps-md-4"
                           >
-                            <i class="fi fi-rr-circle-xmark"></i>
-                          </button>
+                            @if (campo === 'email') {
+                              @if (tieneError('email', 'required')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM1.CORREO.OBLIGATORIO'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError('email', 'pattern')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM1.CORREO.FORMATO' | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError('email', 'emailRepetido')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM1.CORREO.YAEXISTE' | translate
+                                  }}
+                                </div>
+                              }
+                            }
+                            @if (campo === 'nombre') {
+                              @if (tieneError('nombre', 'required')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.NOMBRE_OBLIGATORIO'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                            }
+                            @if (campo === 'apellidos') {
+                              @if (tieneError('apellidos', 'required')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.APELLIDOS_OBLIGATORIO'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                            }
+                            @if (campo === 'telefono') {
+                              @if (tieneError('telefono', 'required')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.TELEFONO.OBLIGATORIO'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError('telefono', 'pattern')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.TELEFONO.FORMATO'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError('telefono', 'telefonoRepetido')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.TELEFONO.YAEXISTE'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                            }
+                            @if (campo === 'fecha_de_nacimiento') {
+                              @if (tieneError(campo, 'fechalimite')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError(campo, 'required')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.FNACIMIENTO.OBLIGATORIA'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError(campo, 'menorDeEdad')) {
+                                <div class="error_menor">
+                                  {{
+                                    'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                              @if (tieneError(campo, 'fechaFutura')) {
+                                <div>
+                                  {{
+                                    'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL'
+                                      | translate
+                                  }}
+                                </div>
+                              }
+                            }
+                          </div>
                         }
                       </li>
                     }
@@ -256,92 +284,98 @@
                 </div>
 
                 <!-- Columna 2: Género y Orientación -->
-                <div class="col-12 col-md-5">
-                  <ul>
+                <div class="col-12 col-md-5 px-1 px-md-3">
+                  <ul class="list-unstyled p-0">
                     @for (campo of camposColumna2; track campo) {
-                      <li class="d-flex align-items-center mb-2">
-                        <i
-                          [ngClass]="{
-                            'fi fi-rr-venus-mars': campo === 'genero',
-                            'fi fi-rs-heart-half-stroke':
-                              campo === 'orientacion',
-                          }"
-                          class="me-1"
-                        ></i>
+                      <li class="d-flex flex-column mb-3">
+                        <div
+                          class="d-flex align-items-center w-100 position-relative"
+                        >
+                          <i
+                            [ngClass]="{
+                              'fi fi-rr-venus-mars': campo === 'genero',
+                              'fi fi-rs-heart-half-stroke':
+                                campo === 'orientacion',
+                            }"
+                            class="me-2 flex-shrink-0"
+                          ></i>
 
-                        <strong class="me-1">
-                          {{ transformToTitleCase(campo) }}:
-                        </strong>
+                          <strong class="me-2 text-nowrap flex-shrink-0">
+                            {{ transformToTitleCase(campo) }}:
+                          </strong>
 
-                        <div class="flex-grow-1">
-                          @if (!editando[campo]) {
-                            <span>
-                              @if (campo === 'genero') {
-                                {{ validacionGenero(getValorCampo(campo)) }}
-                              } @else {
-                                {{
-                                  validacionOrientacion(getValorCampo(campo))
-                                }}
-                              }
-                            </span>
-                          } @else {
-                            <select
-                              class="form-control form-control-sm"
-                              [formControlName]="campo"
-                            >
-                              <option
-                                value=""
-                                disabled
-                                hidden
-                              >
-                                {{
-                                  'REGISTRO.RESUMEN_REGISTRO.SELECCIONA'
-                                    | translate
-                                }}
-                              </option>
-                              @for (
-                                opcion of campo === 'genero'
-                                  ? generos
-                                  : orientaciones;
-                                track opcion
-                              ) {
-                                <option [value]="opcion">
+                          <div class="flex-grow-1 min-width-0">
+                            @if (!editando[campo]) {
+                              <span class="text-truncate d-block">
+                                @if (campo === 'genero') {
+                                  {{ validacionGenero(getValorCampo(campo)) }}
+                                } @else {
                                   {{
-                                    campo === 'genero'
-                                      ? validacionGenero(opcion)
-                                      : validacionOrientacion(opcion)
+                                    validacionOrientacion(getValorCampo(campo))
+                                  }}
+                                }
+                              </span>
+                            } @else {
+                              <select
+                                class="form-control form-control-sm w-100"
+                                [formControlName]="campo"
+                              >
+                                <option
+                                  value=""
+                                  disabled
+                                  hidden
+                                >
+                                  {{
+                                    'REGISTRO.RESUMEN_REGISTRO.SELECCIONA'
+                                      | translate
                                   }}
                                 </option>
-                              }
-                            </select>
-                          }
-                        </div>
+                                @for (
+                                  opcion of campo === 'genero'
+                                    ? generos
+                                    : orientaciones;
+                                  track opcion
+                                ) {
+                                  <option [value]="opcion">
+                                    {{
+                                      campo === 'genero'
+                                        ? validacionGenero(opcion)
+                                        : validacionOrientacion(opcion)
+                                    }}
+                                  </option>
+                                }
+                              </select>
+                            }
+                          </div>
 
-                        <!-- Acciones de edición -->
-                        @if (!editando[campo]) {
-                          <i
-                            class="fi fi-rr-pencil ms-2 me-1 icon-btn"
-                            style="cursor: pointer"
-                            (click)="activarEdicion(campo)"
-                          ></i>
-                        } @else {
-                          @if (hayCambio(campo)) {
-                            <button
-                              type="button"
-                              class="btn btn-link p-0 me-1"
-                              (click)="guardar(campo)"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
-                          <button
-                            type="button"
-                            class="btn btn-link p-0"
-                            (click)="desactivarEdicion(campo)"
-                          >
-                            <i class="fi fi-rr-circle-xmark"></i>
-                          </button>
-                        }
+                          <!-- Acciones de edición -->
+                          <div class="botones_editar">
+                            @if (!editando[campo]) {
+                              <i
+                                class="fi fi-rr-pencil ms-1 ms-md-2 icon-btn"
+                                style="cursor: pointer"
+                                (click)="activarEdicion(campo)"
+                              ></i>
+                            } @else {
+                              @if (hayCambio(campo)) {
+                                <button
+                                  type="button"
+                                  class="btn btn-link p-0 me-1 me-md-2 text-dark"
+                                  (click)="guardar(campo)"
+                                >
+                                  <i class="fi fi-rs-disk"></i>
+                                </button>
+                              }
+                              <button
+                                type="button"
+                                class="btn btn-link p-0 text-dark"
+                                (click)="desactivarEdicion(campo)"
+                              >
+                                <i class="fi fi-rr-circle-xmark"></i>
+                              </button>
+                            }
+                          </div>
+                        </div>
                       </li>
                     }
                   </ul>

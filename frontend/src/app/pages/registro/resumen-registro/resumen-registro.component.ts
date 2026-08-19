@@ -98,6 +98,7 @@ export class ResumenRegistroComponent implements OnInit {
 
   ngOnInit(): void {
     const storedData = this.userService.getUsuarioData();
+    console.log('storedData: ', storedData);
 
     if (!storedData) {
       this.navCtrl.navigateRoot('/registro');
@@ -108,30 +109,45 @@ export class ResumenRegistroComponent implements OnInit {
   }
 
   private inicializarFormulario(data: any): void {
+    const usuarioInfo = data?.datosGoogle ?? data;
+    const emailObtenido =
+      usuarioInfo?.email ?? data?.usuario?.email ?? data?.email ?? '';
+
     this.formularioResumen = this.fb.group({
       email: [
-        data?.email ?? '',
+        emailObtenido,
         [Validators.required, Validators.pattern(EMAIL_REGEX)],
       ],
       fecha_de_nacimiento: [
-        data?.fecha_nacimiento ?? '',
+        usuarioInfo?.fecha_nacimiento ?? data?.fecha_nacimiento ?? '',
         [Validators.required],
       ],
-      nombre: [data?.nombre ?? '', [Validators.required]],
-      apellidos: [data?.apellidos ?? '', [Validators.required]],
+      nombre: [
+        usuarioInfo?.nombre ?? data?.nombre ?? '',
+        [Validators.required],
+      ],
+      apellidos: [
+        usuarioInfo?.apellidos ?? data?.apellidos ?? '',
+        [Validators.required],
+      ],
       telefono: [
-        data?.telefono ?? '',
+        usuarioInfo?.telefono ?? data?.telefono ?? '',
         [Validators.required, Validators.pattern(/^[0-9]{9}$/)],
       ],
-      genero: [data?.genero ?? '', [Validators.required]],
-      orientacion: [data?.orientacion ?? '', [Validators.required]],
+      genero: [
+        usuarioInfo?.genero ?? data?.genero ?? '',
+        [Validators.required],
+      ],
+      orientacion: [
+        usuarioInfo?.orientacion ?? data?.orientacion ?? '',
+        [Validators.required],
+      ],
     });
   }
 
   // --- MÉTODOS DE EDICIÓN EN LÍNEA ---
 
   activarEdicion(campo: string): void {
-    // Cancela cualquier otra edición activa y restaura sus valores iniciales
     Object.keys(this.editando).forEach((key) => {
       if (this.editando[key]) {
         this.formularioResumen.get(key)?.setValue(this.original[key]);
@@ -139,7 +155,6 @@ export class ResumenRegistroComponent implements OnInit {
       this.editando[key] = false;
     });
 
-    // Guarda el valor original antes de entrar en edición
     this.original[campo] = this.formularioResumen.get(campo)?.value;
     this.editando[campo] = true;
   }
@@ -236,6 +251,8 @@ export class ResumenRegistroComponent implements OnInit {
     });
   }
 
+  // --- LÓGICA DE FECHAS ---
+
   comprobarTelefonoRegistrado(telefono: string): void {
     this.userService.verificarTelefonoExistente(telefono).subscribe({
       next: (existe: boolean) => {
@@ -264,13 +281,12 @@ export class ResumenRegistroComponent implements OnInit {
     const fechaControl = this.formularioResumen.get('fecha_de_nacimiento');
     const fechaValor = fechaControl?.value;
 
-    if (!fechaValor || fechaValor.length !== 10) {
-      fechaControl?.setErrors({ incompleteDate: true });
-      this.fechaValida = false;
-      return;
-    }
-
-    if (fechaValor < '1930-01-01') {
+    if (
+      !fechaValor ||
+      fechaValor.length !== 10 ||
+      fechaValor.includes('a') ||
+      fechaValor.includes('A')
+    ) {
       fechaControl?.setErrors({ fechalimite: true });
       this.fechaValida = false;
       return;
@@ -286,9 +302,23 @@ export class ResumenRegistroComponent implements OnInit {
     const anio = parseInt(partes[0], 10);
     const mes = parseInt(partes[1], 10) - 1;
     const dia = parseInt(partes[2], 10);
+
+    if (isNaN(anio) || isNaN(mes) || isNaN(dia)) {
+      fechaControl?.setErrors({ fechalimite: true });
+      this.fechaValida = false;
+      return;
+    }
+
+    if (fechaValor < '1930-01-01') {
+      fechaControl?.setErrors({ fechalimite: true });
+      this.fechaValida = false;
+      return;
+    }
+
     const fechaSeleccionada = new Date(anio, mes, dia);
 
     if (
+      isNaN(fechaSeleccionada.getTime()) ||
       fechaSeleccionada.getFullYear() !== anio ||
       fechaSeleccionada.getMonth() !== mes ||
       fechaSeleccionada.getDate() !== dia
@@ -331,7 +361,15 @@ export class ResumenRegistroComponent implements OnInit {
     return true;
   }
 
-  // --- MÉTODOS DE FORMATO Y AYUDA ---
+  get fechaMaxima(): string {
+    const hoy = new Date();
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const yyyy = hoy.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  // --- HELPERS: FORMATO Y TRADUCCIÓN ---
 
   getValorCampo(campo: string): any {
     return this.formularioResumen.get(campo)?.value ?? '';
@@ -364,14 +402,6 @@ export class ResumenRegistroComponent implements OnInit {
           `SELECTOR_ORIENTACION.${orientacion.toUpperCase()}`,
         )
       : '';
-  }
-
-  get fechaMaxima(): string {
-    const hoy = new Date();
-    const dd = String(hoy.getDate()).padStart(2, '0');
-    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-    const yyyy = hoy.getFullYear();
-    return `${yyyy}-${mm}-${dd}`;
   }
 
   // --- MANEJO DE MODALES Y REGISTRO ---
