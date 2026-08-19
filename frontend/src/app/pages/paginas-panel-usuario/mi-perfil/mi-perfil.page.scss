@@ -3,11 +3,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 2rem;
   width: 100%;
   flex-wrap: nowrap;
   text-align: center;
   position: relative;
+  margin: 0 auto;
 }
 
 /* Asegurar que ocupe el ancho total disponible */
@@ -31,7 +33,7 @@
 }
 
 .line {
-  border-right: none !important; 
+  border-right: none !important;
   border-bottom: none;
 }
 
@@ -204,6 +206,15 @@
 /* Estilos específicos para móviles */
 @media (max-width: 576px) {
 
+  .fila-foto {
+    gap: 1rem;
+
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+  }
+
   /* === Fila de foto y botones === */
   .img_container {
     width: 80px;
@@ -211,10 +222,11 @@
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    justify-content: center;
     display: flex;
+    justify-content: center;
     align-items: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    margin: 0 auto;
   }
 
   .img_profile {
@@ -226,8 +238,8 @@
   }
 
   .boton {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
 
   /* Botón "Así me ven los demás" */
