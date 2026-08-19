@@ -174,6 +174,13 @@ export class TablaVehiculosComponent implements OnInit {
    * Función para añadir un vehículo a la tabla
    */
   guardarVehiculo() {
+    if (
+      !this.marcaSeleccionada ||
+      !this.modeloSeleccionado ||
+      !this.colorSeleccionado
+    ) {
+      return;
+    }
     this.loadUserData();
     if (!this.userData.usuario && this.userData.id) {
       this.userData = { usuario: this.userData };
@@ -228,8 +235,20 @@ export class TablaVehiculosComponent implements OnInit {
    * @param vehiculo
    */
   guardarVehiculoEditado(vehiculo: any) {
+    if (
+      !this.marcaSeleccionada ||
+      !this.modeloSeleccionado ||
+      !this.colorSeleccionado
+    ) {
+      return;
+    }
     console.log('Guardando cambios en el vehículo: ', vehiculo);
     vehiculo.editandoVehiculo = false;
+
+    vehiculo.marca = this.marcaSeleccionada;
+    vehiculo.modelo = this.modeloSeleccionado;
+    vehiculo.color = this.colorSeleccionado;
+
     this.funcionesComunes.editarVehiculo(vehiculo);
     this.cdr.detectChanges();
 

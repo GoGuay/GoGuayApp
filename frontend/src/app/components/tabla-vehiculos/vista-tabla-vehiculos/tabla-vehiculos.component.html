@@ -265,7 +265,11 @@
             >
               <button
                 type="button"
-                [disabled]="matriculaNoValida"
+                [disabled]="
+                  !marcaSeleccionada ||
+                  !modeloSeleccionado ||
+                  !colorSeleccionado
+                "
                 class="btn btn_bg"
                 mat-raised-button
                 (click)="guardarVehiculo()"
@@ -279,7 +283,11 @@
             >
               <button
                 type="button"
-                [disabled]="matriculaNoValida"
+                [disabled]="
+                  !marcaSeleccionada ||
+                  !modeloSeleccionado ||
+                  !colorSeleccionado
+                "
                 class="btn btn_bg"
                 mat-raised-button
                 (click)="guardarVehiculoEditado(cocheEnEdicion)"
