@@ -740,9 +740,9 @@ mat-timepicker-content {
 
       // EFECTO HOVER
       &:hover {
-        background-color: #F0D7B4;
+        background-color: #f0d7b4;
         color: black;
-        transform: translateX(5px); // Un pequeño efecto visual
+        transform: translateX(5px);
       }
 
       &.selected {

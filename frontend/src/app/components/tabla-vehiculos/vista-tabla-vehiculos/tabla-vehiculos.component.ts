@@ -63,6 +63,7 @@ export class TablaVehiculosComponent implements OnInit {
   @Output() eliminarVehiculo = new EventEmitter<any>();
   @Output() irARegistrarVehiculo = new EventEmitter<void>();
   @Output() vehiculoAnadidoExito = new EventEmitter<any>();
+  @Output() mostrarSelectorVehiculoChange = new EventEmitter<boolean>();
 
   userData: any = {} as Usuario;
   userLoggedIn: boolean = false;
@@ -79,10 +80,8 @@ export class TablaVehiculosComponent implements OnInit {
     public funcionesComunes: FuncionesComunes,
     public funcionesUsuario: FuncionesUsuario,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
     private vehiculosServicesService: VehiculosServicesService,
     private userService: UserServicesService,
-    private platform: Platform,
     private messageService: MessageService,
     private translate: TranslateService,
   ) {}
@@ -224,7 +223,7 @@ export class TablaVehiculosComponent implements OnInit {
             this.colorSeleccionado = '';
             this.mostrarSelectorVehiculo = false;
             this.vehiculoAnadidoExito.emit(usuarioActualizado);
-
+            this.mostrarSelectorVehiculoChange.emit(false);
             this.cdr.detectChanges();
           });
       });
@@ -266,6 +265,18 @@ export class TablaVehiculosComponent implements OnInit {
     this.colorSeleccionado = '';
     this.mostrarSelectorVehiculo = false;
     this.editandoCoche = false;
+    this.mostrarSelectorVehiculoChange.emit(false);
+  }
+
+  cancelarCoche() {
+    this.mostrarSelectorVehiculo = false;
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.modelosFiltrados = [];
+    this.editandoCoche = false;
+    this.cocheEnEdicion = null;
+    this.mostrarSelectorVehiculoChange.emit(false);
   }
 
   /**

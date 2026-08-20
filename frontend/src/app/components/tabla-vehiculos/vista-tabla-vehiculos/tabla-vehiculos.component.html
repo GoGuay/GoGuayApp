@@ -139,7 +139,7 @@
             class="cards-vehiculos d-flex flex-wrap gap-2 justify-content-center d-md-none mt-3"
           >
             <div
-              class="card mb-3"
+              class="card mb-1"
               *ngFor="let coche of vehiculos"
             >
               <div class="card-body">
@@ -193,7 +193,7 @@
                   <ng-template #modeloTexto>{{ coche.modelo }}</ng-template>
                 </div>
 
-                <div class="mt-2 mb-4 justify-content-center d-flex">
+                <div class="mt-3 justify-content-center d-flex">
                   <ng-container
                     *ngIf="coche.editandoVehiculo; else colorImagen"
                   >
@@ -211,7 +211,7 @@
                         disabled
                         selected
                       >
-                        {{ 'TABLA_VEHICULOS.SELECTOR.MODELO' | translate }}
+                        {{ 'TABLA_VEHICULOS.SELECTOR.COLOR' | translate }}
                       </option>
                       <option
                         *ngFor="let color of listadoColores"
@@ -229,7 +229,7 @@
                   </ng-template>
                 </div>
 
-                <div cass="text-center d-flex justify-content-center gap-2">
+                <div class="text-center d-flex justify-content-center gap-2">
                   <button
                     mat-icon-button
                     class="botones_tabla btn_bg"
@@ -276,7 +276,7 @@
 
       <ng-template #sinVehiculos>
         <div
-          class="mensaje-sin-vehiculos p-3 text-center card shadow-sm rounded-3"
+          class="mensaje-sin-vehiculos p-2 text-center card shadow-sm rounded-3"
         >
           <p class="text-muted">
             {{ 'TABLA_VEHICULOS.SIN_VEHICULOS' | translate }}
@@ -373,7 +373,7 @@
                     disabled
                     selected
                   >
-                    {{ 'TABLA_VEHICULOS.SELECTOR.MODELO' | translate }}
+                    {{ 'TABLA_VEHICULOS.SELECTOR.COLOR' | translate }}
                   </option>
                   <option
                     *ngFor="let color of listadoColores"
@@ -427,42 +427,47 @@
               >
                 {{ 'BOTON.GUARDAR_VEHICULO' | translate }}
               </button>
+              <!-- Boton para cancelar el guardado de un vehículo nuevo -->
+              <button
+                type="button"
+                class="btn btn_bg ms-2"
+                mat-raised-button
+                (click)="cancelarCoche()"
+              >
+                Cancelar
+              </button>
             </div>
             <div
               *ngIf="editandoCoche"
               class="container d-flex justify-content-center mt-2"
             >
-              <!-- Botón para guardar un coche tras editarlo -->
-              <button
-                type="button"
-                [disabled]="
-                  !marcaSeleccionada ||
-                  !modeloSeleccionado ||
-                  !colorSeleccionado
-                "
-                class="btn btn_bg"
-                mat-raised-button
-                (click)="guardarVehiculoEditado(cocheEnEdicion)"
-              >
-                Guardar coche
-              </button>
+              <div class="d-flex justify-content-center gap-3">
+                <!-- Botón para guardar un coche tras editarlo -->
+                <button
+                  type="button"
+                  [disabled]="
+                    !marcaSeleccionada ||
+                    !modeloSeleccionado ||
+                    !colorSeleccionado
+                  "
+                  class="btn btn_bg"
+                  mat-raised-button
+                  (click)="guardarVehiculoEditado(cocheEnEdicion)"
+                >
+                  Guardar coche
+                </button>
+                <!-- Botón para cancelar un nuevo coche o coche editando -->
+                <button
+                  type="button"
+                  class="btn btn_bg"
+                  mat-raised-button
+                  (click)="cancelarCoche()"
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
-            <div class="container d-flex justify-content-center mt-2">
-              <!-- Botón para cancelar un nuevo coche o coche editando -->
-              <button
-                type="button"
-                [disabled]="
-                  !marcaSeleccionada ||
-                  !modeloSeleccionado ||
-                  !colorSeleccionado
-                "
-                class="btn btn_bg"
-                mat-raised-button
-                (click)="guardarVehiculoEditado(cocheEnEdicion)"
-              >
-                Cancelar
-              </button>
-            </div>
+            <div class="container d-flex justify-content-center mt-2"></div>
           </ion-row>
         </div>
       </div>
