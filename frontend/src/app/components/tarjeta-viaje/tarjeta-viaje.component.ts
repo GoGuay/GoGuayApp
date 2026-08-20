@@ -2,18 +2,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { AlertController, IonicModule, NavController } from '@ionic/angular';
-import { JumbotronComponent } from 'src/app/pages/jumbotron/jumbotron.component';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { SpinnerComponent } from '../spinner/spinner.component';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { Viaje } from 'src/app/models/travel/viaje.model';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
+import { Viaje } from '../../models/travel/viaje.model';
+import { Usuario } from '../../models/user/usuario.model';
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { TravelService } from '../../core/travel-services/travel.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PopoverController } from '@ionic/angular/standalone';
@@ -29,10 +26,7 @@ import { PuntuacionesComponent } from '../puntuaciones/puntuaciones.component';
     IonicModule,
     CommonModule,
     FormsModule,
-    NavbarComponent,
     MatIcon,
-    JumbotronComponent,
-    SpinnerComponent,
     ToastModule,
     TranslateModule,
   ],
@@ -51,6 +45,7 @@ export class TarjetaViajeComponent implements OnInit {
   conductor: boolean = false;
   filtroSeleccionado: string = 'horaSalida';
   cargando = false;
+  fotoPerfil: string = '';
 
   //Para poder pasar los datos del componente padre
   @Input() viajesFiltrados!: Viaje[];
@@ -78,7 +73,8 @@ export class TarjetaViajeComponent implements OnInit {
       const cache = localStorage.getItem('userData');
       if (cache) {
         this.userData = JSON.parse(cache);
-
+        this.fotoPerfil = this.userData?.usuario?.fotoPerfil;
+        console.log('Datos de usuario obtenidos del localStorage:', this.userData);
         const cachedId =
           this.userData.id ||
           (this.userData.usuario ? this.userData.usuario.id : null);
