@@ -1,39 +1,81 @@
 .spinner-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  z-index: 999; 
+  z-index: 999;
 
-  background-color: rgba(255, 255, 255, 0.7); 
-  backdrop-filter: blur(4px); 
-  -webkit-backdrop-filter: blur(4px); 
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
   animation: fadeInOverlay 0.2s ease-in-out;
+
+  // 1. Modo Pantalla Completa (por defecto)
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  // 2. Modo Contenedor / Parcial (para campos específicos)
+  &.inline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    // Opcional: si en espacios pequeños quieres que el spinner sea más pequeño
+    .spinner {
+      width: 35px;
+      height: 35px;
+    }
+
+    // Opcional: ajustar el tamaño del texto si lo consideras necesario
+    p {
+      font-size: 0.85rem;
+    }
+  }
 }
 
 .spinner {
   width: 60px;
   height: 60px;
   animation: colorCycle 2s infinite;
-  
   filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 @keyframes colorCycle {
-  0% { fill: #ffb3ba; }  
-  16% { fill: #ffdfba; }  
-  33% { fill: #ffffba; }  
-  50% { fill: #baffc9; }  
-  66% { fill: #bae1ff; }  
-  83% { fill: #e0baff; }  
-  100% { fill: #ffb3ba; } 
+  0% {
+    fill: #ffb3ba;
+  }
+
+  16% {
+    fill: #ffdfba;
+  }
+
+  33% {
+    fill: #ffffba;
+  }
+
+  50% {
+    fill: #baffc9;
+  }
+
+  66% {
+    fill: #bae1ff;
+  }
+
+  83% {
+    fill: #e0baff;
+  }
+
+  100% {
+    fill: #ffb3ba;
+  }
 }
 
 @keyframes fadeInOverlay {
@@ -42,6 +84,7 @@
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
   }
+
   to {
     background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(4px);

@@ -62,6 +62,7 @@ export class MiPerfilPage implements OnInit {
   orientacionEditada: string = '';
   fechaNacimientoEditada: string = '';
   bioEditada: string = '';
+  texto_spinner: string = 'Traduciendo...';
   preferenciasSeleccionadas: string[] = [];
   comunComerciales: boolean = false;
   emailEditado: string = '';
@@ -195,6 +196,7 @@ export class MiPerfilPage implements OnInit {
    */
   detectarIdioma_traducirTexto(textoATraducir: string) {
     this.spinnerActivo = true;
+    this.texto_spinner = 'MIPERFIL.INFO_PERSONAL.SPINNER_TRADUCIENDO';
     this.googleService
       .detectarIdiomaTexto(textoATraducir)
       .subscribe((resultado: any) => {
