@@ -90,3 +90,5 @@ frontend/.angular/
 frontend/dist/
 frontend/typings/
 frontend/.vscode/typings/
+
+service-account.json

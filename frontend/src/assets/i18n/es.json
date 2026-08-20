@@ -34,7 +34,6 @@
   "MIPERFIL": {
     "TITULO": "Mi perfil",
     "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
-    "BTN_GUARDAR": "Guardar",
     "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
     "INFO_PERSONAL": {
       "TITULO": "Información personal",

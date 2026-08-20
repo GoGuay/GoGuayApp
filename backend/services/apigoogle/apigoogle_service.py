@@ -179,7 +179,7 @@ def detectar_idioma():
         response = client.detect_language(
             content= idioma_del_texto,
             parent=parent,
-            mime_type="text/plain",  # mime types: text/plain, text/html
+            mime_type="text/plain",  
         )
         print("respuesta backend: ", response)
         resultado = {
