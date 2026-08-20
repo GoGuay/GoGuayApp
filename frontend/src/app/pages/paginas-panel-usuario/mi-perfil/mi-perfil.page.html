@@ -441,17 +441,24 @@
               >
                 {{'MIPERFIL.INFO_PERSONAL.LABEL_SOBRETI' | translate}}
               </label>
-              <textarea
-                class="form-control bio"
-                id="bio"
-                rows="5"
-                maxlength="250"
-                placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}"
-                [(ngModel)]="bioEditada"
-                name="bio"
-                aria-describedby="bioHelp"
-                (ngModelChange)="onInputChange()"
-              ></textarea>
+              <div style="position: relative">
+                <textarea
+                  class="form-control bio"
+                  id="bio"
+                  rows="5"
+                  maxlength="250"
+                  placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}"
+                  [(ngModel)]="bioEditada"
+                  name="bio"
+                  aria-describedby="bioHelp"
+                  (ngModelChange)="onInputChange()"
+                ></textarea>
+                <app-spinner
+                  *ngIf="spinnerActivo"
+                  [texto_spinner]="texto_spinner | translate"
+                  [tamano_completo]="false"
+                ></app-spinner>
+              </div>
 
               <div
                 [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
@@ -460,7 +467,6 @@
                 {{ bioEditada.length || 0 }} / 250 {{
                 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
-              <app-spinner *ngIf="spinnerActivo"></app-spinner>
 
               <span
                 id="bioHelp"
@@ -473,7 +479,7 @@
         </ion-row>
       </ion-col>
 
-      <!-- Columna: TAbla vechículos y preferencias de viaje -->
+      <!-- Columna: Tabla vechículos y preferencias de viaje -->
       <ion-col
         size="12"
         size-md="5"

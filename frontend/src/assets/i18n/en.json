@@ -1,7 +1,7 @@
 {
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
-    "LABEL": "Gender You Identify With",
+    "LABEL": "Your gender",
     "INFO": "It Is A Person's Internal And Individual Experience, Expressed Through Identity, Clothing, Or Behavior. It Is Not Related To Sex Assigned At Birth And Is Not Limited Only To Man Or Woman.",
     "SELECCIONA": "Select Your Gender",
     "AYUDA": "Options Are Shown To Choose Your Gender",
@@ -15,7 +15,7 @@
     "NO_RESPONDE": "Prefer Not To Answer"
   },
   "SELECTOR_ORIENTACION": {
-    "LABEL": "What Is Your Sexual Orientation?",
+    "LABEL": "Your sexual orientation?",
     "INFO": "It Is The Emotional, Romantic, And/Or Sexual Attraction Felt Toward Other People.",
     "AYUDA": "Options Are Shown To Choose Your Orientation",
     "SELECCIONA": "Select Your Orientation",
@@ -58,7 +58,8 @@
       "LABEL_SOBRETI": "About you",
       "PLACEHOLDER_SOBRETI": "Here you can tell us whatever you want about yourself!",
       "AYUDA_SOBRETI": "Area for you to write free text",
-      "CARACTERES": "Characters used"
+      "CARACTERES": "Characters used",
+      "SPINNER_TRADUCIENDO": "Translating..."
     },
     "PREF_VIAJE": {
       "LABEL": "My travel preferences",
