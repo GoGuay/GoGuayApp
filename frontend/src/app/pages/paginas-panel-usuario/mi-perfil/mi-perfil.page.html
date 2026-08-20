@@ -489,7 +489,7 @@
         <app-tabla-vehiculos
           [modoSeleccion]="false"
           [vehiculos]="userData?.usuario?.vehiculos || userData?.vehiculos"
-          [mostrarSelectorVehiculo]="mostrarSelectorVehiculo"
+          [(mostrarSelectorVehiculo)]="mostrarSelectorVehiculo"
           (eliminarVehiculo)="modalEliminarVehiculo($event)"
           (irARegistrarVehiculo)="botonAnadirVehiculo()"
           (vehiculoAnadidoExito)="actualizarListaVehiculos($event)"
