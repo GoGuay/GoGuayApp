@@ -1,44 +1,30 @@
-<div
-  *ngFor="let viaje of viajesFiltrados"
-  class="card viaje-card mis-viajes-card mb-5 shadow-sm"
-  [ngClass]="{ 'viaje-en-curso-real': viaje.enCursoReal }"
->
+<div *ngFor="let viaje of viajesFiltrados" class="card viaje-card mis-viajes-card mb-5 shadow-sm"
+  [ngClass]="{ 'viaje-en-curso-real': viaje.enCursoReal }">
   <div class="row g-0">
     <div class="col-md-9 p-3 col-trayecto">
-      <div
-        *ngIf="userData?.usuario"
-        class="mb-2"
-      >
-        <h4
-          *ngIf="
+      <div *ngIf="userData?.usuario" class="mb-2">
+        <h4 *ngIf="
             filtroViajes === 'solicitudes' &&
             viaje.usuario_id === userData.usuario.id
-          "
-          class="text-secondary small mb-2"
-        >
+          " class="text-secondary small mb-2">
           Gestión de pasajeros
         </h4>
 
-        <div
-          *ngIf="
+        <div *ngIf="
             viaje.usuario_id === userData?.usuario?.id &&
             viaje.solicitudes_pendientes?.length! > 0 &&
             !funcionesComunes.esViajeFinalizado(
               viaje.fecha_salida,
               viaje.hora_salida
             )
-          "
-          class="solicitudes-recibidas-container mb-3"
-        >
+          " class="solicitudes-recibidas-container mb-3">
           <h5 class="text-primary">
             <i class="fi fi-rr-envelope-open-text me-2"></i>
             Solicitudes para mi viaje:
           </h5>
 
-          <div
-            *ngFor="let sol of viaje.solicitudes_pendientes"
-            class="d-flex align-items-center justify-content-between border-bottom py-3 bg-light rounded px-2"
-          >
+          <div *ngFor="let sol of viaje.solicitudes_pendientes"
+            class="d-flex align-items-center justify-content-between border-bottom py-3 bg-light rounded px-2">
             <span>
               <i class="fi fi-rr-user me-2"></i>
               <strong>{{ sol.nombre }}</strong>
@@ -46,17 +32,11 @@
             </span>
 
             <div class="d-flex gap-2">
-              <button
-                class="btn-aceptar-mini"
-                (click)="aceptarPasajero(viaje.id, sol.id)"
-              >
+              <button class="btn-aceptar-mini" (click)="aceptarPasajero(viaje.id, sol.id)">
                 <i class="fi fi-rs-badge-check"></i>
                 Aceptar
               </button>
-              <button
-                class="btn-rechazar-mini"
-                (click)="rechazarPasajero(viaje.id, sol.id)"
-              >
+              <button class="btn-rechazar-mini" (click)="rechazarPasajero(viaje.id, sol.id)">
                 <i class="fi fi-rr-cross-circle"></i>
                 Rechazar
               </button>
@@ -66,16 +46,13 @@
 
         <div *ngIf="viaje.usuario_id !== userData.usuario.id">
           <h4 *ngIf="filtroViajes === 'solicitudes'">Mi solicitud de plaza</h4>
-          <span
-            class="badge-solicitud"
-            [ngClass]="
+          <span class="badge-solicitud" [ngClass]="
               viaje.estado_solicitud_propia === 'aceptado'
                 ? 'badge-aceptada'
                 : viaje.estado_solicitud_propia === 'rechazado'
                   ? 'badge-rechazada'
                   : 'badge-pendiente'
-            "
-          >
+            ">
             <i class="fi fi-rr-clock me-1"></i>
             {{ viaje.estado_solicitud_propia || 'pendiente' | uppercase }}
           </span>
@@ -87,66 +64,55 @@
           <i class="fi fi-rr-calendar me-1"></i>
           <span>
             {{
-              viaje.fecha_salida
-                | date: 'EEEE, d MMMM yyyy' : '' : translate.currentLang || 'es'
-                | titlecase
+            viaje.fecha_salida
+            | date: 'EEEE, d MMMM yyyy' : '' : translate.currentLang || 'es'
+            | titlecase
             }}
           </span>
         </div>
         <div class="d-flex gap-2 align-items-center">
           <span [ngClass]="getClaseEstado(viaje.estado_viaje ?? '')">
-            <i
-              class="fi"
-              [ngClass]="getIconoEstado(viaje.estado_viaje ?? '')"
-            ></i>
+            <i class="fi" [ngClass]="getIconoEstado(viaje.estado_viaje ?? '')"></i>
             {{ viaje.estado_viaje ?? 'Próximo' }}
           </span>
         </div>
       </div>
 
-      <div
-        class="d-flex align-items-center justify-content-between trayecto-container"
-      >
+      <div class="d-flex align-items-center justify-content-between trayecto-container">
         <div class="punto-viaje">
           <span class="hora">{{ viaje.hora_salida }}</span>
           <span class="ciudad">{{ viaje.origen || 'Origen' }}</span>
         </div>
         <div class="timeline flex-grow-1 mx-3 text-center">
           <div>
-            <ion-row>
-              <ion-col>
-                <ion-avatar>
-                  <img
-                    alt=""
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
+            <ion-row class="align-items-center justify-content-center">
+
+              <ion-col size="auto" class="text-center">
+                <div class="conductor-container position-relative d-inline-block">
+                  <ion-avatar class="avatar-conductor">
+                    <img [alt]="fotoPerfil || 'Conductor'"
+                      [src]="fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+                  </ion-avatar>
+                  <span class="badge-conductor-icon" title="Conductor">
+                    <i class="fi fi-rr-steering-wheel"></i>
+                  </span>
+                </div>
+              </ion-col>
+
+              <ion-col size="auto" *ngIf="viaje.acompanantes && viaje.acompanantes.length > 0" class="px-1 text-muted">
+                <i class="fi fi-rr-arrow-right small"></i>
+              </ion-col>
+
+              <ion-col size="auto" class="d-flex justify-content-center align-items-center gap-2 flex-wrap"
+                *ngIf="viaje.acompanantes && viaje.acompanantes.length > 0">
+                <ion-avatar class="avatar-acompanante" *ngFor="let ac of viaje.acompanantes">
+                  <img [alt]="ac.nombre || 'Pasajero'"
+                    [src]="ac.fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
                 </ion-avatar>
               </ion-col>
-              <ion-col
-                class="d-flex justify-content-center align-items-center gap-2 flex-wrap"
-              >
-                <ion-avatar>
-                  <img
-                    alt=""
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
-                </ion-avatar>
-                <ion-avatar>
-                  <img
-                    alt=""
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
-                </ion-avatar>
-                <ion-avatar>
-                  <img
-                    alt=""
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
-                </ion-avatar>
-              </ion-col>
+
             </ion-row>
           </div>
-          <!-- <div class="duracion-badge">{{ viaje.duracion_viaje }}</div> -->
         </div>
         <div class="punto-viaje text-end">
           <span class="hora">{{ viaje.hora_llegada || '--:--' }}</span>
@@ -155,103 +121,62 @@
       </div>
     </div>
 
-    <div
-      class="col-md-3 side-management p-3 d-flex flex-column justify-content-center"
-    >
+    <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
       <div class="acciones-grid d-grid gap-2">
-        <button
-          *ngIf="
+        <button *ngIf="
             pasajero &&
             viaje.estado_viaje === 'Finalizado' &&
             !viaje.ya_puntuado
-          "
-          class="btn-gestion btn-puntuar"
-          (click)="puntuarViaje(viaje)"
-          matTooltip="Puntuar viaje"
-          data-name="Puntuar"
-          aria-label="Puntuar viaje"
-        >
+          " class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje"
+          data-name="Puntuar" aria-label="Puntuar viaje">
           <i class="fi fi-rr-survey-xmark"></i>
           <span class="btn-text">Puntuar</span>
         </button>
 
-        <button
-          class="btn-gestion btn-report"
-          (click)="reportar($event, viaje)"
-          matTooltip="Reportar"
-          data-name="Reportar"
-          aria-label="Reportar viaje"
-        >
+        <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar"
+          data-name="Reportar" aria-label="Reportar viaje">
           <i class="fi fi-rr-triangle-warning"></i>
           <span class="btn-text">Reportar</span>
         </button>
 
-        <button
-          class="btn-gestion btn-detalle"
-          (click)="openDetalleViaje(viaje)"
-          matTooltip="Detalles"
-          data-name="Detalles"
-          aria-label="Ver detalles del viaje"
-        >
+        <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles"
+          data-name="Detalles" aria-label="Ver detalles del viaje">
           <i class="fi fi-rr-attention-detail"></i>
           <span class="btn-text">Detalles</span>
         </button>
 
-        <button
-          *ngIf="
+        <button *ngIf="
             !pasajero &&
             viaje.estado_viaje != 'Finalizado' &&
             viaje.estado_viaje != 'Cancelado'
-          "
-          class="btn-gestion btn-editar"
-          (click)="editarViaje(viaje.id)"
-          matTooltip="Editar"
-          data-name="Editar"
-          aria-label="Editar viaje"
-        >
+          " class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar"
+          aria-label="Editar viaje">
           <mat-icon>edit</mat-icon>
           <span class="btn-text">Editar</span>
         </button>
-        <button
-          *ngIf="
+        <button *ngIf="
             !pasajero &&
             viaje.estado_viaje != 'Finalizado' &&
             viaje.estado_viaje != 'Cancelado'
-          "
-          class="btn-gestion btn-eliminar"
-          (click)="eliminarViaje(viaje.id)"
-          matTooltip="Eliminar"
-          data-name="Eliminar"
-          aria-label="Eliminar viaje"
-        >
+          " class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar"
+          data-name="Eliminar" aria-label="Eliminar viaje">
           <mat-icon>delete</mat-icon>
           <span class="btn-text">Eliminar</span>
         </button>
 
-        <button
-          *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'"
-          class="btn-gestion btn-eliminar"
-          (click)="cancelarSolicitud(viaje)"
-          matTooltip="Cancelar solicitud"
-          data-name="Cancelar solicitud"
-          aria-label="Cancelar solicitud de viaje"
-        >
+        <button *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'" class="btn-gestion btn-eliminar"
+          (click)="cancelarSolicitud(viaje)" matTooltip="Cancelar solicitud" data-name="Cancelar solicitud"
+          aria-label="Cancelar solicitud de viaje">
           <i class="fi fi-rr-exit"></i>
           <span class="btn-text">Cancelar</span>
         </button>
 
-        <button
-          *ngIf="
+        <button *ngIf="
             !conductor &&
             pasajero &&
             viaje.estado_solicitud_propia === 'aceptado'
-          "
-          class="btn-gestion btn-eliminar"
-          (click)="salirDeViaje(viaje.id)"
-          matTooltip="Salir del viaje"
-          data-name="Salir del viaje"
-          aria-label="Salir del viaje"
-        >
+          " class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Salir del viaje"
+          data-name="Salir del viaje" aria-label="Salir del viaje">
           <mat-icon>logout</mat-icon>
           <span class="btn-text">Salir</span>
         </button>
