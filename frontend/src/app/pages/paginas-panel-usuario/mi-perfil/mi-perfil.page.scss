@@ -12,6 +12,48 @@
   margin: 0 auto;
 }
 
+.position-relative {
+  position: relative;
+}
+
+.lista_sugerencias {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 2px;
+
+  .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    /* Color rojo para hover y selección activa con teclado */
+    &:hover,
+    &.active {
+      background-color: #F0D7B4 !important;
+      color: black !important;
+    }
+  }
+}
+
+#input-pronombre {
+  &::placeholder {
+    font-size: 0.99rem;
+    opacity: 0.7;
+  }
+}
+
+
+
+.form-select option {
+  background-color: #ffffff;
+  color: #000000;
+
+  &:hover,
+  &:focus {
+    background-color: red !important;
+    color: #ffffff !important;
+  }
+}
+
 /* Asegurar que ocupe el ancho total disponible */
 .fila-foto>.col-auto {
   display: flex;
