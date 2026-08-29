@@ -175,31 +175,35 @@
     },
     "SECCION_PUBLICAR": {
       "TITULO": "¿Quieres compartir tu próximo viaje?",
-      "AYUDA": "Publica tu próximo viaje aquí."
+      "AYUDA": "Publica tu próximo viaje aquí.",
+      "DESCRIPCION": "Publica y viaja en compañía"
     },
     "SECCION_BUSCAR": {
       "TITULO": "¿Quieres buscar un viaje?",
-      "AYUDA": "Busca un viaje aquí."
+      "AYUDA": "Busca un viaje aquí.",
+      "DESCRIPCION": "Encuentra rutas con gente afín"
     },
     "SECCION_DUDAS": {
       "TITULO": "¿TIENES DUDAS?"
-    }
-  },
-  "__Eventos": "Sección Eventos del Home",
-  "EVENTOS": {
-    "TITULO": "¿Quieres ir a algún evento?",
-    "INFO_SELECTOR": "Consulta eventos de diferentes ciudades para crear o unirte a un viaje compartido",
-    "SELECTOR": "Consulta los eventos de estas ciudades",
-    "FINICIO": "Fecha de inicio",
-    "FFIN": "Fecha de fin",
-    "IMAGEN": "Imagen del evento",
-    "ENLACE": "Más información del evento",
-    "BOTONES": {
-      "CREAR_VIAJE": "Crear viaje",
-      "PARA": "para",
-      "BUSCAR_VIAJE": "Buscar viaje"
     },
-    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    "EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
+      "INFO_SELECTOR": "Elige una ciudad de la lista",
+      "SELECTOR": "Elige una ciudad",
+      "PROXIMOS_EN": "Próximos eventos en {{ciudad}}",
+      "FINICIO": "Fecha de inicio",
+      "FFIN": "Fecha de fin",
+      "IMAGEN": "Imagen del evento",
+      "ENLACE": "Más información del evento",
+      "BOTONES": {
+        "CREAR_VIAJE": "Crear viaje",
+        "PARA": "para",
+        "BUSCAR_VIAJE": "Buscar viaje"
+      },
+      "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
+      "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    }
   },
 
   "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
