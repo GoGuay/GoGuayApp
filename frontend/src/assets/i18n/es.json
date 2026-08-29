@@ -202,6 +202,7 @@
         "BUSCAR_VIAJE": "Buscar viaje"
       },
       "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
+      "VUELVE_PRONTO": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
       "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
     }
   },
