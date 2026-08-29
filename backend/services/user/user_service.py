@@ -437,7 +437,7 @@ def reducir_imagen(imagen, max_size=10485760):
 
 ## ACTUALIZAR IMAGEN DE PERFIL ##
 @user_blueprint.route('/actualizar_imagen_perfil/<int:usuario_id>', methods=['PUT'])
-def actualizar_imagen_perfil(user_id):
+def actualizar_imagen_perfil(usuario_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
     2. request.files.get --> captura la imagen que el usuario subió bajo el nombre imagenPerfil y la guarda en imagen. Si no envió ninguna imagen, se detiene la función.
@@ -450,7 +450,7 @@ def actualizar_imagen_perfil(user_id):
     9. db.session.commit --> Guarda los cambios en la BD
     10. Devuelve un Json con mensaje de exito y la nueva URL para que el front pueda mostrar la nueva imagen actualizada inmediatamente sin tener que recargar.
     """
-    user = Usuario.query.get_or_404(user_id)
+    user = Usuario.query.get_or_404(usuario_id)
 
     imagen = request.files.get('imagenPerfil')
     if not imagen:
@@ -461,7 +461,7 @@ def actualizar_imagen_perfil(user_id):
 
     imagen = reducir_imagen(imagen) 
 
-    carpeta_usuario = f"user_{user_id}"
+    carpeta_usuario = f"user_{usuario_id}"
     result = uploader.upload(imagen, folder=carpeta_usuario)
 
     user.fotoPerfil = result['secure_url']

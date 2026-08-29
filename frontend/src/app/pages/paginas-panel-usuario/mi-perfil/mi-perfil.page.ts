@@ -669,38 +669,70 @@ export class MiPerfilPage implements OnInit {
    * Función para eliminar un vehículo del usuario
    * @param vehiculo
    */
+  // eliminarVehiculo(vehiculo: any): any {
+  //   this.vehiculosServicesService.eliminarVehiculo(vehiculo.id, vehiculo).subscribe({
+  //     next: (resultado) => {
+  //       // 1. Actualizamos el array local de vehículos de forma segura
+  //       if (this.userData?.usuario?.vehiculos) {
+  //         this.userData.usuario.vehiculos = this.userData.usuario.vehiculos.filter((coche: any) => coche.id !== vehiculo.id);
+  //       }
+
+  //       // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
+  //       const userDataActual = this.userService.getUsuarioData() || JSON.parse(localStorage.getItem('userData') || '{}');
+
+  //       if (!this.userData.usuario && this.userData.id) {
+  //         this.userData = { usuario: this.userData };
+  //       }
+
+  //       if (userDataActual && userDataActual.usuario) {
+  //         userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
+  //         localStorage.setItem('userData', JSON.stringify(userDataActual));
+
+  //         // Si tu servicio tiene un método de actualización de estado, úsalo:
+  //         if (typeof this.userService.setUsuarioData === 'function') {
+  //           this.userService.setUsuarioData(userDataActual);
+  //         }
+  //       }
+  //       if (this.userData?.usuario?.id) {
+  //         this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
+  //           this.userData = usuarioActualizado;
+  //           localStorage.setItem('userData', JSON.stringify(this.userData));
+  //           this.cdr.detectChanges();
+  //         });
+  //       }
+  //       this.cdr.detectChanges();
+  //       this.messageService.add({
+  //         severity: 'success',
+  //         summary: 'Vehículo eliminado',
+  //         detail: 'El vehículo se ha eliminado correctamente.',
+  //       });
+  //     },
+  //     error: (err) => {
+  //       console.error('Error al eliminar el vehículo en backend:', err);
+  //     },
+  //   });
+  // }
+
   eliminarVehiculo(vehiculo: any): any {
     this.vehiculosServicesService.eliminarVehiculo(vehiculo.id, vehiculo).subscribe({
-      next: (resultado) => {
-        // 1. Actualizamos el array local de vehículos de forma segura
+      next: () => {
         if (this.userData?.usuario?.vehiculos) {
           this.userData.usuario.vehiculos = this.userData.usuario.vehiculos.filter((coche: any) => coche.id !== vehiculo.id);
         }
 
-        // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
-        const userDataActual = this.userService.getUsuarioData() || JSON.parse(localStorage.getItem('userData') || '{}');
-
-        if (!this.userData.usuario && this.userData.id) {
-          this.userData = { usuario: this.userData };
-        }
-
-        if (userDataActual && userDataActual.usuario) {
-          userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
-          localStorage.setItem('userData', JSON.stringify(userDataActual));
-
-          // Si tu servicio tiene un método de actualización de estado, úsalo:
-          if (typeof this.userService.setUsuarioData === 'function') {
-            this.userService.setUsuarioData(userDataActual);
-          }
-        }
-        if (this.userData?.usuario?.id) {
-          this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
-            this.userData = usuarioActualizado;
+        const usuarioId = this.userData?.usuario?.id || this.userData?.id;
+        if (usuarioId) {
+          this.userService.obtenerUsuarioPorID(usuarioId).subscribe((usuarioActualizado) => {
+            this.userData = usuarioActualizado.usuario ? usuarioActualizado : { usuario: usuarioActualizado };
             localStorage.setItem('userData', JSON.stringify(this.userData));
+
+            if (typeof this.userService.setUsuarioData === 'function') {
+              this.userService.setUsuarioData(this.userData);
+            }
             this.cdr.detectChanges();
           });
         }
-        this.cdr.detectChanges();
+
         this.messageService.add({
           severity: 'success',
           summary: 'Vehículo eliminado',
@@ -709,6 +741,11 @@ export class MiPerfilPage implements OnInit {
       },
       error: (err) => {
         console.error('Error al eliminar el vehículo en backend:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el vehículo.',
+        });
       },
     });
   }
