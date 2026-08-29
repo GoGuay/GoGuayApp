@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from '../../../core/travel-services/travel.service';
@@ -22,17 +22,10 @@ import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comu
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { Location } from '@angular/common';
 import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  of,
   Subject,
-  switchMap,
-  tap,
 } from 'rxjs';
-import { GoogleServices } from '../../../core/google-services/google-services.service';
-import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
-import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
+import { ControlLocalidad } from '../../../models/control-localidad/control-localidad.model';
+import { BuscadorLocalidadesService } from '../../../core/buscador-localidades/buscador-localidades.service';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -119,6 +112,7 @@ export class NuevoViajePage implements OnInit {
     private elementRef: ElementRef,
     private travelService: TravelService,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
+    private route: ActivatedRoute
   ) {
     // Inicialización de controles de origen y destino
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
@@ -145,6 +139,24 @@ export class NuevoViajePage implements OnInit {
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+
+    this.route.queryParams.subscribe(params => {
+      if (params['destino']) {
+        const destinoSugerido = params['destino'];
+        
+        this.destinoCtrl.valorTexto = destinoSugerido;
+        
+        this.ultimaLocalidadValidaDestino = { descripcion: destinoSugerido };
+
+        const viajeActual = this.travelService.getViajeData() || {};
+        this.travelService.setViajeData({
+          ...viajeActual,
+          destino: destinoSugerido
+        });
+        
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // Getters auxiliares para mantener compatibilidad con el HTML existente

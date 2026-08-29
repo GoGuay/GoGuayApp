@@ -129,7 +129,7 @@ export class ChatPage implements OnInit {
 
             data.forEach((m: Mensaje) => {
                 if (!m.id) return;
-                if (m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')) {
+                if (m.texto.includes('Solicitud para unirse al viaje:')) {
                     const viajeId = m.texto.split(':')[1];
                     const pasajeroId = m.emisor_id;
                     
@@ -388,7 +388,7 @@ export class ChatPage implements OnInit {
      */
     private procesarMensajesEspeciales(mensajes: Mensaje[]) {
         mensajes.forEach((m) => {
-            if (m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')) {
+            if (m.texto.includes('Solicitud para unirse al viaje:')) {
                 const viajeId = Number(m.texto.split(':')[1]);
                 const mensajeId = m.id as number;
 

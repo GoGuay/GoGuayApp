@@ -51,10 +51,10 @@
           <div class="mensaje-burbuja" 
                [ngClass]="{
                  'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:'),
-                 'burbuja-solicitud': m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')
+                 'burbuja-solicitud': m.texto.includes('Solicitud para unirse al viaje:')
                }">
 
-            <ng-container *ngIf="m.texto.includes('SOLICITUD_UNIRSE_VIAJE:'); else checkTelefono">
+            <ng-container *ngIf="m.texto.includes('Solicitud para unirse al viaje:'); else checkTelefono">
               <div class="solicitud-container p-2">
                 <p><strong><i class="fi fi-rr-messages"></i> Solicitud de viaje</strong></p>
                 

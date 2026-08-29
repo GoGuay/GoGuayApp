@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
 import { Usuario } from '../models/user/usuario.model';
+import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados-ia/viajes-recomendados-ia.component";
 
 @Component({
   selector: 'app-home',
@@ -34,7 +35,8 @@ import { Usuario } from '../models/user/usuario.model';
     NavbarComponent,
     BuscadorViajeHomeComponent,
     CommonModule,
-  ],
+    ViajesRecomendadosIaComponent
+],
 })
 export class HomePage implements OnInit {
   userLoggedIn: boolean = false;

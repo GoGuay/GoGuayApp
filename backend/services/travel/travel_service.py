@@ -2,7 +2,10 @@
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DE LOS VIAJES  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+import os
+
 from flask import Blueprint, jsonify, request
+import requests
 from datetime import datetime
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion
@@ -11,8 +14,9 @@ from sqlalchemy.orm import joinedload
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
 
-travel_blueprint = Blueprint('travel', __name__)
+import json
 
+travel_blueprint = Blueprint('travel', __name__)
 
 # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA CREAR UN VIAJE NUEVO
@@ -733,3 +737,93 @@ def notificar_llegada():
         return jsonify({"mensaje": "Llegada notificada"}), 200
     
     return jsonify({"error": "No se encontró la reserva"}), 404
+
+#
+# SERVICIO PARA OBTENER RECOMENDACIONES DE VIAJES BASADAS EN PREFERENCIAS DEL USUARIO
+# UTILIZANDO IA
+#
+@travel_blueprint.route('/recomendados/<int:user_id>', methods=['GET'])
+def obtener_viajes_recomendados(user_id):
+    try:
+        # Preferencias del usuario actual
+        preferencias_usuario = {
+            "intereses": ["playa", "ambiente festivo", "cultura"],
+            "ubicacion_actual": "Madrid",
+            "estilo": "ocio y socializar"
+        }
+        
+        # Catálogo base de eventos y destinos LGTBI inspiradores en España
+        destinos_sugeridos = [
+            {
+                "id": "sitges-orgullo-playa",
+                "destino": "Sitges (Barcelona)",
+                "tipo": "Evento / Escapada de Playa",
+                "descripcion": "Ambiente inigualable, playas emblemáticas y una gran agenda de ocio inclusivo."
+            },
+            {
+                "id": "torremolinos-soho",
+                "destino": "Torremolinos (Málaga)",
+                "tipo": "Ocio y Sol",
+                "descripcion": "Referente histórico y actual de la Costa del Sol con una vibrante oferta cultural y nocturna."
+            },
+            {
+                "id": "valencia-orgullo-cultura",
+                "destino": "Valencia",
+                "tipo": "Cultura y Festivales",
+                "descripcion": "Planes urbanos, ambiente en el barrio del Carmen y eventos artísticos diversos."
+            }
+        ]
+
+        prompt = f"""
+        Actúa como un recomendador de destinos y eventos lgtbi en España para una aplicación de carpooling. 
+        El objetivo es sugerir al usuario lugares atractivos para que se anime a **crear un viaje nuevo** y compartir coche con más gente.
+        
+        Preferencias del usuario:
+        {json.dumps(preferencias_usuario)}
+
+        Destinos y eventos disponibles para sugerir:
+        {json.dumps(destinos_sugeridos)}
+
+        Devuelve estrictamente un objeto JSON válido (sin formato Markdown adicional ni bloques de código tipo ```json) con esta estructura exacta:
+        [
+          {{
+            "destino_id": "sitges-orgullo-playa",
+            "nombre_destino": "Sitges (Barcelona)",
+            "puntuacion_afinidad": 95,
+            "motivo": "Explicación motivadora de por qué le encantará este destino y por qué vale la pena organizar un viaje en coche hasta allí."
+          }}
+        ]
+        Ordena los resultados del más compatible al menos compatible.
+        """
+
+        groq_api_key = os.getenv("GROQ_API_KEY")
+        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+        
+        payload = {
+            "model": "openai/gpt-oss-20b",
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.3
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {groq_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(endpoint, json=payload, headers=headers)
+        data = response.json()
+
+        if response.status_code != 200:
+            return jsonify({"success": False, "error": data.get("error", "Error en la API de Groq")}), 500
+
+        texto_generado = data['choices'][0]['message']['content']
+        texto_limpio = texto_generado.replace("```json", "").replace("```", "").strip()
+        recomendaciones = json.loads(texto_limpio)
+
+        return jsonify({"success": True, "recomendaciones": recomendaciones}), 200
+
+    except Exception as e:
+        print(f"Error en recomendación IA: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500

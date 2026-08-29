@@ -7,5 +7,6 @@
         "sound": "off",
         "announcement": "off"
     },
-    "accessibility.signalOptions.volume": 0
+    "accessibility.signalOptions.volume": 0,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

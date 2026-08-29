@@ -31,7 +31,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService,
-  ) {}
+  ) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -466,4 +466,19 @@ export class TravelService {
       },
     );
   }
+  
+  /**
+     * Función para obtener los viajes recomendados por IA para un usuario específico.
+     * @param userId ID del usuario.
+     * @returns Observable con la lista de recomendaciones y sus motivos de afinidad.
+     */
+  getViajesRecomendadosIA(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/travel/recomendados/${userId}`).pipe(
+      catchError((error) => {
+        console.error('Error al obtener los viajes recomendados por IA:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
 }

@@ -1,0 +1,44 @@
+.recomendados-ia-container {
+  width: 100%;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #333;
+}
+
+.badge-ia {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #90caf9;
+  display: flex;
+  align-items: center;
+}
+
+.ia-card {
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+  border-left: 5px solid #3f51b5;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .motivo-ia-text {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-style: italic;
+    color: #555;
+    border-left: 2px solid #90caf9;
+  }
+}

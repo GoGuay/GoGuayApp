@@ -271,7 +271,7 @@ def solicitar_unirse():
     )
     db.session.add(nueva_solicitud)
 
-    texto_solicitud = f"SOLICITUD_UNIRSE_VIAJE:{viaje_id}"
+    texto_solicitud = f"Solicitud para unirse al viaje: {viaje_id}"
     nuevo_msj = Mensaje(
         conversacion_id=conv_id,
         emisor_id=emisor_id,
