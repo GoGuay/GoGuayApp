@@ -169,6 +169,7 @@
                   </ng-template>
                 </ion-popover>
               </label>
+
               <input
                 #inputPronombre
                 id="input-pronombre"
@@ -183,6 +184,7 @@
                 spellcheck="false"
                 [placeholder]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate"
                 role="combobox"
+                readonly
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
                 aria-describedby="pronombreAyuda"
@@ -193,6 +195,7 @@
               <i
                 class="bi bi-chevron-down position-absolute text-muted"
                 style="right: 15px; top: 68%; transform: translateY(-50%); pointer-events: none"
+                (click)="abrirSelector(pronombreCtrl, listaPronombresOriginales); inputPronombre.focus()"
                 aria-hidden="true"
               ></i>
               <ul
@@ -274,6 +277,7 @@
                 spellcheck="false"
                 [placeholder]="'SELECTOR_GENERO.SELECCIONA' | translate"
                 role="combobox"
+                readonly
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
                 aria-describedby="generoAyuda"
@@ -316,7 +320,7 @@
           </ion-col>
 
           <!-- Selector de orientación -->
-          <ion-col class="col-orientacion">
+          <ion-col class="col-orientacion text-center">
             <div class="mb-3 position-relative">
               <label
                 for="orientacion"
@@ -349,53 +353,59 @@
                   </ng-template>
                 </ion-popover>
               </label>
-              <input
-                #inputOrientacion
-                id="input-orientacion"
-                type="text"
-                class="form-control text-start col-orientacion pe-5"
-                [(ngModel)]="orientacionCtrl.valorTexto"
-                (blur)="validarSeleccionOpcion(orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
-                (focus)="abrirSelector(orientacionCtrl, listaOrientacionesOriginales)"
-                (input)="filtrarOpciones(orientacionCtrl, listaOrientacionesOriginales, 'orientacion', $event)"
-                (keydown)="manejarNavegacionTeclado($event, orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
-                autocomplete="off"
-                spellcheck="false"
-                [placeholder]="'SELECTOR_ORIENTACION.SELECCIONA' | translate"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-haspopup="listbox"
-                aria-describedby="orientacionAyuda"
-                [attr.aria-expanded]="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
-                [attr.aria-controls]="orientacionCtrl.sugerencias.length > 0 ? 'lista-orientacion-resultados' : null"
-                [attr.aria-activedescendant]="orientacionCtrl.indiceActivo >= 0 ? 'opt-ori-' + orientacionCtrl.indiceActivo : null"
-              />
-              <i
-                class="bi bi-chevron-down position-absolute text-muted"
-                style="right: 15px; top: 68%; transform: translateY(-50%); pointer-events: none"
-                (click)="inputOrientacion.focus(); orientacionCtrl.estaActivo = true; orientacionCtrl.sugerencias = listaOrientacionesOriginales"
-                aria-hidden="true"
-              ></i>
-              <ul
-                id="lista-orientacion-resultados"
-                *ngIf="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
-                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
-                role="listbox"
-                aria-live="polite"
-                style="z-index: 1000"
+              <div
+                class="position-relative d-inline-block w-100"
+                style="max-width: 300px"
               >
-                <li
-                  [id]="'opt-ori-' + i"
-                  *ngFor="let opcion of orientacionCtrl.sugerencias; let i = index"
-                  class="list-group-item"
-                  (mousedown)="$event.preventDefault(); seleccionarOpcion(orientacionCtrl, opcion, 'orientacion', inputOrientacion)"
-                  [class.active]="i === orientacionCtrl.indiceActivo"
-                  role="option"
-                  tabindex="-1"
+                <input
+                  #inputOrientacion
+                  id="input-orientacion"
+                  type="text"
+                  class="form-control text-start col-orientacion pe-5"
+                  [(ngModel)]="orientacionCtrl.valorTexto"
+                  (blur)="validarSeleccionOpcion(orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
+                  (focus)="abrirSelector(orientacionCtrl, listaOrientacionesOriginales)"
+                  (input)="filtrarOpciones(orientacionCtrl, listaOrientacionesOriginales, 'orientacion', $event)"
+                  (keydown)="manejarNavegacionTeclado($event, orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
+                  autocomplete="off"
+                  spellcheck="false"
+                  [placeholder]="'SELECTOR_ORIENTACION.SELECCIONA' | translate"
+                  role="combobox"
+                  readonly
+                  aria-autocomplete="list"
+                  aria-haspopup="listbox"
+                  aria-describedby="orientacionAyuda"
+                  [attr.aria-expanded]="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
+                  [attr.aria-controls]="orientacionCtrl.sugerencias.length > 0 ? 'lista-orientacion-resultados' : null"
+                  [attr.aria-activedescendant]="orientacionCtrl.indiceActivo >= 0 ? 'opt-ori-' + orientacionCtrl.indiceActivo : null"
+                />
+                <i
+                  class="bi bi-chevron-down position-absolute text-muted"
+                  style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer"
+                  (click)="inputOrientacion.focus(); orientacionCtrl.estaActivo = true; orientacionCtrl.sugerencias = listaOrientacionesOriginales"
+                  aria-hidden="true"
+                ></i>
+                <ul
+                  id="lista-orientacion-resultados"
+                  *ngIf="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
+                  class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+                  role="listbox"
+                  aria-live="polite"
+                  style="z-index: 1000"
                 >
-                  {{ opcion.descripcion.startsWith('SELECTOR_ORIENTACION.') ? (opcion.descripcion | translate) : opcion.descripcion }}
-                </li>
-              </ul>
+                  <li
+                    [id]="'opt-ori-' + i"
+                    *ngFor="let opcion of orientacionCtrl.sugerencias; let i = index"
+                    class="list-group-item"
+                    (mousedown)="$event.preventDefault(); seleccionarOpcion(orientacionCtrl, opcion, 'orientacion', inputOrientacion)"
+                    [class.active]="i === orientacionCtrl.indiceActivo"
+                    role="option"
+                    tabindex="-1"
+                  >
+                    {{ opcion.descripcion.startsWith('SELECTOR_ORIENTACION.') ? (opcion.descripcion | translate) : opcion.descripcion }}
+                  </li>
+                </ul>
+              </div>
 
               <span
                 id="orientacionAyuda"

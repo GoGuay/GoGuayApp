@@ -125,8 +125,8 @@ export class MiPerfilPage implements OnInit {
     },
   ];
   listaGenerosOriginales = [
-    { valor: 'Mujer', descripcion: 'SELECTOR_GENERO.M_CIS' },
-    { valor: 'Hombre', descripcion: 'SELECTOR_GENERO.H_CIS' },
+    { valor: 'Mujer Cis', descripcion: 'SELECTOR_GENERO.M_CIS' },
+    { valor: 'Hombre Cis', descripcion: 'SELECTOR_GENERO.H_CIS' },
     { valor: 'Transexual', descripcion: 'SELECTOR_GENERO.TRANS' },
     { valor: 'No binario', descripcion: 'SELECTOR_GENERO.NO_BINARIO' },
     { valor: 'Intergénero', descripcion: 'SELECTOR_GENERO.INTER' },
