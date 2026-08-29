@@ -9,9 +9,7 @@
     <div class="d-flex justify-content-center">
       <h1>{{'MIPERFIL.TITULO' | translate}}</h1>
     </div>
-    <p class="d-flex justify-content-center mb-4">
-      {{'MIPERFIL.DESCRIPCION' | translate}}
-    </p>
+    <p class="d-flex justify-content-center mb-4">{{'MIPERFIL.DESCRIPCION' | translate}}</p>
 
     <!-- Modificación de datos personales -->
     <ion-row class="d-flex justify-content-center">
@@ -20,14 +18,10 @@
         size="12"
         size-md="6"
       >
-        <h4 class="text-center mb-3">
-          {{'MIPERFIL.INFO_PERSONAL.TITULO' | translate}}
-        </h4>
+        <h4 class="text-center mb-3">{{'MIPERFIL.INFO_PERSONAL.TITULO' | translate}}</h4>
         <div class="container text-center">
           <!-- === Fila 1: botones + imagen centrada === -->
-          <div
-            class="row align-items-center justify-content-center mb-3 fila-foto"
-          >
+          <div class="row align-items-center justify-content-center mb-3 fila-foto">
             <!-- Botón agregar foto -->
             <div class="col-auto">
               <button
@@ -97,8 +91,7 @@
                 [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate"
                 (click)="verPerfilPublico()"
               >
-                {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' |
-                translate}}
+                {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' | translate}}
               </button>
             </div>
           </div>
@@ -140,10 +133,11 @@
             </div>
           </ion-col>
         </ion-row>
-        <!-- Selector de pronombre -->
+
         <ion-row class="fila-selectores">
+          <!-- Selector de pronombre -->
           <ion-col class="col-pronombre">
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label
                 for="pronombre"
                 class="form-label pronombre"
@@ -163,6 +157,7 @@
                     aria-hidden="true"
                   ></i>
                 </span>
+                <!-- Popover móvil -->
                 <ion-popover
                   *ngIf="!isDesktop"
                   #popover
@@ -170,41 +165,57 @@
                   (didDismiss)="isOpen = false"
                 >
                   <ng-template>
-                    <ion-content class="ion-padding">
-                      {{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}
-                    </ion-content>
+                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}</ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
-              <select
-                id="pronombre"
-                class="form-select col-pronombre form-control"
-                [(ngModel)]="pronombreEditado"
-                name="pronombre"
-                (ngModelChange)="onInputChange()"
+              <input
+                #inputPronombre
+                id="input-pronombre"
+                type="text"
+                class="form-control text-start col-pronombre pe-5"
+                [(ngModel)]="pronombreCtrl.valorTexto"
+                (blur)="validarSeleccionOpcion(pronombreCtrl, listaPronombresOriginales, 'pronombre')"
+                (focus)="abrirSelector(pronombreCtrl, listaPronombresOriginales)"
+                (input)="filtrarOpciones(pronombreCtrl, listaPronombresOriginales, 'pronombre', $event)"
+                (keydown)="manejarNavegacionTeclado($event, pronombreCtrl, listaPronombresOriginales, 'pronombre')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
                 aria-describedby="pronombreAyuda"
+                [attr.aria-expanded]="pronombreCtrl.sugerencias.length > 0 && pronombreCtrl.estaActivo"
+                [attr.aria-controls]="pronombreCtrl.sugerencias.length > 0 ? 'lista-pronombre-resultados' : null"
+                [attr.aria-activedescendant]="pronombreCtrl.indiceActivo >= 0 ? 'opt-pron-' + pronombreCtrl.indiceActivo : null"
+              />
+              <i
+                class="bi bi-chevron-down position-absolute text-muted"
+                style="right: 15px; top: 68%; transform: translateY(-50%); pointer-events: none"
+                aria-hidden="true"
+              ></i>
+              <ul
+                id="lista-pronombre-resultados"
+                *ngIf="pronombreCtrl.sugerencias.length > 0 && pronombreCtrl.estaActivo"
+                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+                role="listbox"
+                aria-live="polite"
+                style="z-index: 1000"
               >
-                <option
-                  selected
-                  disabled
+                <li
+                  [id]="'opt-pron-' + i"
+                  *ngFor="let opcion of pronombreCtrl.sugerencias; let i = index"
+                  class="list-group-item"
+                  (mousedown)="$event.preventDefault(); seleccionarOpcion(pronombreCtrl, opcion, 'pronombre', inputPronombre)"
+                  [class.active]="i === pronombreCtrl.indiceActivo"
+                  role="option"
+                  tabindex="-1"
                 >
-                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' |
-                  translate }}
-                </option>
-                <option value="Él / He / Him">Él / He / Him</option>
-                <option value="Ella / She / Her">Ella / She / Her</option>
-                <option value="Elle / They / Them">Elle / They / Them</option>
-                <option value="Otros">
-                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS' | translate }}
-                </option>
-                <option value="No uso ninguno">
-                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO' | translate }}
-                </option>
-                <option value="Prefiero no responder">
-                  {{ 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO' |
-                  translate }}
-                </option>
-              </select>
+                  {{ opcion.descripcion.startsWith('MIPERFIL.') ? (opcion.descripcion | translate) : opcion.descripcion }}
+                </li>
+              </ul>
+
               <span
                 id="pronombreAyuda"
                 class="visually-hidden"
@@ -215,23 +226,28 @@
           </ion-col>
 
           <!-- Selector de género -->
-          <ion-col>
-            <div class="mb-3">
+          <ion-col class="col-genero">
+            <div class="mb-3 position-relative">
               <label
                 for="genero"
-                class="form-label"
+                class="form-label pronombre"
               >
                 {{'SELECTOR_GENERO.LABEL'| translate}}
                 <span
                   tabindex="0"
+                  class="ms-2 text-primary"
                   role="button"
-                  class="ms-2 text-primary col-genero"
-                  [matTooltip]="'SELECTOR_GENEROINFO' | translate"
+                  (click)="presentPopover($event)"
+                  [matTooltip]="'SELECTOR_GENERO.INFO' | translate"
                   matTooltipPosition="above"
                   [attr.aria-label]="'SELECTOR_GENERO.INFO' | translate"
                 >
-                  <i class="bi-question-circle"></i>
+                  <i
+                    class="bi-question-circle"
+                    aria-hidden="true"
+                  ></i>
                 </span>
+                <!-- Popover móvil -->
                 <ion-popover
                   *ngIf="!isDesktop"
                   #popover
@@ -239,54 +255,57 @@
                   (didDismiss)="isOpen = false"
                 >
                   <ng-template>
-                    <ion-content class="ion-padding">
-                      {{'SELECTOR_GENERO.INFO' | translate}}
-                    </ion-content>
+                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}</ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
 
-              <select
-                id="genero"
-                class="form-select col-genero form-control"
-                [(ngModel)]="generoEditado"
-                name="genero"
-                (ngModelChange)="onInputChange()"
+              <input
+                #inputGenero
+                id="input-genero"
+                type="text"
+                class="form-control text-start col-pronombre pe-5"
+                [(ngModel)]="generoCtrl.valorTexto"
+                (blur)="validarSeleccionOpcion(generoCtrl, listaGenerosOriginales, 'genero')"
+                (focus)="abrirSelector(generoCtrl, listaGenerosOriginales)"
+                (input)="filtrarOpciones(generoCtrl, listaGenerosOriginales, 'genero', $event)"
+                (keydown)="manejarNavegacionTeclado($event, generoCtrl, listaGenerosOriginales, 'genero')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'SELECTOR_GENERO.SELECCIONA' | translate"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
                 aria-describedby="generoAyuda"
+                [attr.aria-expanded]="generoCtrl.sugerencias.length > 0 && generoCtrl.estaActivo"
+                [attr.aria-controls]="generoCtrl.sugerencias.length > 0 ? 'lista-genero-resultados' : null"
+                [attr.aria-activedescendant]="generoCtrl.indiceActivo >= 0 ? 'opt-gen-' + generoCtrl.indiceActivo : null"
+              />
+              <i
+                class="bi bi-chevron-down position-absolute text-muted"
+                style="right: 15px; top: 68%; transform: translateY(-50%); pointer-events: none"
+                aria-hidden="true"
+              ></i>
+              <ul
+                id="lista-genero-resultados"
+                *ngIf="generoCtrl.sugerencias.length > 0 && generoCtrl.estaActivo"
+                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+                role="listbox"
+                aria-live="polite"
+                style="z-index: 1000"
               >
-                <option
-                  value=""
-                  selected
-                  disabled
-                  hidden
+                <li
+                  [id]="'opt-gen-' + i"
+                  *ngFor="let opcion of generoCtrl.sugerencias; let i = index"
+                  class="list-group-item"
+                  (mousedown)="$event.preventDefault(); seleccionarOpcion(generoCtrl, opcion, 'genero', inputGenero)"
+                  [class.active]="i === generoCtrl.indiceActivo"
+                  role="option"
+                  tabindex="-1"
                 >
-                  {{ 'SELECTOR_GENERO.SELECCIONA' | translate }}
-                </option>
-                <option value="H_CIS">
-                  {{ 'SELECTOR_GENERO.H_CIS' | translate }}
-                </option>
-                <option value="M_CIS">
-                  {{ 'SELECTOR_GENERO.M_CIS' | translate }}
-                </option>
-                <option value="TRANS">
-                  {{ 'SELECTOR_GENERO.TRANS' | translate }}
-                </option>
-                <option value="NO_BINARIO">
-                  {{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}
-                </option>
-                <option value="INTERGENERO">
-                  {{ 'SELECTOR_GENERO.INTER' | translate }}
-                </option>
-                <option value="NO_FLUIDO">
-                  {{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}
-                </option>
-                <option value="OTRO">
-                  {{ 'SELECTOR_GENERO.OTRO' | translate }}
-                </option>
-                <option value="NO_RESPONDE">
-                  {{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}
-                </option>
-              </select>
+                  {{ opcion.descripcion.startsWith('SELECTOR_GENERO.') ? (opcion.descripcion | translate) : opcion.descripcion }}
+                </li>
+              </ul>
               <span
                 id="generoAyuda"
                 class="visually-hidden"
@@ -298,21 +317,27 @@
 
           <!-- Selector de orientación -->
           <ion-col class="col-orientacion">
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label
                 for="orientacion"
-                class="form-label"
+                class="form-label pronombre"
               >
                 {{'SELECTOR_ORIENTACION.LABEL' | translate}}
                 <span
                   tabindex="0"
-                  role="button"
                   class="ms-2 text-primary"
+                  role="button"
+                  (click)="presentPopover($event)"
                   [matTooltip]="'SELECTOR_ORIENTACION.INFO'| translate"
                   matTooltipPosition="above"
+                  [attr.aria-label]="'SELECTOR_ORIENTACION.INFO' | translate"
                 >
-                  <i class="bi-question-circle"></i>
+                  <i
+                    class="bi-question-circle"
+                    aria-hidden="true"
+                  ></i>
                 </span>
+                <!-- Popover móvil -->
                 <ion-popover
                   *ngIf="!isDesktop"
                   #popover
@@ -320,60 +345,58 @@
                   (didDismiss)="isOpen = false"
                 >
                   <ng-template>
-                    <ion-content class="ion-padding">
-                      {{'SELECTOR_ORIENTACION.INFO'| translate}}
-                    </ion-content>
+                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}</ion-content>
                   </ng-template>
                 </ion-popover>
               </label>
-              <select
-                id="orientacion"
-                [(ngModel)]="orientacionEditada"
-                name="orientacion"
-                class="form-select col-orientacion form-control"
-                (ngModelChange)="onInputChange()"
+              <input
+                #inputOrientacion
+                id="input-orientacion"
+                type="text"
+                class="form-control text-start col-orientacion pe-5"
+                [(ngModel)]="orientacionCtrl.valorTexto"
+                (blur)="validarSeleccionOpcion(orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
+                (focus)="abrirSelector(orientacionCtrl, listaOrientacionesOriginales)"
+                (input)="filtrarOpciones(orientacionCtrl, listaOrientacionesOriginales, 'orientacion', $event)"
+                (keydown)="manejarNavegacionTeclado($event, orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
+                autocomplete="off"
+                spellcheck="false"
+                [placeholder]="'SELECTOR_ORIENTACION.SELECCIONA' | translate"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
                 aria-describedby="orientacionAyuda"
+                [attr.aria-expanded]="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
+                [attr.aria-controls]="orientacionCtrl.sugerencias.length > 0 ? 'lista-orientacion-resultados' : null"
+                [attr.aria-activedescendant]="orientacionCtrl.indiceActivo >= 0 ? 'opt-ori-' + orientacionCtrl.indiceActivo : null"
+              />
+              <i
+                class="bi bi-chevron-down position-absolute text-muted"
+                style="right: 15px; top: 68%; transform: translateY(-50%); pointer-events: none"
+                (click)="inputOrientacion.focus(); orientacionCtrl.estaActivo = true; orientacionCtrl.sugerencias = listaOrientacionesOriginales"
+                aria-hidden="true"
+              ></i>
+              <ul
+                id="lista-orientacion-resultados"
+                *ngIf="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
+                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+                role="listbox"
+                aria-live="polite"
+                style="z-index: 1000"
               >
+                <li
+                  [id]="'opt-ori-' + i"
+                  *ngFor="let opcion of orientacionCtrl.sugerencias; let i = index"
+                  class="list-group-item"
+                  (mousedown)="$event.preventDefault(); seleccionarOpcion(orientacionCtrl, opcion, 'orientacion', inputOrientacion)"
+                  [class.active]="i === orientacionCtrl.indiceActivo"
+                  role="option"
+                  tabindex="-1"
                 >
-                <option
-                  value=""
-                  selected
-                  disabled
-                  hidden
-                >
-                  {{ 'SELECTOR_ORIENTACION.SELECCIONA' | translate }}
-                </option>
-                <option value="GAY">
-                  {{ 'SELECTOR_ORIENTACION.GAY' | translate }}
-                </option>
-                <option value="LESBIANA">
-                  {{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}
-                </option>
-                <option value="BISEXUAL">
-                  {{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}
-                </option>
-                <option value="PANSEXUAL">
-                  {{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}
-                </option>
-                <option value="ASEXUAL">
-                  {{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}
-                </option>
-                <option value="DEMISEXUAL">
-                  {{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}
-                </option>
-                <option value="QUEER">
-                  {{ 'SELECTOR_ORIENTACION.QUEER' | translate }}
-                </option>
-                <option value="HETEROSEXUAL">
-                  {{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}
-                </option>
-                <option value="OTRO">
-                  {{ 'SELECTOR_ORIENTACION.OTRO' | translate }}
-                </option>
-                <option value="NO_RESPONDE">
-                  {{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}
-                </option>
-              </select>
+                  {{ opcion.descripcion.startsWith('SELECTOR_ORIENTACION.') ? (opcion.descripcion | translate) : opcion.descripcion }}
+                </li>
+              </ul>
+
               <span
                 id="orientacionAyuda"
                 class="visually-hidden"
@@ -394,8 +417,7 @@
                     for="fnacimiento"
                     class="form-label"
                   >
-                    {{'MIPERFIL.INFO_PERSONAL.LABEL_FECHANACIMIENTO' |
-                    translate}}
+                    {{'MIPERFIL.INFO_PERSONAL.LABEL_FECHANACIMIENTO' | translate}}
                   </label>
                   <input
                     type="date"
@@ -464,8 +486,7 @@
                 [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
                 style="text-align: right; font-size: 0.8rem; margin-top: 5px"
               >
-                {{ bioEditada.length || 0 }} / 250 {{
-                'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
+                {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
 
               <span
@@ -499,13 +520,9 @@
         <ion-row class="d-flex justify-content-center mt-4">
           <fieldset class="mb-2">
             <!-- Legend para lectores de pantalla -->
-            <legend class="visually-hidden">
-              {{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}
-            </legend>
+            <legend class="visually-hidden">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</legend>
 
-            <h4 class="text-center mb-4">
-              {{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}
-            </h4>
+            <h4 class="text-center mb-4">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</h4>
 
             <div
               role="group"
@@ -515,9 +532,7 @@
                 id="preferencias-label"
                 class="form-label mb-3"
               >
-                <strong>
-                  {{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' | translate }}
-                </strong>
+                <strong>{{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' | translate }}</strong>
               </label>
 
               <!-- HABLAR -->
@@ -594,9 +609,7 @@
 
               <mat-divider class="mb-1 mt-2"></mat-divider>
               <label class="mb-2">
-                <strong>
-                  {{ 'MIPERFIL.PREF_VIAJE.LABEL_OTRAS' | translate }}
-                </strong>
+                <strong>{{ 'MIPERFIL.PREF_VIAJE.LABEL_OTRAS' | translate }}</strong>
               </label>
 
               <!-- MASCOTAS -->

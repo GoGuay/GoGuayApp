@@ -68,9 +68,7 @@ export class MiPerfilPage implements OnInit {
   emailEditado: string = '';
   telefonoEditado: string = '';
   isOpen = false;
-  edad: number = this.funcionesUsuario.calcularEdad(
-    this.fechaNacimientoEditada,
-  );
+  edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
   marcaSeleccionada: string = '';
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
@@ -90,6 +88,66 @@ export class MiPerfilPage implements OnInit {
   listadoColores: string[] = COLORES;
   modelosFiltrados: string[] = [];
 
+  pronombreCtrl = {
+    valorTexto: '',
+    estaActivo: false,
+    indiceActivo: -1,
+    sugerencias: [] as { valor: string; descripcion: string }[],
+  };
+  generoCtrl = {
+    valorTexto: '',
+    estaActivo: false,
+    indiceActivo: -1,
+    sugerencias: [] as any[],
+  };
+  orientacionCtrl = {
+    valorTexto: '',
+    estaActivo: false,
+    indiceActivo: -1,
+    sugerencias: [] as any[],
+  };
+
+  listaPronombresOriginales = [
+    { valor: 'Él / He / Him', descripcion: 'Él / He / Him' },
+    { valor: 'Ella / She / Her', descripcion: 'Ella / She / Her' },
+    { valor: 'Elle / They / Them', descripcion: 'Elle / They / Them' },
+    {
+      valor: 'Otros',
+      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS',
+    },
+    {
+      valor: 'No uso ninguno',
+      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO',
+    },
+    {
+      valor: 'Prefiero no responder',
+      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO',
+    },
+  ];
+  listaGenerosOriginales = [
+    { valor: 'Mujer', descripcion: 'SELECTOR_GENERO.M_CIS' },
+    { valor: 'Hombre', descripcion: 'SELECTOR_GENERO.H_CIS' },
+    { valor: 'Transexual', descripcion: 'SELECTOR_GENERO.TRANS' },
+    { valor: 'No binario', descripcion: 'SELECTOR_GENERO.NO_BINARIO' },
+    { valor: 'Intergénero', descripcion: 'SELECTOR_GENERO.INTER' },
+    { valor: 'No fluido', descripcion: 'SELECTOR_GENERO.NO_FLUIDO' },
+    { valor: 'Otro', descripcion: 'SELECTOR_GENERO.OTRO' },
+    { valor: 'Prefiero no responder', descripcion: 'SELECTOR_GENERO.NO_RESPONDE' },
+  ];
+
+  listaOrientacionesOriginales = [
+    { valor: 'Gay', descripcion: 'SELECTOR_ORIENTACION.GAY' },
+    { valor: 'Lesbiana', descripcion: 'SELECTOR_ORIENTACION.LESBIANA' },
+    { valor: 'Bisexual', descripcion: 'SELECTOR_ORIENTACION.BISEXUAL' },
+    { valor: 'Heterosexual', descripcion: 'SELECTOR_ORIENTACION.HETEROSEXUAL' },
+    { valor: 'Pansexual', descripcion: 'SELECTOR_ORIENTACION.PANSEXUAL' },
+    { valor: 'Demisexual', descripcion: 'SELECTOR_ORIENTACION.DEMISEXUAL' },
+    { valor: 'Queer', descripcion: 'SELECTOR_ORIENTACION.QUEER' },
+    { valor: 'Asexual', descripcion: 'SELECTOR_ORIENTACION.ASEXUAL' },
+    { valor: 'Otro', descripcion: 'SELECTOR_ORIENTACION.OTRO' },
+    { valor: 'Prefiero no responder', descripcion: 'SELECTOR_ORIENTACION.NO_RESPONDE' },
+  ];
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private languageService: LanguageService,
@@ -104,15 +162,12 @@ export class MiPerfilPage implements OnInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {
     this.loadUserData();
-    const usr =
-      this.userData?.usuario || (this.userData?.id ? this.userData : null);
+    const usr = this.userData?.usuario || (this.userData?.id ? this.userData : null);
     if (!usr) {
-      console.warn(
-        'MiPerfil - No se encontró un usuario válido en el storage, redirigiendo al login.',
-      );
+      console.warn('MiPerfil - No se encontró un usuario válido en el storage, redirigiendo al login.');
       this.navCtrl.navigateRoot('/login');
       return;
     }
@@ -145,9 +200,19 @@ export class MiPerfilPage implements OnInit {
 
         this.nombreEditado = usuario.nombre;
         this.apellidosEditados = usuario.apellidos || '';
+
         this.pronombreEditado = usuario.pronombre || '';
+        this.pronombreCtrl.valorTexto = usuario.pronombre || '';
+        this.pronombreCtrl.sugerencias = [...this.listaPronombresOriginales];
+
         this.generoEditado = usuario.genero || '';
+        this.generoCtrl.valorTexto = usuario.genero || '';
+        this.generoCtrl.sugerencias = [...this.listaGenerosOriginales];
+
         this.orientacionEditada = usuario.orientacion || '';
+        this.orientacionCtrl.valorTexto = usuario.orientacion || '';
+        this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
+
         this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
         this.bioEditada = usuario.biografia || '';
         this.preferenciasSeleccionadas = usuario.preferencias || [];
@@ -197,28 +262,134 @@ export class MiPerfilPage implements OnInit {
   detectarIdioma_traducirTexto(textoATraducir: string) {
     this.spinnerActivo = true;
     this.texto_spinner = 'MIPERFIL.INFO_PERSONAL.SPINNER_TRADUCIENDO';
-    this.googleService
-      .detectarIdiomaTexto(textoATraducir)
-      .subscribe((resultado: any) => {
-        console.log('resultado: ', resultado);
-        if (this.lang !== resultado.idioma) {
-          this.googleService
-            .traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma)
-            .subscribe((resultadoTraduccion: any) => {
-              console.log('resultadoTraduccion: ', resultadoTraduccion);
-              this.bioEditada = resultadoTraduccion.texto_traducido;
-              this.spinnerActivo = false;
-            });
-        }
-      });
+    this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
+      console.log('resultado: ', resultado);
+      if (this.lang !== resultado.idioma) {
+        this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
+          console.log('resultadoTraduccion: ', resultadoTraduccion);
+          this.bioEditada = resultadoTraduccion.texto_traducido;
+          this.spinnerActivo = false;
+        });
+      }
+    });
   }
 
+  //SELECTORES
+
+  /**
+   * Abre un selector y cierra automáticamente todos los demás de forma instantánea
+   */
+  abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
+    // Cerramos todos los demás de inmediato
+    this.pronombreCtrl.estaActivo = false;
+    this.generoCtrl.estaActivo = false;
+    this.orientacionCtrl.estaActivo = false;
+
+    // Abrimos el que se ha seleccionado
+    ctrlAActivar.estaActivo = true;
+    ctrlAActivar.sugerencias = listaOriginal;
+    ctrlAActivar.indiceActivo = -1;
+  }
+
+  /**
+   * Función unificada para filtrar sugerencias en cualquier selector
+   */
+  filtrarOpciones(ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion', event: any) {
+    const texto = event.target.value.toLowerCase();
+    ctrl.valorTexto = event.target.value;
+    ctrl.indiceActivo = -1;
+
+    if (tipoCampo === 'pronombre') this.pronombreEditado = ctrl.valorTexto;
+    if (tipoCampo === 'genero') this.generoEditado = ctrl.valorTexto;
+    if (tipoCampo === 'orientacion') this.orientacionEditada = ctrl.valorTexto;
+
+    this.onInputChange();
+
+    if (!texto.trim()) {
+      ctrl.sugerencias = [...listaOriginal];
+      return;
+    }
+
+    ctrl.sugerencias = listaOriginal.filter(
+      (item) => item.valor.toLowerCase().includes(texto) || item.descripcion.toLowerCase().includes(texto)
+    );
+  }
+
+  /**
+   * Selecciona una opción de la lista y quita el foco del input
+   */
+  seleccionarOpcion(
+    ctrl: any,
+    opcion: { valor: string; descripcion: string },
+    tipoCampo: 'pronombre' | 'genero' | 'orientacion',
+    inputElement?: HTMLInputElement
+  ) {
+    ctrl.valorTexto = opcion.valor;
+    if (tipoCampo === 'pronombre') this.pronombreEditado = opcion.valor;
+    if (tipoCampo === 'genero') this.generoEditado = opcion.valor;
+    if (tipoCampo === 'orientacion') this.orientacionEditada = opcion.valor;
+
+    ctrl.sugerencias = [];
+    ctrl.estaActivo = false;
+    ctrl.indiceActivo = -1;
+    this.onInputChange();
+
+    // Quitar el foco para que desaparezca el cursor parpadeando
+    if (inputElement) {
+      inputElement.blur();
+    }
+  }
+
+  /**
+   * Función unificada para validar al perder el foco
+   */
+  validarSeleccionOpcion(ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion') {
+    setTimeout(() => {
+      ctrl.sugerencias = [];
+      ctrl.indiceActivo = -1;
+
+      const encontrado = listaOriginal.find((item) => item.valor.toLowerCase() === ctrl.valorTexto.toLowerCase());
+      if (!encontrado && ctrl.valorTexto.trim() !== '') {
+        if (tipoCampo === 'pronombre') this.pronombreEditado = ctrl.valorTexto;
+        if (tipoCampo === 'genero') this.generoEditado = ctrl.valorTexto;
+        if (tipoCampo === 'orientacion') this.orientacionEditada = ctrl.valorTexto;
+      }
+      this.onInputChange();
+    }, 200);
+  }
+
+  /**
+   * Función unificada para la navegación por teclado (Flechas, Enter, Escape)
+   */
+  manejarNavegacionTeclado(event: KeyboardEvent, ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion') {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (ctrl.sugerencias.length > 0) {
+        ctrl.estaActivo = true;
+        ctrl.indiceActivo = (ctrl.indiceActivo + 1) % ctrl.sugerencias.length;
+      }
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (ctrl.sugerencias.length > 0) {
+        ctrl.indiceActivo = (ctrl.indiceActivo - 1 + ctrl.sugerencias.length) % ctrl.sugerencias.length;
+      }
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (ctrl.indiceActivo >= 0 && ctrl.sugerencias[ctrl.indiceActivo]) {
+        this.seleccionarOpcion(ctrl, ctrl.sugerencias[ctrl.indiceActivo], tipoCampo);
+      }
+    } else if (event.key === 'Escape') {
+      ctrl.sugerencias = [];
+      ctrl.estaActivo = false;
+    }
+  }
+
+  //SELECTORES ^^
+
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService
-      .obtenerUsuarioPorID(id_usuario)
-      .subscribe((resultadoUsuario) => {
-        this.userData.usuario = resultadoUsuario;
-      });
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.userData.usuario = resultadoUsuario;
+    });
   }
 
   loadUserData(): void {
@@ -227,12 +398,7 @@ export class MiPerfilPage implements OnInit {
 
   checkScreenSize() {
     this.isDesktop = window.innerWidth > 576;
-    console.log(
-      'Tamaño detectado:',
-      window.innerWidth,
-      'isDesktop:',
-      this.isDesktop,
-    );
+    console.log('Tamaño detectado:', window.innerWidth, 'isDesktop:', this.isDesktop);
     this.cdr.detectChanges();
   }
 
@@ -245,19 +411,13 @@ export class MiPerfilPage implements OnInit {
 
     // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
-    const apellidosChanged =
-      this.apellidosEditados !== this.userData.usuario?.apellidos;
-    const pronombreChanged =
-      this.pronombreEditado !== this.userData.usuario?.pronombre;
+    const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
+    const pronombreChanged = this.pronombreEditado !== this.userData.usuario?.pronombre;
     const generoChanged = this.generoEditado !== this.userData.usuario.genero;
-    const orientacionChanged =
-      this.orientacionEditada !== this.userData.usuario.orientacion;
-    const fechaNacimientoChanged =
-      this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
+    const orientacionChanged = this.orientacionEditada !== this.userData.usuario.orientacion;
+    const fechaNacimientoChanged = this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
-    const preferenciasChanged =
-      JSON.stringify(this.preferenciasSeleccionadas) !==
-      JSON.stringify(this.userData.usuario.preferencias);
+    const preferenciasChanged = JSON.stringify(this.preferenciasSeleccionadas) !== JSON.stringify(this.userData.usuario.preferencias);
 
     //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
@@ -338,25 +498,23 @@ export class MiPerfilPage implements OnInit {
     };
     console.log('Objeto modificado: ', nuevoUsuario);
 
-    this.userService
-      .editarDatosUsuario(this.userData.usuario.id, nuevoUsuario)
-      .subscribe(
-        (response) => {
-          console.log('Datos actualizado con exito', response);
-          this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-          localStorage.setItem('userData', JSON.stringify(this.userData));
-          this.funcionesUsuario.obtenerUsuario();
-          this.botonHabilitado = false;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Datos guardados',
-            detail: 'Se han guardado correctamente los datos',
-          });
-        },
-        (error) => {
-          console.error('Error al actualizar los datos', error);
-        },
-      );
+    this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe(
+      (response) => {
+        console.log('Datos actualizado con exito', response);
+        this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
+        localStorage.setItem('userData', JSON.stringify(this.userData));
+        this.funcionesUsuario.obtenerUsuario();
+        this.botonHabilitado = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Datos guardados',
+          detail: 'Se han guardado correctamente los datos',
+        });
+      },
+      (error) => {
+        console.error('Error al actualizar los datos', error);
+      }
+    );
   }
 
   /**
@@ -374,9 +532,7 @@ export class MiPerfilPage implements OnInit {
         this.preferenciasSeleccionadas.push(valor);
       }
     } else {
-      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter(
-        (pref) => pref !== valor,
-      );
+      this.preferenciasSeleccionadas = this.preferenciasSeleccionadas.filter((pref) => pref !== valor);
     }
 
     console.log('Preferencias actualizadas:', this.preferenciasSeleccionadas);
@@ -474,15 +630,12 @@ export class MiPerfilPage implements OnInit {
   private actualizarFotoPerfil(usuario: Usuario['usuario'] | null) {
     console.log('usuario: ', usuario);
 
-    this.imagenPerfilUsuario = usuario?.fotoPerfil
-      ? usuario.fotoPerfil
-      : '../../../assets/user/logOn.gif';
+    this.imagenPerfilUsuario = usuario?.fotoPerfil ? usuario.fotoPerfil : '../../../assets/user/logOn.gif';
   }
 
   modalEliminarFotoPerfil(usuario: any) {
     const titulo: string = '¡ATENCIÓN: Vas a eliminar tu foto de perfil!';
-    const mensaje: string =
-      '¿Estás seguro que deseas eliminar tu foto de perfil?';
+    const mensaje: string = '¿Estás seguro que deseas eliminar tu foto de perfil?';
 
     const dialogRef = this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje, showAcceptButton: true },
@@ -517,56 +670,47 @@ export class MiPerfilPage implements OnInit {
    * @param vehiculo
    */
   eliminarVehiculo(vehiculo: any): any {
-    this.vehiculosServicesService
-      .eliminarVehiculo(vehiculo.id, vehiculo)
-      .subscribe({
-        next: (resultado) => {
-          // 1. Actualizamos el array local de vehículos de forma segura
-          if (this.userData?.usuario?.vehiculos) {
-            this.userData.usuario.vehiculos =
-              this.userData.usuario.vehiculos.filter(
-                (coche: any) => coche.id !== vehiculo.id,
-              );
-          }
+    this.vehiculosServicesService.eliminarVehiculo(vehiculo.id, vehiculo).subscribe({
+      next: (resultado) => {
+        // 1. Actualizamos el array local de vehículos de forma segura
+        if (this.userData?.usuario?.vehiculos) {
+          this.userData.usuario.vehiculos = this.userData.usuario.vehiculos.filter((coche: any) => coche.id !== vehiculo.id);
+        }
 
-          // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
-          const userDataActual =
-            this.userService.getUsuarioData() ||
-            JSON.parse(localStorage.getItem('userData') || '{}');
+        // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
+        const userDataActual = this.userService.getUsuarioData() || JSON.parse(localStorage.getItem('userData') || '{}');
 
-          if (!this.userData.usuario && this.userData.id) {
-            this.userData = { usuario: this.userData };
-          }
+        if (!this.userData.usuario && this.userData.id) {
+          this.userData = { usuario: this.userData };
+        }
 
-          if (userDataActual && userDataActual.usuario) {
-            userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
-            localStorage.setItem('userData', JSON.stringify(userDataActual));
+        if (userDataActual && userDataActual.usuario) {
+          userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
+          localStorage.setItem('userData', JSON.stringify(userDataActual));
 
-            // Si tu servicio tiene un método de actualización de estado, úsalo:
-            if (typeof this.userService.setUsuarioData === 'function') {
-              this.userService.setUsuarioData(userDataActual);
-            }
+          // Si tu servicio tiene un método de actualización de estado, úsalo:
+          if (typeof this.userService.setUsuarioData === 'function') {
+            this.userService.setUsuarioData(userDataActual);
           }
-          if (this.userData?.usuario?.id) {
-            this.userService
-              .obtenerUsuarioPorID(this.userData.usuario.id)
-              .subscribe((usuarioActualizado) => {
-                this.userData = usuarioActualizado;
-                localStorage.setItem('userData', JSON.stringify(this.userData));
-                this.cdr.detectChanges();
-              });
-          }
-          this.cdr.detectChanges();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Vehículo eliminado',
-            detail: 'El vehículo se ha eliminado correctamente.',
+        }
+        if (this.userData?.usuario?.id) {
+          this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
+            this.userData = usuarioActualizado;
+            localStorage.setItem('userData', JSON.stringify(this.userData));
+            this.cdr.detectChanges();
           });
-        },
-        error: (err) => {
-          console.error('Error al eliminar el vehículo en backend:', err);
-        },
-      });
+        }
+        this.cdr.detectChanges();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Vehículo eliminado',
+          detail: 'El vehículo se ha eliminado correctamente.',
+        });
+      },
+      error: (err) => {
+        console.error('Error al eliminar el vehículo en backend:', err);
+      },
+    });
   }
 
   modalEliminarVehiculo(cocheAEliminar: any) {
@@ -593,20 +737,18 @@ export class MiPerfilPage implements OnInit {
     const usuario = JSON.parse(userDataString);
     if (!usuario?.usuario?.id) return;
 
-    this.vehiculosServicesService
-      .obtenerVehiculosUsuario(usuario.usuario.id)
-      .subscribe({
-        next: (resultado: any) => {
-          const listaVehiculos = resultado?.vehiculos || [];
-          console.log('Vehículos: ', listaVehiculos);
+    this.vehiculosServicesService.obtenerVehiculosUsuario(usuario.usuario.id).subscribe({
+      next: (resultado: any) => {
+        const listaVehiculos = resultado?.vehiculos || [];
+        console.log('Vehículos: ', listaVehiculos);
 
-          this.funcionesUsuario.vehiculos_usuario = listaVehiculos;
-        },
-        error: (err) => {
-          console.error('Error al obtener los vehículos:', err);
-          this.funcionesUsuario.vehiculos_usuario = [];
-        },
-      });
+        this.funcionesUsuario.vehiculos_usuario = listaVehiculos;
+      },
+      error: (err) => {
+        console.error('Error al obtener los vehículos:', err);
+        this.funcionesUsuario.vehiculos_usuario = [];
+      },
+    });
   }
 
   filtrarModelosEditando(coche: any) {
@@ -614,10 +756,7 @@ export class MiPerfilPage implements OnInit {
     const vehiculo = this.listadoCoches.find((c) => c.marca === coche.marca);
     this.modelosFiltrados = vehiculo.modelos;
 
-    if (
-      this.modelosFiltrados.length > 0 &&
-      !this.modelosFiltrados.includes(coche.modelo)
-    ) {
+    if (this.modelosFiltrados.length > 0 && !this.modelosFiltrados.includes(coche.modelo)) {
       this.modeloSeleccionado = this.modelosFiltrados[0];
     }
   }
@@ -683,10 +822,7 @@ export class MiPerfilPage implements OnInit {
     // Comprobamos si el backend devuelve el objeto envuelto en { usuario: { ... } } o plano
     if (usuarioActualizado && usuarioActualizado.usuario) {
       this.userData = usuarioActualizado;
-    } else if (
-      usuarioActualizado &&
-      (usuarioActualizado.id || usuarioActualizado.vehiculos)
-    ) {
+    } else if (usuarioActualizado && (usuarioActualizado.id || usuarioActualizado.vehiculos)) {
       // Si viene plano, lo reestructuramos para mantener la compatibilidad con el HTML del padre
       this.userData = {
         ...(this.userData || {}),
