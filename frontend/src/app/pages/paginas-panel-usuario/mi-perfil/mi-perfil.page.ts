@@ -189,10 +189,6 @@ export class MiPerfilPage implements OnInit {
         this.generoEditado = usuario.genero || '';
         this.orientacionEditada = usuario.orientacion || '';
 
-        this.generoEditado = usuario.genero || '';
-        // this.generoCtrl.valorTexto = usuario.genero || '';
-        // this.generoCtrl.sugerencias = [...this.listaGenerosOriginales];
-
         this.orientacionEditada = usuario.orientacion || '';
         this.orientacionCtrl.valorTexto = usuario.orientacion || '';
         this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
@@ -271,15 +267,15 @@ export class MiPerfilPage implements OnInit {
   /**
    * Abre un selector y cierra automáticamente todos los demás de forma instantánea
    */
-  abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
-    // this.pronombreCtrl.estaActivo = false;
-    // this.generoCtrl.estaActivo = false;
-    // this.orientacionCtrl.estaActivo = false;
+  // abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
+  //   this.pronombreCtrl.estaActivo = false;
+  //   this.generoCtrl.estaActivo = false;
+  //   this.orientacionCtrl.estaActivo = false;
 
-    ctrlAActivar.estaActivo = true;
-    ctrlAActivar.sugerencias = listaOriginal;
-    ctrlAActivar.indiceActivo = -1;
-  }
+  //   ctrlAActivar.estaActivo = true;
+  //   ctrlAActivar.sugerencias = listaOriginal;
+  //   ctrlAActivar.indiceActivo = -1;
+  // }
 
   /**
    * Función unificada para filtrar sugerencias en cualquier selector
