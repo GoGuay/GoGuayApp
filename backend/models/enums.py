@@ -13,13 +13,23 @@ class PreferenciasViajeEnum(Enum):
     mascotas = "Se permiten mascotas"
     fumar = "Se permite fumar"
 
+
+class Pronombre(Enum):
+    el_he_him = "Él / He / Him"
+    ella_she_her = "Ella / She / Her"
+    elle_they_them = "Elle / They / Them"
+    otros = "Otros"
+    no_uso = "No uso ninguno"
+    no_responde = "Prefiero no responder"
+
+
 class Genero(Enum):
     defecto = ""
     hombre_Cis = "Hombre Cis"
     mujer_Cis = "Mujer Cis"
     transexual = "Transexual"    
     no_binario =  "No binario"
-    intergenero = "Intergenero"
+    intergenero = "Intergénero"
     no_fluido = "No Fluido"
     otro = "Otro"
     no_responde = "Prefiero no responder"

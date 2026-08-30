@@ -49,6 +49,9 @@
         "INFO": "Word we use to refer to a person without saying their name. Each person can choose the pronouns they feel comfortable with, such as he, she, or they.",
         "AYUDA": "Options are shown to choose your pronoun",
         "ESCOGE_OPCION": "Choose your pronoun",
+        "OPC_EL": "Él / He / Him",
+        "OPC_ELLA": "Ella / She / Her",
+        "OPC_ELLE": "Elle / They / Them",
         "OPC_OTROS": "Others",
         "OPC_NOUSO": "I don't use any",
         "OPC_NORESPONDO": "Prefer not to answer"

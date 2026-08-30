@@ -1,0 +1,23 @@
+.lista_sugerencias {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 2px;
+
+  .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover,
+    &.active {
+      background-color: #F0D7B4 !important;
+      color: black !important;
+    }
+  }
+}
+
+.flecha_selector {
+  right: 15px;
+  top: 67%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

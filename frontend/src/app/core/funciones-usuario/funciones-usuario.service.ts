@@ -22,7 +22,7 @@ export class FuncionesUsuario {
     private funcionesComunes: FuncionesComunes,
     private vehiculosServices: VehiculosServicesService,
 
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.loadUserData();
   }
@@ -40,11 +40,10 @@ export class FuncionesUsuario {
    * Se obtiene un usuario a través del id
    */
   obtenerUsuario() {
-    this.userService
-      .obtenerUsuarioPorID(this.userData.usuario.id)
-      .subscribe((respuesta) => {
-        this.usuario = respuesta;
-      });
+    this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((respuesta) => {
+      this.usuario = respuesta;
+      return this.usuario;
+    });
   }
 
   /**

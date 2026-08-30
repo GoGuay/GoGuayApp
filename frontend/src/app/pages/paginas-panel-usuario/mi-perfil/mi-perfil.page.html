@@ -137,234 +137,50 @@
         <ion-row class="fila-selectores">
           <!-- 1. Pronombre -->
           <ion-col class="col-pronombre">
-            <div class="mb-3 position-relative">
-              <label
-                for="input-pronombre"
-                class="form-label pronombre d-flex align-items: center gap-2"
-              >
-                <span>{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL' | translate}}</span>
-                <span
-                  tabindex="0"
-                  class="text-primary"
-                  role="button"
-                  (click)="presentPopover($event)"
-                  [matTooltip]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate"
-                >
-                  <i
-                    class="bi-question-circle"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-                <ion-popover
-                  *ngIf="!isDesktop"
-                  #popover
-                  [isOpen]="isOpen"
-                  (didDismiss)="isOpen = false"
-                >
-                  <ng-template>
-                    <ion-content class="ion-padding">{{'MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO' | translate}}</ion-content>
-                  </ng-template>
-                </ion-popover>
-              </label>
-
-              <input
-                #inputPronombre
-                id="input-pronombre"
-                type="text"
-                class="form-control text-start pe-5"
-                [(ngModel)]="pronombreCtrl.valorTexto"
-                (blur)="validarSeleccionOpcion(pronombreCtrl, listaPronombresOriginales, 'pronombre')"
-                (focus)="abrirSelector(pronombreCtrl, listaPronombresOriginales)"
-                (input)="filtrarOpciones(pronombreCtrl, listaPronombresOriginales, 'pronombre', $event)"
-                (keydown)="manejarNavegacionTeclado($event, pronombreCtrl, listaPronombresOriginales, 'pronombre')"
-                autocomplete="off"
-                spellcheck="false"
-                [placeholder]="'MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION' | translate"
-                role="combobox"
-                readonly
-                aria-autocomplete="list"
-                aria-haspopup="listbox"
-                aria-describedby="pronombreAyuda"
-                [attr.aria-expanded]="pronombreCtrl.sugerencias.length > 0 && pronombreCtrl.estaActivo"
-                [attr.aria-controls]="pronombreCtrl.sugerencias.length > 0 ? 'lista-pronombre-resultados' : null"
-                [attr.aria-activedescendant]="pronombreCtrl.indiceActivo >= 0 ? 'opt-pron-' + pronombreCtrl.indiceActivo : null"
-              />
-              <i
-                class="bi bi-chevron-down position-absolute text-muted flecha_selector"
-                aria-hidden="true"
-              ></i>
-
-              <ul
-                id="lista-pronombre-resultados"
-                *ngIf="pronombreCtrl.sugerencias.length > 0 && pronombreCtrl.estaActivo"
-                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
-                role="listbox"
-                aria-live="polite"
-                style="z-index: 1000"
-              >
-                <li
-                  *ngFor="let opcion of pronombreCtrl.sugerencias; let i = index"
-                  [id]="'sugerencia-' + pronombreCtrl.idUnico + '-' + i"
-                  class="list-group-item"
-                  (mousedown)="$event.preventDefault(); seleccionarOpcion(pronombreCtrl, opcion, 'pronombre', inputPronombre)"
-                  [class.active]="i === pronombreCtrl.indiceActivo"
-                  role="option"
-                  tabindex="-1"
-                >
-                  {{ opcion.descripcion.startsWith('MIPERFIL.') ? (opcion.descripcion | translate) : opcion.descripcion }}
-                </li>
-              </ul>
-            </div>
+            <app-selector-general
+              idUnico="pronombre"
+              labelKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL"
+              placeholderKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION"
+              tooltipKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO"
+              popoverKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO"
+              [opciones]="listaPronombresOriginales"
+              [valor]="pronombreEditado"
+              [(ngModel)]="pronombreEditado"
+              (seleccionCambiada)="onInputChange()"
+              [soloLectura]="true"
+            ></app-selector-general>
           </ion-col>
 
           <!-- 2. Género -->
           <ion-col class="col-genero text-center">
-            <div class="mb-3 position-relative">
-              <label
-                for="input-genero"
-                class="form-label pronombre d-flex align-items: center gap-2"
-              >
-                <span>{{'SELECTOR_GENERO.LABEL' | translate}}</span>
-                <span
-                  tabindex="0"
-                  class="text-primary"
-                  role="button"
-                  (click)="presentPopover($event)"
-                  [matTooltip]="'SELECTOR_GENERO.INFO' | translate"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'SELECTOR_GENERO.INFO' | translate"
-                >
-                  <i
-                    class="bi-question-circle"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-              </label>
-
-              <input
-                #inputGenero
-                id="input-genero"
-                type="text"
-                class="form-control text-start pe-5"
-                [(ngModel)]="generoCtrl.valorTexto"
-                (blur)="validarSeleccionOpcion(generoCtrl, listaGenerosOriginales, 'genero')"
-                (focus)="abrirSelector(generoCtrl, listaGenerosOriginales)"
-                (input)="filtrarOpciones(generoCtrl, listaGenerosOriginales, 'genero', $event)"
-                (keydown)="manejarNavegacionTeclado($event, generoCtrl, listaGenerosOriginales, 'genero')"
-                autocomplete="off"
-                spellcheck="false"
-                [placeholder]="'SELECTOR_GENERO.SELECCIONA' | translate"
-                role="combobox"
-                readonly
-                aria-autocomplete="list"
-                aria-haspopup="listbox"
-                aria-describedby="generoAyuda"
-                [attr.aria-expanded]="generoCtrl.sugerencias.length > 0 && generoCtrl.estaActivo"
-                [attr.aria-controls]="generoCtrl.sugerencias.length > 0 ? 'lista-genero-resultados' : null"
-                [attr.aria-activedescendant]="generoCtrl.indiceActivo >= 0 ? 'opt-gen-' + generoCtrl.indiceActivo : null"
-              />
-              <i
-                class="bi bi-chevron-down position-absolute text-muted flecha_selector"
-                aria-hidden="true"
-              ></i>
-
-              <ul
-                id="lista-genero-resultados"
-                *ngIf="generoCtrl.sugerencias.length > 0 && generoCtrl.estaActivo"
-                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
-                role="listbox"
-                aria-live="polite"
-                style="z-index: 1000"
-              >
-                <li
-                  *ngFor="let opcion of generoCtrl.sugerencias; let i = index"
-                  [id]="'sugerencia-' + generoCtrl.idUnico + '-' + i"
-                  class="list-group-item"
-                  (mousedown)="$event.preventDefault(); seleccionarOpcion(generoCtrl, opcion, 'genero', inputGenero)"
-                  [class.active]="i === generoCtrl.indiceActivo"
-                  role="option"
-                  tabindex="-1"
-                >
-                  {{ opcion.descripcion.startsWith('SELECTOR_GENERO.') ? (opcion.descripcion | translate) : opcion.descripcion }}
-                </li>
-              </ul>
-            </div>
+            <app-selector-general
+              idUnico="genero"
+              labelKey="SELECTOR_GENERO.LABEL"
+              placeholderKey="SELECTOR_GENERO.SELECCIONA"
+              tooltipKey="SELECTOR_GENERO.INFO"
+              popoverKey="SELECTOR_GENERO.INFO"
+              [opciones]="listaGenerosOriginales"
+              [valor]="generoEditado"
+              [(ngModel)]="generoEditado"
+              (seleccionCambiada)="onInputChange()"
+              [soloLectura]="true"
+            ></app-selector-general>
           </ion-col>
 
           <!-- 3. Orientación -->
           <ion-col class="col-orientacion text-center">
-            <div class="mb-3 position-relative">
-              <label
-                for="input-orientacion"
-                class="form-label pronombre d-flex align-items: center gap-2"
-              >
-                <span>{{'SELECTOR_ORIENTACION.LABEL' | translate}}</span>
-                <span
-                  tabindex="0"
-                  class="text-primary"
-                  role="button"
-                  (click)="presentPopover($event)"
-                  [matTooltip]="'SELECTOR_ORIENTACION.INFO' | translate"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'SELECTOR_ORIENTACION.INFO' | translate"
-                >
-                  <i
-                    class="bi-question-circle"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-              </label>
-
-              <input
-                #inputOrientacion
-                id="input-orientacion"
-                type="text"
-                class="form-control text-start pe-5"
-                [(ngModel)]="orientacionCtrl.valorTexto"
-                (blur)="validarSeleccionOpcion(orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
-                (focus)="abrirSelector(orientacionCtrl, listaOrientacionesOriginales)"
-                (input)="filtrarOpciones(orientacionCtrl, listaOrientacionesOriginales, 'orientacion', $event)"
-                (keydown)="manejarNavegacionTeclado($event, orientacionCtrl, listaOrientacionesOriginales, 'orientacion')"
-                autocomplete="off"
-                spellcheck="false"
-                [placeholder]="'SELECTOR_ORIENTACION.SELECCIONA' | translate"
-                role="combobox"
-                readonly
-                aria-autocomplete="list"
-                aria-haspopup="listbox"
-                aria-describedby="orientacionAyuda"
-                [attr.aria-expanded]="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
-                [attr.aria-controls]="orientacionCtrl.sugerencias.length > 0 ? 'lista-orientacion-resultados' : null"
-                [attr.aria-activedescendant]="orientacionCtrl.indiceActivo >= 0 ? 'opt-ori-' + orientacionCtrl.indiceActivo : null"
-              />
-              <i
-                class="bi bi-chevron-down position-absolute text-muted flecha_selector"
-                aria-hidden="true"
-              ></i>
-
-              <ul
-                id="lista-orientacion-resultados"
-                *ngIf="orientacionCtrl.sugerencias.length > 0 && orientacionCtrl.estaActivo"
-                class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
-                role="listbox"
-                aria-live="polite"
-                style="z-index: 1000"
-              >
-                <li
-                  *ngFor="let opcion of orientacionCtrl.sugerencias; let i = index"
-                  [id]="'sugerencia-' + orientacionCtrl.idUnico + '-' + i"
-                  class="list-group-item"
-                  (mousedown)="$event.preventDefault(); seleccionarOpcion(orientacionCtrl, opcion, 'orientacion', inputOrientacion)"
-                  [class.active]="i === orientacionCtrl.indiceActivo"
-                  role="option"
-                  tabindex="-1"
-                >
-                  {{ opcion.descripcion.startsWith('SELECTOR_ORIENTACION.') ? (opcion.descripcion | translate) : opcion.descripcion }}
-                </li>
-              </ul>
-            </div>
+            <app-selector-general
+              idUnico="orientacion"
+              labelKey="SELECTOR_ORIENTACION.LABEL"
+              placeholderKey="SELECTOR_ORIENTACION.SELECCIONA"
+              tooltipKey="SELECTOR_ORIENTACION.INFO"
+              popoverKey="SELECTOR_ORIENTACION.INFO"
+              [valor]="orientacionEditada"
+              [opciones]="listaOrientacionesOriginales"
+              [(ngModel)]="orientacionEditada"
+              (seleccionCambiada)="onInputChange()"
+              [soloLectura]="true"
+            ></app-selector-general>
           </ion-col>
         </ion-row>
 

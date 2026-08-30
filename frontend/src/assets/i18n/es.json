@@ -49,6 +49,9 @@
         "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
         "AYUDA": "Se muestran las opciones para elegir tu pronombre",
         "ESCOGE_OPCION": "Escoge tu pronombre",
+        "OPC_EL": "Él / He / Him",
+        "OPC_ELLA": "Ella / She / Her",
+        "OPC_ELLE": "Elle / They / Them",
         "OPC_OTROS": "Otros",
         "OPC_NOUSO": "No uso ninguno",
         "OPC_NORESPONDO": "Prefiero no responder"
@@ -356,6 +359,10 @@
       "SUBTITULO": "Oculta o muestra el banner que aparece en algunas pantallas de la aplicación.",
       "ALERT_TITULO": "Ajustes del banner",
       "ALERT_MENSAJE": "Se han modificado los ajustes del banner correctamente."
+    },
+    "CAMBIOS_GUARDADOS": {
+      "TITULO": "Datos guardados",
+      "SUBTITULO": "Se han guardado correctamente los datos"
     },
     "OPCION_NOTIFICACION": {
       "TITULO": "Notificaciones",

@@ -1,0 +1,76 @@
+<div class="mb-3 position-relative">
+  <label
+    [for]="'input-' + idUnico"
+    class="form-label d-flex align-items-center gap-2"
+  >
+    <span>{{ labelKey | translate }}</span>
+    <!-- Opcional: Tooltip si se envía -->
+    <span
+      *ngIf="tooltipKey"
+      tabindex="0"
+      class="text-primary"
+      role="button"
+      [matTooltip]="tooltipKey | translate"
+    >
+      <i
+        class="bi-question-circle"
+        aria-hidden="true"
+      ></i>
+    </span>
+    <ion-popover
+      *ngIf="!isDesktop && popoverKey"
+      #popover
+      [isOpen]="isOpen"
+      (didDismiss)="isOpen = false"
+    >
+      <ng-template>
+        <ion-content class="ion-padding">{{ popoverKey | translate }}</ion-content>
+      </ng-template>
+    </ion-popover>
+  </label>
+
+  <input
+    #inputRef
+    [id]="'input-' + idUnico"
+    type="text"
+    style="cursor: pointer"
+    class="form-control text-start pe-5"
+    [value]="valorTexto"
+    (input)="filtrarOpciones($event)"
+    (focus)="abrirSelector()"
+    (blur)="onTouched()"
+    (keydown)="manejarNavegacionTeclado($event)"
+    autocomplete="off"
+    spellcheck="false"
+    [placeholder]="placeholderKey | translate"
+    role="combobox"
+    aria-autocomplete="list"
+    [attr.aria-expanded]="sugerencias.length > 0 && estaActivo"
+    [readonly]="soloLectura"
+  />
+
+  <i
+    class="bi bi-chevron-down position-absolute text-muted flecha_selector"
+    aria-hidden="true"
+  ></i>
+
+  <!-- Lista desplegable con scroll integrado -->
+  <ul
+    *ngIf="sugerencias.length > 0 && estaActivo"
+    class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+    role="listbox"
+    style="z-index: 1000"
+  >
+    <li
+      *ngFor="let opcion of sugerencias; let i = index"
+      [id]="'sugerencia-' + idUnico + '-' + i"
+      class="list-group-item"
+      (mousedown)="$event.preventDefault(); seleccionarOpcion(opcion)"
+      [class.active]="i === indiceActivo"
+      role="option"
+      tabindex="-1"
+    >
+      {{ obtenerTextoOpcion(opcion) }}
+    </li>
+  </ul>
+</div>

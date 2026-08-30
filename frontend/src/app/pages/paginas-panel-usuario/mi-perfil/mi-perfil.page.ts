@@ -21,6 +21,7 @@ import { GoogleServices } from 'src/app/core/google-services/google-services.ser
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
 import { CARS, COLORES } from 'src/app/models/vehiculos/marcas_modelos.model';
+import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -39,6 +40,7 @@ import { CARS, COLORES } from 'src/app/models/vehiculos/marcas_modelos.model';
     MatTooltipModule,
     SpinnerComponent,
     MatDivider,
+    SelectorGeneralComponent,
   ],
 
   providers: [MessageService],
@@ -72,10 +74,10 @@ export class MiPerfilPage implements OnInit {
   marcaSeleccionada: string = '';
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
-  lang: string = this.languageService.getLanguage() || 'es'; // Variable para almacenar el lenguaje seleccionado.
-  imagenPerfilSrc: string = '../../../assets/user/logOn.gif'; // Variable para almacenar la imagen de perfil por defecto.
-  imagenPerfilUsuario: string | null = null; // Variable para almacenar la imagen seleccionada por el usuario.
-  cargando = false; // Variable que se utiliza para mostrar el spinner de carga
+  lang: string = this.languageService.getLanguage() || 'es';
+  imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
+  imagenPerfilUsuario: string | null = null;
+  cargando = false;
   perfilSinFoto: boolean = false;
   variableEjemplo: boolean = false;
   spinnerActivo: boolean = false;
@@ -88,20 +90,6 @@ export class MiPerfilPage implements OnInit {
   listadoColores: string[] = COLORES;
   modelosFiltrados: string[] = [];
 
-  pronombreCtrl = {
-    idUnico: 'pronombre',
-    valorTexto: '',
-    estaActivo: false,
-    indiceActivo: -1,
-    sugerencias: [] as { valor: string; descripcion: string }[],
-  };
-  generoCtrl = {
-    idUnico: 'genero',
-    valorTexto: '',
-    estaActivo: false,
-    indiceActivo: -1,
-    sugerencias: [] as any[],
-  };
   orientacionCtrl = {
     idUnico: 'orientacion',
     valorTexto: '',
@@ -111,21 +99,12 @@ export class MiPerfilPage implements OnInit {
   };
 
   listaPronombresOriginales = [
-    { valor: 'Él / He / Him', descripcion: 'Él / He / Him' },
-    { valor: 'Ella / She / Her', descripcion: 'Ella / She / Her' },
-    { valor: 'Elle / They / Them', descripcion: 'Elle / They / Them' },
-    {
-      valor: 'Otros',
-      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS',
-    },
-    {
-      valor: 'No uso ninguno',
-      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO',
-    },
-    {
-      valor: 'Prefiero no responder',
-      descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO',
-    },
+    { valor: 'el_he_him', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_EL' },
+    { valor: 'ella_she_her', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_ELLA' },
+    { valor: 'elle_they_them', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_ELLE' },
+    { valor: 'otros', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_OTROS' },
+    { valor: 'no_uso', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NOUSO' },
+    { valor: 'no_responde', descripcion: 'MIPERFIL.INFO_PERSONAL.PRONOMBRE.OPC_NORESPONDO' },
   ];
   listaGenerosOriginales = [
     { valor: 'Mujer Cis', descripcion: 'SELECTOR_GENERO.M_CIS' },
@@ -199,27 +178,37 @@ export class MiPerfilPage implements OnInit {
      */
     this.userService.usuario$.subscribe((usuario) => {
       if (usuario) {
+        console.log('🚨 [VERIFICACIÓN] El servicio emite pronombre:', usuario.pronombre);
+        console.log('🚨 [VERIFICACIÓN] Mi variable pronombreEditado actual es:', this.pronombreEditado);
         this.userData.usuario = usuario;
 
         this.nombreEditado = usuario.nombre;
         this.apellidosEditados = usuario.apellidos || '';
 
         this.pronombreEditado = usuario.pronombre || '';
-        this.pronombreCtrl.valorTexto = usuario.pronombre || '';
-        this.pronombreCtrl.sugerencias = [...this.listaPronombresOriginales];
+        this.generoEditado = usuario.genero || '';
+        this.orientacionEditada = usuario.orientacion || '';
 
         this.generoEditado = usuario.genero || '';
-        this.generoCtrl.valorTexto = usuario.genero || '';
-        this.generoCtrl.sugerencias = [...this.listaGenerosOriginales];
+        // this.generoCtrl.valorTexto = usuario.genero || '';
+        // this.generoCtrl.sugerencias = [...this.listaGenerosOriginales];
 
         this.orientacionEditada = usuario.orientacion || '';
         this.orientacionCtrl.valorTexto = usuario.orientacion || '';
         this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
+        this.cdr.detectChanges();
 
         this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
         this.bioEditada = usuario.biografia || '';
         this.preferenciasSeleccionadas = usuario.preferencias || [];
         this.actualizarFotoPerfil(usuario);
+
+        setTimeout(() => {
+          this.pronombreEditado = usuario.pronombre || '';
+          this.generoEditado = usuario.genero || '';
+          this.orientacionEditada = usuario.orientacion || '';
+          this.cdr.detectChanges();
+        });
 
         this.userLoggedIn = !!usuario.email;
 
@@ -245,7 +234,7 @@ export class MiPerfilPage implements OnInit {
     });
 
     this.actualizarEdad();
-    this.obtenerUsuarioPorID(this.userData.usuario.id);
+    // this.obtenerUsuarioPorID(this.userData.usuario.id);
     this.funcionesComunes.getBaseUrl();
   }
 
@@ -283,9 +272,9 @@ export class MiPerfilPage implements OnInit {
    * Abre un selector y cierra automáticamente todos los demás de forma instantánea
    */
   abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
-    this.pronombreCtrl.estaActivo = false;
-    this.generoCtrl.estaActivo = false;
-    this.orientacionCtrl.estaActivo = false;
+    // this.pronombreCtrl.estaActivo = false;
+    // this.generoCtrl.estaActivo = false;
+    // this.orientacionCtrl.estaActivo = false;
 
     ctrlAActivar.estaActivo = true;
     ctrlAActivar.sugerencias = listaOriginal;
@@ -515,14 +504,15 @@ export class MiPerfilPage implements OnInit {
     this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe(
       (response) => {
         console.log('Datos actualizado con exito', response);
-        this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
-        localStorage.setItem('userData', JSON.stringify(this.userData));
-        this.funcionesUsuario.obtenerUsuario();
+        this.userService.actualizarEstadoUsuario(nuevoUsuario);
         this.botonHabilitado = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Datos guardados',
-          detail: 'Se han guardado correctamente los datos',
+        this.translate.get(['AJUSTESAPP.CAMBIOS_GUARDADOS.TITULO', 'AJUSTESAPP.CAMBIOS_GUARDADOS.SUBTITULO']).subscribe((translations) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: translations['AJUSTESAPP.CAMBIOS_GUARDADOS.TITULO'],
+            detail: translations['AJUSTESAPP.CAMBIOS_GUARDADOS.SUBTITULO'],
+            life: 2000,
+          });
         });
       },
       (error) => {
