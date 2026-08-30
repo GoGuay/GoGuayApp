@@ -206,6 +206,7 @@
               >
                 <li
                   *ngFor="let opcion of pronombreCtrl.sugerencias; let i = index"
+                  [id]="'sugerencia-' + pronombreCtrl.idUnico + '-' + i"
                   class="list-group-item"
                   (mousedown)="$event.preventDefault(); seleccionarOpcion(pronombreCtrl, opcion, 'pronombre', inputPronombre)"
                   [class.active]="i === pronombreCtrl.indiceActivo"
@@ -279,6 +280,7 @@
               >
                 <li
                   *ngFor="let opcion of generoCtrl.sugerencias; let i = index"
+                  [id]="'sugerencia-' + generoCtrl.idUnico + '-' + i"
                   class="list-group-item"
                   (mousedown)="$event.preventDefault(); seleccionarOpcion(generoCtrl, opcion, 'genero', inputGenero)"
                   [class.active]="i === generoCtrl.indiceActivo"
@@ -352,6 +354,7 @@
               >
                 <li
                   *ngFor="let opcion of orientacionCtrl.sugerencias; let i = index"
+                  [id]="'sugerencia-' + orientacionCtrl.idUnico + '-' + i"
                   class="list-group-item"
                   (mousedown)="$event.preventDefault(); seleccionarOpcion(orientacionCtrl, opcion, 'orientacion', inputOrientacion)"
                   [class.active]="i === orientacionCtrl.indiceActivo"

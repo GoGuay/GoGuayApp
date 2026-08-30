@@ -89,18 +89,21 @@ export class MiPerfilPage implements OnInit {
   modelosFiltrados: string[] = [];
 
   pronombreCtrl = {
+    idUnico: 'pronombre',
     valorTexto: '',
     estaActivo: false,
     indiceActivo: -1,
     sugerencias: [] as { valor: string; descripcion: string }[],
   };
   generoCtrl = {
+    idUnico: 'genero',
     valorTexto: '',
     estaActivo: false,
     indiceActivo: -1,
     sugerencias: [] as any[],
   };
   orientacionCtrl = {
+    idUnico: 'orientacion',
     valorTexto: '',
     estaActivo: false,
     indiceActivo: -1,
@@ -280,12 +283,10 @@ export class MiPerfilPage implements OnInit {
    * Abre un selector y cierra automáticamente todos los demás de forma instantánea
    */
   abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
-    // Cerramos todos los demás de inmediato
     this.pronombreCtrl.estaActivo = false;
     this.generoCtrl.estaActivo = false;
     this.orientacionCtrl.estaActivo = false;
 
-    // Abrimos el que se ha seleccionado
     ctrlAActivar.estaActivo = true;
     ctrlAActivar.sugerencias = listaOriginal;
     ctrlAActivar.indiceActivo = -1;
@@ -333,8 +334,6 @@ export class MiPerfilPage implements OnInit {
     ctrl.estaActivo = false;
     ctrl.indiceActivo = -1;
     this.onInputChange();
-
-    // Quitar el foco para que desaparezca el cursor parpadeando
     if (inputElement) {
       inputElement.blur();
     }
@@ -367,11 +366,13 @@ export class MiPerfilPage implements OnInit {
       if (ctrl.sugerencias.length > 0) {
         ctrl.estaActivo = true;
         ctrl.indiceActivo = (ctrl.indiceActivo + 1) % ctrl.sugerencias.length;
+        this.asegurarVisibilidadScroll(ctrl);
       }
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (ctrl.sugerencias.length > 0) {
         ctrl.indiceActivo = (ctrl.indiceActivo - 1 + ctrl.sugerencias.length) % ctrl.sugerencias.length;
+        this.asegurarVisibilidadScroll(ctrl);
       }
     } else if (event.key === 'Enter') {
       event.preventDefault();
@@ -382,6 +383,19 @@ export class MiPerfilPage implements OnInit {
       ctrl.sugerencias = [];
       ctrl.estaActivo = false;
     }
+  }
+
+  // Función auxiliar para mover el scroll
+  private asegurarVisibilidadScroll(ctrl: any) {
+    setTimeout(() => {
+      const elementoActivo = document.getElementById(`sugerencia-${ctrl.idUnico}-${ctrl.indiceActivo}`);
+      if (elementoActivo) {
+        elementoActivo.scrollIntoView({
+          block: 'nearest',
+          behavior: 'smooth',
+        });
+      }
+    });
   }
 
   //SELECTORES ^^
