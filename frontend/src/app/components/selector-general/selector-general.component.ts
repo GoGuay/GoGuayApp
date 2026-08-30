@@ -33,6 +33,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges, OnInit {
   @ViewChild('popover') popover!: HTMLIonPopoverElement;
+  @ViewChild('inputRef') inputRef!: ElementRef;
   @Input() idUnico: string = 'selector';
   @Input() labelKey: string = '';
   @Input() placeholderKey: string = '';
@@ -121,6 +122,10 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.sugerencias = [];
     this.estaActivo = false;
     this.indiceActivo = -1;
+
+    if (this.inputRef && this.inputRef.nativeElement) {
+      this.inputRef.nativeElement.blur();
+    }
   }
 
   filtrarOpciones(event: any) {
