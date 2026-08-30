@@ -106,7 +106,9 @@
 
 /* Botón "Así me ven los demás" */
 .ver-perfil-btn {
-  width: 250px;
+  width: auto;
+  min-width: 250px;
+  white-space: nowrap;
   font-weight: 500;
   background-color: #a758e8;
   color: white;
