@@ -4,9 +4,7 @@
   </h4>
   <div class="contenedor_seccion">
     <div class="contenedor_inputs">
-      <ng-container
-        *ngIf="vehiculos && vehiculos.length > 0; else sinVehiculos"
-      >
+      <ng-container *ngIf="vehiculos && vehiculos.length > 0; else sinVehiculos">
         <!-- MODO SELECCIÓN (Crear Viaje) -->
         <ng-container *ngIf="modoSeleccion; else modoPerfil">
           <ion-list
@@ -31,9 +29,7 @@
                       alt="Color vehículo"
                     />
                   </div>
-                  <span class="car-info-text">
-                    {{ coche.marca }} {{ coche.modelo }}
-                  </span>
+                  <span class="car-info-text">{{ coche.marca }} {{ coche.modelo }}</span>
                 </ion-label>
                 <ion-radio
                   slot="end"
@@ -44,9 +40,7 @@
             </ion-radio-group>
           </ion-list>
 
-          <div
-            class="d-flex flex-column align-items-center mt-3 alternate-add-box"
-          >
+          <div class="d-flex flex-column align-items-center mt-3 alternate-add-box">
             <p class="mb-2 text-muted small">
               {{ 'TABLA_VEHICULOS.ANADIR_OTRO' | translate }}
             </p>
@@ -76,15 +70,10 @@
                   <img
                     class="colorCoche"
                     [src]="mostrarColorCoche(coche.color)"
-                    [alt]="
-                      'TABLA_VEHICULOS.SELECTOR.COLOR'
-                        | translate: { color: coche.color }
-                    "
+                    [alt]="'TABLA_VEHICULOS.SELECTOR.COLOR' | translate: { color: coche.color }"
                   />
                 </div>
-                <span class="car-info-text">
-                  {{ coche.marca }} {{ coche.modelo }}
-                </span>
+                <span class="car-info-text">{{ coche.marca }} {{ coche.modelo }}</span>
               </ion-label>
 
               <!-- Botones de Editar y Eliminar (Solo en Mi Perfil) -->
@@ -104,11 +93,7 @@
                             color: coche.color,
                           }
                   "
-                  (click)="
-                    editarFilaVehiculo(coche);
-                    editarVehiculo.emit(coche);
-                    $event.stopPropagation()
-                  "
+                  (click)="editarFilaVehiculo(coche); editarVehiculo.emit(coche); $event.stopPropagation()"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -124,9 +109,7 @@
                           }
                   "
                   class="botones_tabla btn_bg"
-                  (click)="
-                    eliminarVehiculo.emit(coche); $event.stopPropagation()
-                  "
+                  (click)="eliminarVehiculo.emit(coche); $event.stopPropagation()"
                 >
                   <mat-icon>delete</mat-icon>
                 </button>
@@ -135,9 +118,7 @@
           </ion-list>
 
           <!-- Cards para dispositivos moviles -->
-          <div
-            class="cards-vehiculos d-flex flex-wrap gap-2 justify-content-center d-md-none mt-3"
-          >
+          <div class="cards-vehiculos d-flex flex-wrap gap-2 justify-content-center d-md-none mt-3">
             <div
               class="card mb-1"
               *ngFor="let coche of vehiculos"
@@ -145,81 +126,43 @@
               <div class="card-body">
                 <div class="justify-content-center d-flex">
                   <ng-container *ngIf="coche.editandoVehiculo; else marcaTexto">
-                    <select
-                      class="form-select"
-                      [(ngModel)]="marcaSeleccionada"
-                      (change)="filtrarModelos()"
-                    >
-                      <option
-                        *ngFor="let coche of listadoCoches"
-                        [value]="coche.marca"
-                      >
-                        {{ coche.marca }}
-                      </option>
-                    </select>
+                    <app-selector-general
+                      idUnico="marca-vehiculo"
+                      labelKey=""
+                      placeholderKey="TABLA_VEHICULOS.SELECTOR.MARCA"
+                      [opciones]="marcasParaSelector"
+                      [valor]="marcaSeleccionada"
+                      (seleccionCambiada)="onMarcaChange($event)"
+                      [soloLectura]="true"
+                    ></app-selector-general>
                   </ng-container>
                   <ng-template #marcaTexto>{{ coche.marca }}</ng-template>
                 </div>
 
                 <div class="justify-content-center d-flex">
-                  <ng-container
-                    *ngIf="coche.editandoVehiculo; else modeloTexto"
-                  >
-                    <select
-                      class="form-select"
-                      [(ngModel)]="modeloSeleccionado"
-                      [disabled]="!marcaSeleccionada"
-                      [ngModelOptions]="{ standalone: true }"
-                      [attr.aria-label]="
-                        'TABLA_VEHICULOS.SELECTOR.AYUDA_MODELO' | translate
-                      "
-                    >
-                      <option
-                        value=""
-                        disabled
-                        selected
-                      >
-                        {{ 'TABLA_VEHICULOS.SELECTOR.MODELO' | translate }}
-                      </option>
-
-                      <option
-                        *ngFor="let modelo of modelosFiltrados"
-                        [value]="modelo"
-                      >
-                        {{ modelo }}
-                      </option>
-                    </select>
+                  <ng-container *ngIf="coche.editandoVehiculo; else modeloTexto">
+                    <app-selector-general
+                      idUnico="modelo-vehiculo"
+                      placeholderKey="TABLA_VEHICULOS.SELECTOR.MODELO"
+                      [opciones]="modelosFiltrados"
+                      [valor]="modeloSeleccionado"
+                      (seleccionCambiada)="onModeloChange($event)"
+                      [soloLectura]="true"
+                    ></app-selector-general>
                   </ng-container>
                   <ng-template #modeloTexto>{{ coche.modelo }}</ng-template>
                 </div>
 
                 <div class="mt-3 justify-content-center d-flex">
-                  <ng-container
-                    *ngIf="coche.editandoVehiculo; else colorImagen"
-                  >
-                    <select
-                      class="form-select"
-                      [(ngModel)]="colorSeleccionado"
-                      [ngModelOptions]="{ standalone: true }"
-                      [disabled]="!modeloSeleccionado"
-                      [attr.aria-label]="
-                        'TABLA_VEHICULOS.SELECTOR.AYUDA_COLOR' | translate
-                      "
-                    >
-                      <option
-                        value=""
-                        disabled
-                        selected
-                      >
-                        {{ 'TABLA_VEHICULOS.SELECTOR.COLOR' | translate }}
-                      </option>
-                      <option
-                        *ngFor="let color of listadoColores"
-                        [value]="color"
-                      >
-                        {{ color }}
-                      </option>
-                    </select>
+                  <ng-container *ngIf="coche.editandoVehiculo; else colorImagen">
+                    <app-selector-general
+                      idUnico="color-vehiculo"
+                      placeholderKey="TABLA_VEHICULOS.SELECTOR.COLOR"
+                      [opciones]="listadoColoresUnico"
+                      [valor]="colorSeleccionado"
+                      (seleccionCambiada)="onColorChange($event)"
+                      [soloLectura]="true"
+                    ></app-selector-general>
                   </ng-container>
                   <ng-template #colorImagen>
                     <img
@@ -233,11 +176,7 @@
                   <button
                     mat-icon-button
                     class="botones_tabla btn_bg"
-                    (click)="
-                      coche.editandoVehiculo
-                        ? guardarVehiculoEditado(coche)
-                        : editarFilaVehiculo(coche)
-                    "
+                    (click)="coche.editandoVehiculo ? guardarVehiculoEditado(coche) : editarFilaVehiculo(coche)"
                   >
                     <mat-icon>
                       {{ coche.editandoVehiculo ? 'save' : 'edit' }}
@@ -246,9 +185,7 @@
                   <button
                     mat-icon-button
                     class="botones_tabla btn_bg"
-                    (click)="
-                      eliminarVehiculo.emit(coche); $event.stopPropagation()
-                    "
+                    (click)="eliminarVehiculo.emit(coche); $event.stopPropagation()"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -275,9 +212,7 @@
       </ng-container>
 
       <ng-template #sinVehiculos>
-        <div
-          class="mensaje-sin-vehiculos p-2 text-center card shadow-sm rounded-3"
-        >
+        <div class="mensaje-sin-vehiculos p-2 text-center card shadow-sm rounded-3">
           <p class="text-muted">
             {{ 'TABLA_VEHICULOS.SIN_VEHICULOS' | translate }}
           </p>
@@ -303,110 +238,39 @@
           <div class="row d-flex justify-content-center">
             <!-- Selector de marca -->
             <div class="col-12 col-md-3 mb-2 mb-md-0">
-              <select
-                class="form-select"
-                [(ngModel)]="marcaSeleccionada"
-                (change)="filtrarModelos()"
-                [ngModelOptions]="{ standalone: true }"
-                [attr.aria-label]="
-                  'TABLA_VEHICULOS.SELECTOR.AYUDA_MARCA' | translate
-                "
-              >
-                <option
-                  value=""
-                  disabled
-                  selected
-                >
-                  {{ 'TABLA_VEHICULOS.SELECTOR.MARCA' | translate }}
-                </option>
-                <option
-                  *ngFor="let coche of listadoCoches"
-                  [value]="coche.marca"
-                >
-                  {{ coche.marca }}
-                </option>
-              </select>
+              <app-selector-general
+                idUnico="marca-vehiculo"
+                labelKey=""
+                placeholderKey="TABLA_VEHICULOS.SELECTOR.MARCA"
+                [opciones]="marcasParaSelector"
+                [valor]="marcaSeleccionada"
+                (seleccionCambiada)="onMarcaChange($event)"
+                [soloLectura]="true"
+              ></app-selector-general>
             </div>
 
             <!-- Selector de modelo -->
             <div class="col-12 col-md-3 mb-2 mb-md-0">
-              <select
-                class="form-select"
-                [(ngModel)]="modeloSeleccionado"
-                [disabled]="!marcaSeleccionada"
-                [ngModelOptions]="{ standalone: true }"
-                [attr.aria-label]="
-                  'TABLA_VEHICULOS.SELECTOR.AYUDA_MODELO' | translate
-                "
-              >
-                <option
-                  value=""
-                  disabled
-                  selected
-                >
-                  {{ 'TABLA_VEHICULOS.SELECTOR.MODELO' | translate }}
-                </option>
-
-                <option
-                  *ngFor="let modelo of modelosFiltrados"
-                  [value]="modelo"
-                >
-                  {{ modelo }}
-                </option>
-              </select>
+              <app-selector-general
+                idUnico="modelo-vehiculo"
+                placeholderKey="TABLA_VEHICULOS.SELECTOR.MODELO"
+                [opciones]="modelosFiltrados"
+                [valor]="modeloSeleccionado"
+                (seleccionCambiada)="onModeloChange($event)"
+                [soloLectura]="true"
+              ></app-selector-general>
             </div>
 
             <!-- Selector de color -->
             <div class="col-12 col-md-3 mb-2 mb-md-0">
-              <div *ngIf="funcionesComunes.validacionIdioma">
-                <select
-                  class="form-select"
-                  [(ngModel)]="colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!modeloSeleccionado"
-                  [attr.aria-label]="
-                    'TABLA_VEHICULOS.SELECTOR.AYUDA_COLOR' | translate
-                  "
-                >
-                  <option
-                    value=""
-                    disabled
-                    selected
-                  >
-                    {{ 'TABLA_VEHICULOS.SELECTOR.COLOR' | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of listadoColores"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
-
-              <div *ngIf="!funcionesComunes.validacionIdioma">
-                <select
-                  class="form-select inputs_selectores"
-                  aria-label="Selección de color"
-                  [(ngModel)]="colorSeleccionado"
-                  [ngModelOptions]="{ standalone: true }"
-                  [disabled]="!modeloSeleccionado"
-                >
-                  <option
-                    value=""
-                    disabled
-                    selected
-                  >
-                    {{ 'TABLA_VEHICULOS.SELECTOR.COLOR' | translate }}
-                  </option>
-                  <option
-                    *ngFor="let color of listColours"
-                    [value]="color"
-                  >
-                    {{ color }}
-                  </option>
-                </select>
-              </div>
+              <app-selector-general
+                idUnico="color-vehiculo"
+                placeholderKey="TABLA_VEHICULOS.SELECTOR.COLOR"
+                [opciones]="listadoColoresUnico"
+                [valor]="colorSeleccionado"
+                (seleccionCambiada)="onColorChange($event)"
+                [soloLectura]="true"
+              ></app-selector-general>
             </div>
           </div>
           <ion-row>
@@ -416,11 +280,7 @@
             >
               <button
                 type="button"
-                [disabled]="
-                  !marcaSeleccionada ||
-                  !modeloSeleccionado ||
-                  !colorSeleccionado
-                "
+                [disabled]="!marcaSeleccionada || !modeloSeleccionado || !colorSeleccionado"
                 class="btn btn_bg"
                 mat-raised-button
                 (click)="guardarVehiculo()"
@@ -445,11 +305,7 @@
                 <!-- Botón para guardar un coche tras editarlo -->
                 <button
                   type="button"
-                  [disabled]="
-                    !marcaSeleccionada ||
-                    !modeloSeleccionado ||
-                    !colorSeleccionado
-                  "
+                  [disabled]="!marcaSeleccionada || !modeloSeleccionado || !colorSeleccionado"
                   class="btn btn_bg"
                   mat-raised-button
                   (click)="guardarVehiculoEditado(cocheEnEdicion)"
