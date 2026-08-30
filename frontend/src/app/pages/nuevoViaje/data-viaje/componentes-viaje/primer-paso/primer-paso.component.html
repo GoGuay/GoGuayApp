@@ -5,9 +5,7 @@
       size="12"
       size-xl="6"
     >
-      <h1 class="d-flex justify-content-center section-title">
-        ELIGE LA FECHA DEL VIAJE
-      </h1>
+      <h1 class="d-flex justify-content-center section-title">ELIGE LA FECHA DEL VIAJE</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
           <ion-datetime
@@ -27,9 +25,7 @@
       </div>
 
       <div class="contenedor_seccion mt-4">
-        <h1 class="d-flex justify-content-center section-title">
-          HORA DE SALIDA
-        </h1>
+        <h1 class="d-flex justify-content-center section-title">HORA DE SALIDA</h1>
         <div class="contenedor_hora">
           <div
             *ngIf="isDesktop"
@@ -108,12 +104,8 @@
       size="12"
       size-xl="6"
     >
-      <h1 class="d-flex justify-content-center section-title">
-        NÚMERO DE PLAZAS LIBRES
-      </h1>
-      <span class="d-flex justify-content-center span sub-text">
-        Selecciona el número de pasajeros que pueden viajar contigo:
-      </span>
+      <h1 class="d-flex justify-content-center section-title">NÚMERO DE PLAZAS LIBRES</h1>
+      <span class="d-flex justify-content-center span sub-text">Selecciona el número de pasajeros que pueden viajar contigo:</span>
 
       <div
         class="select-container custom-dropdown mt-3 mb-4"
@@ -160,20 +152,17 @@
       </div>
 
       <div class="contenedor_seccion">
-        <h1 class="d-flex justify-content-center section-title">
-          COCHE PARA VIAJAR
-        </h1>
+        <h1 class="d-flex justify-content-center section-title">COCHE PARA VIAJAR</h1>
         <app-tabla-vehiculos
           [modoSeleccion]="true"
           [vehiculos]="userData?.usuario?.vehiculos"
           [(cocheSeleccionado)]="cocheSeleccionado"
-          (irARegistrarVehiculo)="irARegistrarVehiculo()"
+          [(mostrarSelectorVehiculo)]="mostrarSelectorVehiculo"
+          (irARegistrarVehiculo)="botonAnadirVehiculo()"
         ></app-tabla-vehiculos>
 
         <div class="contenedor_inputs mt-4">
-          <h1 class="d-flex justify-content-center section-title">
-            MODO DE RESERVA
-          </h1>
+          <h1 class="d-flex justify-content-center section-title">MODO DE RESERVA</h1>
           <ion-list
             class="reserva-list custom-goguay-list"
             lines="none"
@@ -190,9 +179,7 @@
                 ></ion-radio>
                 <ion-label class="ms-2">
                   <h2 class="fw-bold mb-0">Aceptación manual</h2>
-                  <p class="text-muted small mb-0">
-                    Tú decides quién viaja contigo aceptando cada solicitud.
-                  </p>
+                  <p class="text-muted small mb-0">Tú decides quién viaja contigo aceptando cada solicitud.</p>
                 </ion-label>
                 <ion-icon
                   name="hand-right-outline"
@@ -213,9 +200,7 @@
                 ></ion-radio>
                 <ion-label class="ms-2">
                   <h2 class="fw-bold mb-0">Reserva automática</h2>
-                  <p class="text-muted small mb-0">
-                    Las plazas se reservan al instante sin tu intervención.
-                  </p>
+                  <p class="text-muted small mb-0">Las plazas se reservan al instante sin tu intervención.</p>
                 </ion-label>
                 <ion-icon
                   name="flash-outline"
