@@ -1,9 +1,19 @@
-<div id="contenedor_publicar_viaje" class="p-2">
-  <ion-grid [fixed]="true" class="d-flex justify-content-center">
+<div
+  id="contenedor_publicar_viaje"
+  class="p-2"
+>
+  <ion-grid
+    [fixed]="true"
+    class="d-flex justify-content-center"
+  >
     <ion-row>
       <ion-col>
         <div class="container">
-          <img title="imagen publicación de viaje" src="../../../assets/banco_imagenes/pareja1.png" class="img_travel" />
+          <img
+            alt=""
+            src="../../../assets/banco_imagenes/pareja1.png"
+            class="img_travel"
+          />
         </div>
       </ion-col>
       <ion-col>
@@ -16,13 +26,22 @@
               class="me-2 btn_bg travel-btn"
               (click)="openNewTravel()"
               [attr.aria-label]="'HOME.SECCION_PUBLICAR.AYUDA' | translate"
-              [title]="'HOME.SECCION_PUBLICAR.AYUDA' | translate">
-              <img src="../../../assets/sistema/mapa.png" class="travel-icon" />
-              <span class="travel-text">{{ 'BOTON.PUBLICA_TU_VIAJE_AQUI' | translate }}</span>
+              [title]="'HOME.SECCION_PUBLICAR.AYUDA' | translate"
+            >
+              <img
+                src="../../../assets/sistema/mapa.png"
+                class="travel-icon"
+                alt=""
+              />
+              <span class="travel-text">
+                {{ 'BOTON.PUBLICA_TU_VIAJE_AQUI' | translate }}
+              </span>
             </button>
           </div>
           <div class="d-flex justify-content-center">
-            <span class="travel_span">Publica y encuentra gente con tu estilo</span>
+            <span class="travel_span">
+              {{ 'HOME.SECCION_PUBLICAR.DESCRIPCION' | translate }}
+            </span>
           </div>
         </div>
       </ion-col>

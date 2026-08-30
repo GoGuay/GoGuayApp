@@ -1,7 +1,7 @@
 {
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
-    "LABEL": "Género con el que te identificas",
+    "LABEL": "Tu género",
     "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
     "SELECCIONA": "Selecciona tu género",
     "AYUDA": "Se muestran las opciones para elegir tu género",
@@ -15,7 +15,7 @@
     "NO_RESPONDE": "Prefiero no responder"
   },
   "SELECTOR_ORIENTACION": {
-    "LABEL": "¿Cuál es tu orientación sexual?",
+    "LABEL": "¿Orientación sexual?",
     "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
     "AYUDA": "Se muestran las opciones para elegir tu orientación",
     "SELECCIONA": "Selecciona tu orientación",
@@ -58,7 +58,8 @@
       "LABEL_SOBRETI": "Sobre ti",
       "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
       "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
-      "CARACTERES": "Caracteres usados"
+      "CARACTERES": "Caracteres usados",
+      "SPINNER_TRADUCIENDO": "Traduciendo..."
     },
 
     "PREF_VIAJE": {
@@ -174,31 +175,36 @@
     },
     "SECCION_PUBLICAR": {
       "TITULO": "¿Quieres compartir tu próximo viaje?",
-      "AYUDA": "Publica tu próximo viaje aquí."
+      "AYUDA": "Publica tu próximo viaje aquí.",
+      "DESCRIPCION": "Publica y viaja en compañía"
     },
     "SECCION_BUSCAR": {
       "TITULO": "¿Quieres buscar un viaje?",
-      "AYUDA": "Busca un viaje aquí."
+      "AYUDA": "Busca un viaje aquí.",
+      "DESCRIPCION": "Encuentra rutas con gente afín"
     },
     "SECCION_DUDAS": {
       "TITULO": "¿TIENES DUDAS?"
-    }
-  },
-  "__Eventos": "Sección Eventos del Home",
-  "EVENTOS": {
-    "TITULO": "¿Quieres ir a algún evento?",
-    "INFO_SELECTOR": "Consulta eventos de diferentes ciudades para crear o unirte a un viaje compartido",
-    "SELECTOR": "Consulta los eventos de estas ciudades",
-    "FINICIO": "Fecha de inicio",
-    "FFIN": "Fecha de fin",
-    "IMAGEN": "Imagen del evento",
-    "ENLACE": "Más información del evento",
-    "BOTONES": {
-      "CREAR_VIAJE": "Crear viaje",
-      "PARA": "para",
-      "BUSCAR_VIAJE": "Buscar viaje"
     },
-    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    "EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
+      "INFO_SELECTOR": "Elige una ciudad de la lista",
+      "SELECTOR": "Elige una ciudad",
+      "PROXIMOS_EN": "Próximos eventos en {{ciudad}}",
+      "FINICIO": "Fecha de inicio",
+      "FFIN": "Fecha de fin",
+      "IMAGEN": "Imagen del evento",
+      "ENLACE": "Más información del evento",
+      "BOTONES": {
+        "CREAR_VIAJE": "Crear viaje",
+        "PARA": "para",
+        "BUSCAR_VIAJE": "Buscar viaje"
+      },
+      "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
+      "VUELVE_PRONTO": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
+      "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    }
   },
 
   "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
