@@ -30,6 +30,20 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
+  "SELECTOR_COLOR": {
+    "BLANCO": "Blanco",
+    "NEGRO": "Negro",
+    "ROJO": "Rojo",
+    "AMARILLO": "Amarillo",
+    "VERDE": "Verde",
+    "GRIS": "Gris",
+    "DORADO": "Dorado",
+    "MARRON": "Marrón",
+    "MORADO": "Morado",
+    "BEIGE": "Beige",
+    "PERLA": "Perla",
+    "OTRO": "Otro"
+  },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",

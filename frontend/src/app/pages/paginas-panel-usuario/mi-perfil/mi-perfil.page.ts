@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IonicModule, NavController, Platform } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -137,7 +137,6 @@ export class MiPerfilPage implements OnInit {
     private googleService: GoogleServices,
     public funcionesUsuario: FuncionesUsuario,
     private vehiculosServicesService: VehiculosServicesService,
-    private platform: Platform,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     public translate: TranslateService,
@@ -221,9 +220,6 @@ export class MiPerfilPage implements OnInit {
       }
     });
 
-    this.checkScreenSize();
-    window.addEventListener('resize', () => this.checkScreenSize());
-
     //Asegurar que cada vehículo tiene una propiedad que sea "editandoVehiculo"
     this.funcionesComunes.vehiculos_usuario.forEach((vehiculo) => {
       vehiculo.editandoVehiculo = false;
@@ -262,129 +258,6 @@ export class MiPerfilPage implements OnInit {
     });
   }
 
-  //SELECTORES
-
-  /**
-   * Abre un selector y cierra automáticamente todos los demás de forma instantánea
-   */
-  // abrirSelector(ctrlAActivar: any, listaOriginal: any[]) {
-  //   this.pronombreCtrl.estaActivo = false;
-  //   this.generoCtrl.estaActivo = false;
-  //   this.orientacionCtrl.estaActivo = false;
-
-  //   ctrlAActivar.estaActivo = true;
-  //   ctrlAActivar.sugerencias = listaOriginal;
-  //   ctrlAActivar.indiceActivo = -1;
-  // }
-
-  /**
-   * Función unificada para filtrar sugerencias en cualquier selector
-   */
-  filtrarOpciones(ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion', event: any) {
-    const texto = event.target.value.toLowerCase();
-    ctrl.valorTexto = event.target.value;
-    ctrl.indiceActivo = -1;
-
-    if (tipoCampo === 'pronombre') this.pronombreEditado = ctrl.valorTexto;
-    if (tipoCampo === 'genero') this.generoEditado = ctrl.valorTexto;
-    if (tipoCampo === 'orientacion') this.orientacionEditada = ctrl.valorTexto;
-
-    this.onInputChange();
-
-    if (!texto.trim()) {
-      ctrl.sugerencias = [...listaOriginal];
-      return;
-    }
-
-    ctrl.sugerencias = listaOriginal.filter(
-      (item) => item.valor.toLowerCase().includes(texto) || item.descripcion.toLowerCase().includes(texto)
-    );
-  }
-
-  /**
-   * Selecciona una opción de la lista y quita el foco del input
-   */
-  seleccionarOpcion(
-    ctrl: any,
-    opcion: { valor: string; descripcion: string },
-    tipoCampo: 'pronombre' | 'genero' | 'orientacion',
-    inputElement?: HTMLInputElement
-  ) {
-    ctrl.valorTexto = opcion.valor;
-    if (tipoCampo === 'pronombre') this.pronombreEditado = opcion.valor;
-    if (tipoCampo === 'genero') this.generoEditado = opcion.valor;
-    if (tipoCampo === 'orientacion') this.orientacionEditada = opcion.valor;
-
-    ctrl.sugerencias = [];
-    ctrl.estaActivo = false;
-    ctrl.indiceActivo = -1;
-    this.onInputChange();
-    if (inputElement) {
-      inputElement.blur();
-    }
-  }
-
-  /**
-   * Función unificada para validar al perder el foco
-   */
-  validarSeleccionOpcion(ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion') {
-    setTimeout(() => {
-      ctrl.sugerencias = [];
-      ctrl.indiceActivo = -1;
-
-      const encontrado = listaOriginal.find((item) => item.valor.toLowerCase() === ctrl.valorTexto.toLowerCase());
-      if (!encontrado && ctrl.valorTexto.trim() !== '') {
-        if (tipoCampo === 'pronombre') this.pronombreEditado = ctrl.valorTexto;
-        if (tipoCampo === 'genero') this.generoEditado = ctrl.valorTexto;
-        if (tipoCampo === 'orientacion') this.orientacionEditada = ctrl.valorTexto;
-      }
-      this.onInputChange();
-    }, 200);
-  }
-
-  /**
-   * Función unificada para la navegación por teclado (Flechas, Enter, Escape)
-   */
-  manejarNavegacionTeclado(event: KeyboardEvent, ctrl: any, listaOriginal: any[], tipoCampo: 'pronombre' | 'genero' | 'orientacion') {
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      if (ctrl.sugerencias.length > 0) {
-        ctrl.estaActivo = true;
-        ctrl.indiceActivo = (ctrl.indiceActivo + 1) % ctrl.sugerencias.length;
-        this.asegurarVisibilidadScroll(ctrl);
-      }
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      if (ctrl.sugerencias.length > 0) {
-        ctrl.indiceActivo = (ctrl.indiceActivo - 1 + ctrl.sugerencias.length) % ctrl.sugerencias.length;
-        this.asegurarVisibilidadScroll(ctrl);
-      }
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      if (ctrl.indiceActivo >= 0 && ctrl.sugerencias[ctrl.indiceActivo]) {
-        this.seleccionarOpcion(ctrl, ctrl.sugerencias[ctrl.indiceActivo], tipoCampo);
-      }
-    } else if (event.key === 'Escape') {
-      ctrl.sugerencias = [];
-      ctrl.estaActivo = false;
-    }
-  }
-
-  // Función auxiliar para mover el scroll
-  private asegurarVisibilidadScroll(ctrl: any) {
-    setTimeout(() => {
-      const elementoActivo = document.getElementById(`sugerencia-${ctrl.idUnico}-${ctrl.indiceActivo}`);
-      if (elementoActivo) {
-        elementoActivo.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth',
-        });
-      }
-    });
-  }
-
-  //SELECTORES ^^
-
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.userData.usuario = resultadoUsuario;
@@ -393,12 +266,6 @@ export class MiPerfilPage implements OnInit {
 
   loadUserData(): void {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  }
-
-  checkScreenSize() {
-    this.isDesktop = window.innerWidth > 576;
-    console.log('Tamaño detectado:', window.innerWidth, 'isDesktop:', this.isDesktop);
-    this.cdr.detectChanges();
   }
 
   // Función para verificar si ha habido cambios
@@ -656,14 +523,6 @@ export class MiPerfilPage implements OnInit {
       queryParams: usuario,
     });
   }
-  presentPopover(e: Event) {
-    this.popover.event = e;
-    this.isOpen = true;
-  }
-
-  volverAViaje() {
-    this.router.navigate(['/data-viaje']);
-  }
 
   /**
    * Función para eliminar un vehículo del usuario
@@ -856,11 +715,9 @@ export class MiPerfilPage implements OnInit {
   }
 
   actualizarListaVehiculos(usuarioActualizado: any) {
-    // Comprobamos si el backend devuelve el objeto envuelto en { usuario: { ... } } o plano
     if (usuarioActualizado && usuarioActualizado.usuario) {
       this.userData = usuarioActualizado;
     } else if (usuarioActualizado && (usuarioActualizado.id || usuarioActualizado.vehiculos)) {
-      // Si viene plano, lo reestructuramos para mantener la compatibilidad con el HTML del padre
       this.userData = {
         ...(this.userData || {}),
         usuario: usuarioActualizado,
@@ -869,7 +726,6 @@ export class MiPerfilPage implements OnInit {
       this.userData = usuarioActualizado;
     }
 
-    // Sincronizamos el localStorage con el objeto completo actualizado
     localStorage.setItem('userData', JSON.stringify(this.userData));
 
     this.mostrarSelectorVehiculo = false;
