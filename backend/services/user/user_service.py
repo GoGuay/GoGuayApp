@@ -210,7 +210,7 @@ def verificar_email_existente():
     email_normalizado = email.lower()
 
     existe = Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first() is not None
-    return jsonify ({"Ya existe correo": existe}), 200
+    return jsonify ({"existe": existe}), 200
 
 
 ## COMPOBAR SI YA EXISTE UN TELÉFONO DURANTE EL REGISTRO ##
@@ -310,7 +310,7 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     
     return jsonify(usuario.serialize_public()), 200
 
-## EDITAR INFORMACIÓN DE UN USUAURIO ##
+## EDITAR INFORMACIÓN DE UN USUARIO ##
 @user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
 def actualizar_usuario(usuario_id):

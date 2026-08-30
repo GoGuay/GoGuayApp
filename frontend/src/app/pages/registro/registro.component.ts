@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit, AfterViewInit } from '@angular/core';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-  FormsModule,
-} from '@angular/forms';
+import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -21,14 +15,7 @@ declare const google: any;
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    MatButtonModule,
-    TranslateModule,
-    FormsModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule, FormsModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -70,6 +57,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
 
     /**
      * Con el formBuilder creamos un grupo de formularios.
@@ -88,31 +76,18 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       fecha_nacimiento: ['', Validators.required],
       nombre: [{ value: '', disabled: true }, Validators.required],
       apellidos: [{ value: '', disabled: true }, Validators.required],
-      telefono: [
-        { value: '', disabled: true },
-        [Validators.required, Validators.pattern(/^[0-9]{9}$/)],
-      ],
+      telefono: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
       genero: [{ value: 'NO_RESPONDE', disabled: true }, Validators.required],
-      orientacion: [
-        { value: 'NO_RESPONDE', disabled: true },
-        Validators.required,
-      ],
+      orientacion: [{ value: 'NO_RESPONDE', disabled: true }, Validators.required],
     });
 
     // Formulario 3: Contraseña
     this.formulario3 = this.fb.group(
       {
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(6),
-            Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$'),
-          ],
-        ],
+        password: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
         confirmarPassword: ['', Validators.required], // Asegúrate de que solo sea ''
       },
-      { validators: this.passwordMatchValidator },
+      { validators: this.passwordMatchValidator }
     );
   }
 
@@ -130,12 +105,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   get isPaso2Valido(): boolean {
     const values = this.formulario2.getRawValue();
     const todoLleno =
-      values.fecha_nacimiento &&
-      values.nombre &&
-      values.apellidos &&
-      values.telefono &&
-      values.genero &&
-      values.orientacion;
+      values.fecha_nacimiento && values.nombre && values.apellidos && values.telefono && values.genero && values.orientacion;
     return !!(todoLleno && this.formulario2.valid && !this.cargandoTelefono);
   }
 
@@ -210,13 +180,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   // ------------------------------------------------------------------
   // 5. LÓGICA DE ESCALERA Y CONTROLES REACTIVOS
   // ------------------------------------------------------------------
-  private gestionarControl(
-    form: FormGroup,
-    name: string,
-    habilitar: boolean,
-    defaultValue: any = '',
-    resetearValor: boolean = false,
-  ) {
+  private gestionarControl(form: FormGroup, name: string, habilitar: boolean, defaultValue: any = '', resetearValor: boolean = false) {
     const control = form.get(name);
     if (habilitar) {
       if (control?.disabled) control.enable({ emitEvent: false });
@@ -234,35 +198,17 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     this.formulario2.get('fecha_nacimiento')?.valueChanges.subscribe(() => {
       this.validarFechaCompleta();
       if (!this.esGoogle) {
-        this.gestionarControl(
-          this.formulario2,
-          'nombre',
-          this.fechaValida,
-          '',
-          false,
-        );
+        this.gestionarControl(this.formulario2, 'nombre', this.fechaValida, '', false);
       }
     });
     this.formulario2.get('nombre')?.valueChanges.subscribe(() => {
       const controlNombre = this.formulario2.get('nombre');
-      this.gestionarControl(
-        this.formulario2,
-        'apellidos',
-        !!controlNombre?.valid,
-        '',
-        false,
-      );
+      this.gestionarControl(this.formulario2, 'apellidos', !!controlNombre?.valid, '', false);
     });
 
     this.formulario2.get('apellidos')?.valueChanges.subscribe(() => {
       const controlApellidos = this.formulario2.get('apellidos');
-      this.gestionarControl(
-        this.formulario2,
-        'telefono',
-        !!controlApellidos?.valid,
-        '',
-        false,
-      );
+      this.gestionarControl(this.formulario2, 'telefono', !!controlApellidos?.valid, '', false);
     });
 
     this.formulario2.get('telefono')?.valueChanges.subscribe((val) => {
@@ -271,26 +217,15 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       if (!controlTel?.valid || val?.length !== 9) {
         this.telefonoValido = false;
         this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
-        this.gestionarControl(
-          this.formulario2,
-          'orientacion',
-          false,
-          'NO_RESPONDE',
-        );
+        this.gestionarControl(this.formulario2, 'orientacion', false, 'NO_RESPONDE');
       }
     });
 
     this.formulario2.get('genero')?.valueChanges.subscribe(() => {
       const controlGenero = this.formulario2.get('genero');
-      const generoValidoYHabilitado =
-        !!controlGenero?.enabled && !!controlGenero?.valid;
+      const generoValidoYHabilitado = !!controlGenero?.enabled && !!controlGenero?.valid;
 
-      this.gestionarControl(
-        this.formulario2,
-        'orientacion',
-        generoValidoYHabilitado,
-        'NO_RESPONDE',
-      );
+      this.gestionarControl(this.formulario2, 'orientacion', generoValidoYHabilitado, 'NO_RESPONDE');
     });
   }
 
@@ -302,11 +237,14 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     const control = formulario.get(controlName);
     if (!control) return;
     control.markAsTouched();
-    control.markAsDirty();
+    // control.markAsDirty();
     control.updateValueAndValidity();
 
     if (controlName === 'email') {
-      if (control.invalid) {
+      const errors = control.errors;
+      const tieneErrorEstructural = errors && (errors['required'] || errors['pattern']);
+
+      if (tieneErrorEstructural) {
         this.emailValido = false;
       } else {
         this.comprobarEmailRegistrado(control.value);
@@ -340,14 +278,14 @@ export class RegistroComponent implements OnInit, AfterViewInit {
             control.setErrors(Object.keys(rest).length > 0 ? rest : null);
           }
 
-          if (control.valid) {
-            this.emailValido = true;
-          }
+          this.emailValido = control.valid;
         }
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         console.error('Error al verificar el correo:', err);
         this.emailValido = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -365,18 +303,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         if (existe) {
           control.setErrors({ ...control.errors, telefonoRepetido: true });
           this.telefonoValido = false;
-          this.gestionarControl(
-            this.formulario2,
-            'genero',
-            false,
-            'NO_RESPONDE',
-          );
-          this.gestionarControl(
-            this.formulario2,
-            'orientacion',
-            false,
-            'NO_RESPONDE',
-          );
+          this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
+          this.gestionarControl(this.formulario2, 'orientacion', false, 'NO_RESPONDE');
         } else {
           if (control.errors?.['telefonoRepetido']) {
             const { telefonoRepetido, ...rest } = control.errors;
@@ -385,18 +313,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
           if (control.valid) {
             this.telefonoValido = true;
-            this.gestionarControl(
-              this.formulario2,
-              'genero',
-              true,
-              'NO_RESPONDE',
-            );
-            this.gestionarControl(
-              this.formulario2,
-              'orientacion',
-              true,
-              'NO_RESPONDE',
-            );
+            this.gestionarControl(this.formulario2, 'genero', true, 'NO_RESPONDE');
+            this.gestionarControl(this.formulario2, 'orientacion', true, 'NO_RESPONDE');
           }
         }
         this.actualizarEstadoBoton();
@@ -405,12 +323,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         this.cargandoTelefono = false;
         this.telefonoValido = false;
         this.gestionarControl(this.formulario2, 'genero', false, 'NO_RESPONDE');
-        this.gestionarControl(
-          this.formulario2,
-          'orientacion',
-          false,
-          'NO_RESPONDE',
-        );
+        this.gestionarControl(this.formulario2, 'orientacion', false, 'NO_RESPONDE');
       },
     });
   }
@@ -425,12 +338,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     fechaControl.markAsTouched();
     const fechaValor = fechaControl?.value;
 
-    if (
-      !fechaValor ||
-      fechaValor.length !== 10 ||
-      fechaValor.includes('a') ||
-      fechaValor.includes('A')
-    ) {
+    if (!fechaValor || fechaValor.length !== 10 || fechaValor.includes('a') || fechaValor.includes('A')) {
       fechaControl?.setErrors({ fechalimite: true });
       this.fechaValida = false;
       return;
@@ -456,11 +364,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
     const fechaSeleccionada = new Date(anio, mes, dia);
 
-    if (
-      fechaSeleccionada.getFullYear() !== anio ||
-      fechaSeleccionada.getMonth() !== mes ||
-      fechaSeleccionada.getDate() !== dia
-    ) {
+    if (fechaSeleccionada.getFullYear() !== anio || fechaSeleccionada.getMonth() !== mes || fechaSeleccionada.getDate() !== dia) {
       fechaControl?.setErrors({ invalidDate: true });
       this.botonHabilitadoContacto = false;
       this.fechaValida = false;
@@ -574,12 +478,14 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     const control = this.formulario1.get('email');
     if (!control) return;
 
-    if (control.hasError('emailRepetido')) {
-      const { emailRepetido, ...rest } = control.errors || {};
+    if (control.errors?.['emailRepetido']) {
+      const { emailRepetido, ...rest } = control.errors;
       control.setErrors(Object.keys(rest).length > 0 ? rest : null);
     }
+    const errors = control.errors;
+    const tieneErrorEstructural = errors && (errors['required'] || errors['pattern']);
 
-    if (control.valid && control.value) {
+    if (!tieneErrorEstructural && control.value) {
       this.comprobarEmailRegistrado(control.value);
     } else {
       this.emailValido = false;
@@ -601,9 +507,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   registrar() {
     const esValido = this.esGoogle
       ? this.formulario1.valid && this.formulario2.valid
-      : this.formulario1.valid &&
-        this.formulario2.valid &&
-        this.formulario3.valid;
+      : this.formulario1.valid && this.formulario2.valid && this.formulario3.valid;
 
     if (esValido) {
       const datosRegistro = {
@@ -628,8 +532,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           const title = 'Error!';
-          const message =
-            err.error.error || 'Ocurrió un error al registrar el usuario';
+          const message = err.error.error || 'Ocurrió un error al registrar el usuario';
           this.openError(title, message);
         },
       });
@@ -655,10 +558,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   manejarTabPassword(event: KeyboardEvent) {
     if (event.key === 'Tab') {
       const passwordControl = this.formulario3.get('password');
-      if (
-        !event.shiftKey &&
-        (passwordControl?.invalid || !passwordControl?.value)
-      ) {
+      if (!event.shiftKey && (passwordControl?.invalid || !passwordControl?.value)) {
         event.preventDefault();
         const btnAtras = document.getElementById('btnAtras');
 
@@ -681,9 +581,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         fechaControl?.enable();
 
         setTimeout(() => {
-          const campoFecha = document.getElementById(
-            'fnacimiento',
-          ) as HTMLInputElement;
+          const campoFecha = document.getElementById('fnacimiento') as HTMLInputElement;
           if (campoFecha) {
             campoFecha.focus();
             campoFecha.click();
@@ -730,8 +628,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     if (typeof google !== 'undefined' && google?.accounts?.id) {
       google.accounts.id.initialize({
         client_id: environment.googleClientId,
-        callback: (response: any) =>
-          this.procesarLoginGoogle(response.credential),
+        callback: (response: any) => this.procesarLoginGoogle(response.credential),
       });
 
       const contenedor = document.getElementById('btnGoogleContainer');

@@ -10,9 +10,7 @@
 
   <!-- ================= PASO 1 ================= -->
   <div *ngIf="pasoActual === 1">
-    <div
-      class="d-flex flex-column justify-content-center text-md-start text-center align-items-center"
-    >
+    <div class="d-flex flex-column justify-content-center text-md-start text-center align-items-center">
       <h1>
         <strong>{{ 'REGISTRO.FORM1.BIENVENIDE' | translate }}</strong>
       </h1>
@@ -62,7 +60,6 @@
             autocomplete="email"
             (blur)="validarCampo('email', formulario1)"
             (input)="onEmailInput()"
-            (ngModelChange)="onInputChange()"
           />
           <!-- Mensaje de ayuda accesible -->
           <span
@@ -73,10 +70,7 @@
           </span>
           <!-- Mensajes de Error Email -->
           <div
-            *ngIf="
-              formulario1.get('email')?.invalid &&
-              formulario1.get('email')?.touched
-            "
+            *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched"
             class="text-danger"
           >
             <span *ngIf="formulario1.get('email')?.errors?.['required']">
@@ -97,7 +91,7 @@
             type="button"
             id="btnSiguientePaso1"
             class="btn btn_bg w-100"
-            [disabled]="!formulario1.valid || !emailValido"
+            [disabled]="!formulario1.valid && !emailValido"
             (click)="siguientePaso()"
           >
             {{ 'REGISTRO.BOTONES2.SIGUIENTE' | translate }}
@@ -199,8 +193,7 @@
             aria-describedby="fnacimientoHelp"
             [attr.aria-invalid]="
               formulario2.get('fecha_nacimiento')?.invalid &&
-              (formulario2.get('fecha_nacimiento')?.touched ||
-                formulario2.get('fecha_nacimiento')?.dirty)
+              (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
             "
             required
             formControlName="fecha_nacimiento"
@@ -221,15 +214,12 @@
             aria-live="polite"
             *ngIf="
               formulario2.get('fecha_nacimiento')?.invalid &&
-              (formulario2.get('fecha_nacimiento')?.touched ||
-                formulario2.get('fecha_nacimiento')?.dirty)
+              (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
             "
           >
             <span
               class="dato-obligatorio"
-              *ngIf="
-                formulario2.get('fecha_nacimiento')?.errors?.['fechalimite']
-              "
+              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechalimite']"
             >
               {{ 'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA' | translate }}
             </span>
@@ -241,17 +231,13 @@
             </span>
             <span
               class="dato-obligatorio"
-              *ngIf="
-                formulario2.get('fecha_nacimiento')?.errors?.['menorDeEdad']
-              "
+              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['menorDeEdad']"
             >
               {{ 'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD' | translate }}
             </span>
             <span
               class="dato-obligatorio"
-              *ngIf="
-                formulario2.get('fecha_nacimiento')?.errors?.['fechaFutura']
-              "
+              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechaFutura']"
             >
               {{ 'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL' | translate }}
             </span>
@@ -282,10 +268,7 @@
             required
             formControlName="nombre"
             autocomplete="given-name"
-            [attr.aria-invalid]="
-              formulario2.get('nombre')?.invalid &&
-              formulario2.get('nombre')?.touched
-            "
+            [attr.aria-invalid]="formulario2.get('nombre')?.invalid && formulario2.get('nombre')?.touched"
             (input)="escucharCambiosFormulario2('nombre')"
           />
         </div>
@@ -313,10 +296,7 @@
             required
             formControlName="apellidos"
             autocomplete="family-name"
-            [attr.aria-invalid]="
-              formulario2.get('apellidos')?.invalid &&
-              formulario2.get('apellidos')?.touched
-            "
+            [attr.aria-invalid]="formulario2.get('apellidos')?.invalid && formulario2.get('apellidos')?.touched"
             (input)="escucharCambiosFormulario2('apellidos')"
           />
         </div>
@@ -344,10 +324,7 @@
             required
             formControlName="telefono"
             autocomplete="tel"
-            [attr.aria-invalid]="
-              formulario2.get('telefono')?.invalid &&
-              formulario2.get('telefono')?.touched
-            "
+            [attr.aria-invalid]="formulario2.get('telefono')?.invalid && formulario2.get('telefono')?.touched"
             (input)="validarCampo('telefono', formulario2)"
           />
           <!-- Mensajes de Error Teléfono -->
@@ -413,10 +390,7 @@
             required
             formControlName="genero"
             aria-describedby="info_genero"
-            [attr.aria-invalid]="
-              formulario2.get('genero')?.invalid &&
-              formulario2.get('genero')?.touched
-            "
+            [attr.aria-invalid]="formulario2.get('genero')?.invalid && formulario2.get('genero')?.touched"
             (change)="escucharCambiosFormulario2('genero')"
           >
             <option
@@ -496,10 +470,7 @@
             required
             formControlName="orientacion"
             aria-describedby="info_orientacion"
-            [attr.aria-invalid]="
-              formulario2.get('orientacion')?.invalid &&
-              formulario2.get('orientacion')?.touched
-            "
+            [attr.aria-invalid]="formulario2.get('orientacion')?.invalid && formulario2.get('orientacion')?.touched"
             (input)="escucharCambiosFormulario2('orientacion')"
           >
             <option
@@ -554,9 +525,7 @@
 
   <!-- ================= PASO 3 ================= -->
   <div *ngIf="pasoActual === 3">
-    <div
-      class="d-flex justify-content-center text-md-start text-center px-4 px-md-0"
-    >
+    <div class="d-flex justify-content-center text-md-start text-center px-4 px-md-0">
       <h1>
         {{ 'REGISTRO.FORM3.TITULO' | translate }}
       </h1>
@@ -601,10 +570,7 @@
               formControlName="password"
               class="form-control form-input"
               id="password"
-              [attr.aria-invalid]="
-                formulario3.get('password')?.invalid &&
-                formulario3.get('password')?.touched
-              "
+              [attr.aria-invalid]="formulario3.get('password')?.invalid && formulario3.get('password')?.touched"
               aria-describedby="passwordError"
               (keydown)="manejarTabPassword($event)"
             />
@@ -612,16 +578,8 @@
               type="button"
               (click)="botonMostrarPassword_1()"
               class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2 border-0 bg-transparent shadow-none"
-              style="
-                --bs-btn-hover-bg: transparent;
-                --bs-btn-hover-border-color: transparent;
-              "
-              [attr.aria-label]="
-                (mostrarPassword1
-                  ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA'
-                  : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA'
-                ) | translate
-              "
+              style="--bs-btn-hover-bg: transparent; --bs-btn-hover-border-color: transparent"
+              [attr.aria-label]="(mostrarPassword1 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate"
             >
               <i
                 class="bi"
@@ -636,10 +594,7 @@
           >
             <span
               class="text-danger"
-              *ngIf="
-                formulario3.get('password')?.errors?.['pattern'] &&
-                formulario3.get('password')?.touched
-              "
+              *ngIf="formulario3.get('password')?.errors?.['pattern'] && formulario3.get('password')?.touched"
             >
               {{ 'REGISTRO.FORM3.CONTRASEÑA.FORMATO' | translate }}
             </span>
@@ -660,13 +615,8 @@
                 formControlName="confirmarPassword"
                 [readonly]="formulario3.get('password')?.invalid"
                 [attr.aria-disabled]="formulario3.get('password')?.invalid"
-                [class.input-deshabilitado]="
-                  formulario3.get('password')?.invalid
-                "
-                [attr.aria-invalid]="
-                  formulario3.get('confirmarPassword')?.invalid &&
-                  formulario3.get('confirmarPassword')?.touched
-                "
+                [class.input-deshabilitado]="formulario3.get('password')?.invalid"
+                [attr.aria-invalid]="formulario3.get('confirmarPassword')?.invalid && formulario3.get('confirmarPassword')?.touched"
                 aria-describedby="confirmarPasswordError"
               />
 
@@ -675,10 +625,7 @@
                 (click)="botonMostrarPassword_2()"
                 class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
                 [attr.aria-label]="
-                  (mostrarPassword2
-                    ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA'
-                    : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA'
-                  ) | translate
+                  (mostrarPassword2 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate
                 "
               >
                 <i
@@ -693,10 +640,7 @@
           <div
             id="confirmarPasswordError"
             aria-live="polite"
-            *ngIf="
-              formulario3.get('confirmarPassword')?.hasError('noCoincide') &&
-              formulario3.get('confirmarPassword')?.touched
-            "
+            *ngIf="formulario3.get('confirmarPassword')?.hasError('noCoincide') && formulario3.get('confirmarPassword')?.touched"
           >
             <small class="text-danger">
               {{ 'AJUSTESAPP.PASSWORD.NO_COINCIDEN' | translate }}
@@ -720,9 +664,7 @@
         type="button"
         class="btn btn_bg_secondary"
         (click)="pasoAnterior()"
-        [attr.aria-label]="
-          'REGISTRO.BOTONES.ATRAS_PASO' | translate: { paso: pasoActual - 1 }
-        "
+        [attr.aria-label]="'REGISTRO.BOTONES.ATRAS_PASO' | translate: { paso: pasoActual - 1 }"
       >
         {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
       </button>
@@ -744,13 +686,7 @@
 
   <!-- Botón Finalizar Registro (solo Paso 3) -->
   <div
-    *ngIf="
-      (pasoActual === 3 &&
-        formulario1.valid &&
-        formulario2.valid &&
-        formulario3.valid) ||
-      (pasoActual === 2 && esGoogle)
-    "
+    *ngIf="(pasoActual === 3 && formulario1.valid && formulario2.valid && formulario3.valid) || (pasoActual === 2 && esGoogle)"
     class="d-flex justify-content-center"
   >
     <button
