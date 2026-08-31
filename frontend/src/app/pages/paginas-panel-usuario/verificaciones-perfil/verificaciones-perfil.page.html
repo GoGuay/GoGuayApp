@@ -5,13 +5,19 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
-
-  <div *ngIf="cargando" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+  <div
+    *ngIf="cargando"
+    class="d-flex justify-content-center align-items-center"
+    style="height: 80vh"
+  >
     <app-spinner></app-spinner>
     <p class="mt-3">Cargando verificaciones...</p>
   </div>
 
-  <div class="container" *ngIf="!cargando">
+  <div
+    class="container"
+    *ngIf="!cargando"
+  >
     <div class="d-flex justify-content-center">
       <h1 class="text-center mb-5">{{'VERIFICACION.TITULO' | translate}}</h1>
     </div>
@@ -20,15 +26,19 @@
       <p class="mb-2">{{'VERIFICACION.SUBT_VERIF_BASICA' | translate}}</p>
     </div>
 
-    <div class="text-center" *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado">
-      <p class="mb-2 verified-message"><i class="fi fi-rr-badget-check-alt"></i> Actualmente tienes tu perfil verificado.</p>
+    <div
+      class="text-center"
+      *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"
+    >
+      <p class="mb-2 verified-message">
+        <i class="fi fi-rr-badget-check-alt"></i>
+        Actualmente tienes tu perfil verificado.
+      </p>
     </div>
 
     <!-- Tablas -->
     <div class="container mt-5 mb-5">
-      <div
-        class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper"
-      >
+      <div class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper">
         <div class="verif-col">
           <h5>{{'VERIFICACION.TABLA_VBASICA.TITULO' | translate}}</h5>
           <table class="verification-table mt-3 mx-auto">
@@ -71,173 +81,176 @@
       </div>
     </div>
 
-   <div class="container-fluid d-flex justify-content-center">
-    <!-- Correo, teléfono e identidad -->
-    <ion-row class="ion-justify-content-center fila_superior">
-      <!-- Verificación de correo -->
-      <ion-col size="12" size-md="5" class="ion-padding d-flex justify-content-center">
-        <div class="mt-2 text-center">
-          <p class="mb-4">
-            <strong>{{'VERIFICACION.VERIFICA_CORREO' | translate}}</strong>
-          </p>
-          <ion-row>
+    <div class="container-fluid d-flex justify-content-center">
+      <!-- Correo, teléfono e identidad -->
+      <ion-row class="ion-justify-content-center fila_superior">
+        <!-- Verificación de correo -->
+        <ion-col
+          size="12"
+          size-md="5"
+          class="ion-padding d-flex justify-content-center"
+        >
+          <div class="mt-2 text-center">
+            <p class="mb-4">
+              <strong>{{'VERIFICACION.VERIFICA_CORREO' | translate}}</strong>
+            </p>
+            <ion-row>
+              <ion-col>
+                <p
+                  class="text-align-justify"
+                  style="font-size: 14px"
+                >
+                  {{'VERIFICACION.INFO_VERIF_CORREO' | translate}}
+                </p>
+              </ion-col>
+            </ion-row>
             <ion-col>
-              <p
-                class="text-align-justify"
-                style="font-size: 14px"
+              <button
+                type="btn"
+                class="btn btn_bg mb-4 w-100"
+                mat-raised-button
+                (click)="envio_mail_verificar_correo(emailUsuario)"
+                [disabled]="usuario.emailVerificado || botonCorreoVerificado"
               >
-                {{'VERIFICACION.INFO_VERIF_CORREO' | translate}}
-              </p>
+                {{emailUsuario}}
+              </button>
+              <p-toast position="bottom-center"></p-toast>
             </ion-col>
-          </ion-row>
-          <ion-col>
-            <button
-              type="btn"
-              class="btn btn_bg mb-4 w-100"
-              mat-raised-button
-              (click)="envio_mail_verificar_correo(emailUsuario)"
-              [disabled]="usuario.emailVerificado || botonCorreoVerificado"
-            >
-              {{emailUsuario}}
-            </button>
-            <p-toast position="bottom-center"></p-toast>
-          </ion-col>
-        </div>
-      </ion-col>
-
-      <div class="divider-container d-none d-md-block">
-        <mat-divider vertical></mat-divider>
-      </div>
-
-      <!-- Verificación de teléfono -->
-      <ion-col size="12" size-md="5" class="ion-padding d-flex justify-content-center">
-        <div class="mt-2 text-center">
-          <p>
-            <strong>{{'VERIFICACION.VERIFICA_TELEFONO' | translate}}</strong>
-          </p>
-          <ion-row>
-            <ion-col>
-              <p
-                class="text-align-justify"
-                style="font-size: 14px"
-              >
-                {{'VERIFICACION.INFO_VERIF_TELEFONO' | translate}}
-              </p>
-            </ion-col>
-          </ion-row>
-          <ion-col>
-            <button
-              type="button"
-              [disabled]="sms_enviado || usuario.telefonoVerificado"
-              class="btn btn_bg"
-              mat-raised-button
-              type="btn"
-              (click)="enviar_sms(telefonoUsuario)"
-            >
-              {{telefonoUsuario}}
-            </button>
-          </ion-col>
-          <ion-row class="mt-4"></ion-row>
-          <div
-            class="input-container d-flex justify-content-center mb-3"
-            *ngIf="!usuario.telefonoVerificado"
-          >
-            <input
-              #d0
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 0"
-              [(ngModel)]="codigoArray[0]"
-              (input)="moveNext(d0, d1, 0)"
-              (keydown)="handleBackspace($event, 0)"
-              (focus)="focusedInput = 0"
-              [disabled]="!inputsHabilitados"
-              (paste)="handlePaste($event)"
-            />
-            <input
-              #d1
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 1"
-              [(ngModel)]="codigoArray[1]"
-              (input)="moveNext(d1, d2, 1)"
-              (keydown)="handleBackspace($event, 1)"
-              (focus)="focusedInput = 1"
-              [disabled]="!inputsHabilitados"
-            />
-            <input
-              #d2
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 2"
-              [(ngModel)]="codigoArray[2]"
-              (input)="moveNext(d2, d3, 2)"
-              (keydown)="handleBackspace($event, 2)"
-              (focus)="focusedInput = 2"
-              [disabled]="!inputsHabilitados"
-            />
-            <input
-              #d3
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 3"
-              [(ngModel)]="codigoArray[3]"
-              (input)="moveNext(d3, d4, 3)"
-              (keydown)="handleBackspace($event, 3)"
-              (focus)="focusedInput = 3"
-              [disabled]="!inputsHabilitados"
-            />
-            <input
-              #d4
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 4"
-              [(ngModel)]="codigoArray[4]"
-              (input)="moveNext(d4, d5, 4)"
-              (keydown)="handleBackspace($event, 4)"
-              (focus)="focusedInput = 4"
-              [disabled]="!inputsHabilitados"
-            />
-            <input
-              #d5
-              type="text"
-              maxlength="1"
-              class="digit-input mx-1"
-              [class.active]="focusedInput === 5"
-              [(ngModel)]="codigoArray[5]"
-              (input)="updateCodigo()"
-              (keydown)="handleBackspace($event, 5)"
-              (focus)="focusedInput = 5"
-              [disabled]="!inputsHabilitados"
-            />
           </div>
-          <span *ngIf="codigo_erroneo">
-            Este código no es correcto. Vuelve a introducirlo o solicita uno
-            nuevo pasados 10 minutos
-          </span>
+        </ion-col>
 
-          <button
-            (click)="verificar_codigo_sms(codigo)"
-            *ngIf="!usuario.telefonoVerificado"
-            type="button"
-            class="btn mt-2 btn_bg"
-            mat-raised-button
-            [disabled]="!codigoCompleto"
-          >
-            {{'VERIFICACION.BOTÓN_VERIFICAR_TELEFONO' | translate}}
-          </button>
+        <div class="divider-container d-none d-md-block">
+          <mat-divider vertical></mat-divider>
         </div>
-      </ion-col>
 
-      <div class="divider-container hide-on-mobile"></div>
-    </ion-row>
-   </div>
+        <!-- Verificación de teléfono -->
+        <ion-col
+          size="12"
+          size-md="5"
+          class="ion-padding d-flex justify-content-center"
+        >
+          <div class="mt-2 text-center">
+            <p>
+              <strong>{{'VERIFICACION.VERIFICA_TELEFONO' | translate}}</strong>
+            </p>
+            <ion-row>
+              <ion-col>
+                <p
+                  class="text-align-justify"
+                  style="font-size: 14px"
+                >
+                  {{'VERIFICACION.INFO_VERIF_TELEFONO' | translate}}
+                </p>
+              </ion-col>
+            </ion-row>
+            <ion-col>
+              <button
+                type="button"
+                [disabled]="sms_enviado || usuario.telefonoVerificado"
+                class="btn btn_bg"
+                mat-raised-button
+                type="btn"
+                (click)="enviar_sms(telefonoUsuario)"
+              >
+                {{telefonoUsuario}}
+              </button>
+            </ion-col>
+            <ion-row class="mt-4"></ion-row>
+            <div
+              class="input-container d-flex justify-content-center mb-3"
+              *ngIf="!usuario.telefonoVerificado"
+            >
+              <input
+                #d0
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 0"
+                [(ngModel)]="codigoArray[0]"
+                (input)="moveNext(d0, d1, 0)"
+                (keydown)="handleBackspace($event, 0)"
+                (focus)="focusedInput = 0"
+                [disabled]="!inputsHabilitados"
+                (paste)="handlePaste($event)"
+              />
+              <input
+                #d1
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 1"
+                [(ngModel)]="codigoArray[1]"
+                (input)="moveNext(d1, d2, 1)"
+                (keydown)="handleBackspace($event, 1)"
+                (focus)="focusedInput = 1"
+                [disabled]="!inputsHabilitados"
+              />
+              <input
+                #d2
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 2"
+                [(ngModel)]="codigoArray[2]"
+                (input)="moveNext(d2, d3, 2)"
+                (keydown)="handleBackspace($event, 2)"
+                (focus)="focusedInput = 2"
+                [disabled]="!inputsHabilitados"
+              />
+              <input
+                #d3
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 3"
+                [(ngModel)]="codigoArray[3]"
+                (input)="moveNext(d3, d4, 3)"
+                (keydown)="handleBackspace($event, 3)"
+                (focus)="focusedInput = 3"
+                [disabled]="!inputsHabilitados"
+              />
+              <input
+                #d4
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 4"
+                [(ngModel)]="codigoArray[4]"
+                (input)="moveNext(d4, d5, 4)"
+                (keydown)="handleBackspace($event, 4)"
+                (focus)="focusedInput = 4"
+                [disabled]="!inputsHabilitados"
+              />
+              <input
+                #d5
+                type="text"
+                maxlength="1"
+                class="digit-input mx-1"
+                [class.active]="focusedInput === 5"
+                [(ngModel)]="codigoArray[5]"
+                (input)="updateCodigo()"
+                (keydown)="handleBackspace($event, 5)"
+                (focus)="focusedInput = 5"
+                [disabled]="!inputsHabilitados"
+              />
+            </div>
+            <span *ngIf="codigo_erroneo">Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos</span>
 
+            <button
+              (click)="verificar_codigo_sms(codigo)"
+              *ngIf="!usuario.telefonoVerificado"
+              type="button"
+              class="btn mt-2 btn_bg"
+              mat-raised-button
+              [disabled]="!codigoCompleto"
+            >
+              {{'VERIFICACION.BOTON_VERIFICAR_TELEFONO' | translate}}
+            </button>
+          </div>
+        </ion-col>
 
+        <div class="divider-container hide-on-mobile"></div>
+      </ion-row>
+    </div>
   </div>
 </ion-content>

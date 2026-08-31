@@ -2,23 +2,23 @@
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
     "LABEL": "Your gender",
-    "INFO": "It Is A Person's Internal And Individual Experience, Expressed Through Identity, Clothing, Or Behavior. It Is Not Related To Sex Assigned At Birth And Is Not Limited Only To Man Or Woman.",
-    "SELECCIONA": "Select Your Gender",
-    "AYUDA": "Options Are Shown To Choose Your Gender",
-    "H_CIS": "Cis Man",
-    "M_CIS": "Cis Woman",
+    "INFO": "It is a person's internal and individual experience, expressed through identity, clothing, or behavior. It is not related to the sex assigned at birth and is not limited only to man or woman.",
+    "SELECCIONA": "Select your gender",
+    "AYUDA": "Options to choose your gender are shown",
+    "H_CIS": "Cis man",
+    "M_CIS": "Cis woman",
     "TRANS": "Transgender",
-    "NO_BINARIO": "Non-Binary",
+    "NO_BINARIO": "Non-binary",
     "INTER": "Intergender",
     "NO_FLUIDO": "Genderfluid",
     "OTRO": "Other",
-    "NO_RESPONDE": "Prefer Not To Answer"
+    "NO_RESPONDE": "Prefer not to answer"
   },
   "SELECTOR_ORIENTACION": {
-    "LABEL": "Your sexual orientation?",
-    "INFO": "It Is The Emotional, Romantic, And/Or Sexual Attraction Felt Toward Other People.",
-    "AYUDA": "Options Are Shown To Choose Your Orientation",
-    "SELECCIONA": "Select Your Orientation",
+    "LABEL": "Sexual orientation?",
+    "INFO": "It is the emotional, romantic and/or sexual attraction felt toward other people.",
+    "AYUDA": "Options to choose your orientation are shown",
+    "SELECCIONA": "Select your orientation",
     "GAY": "Gay",
     "LESBIANA": "Lesbian",
     "BISEXUAL": "Bisexual",
@@ -28,7 +28,7 @@
     "QUEER": "Queer",
     "HETEROSEXUAL": "Heterosexual",
     "OTRO": "Other",
-    "NO_RESPONDE": "Prefer Not To Answer"
+    "NO_RESPONDE": "Prefer not to answer"
   },
   "SELECTOR_COLOR": {
     "BLANCO": "White",
@@ -36,7 +36,7 @@
     "ROJO": "Red",
     "AMARILLO": "Yellow",
     "VERDE": "Green",
-    "GRIS": "Grey",
+    "GRIS": "Gray",
     "DORADO": "Gold",
     "MARRON": "Brown",
     "MORADO": "Purple",
@@ -44,11 +44,11 @@
     "PERLA": "Pearl",
     "OTRO": "Other"
   },
-  "__MiPerfil": "My Profile Component - /mi-perfil --------- FINALIZADO agosto 2026",
+  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "My profile",
-    "DESCRIPCION": "In this section you can view and modify your personal information, as well as add your vehicles and travel preferences",
-    "BTN_GUARDAR_HELP": "Saves any modification made to your profile",
+    "DESCRIPCION": "In this section you can check and modify your personal information, as well as add your vehicles and travel preferences",
+    "BTN_GUARDAR_HELP": "Saves any changes made to your profile",
     "INFO_PERSONAL": {
       "TITULO": "Personal information",
       "BTN_ANADIR_FOTO": "Add or change profile picture",
@@ -56,18 +56,18 @@
       "BTN_ELIMINAR_FOTO": "Delete profile picture",
       "BTN_PERFIL_PUBLICO": "Here you can view your public profile",
       "BTN_PERFIL_PUBLICO_TEXTO": "This is how others see me",
-      "LABEL_NOMBRE": "Name",
-      "LABEL_APELLIDOS": "Last names",
+      "LABEL_NOMBRE": "First name",
+      "LABEL_APELLIDOS": "Last name",
       "PRONOMBRE": {
         "LABEL": "Pronoun",
-        "INFO": "Word we use to refer to a person without saying their name. Each person can choose the pronouns they feel comfortable with, such as he, she, or they.",
-        "AYUDA": "Options are shown to choose your pronoun",
+        "INFO": "A word we use to refer to a person without saying their name. Each person can choose the pronouns they feel comfortable with, such as he, she, or they.",
+        "AYUDA": "Options to choose your pronoun are shown",
         "ESCOGE_OPCION": "Choose your pronoun",
-        "OPC_EL": "Él / He / Him",
-        "OPC_ELLA": "Ella / She / Her",
-        "OPC_ELLE": "Elle / They / Them",
+        "OPC_EL": "He / He / Him",
+        "OPC_ELLA": "She / She / Her",
+        "OPC_ELLE": "They / They / Them",
         "OPC_OTROS": "Others",
-        "OPC_NOUSO": "I don't use any",
+        "OPC_NOUSO": "I use none",
         "OPC_NORESPONDO": "Prefer not to answer"
       },
       "LABEL_FECHANACIMIENTO": "Date of birth",
@@ -78,13 +78,14 @@
       "CARACTERES": "Characters used",
       "SPINNER_TRADUCIENDO": "Translating..."
     },
+
     "PREF_VIAJE": {
       "LABEL": "My travel preferences",
-      "SUBTITULO": "When traveling I prefer...",
-      "OPC_HABLAR": "Talking",
-      "OPC_MUSICA": "Listening to music",
-      "OPC_DORMIR": "Sleeping",
-      "OPC_SILENCIO": "Traveling in silence",
+      "SUBTITULO": "When I travel I prefer...",
+      "OPC_HABLAR": "To talk",
+      "OPC_MUSICA": "To listen to music",
+      "OPC_DORMIR": "To sleep",
+      "OPC_SILENCIO": "To go in silence",
       "LABEL_OTRAS": "Other travel preferences",
       "MASCOTAS": "Pets allowed / I can travel with my pet",
       "FUMAR": "Smoking allowed"
@@ -92,23 +93,30 @@
   },
   "TABLA_VEHICULOS": {
     "TITULO": "My vehicles",
-    "SIN_VEHICULOS": "No vehicles added",
+    "SIN_VEHICULOS": "You have no vehicles added",
     "BTN_ANADIR_VEHICULO": "Add vehicle",
     "BTN_AYUDA_ANADIR_VEHICULO": "To add a new vehicle",
     "ADVERTENCIA_MODIFICACION": "Remember that if you change the brand, you must also modify the model",
     "ANADIR_OTRO": "Do you want to add another vehicle?",
-    "BOTÓN_EDITAR_HELP": "Edit {{marca}} {{modelo}} vehicle in {{color}}",
-    "BOTON_ELIMINAR_HELP": "Delete {{marca}} {{modelo}} vehicle in {{color}}",
+    "GUARDAR_VEHICULO": "Save vehicle",
+    "BOTON_GUARDAR_HELP": "Save vehicle {{marca}} {{modelo}} in color {{color}}",
+    "GUARDAR_CAMBIOS": "Save changes",
+    "BOTON_EDITAR_HELP": "Edit vehicle {{marca}} {{modelo}} in color {{color}}",
+    "BOTON_ELIMINAR_HELP": "Delete vehicle {{marca}} {{modelo}} in color {{color}}",
+    "CANCELAR": "Cancel",
     "SELECTOR": {
       "MARCA": "Brand",
       "AYUDA_MARCA": "Vehicle brand selector",
       "MODELO": "Model",
       "AYUDA_MODELO": "Vehicle model selector",
       "COLOR": "Color",
+      "COLOR_VEHICULO": "Vehicle color: {{color}}",
       "AYUDA_COLOR": "Vehicle color selector"
     },
-    "INFO": "*If you cannot find your vehicle, please contact us:"
+    "INFO": "*If you cannot find your vehicle, please contact us:",
+    "ENVIAR_CORREO": "Send contact email"
   },
+
   "BOTON": {
     "GUARDAR": "Save",
     "VERIF_TU_IDENTIDAD": "Verify your identity",
@@ -318,14 +326,14 @@
     "INFO_VERIF_CORREO": "We will send a link to your email, you just have to click on the link that will appear.",
     "VERIFICA_TELEFONO": "Verify your phone:",
     "INFO_VERIF_TELEFONO": "We will send a 6-digit code. You must enter it in the boxes below.",
-    "BOTÓN_VERIFICAR_TELEFONO": "Confirm code",
+    "BOTON_VERIFICAR_TELEFONO": "Confirm code",
     "VERIF_IDENTIDAD": "Verify your identity:",
     "INFO_VERIF_IDENTIDAD": "Choose the type of document and indicate your number. Don't forget to modify it if necessary",
     "TIPO_DOCUMENTO": "Select the type of document",
     "ESCOGE_TIPO_DOCUMENTO": "Choose your document type",
     "NUMERO_DOCUMENTO": "Document number without spaces",
     "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
-    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirm document",
+    "BOTON_VERIFICAR_IDENTIDAD": "Confirm document",
     "VAVANZADA": {
       "TITULO": "Advanced verification",
       "INFO": "This verification is mandatory only if you are going to publish a trip as a driver"

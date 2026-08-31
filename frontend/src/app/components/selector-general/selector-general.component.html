@@ -46,6 +46,7 @@
     role="combobox"
     aria-autocomplete="list"
     [attr.aria-expanded]="sugerencias.length > 0 && estaActivo"
+    [attr.aria-label]="ariaLabel || (placeholderKey | translate)"
     [readonly]="soloLectura"
   />
 
