@@ -42,6 +42,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   @Input() soloLectura: boolean = false;
   @Input() opciones: any[] = [];
   @Input() valor: any = '';
+  @Input() ariaLabel: string = '';
 
   @Output() seleccionCambiada = new EventEmitter<any>(); //para usar sin formulario reactivos
   @Output() alAbrir = new EventEmitter<void>(); // NUEVO: Para avisar al padre si es necesario
