@@ -197,19 +197,37 @@
       "SLOGAN": "Whoever you are, we travel with you"
     },
     "SECCION_PUBLICAR": {
-      "TITULO": "Do you want to share your next trip?"
+      "TITULO": "Do you want to share your next trip?",
+      "SUBTITULO": "Select the city you want and find the perfect event",
+      "AYUDA": "Publish your next trip here.",
+      "DESCRIPCION": "Publish and travel in company"
     },
     "SECCION_BUSCAR": {
-      "TITULO": "Do you want to search for a trip?"
-    },
-    "SECCION_EVENTOS": {
-      "TITULO": "Is there an event nearby?",
-      "DESPLEGABLE": "Click here to see upcoming events",
-      "AVISO": "*Note: Event information was extracted from their respective sources in 2025. (This information may not be properly updated)"
+      "TITULO": "Do you want to search for a trip?",
+      "AYUDA": "Search for a trip here.",
+      "DESCRIPCION": "Find routes with like-minded people"
     },
     "SECCION_DUDAS": {
-      "TITULO": "DO YOU HAVE ANY QUESTIONS?",
-      "BOTON": "Check here"
+      "TITULO": "DO YOU HAVE QUESTIONS?"
+    },
+    "EVENTOS": {
+      "TITULO": "Do you want to go to an event?",
+      "SUBTITULO": "Select the city, find the event and create or search for a trip to that place!",
+      "INFO_SELECTOR": "Choose a city from the list",
+      "SELECTOR": "Choose a city",
+      "PROXIMOS_EN": "Upcoming events in {{ciudad}}",
+      "FINICIO": "Start date",
+      "FFIN": "End date",
+      "IMAGEN": "Event image",
+      "ENLACE": "+Info",
+      "BOTONES": {
+        "CREAR_VIAJE": "Create trip",
+        "PARA": "for",
+        "BUSCAR_VIAJE": "Search trip"
+      },
+      "NO_HAY_EVENTOS": "There are currently no events available for {{ ciudad }}",
+      "PREPARANDO_EVENTOS": "We are preparing new events. Come back soon!",
+      "AVISO": "Notice: Event information has been extracted from its respective sources: GoGuay is not responsible for any modifications made by the event organization."
     }
   },
 
