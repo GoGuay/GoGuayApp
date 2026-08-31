@@ -10,16 +10,16 @@ import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EventosServices } from '../../core/eventos-services/eventos-services.service';
+import { SelectorGeneralComponent } from '../selector-general/selector-general.component';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule, MatSelectModule, MatFormFieldModule],
+  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule, MatSelectModule, MatFormFieldModule, SelectorGeneralComponent],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
-  //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
   lista_eventos: Evento[] = Eventos;
   isOpen: boolean = false;
 
@@ -73,14 +73,13 @@ export class TrayectosPopularesComponent implements OnInit {
   }
 
   obtenerEventos() {
-    this.eventosService.obtenerTodosLosEventos()
-      .subscribe((resultado) => {
-        this.lista_eventos = resultado;
-        this.obtener_ciudades_eventos();
-        // if (this.ciudadesUnicas.length > 0) {
-        //   this.selectOption(this.ciudadesUnicas[0]);
-        // }
-      })
+    this.eventosService.obtenerTodosLosEventos().subscribe((resultado) => {
+      this.lista_eventos = resultado;
+      this.obtener_ciudades_eventos();
+      // if (this.ciudadesUnicas.length > 0) {
+      //   this.selectOption(this.ciudadesUnicas[0]);
+      // }
+    });
   }
 
   /**

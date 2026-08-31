@@ -198,6 +198,7 @@
     },
     "SECCION_PUBLICAR": {
       "TITULO": "¿Quieres compartir tu próximo viaje?",
+      "SUBTITULO": "Selecciona la ciudad que quieras y encuentra el evento perfecto",
       "AYUDA": "Publica tu próximo viaje aquí.",
       "DESCRIPCION": "Publica y viaja en compañía"
     },
@@ -218,14 +219,14 @@
       "FINICIO": "Fecha de inicio",
       "FFIN": "Fecha de fin",
       "IMAGEN": "Imagen del evento",
-      "ENLACE": "Más información del evento",
+      "ENLACE": "+Info",
       "BOTONES": {
         "CREAR_VIAJE": "Crear viaje",
         "PARA": "para",
         "BUSCAR_VIAJE": "Buscar viaje"
       },
       "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
-      "VUELVE_PRONTO": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
+      "PREPARANDO_EVENTOS": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
       "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
     }
   },
