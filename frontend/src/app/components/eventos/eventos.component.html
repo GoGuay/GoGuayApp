@@ -62,6 +62,11 @@
               slot="content"
               class="contenido-estatico"
             >
+              <app-spinner
+                *ngIf="spinnerActivo"
+                [texto_spinner]="texto_spinner | translate"
+                [tamano_completo]="false"
+              ></app-spinner>
               <div class="mb-3">{{ evento.descripcion }}</div>
               <div class="mb-3 contenedor_imagen">
                 <img
