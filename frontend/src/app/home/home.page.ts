@@ -41,6 +41,7 @@ import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados
 export class HomePage implements OnInit {
   userLoggedIn: boolean = false;
   mostrarJumbotron = true;
+  iaActiva: boolean = true;
   usuario: any;
   userData: Usuario = {} as Usuario;
   messaging: string = '../../assets/sistema/messaging.png';
@@ -58,6 +59,7 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
+    this.loadIASetting();
 
     if (this.userLoggedIn) {
       this.obtenerUsuarioPorID(this.userData?.usuario?.id);
@@ -77,6 +79,16 @@ export class HomePage implements OnInit {
       this.mostrarJumbotron = true;
     } else {
       this.mostrarJumbotron = jumbotronSetting === 'true';
+    }
+  }
+
+  loadIASetting() {
+    const iaSetting = localStorage.getItem('iaActiva');
+    if (iaSetting === null) {
+      localStorage.setItem('iaActiva', 'true');
+      this.iaActiva = true;
+    } else {
+      this.iaActiva = iaSetting === 'true';
     }
   }
 

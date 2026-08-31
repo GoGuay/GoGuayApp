@@ -1,8 +1,4 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
@@ -13,70 +9,38 @@
 
     <!-- Modificación de datos personales -->
     <ion-row class="d-flex justify-content-center">
-      <ion-col
-        class="line"
-        size="12"
-        size-md="6"
-      >
+      <ion-col class="line" size="12" size-md="6">
         <h4 class="text-center mb-3">{{'MIPERFIL.INFO_PERSONAL.TITULO' | translate}}</h4>
         <div class="container text-center">
           <!-- === Fila 1: botones + imagen centrada === -->
           <div class="row align-items-center justify-content-center mb-3 fila-foto">
             <!-- Botón agregar foto -->
             <div class="col-auto">
-              <button
-                type="button"
-                class="btn btn_bg boton"
-                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
-                (click)="fileInputPerfil.click()"
-              >
-                <img
-                  class="edit_btn"
-                  src="../../../../assets/sistema/mas.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
-                />
+              <button type="button" class="btn btn_bg boton"
+                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate" (click)="fileInputPerfil.click()">
+                <img class="edit_btn" src="../../../../assets/sistema/mas.png"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate" />
               </button>
-              <input
-                type="file"
-                #fileInputPerfil
-                accept="image/*"
-                (change)="subirFotoPerfil($event)"
-                style="display: none"
-              />
+              <input type="file" #fileInputPerfil accept="image/*" (change)="subirFotoPerfil($event)"
+                style="display: none" />
             </div>
             <!-- Imagen centrada -->
             <div class="col-auto">
               <div class="img_container">
-                <img
-                  class="img_profile"
-                  [src]="imagenPerfilUsuario"
-                  referrerpolicy="no-referrer"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.ALT_IMG_PERFIL' | translate"
-                />
-                <div
-                  class="overlay"
-                  *ngIf="cargando"
-                >
+                <img class="img_profile" [src]="imagenPerfilUsuario" referrerpolicy="no-referrer"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.ALT_IMG_PERFIL' | translate" />
+                <div class="overlay" *ngIf="cargando">
                   <app-spinner></app-spinner>
                 </div>
               </div>
             </div>
             <!-- Botón eliminar foto -->
-            <div
-              class="col-auto"
-              *ngIf="!perfilSinFoto"
-            >
-              <button
-                type="button"
-                class="btn btn_bg boton btn_delete"
+            <div class="col-auto" *ngIf="!perfilSinFoto">
+              <button type="button" class="btn btn_bg boton btn_delete"
                 [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
-                (click)="modalEliminarFotoPerfil(userData.usuario)"
-              >
-                <img
-                  class="edit_btn"
-                  src="../../../../assets/sistema/cruz.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
-                />
+                (click)="modalEliminarFotoPerfil(userData.usuario)">
+                <img class="edit_btn" src="../../../../assets/sistema/cruz.png"
+                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate" />
               </button>
             </div>
           </div>
@@ -84,13 +48,10 @@
           <!-- === Fila 2: botón "Así me ven los demás" === -->
           <div class="row justify-content-center mb-4">
             <div class="col-auto">
-              <button
-                type="button"
-                class="btn btn_bg ver-perfil-btn"
+              <button type="button" class="btn btn_bg ver-perfil-btn"
                 matTooltip="{{ 'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate }}"
                 [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate"
-                (click)="verPerfilPublico()"
-              >
+                (click)="verPerfilPublico()">
                 {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' | translate}}
               </button>
             </div>
@@ -100,36 +61,18 @@
         <ion-row class="fila-datos">
           <ion-col class="col_nombre_apellidos">
             <div class="mb-3">
-              <label
-                for="nombre"
-                class="form-label"
-              >
+              <label for="nombre" class="form-label">
                 {{'MIPERFIL.INFO_PERSONAL.LABEL_NOMBRE' | translate}}
               </label>
-              <input
-                type="text"
-                class="form-control w-100"
-                id="nombre"
-                [(ngModel)]="nombreEditado"
-                name="nombre"
-                (ngModelChange)="onInputChange()"
-              />
+              <input type="text" class="form-control w-100" id="nombre" [(ngModel)]="nombreEditado" name="nombre"
+                (ngModelChange)="onInputChange()" />
             </div>
             <div class="mb-3">
-              <label
-                for="apellidos"
-                class="form-label"
-              >
+              <label for="apellidos" class="form-label">
                 {{'MIPERFIL.INFO_PERSONAL.LABEL_APELLIDOS' | translate}}
               </label>
-              <input
-                type="text"
-                class="form-control"
-                id="apellidos"
-                [(ngModel)]="apellidosEditados"
-                name="apellidos"
-                (ngModelChange)="onInputChange()"
-              />
+              <input type="text" class="form-control" id="apellidos" [(ngModel)]="apellidosEditados" name="apellidos"
+                (ngModelChange)="onInputChange()" />
             </div>
           </ion-col>
         </ion-row>
@@ -137,50 +80,29 @@
         <ion-row class="fila-selectores">
           <!-- 1. Pronombre -->
           <ion-col class="col-pronombre">
-            <app-selector-general
-              idUnico="pronombre"
-              labelKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL"
+            <app-selector-general idUnico="pronombre" labelKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.LABEL"
               placeholderKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.ESCOGE_OPCION"
-              tooltipKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO"
-              popoverKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO"
-              [opciones]="listaPronombresOriginales"
-              [valor]="pronombreEditado"
-              [(ngModel)]="pronombreEditado"
-              (seleccionCambiada)="onInputChange()"
-              [soloLectura]="true"
-            ></app-selector-general>
+              tooltipKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO" popoverKey="MIPERFIL.INFO_PERSONAL.PRONOMBRE.INFO"
+              [opciones]="listaPronombresOriginales" [valor]="pronombreEditado" [(ngModel)]="pronombreEditado"
+              (seleccionCambiada)="onInputChange()" [soloLectura]="true"></app-selector-general>
           </ion-col>
 
           <!-- 2. Género -->
           <ion-col class="col-genero text-center">
-            <app-selector-general
-              idUnico="genero"
-              labelKey="SELECTOR_GENERO.LABEL"
-              placeholderKey="SELECTOR_GENERO.SELECCIONA"
-              tooltipKey="SELECTOR_GENERO.INFO"
-              popoverKey="SELECTOR_GENERO.INFO"
-              [opciones]="listaGenerosOriginales"
-              [valor]="generoEditado"
-              [(ngModel)]="generoEditado"
-              (seleccionCambiada)="onInputChange()"
-              [soloLectura]="true"
-            ></app-selector-general>
+            <app-selector-general idUnico="genero" labelKey="SELECTOR_GENERO.LABEL"
+              placeholderKey="SELECTOR_GENERO.SELECCIONA" tooltipKey="SELECTOR_GENERO.INFO"
+              popoverKey="SELECTOR_GENERO.INFO" [opciones]="listaGenerosOriginales" [valor]="generoEditado"
+              [(ngModel)]="generoEditado" (seleccionCambiada)="onInputChange()"
+              [soloLectura]="true"></app-selector-general>
           </ion-col>
 
           <!-- 3. Orientación -->
           <ion-col class="col-orientacion text-center">
-            <app-selector-general
-              idUnico="orientacion"
-              labelKey="SELECTOR_ORIENTACION.LABEL"
-              placeholderKey="SELECTOR_ORIENTACION.SELECCIONA"
-              tooltipKey="SELECTOR_ORIENTACION.INFO"
-              popoverKey="SELECTOR_ORIENTACION.INFO"
-              [valor]="orientacionEditada"
-              [opciones]="listaOrientacionesOriginales"
-              [(ngModel)]="orientacionEditada"
-              (seleccionCambiada)="onInputChange()"
-              [soloLectura]="true"
-            ></app-selector-general>
+            <app-selector-general idUnico="orientacion" labelKey="SELECTOR_ORIENTACION.LABEL"
+              placeholderKey="SELECTOR_ORIENTACION.SELECCIONA" tooltipKey="SELECTOR_ORIENTACION.INFO"
+              popoverKey="SELECTOR_ORIENTACION.INFO" [valor]="orientacionEditada"
+              [opciones]="listaOrientacionesOriginales" [(ngModel)]="orientacionEditada"
+              (seleccionCambiada)="onInputChange()" [soloLectura]="true"></app-selector-general>
           </ion-col>
         </ion-row>
 
@@ -190,86 +112,45 @@
             <ion-row class="justify-content-center">
               <ion-col class="col_fecha_edad justify-content-center">
                 <div class="mb-3">
-                  <label
-                    for="fnacimiento"
-                    class="form-label d-flex justify-content-center"
-                  >
+                  <label for="fnacimiento" class="form-label d-flex justify-content-center">
                     {{'MIPERFIL.INFO_PERSONAL.LABEL_FECHANACIMIENTO' | translate}}
                   </label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="fnacimiento"
-                    [(ngModel)]="fechaNacimientoEditada"
-                    name="fnacimiento"
-                    (ngModelChange)="actualizarEdad()"
-                    (ngModelChange)="onInputChange()"
-                    aria-describedby="fechaNacimientoHelp"
-                  />
-                  <small
-                    id="fechaNacimientoHelp"
-                    class="visually-hidden"
-                  >
+                  <input type="date" class="form-control" id="fnacimiento" [(ngModel)]="fechaNacimientoEditada"
+                    name="fnacimiento" (ngModelChange)="actualizarEdad()" (ngModelChange)="onInputChange()"
+                    aria-describedby="fechaNacimientoHelp" />
+                  <small id="fechaNacimientoHelp" class="visually-hidden">
                     {{ 'MIPERFIL.FECHA_NACIMIENTO_AYUDA' | translate }}
                   </small>
                 </div>
                 <div class="mb-3 cajon_edad">
-                  <label
-                    for="edad"
-                    class="form-label d-flex justify-content-center"
-                  >
+                  <label for="edad" class="form-label d-flex justify-content-center">
                     {{ 'MIPERFIL.INFO_PERSONAL.LABEL_EDAD' | translate }}
                   </label>
 
-                  <input
-                    type="text"
-                    id="edad"
-                    class="form-control"
-                    [value]="edad"
-                    readonly
-                  />
+                  <input type="text" id="edad" class="form-control" [value]="edad" readonly />
                 </div>
               </ion-col>
             </ion-row>
 
             <!-- Sobre tí -->
             <div class="mb-3">
-              <label
-                for="bio"
-                class="form-label"
-              >
+              <label for="bio" class="form-label">
                 {{'MIPERFIL.INFO_PERSONAL.LABEL_SOBRETI' | translate}}
               </label>
               <div style="position: relative">
-                <textarea
-                  class="form-control bio"
-                  id="bio"
-                  rows="5"
-                  maxlength="250"
-                  placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}"
-                  [(ngModel)]="bioEditada"
-                  name="bio"
-                  aria-describedby="bioHelp"
-                  (ngModelChange)="onInputChange()"
-                ></textarea>
-                <app-spinner
-                  *ngIf="spinnerActivo"
-                  [texto_spinner]="texto_spinner | translate"
-                  [tamano_completo]="false"
-                ></app-spinner>
+                <textarea class="form-control bio" id="bio" rows="5" maxlength="250"
+                  placeholder="{{'MIPERFIL.INFO_PERSONAL.PLACEHOLDER_SOBRETI' | translate}}" [(ngModel)]="bioEditada"
+                  name="bio" aria-describedby="bioHelp" (ngModelChange)="onInputChange()"></textarea>
+                <app-spinner *ngIf="spinnerActivo" [texto_spinner]="texto_spinner | translate"
+                  [tamano_completo]="false"></app-spinner>
               </div>
 
-              <div
-                [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
-                style="text-align: right; font-size: 0.8rem; margin-top: 5px"
-              >
+              <div [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
+                style="text-align: right; font-size: 0.8rem; margin-top: 5px">
                 {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
 
-              <span
-                id="bioHelp"
-                class="visually-hidden"
-              >
+              <span id="bioHelp" class="visually-hidden">
                 {{ 'MIPERFIL.INFO_PERSONAL.AYUDA_SOBRETI' | translate }}
               </span>
             </div>
@@ -278,20 +159,12 @@
       </ion-col>
 
       <!-- Columna: Tabla vechículos y preferencias de viaje -->
-      <ion-col
-        size="12"
-        size-md="5"
-        class="mx-md-5"
-      >
+      <ion-col size="12" size-md="5" class="mx-md-5">
         <!-- Tabla vehiculos -->
-        <app-tabla-vehiculos
-          [modoSeleccion]="false"
-          [vehiculos]="userData?.usuario?.vehiculos || userData?.vehiculos"
-          [(mostrarSelectorVehiculo)]="mostrarSelectorVehiculo"
-          (eliminarVehiculo)="modalEliminarVehiculo($event)"
+        <app-tabla-vehiculos [modoSeleccion]="false" [vehiculos]="userData?.usuario?.vehiculos || userData?.vehiculos"
+          [(mostrarSelectorVehiculo)]="mostrarSelectorVehiculo" (eliminarVehiculo)="modalEliminarVehiculo($event)"
           (irARegistrarVehiculo)="botonAnadirVehiculo()"
-          (vehiculoAnadidoExito)="actualizarListaVehiculos($event)"
-        ></app-tabla-vehiculos>
+          (vehiculoAnadidoExito)="actualizarListaVehiculos($event)"></app-tabla-vehiculos>
 
         <!-- Preferencias -->
         <ion-row class="d-flex justify-content-center mt-4">
@@ -301,85 +174,48 @@
 
             <h4 class="text-center mb-4">{{ 'MIPERFIL.PREF_VIAJE.LABEL' | translate }}</h4>
 
-            <div
-              role="group"
-              aria-labelledby="preferencias-label"
-            >
-              <label
-                id="preferencias-label"
-                class="form-label mb-3"
-              >
+            <div role="group" aria-labelledby="preferencias-label">
+              <label id="preferencias-label" class="form-label mb-3">
                 <strong>{{ 'MIPERFIL.PREF_VIAJE.SUBTITULO' | translate }}</strong>
               </label>
 
               <!-- HABLAR -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate "
-                  (change)="onCheckboxChange('talk', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('talk')"
-                  id="pref-talk"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-talk"
-                >
+                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate "
+                  (change)="onCheckboxChange('talk', $event)" [checked]="preferenciasSeleccionadas.includes('talk')"
+                  id="pref-talk" />
+                <label class="form-check-label" for="pref-talk">
                   {{ 'MIPERFIL.PREF_VIAJE.OPC_HABLAR' | translate }}
                 </label>
               </div>
 
               <!-- MÚSICA -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate "
-                  (change)="onCheckboxChange('music', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('music')"
-                  id="pref-music"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-music"
-                >
+                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate "
+                  (change)="onCheckboxChange('music', $event)" [checked]="preferenciasSeleccionadas.includes('music')"
+                  id="pref-music" />
+                <label class="form-check-label" for="pref-music">
                   {{ 'MIPERFIL.PREF_VIAJE.OPC_MUSICA' | translate }}
                 </label>
               </div>
 
               <!-- DORMIR -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [value]=" 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate "
-                  (change)="onCheckboxChange('sleep', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('sleep')"
-                  id="pref-sleep"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-sleep"
-                >
+                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate "
+                  (change)="onCheckboxChange('sleep', $event)" [checked]="preferenciasSeleccionadas.includes('sleep')"
+                  id="pref-sleep" />
+                <label class="form-check-label" for="pref-sleep">
                   {{ 'MIPERFIL.PREF_VIAJE.OPC_DORMIR' | translate }}
                 </label>
               </div>
 
               <!-- SILENCIO -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
+                <input class="form-check-input" type="checkbox"
                   [value]=" 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate "
                   (change)="onCheckboxChange('Silencio', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('Silencio')"
-                  id="pref-silence"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-silence"
-                >
+                  [checked]="preferenciasSeleccionadas.includes('Silencio')" id="pref-silence" />
+                <label class="form-check-label" for="pref-silence">
                   {{ 'MIPERFIL.PREF_VIAJE.OPC_SILENCIO' | translate }}
                 </label>
               </div>
@@ -391,36 +227,20 @@
 
               <!-- MASCOTAS -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [value]=" 'MIPERFIL.PREF_VIAJE.MASCOTAS' | translate "
+                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.MASCOTAS' | translate "
                   (change)="onCheckboxChange('Mascotas', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('Mascotas')"
-                  id="pref-pets"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-pets"
-                >
+                  [checked]="preferenciasSeleccionadas.includes('Mascotas')" id="pref-pets" />
+                <label class="form-check-label" for="pref-pets">
                   {{ 'MIPERFIL.PREF_VIAJE.MASCOTAS' | translate }}
                 </label>
               </div>
 
               <!-- FUMAR -->
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [value]=" 'MIPERFIL.PREF_VIAJE.FUMAR'| translate "
-                  (change)="onCheckboxChange('Fumar', $event)"
-                  [checked]="preferenciasSeleccionadas.includes('Fumar')"
-                  id="pref-smoke"
-                />
-                <label
-                  class="form-check-label"
-                  for="pref-smoke"
-                >
+                <input class="form-check-input" type="checkbox" [value]=" 'MIPERFIL.PREF_VIAJE.FUMAR'| translate "
+                  (change)="onCheckboxChange('Fumar', $event)" [checked]="preferenciasSeleccionadas.includes('Fumar')"
+                  id="pref-smoke" />
+                <label class="form-check-label" for="pref-smoke">
                   {{'MIPERFIL.PREF_VIAJE.FUMAR' | translate }}
                 </label>
               </div>
@@ -429,18 +249,66 @@
         </ion-row>
       </ion-col>
     </ion-row>
+
+    <!-- INTERESES DE OCIO Y DESTINOS -->
+    <ion-row class="d-flex justify-content-center mt-4">
+      <fieldset class="mb-2">
+        <!-- Legend para lectores de pantalla -->
+        <legend class="visually-hidden">Intereses de ocio y destinos</legend>
+
+        <h4 class="text-center mb-4">Tus intereses para la IA</h4>
+
+        <div role="group" aria-labelledby="intereses-label">
+          <label id="intereses-label" class="form-label mb-3">
+            <strong>Selecciona tus planes y destinos favoritos para recibir mejores sugerencias de viaje:</strong>
+          </label>
+
+          <!-- PLAYA -->
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" (change)="onOcioCheckboxChange('playa', $event)"
+              [checked]="interesesOcioSeleccionados.includes('playa')" id="ocio-playa" />
+            <label class="form-check-label" for="ocio-playa">
+              Playa y escapadas costeras
+            </label>
+          </div>
+
+          <!-- AMBIENTE FESTIVO -->
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" (change)="onOcioCheckboxChange('ambiente festivo', $event)"
+              [checked]="interesesOcioSeleccionados.includes('ambiente festivo')" id="ocio-festivo" />
+            <label class="form-check-label" for="ocio-festivo">
+              Ocio nocturno y festivales / Orgullo
+            </label>
+          </div>
+
+          <!-- CULTURA -->
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" (change)="onOcioCheckboxChange('cultura', $event)"
+              [checked]="interesesOcioSeleccionados.includes('cultura')" id="ocio-cultura" />
+            <label class="form-check-label" for="ocio-cultura">
+              Cultura, museos y arte urbano
+            </label>
+          </div>
+
+          <!-- TURISMO RURAL -->
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" (change)="onOcioCheckboxChange('turismo rural', $event)"
+              [checked]="interesesOcioSeleccionados.includes('turismo rural')" id="ocio-rural" />
+            <label class="form-check-label" for="ocio-rural">
+              Naturaleza y escapadas rurales
+            </label>
+          </div>
+        </div>
+        <mat-divider class="mb-1 mt-3"></mat-divider>
+      </fieldset>
+    </ion-row>
+
     <!-- Botón para guardar los cambios -->
     <ion-row class="d-flex justify-content-center ms-1 mt-5 mb-3">
       <div>
         <p-toast position="bottom-center"></p-toast>
-        <button
-          type="button"
-          class="btn btn_bg"
-          [attr.aria-label]="'MIPERFIL.BTN_GUARDAR_HELP' | translate"
-          mat-raised-button
-          [disabled]="!botonHabilitado"
-          (click)="editarDatos()"
-        >
+        <button type="button" class="btn btn_bg" [attr.aria-label]="'MIPERFIL.BTN_GUARDAR_HELP' | translate"
+          mat-raised-button [disabled]="!botonHabilitado" (click)="editarDatos()">
           {{'BOTON.GUARDAR' | translate}}
         </button>
       </div>

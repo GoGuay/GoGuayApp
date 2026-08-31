@@ -40,7 +40,8 @@
       <app-trayectos-populares></app-trayectos-populares>
     </div>
 
-    <div class="d-flex justify-content-center p-2">
+    <!-- COMPONENTE DE VIAJES RECOMENDADOS POR IA (SOLO SI EL USUARIO HA INICIADO SESIÓN Y HA CONFIGURADO SUS INTERESES)  -->
+    <div class="d-flex justify-content-center p-2" *ngIf="iaActiva">
       <app-viajes-recomendados-ia></app-viajes-recomendados-ia>
     </div>
 
