@@ -215,7 +215,7 @@
       "SUBTITULO": "Select the city, find the event and create or search for a trip to that place!",
       "INFO_SELECTOR": "Choose a city from the list",
       "SELECTOR": "Choose a city",
-      "PROXIMOS_EN": "Upcoming events in {{ciudad}}",
+      "PROXIMOS_EN": "Upcoming events in ",
       "FINICIO": "Start date",
       "FFIN": "End date",
       "IMAGEN": "Event image",

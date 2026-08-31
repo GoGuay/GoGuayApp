@@ -215,7 +215,7 @@
       "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
       "INFO_SELECTOR": "Elige una ciudad de la lista",
       "SELECTOR": "Elige una ciudad",
-      "PROXIMOS_EN": "Próximos eventos en {{ciudad}}",
+      "PROXIMOS_EN": "Próximos eventos en ",
       "FINICIO": "Fecha de inicio",
       "FFIN": "Fecha de fin",
       "IMAGEN": "Imagen del evento",
