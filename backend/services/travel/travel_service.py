@@ -2,17 +2,21 @@
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DE LOS VIAJES  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+import os
+
 from flask import Blueprint, jsonify, request
+import requests
 from datetime import datetime
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
 
-travel_blueprint = Blueprint('travel', __name__)
+import json
 
+travel_blueprint = Blueprint('travel', __name__)
 
 # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA CREAR UN VIAJE NUEVO
@@ -733,3 +737,170 @@ def notificar_llegada():
         return jsonify({"mensaje": "Llegada notificada"}), 200
     
     return jsonify({"error": "No se encontró la reserva"}), 404
+
+#
+# SERVICIO PARA OBTENER RECOMENDACIONES DE VIAJES BASADAS EN PREFERENCIAS DEL USUARIO
+# UTILIZANDO IA
+#
+@travel_blueprint.route('/recomendados/<int:user_id>', methods=['GET'])
+def obtener_viajes_recomendados(user_id):
+    try:
+        usuario = Usuario.query.get(user_id)
+        if not usuario:
+            return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
+
+        # Extraer y estructurar las preferencias del campo JSON de forma segura
+        preferencias_crudas = usuario.preferencias
+        if isinstance(preferencias_crudas, str):
+            try:
+                preferencias_usuario = json.loads(preferencias_crudas)
+            except json.JSONDecodeError:
+                preferencias_usuario = {}
+        elif isinstance(preferencias_crudas, dict):
+            preferencias_usuario = preferencias_crudas
+        else:
+            preferencias_usuario = {}
+
+        convivencia = preferencias_usuario.get("convivencia_viaje", {
+            "acepta_mascotas": preferencias_usuario.get("acepta_mascotas", True),
+            "fuma": preferencias_usuario.get("fuma", False),
+            "conversacion": preferencias_usuario.get("conversacion", "moderada")
+        })
+        
+        intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
+
+        # Recopilar el historial de viajes previos del usuario
+        viajes_como_conductor = [
+            {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
+            for v in usuario.viajes_publicados
+        ]
+        
+        viajes_como_pasajero = [
+            {"origen": r.viaje.origen, "destino": r.viaje.destino, "fecha": r.viaje.fecha_salida.isoformat()}
+            for r in usuario.reservas_realizadas if r.viaje
+        ]
+
+        historial_viajes = {
+            "publicados_como_conductor": viajes_como_conductor,
+            "reservas_como_pasajero": viajes_como_pasajero
+        }
+
+        perfil_analitico = {
+            "nombre": usuario.nombre,
+            "genero": usuario.genero,
+            "orientacion": usuario.orientacion,
+            "biografia": usuario.biografia,
+            "preferencias_convivencia": convivencia,
+            "intereses_ocio": intereses_ocio,
+            "reputacion_estrellas": usuario.estrellas_por_opiniones,
+            "estado_perfil": usuario.estado_perfil,
+            "historial_viajes": historial_viajes
+        }
+
+        # PROMPT: Evitamos que use comillas internas y aseguramos formato plano
+        prompt = f"""
+        Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
+        Analiza detalladamente el perfil analítico del usuario. Selecciona libremente entre 3 y 5 destinos o eventos reales en España que encajen con su personalidad.
+        
+        REGLAS ESTRICTAS DE FORMATO:
+        - Devuelve EXCLUSIVAMENTE un array JSON válido, sin texto adicional, sin bloques de código markdown (nada de ```json).
+        - NO utilices NUNCA comillas dobles (") ni saltos de línea dentro de los valores de texto (como en el campo "motivo"). Usa únicamente texto plano.
+        
+        Estructura exacta requerida:
+        [
+          {{
+            "destino_id": "slug-del-destino",
+            "nombre_destino": "Ciudad (Provincia)",
+            "puntuacion_afinidad": 95,
+            "motivo": "Texto breve explicando por qué le gusta sin usar comillas dobles."
+          }}
+        ]
+
+        Perfil del usuario: {json.dumps(perfil_analitico, ensure_ascii=False)}
+        """
+
+        groq_api_key = os.getenv("GROQ_API_KEY")
+        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+        
+        payload = {
+            "model": "openai/gpt-oss-20b",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.5, 
+            "max_tokens": 1500
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {groq_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(endpoint, json=payload, headers=headers)
+        data = response.json()
+
+        recomendaciones = None
+
+        if response.status_code == 200:
+            try:
+                texto_generado = data['choices'][0]['message']['content'].strip()
+                
+                # Limpieza exhaustiva de bloques markdown si los hubiera
+                if texto_generado.startswith("```json"):
+                    texto_generado = texto_generado[7:]
+                if texto_generado.startswith("```"):
+                    texto_generado = texto_generado[3:]
+                if texto_generado.endswith("```"):
+                    texto_generado = texto_generado[:-3]
+                
+                texto_generado = texto_generado.strip()
+                
+                recomendaciones = json.loads(texto_generado)
+                
+                if isinstance(recomendaciones, list):
+                    for rec in recomendaciones:
+                        rec["fuente"] = "ia"
+                        
+            except Exception as parse_error:
+                print(f"⚠️ Aviso: Falló el parseo de la IA ({str(parse_error)}). Texto recibido: {repr(texto_generado if 'texto_generado' in locals() else 'N/A')}")
+                recomendaciones = None
+
+        # Fallback dinámico en caso de fallo
+        if not recomendaciones or not isinstance(recomendaciones, list):
+            nombre_usuario = usuario.nombre or "viajero"
+            intereses_lower = [i.lower() for i in intereses_ocio]
+            
+            destinos_fallback = [
+                {
+                    "id": "sitges-playa",
+                    "destino": "Sitges (Barcelona)",
+                    "afinidad": 96 if "playa" in intereses_lower else 85,
+                    "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero y su gran oferta de ocio inclusivo."
+                },
+                {
+                    "id": "madrid-chueca",
+                    "destino": "Madrid",
+                    "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
+                    "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y vivir una vibrante experiencia cultural y de ocio."
+                },
+                {
+                    "id": "valencia-carmen",
+                    "destino": "Valencia",
+                    "afinidad": 95 if "cultura" in intereses_lower else 82,
+                    "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas llenas de arte y planes alternativos."
+                }
+            ]
+            recomendaciones = [
+                {
+                    "destino_id": d["id"],
+                    "nombre_destino": d["destino"],
+                    "puntuacion_afinidad": d["afinidad"],
+                    "motivo": d["motivo"],
+                    "fuente": "fallback"
+                } for d in destinos_fallback
+            ]
+            recomendaciones = sorted(recomendaciones, key=lambda x: x["puntuacion_afinidad"], reverse=True)
+
+        return jsonify({"success": True, "recomendaciones": recomendaciones}), 200
+
+    except Exception as e:
+        print(f"Error crítico en recomendación: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500

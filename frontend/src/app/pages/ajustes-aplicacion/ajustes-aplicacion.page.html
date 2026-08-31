@@ -86,6 +86,21 @@
               </div>
             </div>
           </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="box-section goguay-border h-100">
+              <h3>
+                <i class="fi fi-rr-magic-wand me-2 text-primary"></i>
+                Recomendaciones con IA
+              </h3>
+              <mat-divider></mat-divider>
+              <div class="notif-option mt-3">
+                <span>Activar Smart Match y sugerencias de IA</span>
+                <ion-toggle [(ngModel)]="iaActiva" (ionChange)="guardarAjustesIA()"></ion-toggle>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
 
