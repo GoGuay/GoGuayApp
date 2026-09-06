@@ -24,16 +24,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [
-    CommonModule,
-    FormsModule,
-    NavbarComponent,
-    IonicModule,
-    ToastModule,
-    MatDividerModule,
-    TranslateModule,
-    FormsModule,
-  ],
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -102,7 +93,7 @@ export class AjustesAplicacionPage implements OnInit {
     private translate: TranslateService,
     private route: ActivatedRoute,
     private funcionesComunes: FuncionesComunes,
-    private _bottomSheet: MatBottomSheet,
+    private _bottomSheet: MatBottomSheet
   ) {
     addIcons({ logoPaypal, cardOutline, businessOutline });
   }
@@ -111,10 +102,8 @@ export class AjustesAplicacionPage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron =
-      savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
-    this.notificacionesActivas =
-      localStorage.getItem('notificacionesActivas') !== 'false';
+    this.mostrarJumbotron = savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
+    this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
     this.notifPush = localStorage.getItem('notifPush') !== 'false';
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
@@ -141,38 +130,29 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   obtenerUsuario() {
-    this.userService
-      .obtenerUsuarioPorID(this.userData.usuario.id)
-      .subscribe((respuesta) => {
-        this.usuarioBD = respuesta;
-        this.metodoPagoPredeterminado =
-          respuesta.metodo_pago_preferido || 'paypal';
-      });
+    this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((respuesta) => {
+      this.usuarioBD = respuesta;
+      console.log(this.usuarioBD);
+      this.emailPaypal = this.usuarioBD.paypal_email;
+      this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
+    });
   }
 
   guardarAjustes() {
     localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron.toString());
-    localStorage.setItem(
-      'notificacionesActivas',
-      this.notificacionesActivas.toString(),
-    );
+    localStorage.setItem('notificacionesActivas', this.notificacionesActivas.toString());
     localStorage.setItem('notifPush', this.notifPush.toString());
     localStorage.setItem('notifEmail', this.notifEmail.toString());
     localStorage.setItem('notifSMS', this.notifSMS.toString());
 
-    this.translate
-      .get([
-        'AJUSTESAPP.OPCION_BANNER.ALERT_TITULO',
-        'AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE',
-      ])
-      .subscribe((translations) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: translations['AJUSTESAPP.OPCION_BANNER.ALERT_TITULO'],
-          detail: translations['AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE'],
-          life: 2000,
-        });
+    this.translate.get(['AJUSTESAPP.OPCION_BANNER.ALERT_TITULO', 'AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_BANNER.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_BANNER.ALERT_MENSAJE'],
+        life: 2000,
       });
+    });
   }
 
   changeLanguage(event: Event) {
@@ -182,19 +162,14 @@ export class AjustesAplicacionPage implements OnInit {
     this.languageService.setLanguage(selectedLanguage);
     this.selectedLanguage = selectedLanguage;
     this.translate.use(selectedLanguage);
-    this.translate
-      .get([
-        'AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO',
-        'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE',
-      ])
-      .subscribe((translations) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
-          detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
-          life: 3000,
-        });
+    this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+        life: 3000,
       });
+    });
   }
 
   onMetodoPagoChange() {
@@ -205,25 +180,20 @@ export class AjustesAplicacionPage implements OnInit {
    * Modal que se muestra cuando se pulsa el botón de eliminar usuario.
    */
   modalEliminarUsuario() {
-    this.translate
-      .get([
-        'AJUSTESAPP.ELIMINARCTA.MODAL_TITULO',
-        'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE',
-      ])
-      .subscribe((translations) => {
-        const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
-        const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+    this.translate.get(['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO', 'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE']).subscribe((translations) => {
+      const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
+      const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
 
-        const dialogRef = this.dialog.open(HelpModalComponent, {
-          data: { title: titulo, message: mensaje, showAcceptButton: true },
-          disableClose: true,
-        });
-        dialogRef.afterClosed().subscribe((confirmar) => {
-          if (confirmar) {
-            this.eliminar_usuario();
-          }
-        });
+      const dialogRef = this.dialog.open(HelpModalComponent, {
+        data: { title: titulo, message: mensaje, showAcceptButton: true },
+        disableClose: true,
       });
+      dialogRef.afterClosed().subscribe((confirmar) => {
+        if (confirmar) {
+          this.eliminar_usuario();
+        }
+      });
+    });
   }
 
   /**
@@ -234,7 +204,7 @@ export class AjustesAplicacionPage implements OnInit {
 
     this.userService.eliminarUsuario(this.userData.usuario.id).subscribe(
       (res) => console.log('Respuesta del backend: ', res),
-      (err) => console.error('Error del backedn: ', err),
+      (err) => console.error('Error del backedn: ', err)
     );
     localStorage.removeItem('userData');
     this.navCtrl.navigateRoot(['/'], {});
@@ -252,39 +222,34 @@ export class AjustesAplicacionPage implements OnInit {
    *
    */
   comprobarContrasenaActual() {
-
-    if (!this.passwordActual || this.passwordActual.length < 6) { 
+    if (!this.passwordActual || this.passwordActual.length < 6) {
       this.isPasswordActualValida = false;
       this.errorMensaje = '';
       return;
     }
 
-    this.userService
-      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual.trim())
-      .subscribe({
-        next: (res) => {
-          this.isPasswordActualValida = res.isValid;
+    this.userService.verificar_pw_actual(this.userData.usuario.id, this.passwordActual.trim()).subscribe({
+      next: (res) => {
+        this.isPasswordActualValida = res.isValid;
 
-          if (res.isValid) {
-            this.errorMensaje = '';
-            console.log('Contraseña actual verificada correctamente');
-          } else {
-            this.translate
-              .get('AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL_INCO')
-              .subscribe((translation) => {
-                this.errorMensaje = translation;
-              });
-            console.log('Contraseña actual incorrecta');
-          }
-          this.nuevaPassword1 = '';
-          this.nuevaPassword2 = '';
-          this.isNuevaPassword1Valida = false;
-          this.isConfirmacionPasswordValida = false;
-        },
-        error: () => {
-          this.isPasswordActualValida = false;
-        },
-      });
+        if (res.isValid) {
+          this.errorMensaje = '';
+          console.log('Contraseña actual verificada correctamente');
+        } else {
+          this.translate.get('AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL_INCO').subscribe((translation) => {
+            this.errorMensaje = translation;
+          });
+          console.log('Contraseña actual incorrecta');
+        }
+        this.nuevaPassword1 = '';
+        this.nuevaPassword2 = '';
+        this.isNuevaPassword1Valida = false;
+        this.isConfirmacionPasswordValida = false;
+      },
+      error: () => {
+        this.isPasswordActualValida = false;
+      },
+    });
   }
 
   /**
@@ -298,11 +263,9 @@ export class AjustesAplicacionPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isNuevaPassword1Valida = false;
-      this.translate
-        .get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL')
-        .subscribe((translation) => {
-          this.errorMensaje = translation;
-        });
+      this.translate.get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL').subscribe((translation) => {
+        this.errorMensaje = translation;
+      });
     }
     this.nuevaPassword2 = '';
     this.isConfirmacionPasswordValida = false;
@@ -318,11 +281,9 @@ export class AjustesAplicacionPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isConfirmacionPasswordValida = false;
-      this.translate
-        .get('AJUSTESAPP.PASSWORD.NO_COINCIDEN')
-        .subscribe((translation) => {
-          this.errorMensaje = translation;
-        });
+      this.translate.get('AJUSTESAPP.PASSWORD.NO_COINCIDEN').subscribe((translation) => {
+        this.errorMensaje = translation;
+      });
     }
   }
 
@@ -331,33 +292,27 @@ export class AjustesAplicacionPage implements OnInit {
    */
   botonCambioPassword() {
     if (!this.isConfirmacionPasswordValida) return;
-    this.userService
-      .cambio_pw(this.userData.usuario.id, this.nuevaPassword1)
-      .subscribe({
-        next: () => {
-          this.translate
-            .get('AJUSTESAPP.PASSWORD.CAMBIADA_OK')
-            .subscribe((translation) => {
-              this.exitoMensaje = translation;
-            });
-          this.errorMensaje = '';
-          this.passwordActual = '';
+    this.userService.cambio_pw(this.userData.usuario.id, this.nuevaPassword1).subscribe({
+      next: () => {
+        this.translate.get('AJUSTESAPP.PASSWORD.CAMBIADA_OK').subscribe((translation) => {
+          this.exitoMensaje = translation;
+        });
+        this.errorMensaje = '';
+        this.passwordActual = '';
 
-          this.nuevaPassword1 = '';
-          this.nuevaPassword2 = '';
-          this.isPasswordActualValida = null;
-          this.isNuevaPassword1Valida = false;
-          this.isConfirmacionPasswordValida = false;
-        },
-        error: (err) => {
-          this.translate
-            .get('AJUSTESAPP.PASSWORD.NO_CAMBIADA')
-            .subscribe((translation) => {
-              this.exitoMensaje = translation;
-            });
-          this.exitoMensaje = '';
-        },
-      });
+        this.nuevaPassword1 = '';
+        this.nuevaPassword2 = '';
+        this.isPasswordActualValida = null;
+        this.isNuevaPassword1Valida = false;
+        this.isConfirmacionPasswordValida = false;
+      },
+      error: (err) => {
+        this.translate.get('AJUSTESAPP.PASSWORD.NO_CAMBIADA').subscribe((translation) => {
+          this.exitoMensaje = translation;
+        });
+        this.exitoMensaje = '';
+      },
+    });
   }
 
   /**
@@ -421,17 +376,15 @@ export class AjustesAplicacionPage implements OnInit {
       tarjeta_exp: this.fechaCaducidad,
     };
 
-    this.userService
-      .actualizarUsuario(this.userData.usuario.id, datosPago)
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Datos de pago actualizados correctamente',
-          });
-        },
-      });
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosPago).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de pago actualizados correctamente',
+        });
+      },
+    });
   }
 
   /**
@@ -446,17 +399,15 @@ export class AjustesAplicacionPage implements OnInit {
       cobro_titular: this.cobroTitular,
     };
 
-    this.userService
-      .actualizarUsuario(this.userData.usuario.id, datosCobro)
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Datos de cobro actualizados correctamente',
-          });
-        },
-      });
+    this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Datos de cobro actualizados correctamente',
+        });
+      },
+    });
   }
 
   /**

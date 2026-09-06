@@ -16,7 +16,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje
+from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -882,7 +882,7 @@ def create_order():
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
     payload = {
-        "intent": "CAPTURE",
+        "intent": "AUTHORIZE",
         "purchase_units": [{
             "reference_id": str(viaje_id),
             "amount": {
@@ -926,14 +926,36 @@ def create_order():
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/authorize", headers=headers)
     
     capture_data = response.json()
     
     if response.status_code not in [200, 201]:
         print(f"❌ Error al capturar la orden {order_id}:", capture_data)
         return jsonify(capture_data), response.status_code
+    
+    try:
+        authorization_id = capture_data['purchase_units'][0]['payments']['authorizations'][0]['id']
         
-    return jsonify(capture_data), 200
+        orden_paypal = Ordenes_Paypal.query.filter_by(paypal_order_id=order_id).first()
+        
+        if orden_paypal:
+            # 3. Buscamos el registro en PasajeroViaje y le guardamos el auth_id
+            pasajero_viaje = PasajeroViaje.query.filter_by(
+                viaje_id=orden_paypal.viaje_id, 
+                usuario_id=orden_paypal.pasajero_id
+            ).first()
+            
+            if pasajero_viaje:
+                pasajero_viaje.paypal_auth_id = authorization_id
+                db.session.commit()
+                print(f"✅ Authorization ID {authorization_id} guardado en PasajeroViaje.")
 
+    except (KeyError, IndexError) as e:
+        print("❌ Error extrayendo el authorization_id:", e)
+        return jsonify({"error": "No se pudo extraer el ID de autorización", "detalle": capture_data}), 500
+
+    return jsonify(capture_data), 200
+    
+    
 
