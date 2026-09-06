@@ -48,3 +48,23 @@
     border-left: 2px solid #90caf9;
   }
 }
+
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; 
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
+    border-radius: 35px;
+  }
+  
+  i {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+}
+

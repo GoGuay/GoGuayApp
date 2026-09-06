@@ -4,7 +4,7 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SpinnerComponent } from "../spinner/spinner.component";
-import { RouterLink } from '@angular/router';
+import { NavigationExtras, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-viajes-recomendados-ia',
@@ -55,8 +55,17 @@ export class ViajesRecomendadosIaComponent implements OnInit {
     });
   }
 
-  verDetalleViaje(viajeId: number) {
-    this.navCtrl.navigateForward(`/detalles-viaje/${viajeId}`);
+  crearViajeDesde(nombreDestino: string) {
+    const navigationExtras: NavigationExtras = {
+      queryParams: { destino: nombreDestino }
+    };
+    this.navCtrl.navigateForward(['/nuevo-viaje'], navigationExtras);
   }
   
+  buscarViajeDesde(nombreDestino: string) {
+    const navigationExtras: NavigationExtras = {
+      queryParams: { destino: nombreDestino }
+    };
+    this.navCtrl.navigateForward(['/busqueda-viajes'], navigationExtras);
+  }
 }

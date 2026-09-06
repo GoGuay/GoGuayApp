@@ -23,6 +23,7 @@ import { MessageService } from 'primeng/api';
 import { of, Subject } from 'rxjs';
 import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-buscador',
@@ -74,6 +75,7 @@ export class BuscadorComponent implements OnInit {
     public translate: TranslateService,
     private navCtrl: NavController,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
+    private route: ActivatedRoute
   ) {
     addIcons({ eye, lockClosed });
 
@@ -85,7 +87,13 @@ export class BuscadorComponent implements OnInit {
     this.buscadorLocalidadesService.inicializarBuscador(this.destinoCtrl);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      if (params['destino']) {
+        this.destinoCtrl.valorTexto = params['destino'];
+      }
+    });
+  }
 
   // Getters auxiliares para mantener compatibilidad con el HTML existente
   get origen(): string {

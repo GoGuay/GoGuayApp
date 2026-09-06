@@ -797,25 +797,18 @@ def obtener_viajes_recomendados(user_id):
             "historial_viajes": historial_viajes
         }
 
-        # PROMPT: Evitamos que use comillas internas y aseguramos formato plano
+        # NUEVO PROMPT: Formato plano por líneas delimitadas (CERO errores de comillas)
         prompt = f"""
         Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
-        Analiza detalladamente el perfil analítico del usuario. Selecciona libremente entre 3 y 5 destinos o eventos reales en España que encajen con su personalidad.
+        Analiza el perfil analítico del usuario y selecciona EXACTAMENTE 3 destinos o eventos reales en España que encajen con su personalidad.
         
-        REGLAS ESTRICTAS DE FORMATO:
-        - Devuelve EXCLUSIVAMENTE un array JSON válido, sin texto adicional, sin bloques de código markdown (nada de ```json).
-        - NO utilices NUNCA comillas dobles (") ni saltos de línea dentro de los valores de texto (como en el campo "motivo"). Usa únicamente texto plano.
+        REQUISITO DE FORMATO ESTRICTO:
+        No devuelvas JSON. Devuelve única y exclusivamente las recomendaciones en formato de texto plano, una por línea, separando sus campos exactamente con el carácter barra vertical (|) de esta forma:
+        ID_SLUG | NOMBRE_DESTINO | PUNTUACION_AFINIDAD | MOTIVO_PERSONALIZADO
         
-        Estructura exacta requerida:
-        [
-          {{
-            "destino_id": "slug-del-destino",
-            "nombre_destino": "Ciudad (Provincia)",
-            "puntuacion_afinidad": 95,
-            "motivo": "Texto breve explicando por qué le gusta sin usar comillas dobles."
-          }}
-        ]
-
+        Ejemplo:
+        sitges-playa | Sitges (Barcelona) | 95 | Daniel, las playas mediterráneas combinan con tu afición por el aire libre.
+        
         Perfil del usuario: {json.dumps(perfil_analitico, ensure_ascii=False)}
         """
 
@@ -825,8 +818,8 @@ def obtener_viajes_recomendados(user_id):
         payload = {
             "model": "openai/gpt-oss-20b",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.5, 
-            "max_tokens": 1500
+            "temperature": 0.6, 
+            "max_tokens": 1000
         }
         
         headers = {
@@ -837,34 +830,44 @@ def obtener_viajes_recomendados(user_id):
         response = requests.post(endpoint, json=payload, headers=headers)
         data = response.json()
 
-        recomendaciones = None
+        recomendaciones = []
 
         if response.status_code == 200:
             try:
                 texto_generado = data['choices'][0]['message']['content'].strip()
                 
-                # Limpieza exhaustiva de bloques markdown si los hubiera
-                if texto_generado.startswith("```json"):
-                    texto_generado = texto_generado[7:]
-                if texto_generado.startswith("```"):
-                    texto_generado = texto_generado[3:]
-                if texto_generado.endswith("```"):
-                    texto_generado = texto_generado[:-3]
-                
-                texto_generado = texto_generado.strip()
-                
-                recomendaciones = json.loads(texto_generado)
-                
-                if isinstance(recomendaciones, list):
-                    for rec in recomendaciones:
-                        rec["fuente"] = "ia"
-                        
-            except Exception as parse_error:
-                print(f"⚠️ Aviso: Falló el parseo de la IA ({str(parse_error)}). Texto recibido: {repr(texto_generado if 'texto_generado' in locals() else 'N/A')}")
-                recomendaciones = None
+                # 🔍 NUEVO: Imprime esto en la consola para ver qué formato exacto está mandando la IA
+                print(f"🤖 Texto bruto recibido de la IA:\n{texto_generado}\n-------------------")
 
-        # Fallback dinámico en caso de fallo
-        if not recomendaciones or not isinstance(recomendaciones, list):
+                lineas = texto_generado.split('\n')
+                
+                for linea in lineas:
+                    partes = [p.strip() for p in linea.split('|')]
+                    if len(partes) >= 4:
+                        destino_id = partes[0]
+                        nombre_destino = partes[1]
+                        try:
+                            afinidad = int(partes[2])
+                        except ValueError:
+                            afinidad = 85
+                        motivo = partes[3]
+                        
+                        recomendaciones.append({
+                            "destino_id": destino_id,
+                            "nombre_destino": nombre_destino,
+                            "puntuacion_afinidad": afinidad,
+                            "motivo": motivo,
+                            "fuente": "ia"
+                        })
+            except Exception as parse_error:
+                print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
+                recomendaciones = []
+
+        # Recortamos estrictamente a 3 elementos
+        recomendaciones = recomendaciones[:3]
+
+        # Fallback dinámico por si la IA no devuelve líneas válidas
+        if not recomendaciones:
             nombre_usuario = usuario.nombre or "viajero"
             intereses_lower = [i.lower() for i in intereses_ocio]
             
