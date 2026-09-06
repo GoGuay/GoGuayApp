@@ -133,37 +133,17 @@ ion-toolbar {
     order: 3;
     flex: 0 0 100%;
     margin-top: 4px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
     padding-top: 4px;
     justify-content: flex-start !important;
+    .links-scroll-wrapper {
+      animation: sugerirScroll 2.5s ease-in-out 1.5s 2;
+    }
   }
 }
 
 @media (min-width: 768px) {
   .brand-container {
     flex-direction: column;
-  }
-
-  .links-scroll-wrapper {
-    animation: sugerirScroll 2.5s ease-in-out 1.5s 2;
-  }
-
-  @keyframes sugerirScroll {
-    0% {
-      transform: translateX(0);
-    }
-    20% {
-      transform: translateX(-15px);
-    }
-    40% {
-      transform: translateX(0);
-    }
-    60% {
-      transform: translateX(-10px);
-    }
-    100% {
-      transform: translateX(0);
-    }
   }
 
   .footer-row {
@@ -186,5 +166,23 @@ ion-toolbar {
       order: 3;
       justify-content: flex-end;
     }
+  }
+}
+
+@keyframes sugerirScroll {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-15px);
+  }
+  40% {
+    transform: translateX(0);
+  }
+  60% {
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
