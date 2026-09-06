@@ -179,8 +179,6 @@ export class MiPerfilPage implements OnInit {
      */
     this.userService.usuario$.subscribe((usuario) => {
       if (usuario) {
-        console.log('🚨 [VERIFICACIÓN] El servicio emite pronombre:', usuario.pronombre);
-        console.log('🚨 [VERIFICACIÓN] Mi variable pronombreEditado actual es:', this.pronombreEditado);
         this.userData.usuario = usuario;
 
         this.nombreEditado = usuario.nombre;
@@ -270,7 +268,6 @@ export class MiPerfilPage implements OnInit {
     this.spinnerActivo = true;
     this.texto_spinner = 'MIPERFIL.INFO_PERSONAL.SPINNER_TRADUCIENDO';
     this.googleService.detectarIdiomaTexto(textoATraducir).subscribe((resultado: any) => {
-      console.log('resultado: ', resultado);
       if (this.lang !== resultado.idioma) {
         this.googleService.traducirIdiomaTexto(textoATraducir, this.lang, resultado.idioma).subscribe((resultadoTraduccion: any) => {
           console.log('resultadoTraduccion: ', resultadoTraduccion);

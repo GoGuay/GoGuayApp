@@ -2,21 +2,21 @@
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
     "LABEL": "Tu género",
-    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
+    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita solo a hombre o mujer.",
     "SELECCIONA": "Selecciona tu género",
     "AYUDA": "Se muestran las opciones para elegir tu género",
-    "H_CIS": "Hombre Cis",
-    "M_CIS": "Mujer Cis",
+    "H_CIS": "Hombre cis",
+    "M_CIS": "Mujer cis",
     "TRANS": "Transexual",
     "NO_BINARIO": "No binario",
     "INTER": "Intergénero",
-    "NO_FLUIDO": "No Fluido",
+    "NO_FLUIDO": "No fluido",
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
   "SELECTOR_ORIENTACION": {
     "LABEL": "¿Orientación sexual?",
-    "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
+    "INFO": "Es la atracción emocional, romántica y/o sexual que se siente hacia otras personas.",
     "AYUDA": "Se muestran las opciones para elegir tu orientación",
     "SELECCIONA": "Selecciona tu orientación",
     "GAY": "Gay",
@@ -78,7 +78,6 @@
       "CARACTERES": "Caracteres usados",
       "SPINNER_TRADUCIENDO": "Traduciendo..."
     },
-
     "PREF_VIAJE": {
       "LABEL": "Mis preferencias de viaje",
       "SUBTITULO": "Cuando viajo prefiero...",
@@ -96,20 +95,27 @@
     "SIN_VEHICULOS": "No tienes vehículos añadidos",
     "BTN_ANADIR_VEHICULO": "Añadir vehículo",
     "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
-    "ADVERTENCIA_MODIFICACION": "Recuerda que si cambiar la marca, debes modificar también el modelo",
+    "ADVERTENCIA_MODIFICACION": "Recuerda que si cambias la marca, debes modificar también el modelo",
     "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
-    "BOTÓN_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "GUARDAR_VEHICULO": "Guardar vehículo",
+    "BOTON_GUARDAR_HELP": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "GUARDAR_CAMBIOS": "Guardar cambios",
+    "BOTON_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
     "BOTON_ELIMINAR_HELP": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "CANCELAR": "Cancelar",
     "SELECTOR": {
       "MARCA": "Marca",
       "AYUDA_MARCA": "Selector de marca del vehículo",
       "MODELO": "Modelo",
       "AYUDA_MODELO": "Selector de modelo del vehículo",
       "COLOR": "Color",
+      "COLOR_VEHICULO": "Color del vehículo: {{color}}",
       "AYUDA_COLOR": "Selector del color del vehículo"
     },
-    "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:"
+    "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:",
+    "ENVIAR_CORREO": "Enviar correo electrónico de contacto"
   },
+
   "BOTON": {
     "GUARDAR": "Guardar",
     "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
@@ -192,6 +198,7 @@
     },
     "SECCION_PUBLICAR": {
       "TITULO": "¿Quieres compartir tu próximo viaje?",
+      "SUBTITULO": "Selecciona la ciudad que quieras y encuentra el evento perfecto",
       "AYUDA": "Publica tu próximo viaje aquí.",
       "DESCRIPCION": "Publica y viaja en compañía"
     },
@@ -208,18 +215,18 @@
       "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
       "INFO_SELECTOR": "Elige una ciudad de la lista",
       "SELECTOR": "Elige una ciudad",
-      "PROXIMOS_EN": "Próximos eventos en {{ciudad}}",
+      "PROXIMOS_EN": "Próximos eventos en ",
       "FINICIO": "Fecha de inicio",
       "FFIN": "Fecha de fin",
       "IMAGEN": "Imagen del evento",
-      "ENLACE": "Más información del evento",
+      "ENLACE": "+Info",
       "BOTONES": {
         "CREAR_VIAJE": "Crear viaje",
         "PARA": "para",
         "BUSCAR_VIAJE": "Buscar viaje"
       },
       "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
-      "VUELVE_PRONTO": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
+      "PREPARANDO_EVENTOS": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
       "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
     }
   },
@@ -342,14 +349,14 @@
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
-    "BOTÓN_VERIFICAR_TELEFONO": "Confirmar código",
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
     "VERIF_IDENTIDAD": "Verifica tu identidad:",
     "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
     "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
     "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
     "NUMERO_DOCUMENTO": "Número de documento sin espacios",
     "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
-    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirmar documento",
+    "BOTON_VERIFICAR_IDENTIDAD": "Confirmar documento",
     "VAVANZADA": {
       "TITULO": "Verificación avanzada",
       "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"

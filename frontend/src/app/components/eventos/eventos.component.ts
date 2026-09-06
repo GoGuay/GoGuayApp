@@ -1,26 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
-import { Evento, Eventos } from '../../models/eventos/eventos';
+import { Evento } from '../../models/eventos/eventos';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EventosServices } from '../../core/eventos-services/eventos-services.service';
+import { SelectorGeneralComponent } from '../selector-general/selector-general.component';
+import { GoogleServices } from 'src/app/core/google-services/google-services.service';
+import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, MatTableModule, MatSelectModule, MatFormFieldModule],
+  imports: [
+    IonicModule,
+    TranslateModule,
+    CommonModule,
+    MatTableModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    SelectorGeneralComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
-  //Coge los eventos del modelo Eventos que contiene un listado (array) de eventos.
-  lista_eventos: Evento[] = Eventos;
+  lista_eventos: Evento[] = [];
   isOpen: boolean = false;
 
   usuarioNoLogueado: boolean = false;
@@ -30,6 +42,9 @@ export class TrayectosPopularesComponent implements OnInit {
   ciudadSeleccionada: string = '';
   filtradosPorCiudad: Evento[] = [];
   ciudadSeleccionadaLabel: string = '';
+  spinnerActivo: boolean = false;
+  texto_spinner: string = 'Traduciendo...';
+  lang: string = this.languageService.getLanguage() || 'es';
 
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) {
@@ -45,7 +60,10 @@ export class TrayectosPopularesComponent implements OnInit {
     public funcionesComunes: FuncionesComunes,
     private translate: TranslateService,
     private eventosService: EventosServices,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private googleService: GoogleServices,
+    private languageService: LanguageService,
+    private cdr: ChangeDetectorRef
   ) {
     this.translate.get('NUEVOVIAJE.TITULO_MODAL_AYUDA').subscribe((traduccion: string) => {
       this.title_help_auth = traduccion;
@@ -59,6 +77,12 @@ export class TrayectosPopularesComponent implements OnInit {
   ngOnInit() {
     this.usuarioNoLogueado = this.funcionesComunes.isUserLoggedIn();
     this.obtenerEventos();
+    this.translate.onLangChange.subscribe((idiomaCambiado) => {
+      this.lang = idiomaCambiado.lang;
+      console.log('El idioma ha cambiado a:', this.lang);
+      this.traducirDescripcionesEventos(this.lista_eventos);
+    });
+    this.cdr.detectChanges();
   }
 
   selectOption(ciudad: string) {
@@ -73,14 +97,11 @@ export class TrayectosPopularesComponent implements OnInit {
   }
 
   obtenerEventos() {
-    this.eventosService.obtenerTodosLosEventos()
-      .subscribe((resultado) => {
-        this.lista_eventos = resultado;
-        this.obtener_ciudades_eventos();
-        // if (this.ciudadesUnicas.length > 0) {
-        //   this.selectOption(this.ciudadesUnicas[0]);
-        // }
-      })
+    this.eventosService.obtenerTodosLosEventos().subscribe((resultado) => {
+      this.lista_eventos = resultado;
+      this.obtener_ciudades_eventos();
+      this.traducirDescripcionesEventos(this.lista_eventos);
+    });
   }
 
   /**
@@ -158,5 +179,50 @@ export class TrayectosPopularesComponent implements OnInit {
       const fechaB = this.convertirFecha(b.fecha_inicio).getTime();
       return fechaA - fechaB;
     });
+    this.traducirDescripcionesEventos(this.filtradosPorCiudad);
+  }
+
+  traducirDescripcionesEventos(eventos: Evento[]) {
+    if (!eventos || eventos.length === 0) return;
+    this.spinnerActivo = true;
+    this.cdr.detectChanges();
+    let completados = 0;
+    const total = eventos.length;
+    eventos.forEach((evento) => {
+      if (!evento.descripcion) {
+        this.verificarFin(total, ++completados);
+        return;
+      }
+
+      this.googleService.detectarIdiomaTexto(evento.descripcion).subscribe({
+        next: (resultado: any) => {
+          if (this.lang && resultado && this.lang !== resultado.idioma) {
+            this.googleService.traducirIdiomaTexto(evento.descripcion, this.lang, resultado.idioma).subscribe({
+              next: (resultadoTraduccion: any) => {
+                if (resultadoTraduccion && resultadoTraduccion.texto_traducido) {
+                  evento.descripcion = resultadoTraduccion.texto_traducido;
+                }
+                this.verificarFin(total, ++completados);
+              },
+              error: () => {
+                this.verificarFin(total, ++completados);
+              },
+            });
+          } else {
+            this.verificarFin(total, ++completados);
+          }
+        },
+        error: () => {
+          this.verificarFin(total, ++completados);
+        },
+      });
+    });
+  }
+  // Método auxiliar para controlar cuándo acaban todas las traducciones
+  private verificarFin(total: number, completados: number) {
+    if (completados >= total) {
+      this.spinnerActivo = false;
+    }
+    this.cdr.detectChanges();
   }
 }
