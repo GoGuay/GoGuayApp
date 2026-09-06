@@ -45,6 +45,24 @@
       <app-ventana-dudas></app-ventana-dudas>
     </div>
   </div>
+
+  <div class="survey-floating-banner animate__animated animate__fadeInUp" *ngIf="mostrarBannerEncuesta">
+    <button class="btn-close-banner" (click)="cerrarBannerEncuesta()" aria-label="Cerrar">
+      <i class="fi fi-rr-cross-small"></i>
+    </button>
+    <div class="banner-content d-flex align-items-center gap-3">
+      <div class="banner-icon-wrapper">
+        <i class="fi fi-rr-heart text-primary"></i>
+      </div>
+      <div class="banner-text">
+        <h6 class="fw-bold mb-1">¿Qué te parece GoGuay?</h6>
+        <p class="small text-muted mb-0">Ayúdanos a mejorar valorando tu experiencia.</p>
+      </div>
+      <button class="btn btn_bg btn-sm rounded-pill px-3 ms-auto" (click)="irAEncuesta()">
+        Valorar
+      </button>
+    </div>
+  </div>
 </ion-content>
 
 <ion-footer>
