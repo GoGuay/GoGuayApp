@@ -22,6 +22,13 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
+::ng-deep app-selector-general input,
+::ng-deep app-selector-general select {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .imagen-fondo {
   position: relative;
   width: 100%;
@@ -59,14 +66,14 @@
   text-align: center;
   z-index: 1;
   width: 350px;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .contenido_formulario {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: stretch; 
+  align-items: stretch;
 }
 
 // === Inputs y Contenedores ===
@@ -74,14 +81,14 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   margin-bottom: 10px;
   width: 100%;
 
   input {
-    padding-left: 35px; 
-    padding-right: 45px !important; 
-    text-align: left; 
+    padding-left: 35px;
+    padding-right: 45px !important;
+    text-align: left;
     margin-top: 5px;
   }
 
@@ -112,7 +119,7 @@
   top: 50% !important;
   right: 15px !important;
   left: auto !important;
-  transform: translateY(-50%) !important; 
+  transform: translateY(-50%) !important;
   width: 48px !important;
   height: 48px !important;
   background: transparent !important;
@@ -123,10 +130,19 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important; 
+  overflow: hidden !important;
 
   ::ng-deep {
-    p, span, h1, h2, h3, h4, .text-center, .loading-text, .spinner-overlay {
+
+    p,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    .text-center,
+    .loading-text,
+    .spinner-overlay {
       display: none !important;
       visibility: hidden !important;
       opacity: 0 !important;
@@ -136,7 +152,8 @@
       padding: 0 !important;
     }
 
-    .spinner-container, div {
+    .spinner-container,
+    div {
       width: 48px !important;
       height: 48px !important;
       background: transparent !important;
@@ -148,11 +165,12 @@
       margin: 0 !important;
     }
 
-    .spinner, svg {
+    .spinner,
+    svg {
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
-      width: 48px !important; 
+      width: 48px !important;
       height: 48px !important;
       max-width: 48px !important;
       max-height: 48px !important;
@@ -167,15 +185,15 @@
   position: absolute;
   background-color: white;
   border: 1px solid #ccc;
-  border-radius: 20px; 
+  border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   z-index: 9999 !important;
-  top: 100%; 
+  top: 100%;
   left: 0;
   right: 0;
   max-height: 230px;
   overflow-y: auto;
-  width: 100%; 
+  width: 100%;
   padding: 0;
   margin: 0;
 }
@@ -224,14 +242,14 @@
   min-height: 45px;
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   width: 100%;
   margin-top: 5px;
 
   .select-icon {
     position: absolute;
-    left: 15px; 
+    left: 15px;
     width: 24px;
     height: 24px;
     max-width: 24px;
@@ -239,7 +257,7 @@
   }
 
   .selected-value {
-    margin-left: 35px; 
+    margin-left: 35px;
     color: #333;
     font-size: 1rem;
     text-align: left;
@@ -265,7 +283,7 @@
       border-radius: 35px;
       transition: all 0.2s ease;
       color: #333;
-      text-align: left; 
+      text-align: left;
 
       &:last-child {
         margin-bottom: 0;
@@ -308,14 +326,16 @@
     color: #555;
   }
 
-  .btn_bg img, img.input-icon, img.marcador-icon {
+  .btn_bg img,
+  img.input-icon,
+  img.marcador-icon {
     width: 22px !important;
     height: 22px !important;
     max-width: 22px !important;
     max-height: 22px !important;
     display: inline-block;
     vertical-align: middle;
-    margin-right: 8px; 
+    margin-right: 8px;
   }
 }
 
@@ -330,12 +350,14 @@ ion-button {
 
 .help_btn {
   border-radius: 50%;
+
   img {
     width: 24px !important;
     height: 24px !important;
     max-width: 24px !important;
     max-height: 24px !important;
   }
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }

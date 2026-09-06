@@ -1,17 +1,10 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TravelService } from '../../../core/travel-services/travel.service';
@@ -21,18 +14,10 @@ import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { Location } from '@angular/common';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  of,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
-import { GoogleServices } from '../../../core/google-services/google-services.service';
-import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
-import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
+import { Subject } from 'rxjs';
+import { ControlLocalidad } from '../../../models/control-localidad/control-localidad.model';
+import { BuscadorLocalidadesService } from '../../../core/buscador-localidades/buscador-localidades.service';
+import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -51,7 +36,7 @@ import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/bu
     MatDialogModule,
     MatTooltipModule,
     ToastModule,
-    SpinnerComponent,
+    SelectorGeneralComponent,
   ],
 })
 export class NuevoViajePage implements OnInit {
@@ -77,6 +62,13 @@ export class NuevoViajePage implements OnInit {
   indiceActivoDestino: number = -1;
 
   irAtrasImg: string = '../../../assets/sistema/atras.png';
+
+  opcionesPlazas = [
+    { id: '1', descripcion: '1' },
+    { id: '2', descripcion: '2' },
+    { id: '3', descripcion: '3' },
+    { id: '4', descripcion: '4' },
+  ];
 
   private buscadorOrigen$ = new Subject<string>();
   private buscadorDestino$ = new Subject<string>();
@@ -119,6 +111,7 @@ export class NuevoViajePage implements OnInit {
     private elementRef: ElementRef,
     private travelService: TravelService,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
+    private route: ActivatedRoute
   ) {
     // Inicialización de controles de origen y destino
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
@@ -126,25 +119,37 @@ export class NuevoViajePage implements OnInit {
 
     this.buscadorLocalidadesService.inicializarBuscador(this.origenCtrl);
     this.buscadorLocalidadesService.inicializarBuscador(this.destinoCtrl);
-    this.translate
-      .get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET')
-      .subscribe((traduccion: string) => {
-        this.message_help_carnet = traduccion;
-      });
-    this.translate
-      .get('NUEVOVIAJE.TITULO_MODAL_AYUDA')
-      .subscribe((traduccion: string) => {
-        this.title_help_carnet = traduccion;
-      });
-    this.translate
-      .get('NUEVOVIAJE.MENSAJE_AYUDA_LOGIN_REG')
-      .subscribe((traduccion: string) => {
-        this.message_help_auth = traduccion;
-      });
+    this.translate.get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET').subscribe((traduccion: string) => {
+      this.message_help_carnet = traduccion;
+    });
+    this.translate.get('NUEVOVIAJE.TITULO_MODAL_AYUDA').subscribe((traduccion: string) => {
+      this.title_help_carnet = traduccion;
+    });
+    this.translate.get('NUEVOVIAJE.MENSAJE_AYUDA_LOGIN_REG').subscribe((traduccion: string) => {
+      this.message_help_auth = traduccion;
+    });
   }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+
+    this.route.queryParams.subscribe((params) => {
+      if (params['destino']) {
+        const destinoSugerido = params['destino'];
+
+        this.destinoCtrl.valorTexto = destinoSugerido;
+
+        this.ultimaLocalidadValidaDestino = { descripcion: destinoSugerido };
+
+        const viajeActual = this.travelService.getViajeData() || {};
+        this.travelService.setViajeData({
+          ...viajeActual,
+          destino: destinoSugerido,
+        });
+
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // Getters auxiliares para mantener compatibilidad con el HTML existente
@@ -175,10 +180,7 @@ export class NuevoViajePage implements OnInit {
     };
 
     if (!this.userLoggedIn) {
-      this.funcionesComunes.openConfirmModal(
-        this.title_help_carnet,
-        this.message_help_auth,
-      );
+      this.funcionesComunes.openConfirmModal(this.title_help_carnet, this.message_help_auth);
     } else {
       /**
        * Se almacena temporalmente los datos del viaje.
@@ -208,16 +210,12 @@ export class NuevoViajePage implements OnInit {
             .then((response) => response.json())
             .then((data) => {
               if (data && data.address) {
-                let city =
-                  data.address.city ||
-                  data.address.town ||
-                  data.address.village ||
-                  '';
+                let city = data.address.city || data.address.town || data.address.village || '';
                 if (city) {
-                  this.origenCtrl = city;
+                  this.origenCtrl.valorTexto = city;
                   const viajeData = {
                     ...this.travelService.getViajeData(),
-                    origen: this.origenCtrl,
+                    origen: city,
                   };
                   this.travelService.setViajeData(viajeData);
                   this.cargandoOrigen = false;
@@ -227,16 +225,11 @@ export class NuevoViajePage implements OnInit {
                 }
               }
             })
-            .catch((error) =>
-              console.error(
-                'Error al obtener la ubicación con Leaflet:',
-                error,
-              ),
-            );
+            .catch((error) => console.error('Error al obtener la ubicación con Leaflet:', error));
         },
         (error) => {
           console.error('Error de geolocalización:', error.message);
-        },
+        }
       );
     } else {
       console.error('La geolocalización no está soportada por este navegador.');
@@ -258,10 +251,7 @@ export class NuevoViajePage implements OnInit {
    *  -
    */
 
-  private actualizarIndiceYFoco(
-    tipo: 'origen' | 'destino',
-    nuevoIndice: number,
-  ) {
+  private actualizarIndiceYFoco(tipo: 'origen' | 'destino', nuevoIndice: number) {
     if (tipo === 'origen') {
       this.indiceActivoOrigen = nuevoIndice;
     } else {
@@ -270,10 +260,7 @@ export class NuevoViajePage implements OnInit {
 
     if (nuevoIndice !== -1) {
       // Selector dinámico basado en el tipo
-      const selector =
-        tipo === 'origen'
-          ? '.lista_sugerencias_origen'
-          : '.lista_sugerencias_destino';
+      const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
       setTimeout(() => {
         const elementos = document.querySelectorAll(selector);
         (elementos[nuevoIndice] as HTMLElement)?.focus();
@@ -281,10 +268,7 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
-  limpiarSugerencias(
-    tipo: 'origen' | 'destino',
-    devolverFoco: boolean = false,
-  ) {
+  limpiarSugerencias(tipo: 'origen' | 'destino', devolverFoco: boolean = false) {
     if (tipo === 'origen') {
       this.sugerenciasOrigen = [];
       this.indiceActivoOrigen = -1;
@@ -302,33 +286,19 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
-  manejarNavegacionTeclado(
-    event: KeyboardEvent,
-    tipo: 'origen' | 'destino',
-    index: number = -1,
-  ) {
+  manejarNavegacionTeclado(event: KeyboardEvent, tipo: 'origen' | 'destino', index: number = -1) {
     const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
-    const selector =
-      tipo === 'origen'
-        ? '.lista_sugerencias_origen'
-        : '.lista_sugerencias_destino';
+    const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
     const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
 
-    this.buscadorLocalidadesService.manejarNavegacionTeclado(
-      event,
-      control,
-      selector,
-      inputRef,
-    );
+    this.buscadorLocalidadesService.manejarNavegacionTeclado(event, control, selector, inputRef);
   }
 
   validarSeleccion(tipo: 'origen' | 'destino') {
     setTimeout(() => {
       if (tipo === 'origen') {
         const textoActual = this.origen.trim();
-        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion
-          .split(',')[0]
-          .trim();
+        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion.split(',')[0].trim();
 
         if (textoActual === '') {
           this.ultimaLocalidadValidaOrigen = null;
@@ -349,9 +319,7 @@ export class NuevoViajePage implements OnInit {
           this.limpiarSugerencias('destino', false);
           return;
         }
-        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion
-          .split(',')[0]
-          .trim();
+        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion.split(',')[0].trim();
 
         if (!this.ultimaLocalidadValidaDestino || textoActual !== textoValido) {
           this.destino = '';
@@ -364,5 +332,9 @@ export class NuevoViajePage implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  seleccionarPlazas(opcion: any) {
+    this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
   }
 }

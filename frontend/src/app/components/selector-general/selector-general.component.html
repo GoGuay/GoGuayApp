@@ -38,6 +38,7 @@
     [value]="valorTexto"
     (input)="filtrarOpciones($event)"
     (blur)="onInputBlur()"
+    (click)="manejarClickInput()"
     (keydown)="manejarNavegacionTeclado($event)"
     autocomplete="off"
     spellcheck="false"
@@ -50,6 +51,7 @@
   />
 
   <i
+    *ngIf="mostrarFlechaSelector"
     class="bi bi-chevron-down position-absolute text-muted flecha_selector"
     aria-hidden="true"
   ></i>
