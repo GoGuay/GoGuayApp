@@ -12,6 +12,7 @@ class PasajeroViaje(db.Model):
     fecha_confirmacion_reserva = db.Column(db.DateTime, default=datetime.utcnow)
     estado = db.Column(db.String(50), default=EstadoSolicitudEnum.PENDIENTE.value)
     fecha_solicitud = db.Column(db.DateTime, default=datetime.utcnow)
+    paypal_auth_id = db.Column(db.String(100), nullable=True)
 
     recordatorio_inicio_enviado = db.Column(db.Boolean, default=False)
     
@@ -26,5 +27,6 @@ class PasajeroViaje(db.Model):
             "fecha_confirmacion_reserva": self.fecha_confirmacion_reserva,
             "estado": self.estado,
             "fecha_solicitud": self.fecha_solicitud,
-            "recordatorio_inicio_enviado": self.recordatorio_inicio_enviado
+            "recordatorio_inicio_enviado": self.recordatorio_inicio_enviado,
+            "paypal_auth_id": self.paypal_auth_id
         }
