@@ -33,6 +33,13 @@
   }
 }
 
+::ng-deep app-selector-general input,
+::ng-deep app-selector-general select {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 #input-pronombre {
   &::placeholder {
     font-size: 0.99rem;
