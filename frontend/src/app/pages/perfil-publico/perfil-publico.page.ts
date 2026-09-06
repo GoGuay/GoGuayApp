@@ -83,13 +83,25 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
    * 
    * @param userId --> Recibe el ID del usuario que va a mostrar sus datos
    */
-  private cargarDatosPerfil(userId: number) {
+private cargarDatosPerfil(userId: number) {
     this.cargando = true; 
 
     this.userService.obtenerUsuarioPorID(userId).subscribe({
       next: (resultadoUsuario) => {
         this.usuario = resultadoUsuario;
-        this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.usuario.preferencias);
+        
+        const prefs = this.usuario.preferencias;
+        let listaPreferencias: string[] = [];
+
+        if (prefs && typeof prefs === 'object' && !Array.isArray(prefs)) {
+          const convivencia = prefs.convivencia_viaje || [];
+          const ocio = prefs.intereses_ocio || [];
+          listaPreferencias = [...convivencia, ...ocio];
+        } else if (Array.isArray(prefs)) {
+          listaPreferencias = prefs;
+        }
+
+        this.preferenciasViaje = listaPreferencias;
         
         this.validacionPerilLogeado(userId);
 
