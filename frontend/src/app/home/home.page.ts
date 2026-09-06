@@ -46,6 +46,9 @@ export class HomePage implements OnInit {
   userData: Usuario = {} as Usuario;
   messaging: string = '../../assets/sistema/messaging.png';
 
+  mostrarBannerEncuesta: boolean = false;
+  private tiempoNavegacion: any;
+
   constructor(
     private translate: TranslateService,
     private funcionesComunes: FuncionesComunes,
@@ -64,6 +67,16 @@ export class HomePage implements OnInit {
     if (this.userLoggedIn) {
       this.obtenerUsuarioPorID(this.userData?.usuario?.id);
       this.obtenerNotificaciones(this.userData?.usuario?.id);
+    }
+  }
+
+  ionViewDidEnter() {
+    this.iniciarTemporizadorEncuesta();
+  }
+
+  ionViewWillLeave() {
+    if (this.tiempoNavegacion) {
+      clearTimeout(this.tiempoNavegacion);
     }
   }
 
@@ -116,5 +129,25 @@ export class HomePage implements OnInit {
 
   irAmensajes() {
     this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
+  }
+
+  iniciarTemporizadorEncuesta() {
+    const encuestaOculta = localStorage.getItem('encuesta_goguay_cerrada');
+    if (encuestaOculta) return;
+
+    this.tiempoNavegacion = setTimeout(() => {
+      this.mostrarBannerEncuesta = true;
+    }, 180000); 
+  }
+
+  cerrarBannerEncuesta() {
+    this.mostrarBannerEncuesta = false;
+    localStorage.setItem('encuesta_goguay_cerrada', 'true');
+  }
+
+  irAEncuesta() {
+    this.mostrarBannerEncuesta = false;
+    localStorage.setItem('encuesta_goguay_cerrada', 'true');
+    this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 }

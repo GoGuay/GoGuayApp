@@ -1,44 +1,36 @@
 :host {
-  --ion-background-color: #F0D7B4;
+  --ion-background-color: #f0d7b4;
   --ion-text-color: #000000;
 }
 
 ion-footer {
   background-color: var(--ion-background-color);
   color: var(--ion-text-color);
-  // position: fixed;
-  // bottom: 0;
   width: 100%;
-  // z-index: 10;
 }
 
 ::ng-deep ion-footer {
-  --background: #F0D7B4;
+  --background: #f0d7b4;
   --color: #000000;
 }
 
 ::ng-deep ion-toolbar {
   --background: inherit;
   --color: inherit;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
 }
 
 ion-toolbar {
   background-color: inherit;
   color: inherit;
-  display: flex;
-  align-items: center;
 }
 
 .footer-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.footer-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  padding: 4px 0;
 }
 
 .footer-item {
@@ -50,135 +42,131 @@ ion-toolbar {
 
 .brand-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 6px;
   text-align: center;
 }
 
+.footer-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
 .footer-brand-name {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: bold;
-  margin-top: 4px;
 }
 
 .footer-link {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--ion-text-color);
   text-decoration: none;
   font-weight: 500;
   white-space: nowrap;
 }
 
-
-.footer-title-container {
+.social-icons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  gap: 12px;
 }
 
-.footer-logo {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-
-.footer-title {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: inherit;
-  margin-top: 0.3rem;
+.separator {
+  font-size: 0.7rem;
+  color: var(--ion-text-color);
+  opacity: 0.6;
 }
 
 .sizeGrid {
   width: 100%;
+  padding: 0 8px;
 }
 
-ion-title {
-  font-size: 0.8rem;
-  color: black;
-}
-
-.social-icons {
+.links-scroll-wrapper {
   display: flex;
-  gap: 10px;
-}
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 4px 0;
+  scrollbar-width: none;
 
-.mobile-logo-container {
-  display: none;
-}
-
-.separator {
-  font-size: 0.8rem;
-  color: var(--ion-text-color);
-}
-
-@media (max-width: 576px) {
-  .footer-row {
-    flex-wrap: wrap;
-  }
-
-  .footer-item {
-    flex: 1 1 100%;
-    justify-content: center;
-  }
-
-  .footer-logo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .footer-title {
-    font-size: 0.7rem;
-  }
-
-  .footer-link {
-    font-size: 0.7rem;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
 @media (max-width: 767px) {
   .footer-row {
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  /* Redes sociales arriba a la izquierda */
   .col-socials {
     order: 1;
+    flex: 0 0 auto;
     justify-content: flex-start !important;
-    padding-left: 15px;
+    padding-left: 4px;
   }
 
-  /* Logo arriba a la derecha */
   .col-brand {
     order: 2;
+    flex: 0 0 auto;
     justify-content: flex-end !important;
-    padding-right: 15px;
+    padding-right: 4px;
 
     .footer-logo {
-      width: 35px;
-      height: 35px;
+      width: 24px;
+      height: 24px;
     }
 
     .footer-brand-name {
-      font-size: 0.5rem;
+      font-size: 0.7rem;
     }
   }
 
-  /* Links centrados abajo */
   .col-links {
     order: 3;
-    width: 100%;
-    margin-top: 15px;
-    justify-content: center !important;
-    padding-bottom: 10px;
+    flex: 0 0 100%;
+    margin-top: 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 4px;
+    justify-content: flex-start !important;
   }
 }
 
-/* --- PC --- */
 @media (min-width: 768px) {
-  .footer-row {
+  .brand-container {
+    flex-direction: column;
+  }
 
+  .links-scroll-wrapper {
+    animation: sugerirScroll 2.5s ease-in-out 1.5s 2;
+  }
+
+  @keyframes sugerirScroll {
+    0% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-15px);
+    }
+    40% {
+      transform: translateX(0);
+    }
+    60% {
+      transform: translateX(-10px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .footer-row {
     .col-socials {
       order: 1;
       justify-content: flex-start;
@@ -187,6 +175,11 @@ ion-title {
     .col-links {
       order: 2;
       justify-content: center;
+
+      .links-scroll-wrapper {
+        justify-content: center;
+        overflow-x: visible;
+      }
     }
 
     .col-brand {
