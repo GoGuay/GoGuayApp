@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request
 import requests
 from datetime import datetime
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
@@ -745,55 +745,71 @@ def notificar_llegada():
 @travel_blueprint.route('/recomendados/<int:user_id>', methods=['GET'])
 def obtener_viajes_recomendados(user_id):
     try:
-        # Preferencias del usuario actual
-        preferencias_usuario = {
-            "intereses": ["playa", "ambiente festivo", "cultura"],
-            "ubicacion_actual": "Madrid",
-            "estilo": "ocio y socializar"
+        usuario = Usuario.query.get(user_id)
+        if not usuario:
+            return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
+
+        # Extraer y estructurar las preferencias del campo JSON de forma segura
+        preferencias_crudas = usuario.preferencias
+        if isinstance(preferencias_crudas, str):
+            try:
+                preferencias_usuario = json.loads(preferencias_crudas)
+            except json.JSONDecodeError:
+                preferencias_usuario = {}
+        elif isinstance(preferencias_crudas, dict):
+            preferencias_usuario = preferencias_crudas
+        else:
+            preferencias_usuario = {}
+
+        convivencia = preferencias_usuario.get("convivencia_viaje", {
+            "acepta_mascotas": preferencias_usuario.get("acepta_mascotas", True),
+            "fuma": preferencias_usuario.get("fuma", False),
+            "conversacion": preferencias_usuario.get("conversacion", "moderada")
+        })
+        
+        intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
+
+        # Recopilar el historial de viajes previos del usuario
+        viajes_como_conductor = [
+            {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
+            for v in usuario.viajes_publicados
+        ]
+        
+        viajes_como_pasajero = [
+            {"origen": r.viaje.origen, "destino": r.viaje.destino, "fecha": r.viaje.fecha_salida.isoformat()}
+            for r in usuario.reservas_realizadas if r.viaje
+        ]
+
+        historial_viajes = {
+            "publicados_como_conductor": viajes_como_conductor,
+            "reservas_como_pasajero": viajes_como_pasajero
         }
-        
-        # Catálogo base de eventos y destinos LGTBI inspiradores en España
-        destinos_sugeridos = [
-            {
-                "id": "sitges-orgullo-playa",
-                "destino": "Sitges (Barcelona)",
-                "tipo": "Evento / Escapada de Playa",
-                "descripcion": "Ambiente inigualable, playas emblemáticas y una gran agenda de ocio inclusivo."
-            },
-            {
-                "id": "torremolinos-soho",
-                "destino": "Torremolinos (Málaga)",
-                "tipo": "Ocio y Sol",
-                "descripcion": "Referente histórico y actual de la Costa del Sol con una vibrante oferta cultural y nocturna."
-            },
-            {
-                "id": "valencia-orgullo-cultura",
-                "destino": "Valencia",
-                "tipo": "Cultura y Festivales",
-                "descripcion": "Planes urbanos, ambiente en el barrio del Carmen y eventos artísticos diversos."
-            }
-        ]
 
+        perfil_analitico = {
+            "nombre": usuario.nombre,
+            "genero": usuario.genero,
+            "orientacion": usuario.orientacion,
+            "biografia": usuario.biografia,
+            "preferencias_convivencia": convivencia,
+            "intereses_ocio": intereses_ocio,
+            "reputacion_estrellas": usuario.estrellas_por_opiniones,
+            "estado_perfil": usuario.estado_perfil,
+            "historial_viajes": historial_viajes
+        }
+
+        # NUEVO PROMPT: Formato plano por líneas delimitadas (CERO errores de comillas)
         prompt = f"""
-        Actúa como un recomendador de destinos y eventos lgtbi en España para una aplicación de carpooling. 
-        El objetivo es sugerir al usuario lugares atractivos para que se anime a **crear un viaje nuevo** y compartir coche con más gente.
+        Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
+        Analiza el perfil analítico del usuario y selecciona EXACTAMENTE 3 destinos o eventos reales en España que encajen con su personalidad.
         
-        Preferencias del usuario:
-        {json.dumps(preferencias_usuario)}
-
-        Destinos y eventos disponibles para sugerir:
-        {json.dumps(destinos_sugeridos)}
-
-        Devuelve estrictamente un objeto JSON válido (sin formato Markdown adicional ni bloques de código tipo ```json) con esta estructura exacta:
-        [
-          {{
-            "destino_id": "sitges-orgullo-playa",
-            "nombre_destino": "Sitges (Barcelona)",
-            "puntuacion_afinidad": 95,
-            "motivo": "Explicación motivadora de por qué le encantará este destino y por qué vale la pena organizar un viaje en coche hasta allí."
-          }}
-        ]
-        Ordena los resultados del más compatible al menos compatible.
+        REQUISITO DE FORMATO ESTRICTO:
+        No devuelvas JSON. Devuelve única y exclusivamente las recomendaciones en formato de texto plano, una por línea, separando sus campos exactamente con el carácter barra vertical (|) de esta forma:
+        ID_SLUG | NOMBRE_DESTINO | PUNTUACION_AFINIDAD | MOTIVO_PERSONALIZADO
+        
+        Ejemplo:
+        sitges-playa | Sitges (Barcelona) | 95 | Daniel, las playas mediterráneas combinan con tu afición por el aire libre.
+        
+        Perfil del usuario: {json.dumps(perfil_analitico, ensure_ascii=False)}
         """
 
         groq_api_key = os.getenv("GROQ_API_KEY")
@@ -801,10 +817,9 @@ def obtener_viajes_recomendados(user_id):
         
         payload = {
             "model": "openai/gpt-oss-20b",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.3
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.6, 
+            "max_tokens": 1000
         }
         
         headers = {
@@ -815,15 +830,80 @@ def obtener_viajes_recomendados(user_id):
         response = requests.post(endpoint, json=payload, headers=headers)
         data = response.json()
 
-        if response.status_code != 200:
-            return jsonify({"success": False, "error": data.get("error", "Error en la API de Groq")}), 500
+        recomendaciones = []
 
-        texto_generado = data['choices'][0]['message']['content']
-        texto_limpio = texto_generado.replace("```json", "").replace("```", "").strip()
-        recomendaciones = json.loads(texto_limpio)
+        if response.status_code == 200:
+            try:
+                texto_generado = data['choices'][0]['message']['content'].strip()
+                
+                # 🔍 NUEVO: Imprime esto en la consola para ver qué formato exacto está mandando la IA
+                print(f"🤖 Texto bruto recibido de la IA:\n{texto_generado}\n-------------------")
+
+                lineas = texto_generado.split('\n')
+                
+                for linea in lineas:
+                    partes = [p.strip() for p in linea.split('|')]
+                    if len(partes) >= 4:
+                        destino_id = partes[0]
+                        nombre_destino = partes[1]
+                        try:
+                            afinidad = int(partes[2])
+                        except ValueError:
+                            afinidad = 85
+                        motivo = partes[3]
+                        
+                        recomendaciones.append({
+                            "destino_id": destino_id,
+                            "nombre_destino": nombre_destino,
+                            "puntuacion_afinidad": afinidad,
+                            "motivo": motivo,
+                            "fuente": "ia"
+                        })
+            except Exception as parse_error:
+                print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
+                recomendaciones = []
+
+        # Recortamos estrictamente a 3 elementos
+        recomendaciones = recomendaciones[:3]
+
+        # Fallback dinámico por si la IA no devuelve líneas válidas
+        if not recomendaciones:
+            nombre_usuario = usuario.nombre or "viajero"
+            intereses_lower = [i.lower() for i in intereses_ocio]
+            
+            destinos_fallback = [
+                {
+                    "id": "sitges-playa",
+                    "destino": "Sitges (Barcelona)",
+                    "afinidad": 96 if "playa" in intereses_lower else 85,
+                    "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero y su gran oferta de ocio inclusivo."
+                },
+                {
+                    "id": "madrid-chueca",
+                    "destino": "Madrid",
+                    "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
+                    "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y vivir una vibrante experiencia cultural y de ocio."
+                },
+                {
+                    "id": "valencia-carmen",
+                    "destino": "Valencia",
+                    "afinidad": 95 if "cultura" in intereses_lower else 82,
+                    "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas llenas de arte y planes alternativos."
+                }
+            ]
+            recomendaciones = [
+                {
+                    "destino_id": d["id"],
+                    "nombre_destino": d["destino"],
+                    "puntuacion_afinidad": d["afinidad"],
+                    "motivo": d["motivo"],
+                    "fuente": "fallback"
+                } for d in destinos_fallback
+            ]
+            recomendaciones = sorted(recomendaciones, key=lambda x: x["puntuacion_afinidad"], reverse=True)
 
         return jsonify({"success": True, "recomendaciones": recomendaciones}), 200
 
     except Exception as e:
-        print(f"Error en recomendación IA: {str(e)}")
+        print(f"Error crítico en recomendación: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500

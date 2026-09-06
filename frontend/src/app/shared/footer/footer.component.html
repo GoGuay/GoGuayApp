@@ -2,8 +2,9 @@
   <ion-toolbar>
     <div class="footer-content">
       <ion-grid class="sizeGrid">
-        <ion-row class="footer-row">
+        <ion-row class="footer-row align-items-center">
 
+          <!-- Redes Sociales -->
           <ion-col class="footer-item col-socials" size="6" size-md="4">
             <div class="social-icons">
               <a>
@@ -24,6 +25,7 @@
             </div>
           </ion-col>
 
+          <!-- Marca / Logo -->
           <ion-col class="footer-item col-brand" size="6" size-md="4">
             <div class="brand-container">
               <img class="footer-logo" src="../../../assets/logo/PRIDECAR.png" alt="Logo" />
@@ -31,14 +33,23 @@
             </div>
           </ion-col>
 
+          <!-- Enlaces (con contenedor scrollable en móvil para evitar que salten de línea) -->
           <ion-col class="footer-item col-links" size="12" size-md="4">
-            <a type="button" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate }}</a>
-            <span class="separator">|</span>
-            <a type="button" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate }}</a>
-            <span class="separator">|</span>
-            <a type="button" class="footer-link" (click)="openCondiciones()">Condiciones</a>
-            <span class="separator">|</span>
-            <a type="button" class="footer-link" (click)="openAdmin()">Admin</a>
+            <div class="links-scroll-wrapper">
+              <a type="button" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate }}</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate }}</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openCondiciones()">Condiciones</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openFAQs()">FAQs</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openDecalogo()">Decálogo</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openQuienesSomos()">Quienes somos</a>
+              <span class="separator">|</span>
+              <a type="button" class="footer-link" (click)="openAdmin()">Admin</a>
+            </div>
           </ion-col>
 
         </ion-row>

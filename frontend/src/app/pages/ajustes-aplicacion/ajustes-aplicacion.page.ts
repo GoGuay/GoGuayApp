@@ -89,6 +89,8 @@ export class AjustesAplicacionPage implements OnInit {
   cobroIBAN: string = '';
   cobroTitular: string = '';
 
+  iaActiva: boolean = true;
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -116,6 +118,9 @@ export class AjustesAplicacionPage implements OnInit {
     this.notifPush = localStorage.getItem('notifPush') !== 'false';
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
+
+    const savedIASetting = localStorage.getItem('iaActiva');
+    this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.obtenerUsuario();
@@ -473,5 +478,15 @@ export class AjustesAplicacionPage implements OnInit {
    */
   valorarApp() {
     this.navCtrl.navigateForward('/encuesta-satisfaccion');
+  }
+
+  guardarAjustesIA() {
+    localStorage.setItem('iaActiva', this.iaActiva.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: this.iaActiva ? 'Recomendaciones de IA activadas.' : 'Recomendaciones de IA desactivadas.',
+      life: 2000,
+    });
   }
 }

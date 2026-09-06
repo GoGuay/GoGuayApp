@@ -359,6 +359,7 @@
 .avatar-wrapper {
   position: relative;
   display: inline-block;
+  cursor: pointer;
   
   .img-conductor {
     width: 60px;
@@ -442,6 +443,7 @@
     align-items: center;
     gap: 10px;
     text-align: left !important;
+    cursor: pointer;
   }
   .img-conductor { width: 45px !important; height: 45px !important; }
 }

@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatDivider } from '@angular/material/divider';
-import { Usuario } from 'src/app/models/user/usuario.model';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { Usuario } from '../../../models/user/usuario.model';
+import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
-import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { TablaVehiculosComponent } from '../../../components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
+import { UserServicesService } from '../../../core/user-services/user-services.service';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -17,11 +17,11 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from '../../../components/help-modal/help-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GoogleServices } from 'src/app/core/google-services/google-services.service';
-import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
-import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
-import { CARS, COLORES } from 'src/app/models/vehiculos/marcas_modelos.model';
-import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
+import { GoogleServices } from '../../../core/google-services/google-services.service';
+import { LanguageService } from '../../../core/lenguajes/languaje.service';
+import { VehiculosServicesService } from '../../../core/vehiculos-services/vehiculos-services.service';
+import { CARS, COLORES } from '../../../models/vehiculos/marcas_modelos.model';
+import { SelectorGeneralComponent } from '../../../components/selector-general/selector-general.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -130,6 +130,8 @@ export class MiPerfilPage implements OnInit {
     { valor: 'Prefiero no responder', descripcion: 'SELECTOR_ORIENTACION.NO_RESPONDE' },
   ];
 
+  interesesOcioSeleccionados: string[] = [];
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private languageService: LanguageService,
@@ -193,7 +195,17 @@ export class MiPerfilPage implements OnInit {
 
         this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
         this.bioEditada = usuario.biografia || '';
-        this.preferenciasSeleccionadas = usuario.preferencias || [];
+
+        const prefsUsuario = usuario.preferencias as any;
+
+        if (prefsUsuario && typeof prefsUsuario === 'object' && !Array.isArray(prefsUsuario)) {
+          this.preferenciasSeleccionadas = prefsUsuario.convivencia_viaje || [];
+          this.interesesOcioSeleccionados = prefsUsuario.intereses_ocio || [];
+        } else {
+          this.preferenciasSeleccionadas = Array.isArray(prefsUsuario) ? prefsUsuario : [];
+          this.interesesOcioSeleccionados = [];
+        }
+
         this.actualizarFotoPerfil(usuario);
 
         setTimeout(() => {
@@ -209,6 +221,17 @@ export class MiPerfilPage implements OnInit {
           this.lang = idiomaCambiado.lang;
           console.log('El idioma ha cambiado a:', this.lang);
           this.detectarIdioma_traducirTexto(this.bioEditada);
+
+          const prefsUsuario = usuario.preferencias as any;
+          if (prefsUsuario && typeof prefsUsuario === 'object' && !Array.isArray(prefsUsuario)) {
+            // Si ya usa la nueva estructura por bloques
+            this.preferenciasSeleccionadas = prefsUsuario.convivencia_viaje || [];
+            this.interesesOcioSeleccionados = prefsUsuario.intereses_ocio || [];
+          } else {
+            // Si viene del formato plano antiguo
+            this.preferenciasSeleccionadas = Array.isArray(prefsUsuario) ? prefsUsuario : [];
+            this.interesesOcioSeleccionados = [];
+          }
         });
         this.cdr.detectChanges();
 
@@ -272,6 +295,11 @@ export class MiPerfilPage implements OnInit {
       return;
     }
 
+    const preferenciasActualesEstructuradas = {
+      convivencia_viaje: this.preferenciasSeleccionadas,
+      intereses_ocio: this.interesesOcioSeleccionados
+    };
+
     // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
     const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
@@ -280,7 +308,7 @@ export class MiPerfilPage implements OnInit {
     const orientacionChanged = this.orientacionEditada !== this.userData.usuario.orientacion;
     const fechaNacimientoChanged = this.fechaNacimientoEditada !== this.userData.usuario.fecha_nacimiento;
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
-    const preferenciasChanged = JSON.stringify(this.preferenciasSeleccionadas) !== JSON.stringify(this.userData.usuario.preferencias);
+    const preferenciasChanged = JSON.stringify(preferenciasActualesEstructuradas) !== JSON.stringify(this.userData.usuario.preferencias);
 
     //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
@@ -329,6 +357,28 @@ export class MiPerfilPage implements OnInit {
     this.edad = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
   }
 
+  onOcioCheckboxChange(clave: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input) return;
+
+    const intereses = [...this.interesesOcioSeleccionados];
+
+    if (input.checked) {
+      if (!intereses.includes(clave)) {
+        intereses.push(clave);
+      }
+    } else {
+      const index = intereses.indexOf(clave);
+      if (index !== -1) {
+        intereses.splice(index, 1);
+      }
+    }
+
+    this.interesesOcioSeleccionados = intereses;
+    this.checkForChanges();
+    this.cdr.detectChanges();
+  }
+
   /**
    *  Editar los datos del usuario, excepto correo y teléfono
    * @returns
@@ -355,10 +405,14 @@ export class MiPerfilPage implements OnInit {
       orientacion: this.orientacionEditada,
       fecha_nacimiento: this.fechaNacimientoEditada,
       biografia: this.bioEditada,
-      preferencias: this.preferenciasSeleccionadas,
+      preferencias: {
+        convivencia_viaje: this.preferenciasSeleccionadas,
+        intereses_ocio: this.interesesOcioSeleccionados
+      },
       email: this.emailEditado,
       telefono: this.telefonoEditado,
     };
+
     console.log('Objeto modificado: ', nuevoUsuario);
 
     this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe(
