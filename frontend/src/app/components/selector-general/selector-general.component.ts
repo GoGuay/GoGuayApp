@@ -125,7 +125,25 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.indiceActivo = -1;
 
     if (this.inputRef && this.inputRef.nativeElement) {
-      this.inputRef.nativeElement.blur();
+      setTimeout(() => {
+        this.enfocarSiguienteElemento(this.inputRef.nativeElement);
+      }, 50);
+    }
+  }
+
+  private enfocarSiguienteElemento(elementoActual: HTMLElement) {
+    const focusableElements = Array.from(
+      document.querySelectorAll(
+        'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]'
+      )
+    ) as HTMLElement[];
+
+    const index = focusableElements.indexOf(elementoActual);
+
+    if (index > -1 && index + 1 < focusableElements.length) {
+      focusableElements[index + 1].focus();
+    } else {
+      elementoActual.blur();
     }
   }
 
@@ -147,10 +165,18 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   manejarNavegacionTeclado(event: KeyboardEvent) {
+    if (event.key === 'Tab') {
+      // Permitir que el Tab navegue libremente cerrando las sugerencias
+      this.sugerencias = [];
+      this.estaActivo = false;
+      return;
+    }
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      if (this.sugerencias.length > 0) {
-        this.estaActivo = true;
+      if (!this.estaActivo) {
+        this.abrirSelector();
+      } else if (this.sugerencias.length > 0) {
         this.indiceActivo = (this.indiceActivo + 1) % this.sugerencias.length;
         this.asegurarVisibilidadScroll();
       }
@@ -162,13 +188,23 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       }
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      if (this.indiceActivo >= 0 && this.sugerencias[this.indiceActivo]) {
+      if (this.estaActivo && this.indiceActivo >= 0 && this.sugerencias[this.indiceActivo]) {
         this.seleccionarOpcion(this.sugerencias[this.indiceActivo]);
       }
     } else if (event.key === 'Escape') {
       this.sugerencias = [];
       this.estaActivo = false;
     }
+  }
+
+  onInputBlur() {
+    setTimeout(() => {
+      this.estaActivo = false;
+      this.sugerencias = [];
+      this.indiceActivo = -1;
+      this.cdr.detectChanges();
+    }, 100);
+    this.onTouched();
   }
 
   private asegurarVisibilidadScroll() {
