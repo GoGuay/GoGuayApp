@@ -29,6 +29,12 @@
     padding-right: 40px;
   }
 
+  > li.col-left {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 30px;
+  }
+
   /* 2. Centro Absoluto (Logo y Título) */
   > li.logo-central-item {
     display: flex;
@@ -37,6 +43,7 @@
     justify-content: center;
     text-align: center;
     justify-self: center;
+    padding: 0 20px;
   }
 
   /* 3. Lado Derecho (Publicar viaje + controles de usuario separados) */
@@ -45,15 +52,20 @@
     align-items: center;
     justify-content: space-between;
     padding-left: 40px;
-    width: 100%;
+  }
+
+  > li.col-right-link {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 30px;
   }
 }
 
 .right-user-controls {
+  margin-right: 10%;
   display: flex;
   align-items: center;
-  gap: 40px;
-  margin-left: auto;
+  gap: 20px;
 }
 
 .logo {
@@ -129,7 +141,9 @@
     visibility: hidden;
     transition: all 0.3s ease-in-out;
     display: block;
-    width: 220px;
+    width: 260px;
+    border-radius: 35px;
+    padding: 15%;
   }
 
   .dropdown-menu.show {
@@ -141,12 +155,13 @@
 
 .navbar .dropdown-menu li a:hover {
   background-color: #f0d7b4;
-  border-radius: 15px;
+  border-radius: 35px;
 }
 
 .navbar .dropdown-menu .logout a:hover {
   background-color: #ff5733;
   color: white;
+  font-weight: bold;
 }
 
 ul {
@@ -161,10 +176,13 @@ ul {
   text-decoration: none;
   white-space: nowrap;
   font-size: clamp(0.85rem, 1.3vw, 1rem);
+  border-radius: 35px;
 }
 
 .nav-link:hover {
-  color: gray;
+  color: black;
+  font-weight: bold;
+  transform: translateX(2px);
 }
 
 .icono_ajsutes {
@@ -277,32 +295,82 @@ ul {
 }
 
 @media (max-width: 767px) {
+  /* Apagamos por completo el bloque de escritorio en pantallas pequeñas */
   .desktop-only {
     display: none !important;
   }
 
+  /* Encendemos y forzamos el bloque móvil respetando su propia retícula */
   .mobile-only {
-    display: flex !important;
+    display: block !important;
+    width: 100%;
   }
 
-  .btnNotificaciones,
-  .btnMensajes {
-    width: 45px;
-    height: 45px;
+  /* Retícula móvil simétrica de 3 columnas (Hamburguesa | Logo | Controles) */
+  .opciones-movil-centradas {
+    display: grid !important;
+    grid-template-columns: 45px auto 1fr;
+    align-items: center;
+    width: 100%;
+    min-height: 60px;
+    padding: 0 8px;
+    list-style: none;
+
+    > li {
+      display: flex;
+      align-items: center;
+    }
+
+    > li:nth-child(1) {
+      justify-content: flex-start;
+    }
+
+    > li:nth-child(2) {
+      justify-content: center;
+      justify-self: center;
+      cursor: pointer;
+    }
+
+    > li:nth-child(3) {
+      justify-content: flex-end;
+      gap: 6px;
+    }
   }
 
-  .icono-notificacion,
-  .icono-mensaje {
+  /* Tamaños adaptados y limpios para móvil */
+  .logo_mobile {
     width: 40px;
     height: 40px;
   }
 
+  .btnNotificaciones,
+  .btnMensajes {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icono-notificacion,
+  .icono-mensaje {
+    width: 22px;
+    height: 22px;
+  }
+
+  .caja_imagen_perfil_mobile {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+      overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+
   .badge-notificaciones,
   .badge-notificaciones_mensajes {
-    top: 3px;
-    right: 14px;
-    width: 20px;
-    height: 20px;
+    top: 1px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
     font-size: 0.5rem;
   }
 }
