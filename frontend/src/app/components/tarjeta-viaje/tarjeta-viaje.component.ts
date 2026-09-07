@@ -22,14 +22,7 @@ import { PuntuacionesComponent } from '../puntuaciones/puntuaciones.component';
   templateUrl: './tarjeta-viaje.component.html',
   styleUrls: ['./tarjeta-viaje.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    MatIcon,
-    ToastModule,
-    TranslateModule,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, MatIcon, ToastModule, TranslateModule],
   providers: [MessageService],
 })
 export class TarjetaViajeComponent implements OnInit {
@@ -47,7 +40,7 @@ export class TarjetaViajeComponent implements OnInit {
   cargando = false;
   fotoPerfil: string = '';
 
-  //Para poder pasar los datos del componente padre
+  //Para poder pasar los datos del componente padre//
   @Input() viajesFiltrados!: Viaje[];
 
   constructor(
@@ -62,7 +55,7 @@ export class TarjetaViajeComponent implements OnInit {
     private alertCtrl: AlertController,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -75,9 +68,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.userData = JSON.parse(cache);
         this.fotoPerfil = this.userData?.usuario?.fotoPerfil;
         console.log('Datos de usuario obtenidos del localStorage:', this.userData);
-        const cachedId =
-          this.userData.id ||
-          (this.userData.usuario ? this.userData.usuario.id : null);
+        const cachedId = this.userData.id || (this.userData.usuario ? this.userData.usuario.id : null);
         if (cachedId) {
           finalUserId = Number(cachedId);
         }
@@ -93,9 +84,7 @@ export class TarjetaViajeComponent implements OnInit {
       if (finalUserId && !isNaN(finalUserId)) {
         this.cargarTodosLosViajes(finalUserId);
       } else {
-        console.warn(
-          'No se detectó un ID de usuario válido en la inicialización.',
-        );
+        console.warn('No se detectó un ID de usuario válido en la inicialización.');
         this.cargandoViajes = false;
       }
     });
@@ -138,13 +127,11 @@ export class TarjetaViajeComponent implements OnInit {
           text: 'Rechazar',
           role: 'destructive',
           handler: () => {
-            this.travelService
-              .rechazarPasajeroManual(viajeId, pasajeroId)
-              .subscribe({
-                next: () => {
-                  this.cargarTodosLosViajes(this.userData.usuario.id);
-                },
-              });
+            this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
+              next: () => {
+                this.cargarTodosLosViajes(this.userData.usuario.id);
+              },
+            });
           },
         },
       ],
@@ -161,15 +148,9 @@ export class TarjetaViajeComponent implements OnInit {
 
     // Ejecutamos las 3 peticiones de viajes en paralelo
     forkJoin({
-      acompanante: this.travelService
-        .getViajesComoAcompañante(userId)
-        .pipe(catchError(() => of([]))),
-      creados: this.travelService
-        .getViajesUsuario(userId)
-        .pipe(catchError(() => of({ viajes: [] }))),
-      solicitudes: this.travelService
-        .getMisSolicitudesPendientes(userId)
-        .pipe(catchError(() => of([]))),
+      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(catchError(() => of([]))),
+      creados: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
+      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
     }).subscribe({
       next: ({ acompanante, creados, solicitudes }) => {
         this.misViajesAcompanante = acompanante;
@@ -209,10 +190,7 @@ export class TarjetaViajeComponent implements OnInit {
         break;
 
       case 'solicitudes':
-        const misViajesConSolicitudes = creados.filter(
-          (v) =>
-            v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0,
-        );
+        const misViajesConSolicitudes = creados.filter((v) => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
 
         this.misViajes = [...solicitudes, ...misViajesConSolicitudes];
 
@@ -222,23 +200,14 @@ export class TarjetaViajeComponent implements OnInit {
 
       case 'antiguos':
         this.misViajes.sort((a, b) => {
-          return (
-            new Date(a.fecha_salida).getTime() -
-            new Date(b.fecha_salida).getTime()
-          );
+          return new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime();
         });
         break;
 
       case 'pendientes':
         this.misViajes.sort((a, b) => {
-          const aFinalizado = this.funcionesComunes.esViajeFinalizado(
-            a.fecha_salida,
-            a.hora_salida,
-          );
-          const bFinalizado = this.funcionesComunes.esViajeFinalizado(
-            b.fecha_salida,
-            b.hora_salida,
-          );
+          const aFinalizado = this.funcionesComunes.esViajeFinalizado(a.fecha_salida, a.hora_salida);
+          const bFinalizado = this.funcionesComunes.esViajeFinalizado(b.fecha_salida, b.hora_salida);
           return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
         });
         break;
@@ -247,10 +216,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.misViajes = [];
         break;
     }
-    this.onFiltroChange(
-      { detail: { value: this.filtroSeleccionado } },
-      { dismiss: () => {} },
-    );
+    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => {} });
   }
 
   /**
@@ -279,26 +245,18 @@ export class TarjetaViajeComponent implements OnInit {
         viajesBase = [...acompanante];
         break;
       case 'solicitudes':
-        const misViajesConSoli = creados.filter(
-          (v) =>
-            v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0,
-        );
+        const misViajesConSoli = creados.filter((v) => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
         viajesBase = [...solicitudes, ...misViajesConSoli];
         break;
     }
 
     switch (this.filtroSeleccionado) {
       case 'en_curso':
-        this.misViajes = viajesBase.filter(
-          (v) => v.estado_viaje === 'En curso',
-        );
+        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'En curso');
         break;
 
       case 'finalizado':
-        this.misViajes = viajesBase.filter(
-          (v) =>
-            v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado',
-        );
+        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado');
         break;
 
       case 'proximo':
@@ -306,9 +264,7 @@ export class TarjetaViajeComponent implements OnInit {
         break;
 
       default:
-        this.misViajes = viajesBase.filter(
-          (v) => v.estado_viaje === 'Finalizado',
-        );
+        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Finalizado');
         break;
     }
 
@@ -431,10 +387,7 @@ export class TarjetaViajeComponent implements OnInit {
           text: 'Reportar ausencias',
           role: 'destructive',
           handler: (pasajerosSeleccionados: any[]) => {
-            if (
-              !pasajerosSeleccionados ||
-              pasajerosSeleccionados.length === 0
-            ) {
+            if (!pasajerosSeleccionados || pasajerosSeleccionados.length === 0) {
               console.warn('No se seleccionó ningún pasajero');
               return false;
             }
@@ -457,10 +410,7 @@ export class TarjetaViajeComponent implements OnInit {
    * @param viajeId --> ID del viaje seleccionado.
    */
   confirmarReporte(pasajeros: any[], viajeId: number) {
-    console.log(
-      `Reportando ${pasajeros.length} pasajero(s) en el viaje ${viajeId}:`,
-      pasajeros,
-    );
+    console.log(`Reportando ${pasajeros.length} pasajero(s) en el viaje ${viajeId}:`, pasajeros);
 
     pasajeros.forEach((pasajero) => {
       this.messageService.add({
@@ -497,18 +447,13 @@ export class TarjetaViajeComponent implements OnInit {
    */
   async cancelarSolicitud(viaje: Viaje) {
     const esFinalizado =
-      viaje.estado_viaje === 'Finalizado' ||
-      this.funcionesComunes.esViajeFinalizado(
-        viaje.fecha_salida,
-        viaje.hora_salida,
-      );
+      viaje.estado_viaje === 'Finalizado' || this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
 
     if (esFinalizado) {
       this.messageService.add({
         severity: 'error',
         summary: 'Acción no permitida',
-        detail:
-          'No puedes cancelar una solicitud de un viaje que ya ha finalizado.',
+        detail: 'No puedes cancelar una solicitud de un viaje que ya ha finalizado.',
         life: 4000,
       });
       return;
@@ -558,8 +503,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Puntuación guardada',
-          detail:
-            'Muchas gracias por realizar nuestra encuesta de satisfacción.',
+          detail: 'Muchas gracias por realizar nuestra encuesta de satisfacción.',
           life: 3000,
         });
 
@@ -605,8 +549,7 @@ export class TarjetaViajeComponent implements OnInit {
   async eliminarViaje(viajeId: number) {
     const alertMotivos = await this.alertCtrl.create({
       header: 'Cancelar Viaje',
-      subHeader:
-        'Por favor, selecciona el motivo de la cancelación para registrarlo en tu perfil:',
+      subHeader: 'Por favor, selecciona el motivo de la cancelación para registrarlo en tu perfil:',
       cssClass: 'custom-alert-chat',
       inputs: [
         {
@@ -687,8 +630,7 @@ export class TarjetaViajeComponent implements OnInit {
         {
           type: 'radio',
           label: 'El conductor no aparece (15 min)',
-          value:
-            'Tras 15 minutos en el punto de encuentro, el conductor no aparece',
+          value: 'Tras 15 minutos en el punto de encuentro, el conductor no aparece',
         },
         {
           type: 'radio',
@@ -698,8 +640,7 @@ export class TarjetaViajeComponent implements OnInit {
         {
           type: 'radio',
           label: 'Cambio de condiciones incómodo',
-          value:
-            'Se ha cambiado el punto de encuentro y la hora y no me viene bien',
+          value: 'Se ha cambiado el punto de encuentro y la hora y no me viene bien',
         },
         {
           type: 'radio',
@@ -733,10 +674,7 @@ export class TarjetaViajeComponent implements OnInit {
    * @param viajeId ID del viaje
    * @param rol Rol del usuario (conductor o pasajero)
    */
-  private async mostrarInputAbiertoCancelacion(
-    viajeId: number,
-    rol: 'conductor' | 'pasajero',
-  ) {
+  private async mostrarInputAbiertoCancelacion(viajeId: number, rol: 'conductor' | 'pasajero') {
     const alertAbierto = await this.alertCtrl.create({
       header: 'Especificar motivo',
       message: 'Por favor, escribe brevemente la razón de la cancelación:',
@@ -754,8 +692,7 @@ export class TarjetaViajeComponent implements OnInit {
           text: 'Confirmar',
           role: 'destructive',
           handler: (data) => {
-            const motivoFinal =
-              data.motivoEspecifico?.trim() || 'Otros motivos';
+            const motivoFinal = data.motivoEspecifico?.trim() || 'Otros motivos';
             if (rol === 'conductor') {
               this.ejecutarCancelacionConductor(viajeId, motivoFinal);
             } else {
@@ -780,18 +717,14 @@ export class TarjetaViajeComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Viaje Cancelado',
-          detail:
-            'El trayecto ha sido anulado y penalizado en tu historial de fiabilidad.',
+          detail: 'El trayecto ha sido anulado y penalizado en tu historial de fiabilidad.',
           life: 3500,
         });
         this.obtenerViajesCreados();
       },
       error: (err) => {
         this.cargandoViajes = false;
-        console.error(
-          'Error al tramitar la baja del viaje en el servidor:',
-          err,
-        );
+        console.error('Error al tramitar la baja del viaje en el servidor:', err);
       },
     });
   }
@@ -803,37 +736,33 @@ export class TarjetaViajeComponent implements OnInit {
    */
   private ejecutarCancelacionPasajero(viajeId: number, motivo: string) {
     this.cargando = true;
-    this.travelService
-      .salirDeViajeConMotivo(viajeId, this.userData.usuario.id, motivo)
-      .subscribe({
-        next: () => {
-          this.cargando = false;
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Baja del viaje',
-            detail: 'Has liberado tu plaza con éxito.',
-            life: 3000,
-          });
-          this.obtenerViajesComoAcompanante();
-          this.obtenerViajesCreados();
-        },
-        error: () => (this.cargando = false),
-      });
+    this.travelService.salirDeViajeConMotivo(viajeId, this.userData.usuario.id, motivo).subscribe({
+      next: () => {
+        this.cargando = false;
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Baja del viaje',
+          detail: 'Has liberado tu plaza con éxito.',
+          life: 3000,
+        });
+        this.obtenerViajesComoAcompanante();
+        this.obtenerViajesCreados();
+      },
+      error: () => (this.cargando = false),
+    });
   }
 
   /**
    * Función para obtener la lista de viajes que ha creado el usuario
    */
   obtenerViajesCreados() {
-    this.travelService
-      .getViajesUsuario(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesCreados = result.viajes;
-        this.misViajesCreados.forEach((viaje) => {
-          viaje.usuario = this.userData;
-        });
-        this.filtrarViajes();
+    this.travelService.getViajesUsuario(this.userData.usuario.id).subscribe((result) => {
+      this.misViajesCreados = result.viajes;
+      this.misViajesCreados.forEach((viaje) => {
+        viaje.usuario = this.userData;
       });
+      this.filtrarViajes();
+    });
   }
 
   /**
@@ -841,12 +770,10 @@ export class TarjetaViajeComponent implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
-    this.travelService
-      .getViajesComoAcompañante(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesAcompanante = result;
-        this.cargandoViajes = false;
-        this.filtrarViajes();
-      });
+    this.travelService.getViajesComoAcompañante(this.userData.usuario.id).subscribe((result) => {
+      this.misViajesAcompanante = result;
+      this.cargandoViajes = false;
+      this.filtrarViajes();
+    });
   }
 }
