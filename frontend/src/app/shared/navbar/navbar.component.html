@@ -130,18 +130,18 @@
 
           <div class="d-flex align-items-center gap-2 ms-3">
             <button class="btn btnNotificaciones position-relative" type="button" *ngIf="isLoggedIn">
-              <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100" href="/notificaciones">
-                <img class="icono-notificacion" src="../../../assets/sistema/campana.gif" alt="Notificaciones" />
-              </a>
-              <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
-            </button>
+                <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100" href="/notificaciones">
+                  <img class="icono-notificacion" [class.animar-icono]="numNotificaciones > 0" src="../../../assets/sistema/campana.png" alt="Notificaciones" />
+                </a>
+                <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
+              </button>
 
             <button class="btn btnMensajes position-relative" type="button" *ngIf="isLoggedIn">
-              <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100" href="/messaging-center">
-                <img class="icono-mensaje" src="../../../assets/sistema/messaging.png" alt="Mensajes" />
-              </a>
-              <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{ numNotificacionesMensajes }}</span>
-            </button>
+                <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100" href="/messaging-center">
+                  <img class="icono-mensaje" [class.animar-icono]="numNotificacionesMensajes > 0" src="../../../assets/sistema/messaging.png" alt="Mensajes" />
+                </a>
+                <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{ numNotificacionesMensajes }}</span>
+              </button>
           </div>
         </div>
       </div>
