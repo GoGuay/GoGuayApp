@@ -4,16 +4,21 @@
   [isLoggedIn]="userLoggedIn"
 ></app-navbar>
 
-<ion-content [fullscreen]="true">
+<ion-content
+  [fullscreen]="true"
+  role="main"
+>
   <ion-row class="primera-seccion">
     <div class="imagen-fondo">
       <div class="formulario-viaje">
         <div class="contenido_formulario">
-          <label class="text-start">Origen:</label>
+          <label class="text-start">{{'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate}}</label>
           <div class="input-container mb-4">
             <app-selector-general
               idUnico="input-origen"
-              placeholderKey="BUSCADOR.PLACEHOLDER_LOCALIDAD"
+              aria-labelledby="label-origen"
+              placeholderKey="PLACEHOLDER.DONDE_COMIENZA"
+              class="w-100"
               [opciones]="origenCtrl.sugerencias"
               [(ngModel)]="origenCtrl.valorTexto"
               [soloLectura]="false"
@@ -22,6 +27,13 @@
               (alAbrir)="origenCtrl.estaActivo = true"
               (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"
             ></app-selector-general>
+            <app-spinner
+              *ngIf="spinnerActivo"
+              [texto_spinner]="texto_spinner | translate"
+              [tamano_completo]="false"
+              aria-live="polite"
+              role="status"
+            ></app-spinner>
           </div>
 
           <div class="input-container">
@@ -29,10 +41,14 @@
               type="button"
               class="btn btn_bg mb-3"
               (click)="buscarUbicacion()"
+              aria-label="Obtener mi ubicación actual automáticamente"
             >
               <span>
-                <i class="fi fi-rr-marker"></i>
-                Mi ubicación
+                <i
+                  class="fi fi-rr-marker"
+                  aria-hidden="true"
+                ></i>
+                {{'NUEVOVIAJE.NUEVO_VIAJE.BOTÓN_MI_UBICACION' | translate}}
               </span>
             </button>
           </div>
@@ -41,7 +57,9 @@
           <div class="input-container">
             <app-selector-general
               idUnico="input-destino"
-              placeholderKey="BUSCADOR.PLACEHOLDER_LOCALIDAD"
+              aria-labelledby="label-destino"
+              placeholderKey="PLACEHOLDER.HASTA_DONDE"
+              class="w-100"
               [opciones]="destinoCtrl.sugerencias"
               [(ngModel)]="destinoCtrl.valorTexto"
               [soloLectura]="false"
@@ -57,7 +75,9 @@
           <div class="input-container mb-3">
             <app-selector-general
               idUnico="input-plazas"
-              placeholderKey="NUEVOVIAJE.PLACE_NUM_PLAZAS"
+              aria-labelledby="label-plazas"
+              placeholderKey="PLACEHOLDER.NUM_PLAZAS"
+              class="w-100"
               [opciones]="opcionesPlazas"
               [(ngModel)]="plazas"
               [valor]="plazas"
@@ -70,18 +90,22 @@
           <div
             class="alert"
             *ngIf="!userLoggedIn"
+            role="region"
+            aria-label="Aviso de inicio de sesión"
           >
             <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
             <div class="d-flex justify-content-center">
               <button
                 type="button"
                 class="help_btn d-flex justify-content-center"
-                title="Ayuda para iniciar sesión / registrarse"
+                aria-label="Ayuda para iniciar sesión o registrarse"
                 (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
               >
                 <img
                   src="../../../../assets/sistema/interrogatorio.png"
                   class="marcador-icon input-icon"
+                  alt=""
+                  aria-hidden="true"
                 />
               </button>
             </div>
@@ -115,6 +139,8 @@
           <img
             src="../../../../assets/sistema/interrogatorio.png"
             class="marcador-icon input-icon"
+            alt=""
+            aria-hidden="true"
           />
           {{ 'BOTON.CENTROAYUDA' | translate }}
         </button>
@@ -128,13 +154,14 @@
     class="fab-ajustes fab-buscar"
   >
     <ion-fab-button
-      aria-label="Ir atrás"
+      aria-label="Volver a la página anterior"
       (click)="goBack()"
     >
       <img
         [src]="irAtrasImg"
         alt="Ir atrás"
         style="width: 24px; height: 24px"
+        aria-hidden="true"
       />
     </ion-fab-button>
   </ion-fab>

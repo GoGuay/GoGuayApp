@@ -22,13 +22,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
-::ng-deep app-selector-general input,
-::ng-deep app-selector-general select {
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
 .imagen-fondo {
   position: relative;
   width: 100%;
@@ -76,7 +69,17 @@
   align-items: stretch;
 }
 
-// === Inputs y Contenedores ===
+/* Inputs / app-selector-general (Origen, Destino, Plazas) y Botón "Mi ubicación" --> Sólo un borde en focus*/
+::ng-deep app-selector-general input,
+::ng-deep app-selector-general select {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+
+
+
 .input-container {
   position: relative;
   display: flex;
@@ -102,10 +105,8 @@
   }
 }
 
-.input-viaje {
-  background: rgba(255, 255, 255, 0.65) !important;
-  backdrop-filter: blur(5px);
-  width: 100%;
+.btn_bg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
 .marcador-icon {
@@ -114,91 +115,29 @@
   color: #000000;
 }
 
-.spinner-container.spinner-input-inline {
-  position: absolute !important;
-  top: 50% !important;
-  right: 15px !important;
-  left: auto !important;
-  transform: translateY(-50%) !important;
-  width: 48px !important;
-  height: 48px !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  z-index: 10 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: hidden !important;
+.alert {
+  border-radius: 15px;
+  border: 1px solid #cf9456;
+  padding: 10px;
+  margin-top: 10px;
+}
 
-  ::ng-deep {
+.help_btn {
+  border-radius: 50%;
 
-    p,
-    span,
-    h1,
-    h2,
-    h3,
-    h4,
-    .text-center,
-    .loading-text,
-    .spinner-overlay {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      height: 0 !important;
-      width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
+  img {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+  }
 
-    .spinner-container,
-    div {
-      width: 48px !important;
-      height: 48px !important;
-      background: transparent !important;
-      background-color: transparent !important;
-      backdrop-filter: none !important;
-      position: static !important;
-      transform: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    .spinner,
-    svg {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      width: 48px !important;
-      height: 48px !important;
-      max-width: 48px !important;
-      max-height: 48px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      filter: none !important;
-    }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 }
 
-.lista_sugerencias {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  z-index: 9999 !important;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 230px;
-  overflow-y: auto;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
 
-// === Botones y Alertas ===
 .btn-publicar {
   background: rgba(179, 181, 230, 0.75);
   -webkit-backdrop-filter: blur(10px);
@@ -218,84 +157,6 @@
   &:hover {
     background-color: rgba(207, 148, 86, 0.85);
     color: white;
-  }
-}
-
-.btn_bg {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.alert {
-  border-radius: 15px;
-  border: 1px solid #cf9456;
-  padding: 10px;
-  margin-top: 10px;
-}
-
-.custom-dropdown {
-  position: relative;
-  cursor: pointer;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 35px;
-  padding: 10px;
-  min-height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  width: 100%;
-  margin-top: 5px;
-
-  .select-icon {
-    position: absolute;
-    left: 15px;
-    width: 24px;
-    height: 24px;
-    max-width: 24px;
-    max-height: 24px;
-  }
-
-  .selected-value {
-    margin-left: 35px;
-    color: #333;
-    font-size: 1rem;
-    text-align: left;
-  }
-
-  .custom-options {
-    position: absolute;
-    top: 105%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    z-index: 9999 !important;
-    list-style: none;
-    padding: 8px;
-    margin: 0;
-
-    li {
-      padding: 10px 15px;
-      margin-bottom: 4px;
-      border-radius: 35px;
-      transition: all 0.2s ease;
-      color: #333;
-      text-align: left;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      &:hover,
-      &.selected {
-        background-color: #f0d7b4;
-        color: black;
-        font-weight: bold;
-      }
-    }
   }
 }
 
@@ -337,42 +198,49 @@
     vertical-align: middle;
     margin-right: 8px;
   }
-}
 
-ion-title {
-  font-size: 18px;
-  text-align: center;
-}
+  /* ==========================================
+   SPINNER INLINE PARA INPUTS (REDONDEADO)
+   ========================================== */
+  .spinner-input-inline {
+    position: absolute !important;
+    top: 50% !important;
+    right: 15px !important;
+    transform: translateY(-50%) !important;
+    width: 28px !important;
+    height: 28px !important;
+    z-index: 10 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    pointer-events: none;
+    border-radius: 35px !important;
+    overflow: hidden !important;
 
-ion-button {
-  color: #000000 !important;
-}
+    /* Forzamos el redondeo y la ocultación de texto también dentro del componente hijo */
+    ::ng-deep {
 
-.help_btn {
-  border-radius: 50%;
+      .spinner-container,
+      div {
+        border-radius: 35px !important;
+        overflow: hidden !important;
+        background: transparent !important;
+      }
 
-  img {
-    width: 24px !important;
-    height: 24px !important;
-    max-width: 24px !important;
-    max-height: 24px !important;
+      p,
+      span {
+        display: none !important;
+      }
+
+      .spinner,
+      svg {
+        display: block !important;
+        width: 24px !important;
+        height: 24px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
+      }
+    }
   }
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
-
-/**
-* CONFIGURACIÓN PARA DISPOSITIVOS MÓVILES    *
-**/
-@media (max-width: 768px) {
-  .buscar-viaje {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .nav-link.active {
-    margin-right: 0;
-  }
 }
