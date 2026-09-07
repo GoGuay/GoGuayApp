@@ -16,7 +16,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje
+from models import Usuario, RolUsuarioEnum, Viaje, Monedero, MovimientoMonedero
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -121,7 +121,11 @@ def crear_usuario():
     except Exception as e:
         return jsonify({"error": f"Error al guardar en la base de datos: {str(e)}"}), 500
 
-    
+    # Crear monedero para el nuevo usuario
+    monedero = Monedero(usuario_id=nuevo_usuario.id)
+    db.session.add(monedero)
+    db.session.commit()
+
     access_token = create_access_token(identity=str(nuevo_usuario.id))
 
     try:
@@ -937,3 +941,135 @@ def capture_order(order_id: str):
     return jsonify(capture_data), 200
 
 
+## --- RUTAS DE RECARGA DE MONEDERO CON PAYPAL --- ##
+
+@user_blueprint.route("/create-wallet-order", methods=['POST'])
+@jwt_required()
+def create_wallet_order():
+    """
+    1. Recibe el monto (cantidad) que el usuario desea añadir a su monedero desde el frontend.
+    2. Valida que el usuario esté autenticado mediante JWT y tenga un monedero activo.
+    3. Crea una orden en PayPal configurada para capturar fondos destinados a la cuenta de la empresa.
+    """
+    current_user_id = get_jwt_identity()
+    data = request.get_json() or {}
+    
+    cantidad = data.get('cantidad')
+
+    if not cantidad or float(cantidad) <= 0:
+        return jsonify({"error": "La cantidad de recarga no es válida"}), 400
+
+    usuario = Usuario.query.get(current_user_id)
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Formatear el precio a dos decimales requerido por PayPal
+    precio_formateado = f"{float(cantidad):.2f}"
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
+    # El dinero de la recarga va directamente a la cuenta business de la empresa
+    email_empresa = "goguay_empresa@business.example.com"
+    
+    payload = {
+        "intent": "CAPTURE",
+        "purchase_units": [{
+            "reference_id": f"wallet_recharge_{current_user_id}",
+            "amount": {
+                "currency_code": "EUR", 
+                "value": precio_formateado
+            },
+            "payee": {
+                "email_address": email_empresa
+            },
+            "description": f"Recarga de saldo en monedero GoGuay - Usuario {usuario.email}"
+        }],
+        "application_context": { 
+            "shipping_preference": "NO_SHIPPING", 
+            "user_action": "PAY_NOW",
+            "return_url": "http://localhost:4200/saldo-transferencias?success=true",
+            "cancel_url": "http://localhost:4200/saldo-transferencias?cancel=true"
+        }
+    }
+
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
+    order = response.json()
+
+    if response.status_code not in [200, 201]:
+        print("❌ DETALLE DE ERROR EN PAYPAL API (Monedero):", order)
+        return jsonify({"error": "Error al comunicarse con la pasarela de PayPal", "detalle": order}), response.status_code
+
+    try:
+        approve_link = next(
+            link["href"] for link in order["links"] if link["rel"] == "approve"
+        )
+        return jsonify({
+            "order_id": order["id"],
+            "approve_url": approve_link
+        }), 200
+    except KeyError:
+        return jsonify({"error": "No se pudo generar el enlace de aprobación de PayPal", "detalle": order}), 500
+
+
+@user_blueprint.route("/capture-wallet-order/<order_id>", methods=['POST'])
+@jwt_required()
+def capture_wallet_order(order_id: str):
+    """
+    1. Captura la orden de PayPal una vez el usuario aprueba el pago.
+    2. Si el pago es exitoso ('COMPLETED'), busca el monedero del usuario autenticado.
+    3. Incrementa el saldo actual y registra un nuevo movimiento en el historial.
+    4. Guarda los cambios en la base de datos de forma segura.
+    """
+    current_user_id = get_jwt_identity()
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
+    
+    capture_data = response.json()
+    
+    if response.status_code not in [200, 201] or capture_data.get("status") != "COMPLETED":
+        print(f"❌ Error al capturar la orden de recarga {order_id}:", capture_data)
+        return jsonify({"error": "El pago no pudo ser completado o capturado", "detalle": capture_data}), 400
+        
+    try:
+        # Extraer la cantidad pagada desde la respuesta de PayPal
+        unidad_compra = capture_data["purchase_units"][0]
+        captura = unidad_compra["payments"]["captures"][0]
+        monto_recargado = float(captura["amount"]["value"])
+        
+        # Buscar o inicializar el monedero del usuario
+        usuario = Usuario.query.get(current_user_id)
+        if not usuario:
+            return jsonify({"error": "Usuario asociado no encontrado"}), 404
+            
+        monedero = Monedero.query.filter_by(usuario_id=usuario.id).first()
+        if not monedero:
+            monedero = Monedero(usuario_id=usuario.id, saldo=0.0)
+            db.session.add(monedero)
+            db.session.flush() # Para obtener el ID del monedero antes del commit final
+
+        # Actualizar saldo
+        monedero.saldo += monto_recargado
+        
+        # Registrar el movimiento en el historial
+        nuevo_movimiento = MovimientoMonedero(
+            monedero_id=monedero.id,
+            concepto="Recarga de saldo vía PayPal",
+            cantidad=monto_recargado,
+            saldo_final=monedero.saldo
+        )
+        db.session.add(nuevo_movimiento)
+        db.session.commit()
+
+        return jsonify({
+            "mensaje": "Saldo añadido correctamente al monedero",
+            "nuevo_saldo": monedero.saldo,
+            "detalles_pago": capture_data
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error interno al actualizar el monedero: {str(e)}")
+        return jsonify({"error": f"Error interno al procesar la recarga: {str(e)}"}), 500

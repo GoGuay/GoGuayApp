@@ -419,4 +419,56 @@ export class UserServicesService {
         })
       );
   }
+
+  /**
+   * Función para crear una orden de PayPal para la recarga del monedero.
+   * @param cantidad Cantidad en euros que el usuario desea recargar.
+   * @returns Observable con los datos de la orden de PayPal (incluyendo approve_url).
+   */
+  crearOrdenMonedero(cantidad: number): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(
+      `${this.apiUrl}/user/create-wallet-order`,
+      { cantidad },
+      { headers }
+    ).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al crear la orden de recarga del monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Función para capturar y confirmar el pago de la recarga del monedero en PayPal.
+   * @param orderId ID de la orden de PayPal devuelto tras la aprobación.
+   * @returns Observable con la confirmación de la recarga y el nuevo saldo.
+   */
+  capturarOrdenMonedero(orderId: string): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(
+      `${this.apiUrl}/user/capture-wallet-order/${orderId}`,
+      {},
+      { headers }
+    ).pipe(
+      map((response) => {
+        // Opcional: si quieres actualizar el estado del usuario o emitir algo si es necesario
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al capturar la orden de recarga del monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }
