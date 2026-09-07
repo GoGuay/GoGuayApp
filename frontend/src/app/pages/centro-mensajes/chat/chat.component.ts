@@ -29,17 +29,17 @@ import { timer } from 'rxjs';
     styleUrls: ['./chat.component.scss'],
     standalone: true,
     imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    MatSliderModule,
-    NavbarComponent,
-    IonicModule,
-    SpinnerComponent
-],
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        ReactiveFormsModule,
+        MatSliderModule,
+        NavbarComponent,
+        IonicModule,
+        SpinnerComponent
+    ],
     providers: []
 })
 export class ChatPage implements OnInit {
@@ -77,8 +77,8 @@ export class ChatPage implements OnInit {
         private travelService: TravelService,
         private navCtrl: NavController,
         private cdr: ChangeDetectorRef) {
-            addIcons({ send  });
-         }
+        addIcons({ send });
+    }
 
     ngOnInit() {
         this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -105,15 +105,15 @@ export class ChatPage implements OnInit {
                 if (data.length !== this.mensajes.length) {
                     this.mensajes = data;
                     this.procesarMensajesEspeciales(data);
-                    this.marcarComoLeidos(); 
-                    this.cdr.detectChanges(); 
+                    this.marcarComoLeidos();
+                    this.cdr.detectChanges();
                 }
-                this.cargandoPreferenciaTelefono = false; 
+                this.cargandoPreferenciaTelefono = false;
             });
     }
 
     ionViewWillEnter() {
-        this.cargarMensajes(); 
+        this.cargarMensajes();
     }
 
     /**
@@ -123,7 +123,6 @@ export class ChatPage implements OnInit {
         this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
             this.mensajes = data;
             this.cdr.detectChanges();
-            console.log("Mensajes cargados:", this.mensajes);
             this.telefonoRecibido = null;
             this.compartiendoMiTelefono = false;
 
@@ -132,15 +131,26 @@ export class ChatPage implements OnInit {
                 if (m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')) {
                     const viajeId = m.texto.split(':')[1];
                     const pasajeroId = m.emisor_id;
-                    
-                    const mensajeId = m.id as number; 
+                    const mensajeId = m.id as number;
 
                     this.travelService.getViaje(Number(viajeId)).subscribe(viaje => {
                         const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === pasajeroId);
-                        
+
                         if (estaAceptado) {
                             this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                        } else {
+                            // Si no está en acompañantes, verificamos si ya se envió un mensaje de rechazo previo 
+                            // o si podemos deducir que fue rechazada (o mantenemos un registro local/backend)
+                            // Por defecto, si el conductor ya respondió con un mensaje de rechazo, marcamos como rechazada:
+                            const respuestaRechazo = data.some(msg =>
+                                msg.emisor_id !== pasajeroId &&
+                                msg.texto.includes('Lo siento, no puedo aceptarte')
+                            );
+                            if (respuestaRechazo) {
+                                this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                            }
                         }
+                        this.cdr.detectChanges();
                     });
                 }
 
@@ -154,7 +164,6 @@ export class ChatPage implements OnInit {
             });
 
             this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
-
             this.cargandoPreferenciaTelefono = false;
             this.scrollToBottom();
         });
@@ -169,9 +178,9 @@ export class ChatPage implements OnInit {
         let receptorId = 0;
         if (this.mensajes.length > 0) {
             const primerMsj = this.mensajes[0];
-            receptorId = primerMsj.emisor_id !== this.usuarioLogueadoId 
-                        ? primerMsj.emisor_id 
-                        : primerMsj.receptor_id;
+            receptorId = primerMsj.emisor_id !== this.usuarioLogueadoId
+                ? primerMsj.emisor_id
+                : primerMsj.receptor_id;
         }
 
         const nuevoMensaje: any = {
@@ -340,15 +349,18 @@ export class ChatPage implements OnInit {
                     this.enviarMensajeSistema("He aceptado tu solicitud. ¡Nos vemos en el viaje!", viajeId);
                 },
                 error: (err) => {
+                    console.error("Error al aceptar pasajero:", err);
                     this.cargandoSolicitud[mensajeId] = false;
                 }
             });
         } else {
+            // Si tienes un método en travelService para rechazar, úsalo aquí. 
+            // Simulamos el almacenamiento del estado y el envío del mensaje de rechazo:
             setTimeout(() => {
                 this.solicitudesGestionadas[mensajeId] = 'rechazada';
                 this.cargandoSolicitud[mensajeId] = false;
-                this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.");
-            }, 1000);
+                this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.", viajeId);
+            }, 500);
         }
     }
 
@@ -395,9 +407,19 @@ export class ChatPage implements OnInit {
                 if (this.solicitudesGestionadas[mensajeId]) return;
 
                 this.travelService.getViaje(viajeId).subscribe(viaje => {
-                    if (viaje.acompanantes?.some((p: any) => p.id === m.emisor_id)) {
+                    const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === m.emisor_id);
+                    if (estaAceptado) {
                         this.solicitudesGestionadas[mensajeId] = 'aceptada';
                         this.cdr.detectChanges();
+                    } else {
+                        const respuestaRechazo = mensajes.some(msg =>
+                            msg.emisor_id !== m.emisor_id &&
+                            msg.texto.includes('Lo siento, no puedo aceptarte')
+                        );
+                        if (respuestaRechazo) {
+                            this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                            this.cdr.detectChanges();
+                        }
                     }
                 });
             }
@@ -409,7 +431,6 @@ export class ChatPage implements OnInit {
                 }
             }
             this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
-
             this.cargandoPreferenciaTelefono = false;
             this.scrollToBottom();
         });

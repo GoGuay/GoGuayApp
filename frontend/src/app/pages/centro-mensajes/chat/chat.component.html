@@ -4,7 +4,7 @@
 
 <ion-content>
   <div class="chat-limiter">
-    
+
     <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-atras" title="Volver atrás">
       <ion-fab-button (click)="goBack()">
         <img [src]="irAtrasImg" alt="Volver" style="width: 24px; height: 24px;">
@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
+      <!-- <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
         <div class="card shadow-sm border-0 text-center p-3">
           <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>
           <div class="d-flex justify-content-center gap-2">
@@ -31,7 +31,7 @@
             <ion-button size="small" color="light" (click)="decidirCompartirTelefono(false)">Ahora no</ion-button>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="phone-info-banner mb-1 text-center" *ngIf="telefonoRecibido">
         <ion-badge color="secondary" class="p-2">
@@ -46,10 +46,10 @@
       </div>
 
       <ng-container *ngFor="let m of mensajes; let i = index">
-        <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}" class="mensaje-wrapper">
-          
-          <div class="mensaje-burbuja" 
-               [ngClass]="{
+        <div [ngClass]="{'mio': m.emisor_id === usuarioLogueadoId, 'otro': m.emisor_id !== usuarioLogueadoId}"
+          class="mensaje-wrapper">
+
+          <div class="mensaje-burbuja" [ngClass]="{
                  'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:'),
                  'burbuja-solicitud': m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')
                }">
@@ -57,27 +57,46 @@
             <ng-container *ngIf="m.texto.includes('SOLICITUD_UNIRSE_VIAJE:'); else checkTelefono">
               <div class="solicitud-container p-2">
                 <p><strong><i class="fi fi-rr-messages"></i> Solicitud de viaje</strong></p>
-                
+
                 <div *ngIf="cargandoSolicitud[m.id]" class="text-center p-2">
                   <app-spinner></app-spinner>
                   <p class="small">Procesando solicitud...</p>
                 </div>
 
+                <!-- 1. Mostrar botones de acción SOLO si está pendiente y el usuario logueado NO es el que mandó la solicitud -->
                 <ng-container *ngIf="!cargandoSolicitud[m.id] && !solicitudesGestionadas[m.id]">
                   <p>Hola, me gustaría unirme a tu viaje.</p>
                   <div class="d-flex gap-2 mt-2" *ngIf="m.emisor_id !== usuarioLogueadoId">
-                    <ion-button size="small" color="success" (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
-                    <ion-button size="small" color="danger" (click)="gestionarSolicitud(m, 'rechazar')">Rechazar</ion-button>
+                    <ion-button size="small" color="success"
+                      (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
+                    <ion-button size="small" color="danger"
+                      (click)="gestionarSolicitud(m, 'rechazar')">Rechazar</ion-button>
                   </div>
                   <div *ngIf="m.emisor_id === usuarioLogueadoId">
-                    <ion-badge color="medium">Solicitud enviada</ion-badge>
+                    <ion-badge color="medium">Solicitud enviada (Pendiente)</ion-badge>
                   </div>
                 </ng-container>
 
+                <!-- 2. Si ya está gestionada (Aceptada o Rechazada), ocultamos los botones y mostramos el estado con mensajes personalizados -->
                 <div *ngIf="!cargandoSolicitud[m.id] && solicitudesGestionadas[m.id]" class="mt-2">
-                  <div class="info-gestion-box" [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'aceptado' : 'rechazado'">
-                    <i [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'fi fi-rr-comment-alt-check' : 'fi fi-rr-cross-circle'"></i>
-                    <small>{{ solicitudesGestionadas[m.id] === 'aceptada' ? 'Has aceptado a este pasajero.' : 'Has rechazado esta solicitud.' }}</small>
+                  <div class="info-gestion-box"
+                    [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'aceptado' : 'rechazado'">
+                    <i
+                      [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'fi fi-rr-comment-alt-check' : 'fi fi-rr-cross-circle'"></i>
+
+                    <!-- Mensajes personalizados según el rol (Conductor vs Pasajero) -->
+                    <small>
+                      <ng-container [ngSwitch]="solicitudesGestionadas[m.id]">
+                        <ng-container *ngSwitchCase="'aceptada'">
+                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido aceptada.' : 'Has aceptado a este
+                          pasajero.' }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'rechazada'">
+                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido rechazada.' : 'Has rechazado esta
+                          solicitud.' }}
+                        </ng-container>
+                      </ng-container>
+                    </small>
                   </div>
                 </div>
               </div>
@@ -102,8 +121,8 @@
             <div class="info-meta" *ngIf="!m.texto.includes('SOLICITUD_UNIRSE_VIAJE:')">
               <span class="mensaje-fecha">{{ m.fecha | date:'HH:mm' }}</span>
               <i *ngIf="m.emisor_id === usuarioLogueadoId"
-                 [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
-                 class="read-icon-ui">
+                [ngClass]="m.leido ? 'fi fi-rr-check-double icon-leido' : 'fi fi-rr-check icon-pendiente'"
+                class="read-icon-ui">
               </i>
             </div>
           </div>
@@ -116,7 +135,7 @@
 <ion-footer class="ion-no-border">
   <div class="footer-limiter">
     <div class="input-wrapper d-flex align-items-end p-2 bg-light position-relative">
-      
+
       <button type="button" class="btn-emoji me-2" (click)="toggleEmojiPicker()">
         <i [ngClass]="{'fi fi-rr-surprise': mostrarEmojiPicker, 'fi fi-rr-smile': !mostrarEmojiPicker}"></i>
       </button>
@@ -127,16 +146,10 @@
         </div>
       </div>
 
-      <ion-textarea 
-        [(ngModel)]="texto" 
-        placeholder="Escribe un mensaje..." 
-        autoGrow="true" 
-        rows="1"
-        class="chat-textarea me-2"
-        (focus)="mostrarEmojiPicker = false"
-        (keydown.enter)="handleEnter($event)"> 
+      <ion-textarea [(ngModel)]="texto" placeholder="Escribe un mensaje..." autoGrow="true" rows="1"
+        class="chat-textarea me-2" (focus)="mostrarEmojiPicker = false" (keydown.enter)="handleEnter($event)">
       </ion-textarea>
-      
+
       <ion-button class="btn-send" (click)="enviar()" [disabled]="!texto.trim()">
         <ion-icon name="send" slot="icon-only"></ion-icon>
       </ion-button>

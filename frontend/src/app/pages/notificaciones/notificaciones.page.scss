@@ -1,5 +1,5 @@
 .notificacion-no-leida {
-  background-color: #ffefef; 
+  background-color: #ffefef;
   border-left: 5px solid #ef4444;
 }
 
@@ -10,14 +10,14 @@
 
 .badge-danger {
   border-left: 5px solid #ef4444;
-  background-color: #FFB3BA;
+  background-color: #ffb3ba;
   color: black;
   font-size: 0.75rem;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
 }
 
-.bg-danger{
+.bg-danger {
   border-radius: 35px !important;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .lista_notificaciones {
-  max-height: 600px; 
+  max-height: 600px;
   // width: 650px;
   margin: 0 auto;
   overflow-y: auto;
@@ -45,8 +45,8 @@
   color: #888;
 }
 
-.fab-ajustes{
-  --ion-color-primary: #F0D7B4;
+.fab-ajustes {
+  --ion-color-primary: #f0d7b4;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
@@ -60,23 +60,41 @@
 
 .notificacion-item {
   transition: all 0.6s ease;
-  
+
   &.resaltado {
-    background-color: #fff3cd !important;
-    border: 2px solid #ffc107;
-    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+    background: linear-gradient(135deg, #fff3cd, #ffecb5, #fff8e1, #f0d7b4) !important;
+    background-size: 300% 300% !important;
+    border: 2px solid #f0d7b4 !important;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5) !important;
     transform: translateY(-2px);
+    animation: brilloMovimiento 4s ease infinite !important;
+  }
+}
+
+.notificacion-no-leida:not(.resaltado) {
+  background-color: #ffefef !important; 
+  border-left: 5px solid #ef4444;
+}
+
+@keyframes brilloMovimiento {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
 .btn-link:hover {
-  color: #FFB3BA !important;
+  color: #ffb3ba !important;
 }
 
-.btn{
+.btn {
   border-radius: 35px !important;
 }
-
 
 .cuerpo-mensaje {
   display: -webkit-box;
@@ -96,9 +114,9 @@
 
 @media (min-width: 768px) {
   .notificacion_container {
-    width: 90%; 
+    width: 90%;
   }
-  
+
   .cuerpo-mensaje {
     -webkit-line-clamp: unset !important;
     line-clamp: unset !important;
