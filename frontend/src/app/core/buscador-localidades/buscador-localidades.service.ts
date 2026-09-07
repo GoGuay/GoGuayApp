@@ -1,15 +1,7 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { ControlLocalidad } from '../../models/control-localidad/control-localidad.model';
 import { GoogleServices } from '../google-services/google-services.service';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  of,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -63,19 +55,13 @@ export class BuscadorLocalidadesService {
           }
 
           if (texto.length >= 3) {
-            return this.googleServices
-              .obtenerLocalidad(texto)
-              .pipe(
-                tap(
-                  (resultados) => (this.cacheConsultas[termino] = resultados),
-                ),
-              );
+            return this.googleServices.obtenerLocalidad(texto).pipe(tap((resultados) => (this.cacheConsultas[termino] = resultados)));
           } else {
             control.sugerencias = [];
             return of([]);
           }
         }),
-        filter(() => control.estaActivo),
+        filter(() => control.estaActivo)
       )
       .subscribe((respuesta: any[]) => {
         control.sugerencias = respuesta;
@@ -85,23 +71,14 @@ export class BuscadorLocalidadesService {
   /**
    * Procesa la selección de una localidad de la lista.
    */
-  seleccionarLocalidad(
-    control: ControlLocalidad,
-    localidad: any,
-    elementRefInput?: ElementRef | HTMLInputElement,
-  ): void {
+  seleccionarLocalidad(control: ControlLocalidad, localidad: any, elementRefInput?: ElementRef | HTMLInputElement): void {
     control.buscandoSeleccion = true;
     control.ultimaLocalidadValida = localidad;
-    control.valorTexto = localidad.descripcion
-      ? localidad.descripcion.split(',')[0].trim()
-      : '';
+    control.valorTexto = localidad.descripcion ? localidad.descripcion.split(',')[0].trim() : '';
     control.sugerencias = [];
     control.indiceActivo = -1;
     if (elementRefInput) {
-      const el =
-        'nativeElement' in elementRefInput
-          ? elementRefInput.nativeElement
-          : elementRefInput;
+      const el = 'nativeElement' in elementRefInput ? elementRefInput.nativeElement : elementRefInput;
       el.focus();
     }
     setTimeout(() => {
@@ -112,10 +89,7 @@ export class BuscadorLocalidadesService {
   /**
    * Valida si el texto introducido coincide con una opción válida seleccionada.
    */
-  validarSeleccion(
-    control: ControlLocalidad,
-    elementRefInput?: ElementRef | HTMLInputElement,
-  ): void {
+  validarSeleccion(control: ControlLocalidad, elementRefInput?: ElementRef | HTMLInputElement): void {
     setTimeout(() => {
       if (control.buscandoSeleccion) return;
       const textoActual = control.valorTexto.trim();
@@ -126,9 +100,7 @@ export class BuscadorLocalidadesService {
         return;
       }
 
-      const textoValido = control.ultimaLocalidadValida?.descripcion
-        ?.split(',')[0]
-        ?.trim();
+      const textoValido = control.ultimaLocalidadValida?.descripcion?.split(',')[0]?.trim();
 
       if (!control.ultimaLocalidadValida || textoActual !== textoValido) {
         control.valorTexto = '';
@@ -147,20 +119,19 @@ export class BuscadorLocalidadesService {
     }, 10);
   }
 
-  limpiarSugerencias(
-    control: ControlLocalidad,
-    elementRefInput?: ElementRef | HTMLInputElement,
-    devolverFoco: boolean = false,
-  ): void {
+  limpiarSugerencias(control: ControlLocalidad, elementRefInput?: ElementRef | HTMLInputElement, devolverFoco: boolean = false): void {
     control.sugerencias = [];
     control.indiceActivo = -1;
     control.buscador$.next('');
     if (devolverFoco && elementRefInput) {
       const el =
-        'nativeElement' in elementRefInput
-          ? elementRefInput.nativeElement
+        typeof elementRefInput === 'object' && elementRefInput !== null && 'nativeElement' in elementRefInput
+          ? (elementRefInput as ElementRef).nativeElement
           : elementRefInput;
-      el.focus();
+
+      if (el && typeof el.focus === 'function') {
+        el.focus();
+      }
     }
   }
 
@@ -178,12 +149,7 @@ export class BuscadorLocalidadesService {
    * Si el evento es tecla arriba:
    *  -
    */
-  manejarNavegacionTeclado(
-    event: KeyboardEvent,
-    control: ControlLocalidad,
-    selectorCSSClase: string,
-    elementRefInput?: ElementRef,
-  ): void {
+  manejarNavegacionTeclado(event: KeyboardEvent, control: ControlLocalidad, selectorCSSClase: string, elementRefInput?: ElementRef): void {
     if (control.sugerencias.length === 0) return;
 
     if (event.key === 'ArrowDown') {
@@ -214,9 +180,9 @@ export class BuscadorLocalidadesService {
     }
   }
 
-  obtenerSugerencias(control: ControlLocalidad, evento: Event): void {
-    const contenidoInput = (evento.target as HTMLInputElement).value;
-    control.valorTexto = contenidoInput;
-    control.buscador$.next(contenidoInput);
+  obtenerSugerencias(control: ControlLocalidad, evento: Event | string): void {
+    const texto = typeof evento === 'string' ? evento : (evento.target as HTMLInputElement).value;
+    control.valorTexto = texto;
+    control.buscador$.next(texto);
   }
 }

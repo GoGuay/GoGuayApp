@@ -37,8 +37,8 @@
     class="form-control text-start pe-5"
     [value]="valorTexto"
     (input)="filtrarOpciones($event)"
-    (focus)="abrirSelector()"
-    (blur)="onTouched()"
+    (blur)="onInputBlur()"
+    (click)="manejarClickInput()"
     (keydown)="manejarNavegacionTeclado($event)"
     autocomplete="off"
     spellcheck="false"
@@ -51,6 +51,7 @@
   />
 
   <i
+    *ngIf="mostrarFlechaSelector"
     class="bi bi-chevron-down position-absolute text-muted flecha_selector"
     aria-hidden="true"
   ></i>

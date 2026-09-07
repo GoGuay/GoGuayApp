@@ -11,84 +11,17 @@
         <div class="contenido_formulario">
           <label class="text-start">Origen:</label>
           <div class="input-container mb-4">
-            <img
-              src="../../../../assets/sistema/marcador.png"
-              class="marcador-icon input-icon"
-            />
-            <input
-              #inputOrigen
-              id="input-origen"
-              type="text"
-              class="input-viaje form-control"
+            <app-selector-general
+              idUnico="input-origen"
+              placeholderKey="BUSCADOR.PLACEHOLDER_LOCALIDAD"
+              [opciones]="origenCtrl.sugerencias"
               [(ngModel)]="origenCtrl.valorTexto"
-              (blur)="
-                  origenCtrl.estaActivo = false;
-                  buscadorLocalidadesService.validarSeleccion(
-                    origenCtrl,
-                    inputOrigen
-                  )
-                "
-              (focus)="origenCtrl.estaActivo = true"
-              (input)="
-                  buscadorLocalidadesService.obtenerSugerencias(
-                    origenCtrl,
-                    $event
-                  )
-                "
-              (keydown)="manejarNavegacionTeclado($event, 'origen')"
-              autocomplete="off"
-              spellcheck="false"
-              [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
-              [attr.aria-controls]="
-                  origenCtrl.sugerencias.length > 0
-                    ? 'lista-origen-resultados'
-                    : null
-                "
-              [attr.aria-activedescendant]="
-                  origenCtrl.indiceActivo >= 0
-                    ? 'opt-orig-' + origenCtrl.indiceActivo
-                    : null
-                "
-            />
-            <div
-              *ngIf="cargandoOrigen"
-              class="spinner-container spinner-input-inline"
-            >
-              <app-spinner></app-spinner>
-            </div>
-            <ul
-              id="lista-origen-resultados"
-              *ngIf="origenCtrl.sugerencias.length > 0"
-              class="list-group lista_sugerencias"
-              role="listbox"
-              aria-live="polite"
-            >
-              <li
-                [id]="'opt-orig-' + i"
-                *ngFor="
-                    let localidad of origenCtrl.sugerencias;
-                    let i = index
-                  "
-                class="list-group-item"
-                (mousedown)="
-                    $event.preventDefault();
-                   buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)
-                  "
-                [class.active]="i === origenCtrl.indiceActivo"
-                role="option"
-                tabindex="-1"
-                (click)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
-                (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
-                (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
-              >
-                {{ localidad.descripcion }}
-              </li>
-            </ul>
+              [soloLectura]="false"
+              [mostrarFlechaSelector]="false"
+              (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event)"
+              (alAbrir)="origenCtrl.estaActivo = true"
+              (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"
+            ></app-selector-general>
           </div>
 
           <div class="input-container">
@@ -106,134 +39,32 @@
 
           <label class="text-start">Destino:</label>
           <div class="input-container">
-            <img
-              src="../../../../assets/sistema/viaje-en-coche.png"
-              class="marcador-icon input-icon"
-            />
-            <input
-              #inputDestino
-              id="input-destino"
-              type="text"
-              class="input-viaje form-control"
+            <app-selector-general
+              idUnico="input-destino"
+              placeholderKey="BUSCADOR.PLACEHOLDER_LOCALIDAD"
+              [opciones]="destinoCtrl.sugerencias"
               [(ngModel)]="destinoCtrl.valorTexto"
-              (blur)="
-                  destinoCtrl.estaActivo = false;
-                  buscadorLocalidadesService.validarSeleccion(
-                    destinoCtrl,
-                    inputDestino
-                  )
-                "
-              (focus)="destinoCtrl.estaActivo = true"
-              (input)="
-                  buscadorLocalidadesService.obtenerSugerencias(
-                    destinoCtrl,
-                    $event
-                  )
-                "
-              (keydown)="manejarNavegacionTeclado($event, 'destino')"
-              autocomplete="off"
-              spellcheck="false"
-              [placeholder]="'BUSCADOR.PLACEHOLDER_LOCALIDAD' | translate"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-describedby="instrucciones-busqueda"
-              [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
-              [attr.aria-controls]="
-                  destinoCtrl.sugerencias.length > 0
-                    ? 'lista-destino-resultados'
-                    : null
-                "
-              [attr.aria-activedescendant]="
-                  indiceActivoDestino >= 0
-                    ? 'opt-dest-' + indiceActivoDestino
-                    : null
-                "
-            />
-            <!-- Spinner de carga -->
-            <div
-              *ngIf="cargandoDestino"
-              class="spinner-container spinner-input-inline"
-            >
-              <app-spinner></app-spinner>
-            </div>
-
-            <ul
-              *ngIf="destinoCtrl.sugerencias.length > 0"
-              class="list-group lista_sugerencias"
-              id="lista-destino-resultados"
-              role="listbox"
-              aria-live="polite"
-            >
-              <li
-                [id]="'opt-dest-' + i"
-                *ngFor="
-                    let localidad of destinoCtrl.sugerencias;
-                    let i = index
-                  "
-                class="list-group-item"
-                [class.active]="i === indiceActivoDestino"
-                (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
-                (mousedown)="
-                    $event.preventDefault();
-                    buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)
-                  "
-                role="option"
-                tabindex="-1"
-                (click)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
-                (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
-              >
-                {{ localidad.descripcion }}
-              </li>
-            </ul>
+              [soloLectura]="false"
+              [mostrarFlechaSelector]="false"
+              (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event)"
+              (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, $event)"
+              (alAbrir)="destinoCtrl.estaActivo = true"
+            ></app-selector-general>
           </div>
 
           <!-- SELECTOR DE PLAZAS  -->
           <label class="text-start mt-4">Plazas disponibles:</label>
-          <div
-            class="select-container custom-dropdown mb-3"
-            (click)="toggleDropdown()"
-            [class.open]="isOpen"
-          >
-            <img
-              src="../../../../assets/sistema/usuarios-alt.png"
-              class="select-icon"
-              alt="icono usuarios"
-            />
-
-            <div class="selected-value">
-              {{ plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
-            </div>
-
-            <ul
-              class="custom-options"
-              *ngIf="isOpen"
-            >
-              <li
-                (click)="selectOption('1')"
-                [class.selected]="plazas === '1'"
-              >
-                1
-              </li>
-              <li
-                (click)="selectOption('2')"
-                [class.selected]="plazas === '2'"
-              >
-                2
-              </li>
-              <li
-                (click)="selectOption('3')"
-                [class.selected]="plazas === '3'"
-              >
-                3
-              </li>
-              <li
-                (click)="selectOption('4')"
-                [class.selected]="plazas === '4'"
-              >
-                4
-              </li>
-            </ul>
+          <div class="input-container mb-3">
+            <app-selector-general
+              idUnico="input-plazas"
+              placeholderKey="NUEVOVIAJE.PLACE_NUM_PLAZAS"
+              [opciones]="opcionesPlazas"
+              [(ngModel)]="plazas"
+              [valor]="plazas"
+              [soloLectura]="true"
+              [mostrarFlechaSelector]="true"
+              (seleccionCambiada)="seleccionarPlazas($event)"
+            ></app-selector-general>
           </div>
 
           <div

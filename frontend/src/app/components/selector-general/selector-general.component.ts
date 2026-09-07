@@ -43,9 +43,12 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   @Input() opciones: any[] = [];
   @Input() valor: any = '';
   @Input() ariaLabel: string = '';
+  @Input() mostrarFlechaSelector: boolean = true;
+  @Input() iconoPath: string = '';
 
   @Output() seleccionCambiada = new EventEmitter<any>(); //para usar sin formulario reactivos
-  @Output() alAbrir = new EventEmitter<void>(); // NUEVO: Para avisar al padre si es necesario
+  @Output() alAbrir = new EventEmitter<void>();
+  @Output() textoCambiado = new EventEmitter<string>();
 
   sugerencias: any[] = [];
   estaActivo: boolean = false;
@@ -86,19 +89,26 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       this.writeValue(this.valor);
     }
 
-    if (changes['opciones'] && this.opciones.length > 0) {
-      this.actualizarTextoVisual();
+    if (changes['opciones'] && this.opciones?.length > 0) {
+      if (!this.estaActivo) {
+        this.actualizarTextoVisual();
+      } else {
+        this.sugerencias = [...this.opciones];
+      }
     }
   }
 
   writeValue(value: any): void {
     console.log('📥 [HIJO writeValue] Recibido del padre:', value);
+    if (value === this.valorTexto) {
+      return;
+    }
     if (value !== undefined && value !== null && value !== '') {
       this.valorGuardadoActual = value;
+      this.valorTexto = value;
       this.actualizarTextoVisual();
     } else {
       this.valorGuardadoActual = null;
-      this.valorTexto = '';
       this.cdr.detectChanges();
     }
   }
@@ -125,7 +135,25 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.indiceActivo = -1;
 
     if (this.inputRef && this.inputRef.nativeElement) {
-      this.inputRef.nativeElement.blur();
+      setTimeout(() => {
+        this.enfocarSiguienteElemento(this.inputRef.nativeElement);
+      }, 50);
+    }
+  }
+
+  private enfocarSiguienteElemento(elementoActual: HTMLElement) {
+    const focusableElements = Array.from(
+      document.querySelectorAll(
+        'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]'
+      )
+    ) as HTMLElement[];
+
+    const index = focusableElements.indexOf(elementoActual);
+
+    if (index > -1 && index + 1 < focusableElements.length) {
+      focusableElements[index + 1].focus();
+    } else {
+      elementoActual.blur();
     }
   }
 
@@ -134,8 +162,10 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.valorTexto = texto;
     this.onChange(texto);
     this.seleccionCambiada.emit(texto);
+    this.textoCambiado.emit(texto);
     this.estaActivo = true;
     this.indiceActivo = -1;
+    this.alAbrir.emit();
 
     if (!texto.trim()) {
       this.sugerencias = [...this.opciones];
@@ -147,10 +177,18 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   manejarNavegacionTeclado(event: KeyboardEvent) {
+    if (event.key === 'Tab') {
+      // Permitir que el Tab navegue libremente cerrando las sugerencias
+      this.sugerencias = [];
+      this.estaActivo = false;
+      return;
+    }
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      if (this.sugerencias.length > 0) {
-        this.estaActivo = true;
+      if (!this.estaActivo) {
+        this.abrirSelector();
+      } else if (this.sugerencias.length > 0) {
         this.indiceActivo = (this.indiceActivo + 1) % this.sugerencias.length;
         this.asegurarVisibilidadScroll();
       }
@@ -162,12 +200,33 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       }
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      if (this.indiceActivo >= 0 && this.sugerencias[this.indiceActivo]) {
+      if (this.estaActivo && this.indiceActivo >= 0 && this.sugerencias[this.indiceActivo]) {
         this.seleccionarOpcion(this.sugerencias[this.indiceActivo]);
       }
     } else if (event.key === 'Escape') {
       this.sugerencias = [];
       this.estaActivo = false;
+    }
+  }
+
+  onInputBlur() {
+    setTimeout(() => {
+      this.estaActivo = false;
+      this.sugerencias = [];
+      this.indiceActivo = -1;
+      this.cdr.detectChanges();
+    }, 100);
+    this.onTouched();
+  }
+
+  manejarClickInput() {
+    if (this.soloLectura) {
+      if (this.estaActivo) {
+        this.estaActivo = false;
+        this.sugerencias = [];
+      } else {
+        this.abrirSelector();
+      }
     }
   }
 
