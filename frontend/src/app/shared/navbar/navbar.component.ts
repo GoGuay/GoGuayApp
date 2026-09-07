@@ -71,7 +71,7 @@ export class NavbarComponent implements OnInit {
   numNotificacionesMensajes: number = 0;
   notificaciones: any[] = [];
   notificaciones_mensajes: any[] = [];
-  selectedLanguage: string = this.languageService.getLanguage() || 'es';
+  selectedLanguage: string = 'es';
 
   private pollingSub!: any;
 
@@ -88,7 +88,7 @@ export class NavbarComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
-
+    this.selectedLanguage = this.languageService.getLanguage() || 'es';
   }
 
   async ngOnInit() {

@@ -67,7 +67,7 @@
                     <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"
                       src="../../../assets/user/logOn.gif" referrerpolicy="no-referrer" />
                     <div class="caja_imagen_perfil" *ngIf="usuario?.fotoPerfil">
-                      <img [src]="usuario.fotoPerfil"
+                      <img [src]="usuario?.fotoPerfil"
                         alt="Foto de perfil" referrerpolicy="no-referrer" />
                     </div>
                     <mat-icon class="flecha-icono ms-1 flecha-animada"
@@ -180,7 +180,7 @@
                   <img class="caja-icono tamano-icono" *ngIf="!usuario?.fotoPerfil"
                     src="../../../assets/user/logOn.gif" referrerpolicy="no-referrer" />
                   <div class="caja_imagen_perfil_mobile" *ngIf="usuario?.fotoPerfil">
-                    <img [src]="usuario.fotoPerfil" alt="Perfil" referrerpolicy="no-referrer" />
+                    <img [src]="usuario?.fotoPerfil" alt="Perfil" referrerpolicy="no-referrer" />
                   </div>
                   <mat-icon class="flecha-icono ms-1 flecha-animada"
                     [class.rotada]="isDropdownOpen">expand_more</mat-icon>
