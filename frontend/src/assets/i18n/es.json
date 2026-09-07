@@ -44,6 +44,14 @@
     "PERLA": "Perla",
     "OTRO": "Otro"
   },
+  "PLACEHOLDER": {
+    "SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
+    "DONDE_COMIENZA": "¿Dónde comienza el viaje?",
+    "HASTA_DONDE": "¿Hasta donde es el viaje?",
+    "NUM_PLAZAS": "Número de plazas",
+    "BUSCA_LOCALIDAD": "Busca una localidad",
+    "EMAIL_EJEMPLO": "email@ejemplo.com"
+  },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -73,7 +81,6 @@
       "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
       "LABEL_EDAD": "Edad",
       "LABEL_SOBRETI": "Sobre ti",
-      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
       "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
       "CARACTERES": "Caracteres usados",
       "SPINNER_TRADUCIENDO": "Traduciendo..."
@@ -116,6 +123,24 @@
     "ENVIAR_CORREO": "Enviar correo electrónico de contacto"
   },
 
+  "_NuevoViaje": "/nuevo-viaje",
+  "NUEVOVIAJE": {
+    "NUEVO_VIAJE": {
+      "ORIGEN": "Origen",
+      "BOTÓN_MI_UBICACION": "Mi ubicación",
+      "DESTINO": "Destino",
+      "PLAZAS_DISPONIBLES": "Plazas disponibles"
+    },
+
+    "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
+    "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
+    "AYUDA_TOOLTIP": "Ayuda para publicar un viaje",
+    "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores.",
+    "TITULO_MODAL_AYUDA": "Ayuda",
+    "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
+    "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
+  },
+
   "BOTON": {
     "GUARDAR": "Guardar",
     "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
@@ -136,7 +161,7 @@
     "TITULO": "¿Estás buscando un viaje?",
     "BUSCAR_VIAJE_DESDE": "Desde...",
     "BUSCAR_VIAJE_HASTA": "Hasta...",
-    "PLACEHOLDER_LOCALIDAD": "Busca una localidad",
+
     "BUSCAR_VIAJE_IDA": "¿Cuando vas?",
     "HOY": "Hoy",
     "MAÑANA": "Mañana",
@@ -240,7 +265,6 @@
       "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
       "CORREO": {
         "LABEL": "Correo electrónico",
-        "PLACEHOLDER": "email@ejemplo.com",
         "AYUDA": "Campo para introducir tu correo electrónico. Debe incluir el símbolo '@' y un dominio válido.",
         "OBLIGATORIO": "El correo es obligatorio.",
         "FORMATO": "El formato del correo no es correcto.",
@@ -355,7 +379,6 @@
     "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
     "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
     "NUMERO_DOCUMENTO": "Número de documento sin espacios",
-    "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
     "BOTON_VERIFICAR_IDENTIDAD": "Confirmar documento",
     "VAVANZADA": {
       "TITULO": "Verificación avanzada",
@@ -495,19 +518,7 @@
     "PRECIO_DESC": "Precio (Descendente)",
     "RESULTADOS": "Resultados encontrados"
   },
-  "_NuevoViaje": "/nuevo-viaje",
-  "NUEVOVIAJE": {
-    "PLACE_DONDE_COMIENZA": "¿Dónde comienza el viaje?",
-    "PLACE_HASTA_DONDE": "¿Hasta donde es el viaje?",
-    "PLACE_NUM_PLAZAS": "Número de plazas",
-    "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
-    "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
-    "AYUDA_TOOLTIP": "Ayuda para publicar un viaje",
-    "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores.",
-    "TITULO_MODAL_AYUDA": "Ayuda",
-    "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
-    "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
-  },
+
   "_CentroDeAyuda": " Centro de ayuda",
   "CENTRODEAYUDA": {
     "TITULO": "Centro de ayuda",

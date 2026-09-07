@@ -29,14 +29,14 @@
     left: 0;
     width: 100%;
     height: 100%;
+    border-radius: 35px !important;
+    overflow: hidden !important;
 
-    // Opcional: si en espacios pequeños quieres que el spinner sea más pequeño
     .spinner {
       width: 35px;
       height: 35px;
     }
 
-    // Opcional: ajustar el tamaño del texto si lo consideras necesario
     p {
       font-size: 0.85rem;
     }
