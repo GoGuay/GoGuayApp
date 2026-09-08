@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit 
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { IonicModule, Platform } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { LOCALE_ID } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -51,7 +51,7 @@ export class PrimerPasoComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
   fecha_seleccionada: string | null = null;
-  hora_seleccionada: string | null = null;
+  hora_seleccionada: Date | null = null;
   horaMinimaPermitida: Date | null = null;
 
   origen: string = '';
@@ -60,6 +60,7 @@ export class PrimerPasoComponent implements OnInit {
   hora_salida: string = '';
   plazas: string = '';
   cocheSeleccionado: any = null;
+  horaAlarma = new FormControl('07:00 AM');
 
   isDesktop: boolean = true;
 
@@ -117,23 +118,15 @@ export class PrimerPasoComponent implements OnInit {
 
     this.obtenerVehiculos();
 
+    // fecha actual
     const date = new Date();
     this.fecha_seleccionada = date.toISOString();
 
     this.calcularHoraMinima();
 
-    const fechaConMargen = new Date(date.getTime() + 65 * 60 * 1000);
-
-    this.hora_seleccionada = fechaConMargen.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    this.fecha_seleccionada = date.toISOString();
-    this.hora_seleccionada = date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    // 2. Establecemos la hora con un margen de 60 minutos en el futuro
+    const fechaConMargen = new Date(date.getTime() + 60 * 60 * 1000);
+    this.hora_seleccionada = new Date(date.getTime() + 60 * 60 * 1000);
 
     const viajeData = this.travelService.getViajeData();
     console.log('[PrimerPaso] Datos del viaje obtenidos al iniciar:', viajeData);
@@ -156,6 +149,10 @@ export class PrimerPasoComponent implements OnInit {
 
       this.reservaAutomatica = viajeData.reserva_automatica ?? false;
       this.calcularHoraMinima();
+    }
+
+    if (!this.hora_seleccionada) {
+      this.establecerHoraSegunFecha();
     }
 
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
@@ -320,7 +317,11 @@ export class PrimerPasoComponent implements OnInit {
    * @returns Devuelve la hora seleccionada.
    */
   getTime(): string {
-    return this.hora_seleccionada ? this.hora_seleccionada : 'Ninguna hora seleccionada.';
+    if (!this.hora_seleccionada || isNaN(new Date(this.hora_seleccionada).getTime())) {
+      return 'Ninguna hora seleccionada.';
+    }
+    const fecha = new Date(this.hora_seleccionada);
+    return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   }
 
   /**
@@ -330,8 +331,8 @@ export class PrimerPasoComponent implements OnInit {
   onDateChange(event: any) {
     this.fecha_seleccionada = event.detail.value;
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
-
     this.calcularHoraMinima();
+    this.establecerHoraSegunFecha();
 
     if (this.hora_seleccionada) {
       this.validarHoraSeleccionadaConContexto();
@@ -363,7 +364,7 @@ export class PrimerPasoComponent implements OnInit {
 
     if (isNaN(timeValue.getTime())) {
       this.invalid_date = true;
-      this.hora_seleccionada = '';
+      this.hora_seleccionada = null;
       this.guardaDatosDelViajeEnServicio('hora_salida', '');
       return;
     }
@@ -377,7 +378,6 @@ export class PrimerPasoComponent implements OnInit {
 
       if (fechaViaje === fechaHoy) {
         const ahora = new Date();
-
         const horaPropuesta = new Date();
         horaPropuesta.setHours(horasSeleccionadas, minutosSeleccionados, 0, 0);
 
@@ -385,19 +385,45 @@ export class PrimerPasoComponent implements OnInit {
 
         if (horaPropuesta < limiteMinimo) {
           this.invalid_date = true;
-          this.hora_seleccionada = '';
+          this.hora_seleccionada = null;
           this.guardaDatosDelViajeEnServicio('hora_salida', '');
           return;
         }
       }
     }
-
     this.invalid_date = false;
     const horasString = String(horasSeleccionadas).padStart(2, '0');
     const minutosString = String(minutosSeleccionados).padStart(2, '0');
 
-    this.hora_seleccionada = `${horasString}:${minutosString}`;
-    this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
+    const nuevaHoraDate = new Date();
+    nuevaHoraDate.setHours(Number(horasString), Number(minutosString), 0, 0);
+    this.hora_seleccionada = nuevaHoraDate;
+    const horaFormateada = `${horasString}:${minutosString}`;
+    this.guardaDatosDelViajeEnServicio('hora_salida', horaFormateada);
+  }
+
+  /**
+   * Aplica las 08:00 AM si la fecha es futura, o el margen de 60+ minutos si la fecha es hoy.
+   */
+  establecerHoraSegunFecha() {
+    if (!this.fecha_seleccionada) return;
+
+    const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
+    const fechaHoy = new Date().toDateString();
+
+    const horaBase = new Date();
+
+    if (fechaViaje === fechaHoy) {
+      horaBase.setTime(horaBase.getTime() + 60 * 60 * 1000);
+    } else {
+      horaBase.setHours(8, 0, 0, 0);
+    }
+    this.hora_seleccionada = horaBase;
+    this.invalid_date = false;
+
+    const horasStr = String(horaBase.getHours()).padStart(2, '0');
+    const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
+    this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
   }
 
   /**
@@ -409,16 +435,20 @@ export class PrimerPasoComponent implements OnInit {
       return;
     }
 
-    const [horas, minutos] = this.hora_seleccionada.split(':').map(Number);
+    const horas = this.hora_seleccionada.getHours();
+    const minutos = this.hora_seleccionada.getMinutes();
     const propuesta = new Date();
     propuesta.setHours(horas, minutos, 0, 0);
 
     if (propuesta < this.horaMinimaPermitida) {
       this.invalid_date = true;
-      this.hora_seleccionada = '';
+      this.hora_seleccionada = null;
       this.guardaDatosDelViajeEnServicio('hora_salida', '');
     } else {
       this.invalid_date = false;
+      const horasStr = String(horas).padStart(2, '0');
+      const minutosStr = String(minutos).padStart(2, '0');
+      const horaFormateada = `${horasStr}:${minutosStr}`;
       this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
     }
   }

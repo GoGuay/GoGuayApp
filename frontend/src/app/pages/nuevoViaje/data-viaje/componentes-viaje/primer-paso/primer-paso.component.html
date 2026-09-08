@@ -5,7 +5,7 @@
       size="12"
       size-xl="6"
     >
-      <h1 class="d-flex justify-content-center section-title">ELIGE LA FECHA DEL VIAJE</h1>
+      <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.ELIGE_FECHA' | translate }}</h1>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
           <ion-datetime
@@ -19,13 +19,13 @@
           ></ion-datetime>
         </div>
         <p class="mt-3 text-center date-feedback">
-          Fecha seleccionada:
+          {{ 'NUEVOVIAJE.PRIMER_PASO.FECHA_SELECCIONADA' | translate }}
           <strong>{{ getFormattedDate() }}</strong>
         </p>
       </div>
 
       <div class="contenedor_seccion mt-4">
-        <h1 class="d-flex justify-content-center section-title">HORA DE SALIDA</h1>
+        <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SALIDA' | translate }}</h1>
         <div class="contenedor_hora">
           <div
             *ngIf="isDesktop"
@@ -35,7 +35,7 @@
               appearance="fill"
               class="custom-time-field w-100"
             >
-              <mat-label>Selecciona la hora</mat-label>
+              <mat-label>{{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_HORA' | translate }}</mat-label>
               <input
                 matInput
                 [(ngModel)]="hora_seleccionada"
