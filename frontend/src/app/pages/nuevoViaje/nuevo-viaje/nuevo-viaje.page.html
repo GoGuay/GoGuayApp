@@ -12,7 +12,12 @@
     <div class="imagen-fondo">
       <div class="formulario-viaje">
         <div class="contenido_formulario">
-          <label class="text-start">{{'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate}}</label>
+          <label
+            id="label-origen"
+            class="text-start"
+          >
+            {{'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate}}
+          </label>
           <div class="input-container mb-4">
             <app-selector-general
               idUnico="input-origen"
@@ -41,7 +46,7 @@
               type="button"
               class="btn btn_bg mb-3"
               (click)="buscarUbicacion()"
-              aria-label="Obtener mi ubicación actual automáticamente"
+              [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_BOTON_MI_UBICACION' | translate"
             >
               <span>
                 <i
@@ -53,7 +58,12 @@
             </button>
           </div>
 
-          <label class="text-start">Destino:</label>
+          <label
+            id="label-destino"
+            class="text-start"
+          >
+            Destino:
+          </label>
           <div class="input-container">
             <app-selector-general
               idUnico="input-destino"
@@ -71,7 +81,12 @@
           </div>
 
           <!-- SELECTOR DE PLAZAS  -->
-          <label class="text-start mt-4">Plazas disponibles:</label>
+          <label
+            id="label-plazas"
+            class="text-start mt-4"
+          >
+            {{'NUEVOVIAJE.NUEVO_VIAJE.PLAZAS_DISPONIBLES' | translate}}
+          </label>
           <div class="input-container mb-3">
             <app-selector-general
               idUnico="input-plazas"
@@ -91,14 +106,14 @@
             class="alert"
             *ngIf="!userLoggedIn"
             role="region"
-            aria-label="Aviso de inicio de sesión"
+            [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_AVISO_INICIOSESION' | translate"
           >
             <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
             <div class="d-flex justify-content-center">
               <button
                 type="button"
                 class="help_btn d-flex justify-content-center"
-                aria-label="Ayuda para iniciar sesión o registrarse"
+                [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_AYUDA_INICIO_REGISTRO' | translate"
                 (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
               >
                 <img
@@ -111,14 +126,13 @@
             </div>
           </div>
         </div>
+        <!-- BOTÓN PUBLICAR  -->
         <button
           type="button"
           class="btn-publicar ion-activatable ripple-parent circle"
-          title="{{ 'BOTON.PUBLICAR_VIAJE' | translate }}"
           (click)="goTo()"
-          matTooltip="{{'NUEVOVIAJE.BOTON_PUBLICAR_TOOLTIP' | translate}}"
         >
-          {{ 'BOTON.PUBLICAR_VIAJE' | translate }}
+          {{'NUEVOVIAJE.NUEVO_VIAJE.BOTÓN_PUBLICA_TU_VIAJE' | translate}}
           <ion-ripple-effect></ion-ripple-effect>
         </button>
       </div>

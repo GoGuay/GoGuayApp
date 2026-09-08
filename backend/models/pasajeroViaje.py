@@ -16,17 +16,17 @@ class PasajeroViaje(db.Model):
 
     recordatorio_inicio_enviado = db.Column(db.Boolean, default=False)
     
-    viaje = db.relationship('Viaje', backref='viaje_pasajero', lazy=True) 
-    usuario = db.relationship('Usuario', lazy=True)
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "usuario_id": self.usuario_id,
-            "viaje_id": self.viaje_id,
-            "fecha_confirmacion_reserva": self.fecha_confirmacion_reserva,
-            "estado": self.estado,
-            "fecha_solicitud": self.fecha_solicitud,
-            "recordatorio_inicio_enviado": self.recordatorio_inicio_enviado,
-            "paypal_auth_id": self.paypal_auth_id
-        }
+viaje = db.relationship('Viaje', overlaps="pasajeros,viaje_pasajero", backref='pasajeros_detallados')
+usuario = db.relationship('Usuario', overlaps="reservas_realizadas,pasajero_rel", backref='pasor_viajes_rel', lazy=True)
+def serialize(self):
+        
+    return {
+        "id": self.id,
+        "usuario_id": self.usuario_id,
+        "viaje_id": self.viaje_id,
+        "fecha_confirmacion_reserva": self.fecha_confirmacion_reserva,
+        "estado": self.estado,
+        "fecha_solicitud": self.fecha_solicitud,
+        "recordatorio_inicio_enviado": self.recordatorio_inicio_enviado,
+        "paypal_auth_id": self.paypal_auth_id
+    }

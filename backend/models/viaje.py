@@ -24,7 +24,10 @@ class Viaje(db.Model):
     reserva_automatica = db.Column(db.Boolean, nullable=False, default=False)
 
     pasajeros = db.relationship('PasajeroViaje', backref='viaje_pasajero', lazy=True) 
-    usuario = db.relationship('Usuario', backref='viajes')
+    # usuario = db.relationship('Usuario', backref='viajes')
+    usuario = db.relationship('Usuario', foreign_keys=[usuario_id], overlaps="creador,viajes_publicados,viajes", backref='viajes_como_pasajero_o_relacion')
+
+    pasajeros = db.relationship('PasajeroViaje', foreign_keys='PasajeroViaje.viaje_id', overlaps="viaje,viaje_pasajero", backref='viaje_relacionado', lazy=True)
 
     historial_cambios = db.relationship('HistorialCambiosViaje', backref='viaje', lazy=True, cascade="all, delete-orphan")
 
