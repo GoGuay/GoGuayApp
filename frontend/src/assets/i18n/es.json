@@ -128,14 +128,19 @@
     "NUEVO_VIAJE": {
       "ORIGEN": "Origen",
       "BOTÓN_MI_UBICACION": "Mi ubicación",
+      "ARIALABEL_BOTON_MI_UBICACION": "Obtener mi ubicación actual automáticamente",
       "DESTINO": "Destino",
-      "PLAZAS_DISPONIBLES": "Plazas disponibles"
+      "PLAZAS_DISPONIBLES": "Plazas disponibles",
+      "ARIALABEL_AVISO_INICIOSESION": "Aviso de inicio de sesión",
+      "ARIALABEL_AYUDA_INICIO_REGISTRO": "Ayuda para iniciar sesión o registrarse",
+      "BOTÓN_PUBLICA_TU_VIAJE": "Publica tu viaje",
+      "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores."
     },
 
     "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
     "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
     "AYUDA_TOOLTIP": "Ayuda para publicar un viaje",
-    "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores.",
+
     "TITULO_MODAL_AYUDA": "Ayuda",
     "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
     "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
@@ -153,7 +158,6 @@
     "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
     "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
     "CONSULTA_AQUI": "Consulta aquí",
-    "PUBLICAR_VIAJE": "Publica tu viaje",
     "CENTROAYUDA": "Consulta nuestro centro de ayuda"
   },
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
