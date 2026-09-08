@@ -136,6 +136,12 @@
       "BOTÓN_PUBLICA_TU_VIAJE": "Publica tu viaje",
       "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores."
     },
+    "PRIMER_PASO": {
+      "ELIGE_FECHA": "Elige la fecha del viaje",
+      "FECHA_SELECCIONADA": "Fecha seleccionada: ",
+      "HORA_SALIDA": "Hora de salida",
+      "SELECCIONA_HORA": "Selecciona la hora"
+    },
 
     "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
     "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
