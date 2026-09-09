@@ -63,11 +63,8 @@ export class PrimerPasoComponent implements OnInit {
   horaAlarma = new FormControl('07:00 AM');
 
   isDesktop: boolean = true;
-
   invalid_date: boolean = false;
-
   reservaAutomatica: boolean = false;
-
   hoy: string = new Date().toISOString();
 
   toggleDropdown() {
@@ -80,7 +77,6 @@ export class PrimerPasoComponent implements OnInit {
     this.guardaDatosDelViajeEnServicio('plazas', valor);
   }
 
-  // Opcional: Cerrar si el usuario hace click fuera
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
@@ -115,28 +111,51 @@ export class PrimerPasoComponent implements OnInit {
     }
 
     this.checkScreenSize();
-
     this.obtenerVehiculos();
-
-    // fecha actual
-    const date = new Date();
-    this.fecha_seleccionada = date.toISOString();
-
-    this.calcularHoraMinima();
-
-    // 2. Establecemos la hora con un margen de 60 minutos en el futuro
-    const fechaConMargen = new Date(date.getTime() + 60 * 60 * 1000);
-    this.hora_seleccionada = new Date(date.getTime() + 60 * 60 * 1000);
 
     const viajeData = this.travelService.getViajeData();
     console.log('[PrimerPaso] Datos del viaje obtenidos al iniciar:', viajeData);
-    console.log('[PrimerPaso] Coche seleccionado actualmente:', this.cocheSeleccionado);
 
-    if (viajeData) {
-      this.sumarUnDiaAFecha(viajeData.fecha_salida);
-      this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
+    if (viajeData && viajeData.fecha_salida) {
+      this.fecha_seleccionada = viajeData.fecha_salida;
+      this.calcularHoraMinima(); // Primero calculamos el mínimo para saber qué es válido hoy
+
+      if (viajeData.hora_salida) {
+        let hDate = new Date();
+        if (typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
+          const [horas, minutos] = viajeData.hora_salida.split(':');
+          hDate.setHours(Number(horas), Number(minutos), 0, 0);
+        } else {
+          hDate = new Date(viajeData.hora_salida);
+        }
+
+        // Comprobamos de forma segura que la fecha seleccionada existe antes de usarla
+        let esInvalida = false;
+        if (this.fecha_seleccionada) {
+          const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
+          const fechaHoy = new Date().toDateString();
+
+          if (fechaViaje === fechaHoy && this.horaMinimaPermitida) {
+            if (hDate < this.horaMinimaPermitida) {
+              esInvalida = true;
+            }
+          }
+        }
+
+        if (esInvalida || isNaN(hDate.getTime())) {
+          // Si la hora guardada ya no es válida para hoy, autocalculamos una hora correcta (+1h)
+          this.establecerHoraSegunFecha();
+        } else {
+          this.hora_seleccionada = hDate;
+          this.invalid_date = false;
+        }
+      } else {
+        this.establecerHoraSegunFecha();
+      }
+
       this.viajeros = viajeData.viajeros || '0';
       this.plazas = viajeData.plazas || '';
+
       const cocheEnServicio = viajeData.coche;
       const existeVehiculo = cocheEnServicio && this.userData?.usuario?.vehiculos?.some((v: any) => v.id === cocheEnServicio.id);
 
@@ -148,22 +167,43 @@ export class PrimerPasoComponent implements OnInit {
       }
 
       this.reservaAutomatica = viajeData.reserva_automatica ?? false;
+    } else {
+      // Si es la primera vez que entra: Fecha de hoy y hora actual + 1h
+      const date = new Date();
+      this.fecha_seleccionada = date.toISOString();
+
       this.calcularHoraMinima();
-    }
-
-    if (!this.hora_seleccionada) {
       this.establecerHoraSegunFecha();
+
+      this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     }
 
-    this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
-    this.guardaDatosDelViajeEnServicio('hora_salida', this.hora_seleccionada);
-
+    // Suscripción a los cambios del servicio
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
+        if (viajeData.fecha_salida === this.fecha_seleccionada && viajeData.coche === this.cocheSeleccionado) {
+          return;
+        }
         this.cocheSeleccionado = viajeData.coche || '';
         this.plazas = viajeData.plazas || '';
         this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
-        this.hora_seleccionada = viajeData.hora_salida || this.hora_seleccionada;
+        this.calcularHoraMinima();
+
+        if (viajeData.hora_salida && typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
+          const [horas, minutos] = viajeData.hora_salida.split(':');
+          const hDate = new Date();
+          hDate.setHours(Number(horas), Number(minutos), 0, 0);
+
+          const fechaViaje = new Date(this.fecha_seleccionada || '').toDateString();
+          const fechaHoy = new Date().toDateString();
+
+          if (fechaViaje === fechaHoy && this.horaMinimaPermitida && hDate < this.horaMinimaPermitida) {
+            this.establecerHoraSegunFecha();
+          } else {
+            this.hora_seleccionada = hDate;
+            this.invalid_date = false;
+          }
+        }
       }
     });
   }
@@ -189,14 +229,6 @@ export class PrimerPasoComponent implements OnInit {
     });
   }
 
-  /**
-   * @param fechaDate --> string
-   * Le pasamos a fechaOriginal la fechaDATE convertida en tipo DATE gracias al new Date
-   * DE fechaOiriginal sacamos todo el tiempo en milisegundos con getTime y le sumamos los milisegundos que tendría un día. ESto lo seguimos
-   * manteniendo en formato fecha con new Date para el siguiente paso, y le pasamos el valor a fechaMasUnDia (toISOStrging resta un día al seleccionado.)
-   * @return fecha_seleccionada está como variable global y recibe el valor de fechaMasUnDia en formato string, y cortado hasta la T debido al formato
-   * DATE.
-   */
   sumarUnDiaAFecha(fechaDATE: string): string {
     if (!fechaDATE) {
       return '';
@@ -240,13 +272,8 @@ export class PrimerPasoComponent implements OnInit {
     return horaCelda >= limiteMinimo;
   };
 
-  /**
-   * Función para obtener la lista de vehículos de un usuario.   *
-   */
   obtenerVehiculos() {
     const data = localStorage.getItem('userData');
-    console.log('data: ', data);
-
     if (!data) return;
 
     const usuarioLocal = JSON.parse(data);
@@ -271,21 +298,8 @@ export class PrimerPasoComponent implements OnInit {
     }
   }
 
-  /**
-   * Función para guardar los datos temporalmente en el servicio de los viajes.
-   * -> Esta función recibe dos parámetros de entrada: "clave" y "valor"
-   *
-   * @param clave Es el nombre que va a recibir el atributo del objeto "Viaje"
-   * @param valor Es el valor que va a recibir el atributo.
-   * ------------------------------------------------------------------
-   * -> La función mantiene los datos que hubiera guardados anteriormente
-   *    en el objeto "ViajeData" y añade o modifica los nuevos.
-   */
   guardaDatosDelViajeEnServicio(clave: string, valor: any) {
     const currentViajeData = this.travelService.getViajeData() || {};
-
-    console.log('Datos del viaje a crear: ', currentViajeData);
-
     const viajeData = {
       ...currentViajeData,
       [clave]: valor,
@@ -293,12 +307,6 @@ export class PrimerPasoComponent implements OnInit {
     this.travelService.setViajeData(viajeData);
   }
 
-  /**
-   * Función para obtener la fecha actual y darle un formato específico.
-   *
-   * @returns Si hay una fecha seleccionada la devuelve en el formato configurado,
-   * en el caso de no tener una fecha seleccionada devuelve el string.
-   */
   getFormattedDate(): string {
     if (this.fecha_seleccionada) {
       const date = new Date(this.fecha_seleccionada);
@@ -311,11 +319,6 @@ export class PrimerPasoComponent implements OnInit {
     return 'Ninguna fecha seleccionada.';
   }
 
-  /**
-   * Función para obtener la hora actual.
-   *
-   * @returns Devuelve la hora seleccionada.
-   */
   getTime(): string {
     if (!this.hora_seleccionada || isNaN(new Date(this.hora_seleccionada).getTime())) {
       return 'Ninguna hora seleccionada.';
@@ -324,31 +327,41 @@ export class PrimerPasoComponent implements OnInit {
     return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   }
 
-  /**
-   * Función para manejar el cambio de fecha.
-   * @param event -> Recibe la información del evento en el input de la selección de fecha.
-   */
   onDateChange(event: any) {
-    this.fecha_seleccionada = event.detail.value;
+    if (event && event.detail && event.detail.value) {
+      this.fecha_seleccionada = event.detail.value;
+    } else if (typeof event === 'string') {
+      this.fecha_seleccionada = event;
+    } else if (event instanceof Date) {
+      this.fecha_seleccionada = event.toISOString();
+    }
     this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     this.calcularHoraMinima();
-    this.establecerHoraSegunFecha();
 
-    if (this.hora_seleccionada) {
-      this.validarHoraSeleccionadaConContexto();
+    const fechaViaje = this.fecha_seleccionada ? new Date(this.fecha_seleccionada).toDateString() : '';
+    const fechaHoy = new Date().toDateString();
+
+    if (fechaViaje === fechaHoy) {
+      this.establecerHoraSegunFecha();
+    } else {
+      if (this.hora_seleccionada && this.horaMinimaPermitida) {
+        const horas = this.hora_seleccionada.getHours();
+        const minutos = this.hora_seleccionada.getMinutes();
+        const propuesta = new Date();
+        propuesta.setHours(horas, minutos, 0, 0);
+
+        if (propuesta < this.horaMinimaPermitida) {
+          this.establecerHoraSegunFecha();
+        } else {
+          this.validarHoraSeleccionadaConContexto();
+        }
+      } else {
+        this.establecerHoraSegunFecha();
+      }
     }
+    this.cdr.detectChanges();
   }
 
-  /**
-   * Función para seleccionar la hora.
-   * ---------------------------------
-   * -> Recibe la información del evento en el input de la hora.
-   * -> Damos un formato a la hora de 2 dígitos tanto para la hora como para los minutos.
-   * -> Llamamos a la función que recibe los datos de la hora seleccionada
-   *    para guardarlos en el servicio de los viajes.
-   *
-   * @param event -> Recibe la información del evento en el input de la selección de hora.
-   */
   onTimeChange(event: any) {
     if (!event) return;
 
@@ -402,9 +415,6 @@ export class PrimerPasoComponent implements OnInit {
     this.guardaDatosDelViajeEnServicio('hora_salida', horaFormateada);
   }
 
-  /**
-   * Aplica las 08:00 AM si la fecha es futura, o el margen de 60+ minutos si la fecha es hoy.
-   */
   establecerHoraSegunFecha() {
     if (!this.fecha_seleccionada) return;
 
@@ -421,14 +431,13 @@ export class PrimerPasoComponent implements OnInit {
     this.hora_seleccionada = horaBase;
     this.invalid_date = false;
 
+    this.calcularHoraMinima();
+
     const horasStr = String(horaBase.getHours()).padStart(2, '0');
     const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
     this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
   }
 
-  /**
-   * Función para validar la hora seleccionada con el contexto de la fecha.
-   */
   private validarHoraSeleccionadaConContexto() {
     if (!this.hora_seleccionada || !this.horaMinimaPermitida) {
       this.invalid_date = false;
@@ -453,35 +462,21 @@ export class PrimerPasoComponent implements OnInit {
     }
   }
 
-  /**
-   * Función para seleccionar el coche con el que quiere realizar el viaje.
-   * @param coche --> Recibe la información del coche seleccionado.
-   */
   seleccionarCoche(coche: any) {
     this.cocheSeleccionado = coche;
     this.guardaDatosDelViajeEnServicio('coche', coche);
   }
 
-  /**
-   * Función para comprobar el tamaño de la pantalla.
-   */
   checkScreenSize() {
     const anchoActual = window.innerWidth;
     this.isDesktop = this.platform.is('desktop') || anchoActual > 768;
   }
 
-  /**
-   * Función para seleccionar el tipo de reserva.
-   * @param esAutomatica --> Recibe la selección del tipo de reserva que hace el usuario.
-   */
   seleccionarTipoReserva(esAutomatica: boolean) {
     this.reservaAutomatica = esAutomatica;
     this.guardaDatosDelViajeEnServicio('reserva_automatica', esAutomatica);
   }
 
-  /**
-   * Función para destruir el componente.
-   */
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -494,10 +489,8 @@ export class PrimerPasoComponent implements OnInit {
       this.userService.obtenerUsuarioPorID(usuarioLocal.usuario.id).subscribe((usuarioActualizado) => {
         this.userData = usuarioActualizado;
         localStorage.setItem('userData', JSON.stringify(this.userData));
-        console.log('Vehículos actuales del usuario:', this.userData.usuario.vehiculos);
-        console.log('Coche actualmente seleccionado:', this.cocheSeleccionado);
+
         if (this.cocheSeleccionado && !this.userData.usuario.vehiculos.some((v: any) => v.id === this.cocheSeleccionado.id)) {
-          console.log('¡El coche seleccionado ya no existe! Limpiando...');
           this.cocheSeleccionado = null;
           this.guardaDatosDelViajeEnServicio('coche', null);
         } else if (!this.cocheSeleccionado && this.userData.usuario.vehiculos.length > 0) {
@@ -507,6 +500,7 @@ export class PrimerPasoComponent implements OnInit {
       });
     }
   }
+
   botonAnadirVehiculo() {
     this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
   }
