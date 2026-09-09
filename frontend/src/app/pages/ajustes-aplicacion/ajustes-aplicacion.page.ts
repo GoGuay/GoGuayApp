@@ -119,6 +119,12 @@ export class AjustesAplicacionPage implements OnInit {
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
 
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'cuenta') {
+        this.segmentoSeleccionado = 'cuenta';
+      }
+    });
+    
     const savedIASetting = localStorage.getItem('iaActiva');
     this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
 
