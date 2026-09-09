@@ -8,9 +8,21 @@ import { LanguageService } from './core/lenguajes/languaje.service';
 import { NotificationToastComponent } from './components/notification-toast/notification-toast.component';
 import { NotificacionesService } from './core/notificaciones/notificaciones.service';
 import { Usuario } from './models/user/usuario.model';
-import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonFooter, IonRouterOutlet, IonMenuToggle } from '@ionic/angular/standalone';
+import {
+  IonApp,
+  IonMenu,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItem,
+  IonFooter,
+  IonRouterOutlet,
+  IonMenuToggle,
+} from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { RouterModule } from '@angular/router';
+import { NavigationStart, RouterModule } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -36,9 +48,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     IonRouterOutlet,
     TranslateModule,
     RouterModule,
-    IonMenuToggle
+    IonMenuToggle,
   ],
-  providers: [MenuController]
+  providers: [MenuController],
 })
 export class AppComponent implements OnInit {
   @ViewChild(IonMenu) menu!: IonMenu;
@@ -56,7 +68,14 @@ export class AppComponent implements OnInit {
     private notificacionesService: NotificacionesService,
     private menuCtrl: MenuController,
     private router: Router
-  ) { }
+  ) {
+    this.router.events.forEach((event) => {
+      if (event instanceof NavigationStart) {
+        console.log('🔄 Cambio de ruta detectado hacia:', event.url, ' | Causa:', event.navigationTrigger);
+        console.trace('Pila de llamadas que ordenó la redirección:');
+      }
+    });
+  }
 
   ngOnInit() {
     /**
@@ -68,13 +87,11 @@ export class AppComponent implements OnInit {
     /**
      * Cierra el menú al navegar a una nueva ruta.
      */
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        if (this.menu) {
-          this.menu.close();
-        }
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      if (this.menu) {
+        this.menu.close();
+      }
+    });
 
     const consentStatus = localStorage.getItem('cookieConsentStatus');
     this.loadUserData();
@@ -94,9 +111,7 @@ export class AppComponent implements OnInit {
     });
 
     // Verificar el consentimiento de cookies
-    const hasConsent =
-      this.cookieService.check('analytics') ||
-      this.cookieService.check('advertising');
+    const hasConsent = this.cookieService.check('analytics') || this.cookieService.check('advertising');
     if (!hasConsent) {
       console.log('No se han establecido preferencias de cookies.');
     }
@@ -105,14 +120,11 @@ export class AppComponent implements OnInit {
       // Si ya se ha dado consentimiento, no mostrar el banner
       this.ccService.destroy();
     } else {
-      this.consentGivenSubscription = this.ccService.statusChange$.subscribe(
-        (event: NgcStatusChangeEvent) => {
-          const status = event.status;
-          localStorage.setItem('cookieConsentStatus', status);
-          this.ccService.destroy();
-        }
-      );
-
+      this.consentGivenSubscription = this.ccService.statusChange$.subscribe((event: NgcStatusChangeEvent) => {
+        const status = event.status;
+        localStorage.setItem('cookieConsentStatus', status);
+        this.ccService.destroy();
+      });
     }
 
     /**
@@ -148,16 +160,13 @@ export class AppComponent implements OnInit {
   }
 
   obtenerNotificaciones(usuarioId: number) {
-    this.notificacionesService
-      .obtenerNotificaciones(usuarioId)
-      .subscribe((notificaciones) => {
-        if (notificaciones.length) {
-          this.notificacionesService.notificacionPendiente =
-            notificaciones[0].mensaje;
-          this.notificacionesService.esCreadorDelViaje = true;
-          this.notificacionesService.leerNotificacion(notificaciones);
-        }
-      });
+    this.notificacionesService.obtenerNotificaciones(usuarioId).subscribe((notificaciones) => {
+      if (notificaciones.length) {
+        this.notificacionesService.notificacionPendiente = notificaciones[0].mensaje;
+        this.notificacionesService.esCreadorDelViaje = true;
+        this.notificacionesService.leerNotificacion(notificaciones);
+      }
+    });
   }
 
   loadUserData(): void {
