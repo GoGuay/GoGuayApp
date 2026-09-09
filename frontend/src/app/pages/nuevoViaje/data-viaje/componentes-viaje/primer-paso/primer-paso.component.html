@@ -36,16 +36,19 @@
               class="custom-time-field w-100"
             >
               <mat-label>{{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_HORA' | translate }}</mat-label>
+
               <input
                 matInput
                 [(ngModel)]="hora_seleccionada"
                 [matTimepicker]="minutesPicker"
                 (ngModelChange)="onTimeChange($event)"
               />
+
               <mat-timepicker-toggle
                 matIconSuffix
                 [for]="minutesPicker"
               />
+
               <mat-timepicker
                 interval="15min"
                 #minutesPicker
