@@ -18,6 +18,7 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
 import { VehiculosServicesService } from '../../../../../core/vehiculos-services/vehiculos-services.service';
 import { TablaVehiculosComponent } from 'src/app/components/tabla-vehiculos/vista-tabla-vehiculos/tabla-vehiculos.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
 
 registerLocaleData(localeEs);
 
@@ -36,6 +37,7 @@ registerLocaleData(localeEs);
     MatButtonModule,
     TranslateModule,
     TablaVehiculosComponent,
+    SelectorGeneralComponent,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es-ES' },
@@ -76,6 +78,13 @@ export class PrimerPasoComponent implements OnInit {
     this.isOpen = false;
     this.guardaDatosDelViajeEnServicio('plazas', valor);
   }
+
+  opcionesPlazas = [
+    { id: '1', descripcion: '1' },
+    { id: '2', descripcion: '2' },
+    { id: '3', descripcion: '3' },
+    { id: '4', descripcion: '4' },
+  ];
 
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) {
@@ -503,5 +512,12 @@ export class PrimerPasoComponent implements OnInit {
 
   botonAnadirVehiculo() {
     this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
+  }
+
+  /**
+   * Captura la selección de plazas del selector general.
+   */
+  seleccionarPlazas(opcion: any) {
+    this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
   }
 }

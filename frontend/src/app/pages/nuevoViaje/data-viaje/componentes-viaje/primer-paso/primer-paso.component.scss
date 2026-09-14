@@ -236,41 +236,71 @@ ion-datetime-button {
 
 ::ng-deep {
 
-  .mat-timepicker-content,
-  .mat-timepicker-dialog,
-  .mat-time-dropdown,
-  .mat-timepicker-panel {
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel,
+  .mat-timepicker-panel,
+  cdk-overlay-pane {
 
-    .list-group-item,
-    option,
-    button.mat-time-option {
+    mat-option.mat-mdc-option,
+    .mat-mdc-option {
       cursor: pointer;
       transition: background-color 0.2s ease;
+      background-color: white !important; // Forzar fondo transparente por defecto
 
+      // Elimina el color gris inicial de Material en elementos activos o con foco
+      &.mat-mdc-option-active,
+      &.mdc-list-item--selected:not(.mat-mdc-option-selected),
+      &:focus {
+        background-color: white !important;
+      }
+
+      // Estados de Hover y Selección Real
       &:hover,
       &.active,
+      &.mat-selected,
+      &.mat-mdc-option-selected,
       &[aria-selected="true"] {
         background-color: #F0D7B4 !important;
         color: black !important;
+
+        .mdc-list-item__primary-text,
+        span {
+          font-weight: bold !important;
+          color: black !important;
+        }
       }
     }
   }
+}
+
+.input-container {
+  width: 50%;
+}
+
+.selector-compacto {
+  ::ng-deep input {
+    text-align: center !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
 
 
 
-  @media (max-width: 992px) {
 
-    .contenedor_calendario,
-    .contenedor_hora,
-    .contenedor_inputs {
-      width: 100%;
-    }
 
-    .line {
-      border-right: none;
-      border-bottom: 2px dashed rgba(224, 166, 103, 0.3);
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+@media (max-width: 992px) {
+
+  .contenedor_calendario,
+  .contenedor_hora,
+  .contenedor_inputs {
+    width: 100%;
+  }
+
+  .line {
+    border-right: none;
+    border-bottom: 2px dashed rgba(224, 166, 103, 0.3);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 }
