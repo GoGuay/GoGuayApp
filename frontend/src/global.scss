@@ -594,6 +594,8 @@ button:focus-visible,
 
 
 
+
+
 .form-control:focus,
 input:focus,
 select:focus,
@@ -645,44 +647,7 @@ span:focus {
   font-weight: bold;
 }
 
-/********************************************
-    CONFIGURACIÓN PARA EL SELECTOR DE HORA
-*********************************************/
-/* Redondear el contenedor principal del Timepicker */
-.mat-timepicker-panel {
-  border-radius: 35px !important;
-  // overflow: hidden !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
-  background-color: white !important;
-}
 
-/* Redondear el contenido interno (el reloj o lista de horas) */
-.mat-timepicker-content,
-mat-timepicker-content {
-  border-radius: 35px !important;
-  border: none !important;
-}
-
-/* Ajustar el contenedor que envuelve las acciones (Botones de Cancelar/OK) */
-.mat-timepicker-container {
-  border-radius: 35px !important;
-  padding: 10px !important;
-}
-
-/* esto asegura que los bordes se corten */
-.mat-timepicker-content-container {
-  border-radius: 35px !important;
-}
-
-/* Cambia el color de la selección al naranja de tu app */
-.mat-timepicker-clock-cell.mat-timepicker-clock-cell-selected {
-  background-color: #e0a667 !important;
-  color: white !important;
-}
-
-.mat-timepicker-button.mat-primary {
-  color: #e0a667 !important;
-}
 
 /********************************************
   FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA

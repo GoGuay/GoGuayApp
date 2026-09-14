@@ -140,7 +140,19 @@
       "ELIGE_FECHA": "Elige la fecha del viaje",
       "FECHA_SELECCIONADA": "Fecha seleccionada: ",
       "HORA_SALIDA": "Hora de salida",
-      "SELECCIONA_HORA": "Selecciona la hora"
+      "SELECCIONA_HORA": "Selecciona la hora",
+      "HORA_SELECCIONADA": "Hora seleccionada",
+      "ERROR_HORA_MINIMA": "La hora de salida debe ser, como mínimo, una hora más a la actual.",
+      "NUMERO_PLAZAS_LIBRES": "NÚMERO DE PLAZAS LIBRES",
+      "SELECCIONA_NUMERO_PASAJEROS": "Selecciona el número de pasajeros que pueden viajar contigo:",
+      "COCHE_PARA_VIAJAR": "COCHE PARA VIAJAR",
+      "MODO_RESERVA": {
+        "TITULO": "MODO DE RESERVA",
+        "ACEPTACION_MANUAL_TITULO": "Aceptación manual",
+        "ACEPTACION_MANUAL_DESCRIPCION": "Tu decides quien viaja contigo aceptando cada reserva. ",
+        "ACEPTACION_AUTO_TITULO": "Aceptación automática",
+        "ACEPTACION_AUTO_DESCRIPCION": "La reserva se acepta automaticamente sin tu intervención"
+      }
     },
 
     "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",

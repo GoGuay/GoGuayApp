@@ -15,9 +15,16 @@
   }
 }
 
-.flecha_selector {
-  right: 15px;
-  top: 67%;
-  transform: translateY(-50%);
-  pointer-events: none;
+.position-relative {
+  position: relative;
+
+  .flecha_selector {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.9rem;
+    color: #666663;
+  }
 }

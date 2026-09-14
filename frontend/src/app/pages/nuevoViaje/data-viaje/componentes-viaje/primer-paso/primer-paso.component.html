@@ -91,13 +91,13 @@
           class="error-text text-center mt-2"
         >
           <i class="fi fi-rr-cross-circle me-1"></i>
-          La hora de salida debe ser, como mínimo, una hora más a la actual
+          {{ 'NUEVOVIAJE.PRIMER_PASO.ERROR_HORA_MINIMA' | translate }}
         </p>
         <p
           *ngIf="!invalid_date"
           class="d-flex justify-content-center time-feedback mt-2"
         >
-          Hora seleccionada:
+          {{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SELECCIONADA' | translate }}
           <strong>{{ getTime() }}</strong>
         </p>
       </div>
@@ -107,55 +107,38 @@
       size="12"
       size-xl="6"
     >
-      <h1 class="d-flex justify-content-center section-title">NÚMERO DE PLAZAS LIBRES</h1>
-      <span class="d-flex justify-content-center span sub-text">Selecciona el número de pasajeros que pueden viajar contigo:</span>
+      <div class="d-flex flex-column align-items-center text-center w-100">
+        <!-- Título centrado -->
+        <h1 class="section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.NUMERO_PLAZAS_LIBRES' | translate }}</h1>
 
-      <div
-        class="select-container custom-dropdown mt-3 mb-4"
-        (click)="toggleDropdown()"
-        [class.open]="isOpen"
-      >
-        <img
-          src="../../../../../../assets/sistema/usuarios-alt.png"
-          class="select-icon"
-          alt="icono usuarios"
-        />
-        <div class="selected-value">
-          {{ plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
-        </div>
-        <ul
-          class="custom-options"
-          *ngIf="isOpen"
+        <!-- Label centrado -->
+        <label
+          id="label-plazas"
+          class="mt-4"
         >
-          <li
-            (click)="selectOption('1'); $event.stopPropagation()"
-            [class.selected]="plazas === '1'"
-          >
-            1
-          </li>
-          <li
-            (click)="selectOption('2'); $event.stopPropagation()"
-            [class.selected]="plazas === '2'"
-          >
-            2
-          </li>
-          <li
-            (click)="selectOption('3'); $event.stopPropagation()"
-            [class.selected]="plazas === '3'"
-          >
-            3
-          </li>
-          <li
-            (click)="selectOption('4'); $event.stopPropagation()"
-            [class.selected]="plazas === '4'"
-          >
-            4
-          </li>
-        </ul>
+          {{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_NUMERO_PASAJEROS' | translate }}
+        </label>
+
+        <!-- Input/Selector centrado y con ancho controlado -->
+        <div class="input-container mb-3 w-100 d-flex justify-content-center">
+          <app-selector-general
+            idUnico="input-plazas"
+            aria-labelledby="label-plazas"
+            placeholderKey="PLACEHOLDER.NUM_PLAZAS"
+            class="w-100 selector-compacto"
+            [style.max-width.px]="280"
+            [opciones]="opcionesPlazas"
+            [(ngModel)]="plazas"
+            [valor]="plazas"
+            [soloLectura]="true"
+            [mostrarFlechaSelector]="true"
+            (seleccionCambiada)="seleccionarPlazas($event)"
+          ></app-selector-general>
+        </div>
       </div>
 
       <div class="contenedor_seccion">
-        <h1 class="d-flex justify-content-center section-title">COCHE PARA VIAJAR</h1>
+        <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.COCHE_PARA_VIAJAR' | translate }}</h1>
         <app-tabla-vehiculos
           [modoSeleccion]="true"
           [vehiculos]="userData?.usuario?.vehiculos"
@@ -165,7 +148,7 @@
         ></app-tabla-vehiculos>
 
         <div class="contenedor_inputs mt-4">
-          <h1 class="d-flex justify-content-center section-title">MODO DE RESERVA</h1>
+          <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.TITULO' | translate }}</h1>
           <ion-list
             class="reserva-list custom-goguay-list"
             lines="none"
@@ -181,8 +164,8 @@
                   mode="ios"
                 ></ion-radio>
                 <ion-label class="ms-2">
-                  <h2 class="fw-bold mb-0">Aceptación manual</h2>
-                  <p class="text-muted small mb-0">Tú decides quién viaja contigo aceptando cada solicitud.</p>
+                  <h2 class="fw-bold mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_MANUAL_TITULO' | translate }}</h2>
+                  <p class="text-muted small mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_MANUAL_DESCRIPCION' | translate }}</p>
                 </ion-label>
                 <ion-icon
                   name="hand-right-outline"
@@ -202,8 +185,8 @@
                   mode="ios"
                 ></ion-radio>
                 <ion-label class="ms-2">
-                  <h2 class="fw-bold mb-0">Reserva automática</h2>
-                  <p class="text-muted small mb-0">Las plazas se reservan al instante sin tu intervención.</p>
+                  <h2 class="fw-bold mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_AUTO_TITULO' | translate }}</h2>
+                  <p class="text-muted small mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_AUTO_DESCRIPCION' | translate }}</p>
                 </ion-label>
                 <ion-icon
                   name="flash-outline"
