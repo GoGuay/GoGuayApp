@@ -1,5 +1,3 @@
-// src/app/guards/token-valid.guard.ts
-
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -17,7 +15,7 @@ import { UserServicesService } from '../core/user-services/user-services.service
 export class TokenValidGuard implements CanActivate {
   constructor(
     private userService: UserServicesService,
-    private router: Router
+    private router: Router,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> {
@@ -32,11 +30,10 @@ export class TokenValidGuard implements CanActivate {
         } else if (res?.error === 'Token ya utilizado') {
           return this.router.createUrlTree(['/token-ya-usado']);
         } else {
-          // Manejo por defecto para evitar 'undefined'
           return this.router.createUrlTree(['/']);
         }
       }),
-      catchError(() => of(this.router.createUrlTree(['/token-expirado'])))
+      catchError(() => of(this.router.createUrlTree(['/token-expirado']))),
     );
   }
 }

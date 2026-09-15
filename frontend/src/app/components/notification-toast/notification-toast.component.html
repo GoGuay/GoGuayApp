@@ -1,17 +1,22 @@
-<div *ngIf="toasts.length > 0" class="d-flex justify-content-end mb-2">
+<div *ngIf="toasts.length > 0" class="d-flex justify-content-end mb-2 animate-fade-in">
   <button class="btn btn-danger btn-sm d-flex align-items-center gap-1" (click)="cerrarTodosLosToasts()">
     <img src="../../../assets/sistema/limpio.png" alt="Cerrar todos los mensajes" class="icono-cerrar"> Cerrar todo
   </button>
 </div>
 
 <div class="toasts-container">
-  <div *ngFor="let n of toasts" class="relative bg p-4 mensaje mb-2" (click)="redirigirANotificacion(n)" [ngClass]="{
-       'toast-success': n.type === 'success',
-       'toast-error': n.type === 'error',
-       'toast-warning': n.type === 'warning',
-       'toast-info': n.type === 'info',
-       'toast-slide-out': cerrandoToasts.has(n)
-     }">
+  <div *ngFor="let n of toasts" 
+       class="relative bg p-4 mensaje mb-2 toast-card" 
+       (click)="redirigirANotificacion(n)"
+       (mouseenter)="limpiarTemporizador(n.id)"
+       (mouseleave)="iniciarTemporizador(n)"
+       [ngClass]="{
+         'toast-success': n.type === 'success',
+         'toast-error': n.type === 'error',
+         'toast-warning': n.type === 'warning',
+         'toast-info': n.type === 'info',
+         'toast-slide-out': cerrandoToasts.has(n)
+       }">
 
     <div class="d-flex justify-content-end">
       <button class="btn_notificaciones" (click)="onCerrarClick($event, n)" aria-label="Cerrar notificación">
@@ -19,10 +24,11 @@
       </button>
     </div>
 
-    <strong class="block capitalize">Notificación</strong>
-    <p class="text-sm">{{ n.mensaje }}</p>
+    <strong class="block capitalize title">Notificación</strong>
+    <p class="text-sm mb-0">{{ n.mensaje }}</p>
   </div>
-  <div *ngIf="toasts.length > 0">
+  
+  <div *ngIf="toasts.length > 0" class="animate-fade-in">
     <span class="d-flex justify-content-end nota">Pulsa sobre la notificación para ver más detalles.</span>
   </div>
 </div>

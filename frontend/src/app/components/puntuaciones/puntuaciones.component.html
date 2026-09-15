@@ -1,49 +1,63 @@
-<div class="main">
-  <h1 class="text-center">Puntúa el viaje que has realizado</h1>
-  <mat-divider class="mb-2"></mat-divider>
+<div class="main custom-bottom-sheet">
+  <div class="header-sheet text-center p-3">
+    <h1>Puntúa tu experiencia</h1>
+    <mat-divider></mat-divider>
+  </div>
 
-  <div *ngIf="creador_del_viaje" class="alert alert-warning text-center m-3">
+  <div *ngIf="creador_del_viaje" class="alert alert-warning text-center m-4">
     <p class="d-flex align-items-center justify-content-center mb-0">
       <i class="fi fi-rr-diamond-exclamation me-2"></i>
       No puedes puntuar un viaje creado por ti mismo.
     </p>
   </div>
 
-  <form *ngIf="!creador_del_viaje" [formGroup]="puntuacionForm" (ngSubmit)="verificarEncuesta()">
-    <div class="container text-center mt-4">
-      <div class="row">
-        <div class="container row">
-          <h3>Esta puntuación es para {{ nombre_usuario }}</h3>
-          <p>¿Cómo ha sido tu experiencia?</p>
-          <div class="d-flex justify-content-center starsContainer">
-            <img *ngFor="let estrella of estrellas; let i = index"
-              src="{{ i < calificacionSeleccionada ? '../../../../../assets/rating/como.gif' : '../../../../../assets/rating/favorito.gif' }}"
-              class="stars" type="button" (click)="seleccionarCalificacion(i + 1)">
-          </div>
+  <form *ngIf="!creador_del_viaje" [formGroup]="puntuacionForm" (ngSubmit)="puntuarViaje()" class="flex-grow-1 px-4">
+    <div class="text-center mt-3">
+      <h3>Tu opinión sobre {{ nombre_usuario }}</h3>
+      <p class="text-muted">¿Cómo ha sido tu experiencia en este viaje compartido?</p>
+      
+      <div class="d-flex justify-content-center starsContainer my-3">
+        <img *ngFor="let estrella of estrellas; let i = index"
+          [src]="i < calificacionSeleccionada ? '../../../../../assets/rating/como.gif' : '../../../../../assets/rating/favorito.gif'"
+          class="stars-interactive" 
+          (click)="seleccionarCalificacion(i + 1)"
+          [alt]="'Estrella ' + (i + 1)">
+      </div>
+    </div>
+
+    <div class="form-group mt-4" *ngIf="calificacionSeleccionada > 0">
+      <label for="comentario" class="form-label font-weight-bold">¿Quieres añadir algún detalle? (Opcional)</label>
+      <textarea 
+        id="comentario" 
+        formControlName="comentario_texto" 
+        class="form-control custom-textarea" 
+        rows="3" 
+        placeholder="Cuéntanos qué tal el viaje, la puntualidad, la conversación...">
+      </textarea>
+    </div>
+
+    <div class="card bg-light border-0 rounded-lg p-3 mt-4 satisfaction-box">
+      <div class="d-flex align-items-start">
+        <i class="fi fi-rr-heart-arrow font-large me-3 text-primary"></i>
+        <div>
+          <h5 class="mb-1">¿Te gusta usar GoGuay?</h5>
+          <p class="small text-muted mb-2">Ayúdanos a mejorar la plataforma completando nuestro test de calidad general.</p>
+          <a href="/encuesta-satisfaccion" class="survey-link font-weight-bold">
+            Realizar encuesta completa <i class="fi fi-rr-arrow-small-right vertical-middle"></i>
+          </a>
         </div>
       </div>
     </div>
+
+    <div class="footer-actions text-end my-4 pt-3">
+      <button 
+        mat-raised-button 
+        type="submit" 
+        class="btn-submit-puntuacion" 
+        [disabled]="calificacionSeleccionada === 0 || cargando_puntuacion">
+        <span *ngIf="!cargando_puntuacion">Enviar puntuación</span>
+        <span *ngIf="cargando_puntuacion">Guardando...</span>
+      </button>
+    </div>
   </form>
-
-
-  <div class="container mt-4">
-    <h3>¿Volverías a usar Pride Ride?</h3>
-    <span>
-      Puedes realizar la encuesta completa para que nosotros podamos mejorar.
-      <br>
-      No te robará mucho tiempo:
-    </span>
-
-    <p>
-      <span>
-        <i>👉 </i> <a href="/encuesta-satisfaccion"> Encuesta completa</a>
-      </span>
-    </p>
-
-  </div>
-  <div class="container text-end">
-    <button mat-button type="button" class="btn_bg" (click)="puntuarViaje()" [disabled]="creador_del_viaje">Puntuar
-      viaje</button>
-  </div>
-
 </div>

@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from google.cloud import translate
 import re
+from concurrent.futures import ThreadPoolExecutor
 
 
 
@@ -31,101 +32,128 @@ def buscar_localidad():
     query = request.args.get('q', '')
 
     patron_letras = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]'
-    
-    #Si la longitud es menor de 3 se devuelve la lista vacía, sin error. 
     if len(query) < 3 or not re.match(patron_letras, query):
         return jsonify([]), 200
 
-    url = 'https://places.googleapis.com/v1/places:autocomplete'   
-    payload = {
+    url_autocomplete = 'https://places.googleapis.com/v1/places:autocomplete'   
+    payload_autocomplete = {
         "input": query,
         "languageCode": "es",
         "includedRegionCodes": ["es"],
-        "includedPrimaryTypes": ["locality"]
+        "includedPrimaryTypes": ["(cities)"]
     }
-    headers = {
+    headers_autocomplete = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': googleapykey,
-        'X-Goog-FieldMask': 'suggestions.placePrediction.text,suggestions.placePrediction.placeId'
+        'X-Goog-FieldMask': 'suggestions.placePrediction.placeId,suggestions.placePrediction.structuredFormat'
+    }
+
+    try:        
+        response = requests.post(url_autocomplete, json=payload_autocomplete, headers=headers_autocomplete, timeout=3.0)
+        response.raise_for_status()  
+        data = response.json()  
+
+        suggestions = data.get('suggestions', [])
+        if not suggestions:
+            return jsonify([]), 200
+
+        # MÚLTIPLES HILOS (PARALELO): Se ejecutan todas las consultas a la vez utilizando la librería estándar de Python
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            resultados = list(executor.map(lambda item: obtener_detalle_localidad(item, googleapykey), suggestions))
+
+        # Filtrar duplicados y elementos nulos
+        localidades = []
+        descripciones_vistas = set()
+
+        for res in resultados:
+            if res and res['descripcion'] not in descripciones_vistas:
+                descripciones_vistas.add(res['descripcion'])
+                localidades.append(res)
+
+        return jsonify(localidades), 200
+    
+    except requests.exceptions.RequestException as e:   
+        print(f"Error en Google API Autocomplete: {e.response.text if e.response else e}")     
+        return jsonify({'error': str(e)}), 500
+
+
+def obtener_detalle_localidad(item, api_key):
+    """Función individual que se ejecuta en un hilo secundario."""
+    prediction = item.get('placePrediction')
+    if not prediction or not prediction.get('placeId'):
+        return None
+
+    place_id = prediction['placeId']
+    structured = prediction.get('structuredFormat', {})
+    municipio = structured.get('mainText', {}).get('text', '').strip()
+    
+    region_limpia = None
+
+    # 1. Intentar extraer del texto secundario del autocompletado
+    secundario = structured.get('secondaryText', {})
+    secundario_texto = secundario.get('text', '') if isinstance(secundario, dict) else str(secundario)
+
+    if secundario_texto:
+        partes = [p.strip() for p in secundario_texto.split(',') if p.strip()]
+        partes_filtradas = [p for p in partes if p.lower() not in ['españa', 'spain']]
+        if partes_filtradas:
+            region_limpia = partes_filtradas[0]
+        elif partes:
+            # Si solo venía "España", guardamos temporalmente el texto secundario
+            region_limpia = partes[0]
+
+    # 2. Si no hay una región clara o es solo "España", intentamos la API de detalles
+    if not region_limpia or region_limpia.lower() in ['españa', 'spain']:
+        url_details = f'https://places.googleapis.com/v1/places/{place_id}'
+        headers_details = {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': api_key,
+            'X-Goog-FieldMask': 'addressComponents'
+        }
+    
+        try:
+            resp = requests.get(url_details, headers=headers_details, params={'languageCode': 'es'}, timeout=3.5)
+            if resp.status_code == 200:
+                components = resp.json().get('addressComponents', [])
+                provincia = ''
+                ccaa = ''
+
+                for comp in components:
+                    types = comp.get('types', [])
+                    if 'administrative_area_level_2' in types:
+                        provincia = comp.get('longText') or comp.get('shortText')
+                    elif 'administrative_area_level_1' in types:
+                        ccaa = comp.get('longText') or comp.get('shortText')
+
+                if provincia or ccaa:
+                    region_limpia = provincia or ccaa
+        except Exception as e:
+            print(f"Advertencia en detalles de localidad: {e}")
+    
+    # 3. Limpieza de prefijos y números
+    if region_limpia and isinstance(region_limpia, str):
+        region_limpia = (region_limpia
+                         .replace('Province of ', '')
+                         .replace('Provincia de ', '')
+                         .replace('Provincia d\'', '')
+                         .replace('Provincia d’', '')
+                         .strip())
+        region_limpia = re.sub(r'\d+', '', region_limpia).strip()
+    
+    # 4. Fallback de seguridad absoluto (Evita rotundamente el None)
+    if not region_limpia or str(region_limpia).lower() in ['none', 'None', '', 'españa', 'spain']:
+        region_limpia = secundario_texto if secundario_texto else "España"
+
+    descripcion = f"{municipio}, {region_limpia}" 
+
+    return {
+        'descripcion': descripcion,
+        'place_id': place_id
     }
 
 
-    try:        
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()  
-        data = response.json()  
-        print('DATA ORIGEN: ', data)
 
-
-        # Extraer las predicciones de la respuesta
-        localidades = []
-        for item in data.get('suggestions', []):
-            print ('item: ', item)
-            prediction = item.get('placePrediction')
-
-            if prediction:
-                texto_completo = prediction.get('text', {}).get('text', '')
-                partes = [p.strip() for p in texto_completo.split(',')]
-                partes_sin_pais = [p for p in partes if p.lower() != 'españa']
-
-                if len(partes_sin_pais) >=2:
-                    ciudad = partes_sin_pais[0]
-                    provincia = partes_sin_pais[1]
-                    descripcion = f"{ciudad} ({provincia})"
-                elif len (partes_sin_pais) == 1:
-                    descripcion = partes_sin_pais[0]
-                else:
-                    descripcion = texto_completo
-                
-
-                localidades.append({
-                    'descripcion': descripcion,
-                    'place_id': prediction['placeId']
-        })
-        
-        return jsonify(localidades), 200
-    except requests.exceptions.RequestException as e:   
-        print(f"Error en Google API: {e.response.text if e.response else e}")     
-        return jsonify({'error': str(e)}), 500
-    
-
-#Vinculada a la función anterior, devuelve la provincia según el municipio escogido
-def detalle_localidad(place_id):
-        url = f'https://places.googleapis.com/v1/places/{place_id}'
-
-        headers = {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': googleapykey,
-            'X-Goog-FieldMask': 'addressComponents'
-        }
-
-        respuesta = requests.get(url, headers=headers)
-        
-
-        try:
-
-            if respuesta.status_code == 200:
-                data = respuesta.json()
-                address_components = data.get('addressComponents',[])
-                print ('Address Component: ', address_components)
-
-                provincia = None
-                for component in address_components:
-                    if 'administrative_area_level_2' in component.get('types', []):
-                        provincia = component.get('longtext')
-                        break
-
-                return provincia
-            else:
-                print(f"Error en detalle_localidad: {respuesta.status_code} - {respuesta.text}")
-                return None
-        except Exception as e:
-            print(f"Excepción en detalle_localidad: {str(e)}")
-            return None
-
-
-
-
+   
 
 # Función para detectar el idioma en el que viene el texto de un input #
 # Cogemos los datos que vienen del json, concretamente lo que vienen en el campo 'texto'. 
@@ -151,7 +179,7 @@ def detectar_idioma():
         response = client.detect_language(
             content= idioma_del_texto,
             parent=parent,
-            mime_type="text/plain",  # mime types: text/plain, text/html
+            mime_type="text/plain",  
         )
         print("respuesta backend: ", response)
         resultado = {

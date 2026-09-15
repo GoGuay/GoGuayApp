@@ -2,53 +2,63 @@
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 1000;
+  z-index: 1100; 
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 600px;
+  width: 400px; 
 }
 
 .toasts-container {
-  max-height: 600px;
+  max-height: 80vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 600px;
-  border-radius: 15px;
+  width: 100%;
+}
+
+.title {
+  color: #222222;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .bg {
-  background-color: #e9edd5;
-  border-radius: 15px;
+  background-color: #ffffff; 
+  border-radius: 14px;
   border-left: 6px solid transparent;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1rem 1.25rem 1.25rem 1.25rem !important; 
+  position: relative;
 }
 
-.toast-success {
-  border-left-color: #baffc9;
+/* Animación de entrada por defecto para todas las tarjetas */
+.toast-card {
+  animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+  }
 }
 
-.toast-error {
-  border-left-color: #ffb3ba;
-}
-
-.toast-warning {
-  border-left-color: #ffffba;
-}
-
-.toast-info {
-  border-left-color: #bae1ff;
-}
+.toast-success { border-left-color: #4caf50; }
+.toast-error { border-left-color: #f44336; }
+.toast-warning { border-left-color: #ff9800; }
+.toast-info { border-left-color: #2196f3; }
 
 .icono-cerrar {
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
   display: block;
 }
 
 .btn_notificaciones {
+  position: absolute;
+  top: 12px; 
+  right: 14px;
   background: transparent;
   border: none;
   border-radius: 50%;
@@ -56,56 +66,103 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  z-index: 10; 
+
+  &:hover { 
+    opacity: 1; 
+    background-color: #f5f5f5; 
+  }
 }
 
 .btn-danger {
-  background-color: #ffb3ba;
-  color: black;
-  border: none;
-  border-radius: 8px;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f44336;
+    color: #ffffff;
+  }
 }
 
 .toast-slide-out {
-  animation: collapseAndFade 0.4s ease forwards;
+  animation: collapseAndFade 0.35s ease forwards !important;
 }
 
-.mensaje{
+.mensaje {
   cursor: pointer;
 }
 
-.nota{
-  font-size: 0.7rem;
+.nota {
+  font-size: 0.72rem;
   margin-right: 0.5rem;
+  color: #777777 !important; 
+  font-weight: 500;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease forwards;
+}
+
+// ========================================================
+// ANIMACIONES
+// ========================================================
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes collapseAndFade {
   0% {
     opacity: 1;
-    max-height: 200px;
+    max-height: 150px;
+    transform: scale(1);
     margin-bottom: 0.5rem;
   }
   100% {
     opacity: 0;
     max-height: 0;
+    transform: scale(0.85);
     margin-bottom: 0;
     padding-top: 0;
     padding-bottom: 0;
   }
 }
 
+// ========================================================
+// RESPONSIVE
+// ========================================================
 @media (max-width: 576px) {
   :host {
-    width: auto;
+    width: calc(100% - 2rem);
     right: 1rem;
-    left: auto;
+    left: 1rem;
+    top: 1rem;
   }
 
   .toasts-container {
-    width: 300px;
-    max-width: 90vw;
+    width: 100%;
   }
 }

@@ -11,7 +11,7 @@ select {
 }
 
 .form-input {
-  width: 350px;
+  width: 360px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
@@ -23,6 +23,16 @@ select {
   padding: 15px;
   box-sizing: border-box;
 }
+
+.position-relative .btn:hover,
+.position-relative .btn:focus,
+.position-relative .btn:active {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+
 
 
 
@@ -46,9 +56,26 @@ select {
 
 input.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched {
-  border: 2px solid red;
+  border: 2px solid #dc3545 !important;
 }
 
 .dato-obligatorio {
-  color: red;
+  color: #dc3545 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+  text-align: center;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+
+  .text-danger {
+    white-space: normal !important;
+    word-break: break-word;
+  }
 }

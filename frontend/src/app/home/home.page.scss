@@ -22,11 +22,67 @@
   margin: 0 auto;
 }
 
+.survey-floating-banner {
+  position: fixed;
+  bottom: 146px;
+  right: 20px;
+  z-index: 1050;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  max-width: 360px;
+  width: calc(100% - 40px);
+
+  .btn-close-banner {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    
+    &:hover {
+      color: #333;
+    }
+  }
+
+  .banner-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    background: #e3f2fd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .banner-text {
+    flex-grow: 1;
+    padding-right: 15px;
+  }
+}
+
 @media (max-width: 576px) {
   ion-fab.fab-chat {
     position: fixed !important;
     top: 815px !important;
     left: 355px !important;
     z-index: 9999;
+  }
+
+  .survey-floating-banner {
+    bottom: 146px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    width: auto;
   }
 }

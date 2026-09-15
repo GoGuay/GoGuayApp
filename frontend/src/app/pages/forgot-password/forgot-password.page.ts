@@ -8,6 +8,7 @@ import {
   IonToolbar,
   IonCol,
   IonRow,
+  NavController,
 } from '@ionic/angular/standalone';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -39,9 +40,10 @@ export class ForgotPasswordPage implements OnInit {
   userData: Usuario = {} as Usuario;
 
   constructor(
+    private navCtrl: NavController,
     private userService: UserServicesService,
     private messageService: MessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -66,6 +68,11 @@ export class ForgotPasswordPage implements OnInit {
               life: 3000,
             });
           });
+        setTimeout(() => {
+          this.navCtrl.navigateRoot(['/login'], {
+            animated: false,
+          });
+        }, 4000);
       });
   }
 }

@@ -1,70 +1,89 @@
-<ion-header>
-  <!-- <ion-toolbar>
-    <ion-title class="text-center">Encuesta</ion-title>
-  </ion-toolbar> -->
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <form [formGroup]="encuestaForm" (ngSubmit)="verificarEncuesta()">
-    <div class="container justify-content-center main_container">
-      <div class="encuesta_box mt-4">
-
-        <div class="container mb-3 row">
-          <h1><strong>Queremos escuchar tu opinión</strong></h1>
+  <div class="main-wrapper">
+    <form [formGroup]="encuestaForm" (ngSubmit)="verificarEncuesta()">
+      
+      <div class="welcome-section text-center animate__animated animate__fadeIn">
+        <div class="icon-circle">
+          <i class="fi fi-rr-heart"></i>
         </div>
-
-        <div class="container mb-3 row">
-          <h3>1. ¿Con qué probabilidad recomendarías PrideRide para realizar viajes a un familiar o amigo?</h3>
-          <div class="d-flex justify-content-center starsContainer">
-            <img *ngFor="let estrella of estrellas; let i = index"
-              src="{{ i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif' }}"
-              class="stars" type="button" (click)="seleccionarCalificacion(i + 1)">
-          </div>
-        </div>
-
-        <div class="container mb-3 row">
-          <h3>2. ¿Nos podrías indicar qué es lo que más te ha gustado?</h3>
-          <div class="container">
-            <table class="table table-hover tabla">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">😄</th>
-                  <th scope="col">🫤</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let aspecto of aspectos; let i = index">
-                  <td>{{ aspecto.nombre }}</td>
-                  <td>
-                    <mat-checkbox [formControlName]="'positivo' + i" (change)="toggleCheckbox(i, 'positivo')">
-                    </mat-checkbox>
-                  </td>
-                  <td>
-                    <mat-checkbox [formControlName]="'negativo' + i" (change)="toggleCheckbox(i, 'negativo')">
-                    </mat-checkbox>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="container mb-3 row">
-          <h3>3. Nos ayudaría mucho si nos compartes cómo crees que podemos mejorar la aplicación.</h3>
-          <div class="ms-3">
-            <textarea class="textArea form-control" maxlength="500" formControlName="sugerencias"></textarea>
-          </div>
-        </div>
-
+        <h1>¡Tu opinión nos mueve!</h1>
+        <p>Ayúdanos a mejorar GoGuay en menos de 1 minuto.</p>
       </div>
 
-      <div class="d-flex justify-content-end">
-        <div class="container mb-3 mt-3 row btn_box">
-          <button type="submit" class="btn_bg" mat-raised-button>Enviar</button>
+      <div class="container main_container">
+        
+        <div class="survey-card mt-4">
+          <div class="card-header">
+            <span class="step-number">1</span>
+            <h3>¿Qué probabilidad hay de que nos recomiendes?</h3>
+          </div>
+          <div class="stars-wrapper">
+            <div class="stars-container">
+              <div *ngFor="let estrella of estrellas; let i = index" class="star-item" 
+                   (click)="seleccionarCalificacion(i + 1)"
+                   [class.active]="i < calificacionSeleccionada">
+                <img [src]="i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif'" 
+                     class="star-img">
+                <span class="star-label" *ngIf="i < calificacionSeleccionada">{{ getLabelRating(i+1) }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-    </div>
-  </form>
+        <div class="survey-card mt-4">
+          <div class="card-header">
+            <span class="step-number">2</span>
+            <h3>¿Qué es lo que más te gusta y qué debemos mejorar?</h3>
+          </div>
+          
+          <div class="aspects-grid">
+            <div *ngFor="let aspecto of aspectos; let i = index" class="aspect-item">
+              <p class="aspect-name">{{ aspecto.nombre }}</p>
+              <div class="toggle-buttons">
+                <button type="button" class="btn-toggle pos" 
+                        [class.active]="encuestaForm.get('positivo'+i)?.value"
+                        (click)="toggleAspect(i, 'positivo')">
+                  <i class="fi fi-rr-smile"></i>
+                </button>
+                <button type="button" class="btn-toggle neg" 
+                        [class.active]="encuestaForm.get('negativo'+i)?.value"
+                        (click)="toggleAspect(i, 'negativo')">
+                  <i class="fi fi-rr-frown"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="survey-card mt-4 mb-4">
+          <div class="card-header">
+            <span class="step-number">3</span>
+            <h3>¿Alguna sugerencia extra para nosotros?</h3>
+          </div>
+          <div class="textarea-wrapper">
+            <textarea class="textArea form-control" 
+                      placeholder="Cuéntanos lo que quieras..."
+                      maxlength="500" 
+                      formControlName="sugerencias"></textarea>
+            <div class="char-count mt-2">{{ encuestaForm.get('sugerencias')?.value?.length || 0 }}/500</div>
+          </div>
+        </div>
+
+<div class="actions-wrapper d-flex justify-content-center align-items-center gap-3 pb-5 mt-4">
+  
+  <button type="button" class="btn-back" (click)="goBack()">
+    <i class="fi fi-rr-arrow-small-left me-2"></i>
+    <span>Atrás</span>
+  </button>
+
+  <button type="submit" class="btn-send" [disabled]="calificacionSeleccionada === 0">
+    <span>Enviar valoración</span>
+    <i class="fi fi-rr-paper-plane ms-2"></i>
+  </button>
+  
+</div>
+
+      </div>
+    </form>
+  </div>
 </ion-content>

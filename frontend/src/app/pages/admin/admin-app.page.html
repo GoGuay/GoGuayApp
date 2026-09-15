@@ -60,6 +60,7 @@
                     </ion-card-header>
                 </ion-card>
             </ion-col>
+
             <ion-col size="12" size-md="4">
                 <ion-card class="button_gestion" color="secondary">
                     <ion-card-header>
@@ -67,7 +68,30 @@
                     </ion-card-header>
                 </ion-card>
             </ion-col>
+
+            <ion-col size="12" size-md="4">
+                <ion-card class="button_gestion" color="secondary" (click)="goEncuestas()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Ver Encuestas</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
         </ion-row>
+
+        <section class="ion-margin-top animate__animated animate__fadeIn">
+            <h2><ion-icon name="bar-chart-outline"></ion-icon> Análisis de Satisfacción</h2>
+            <ion-card class="chart-card">
+                <div class="chart-container">
+                    <canvas #barCanvas></canvas>
+                </div>
+                <div *ngIf="totalEncuestas === 0" class="text-center p-3">
+                    <p class="text-muted small">
+                        <i class="fi fi-rr-info me-1"></i>
+                        Las estadísticas se actualizarán automáticamente conforme lleguen valoraciones.
+                    </p>
+                </div>
+            </ion-card>
+        </section>
 
         <!-- GESTIÓN DE USUARIOS  -->
         <section class="ion-margin-top">

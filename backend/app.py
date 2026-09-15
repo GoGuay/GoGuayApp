@@ -25,9 +25,9 @@ from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.events.events_service import evento_blueprint
 from services.notifications.notifications_utils import notifications_blueprint
+from services.encuesta_satisfaccion.encuesta_satisfaccion import encuesta_bp
 from services.user import user_service
 
-import json
 import firebase_admin
 from firebase_admin import credentials
 
@@ -72,14 +72,16 @@ def create_app():
     JWTManager(app)
     CORS(app, resources={r"/api/*": { 
         "origins": [
-            "https://localhost",      
-            "http://localhost",
-            "capacitor://localhost",
+            "http://localhost:4200",
+            "http://127.0.0.1:4200",  
+            "http://localhost:8100",  
+            "http://127.0.0.1:8100",  
             "https://pride-ride.vercel.app",
-            "https://pride-ride-backend.vercel.app"
+            "capacitor://localhost",
+            "ionic://localhost"
         ],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "X-Skip-Interceptor"],
         "supports_credentials": True
     }})
 
@@ -116,6 +118,7 @@ def create_app():
     app.register_blueprint(chat_blueprint, url_prefix="/api/chat")
     app.register_blueprint(evento_blueprint, url_prefix="/api/evento")
     app.register_blueprint(notifications_blueprint, url_prefix="/api/notifications")
+    app.register_blueprint(encuesta_bp, url_prefix="/api/encuesta")
 
  
     user_service.mail = mail

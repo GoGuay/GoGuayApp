@@ -3,14 +3,60 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 2rem;
   width: 100%;
   flex-wrap: nowrap;
   text-align: center;
   position: relative;
+  margin: 0 auto;
 }
 
-/* Asegurar que ocupe el ancho total disponible */
+.position-relative {
+  position: relative;
+}
+
+.lista_sugerencias {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 2px;
+
+  .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover,
+    &.active {
+      background-color: #F0D7B4 !important;
+      color: black !important;
+    }
+  }
+}
+
+::ng-deep app-selector-general input,
+::ng-deep app-selector-general select {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+#input-pronombre {
+  &::placeholder {
+    font-size: 0.99rem;
+    opacity: 0.7;
+  }
+}
+
+.flecha_selector {
+  right: 15px;
+  top: 67%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+
+
+
 .fila-foto>.col-auto {
   display: flex;
   justify-content: center;
@@ -30,6 +76,10 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
+.line {
+  border-right: none !important;
+  border-bottom: none;
+}
 
 /* Imagen redonda */
 .img_profile {
@@ -63,7 +113,9 @@
 
 /* Botón "Así me ven los demás" */
 .ver-perfil-btn {
-  width: 250px;
+  width: auto;
+  min-width: 250px;
+  white-space: nowrap;
   font-weight: 500;
   background-color: #a758e8;
   color: white;
@@ -77,87 +129,15 @@
   background-color: #e0a667;
 }
 
-/* ========================== */
-
-/* === Nombre, apellidos y selectores === */
 
 
-
-
-
-/* ========================== */
-
-
-
-.digit-input {
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  font-size: 24px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  background-color: #fff;
-  transition: border-color 0.3s;
-}
-
-.file-upload {
-  display: inline-block;
-  position: relative;
-}
-
-.file-input {
-  display: none;
-}
-
-
-
-.upload-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  background-color: #a758e8;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-align: center;
-  line-height: 1;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-}
-
-.upload-button:hover {
-  background-color: #e0a667;
-}
 
 .btn_bg {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
-.label-uverif {
-  font-size: 1.5rem;
-}
 
-.checkverficado {
-  border: 1px solid black;
-  border-radius: 15px;
-  background-color: #e0a667;
-  width: 30%;
-}
 
-.col-separator {
-  border-right: 1px solid rgb(143, 141, 141);
-  padding-right: 15px;
-  margin-right: 15px;
-}
-
-.col-separator:last-child {
-  border-right: none;
-}
 
 .container-fluid input,
 .container-fluid select,
@@ -181,23 +161,47 @@
 
 .col_fecha_edad {
   display: flex;
-  flex: 2;
-  gap: 10px;
+  flex: 0 0 100%;
+  max-width: 500px;
+  /* Limita el ancho para que no se expanda demasiado de forma extraña */
+  gap: 20px;
   justify-content: center;
-}
-
-.col_fecha_edad input,
-.col_fecha_edad span#edad {
-  height: 38px;
-  display: flex;
   align-items: center;
+  margin: 0 auto;
+  /* Centra la columna entera en el contenedor padre */
+
+  /* Asegura que los bloques individuales de cada input tengan un ancho equilibrado y centrado */
+  .mb-3:not(.cajon_edad) {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    input {
+      width: 100%;
+      max-width: 150px;
+      text-align: center;
+    }
+  }
+
+  .cajon_edad {
+    flex: 0.8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    input {
+      width: 100%;
+      max-width: 80px;
+      /* <--- Aquí defines el ancho reducido exclusivo para la edad */
+      text-align: center;
+    }
+  }
 }
 
-.col_genero,
-.col_orientacion,
-.col_pronombre {
-  width: 195px;
-}
+
+
+
 
 
 
@@ -211,12 +215,17 @@
   width: 400px;
 }
 
-
-
-
-
 /* Estilos específicos para móviles */
 @media (max-width: 576px) {
+
+  .fila-foto {
+    gap: 1rem;
+
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+  }
 
   /* === Fila de foto y botones === */
   .img_container {
@@ -225,10 +234,11 @@
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    justify-content: center;
     display: flex;
+    justify-content: center;
     align-items: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+    margin: 0 auto;
   }
 
   .img_profile {
@@ -240,8 +250,8 @@
   }
 
   .boton {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
 
   /* Botón "Así me ven los demás" */
@@ -257,7 +267,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
   }
 
-  /* ========================== */
+
 
   /* Contenedor de los selectores */
   .fila-selectores {
@@ -266,14 +276,12 @@
     justify-content: space-between;
   }
 
-  /* Pronombre y género lado a lado ocupando ~50% del ancho */
   .fila-selectores .col-pronombre,
   .fila-selectores .col-genero {
     flex: 0 0 50%;
     max-width: 100%;
   }
 
-  /* Orientación más pequeña y centrada */
   .col-orientacion {
     flex: 0 0 70%;
     max-width: 70%;
@@ -283,10 +291,9 @@
     align-items: center;
   }
 
-  /* Centrar el label de orientación y su tooltip */
   .col-orientacion label {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 5px;
@@ -294,19 +301,34 @@
   }
 
 
-  /* Select ocupando todo el ancho de su columna */
   .fila-selectores select {
     width: 100% !important;
     font-size: 0.8rem !important;
   }
 
+  .line {
+    border-right: none !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
 
-
-
-  .mat-divider-mobile {
-    display: none;
+  .input_edad {
+    width: 60px;
   }
 
 
+}
 
+@media (max-width: 992px) {
+  .line {
+    border-right: 2px dashed rgba(224, 166, 103, 0.4) !important;
+  }
+
+  .col-orientacion {
+    .flecha_selector {
+      top: 76%;
+      transform: translateY(-50%);
+    }
+  }
 }

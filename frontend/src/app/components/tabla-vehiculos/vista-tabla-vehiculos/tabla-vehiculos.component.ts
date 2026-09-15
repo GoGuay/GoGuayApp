@@ -1,27 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { HelpModalComponent } from '../../help-modal/help-modal.component';
-import { DialogConfig, DialogRef } from '@angular/cdk/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import {
-  CARS,
-  Coches,
-  COLORES,
-  COLOURS,
-} from 'src/app/models/vehiculos/marcas_modelos.model';
+import { CARS, Coches, COLORES, COLOURS } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../../../core/vehiculos-services/vehiculos-services.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MessageService } from 'primeng/api';
+import { SelectorGeneralComponent } from '../../selector-general/selector-general.component';
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -37,224 +30,95 @@ import { MessageService } from 'primeng/api';
     MatExpansionModule,
     MatFormFieldModule,
     MatTooltipModule,
+    SelectorGeneralComponent,
   ],
 })
 export class TablaVehiculosComponent implements OnInit {
-  userData: Usuario = {} as Usuario;
+  @Input() vehiculos: any[] = [];
+  @Input() modoSeleccion: boolean = false;
+  @Input() cocheSeleccionado: any = null;
+  @Input() mostrarSelectorVehiculo: boolean = false;
+
+  // Estados del formulario pasados o gestionados aquí
+  @Input() marcaSeleccionada: string = '';
+  @Input() modeloSeleccionado: string = '';
+  @Input() colorSeleccionado: string = '';
+  @Input() matriculaNoValida: boolean = false;
+
+  // Outputs para notificar al componente padre
+  @Output() cocheSeleccionadoChange = new EventEmitter<any>();
+  @Output() editarVehiculo = new EventEmitter<any>();
+  @Output() eliminarVehiculo = new EventEmitter<any>();
+  @Output() irARegistrarVehiculo = new EventEmitter<void>();
+  @Output() vehiculoAnadidoExito = new EventEmitter<any>();
+  @Output() mostrarSelectorVehiculoChange = new EventEmitter<boolean>();
+
+  userData: any = {} as Usuario;
   userLoggedIn: boolean = false;
-  modificandoMarca: boolean = false;
+
+  listColours: string[] = COLOURS;
   vehiculos_usuario: any[] = [];
   listadoCoches = CARS;
   listadoColores: string[] = COLORES;
   modelosFiltrados: string[] = [];
-  mostrarSelectorVehiculo: boolean = false;
-  marcaSeleccionada: string = '';
-  modeloSeleccionado: string = '';
-  colorSeleccionado: string = '';
-  listColours: string[] = COLOURS;
-  matriculaNoValida: boolean = false;
+  cocheEnEdicion: any = null;
+  editandoCoche: boolean = false;
+  marcasParaSelector: string[] = [];
+  listadoColoresUnico = [
+    { valor: 'blanco', descripcion: 'SELECTOR_COLOR.BLANCO' },
+    { valor: 'negro', descripcion: 'SELECTOR_COLOR.NEGRO' },
+    { valor: 'rojo', descripcion: 'SELECTOR_COLOR.ROJO' },
+    { valor: 'amarillo', descripcion: 'SELECTOR_COLOR.AMARILLO' },
+    { valor: 'verde', descripcion: 'SELECTOR_COLOR.VERDE' },
+    { valor: 'gris', descripcion: 'SELECTOR_COLOR.GRIS' },
+    { valor: 'dorado', descripcion: 'SELECTOR_COLOR.DORADO' },
+    { valor: 'marron', descripcion: 'SELECTOR_COLOR.MARRON' },
+    { valor: 'morado', descripcion: 'SELECTOR_COLOR.MORADO' },
+    { valor: 'beige', descripcion: 'SELECTOR_COLOR.BEIGE' },
+    { valor: 'perla', descripcion: 'SELECTOR_COLOR.PERLA' },
+    { valor: 'otro', descripcion: 'SELECTOR_COLOR.OTRO' },
+  ];
 
   constructor(
     public funcionesComunes: FuncionesComunes,
     public funcionesUsuario: FuncionesUsuario,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
     private vehiculosServicesService: VehiculosServicesService,
     private userService: UserServicesService,
-    private platform: Platform,
     private messageService: MessageService,
     private translate: TranslateService
-  ) {
-    this.loadUserData();
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  }
-
-  loadUserData(): void {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  }
+  ) {}
 
   ngOnInit() {
     this.loadUserData();
-    this.obtenerVehiculos();
+    this.marcasParaSelector = this.listadoCoches.map((c) => c.marca);
   }
 
-  /**
-   * Función para añadir un vehículo a la tabla
-   */
-  guardarVehiculo() {
-    this.loadUserData();
-    const nuevoCoche: Coches = {
-      marca: this.marcaSeleccionada,
-      modelo: this.modeloSeleccionado,
-      color: this.colorSeleccionado,
-    };
-    nuevoCoche.usuario_id = this.userData.usuario.id;
-
-    this.vehiculosServicesService
-      .anadirVehiculo(nuevoCoche)
-      .subscribe((resultado: any) => {
-        console.log('Vehiculo guardado correctamente:', resultado);
-        if (
-          resultado.vehiculos_usuario &&
-          resultado.vehiculos_usuario.length > 0
-        ) {
-          this.vehiculos_usuario = [...resultado.vehiculos_usuario];
-        } else {
-          console.error(
-            'No se recibieron vehículos actualizados desde el backend.'
-          );
-        }
-
-        this.userService
-          .obtenerUsuarioPorID(this.userData.usuario.id)
-          .subscribe((usuarioActualizado) => {
-            localStorage.setItem('userData', JSON.stringify(this.userData));
-            this.userData = usuarioActualizado;
-            // this.botonAnadirVehiculo();
-            // this.botonAnadirVehiculo();
-            console.log('Usuario actualizado:', this.userData);
-            this.translate
-              .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
-              .subscribe((vehiculoGuardadoMessage: string) => {
-                this.messageService.add({
-                  severity: 'success',
-                  summary: vehiculoGuardadoMessage, // Título traducido
-                  detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'), // Detalles traducidos
-                });
-              });
-            this.marcaSeleccionada = '';
-            this.modeloSeleccionado = '';
-            this.colorSeleccionado = '';
-
-            this.mostrarSelectorVehiculo = false;
-
-            this.cdr.detectChanges();
-            this.obtenerVehiculos();
-          });
-      });
-  }
-
-  /**
-   * Función para obtener la lista de vehículos de un usuario.   *
-   */
-  obtenerVehiculos() {
-    const usuario = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.vehiculosServicesService
-      .obtenerVehiculosUsuario(usuario.usuario.id)
-      .subscribe((resultado) => {
-        console.log('Vehículos: ', resultado.vehiculos);
-        this.funcionesUsuario.vehiculos_usuario = resultado.vehiculos;
-      });
-  }
-
-  /**
-   * Poner los campos del vehículo en editables (selectores e input)
-   * @param vehiculo
-   */
-  editarFilaVehiculo(vehiculo: any) {
-    vehiculo.editandoVehiculo = !vehiculo.editandoVehiculo;
-
-    if (vehiculo.editandoVehiculo) {
-      this.marcaSeleccionada = vehiculo.marca;
-      this.modeloSeleccionado = vehiculo.modelo;
-      this.colorSeleccionado = vehiculo.color;
-      this.filtrarModelos();
-    }
-  }
-
-  filtrarModelosEditando(coche: any) {
-    this.modificandoMarca = !this.modificandoMarca;
-    if (!coche.marca) return;
-
-    const vehiculo = this.listadoCoches.find((c) => c.marca === coche.marca);
-    this.modelosFiltrados = vehiculo.modelos;
-
-    if (this.modelosFiltrados.length > 0) {
-      coche.modelo = this.modelosFiltrados[0]; // Establecemos el modelo por defecto
-    } else {
-      coche.modelo = ''; // Si no hay modelos, dejamos el modelo vacío
+  loadUserData(): void {
+    const data = localStorage.getItem('userData');
+    if (data) {
+      this.userData = JSON.parse(data);
     }
   }
 
   /**
-   * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
-   * @param vehiculo
-   */
-  guardarVehiculoEditado(vehiculo: any) {
-    console.log('Guardando cambios en el vehículo: ', vehiculo);
-    vehiculo.editandoVehiculo = false;
-    this.funcionesComunes.editarVehiculo(vehiculo);
-    this.cdr.detectChanges();
-    if (this.modificandoMarca) {
-      this.modificandoMarca = false;
-    }
-    this.translate
-      .get('VEHICULOS.TITULO_GUARDANDOALEDITAR')
-      .subscribe((vehiculoGuardadoMessage: string) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: vehiculoGuardadoMessage, // Título traducido
-          detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'), // Detalles traducidos
-        });
-      });
-    this.marcaSeleccionada = '';
-    this.modeloSeleccionado = '';
-    this.colorSeleccionado = '';
-    this.mostrarSelectorVehiculo = false;
-  }
-
-  /**
-   * Función para eliminar un vehículo del usuario
-   * @param vehiculo
-   */
-  eliminarVehiculo(vehiculo: any): any {
-    this.vehiculosServicesService
-      .eliminarVehiculo(vehiculo.id, vehiculo)
-      .subscribe((resultado) => {
-        this.vehiculos_usuario = this.vehiculos_usuario.filter(
-          (coche) => coche.id !== vehiculo.id
-        );
-        this.cdr.detectChanges();
-        this.obtenerVehiculos();
-        this.mostrarSelectorVehiculo = false;
-        console.log('Resultado: ', resultado);
-      });
-  }
-
-  modalEliminarVehiculo(cocheAEliminar: any) {
-    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
-    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
-    const dialogRef = this.dialog.open(HelpModalComponent, {
-      data: { title: titulo, message: mensaje, showAcceptButton: true },
-      disableClose: true,
-    });
-    dialogRef.afterClosed().subscribe((confirmar) => {
-      if (confirmar) {
-        this.eliminarVehiculo(cocheAEliminar);
-        this.vehiculos_usuario;
-      }
-    });
-  }
-
-  /**
-   * Función para mostrar las imágenes de colores de los coches
-   * según el color que se tenga seleccionado del coche.   *
-   * @param color
-   * @returns
+   * Función para mostrar el color del coche seleccionado.
+   * @param color --> Recibe el color del coche.
+   * @returns Devuelve la ruta de la imagen del color del coche.
    */
   mostrarColorCoche(color: string): string {
-    const blanco: string = '../../../assets/ColoresCoches/Blanco.png';
-    const negro: string = '../../../assets/ColoresCoches/Negro.png';
-    const rojo: string = '../../../assets/ColoresCoches/Rojo.png';
-    const amarillo: string = '../../../assets/ColoresCoches/Amarillo.png';
-    const verde: string = '../../../assets/ColoresCoches/Verde.png';
-    const gris: string = '../../../assets/ColoresCoches/Gris.png';
-    const dorado: string = '../../../assets/ColoresCoches/Dorado.png';
-    const marron: string = '../../../assets/ColoresCoches/Marrón.png';
-    const morado: string = '../../../assets/ColoresCoches/Morado.png';
-    const beige: string = '../../../assets/ColoresCoches/Beige.png';
-    const perla: string = '../../../assets/ColoresCoches/Perla.png';
-    const otro: string = '../../../assets/ColoresCoches/Otros.png';
+    const blanco: string = '../../../../../../assets/ColoresCoches/Blanco.png';
+    const negro: string = '../../../../../../assets/ColoresCoches/Negro.png';
+    const rojo: string = '../../../../../../assets/ColoresCoches/Rojo.png';
+    const amarillo: string = '../../../../../../assets/ColoresCoches/Amarillo.png';
+    const verde: string = '../../../../../../assets/ColoresCoches/Verde.png';
+    const gris: string = '../../../../../../assets/ColoresCoches/Gris.png';
+    const dorado: string = '../../../../../../assets/ColoresCoches/Dorado.png';
+    const marron: string = '../../../../../../assets/ColoresCoches/Marrón.png';
+    const morado: string = '../../../../../../assets/ColoresCoches/Morado.png';
+    const beige: string = '../../../../../../assets/ColoresCoches/Beige.png';
+    const perla: string = '../../../../../../assets/ColoresCoches/Perla.png';
+    const otro: string = '../../../../../../assets/ColoresCoches/Otros.png';
 
     switch (color) {
       case 'blanco':
@@ -286,40 +150,162 @@ export class TablaVehiculosComponent implements OnInit {
     }
   }
 
-  /**
-   * Para mostrar (o no) el selector de marca, modelo y color de coche
-   */
-  botonAnadirVehiculo() {
-    this.mostrarSelectorVehiculo = !this.mostrarSelectorVehiculo;
+  onModeloChange(valor: any) {
+    const modeloLimpio = typeof valor === 'object' && valor !== null ? valor.modelo || valor.valor || valor : valor;
+    this.modeloSeleccionado = modeloLimpio;
+  }
+  onMarcaChange(valor: any) {
+    const marcaLimpia = typeof valor === 'object' && valor !== null ? valor.marca || valor.valor || valor : valor;
+    this.marcaSeleccionada = marcaLimpia;
+    this.filtrarModelos(marcaLimpia);
+  }
+  onColorChange(valor: any) {
+    const colorLimpio = typeof valor === 'object' && valor !== null ? valor.valor || valor : valor;
+    this.colorSeleccionado = colorLimpio;
   }
 
   /**
-   * Función para validar que la matrícula tenga el formato 0000ABC
+   * Poner los campos del vehículo en editables (selectores e input)
+   * @param vehiculo
    */
-  // validarMatricula(): void {
-  //   const regex = /^[0-9]{4}[A-Z]{3}$/;
+  editarFilaVehiculo(vehiculo: any) {
+    this.editandoCoche = true;
+    this.cocheEnEdicion = vehiculo;
+    console.log('coche en edicion en función: ', this.cocheEnEdicion);
 
-  //   // Convertir a mayúsculas automáticamente
-  //   this.matricula = this.matricula.toUpperCase();
+    this.mostrarSelectorVehiculo = true;
+    this.marcaSeleccionada = vehiculo.marca;
+    this.modeloSeleccionado = vehiculo.modelo;
+    this.colorSeleccionado = vehiculo.color;
+    const cocheEncontrado = this.listadoCoches.find((c) => c.marca === vehiculo.marca);
+    this.modelosFiltrados = cocheEncontrado ? cocheEncontrado.modelos : [];
 
-  //   if (!regex.test(this.matricula)) {
-  //     console.log(
-  //       'Matrícula inválida. Debe tener 4 números seguidos de 3 letras (Ej: 1234ABC).'
-  //     );
-  //     this.matriculaNoValida = true;
-  //   } else {
-  //     this.matriculaNoValida = false;
-  //   }
-  // }
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Función para añadir un vehículo a la tabla
+   */
+  guardarVehiculo() {
+    if (!this.marcaSeleccionada || !this.modeloSeleccionado || !this.colorSeleccionado) {
+      return;
+    }
+    this.loadUserData();
+    if (!this.userData.usuario && this.userData.id) {
+      this.userData = { usuario: this.userData };
+    }
+    const nuevoCoche: Coches = {
+      marca: this.marcaSeleccionada,
+      modelo: this.modeloSeleccionado,
+      color: this.colorSeleccionado,
+    };
+    nuevoCoche.usuario_id = this.userData.usuario.id;
+
+    this.vehiculosServicesService.anadirVehiculo(nuevoCoche).subscribe((resultado: any) => {
+      console.log('Vehiculo guardado correctamente:', resultado);
+
+      this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
+        this.userData = usuarioActualizado;
+        localStorage.setItem('userData', JSON.stringify(this.userData));
+
+        if (usuarioActualizado?.vehiculos) {
+          this.vehiculos = [...usuarioActualizado.vehiculos];
+        } else if (usuarioActualizado?.usuario?.vehiculos) {
+          this.vehiculos = [...usuarioActualizado.usuario.vehiculos];
+        }
+
+        this.translate.get('VEHICULOS.TITULO_GUARDANDOALEDITAR').subscribe((vehiculoGuardadoMessage: string) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: vehiculoGuardadoMessage,
+            detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'),
+          });
+        });
+
+        this.marcaSeleccionada = '';
+        this.modeloSeleccionado = '';
+        this.colorSeleccionado = '';
+        this.mostrarSelectorVehiculo = false;
+        this.vehiculoAnadidoExito.emit(usuarioActualizado);
+        this.mostrarSelectorVehiculoChange.emit(false);
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  /**
+   * Se encarga de enviar los datos al backend para guardar los nuevos datos del vehículo
+   * @param vehiculo
+   */
+  guardarVehiculoEditado(vehiculo: any) {
+    if (!this.marcaSeleccionada || !this.modeloSeleccionado || !this.colorSeleccionado) {
+      return;
+    }
+    console.log('Guardando cambios en el vehículo: ', vehiculo);
+    vehiculo.editandoVehiculo = false;
+
+    vehiculo.marca = this.marcaSeleccionada;
+    vehiculo.modelo = this.modeloSeleccionado;
+    vehiculo.color = this.colorSeleccionado;
+
+    this.funcionesComunes.editarVehiculo(vehiculo);
+    this.cdr.detectChanges();
+
+    this.translate.get('VEHICULOS.TITULO_GUARDANDOALEDITAR').subscribe((vehiculoGuardadoMessage: string) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: vehiculoGuardadoMessage,
+        detail: this.translate.instant('VEHICULOS.GUARDANDOALEDITAR'),
+      });
+    });
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.mostrarSelectorVehiculo = false;
+    this.editandoCoche = false;
+    this.mostrarSelectorVehiculoChange.emit(false);
+  }
+
+  cancelarCoche() {
+    this.mostrarSelectorVehiculo = false;
+    this.marcaSeleccionada = '';
+    this.modeloSeleccionado = '';
+    this.colorSeleccionado = '';
+    this.modelosFiltrados = [];
+    this.editandoCoche = false;
+    this.cocheEnEdicion = null;
+    this.mostrarSelectorVehiculoChange.emit(false);
+  }
 
   /**
    * Función para filtrar los modelos de los coches
    */
-  filtrarModelos() {
-    const coche = this.listadoCoches.find(
-      (vehiculo) => vehiculo.marca === this.marcaSeleccionada
-    );
-    this.modelosFiltrados = coche ? coche.modelos : []; //si "coche" viene con algún dato, saca los modelos y los guarda en "modelosFiltrados". Si no (:), guarda un array vacio
+  filtrarModelos(nuevaMarca: any) {
+    this.marcaSeleccionada = nuevaMarca;
+    const coche = this.listadoCoches.find((vehiculo) => vehiculo.marca === nuevaMarca);
+    this.modelosFiltrados = coche ? coche.modelos : [];
     this.modeloSeleccionado = '';
+  }
+
+  seleccionarCoche(coche: any) {
+    if (this.modoSeleccion) {
+      this.cocheSeleccionado = coche;
+      this.cocheSeleccionadoChange.emit(coche);
+    }
+  }
+
+  compareVehiculos(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  }
+
+  /**
+   * Función para trackear el vehículo.
+   *
+   * @param index -> Índice del vehículo.
+   * @param coche -> Vehículo a trackear.
+   * @returns Devuelve el id del vehículo.
+   */
+  trackByVehiculo(index: number, coche: any) {
+    return coche.id;
   }
 }

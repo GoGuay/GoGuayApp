@@ -4,7 +4,7 @@
 }
 
 .box_sugerencias {
-  border-radius: 15px;
+  border-radius: 35px;
   border: #e0a667 solid 1px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
   background-color: rgba(224, 166, 103, 0.28);
@@ -12,10 +12,10 @@
 }
 
 .box_text {
-  border: 1px solid black;
-  border-radius: 15px;
+  // border: 1px solid black;
+  border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-  background-color: #B7e0b4;
+  // background-color: #B7e0b4;
   margin-bottom: 3%;
   margin-top: 2%;
 }
@@ -43,6 +43,11 @@
   max-width: 300px;
   background: #fff;
   padding: 10px;
+  background: rgba(255, 255, 255, 0.45); 
+  -webkit-backdrop-filter: blur(25px) saturate(180%); 
+  backdrop-filter: blur(25px) saturate(180%);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15),
+  inset 0 0 0 1px rgba(255, 255, 255, 0.3); 
 
   &::before {
     content: '';
@@ -68,10 +73,9 @@
 }
 
 .btn_bg_main {
-  background: #baffc9; 
-  color: #2e7d32;
+  background: #b3b5e6; 
   font-weight: bold;
-  border-radius: 12px;
+  border-radius: 35px;
   padding: 10px 20px;
 }
 
@@ -80,7 +84,7 @@
   text-decoration: none;
   font-size: 0.9rem;
   &:hover {
-    color: #bae1ff; 
+    color: #b3b5e6; 
     text-decoration: underline;
   }
 }

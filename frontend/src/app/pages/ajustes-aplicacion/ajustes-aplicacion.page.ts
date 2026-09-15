@@ -36,7 +36,6 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
   ],
 })
 export class AjustesAplicacionPage implements OnInit {
-
   userLoggedIn: boolean = false;
 
   selectedLanguage = 'es';
@@ -44,7 +43,6 @@ export class AjustesAplicacionPage implements OnInit {
   notificacionesActivas = true;
   theme = 'light';
   mostrarJumbotron = true;
-  password: string = '';
 
   email: string = '';
   userData: Usuario = {} as Usuario;
@@ -58,6 +56,7 @@ export class AjustesAplicacionPage implements OnInit {
   isPasswordActualValida: boolean | null = null;
   isNuevaPassword1Valida: boolean = false;
   isConfirmacionPasswordValida: boolean = false;
+  interactuoConPassword: boolean = false;
   errorMensaje: string = '';
   exitoMensaje: string = '';
 
@@ -90,6 +89,8 @@ export class AjustesAplicacionPage implements OnInit {
   cobroIBAN: string = '';
   cobroTitular: string = '';
 
+  iaActiva: boolean = true;
+
   @ViewChild(IonContent) content!: IonContent;
 
   constructor(
@@ -101,8 +102,8 @@ export class AjustesAplicacionPage implements OnInit {
     private translate: TranslateService,
     private route: ActivatedRoute,
     private funcionesComunes: FuncionesComunes,
-    private _bottomSheet: MatBottomSheet
-  ) { 
+    private _bottomSheet: MatBottomSheet,
+  ) {
     addIcons({ logoPaypal, cardOutline, businessOutline });
   }
 
@@ -110,32 +111,29 @@ export class AjustesAplicacionPage implements OnInit {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.selectedLanguage = this.languageService.getLanguage();
     const savedJumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
-    this.notificacionesActivas = localStorage.getItem('notificacionesActivas') !== 'false';
+    this.mostrarJumbotron =
+      savedJumbotronSetting === null ? true : savedJumbotronSetting === 'true';
+    this.notificacionesActivas =
+      localStorage.getItem('notificacionesActivas') !== 'false';
     this.notifPush = localStorage.getItem('notifPush') !== 'false';
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
 
-
-    this.darkTheme = localStorage.getItem('darkTheme') === 'true';
-
-    // Aplicar el tema al iniciar
-    this.aplicarTema(this.darkTheme);
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'cuenta') {
+        this.segmentoSeleccionado = 'cuenta';
+      }
+    });
+    
+    const savedIASetting = localStorage.getItem('iaActiva');
+    this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.obtenerUsuario();
-    this.userService.usuario$.subscribe((usuario) => {
-      if (usuario) {
-        this.userData.usuario = usuario;
-        this.preferenciasSeleccionadas = usuario.preferencias || [];
-        this.cargarPreferencias();
-      }
-    });
   }
 
-
   ngAfterViewInit() {
-    this.route.fragment.subscribe(fragment => {
+    this.route.fragment.subscribe((fragment) => {
       if (fragment) {
         setTimeout(() => {
           const element = document.getElementById(fragment);
@@ -153,13 +151,17 @@ export class AjustesAplicacionPage implements OnInit {
       .obtenerUsuarioPorID(this.userData.usuario.id)
       .subscribe((respuesta) => {
         this.usuarioBD = respuesta;
-        this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
+        this.metodoPagoPredeterminado =
+          respuesta.metodo_pago_preferido || 'paypal';
       });
   }
 
   guardarAjustes() {
     localStorage.setItem('mostrarJumbotron', this.mostrarJumbotron.toString());
-    localStorage.setItem('notificacionesActivas', this.notificacionesActivas.toString());
+    localStorage.setItem(
+      'notificacionesActivas',
+      this.notificacionesActivas.toString(),
+    );
     localStorage.setItem('notifPush', this.notifPush.toString());
     localStorage.setItem('notifEmail', this.notifEmail.toString());
     localStorage.setItem('notifSMS', this.notifSMS.toString());
@@ -202,7 +204,7 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   onMetodoPagoChange() {
-    console.log("Cambiando a:", this.metodoPagoPredeterminado);
+    console.log('Cambiando a:', this.metodoPagoPredeterminado);
   }
 
   /**
@@ -238,13 +240,14 @@ export class AjustesAplicacionPage implements OnInit {
 
     this.userService.eliminarUsuario(this.userData.usuario.id).subscribe(
       (res) => console.log('Respuesta del backend: ', res),
-      (err) => console.error('Error del backedn: ', err)
+      (err) => console.error('Error del backedn: ', err),
     );
     localStorage.removeItem('userData');
     this.navCtrl.navigateRoot(['/'], {});
   }
 
-  /**FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
+  /**
+   * FUNCIÓN PARA COMPROBAR LA CONTRASEÑA ACTUAL Y DESHABILITAR/HABILITAR los siguientes campos
    * Si no hay contraseña actual escrita, corta la función y deja todo en deshabilitado.
    * Si hay contraseña actual, llama al servicio para comprobar si la contraseña es la correcta del usuario.
    * Si el backend responde correctamente , actualiza el estado de isPasswordActualValida con true o false.
@@ -255,28 +258,29 @@ export class AjustesAplicacionPage implements OnInit {
    *
    */
   comprobarContrasenaActual() {
-    if (!this.passwordActual) {
+
+    if (!this.passwordActual || this.passwordActual.length < 6) { 
       this.isPasswordActualValida = false;
       this.errorMensaje = '';
       return;
     }
 
     this.userService
-      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual)
+      .verificar_pw_actual(this.userData.usuario.id, this.passwordActual.trim())
       .subscribe({
         next: (res) => {
           this.isPasswordActualValida = res.isValid;
 
           if (res.isValid) {
             this.errorMensaje = '';
-            console.log('✅ Contraseña actual verificada correctamente');
+            console.log('Contraseña actual verificada correctamente');
           } else {
             this.translate
               .get('AJUSTESAPP.PASSWORD.CONTRAS_ACTUAL_INCO')
               .subscribe((translation) => {
-                this.errorMensaje = '❌ ' + translation;
+                this.errorMensaje = translation;
               });
-            console.log('❌ Contraseña actual incorrecta');
+            console.log('Contraseña actual incorrecta');
           }
           this.nuevaPassword1 = '';
           this.nuevaPassword2 = '';
@@ -363,16 +367,6 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   /**
-   * Función para cambiar el modo de visión de la app
-   * @param event 
-   */
-  toggleDarkMode(event: any) {
-    this.darkTheme = event.detail.checked;
-    localStorage.setItem('darkTheme', this.darkTheme.toString());
-    this.aplicarTema(this.darkTheme);
-  }
-
-  /**
    * Función para mostrar u ocultar el jumbotron de la home al activar o desactivar la opción en ajustes de aplicación
    */
   mostrarJumbotronChange() {
@@ -381,72 +375,7 @@ export class AjustesAplicacionPage implements OnInit {
       severity: 'success',
       summary: 'Ajuste actualizado',
       detail: 'Se ha cambiado el ajuste de visualización de la cabecera.',
-      life: 2000
-    });
-  }
-
-  /**
-   * Función para aplicar el tema seleccionado
-   * @param isDark 
-   */
-  private aplicarTema(isDark: boolean) {
-    document.body.classList.toggle('dark', isDark);
-  }
-
-
-  /**
-   * Función para obtener las preferencias de viaje del usuario.
-   * 
-   */
-  cargarPreferencias() {
-    const usuario = this.userData?.usuario;
-    const prefsArray: string[] = usuario?.preferencias || JSON.parse(localStorage.getItem('userPreferences') || '[]');
-
-    this.leGustaHablar = prefsArray.includes('Hablar');
-    this.leGustaMusica = prefsArray.includes('Escuchar música');
-    this.leGustaSilencio = prefsArray.includes('Ir en silencio');
-    this.aceptaMascotas = prefsArray.includes('Mascotas');
-    this.fuma = prefsArray.includes('Fumar');
-  }
-
-  /**
-   * Función para guardar las nuevas preferencias de viaje del usuario.
-   * 
-   */
-  guardarPreferencias() {
-    const nuevasPreferencias: string[] = [];
-
-    if (this.leGustaHablar) nuevasPreferencias.push('Hablar');
-    if (this.leGustaMusica) nuevasPreferencias.push('Escuchar música');
-    if (this.leGustaSilencio) nuevasPreferencias.push('Ir en silencio');
-    if (this.aceptaMascotas) nuevasPreferencias.push('Permitir mascotas');
-    if (this.fuma) nuevasPreferencias.push('Permitir fumar');
-
-    localStorage.setItem('userPreferences', JSON.stringify(nuevasPreferencias));
-
-    
-    this.userService.actualizarUsuario(this.userData.usuario.id, {
-      preferencias: nuevasPreferencias
-    }).subscribe({
-      next: (usuarioActualizado) => {
-        this.userService.setUsuarioData(usuarioActualizado);
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Preferencias actualizadas',
-          detail: 'Se han sincronizado tus preferencias con tu perfil.',
-          life: 2000
-        });
-      },
-      error: (err) => {
-        console.error('Error al guardar preferencias:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudieron guardar las preferencias en el servidor.',
-          life: 3000
-        });
-      }
+      life: 2000,
     });
   }
 
@@ -461,11 +390,11 @@ export class AjustesAplicacionPage implements OnInit {
       data: {
         title: 'Cerrar Sesión',
         message: '¿Estás seguro de que quieres salir de Pridecar?',
-        showAcceptButton: true
-      }
+        showAcceptButton: true,
+      },
     });
 
-    alert.afterClosed().subscribe(confirmado => {
+    alert.afterClosed().subscribe((confirmado) => {
       if (confirmado) {
         if (rememberMe) {
           localStorage.setItem('remember_me', 'true');
@@ -486,27 +415,29 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   /**
-   * Función para guardar el método de pago preferido del usuario. 
+   * Función para guardar el método de pago preferido del usuario.
    * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
-   * 
+   *
    */
   guardarMetodoPago() {
     const datosPago = {
-      metodo_pago_preferido: this.metodoPagoPredeterminado, 
+      metodo_pago_preferido: this.metodoPagoPredeterminado,
       paypal_email: this.emailPaypal,
       tarjeta_numero: this.numeroTarjeta,
-      tarjeta_exp: this.fechaCaducidad
+      tarjeta_exp: this.fechaCaducidad,
     };
 
-    this.userService.actualizarUsuario(this.userData.usuario.id, datosPago).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Datos de pago actualizados correctamente'
-        });
-      }
-    });
+    this.userService
+      .actualizarUsuario(this.userData.usuario.id, datosPago)
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Datos de pago actualizados correctamente',
+          });
+        },
+      });
   }
 
   /**
@@ -518,18 +449,20 @@ export class AjustesAplicacionPage implements OnInit {
       metodo_cobro_preferido: this.metodoCobroPredeterminado,
       cobro_paypal_email: this.cobroEmailPaypal,
       cobro_iban: this.cobroIBAN,
-      cobro_titular: this.cobroTitular
+      cobro_titular: this.cobroTitular,
     };
 
-    this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Datos de cobro actualizados correctamente'
-        });
-      }
-    });
+    this.userService
+      .actualizarUsuario(this.userData.usuario.id, datosCobro)
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Datos de cobro actualizados correctamente',
+          });
+        },
+      });
   }
 
   /**
@@ -546,7 +479,6 @@ export class AjustesAplicacionPage implements OnInit {
     this.navCtrl.navigateForward('/condiciones-generales');
   }
 
-
   /**
    * Función para abrir la página de valoración de la aplicación al hacer click en la opción del menú. Redirige a la página de encuesta de satisfacción.
    */
@@ -554,4 +486,13 @@ export class AjustesAplicacionPage implements OnInit {
     this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 
+  guardarAjustesIA() {
+    localStorage.setItem('iaActiva', this.iaActiva.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: this.iaActiva ? 'Recomendaciones de IA activadas.' : 'Recomendaciones de IA desactivadas.',
+      life: 2000,
+    });
+  }
 }

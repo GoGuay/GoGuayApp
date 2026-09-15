@@ -133,6 +133,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then((m) => m.MisViajesPage),
   },
   {
+    path: 'detalles-viaje/:id',
+    loadComponent: () => import('./pages/mis-viajes/detalles-viaje/detalles-viaje.page').then((m) => m.DetallesViajePage),
+  },
+  {
     path: 'messaging-center',
     loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.component').then((m) => m.CentroMensajesPage),
   },
@@ -163,5 +167,9 @@ export const routes: Routes = [
   {
     path: 'pago-reserva/:id',
     loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+  },
+  {
+    path: 'gestion-encuestas',
+    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then(m => m.GestionEncuestasPage)
   }
 ];

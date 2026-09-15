@@ -5,20 +5,18 @@ import { RouterModule } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
-
 @Component({
   selector: 'app-ventana-dudas',
   standalone: true,
-  imports: [MatButton, RouterModule, TranslateModule, MatIcon],
+  imports: [MatButton, RouterModule, TranslateModule],
   templateUrl: './ventana-dudas.component.html',
   styleUrls: ['./ventana-dudas.component.scss'],
 })
-export class VentanaDudasComponent  implements OnInit {
-
-  constructor(private navController: NavController) { }
+export class VentanaDudasComponent implements OnInit {
+  constructor(private navController: NavController) {}
 
   ngOnInit() {}
   navigateToCentroAyuda() {
-    this.navController.navigateForward(['/centro-ayuda'], { animated: false  });
+    this.navController.navigateForward(['/centro-ayuda'], { animated: false });
   }
 }

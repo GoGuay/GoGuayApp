@@ -1,217 +1,249 @@
 <app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
-<ion-content [fullscreen]="true">
-  <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-md-center align-items-start">
-    <div class="container dialog-animate">
-      <ion-grid>
-        <ion-row>
-          <div class="container">
-            <h1>RESUMEN DEL VIAJE</h1>
-            <mat-divider></mat-divider>
-          </div>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12" size-md="8">
-            <div class="container contenedor_resumen d-flex align-items-center">
-              <div class="container">
-                <ion-grid>
 
-                  <!-- ORIGEN -->
-                  <ion-row class="ion-align-items-center"> <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-plane-departure me-2"></i> <strong>Origen:</strong>
-                      <span class="ms-2" *ngIf="!editMode.origen">{{ currentViajeData?.origen }}</span>
-                      <input *ngIf="editMode.origen" [(ngModel)]="origen"
-                        (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
-                        placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control">
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="main-wrapper animate__animated animate__fadeIn">
+    
+    <div class="summary-container">
+      <header class="text-center mb-4">
+        <h1 class="title-main">Resumen de tu Viaje</h1>
+        <p class="subtitle-main">Revisa los detalles antes de {{ ruta_navegacion_origen === 'mis-viajes' ? 'guardar los cambios' : 'confirmar' }}</p>
+      </header>
 
-                      <ul *ngIf="funcionesComunes.sugerenciasOrigen.length > 0"
-                        class="list-group lista_sugerencias_origen">
-                        <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen"
-                          (click)="seleccionarLocalidadOrigen(sugerencia)" class="list-group-item">
-                          {{ sugerencia.display_name }}
-                        </li>
-                      </ul>
-                    </ion-col>
+      <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: RUTA Y MAPA -->
+        <div class="col-12 col-lg-7">
+          <div class="glass-card main-route-card">
+            <div class="card-section-title">ITINERARIO</div>
+            
+            <!-- Timeline de Ruta -->
+            <div class="route-timeline">
+              <!-- ORIGEN -->
+              <div class="timeline-item">
+                <div class="timeline-icon origin"><i class="fi fi-rr-marker"></i></div>
+                <div class="timeline-content">
+                  <label>Punto de Salida</label>
+                  <div class="data-row">
+                    <h3 *ngIf="!editMode.origen">{{ currentViajeData?.origen }}</h3>
+                    <input *ngIf="editMode.origen" [(ngModel)]="origen" 
+                           (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
+                           class="form-control custom-input">
+                    <button class="btn-edit" (click)="edicionInformacion('origen')">
+                      <mat-icon>{{ editMode.origen ? 'check_circle' : 'edit' }}</mat-icon>
+                    </button>
+                  </div>
+                  <!-- Sugerencias Origen -->
+                  <ul *ngIf="funcionesComunes.sugerenciasOrigen.length > 0" class="suggestions-list">
+                    <li *ngFor="let sug of funcionesComunes.sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sug)">
+                      {{ sug.display_name }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
 
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end"> <button class="btn-rounded"
-                        mat-icon-button (click)="edicionInformacion('origen')">
-                        <mat-icon>{{ editMode.origen ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- DESTINO -->
-                  <ion-row class="ion-align-items-center"> <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-user-roadmap me-2"></i> <strong>Destino: </strong>
-                      <span class="ms-2" *ngIf="!editMode.destino">{{ currentViajeData?.destino }}</span>
-                      <input *ngIf="editMode.destino" [(ngModel)]="destino"
-                        (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
-                        placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control">
-                      <ul *ngIf="funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-                        <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino"
-                          (click)="seleccionarLocalidadDestino(sugerencia)" [ngClass]="{'list-group-item': true}">
-                          {{ sugerencia.display_name }}
-                        </li>
-                      </ul>
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('destino')">
-                        <mat-icon>{{ editMode.destino ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- COCHE SELECCIONADO -->
-                  <ion-row class="ion-align-items-center">
-                    <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-car-rear me-2"></i> <strong>Coche seleccionado:</strong>
-
-                      <span class="ms-2" *ngIf="!editMode.coche">
-                        {{ nombreVehiculo }}
-                      </span>
-                      <select *ngIf="editMode.coche" class="form-select" [(ngModel)]="editableFields.coche"
-                        [ngModelOptions]="{ standalone: true }" aria-label="Selección de coche">
-                        <option value="" disabled selected>
-                          {{ "VEHICULOS.MODELO" | translate }}
-                        </option>
-                        <option *ngFor="let coche of vehiculosUsuario" [ngValue]="coche">
-                          {{coche | json}}
-                          {{ coche.marca }} {{ coche.modelo }}
-                        </option>
-                      </select>
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('coche')">
-                        <mat-icon>{{ editMode.coche ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- HORA DE SALIDA -->
-                  <ion-row class="ion-align-items-center mb-2">
-                    <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-clock-ten me-2"></i> <strong>Hora de salida:</strong>
-                      <input type="time" [(ngModel)]="editableFields.hora_salida" *ngIf="editMode.hora_salida">
-                      <span class="ms-2" *ngIf="!editMode.hora_salida">{{ currentViajeData?.hora_salida }}</span>
-
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('hora_salida')">
-                        <mat-icon>{{ editMode.hora_salida ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- HORA DE LLEGADA -->
-                  <ion-row class="ion-align-items-center">
-                    <ion-col size="12" size-md="12">
-                      <i class="fi fi-rr-clock-ten me-2"></i> <strong>Hora de llegada:</strong>
-                      <span class="ms-2">{{ calcularHoraLlegada(currentViajeData?.hora_salida,
-                        currentViajeData?.ruta_seleccionada?.routes[0]?.legs[0]?.duration?.text) }}</span>
-                      <p class="mt-2"><strong>*Nota: </strong>La hora de llegada se calcula automáticamente según la
-                        hora de salida y la duración del trayecto.</p>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- PLAZAS DISPONIBLES -->
-                  <ion-row class="ion-align-items-center">
-                    <ion-col size="9" size-md="9">
-                      <i class="fi fi-rs-users me-2"></i> <strong>Número de plazas disponibles:</strong>
-                      <span class="ms-2" *ngIf="!editMode.plazas">{{ currentViajeData?.plazas }}</span>
-                      <input *ngIf="editMode.plazas" type="number" [(ngModel)]="editableFields.plazas" />
-
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('plazas')">
-                        <mat-icon>{{ editMode.plazas ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <mat-divider></mat-divider>
-
-                  <!-- PRECIO -->
-                  <ion-row class="ion-align-items-center">
-                    <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-coin-up-arrow me-2"></i> <strong>Precio:</strong>
-                      <span class="ms-2" *ngIf="!editMode.precio_viaje">{{ currentViajeData?.precio_viaje }} €</span>
-                      <input class="ms-2" *ngIf="editMode.precio_viaje" type="number"
-                        [(ngModel)]="editableFields.precio_viaje" class="currencyInput" />
-
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('precio_viaje')">
-                        <mat-icon>{{ editMode.precio_viaje ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-
-                  <!-- RESERVA DEL VIAJE  -->
-                  <ion-row class="ion-align-items-center">
-                    <ion-col size="9" size-md="9">
-                      <i class="fi fi-rr-coin-up-arrow me-2"></i> <strong>Modo de reserva: </strong>
-                      <span class="ms-2" *ngIf="!editMode.reserva_automatica">{{ currentViajeData?.reserva_automatica ? 'Automática' : 'Manual' }} </span>
-                      <!-- <input class="ms-2" *ngIf="editMode.reserva_automatica" type="number"
-                        [(ngModel)]="editableFields.reserva_automatica" class="currencyInput" /> -->
-                      <select *ngIf="editMode.reserva_automatica" class="form-select" [(ngModel)]="editableFields.reserva_automatica"
-                        [ngModelOptions]="{ standalone: true }" aria-label="Selección del modo de reserva">
-                        <option value="" disabled selected>
-                          Modo de reserva
-                        </option>
-                        <option  [ngValue]="true">
-                          Automática
-                        </option>
-                        <option  [ngValue]="false">
-                          Manual
-                        </option>
-                      </select>
-                    </ion-col>
-                    <ion-col size="3" size-md="3" class="d-flex justify-content-end">
-                      <button class="btn-rounded" mat-icon-button (click)="edicionInformacion('precio_viaje')">
-                        <mat-icon>{{ editMode.precio_viaje ? 'save' : 'edit_square' }}</mat-icon>
-                      </button>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-
+              <!-- DESTINO -->
+              <div class="timeline-item">
+                <div class="timeline-icon destination"><i class="fi fi-rr-flag-checkered"></i></div>
+                <div class="timeline-content">
+                  <label>Destino Final</label>
+                  <div class="data-row">
+                    <h3 *ngIf="!editMode.destino">{{ currentViajeData?.destino }}</h3>
+                    <input *ngIf="editMode.destino" [(ngModel)]="destino" 
+                           (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
+                           class="form-control custom-input">
+                    <button class="btn-edit" (click)="edicionInformacion('destino')">
+                      <mat-icon>{{ editMode.destino ? 'check_circle' : 'edit' }}</mat-icon>
+                    </button>
+                  </div>
+                  <!-- Sugerencias Destino -->
+                  <ul *ngIf="funcionesComunes.sugerenciasDestino.length > 0" class="suggestions-list">
+                    <li *ngFor="let sug of funcionesComunes.sugerenciasDestino" (click)="seleccionarLocalidadDestino(sug)">
+                      {{ sug.display_name }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </ion-col>
 
-          <ion-col size="12" size-md="4" class="d-flex align-items-center justify-content-center">
-            <div class="container map-container-resumen">
-              <div #mapResumen id="mapResumen" class="box_img" [hidden]="!currentViajeData?.ruta_seleccionada"></div>
-              <img *ngIf="!currentViajeData?.ruta_seleccionada" class="box_img"
-                src="../../../../../../assets/imgs/travel_1.jpg">
+            <!-- MAPA INTEGRADO -->
+            <div class="map-wrapper-new mt-4">
+              <div #mapResumen id="mapResumen" class="map-canvas" [hidden]="!currentViajeData?.ruta_seleccionada"></div>
+              <img *ngIf="!currentViajeData?.ruta_seleccionada" class="map-placeholder" src="assets/imgs/travel_1.jpg">
             </div>
-          </ion-col>
+          </div>
+        </div>
 
-        </ion-row>
-        <ion-row class="d-flex justify-content-center">
-          <div class="container box_info d-flex justify-content-center align-items-center">
-            <p>
-              Si estás de acuerdo con el viaje que vas a realizar, confírmalo.
-              <br>
-              En caso contrario, tienes que volver atrás y modificar los parámetros que quieras.
-            </p>
+        <!-- COLUMNA DERECHA: AJUSTES Y PRECIO -->
+        <div class="col-12 col-lg-5">
+          <div class="glass-card settings-card">
+            <div class="card-section-title">CONFIGURACIÓN DEL VIAJE</div>
+
+            <div class="settings-grid">
+              <!-- VEHÍCULO -->
+            <div class="setting-item">
+              <div class="icon-box"><i class="fi fi-rr-car-rear"></i></div>
+              <div class="setting-info">
+                <label>Vehículo</label>
+                <div class="d-flex align-items-center">
+                  <span *ngIf="!editMode.coche">{{ nombreVehiculo || 'No seleccionado' }}</span>
+                  <select *ngIf="editMode.coche" 
+                          class="form-select custom-select-pride" 
+                          [(ngModel)]="editableFields.coche"
+                          [compareWith]="compareVehiculos">
+                    <option [ngValue]="null" disabled>Selecciona un vehículo</option>
+                    <option *ngFor="let coche of vehiculosUsuario" [ngValue]="coche">
+                      {{ coche.marca }} {{ coche.modelo }} ({{ coche.matricula }})
+                    </option>
+                  </select>
+                  <button class="btn-edit-sm" (click)="edicionInformacion('coche')">
+                    <mat-icon>{{ editMode.coche ? 'done' : 'edit' }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+              <!-- HORARIOS -->
+              <div class="setting-item">
+                <div class="icon-box"><i class="fi fi-rr-clock"></i></div>
+                <div class="setting-info">
+                  <label>Horario</label>
+                  <div class="d-flex align-items-center">
+                    <div class="time-block">
+                      <span class="badge-time">Salida: {{ currentViajeData?.hora_salida }}</span>
+                    </div>
+                    <button class="btn-edit-sm" (click)="edicionInformacion('hora_salida')">
+                      <mat-icon>{{ editMode.hora_salida ? 'done' : 'edit' }}</mat-icon>
+                    </button>
+                  </div>
+                  <input type="time" [(ngModel)]="editableFields.hora_salida" *ngIf="editMode.hora_salida" class="mt-2 form-control-sm">
+
+                </div>
+                <span class="badge-time arrival">
+                  Llegada: 
+                  <ng-container *ngIf="currentViajeData?.ruta_seleccionada?.routes?.[0] as mainRoute; else horaEstatica">
+                    {{ calcularHoraLlegada(currentViajeData.hora_salida, mainRoute.legs[0].duration.text) }}
+                  </ng-container>
+                  
+                  <ng-template #horaEstatica>
+                    {{ currentViajeData?.hora_llegada || '--:--' }}
+                  </ng-template>
+                </span>
+              </div>
+
+              <!-- PLAZAS -->
+              <div class="setting-item">
+                <div class="icon-box"><i class="fi fi-rs-users"></i></div>
+                <div class="setting-info">
+                  <label>Plazas Disponibles</label>
+                  <div class="d-flex align-items-center">
+                    <span class="data-val" *ngIf="!editMode.plazas">{{ currentViajeData?.plazas }} asientos</span>
+                    
+                    <select *ngIf="editMode.plazas" 
+                            [(ngModel)]="editableFields.plazas" 
+                            class="form-select custom-select-pride">
+                      <option [ngValue]="1">1 plaza</option>
+                      <option [ngValue]="2">2 plazas</option>
+                      <option [ngValue]="3">3 plazas</option>
+                      <option [ngValue]="4">4 plazas</option>
+                    </select>
+
+                    <button class="btn-edit-sm" (click)="edicionInformacion('plazas')">
+                      <mat-icon>{{ editMode.plazas ? 'done' : 'edit' }}</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RESERVA -->
+              <div class="setting-item">
+                <div class="icon-box"><i class="fi fi-rr-shield-check"></i></div>
+                <div class="setting-info">
+                  <label>Modo de Reserva</label>
+                  <div class="d-flex align-items-center">
+                    <span class="badge-reserva" *ngIf="!editMode.reserva_automatica" [class.auto]="currentViajeData?.reserva_automatica">
+                      {{ currentViajeData?.reserva_automatica ? 'Automática' : 'Manual' }}
+                    </span>
+
+                    <select *ngIf="editMode.reserva_automatica" 
+                            class="form-select custom-select-pride" 
+                            [(ngModel)]="editableFields.reserva_automatica">
+                      <option [ngValue]="true">Automática</option>
+                      <option [ngValue]="false">Manual</option>
+                    </select>
+
+                    <button class="btn-edit-sm" (click)="edicionInformacion('reserva_automatica')">
+                      <mat-icon>{{ editMode.reserva_automatica ? 'done' : 'edit' }}</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRECIO DESTACADO -->
+            <div class="price-section mt-4">
+              <div class="price-content">
+                <div class="price-label">Aportación por pasajero</div>
+                
+                <div class="price-value" *ngIf="!editMode.precio_viaje">
+                  {{ currentViajeData?.precio_viaje }}<span>€</span>
+                </div>
+                
+                <input *ngIf="editMode.precio_viaje" 
+                      type="number" 
+                      [(ngModel)]="editableFields.precio_viaje" 
+                      class="input-price-edit"
+                      placeholder="0">
+              </div>
+
+              <button class="btn-edit-price" (click)="edicionInformacion('precio_viaje')">
+                <mat-icon>{{ editMode.precio_viaje ? 'save' : 'edit' }}</mat-icon>
+              </button>
+            </div>
           </div>
-          <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">
-            <button type="button" mat-raised-button class="btn_bg" (click)="volverAInicioDelViaje()">Atrás</button>
-            <button type="button" mat-raised-button class="btn_bg" (click)="confirmarViaje()">Confirmar viaje</button>
-          </div>
-        </ion-row>
-      </ion-grid>
+        </div>
+      </div>
+
+      <!-- ACCIONES FINALES -->
+      <div class="actions-footer mt-5">
+        
+        <!-- Bloque de nota informativa -->
+        <div class="info-note mb-4" [ngClass]="ruta_navegacion_origen === 'mis-viajes' ? 'edit-note' : 'create-note'">
+          <i class="fi" [ngClass]="ruta_navegacion_origen === 'mis-viajes' ? 'fi-rr-edit' : 'fi-rr-info'"></i>
+          
+          <!-- Mensaje para EDICIÓN -->
+          <p *ngIf="ruta_navegacion_origen === 'mis-viajes'">
+            Estás editando un viaje existente. Revisa que los nuevos datos sean correctos. 
+            Al confirmar, se actualizará la información para todos los pasajeros.
+          </p>
+          
+          <!-- Mensaje para CREACIÓN -->
+          <p *ngIf="ruta_navegacion_origen !== 'mis-viajes'">
+            Si estás de acuerdo con el viaje que vas a realizar, confírmalo. 
+            En caso contrario, puedes volver atrás para modificar los parámetros.
+          </p>
+        </div>
+        
+        <!-- Botonera -->
+        <div class="d-flex justify-content-center gap-3 pb-5">
+          
+          <!-- Botón Atrás / Cancelar -->
+          <button mat-button class="btn-secondary-custom" (click)="volverAInicioDelViaje()">
+            <i class="fi fi-rr-arrow-small-left"></i> 
+            {{ ruta_navegacion_origen === 'mis-viajes' ? 'Cancelar edición' : 'Atrás' }}
+          </button>
+
+          <!-- Botón Confirmar / Guardar -->
+          <button mat-raised-button class="btn-primary-custom" (click)="confirmarViaje()">
+            <span>
+              {{ ruta_navegacion_origen === 'mis-viajes' ? 'Guardar cambios' : 'Confirmar viaje' }}
+            </span>
+            <i class="fi" [ngClass]="ruta_navegacion_origen === 'mis-viajes' ? 'fi-rr-disk' : 'fi-rr-check'"></i>
+          </button>
+          
+        </div>
+      </div>
+
     </div>
-    <app-spinner *ngIf="cargando_viaje"></app-spinner>
   </div>
 
+  <app-spinner *ngIf="cargando_viaje"></app-spinner>
 </ion-content>

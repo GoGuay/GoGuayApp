@@ -1,13 +1,115 @@
-.infoText{
-    font-size: 12px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-    width: 500px;
-    padding: 10px;
-    padding-bottom: 1px;
+$purple-pride: #b3b5e6;
+$beige-pride: #f0d7b4;
+
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100%;
+  padding-top: 20px;
 }
 
-.inputContact {
+.contact-container {
+  max-width: 800px !important;
+}
+
+.title-page {
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #333;
+}
+
+.divider-custom {
+  height: 4px;
+  width: 60px;
+  background: $purple-pride;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+.info-card {
+  background-color: white;
+  border-left: 5px solid $beige-pride;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  
+  .icon-info {
+    font-size: 1.5rem;
+    color: $beige-pride;
+    margin-right: 15px;
+  }
+
+  p { font-size: 0.9rem; color: #666; }
+
+  .security-text {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #a38b6d; 
+    background: #fdfaf5;
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
+
+.form-card {
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+  .form-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 8px;
+    margin-left: 5px;
+  }
+
+  .input-wrapper {
+    position: relative;
+    
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $purple-pride;
+      z-index: 10;
+    }
+
+    input {
+      padding-left: 45px;
+    }
+  }
+
+  .form-control {
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
+    border: 2px solid #f0f0f0;
+    padding: 12px 15px;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+
+    &:focus {
+      border-color: $purple-pride;
+      box-shadow: 0 0 0 4px rgba($purple-pride, 0.1);
+    }
+  }
+
+  textarea.form-control {
+    border-radius: 20px;
+  }
+}
+
+.btn-send {
+  background-color: $purple-pride !important;
+  color: white !important;
+  padding: 10px 30px !important;
+  border-radius: 25px !important;
+  font-weight: 700 !important;
+  height: 48px;
+  
+  &:hover {
+    box-shadow: 0 5px 15px rgba($purple-pride, 0.4);
+  }
 }

@@ -1,38 +1,51 @@
 <div class="container">
   <h1>PUNTO DE PARTIDA</h1>
 
-  <input [(ngModel)]="origen" (input)="buscarSugerenciasOrigen($event)"
-    placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control">
-  <button type="button" mat-raised-button class="btn_bg"
-    (click)="getUserLocationWithLeaflet()"><img src="../../../../../../assets/sistema/marcador.png" class="_icon me-3">Usar mi ubicación
+  <input #inputOrigen id="input-origen" autocomplete="off" spellcheck="false" [(ngModel)]="origen"
+    (input)="buscarSugerenciasOrigen($event)" (blur)="estaEnOrigen = false; validarSeleccion('origen')"
+    (focus)="estaEnOrigen = true" placeholder="{{ 'NUEVO_VIAJE2.FROM' | translate }}" class="input-viaje form-control"
+    name="origen" role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
+    aria-describedby="instrucciones-busqueda" [attr.aria-expanded]="sugerenciasOrigen.length > 0" [attr.aria-controls]="sugerenciasOrigen.length > 0
+                    ? 'lista-origen-resultados'
+                    : null
+                " />
+  <button type="button" mat-raised-button class="btn_bg" (click)="getUserLocationWithLeaflet()"><img
+      src="../../../../../../assets/sistema/marcador.png" class="_icon me-3">Usar mi ubicación
   </button>
-    
+
   <div *ngIf="cargandoOrigen" class="spinner-container">
     <app-spinner></app-spinner>
   </div>
 
-  <ul *ngIf="!cargandoOrigen && funcionesComunes.sugerenciasOrigen.length > 0"
-    class="list-group lista_sugerencias_origen">
-    <li *ngFor="let sugerencia of funcionesComunes.sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sugerencia)"
+  <ul *ngIf="!cargandoOrigen && sugerenciasOrigen.length > 0" class="list-group lista_sugerencias_origen">
+    <li *ngFor="let sugerencia of sugerenciasOrigen" (click)="seleccionarLocalidadOrigen(sugerencia)"
       [ngClass]="{'list-group-item': true}">
-      {{ sugerencia.display_name }}
+      {{ sugerencia.descripcion }}
     </li>
   </ul>
 </div>
 
 <div class="container">
   <h1>LUGAR DE LLEGADA</h1>
-  <input [(ngModel)]="destino" (input)="buscarSugerenciasDestino($event)"
-    placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}" class="input-viaje form-control">
+  <input #inputDestino id="input-destino" [(ngModel)]="destino"
+    (blur)="estaEnDestino = false; validarSeleccion('destino')" (focus)="estaEnDestino = true"
+    (input)="buscarSugerenciasDestino($event)" (keydown)="manejarNavegacionTeclado($event, 'destino')"
+    autocomplete="off" spellcheck="false" placeholder="{{ 'NUEVO_VIAJE2.TO' | translate }}"
+    class="input-viaje form-control" name="destino" role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
+    aria-describedby="instrucciones-busqueda" [attr.aria-expanded]="sugerenciasDestino.length > 0" [attr.aria-controls]="
+                  sugerenciasDestino.length > 0
+                    ? 'lista-destino-resultados'
+                    : null
+                " />
 
   <div *ngIf="cargandoDestino" class="spinner-container">
     <app-spinner></app-spinner>
   </div>
 
-  <ul *ngIf="!cargandoDestino && funcionesComunes.sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
-    <li *ngFor="let sugerencia of funcionesComunes.sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
+  <ul *ngIf="!cargandoDestino && sugerenciasDestino.length > 0" class="list-group lista_sugerencias">
+    <li *ngFor="let sugerencia of sugerenciasDestino" (click)="seleccionarLocalidadDestino(sugerencia)"
       [ngClass]="{'list-group-item': true}">
-      {{ sugerencia.display_name }}
+      {{ sugerencia.descripcion }}
     </li>
   </ul>
 </div>

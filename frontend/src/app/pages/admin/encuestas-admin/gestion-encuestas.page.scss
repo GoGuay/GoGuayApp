@@ -1,0 +1,176 @@
+.admin-container {
+  max-width: 1000px;
+  margin: 0 auto;
+
+  h1 { font-weight: 800; color: #333; }
+}
+
+.encuesta-card {
+  position: relative;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  // Clases dinámicas por nota
+  &.rating-high { .status-accent { background: #b7e0b4; } } // Verde
+  &.rating-mid { .status-accent { background: #f0d7b4; } }  // Beige/Amarillo
+  &.rating-low { .status-accent { background: #ffb7b7; } }  // Rojo
+
+  .status-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+  }
+
+  .card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .user-meta {
+    .id-tag {
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #555;
+    }
+    .date-text {
+      display: block;
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 4px;
+    }
+  }
+
+  .rating-box {
+    text-align: right;
+    small {
+      text-transform: uppercase;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #aaa;
+    }
+  }
+
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #bbb;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+}
+
+// Estilo de los Badges de Aspectos
+.aspects-grid-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .aspect-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: #f9f9f9;
+    color: #999;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #eee;
+
+    i { font-size: 0.9rem; }
+
+    &.positivo {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-color: #c8e6c9;
+    }
+    &.negativo {
+      background: #ffebee;
+      color: #c62828;
+      border-color: #ffcdd2;
+    }
+  }
+}
+
+// Vista previa del comentario
+.suggestion-preview {
+  background: #fff9f0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px dashed #f0d7b4;
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #d4a373;
+    margin-bottom: 5px;
+  }
+
+  .preview-content {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #5d4037;
+    line-height: 1.4;
+    font-style: italic;
+  }
+}
+
+// Semáforo de Aspectos
+.aspects-summary {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 10px 0;
+
+  .aspect-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    color: #ccc;
+    font-size: 1rem;
+    transition: all 0.3s;
+
+    &.positivo {
+      background: #b7e0b4;
+      color: #2e7d32;
+    }
+    &.negativo {
+      background: #ffb7b7;
+      color: #c62828;
+    }
+  }
+}
+
+.feedback-text {
+  background: #fdfaf5;
+  padding: 15px;
+  border-radius: 15px;
+  border-left: 4px solid #f0d7b4;
+
+  h6 { font-size: 0.85rem; font-weight: 800; color: #888; }
+  p { font-style: italic; color: #444; margin: 0; }
+}
+
+.no-data {
+  i { font-size: 4rem; color: #ddd; }
+  p { color: #999; font-weight: 600; }
+}

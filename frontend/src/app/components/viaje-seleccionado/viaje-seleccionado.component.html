@@ -186,7 +186,7 @@
 
     <div
       class="acciones-en-curso p-3 mt-3 rounded shadow-sm"
-      *ngIf="viaje.estado_viaje === 'En curso'"
+      *ngIf="viaje.estado_viaje === 'En Curso'"
     >
       <h3 class="text-center">
         <i class="fi fi-rr-play-alt"></i>
@@ -250,7 +250,7 @@
     </div>
   </mat-dialog-content>
 
-  <mat-dialog-actions *ngIf="viaje.estado_viaje !== 'En curso'">
+  <mat-dialog-actions *ngIf="viaje.estado_viaje !== 'En Curso'">
     <div class="d-flex justify-content-center mt-4">
       <button
         mat-raised-button

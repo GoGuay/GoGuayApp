@@ -1,120 +1,74 @@
 <div id="tercer_paso">
-
-  <div class="container">
-    <h1>SELECCIONA UNA RUTA</h1>
+  <div class="container py-3">
+    <h1 class="text-uppercase section-main-title">Selecciona una ruta</h1>
+    <p class="text-muted small">Revisa y elige el trayecto que mejor se adapte a tu viaje compartido:</p>
   </div>
 
   <div class="container">
-    <ion-grid>
+    <ion-grid class="p-0">
       <ion-row>
         <ion-col size="12" size-md="12" size-xl="6">
-          <div class="tercer_paso_container d-flex align-items-center gap-3">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="peajes" checked
-                (change)="onPeajeOptionChange($event)" />
-              <label class="form-check-label" for="peajes">
-                Con peajes
-              </label>
-            </div>
 
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="sinPeajes"
-                (change)="onPeajeOptionChange($event)" />
-              <label class="form-check-label" for="sinPeajes">
-                Sin peajes
-              </label>
-            </div>
-            <div class="form-check" *ngIf="rutaConParadasSeleccionada">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="rutaConParadas"
-                [checked]="rutaConParadasSeleccionada" (change)="actualizarRuta()" />
-              <label class="form-check-label" for="rutaConParadas">
-                Ruta seleccionada
-              </label>
-            </div>
-            <div class="form-check" *ngIf="rutaConParadasSeleccionada">
-              <button type="button" class="trashBtn" (click)="eliminarRutaSeleccionada()"><mat-icon
-                  class="trahsIcon">delete</mat-icon></button>
-            </div>
+          <div *ngIf="isLoadingRoutes" class="text-center py-5">
+            <mat-spinner class="mx-auto" diameter="40"></mat-spinner>
+            <p class="mt-3 text-secondary">Analizando carreteras y peajes de GoGuay...</p>
           </div>
-          <div *ngIf="routes.length > 0">
-            <!-- Lista de sugerencias de paradas -->
-            <!-- <div class="spinner_box" *ngIf="cargandoSugerencias">
-              <mat-spinner></mat-spinner>
-              <p style="color: #B3B5E6" class="mt-2"> Cargando posibles paradas... </p>
-            </div>
-             <div class="container" *ngIf="sugerenciasParadas.length > 0">
-              <span>Sugerencias de paradas</span>
-              <ul class="list-group sugerencia_paradas">
-                <li 
-                  *ngFor="let parada of sugerenciasParadas" 
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                  (click)="seleccionarParada(parada)">
-                  {{ parada.nombre }} - {{ parada.distancia }}
-                  <span *ngIf="paradasSeleccionadas.has(parada.nombre)"><mat-icon class="checkRutaSeleccionada">check</mat-icon></span>
-                </li>
-              </ul>
-              
-             </div> -->
 
+          <div *ngIf="!isLoadingRoutes && rutasCombinadas.length > 0" class="animate__animated animate__fadeIn">
             <div class="route-list-container">
-              <div *ngFor="let route of routes; let i = index" (click)="selectRoute(i)" class="route-option"
-                [class.selected]="selectedRoute?.routes?.[0] === route">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h3>
-                    {{ origen }} <img class="icon" src="../../../../../../assets/sistema/flecha-pequena-derecha.png"> {{
-                    destino }}
-                  </h3>
-                  <label class="toll-label" *ngIf="marcaPeajes">Incluye peajes</label>
-                  <label class="toll-label" *ngIf="!marcaPeajes">Sin peajes</label>
-                </div>
-                <p>Distancia: {{ route.legs[0].distance?.text }}</p>
-                <p>Duración: {{ route.legs[0].duration?.text }}</p>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="routes.length === 0">
-            <!-- Spinner "Cargando rutas" -->
-            <div *ngIf="isLoadingRoutes" class="tercer_paso_container">
-              <ngx-spinner bdColor="rgba(0,0,0,0.8)" size="small" color="#B3B5E6" type="square-jelly-box"
-                [fullScreen]="false">
-                <div class="spinner_box">
-                  <mat-spinner></mat-spinner>
-                  <p style="color: #B3B5E6" class="mt-2"> Cargando rutas... </p>
-                </div>
-              </ngx-spinner>
-            </div>
 
-            <!-- Spinner "Actualizando ruta" -->
-            <div *ngIf="isUpdatingRoute" class="tercer_paso_container">
-              <ngx-spinner bdColor="rgba(0,0,0,0.8)" size="small" color="#B3B5E6" type="square-jelly-box"
-                [fullScreen]="false">
-                <div class="spinner_box">
-                  <mat-spinner></mat-spinner>
-                  <p style="color: #B3B5E6" class="mt-2"> Actualizando ruta... </p>
+              <ion-radio-group [(ngModel)]="indiceRutaSeleccionada">
+
+                <div *ngFor="let item of rutasCombinadas; let i = index" (click)="selectRoute(i)"
+                  class="route-option-card d-flex align-items-center justify-content-between mb-3 p-3"
+                  [class.active-route]="indiceRutaSeleccionada === i">
+
+                  <div class="route-info-side flex-grow-1 pe-3">
+                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                      <h3 class="route-title m-0">
+                        {{ origen.split(',')[0] }}
+                        <img class="arrow-icon mx-1" src="../../../../../../assets/sistema/flecha-pequena-derecha.png"
+                          alt="flecha">
+                        {{ destino.split(',')[0] }}
+                      </h3>
+
+                      <ion-badge [color]="item.tienePeajes ? 'danger' : 'success'" mode="ios" class="toll-badge">
+                        {{ item.tienePeajes ? 'Con Peajes' : 'Sin Peajes' }}
+                      </ion-badge>
+                    </div>
+
+                    <div class="route-meta-data text-secondary small">
+                      <span class="me-3"><i class="fi fi-rr-road me-1 text-primary"></i>{{
+                        item.route.legs[0].distance?.text }}</span>
+                      <span><i class="fi fi-rr-clock me-1 text-warning"></i>{{ item.route.legs[0].duration?.text
+                        }}</span>
+                    </div>
+                  </div>
+
+                  <div class="route-radio-side d-flex align-items-center justify-content-center ps-2">
+                    <ion-radio slot="end" mode="ios" [value]="i"> </ion-radio>
+                  </div>
+
                 </div>
-              </ngx-spinner>
-            </div>
-            <div *ngIf="!isLoadingRoutes && routes.length === 0">
-              <p>
-                No se encontraron rutas. Intenta con otros puntos de origen o
-                destino.
-              </p>
+
+              </ion-radio-group>
+
             </div>
           </div>
+
+          <div *ngIf="!isLoadingRoutes && rutasCombinadas.length === 0" class="text-center py-4 card p-3 border-dashed">
+            <p class="text-muted mb-0">Introduce un origen y destino válidos en el paso anterior para trazar las rutas.
+            </p>
+          </div>
+
         </ion-col>
 
-        <!-- MAPA -->
         <ion-col #mapContainer id="mapContainer" size="12" size-md="12" size-xl="6">
-          <div class="contenedor_mapa">
-            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="500px" width="100%"
+          <div class="contenedor_mapa shadow-lg rounded-4 overflow-hidden">
+            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="480px" width="100%"
               (mapClick)="onMapClick($event)">
-              <map-directions-renderer *ngIf="selectedRoute" [directions]="selectedRoute"></map-directions-renderer>
               <map-marker *ngIf="markerOrigin" [position]="markerOrigin"></map-marker>
             </google-map>
-          </div>
-          <div *ngIf="!apiCargada" class="spinner_box">
-            <app-spinner></app-spinner>
-            <p>Cargando mapa...</p>
           </div>
         </ion-col>
       </ion-row>

@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
 import { Usuario } from '../models/user/usuario.model';
+import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados-ia/viajes-recomendados-ia.component";
 
 @Component({
   selector: 'app-home',
@@ -34,14 +35,19 @@ import { Usuario } from '../models/user/usuario.model';
     NavbarComponent,
     BuscadorViajeHomeComponent,
     CommonModule,
-  ],
+    ViajesRecomendadosIaComponent
+],
 })
 export class HomePage implements OnInit {
   userLoggedIn: boolean = false;
   mostrarJumbotron = true;
+  iaActiva: boolean = true;
   usuario: any;
   userData: Usuario = {} as Usuario;
   messaging: string = '../../assets/sistema/messaging.png';
+
+  mostrarBannerEncuesta: boolean = false;
+  private tiempoNavegacion: any;
 
   constructor(
     private translate: TranslateService,
@@ -56,10 +62,21 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
     this.loadJumbotronSetting();
+    this.loadIASetting();
 
     if (this.userLoggedIn) {
       this.obtenerUsuarioPorID(this.userData?.usuario?.id);
       this.obtenerNotificaciones(this.userData?.usuario?.id);
+    }
+  }
+
+  ionViewDidEnter() {
+    this.iniciarTemporizadorEncuesta();
+  }
+
+  ionViewWillLeave() {
+    if (this.tiempoNavegacion) {
+      clearTimeout(this.tiempoNavegacion);
     }
   }
 
@@ -75,6 +92,16 @@ export class HomePage implements OnInit {
       this.mostrarJumbotron = true;
     } else {
       this.mostrarJumbotron = jumbotronSetting === 'true';
+    }
+  }
+
+  loadIASetting() {
+    const iaSetting = localStorage.getItem('iaActiva');
+    if (iaSetting === null) {
+      localStorage.setItem('iaActiva', 'true');
+      this.iaActiva = true;
+    } else {
+      this.iaActiva = iaSetting === 'true';
     }
   }
 
@@ -102,5 +129,25 @@ export class HomePage implements OnInit {
 
   irAmensajes() {
     this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
+  }
+
+  iniciarTemporizadorEncuesta() {
+    const encuestaOculta = localStorage.getItem('encuesta_goguay_cerrada');
+    if (encuestaOculta) return;
+
+    this.tiempoNavegacion = setTimeout(() => {
+      this.mostrarBannerEncuesta = true;
+    }, 180000); 
+  }
+
+  cerrarBannerEncuesta() {
+    this.mostrarBannerEncuesta = false;
+    localStorage.setItem('encuesta_goguay_cerrada', 'true');
+  }
+
+  irAEncuesta() {
+    this.mostrarBannerEncuesta = false;
+    localStorage.setItem('encuesta_goguay_cerrada', 'true');
+    this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 }

@@ -8,16 +8,14 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-nuevo-viaje-general',
   standalone: true,
-  imports: [IonicModule, MatButtonModule, TranslateModule, MatIcon],
+  imports: [IonicModule, MatButtonModule, TranslateModule],
   templateUrl: './nuevo-viaje-general.component.html',
   styleUrls: ['./nuevo-viaje-general.component.scss'],
 })
 export class NuevoViajeGeneralComponent implements OnInit {
+  constructor(private navCtrl: NavController) {}
 
-  constructor(private navCtrl: NavController) { }
-
-  ngOnInit() { }
-
+  ngOnInit() {}
 
   /**
    * Función para navegar hasta el componente de "nuevo-viaje"

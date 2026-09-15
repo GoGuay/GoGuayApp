@@ -1,25 +1,23 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
-import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { Usuario } from 'src/app/models/user/usuario.model';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
-import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { VehiculosServicesService } from 'src/app/core/vehiculos-services/vehiculos-services.service';
-import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
+import { NavbarComponent } from '../../../../../shared/navbar/navbar.component';
+import { SpinnerComponent } from '../../../../../components/spinner/spinner.component';
+import { Usuario } from '../../../../../models/user/usuario.model';
+import { TravelService } from '../../../../../core/travel-services/travel.service';
+import { VehiculosServicesService } from '../../../../../core/vehiculos-services/vehiculos-services.service';
+import { FuncionesComunes } from '../../../../../core/funciones-comunes/funciones-comunes.service';
+import { HelpModalComponent } from '../../../../../components/help-modal/help-modal.component';
+import { ModalErrorComponent } from '../../../../../components/modal-error/modal-error.component';
 
 
 @Component({
@@ -32,7 +30,6 @@ import { SpinnerComponent } from "src/app/components/spinner/spinner.component";
     MatDatepickerModule,
     FormsModule,
     NavbarComponent,
-    MatDivider,
     MatButtonModule,
     CommonModule,
     TranslateModule,
@@ -80,7 +77,6 @@ export class ResumenViajeComponent implements OnInit {
   ) { }
 
 
-
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
@@ -91,38 +87,24 @@ export class ResumenViajeComponent implements OnInit {
       this.userLoggedIn = false;
     }
 
+    this.actualizarInformacion();
+
     this.route.queryParams.subscribe(params => {
       const viajeId = params['id'];
       this.ruta_navegacion_origen = params['origin'];
 
-      this.currentViajeData = this.travelService.getViajeData();
       if (viajeId) {
         this.obtenerViaje(viajeId);
       }
 
-      // Si no hay viajeId y los datos no están completos, redirigir al home
-      if (
-        !viajeId &&
-        (
-          !this.currentViajeData ||
-          !this.currentViajeData?.coche ||
-          !this.currentViajeData?.destino ||
-          !this.currentViajeData?.fecha_salida ||
-          !this.currentViajeData?.hora_salida ||
-          !this.currentViajeData?.origen ||
-          !this.currentViajeData?.plazas
-        )
-      ) {
+      if (!viajeId && (!this.currentViajeData || !this.currentViajeData?.origen)) {
         this.navCtrl.navigateRoot('/home');
         return;
       }
     });
 
-    if (this.currentViajeData?.coche) {
-      const coche = this.currentViajeData.coche;
-      this.nombreVehiculo = `${coche.marca} ${coche.modelo}`;
-      this.editableFields.coche = coche;
-    }
+    console.log('CURRENT DATA: ', this.currentViajeData);
+    
   }
 
   /**
@@ -131,8 +113,18 @@ export class ResumenViajeComponent implements OnInit {
    */
   ngAfterViewInit() {
     if (this.currentViajeData?.ruta_seleccionada) {
-      this.inicializarMapaResumen();
+      this.intentarInicializarMapa();
     }
+  }
+
+  intentarInicializarMapa() {
+    setTimeout(() => {
+      if (this.mapElement && this.mapElement.nativeElement) {
+        this.inicializarMapaResumen();
+      } else {
+        setTimeout(() => this.intentarInicializarMapa(), 200);
+      }
+    }, 100);
   }
 
   /**
@@ -142,24 +134,65 @@ export class ResumenViajeComponent implements OnInit {
    * 
    */
   inicializarMapaResumen() {
+    if (!this.mapElement) return;
+
     const mapOptions = {
       disableDefaultUI: true,
       zoomControl: false,
-      scrollwheel: false
+      scrollwheel: false,
+      gestureHandling: 'none' 
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-    this.directionsRenderer = new google.maps.DirectionsRenderer();
-    this.directionsRenderer.setMap(this.map);
+    this.directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers: false,
+      map: this.map
+    });
 
-    this.directionsRenderer.setDirections(this.currentViajeData.ruta_seleccionada);
+    setTimeout(() => {
+      if (this.currentViajeData?.ruta_seleccionada) {
+        this.directionsRenderer.setDirections(this.currentViajeData.ruta_seleccionada);
+
+        google.maps.event.trigger(this.map, 'resize');
+
+        const bounds = new google.maps.LatLngBounds();
+        const route = this.currentViajeData.ruta_seleccionada.routes[0];
+        
+        if (route && route.overview_path) {
+          route.overview_path.forEach((point: any) => bounds.extend(point));
+          this.map.fitBounds(bounds);
+        }
+      }
+    }, 500); 
   }
 
   obtenerViaje(viaje_id: number) {
     this.travelService.getViaje(viaje_id).subscribe((resultado) => {
       console.log('Viaje a editar: ', resultado);
       this.currentViajeData = resultado;
+      this.setInitialCoche();
+      if (this.currentViajeData?.ruta_seleccionada) {
+        this.intentarInicializarMapa();
+      }
     })
+  }
+
+  setInitialCoche() {
+    if (!this.currentViajeData || this.vehiculosUsuario.length === 0) return;
+
+    const idBuscado = this.currentViajeData.vehiculo || 
+                      this.currentViajeData.vehiculo_id || 
+                      (this.currentViajeData.coche?.id);
+
+    if (idBuscado) {
+      const cocheEncontrado = this.vehiculosUsuario.find(v => v.id === idBuscado);
+      
+      if (cocheEncontrado) {
+        this.editableFields.coche = cocheEncontrado;
+        this.nombreVehiculo = `${cocheEncontrado.marca} ${cocheEncontrado.modelo}`;
+        this.currentViajeData.coche = cocheEncontrado;
+      }
+    }
   }
 
   /**
@@ -170,11 +203,22 @@ export class ResumenViajeComponent implements OnInit {
    * Una vez confirmado el mensaje, se reenvía a la ventana home.
    */
   confirmarViaje() {
-    const title: string = 'Confirmación de Viaje';
-    const message: string = '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
+    const esEdicion = this.ruta_navegacion_origen === 'mis-viajes';
+    const title = esEdicion ? 'Actualizar Viaje' : 'Confirmación de Viaje';
+    const message = esEdicion 
+      ? '<p>Los cambios se han guardado correctamente y se ha notificado a tus acompañantes.</p>' 
+      : '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
     this.currentViajeData.usuario_id = this.userData.usuario.id;
     this.currentViajeData.plazas = Number(this.currentViajeData.plazas);
+    this.currentViajeData.origen = this.origen || this.currentViajeData.origen;
+    this.currentViajeData.destino = this.destino || this.currentViajeData.destino;
+
+    if (this.editableFields.coche) {
+      this.currentViajeData.coche = { id: this.editableFields.coche.id };
+    } else if (this.currentViajeData.vehiculo && !this.currentViajeData.coche) {
+      this.currentViajeData.coche = { id: this.currentViajeData.vehiculo };
+    }
 
     if (isNaN(this.currentViajeData.plazas)) {
       this.openError('Error!', 'El número de plazas no es válido.');
@@ -184,43 +228,30 @@ export class ResumenViajeComponent implements OnInit {
     const fechaSalidaRaw = new Date(this.currentViajeData.fecha_salida);
     this.currentViajeData.fecha_salida = fechaSalidaRaw.toISOString().split('T')[0];
 
-    if (this.currentViajeData.hora_salida === this.currentViajeData.hora_llegada && 
-      this.currentViajeData.tiempoTotal && 
-      this.currentViajeData.tiempoTotal !== '00:00') {
-    
-      console.log('Detectada llegada incorrecta. Reparando...');
-      
-      const [durH, durM] = this.currentViajeData.tiempoTotal.split(':').map(Number);
-      
-      this.currentViajeData.hora_llegada = this.sumarDuracion(
-        this.currentViajeData.hora_salida, 
-        durH, 
-        durM
-      );
-    }
-
-    console.log('DATOS A GUARDAR:', {
-      salida: this.currentViajeData.hora_salida,
-      llegada: this.currentViajeData.hora_llegada,
-      duracion: this.currentViajeData.duracion_viaje
-    });
-
-    const mensajeConfirmación = this.openHelp('Confirmar viaje', '¿Deseas confirmar el viaje?', true, false, false);
+    const pregunta = esEdicion ? '¿Deseas guardar los cambios realizados?' : '¿Deseas confirmar el viaje?';
+    const mensajeConfirmación = this.openHelp(title, pregunta, true, false, false);
     
     mensajeConfirmación.afterClosed().subscribe((res) => {
       if (res) {
         this.cargando_viaje = true;
-        this.travelService.guardarViaje(this.currentViajeData).subscribe({
+
+        const peticion = esEdicion 
+          ? this.travelService.editarViaje(this.currentViajeData.id, this.currentViajeData)
+          : this.travelService.guardarViaje(this.currentViajeData);
+
+        peticion.subscribe({
           next: (response) => {
             this.cargando_viaje = false;
-            const modalExito = this.openHelp(title, message, true, false, true);
+            const modalExito = this.openHelp(title, message, true, false, !esEdicion);
+            
             modalExito.afterClosed().subscribe(() => {
               this.navCtrl.navigateRoot(`/mis-viajes?id=${this.userData.usuario.id}`);
             });
           },
           error: (error) => {
             this.cargando_viaje = false;
-            this.openError('Error!', 'Error al guardar el viaje.');
+            console.error("Error en la operación:", error);
+            this.openError('Error!', 'No se han podido procesar los datos del viaje.');
           }
         });
       }
@@ -253,7 +284,6 @@ export class ResumenViajeComponent implements OnInit {
       const salida = new Date(`${fechaSalida}T${horaSalida}`);
       let llegada = new Date(`${fechaSalida}T${horaLlegada}`);
 
-      // Si la llegada es anterior a la salida, asumimos que es al día siguiente
       if (llegada < salida) {
         llegada.setDate(llegada.getDate() + 1);
       }
@@ -333,14 +363,25 @@ export class ResumenViajeComponent implements OnInit {
    */
   edicionInformacion(field: string) {
     if (this.editMode[field]) {
-      this.currentViajeData[field] = this.editableFields[field];
+      if (field === 'origen') {
+        this.currentViajeData.origen = this.origen;
+      } else if (field === 'destino') {
+        this.currentViajeData.destino = this.destino;
+      } else if (field === 'coche') {
+        this.currentViajeData.vehiculo = this.editableFields.coche.id;
+        this.nombreVehiculo = `${this.editableFields.coche.marca} ${this.editableFields.coche.modelo}`;
+      } else {
+        this.currentViajeData[field] = this.editableFields[field];
+      }
 
-      const viajeData = {
-        ...this.travelService.getViajeData(),
-        [field]: this.currentViajeData[field],
-      };
-      this.travelService.setViajeData(viajeData);
+      if (field === 'origen' || field === 'destino') {
+        this.recalcularRuta();
+      }
+
+      this.travelService.setViajeData(this.currentViajeData);
     } else {
+      if (field === 'origen') this.origen = this.currentViajeData.origen;
+      if (field === 'destino') this.destino = this.currentViajeData.destino;
       this.editableFields[field] = this.currentViajeData[field];
     }
     this.editMode[field] = !this.editMode[field];
@@ -353,37 +394,72 @@ export class ResumenViajeComponent implements OnInit {
    * @returns
    */
   calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
-    try {
-      if (!hora_salida || !duracion_viaje) return null;
+    if (!hora_salida || !duracion_viaje) return this.currentViajeData?.hora_llegada || '--:--';
 
-      // Paso 1: Parsear hora de salida
+    try {
       const [horasSalida, minutosSalida] = hora_salida.split(':').map(Number);
       const salidaDate = new Date();
       salidaDate.setHours(horasSalida, minutosSalida, 0);
 
-      // Paso 2: Parsear duración (ej. "1h 47 min" o "47 min")
       const horasMatch = duracion_viaje.match(/(\d+)\s*h/);
       const minutosMatch = duracion_viaje.match(/(\d+)\s*min/);
 
       const horas = horasMatch ? parseInt(horasMatch[1]) : 0;
       const minutos = minutosMatch ? parseInt(minutosMatch[1]) : 0;
 
-      // Paso 3: Sumar duración a hora de salida
       const llegadaDate = new Date(salidaDate);
       llegadaDate.setHours(llegadaDate.getHours() + horas);
       llegadaDate.setMinutes(llegadaDate.getMinutes() + minutos);
-      this.currentViajeData.duracion_viaje = llegadaDate.toLocaleTimeString('es-ES', {
+
+      const resultado = llegadaDate.toLocaleTimeString('es-ES', {
         hour: '2-digit',
         minute: '2-digit',
       });
-      return llegadaDate.toLocaleTimeString('es-ES', {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+
+      this.currentViajeData.hora_llegada = resultado;
+      this.currentViajeData.duracion_viaje = duracion_viaje; 
+
+      return resultado;
     } catch (error) {
-      console.error('Error al calcular hora de llegada:', error);
-      return null;
+      console.error("Error calculando hora:", error);
+      return this.currentViajeData?.hora_llegada || '--:--';
     }
+  }
+
+  /**
+   * Función para recalcular la ruta si se modifica
+   */
+  recalcularRuta() {
+    if (!this.currentViajeData.origen || !this.currentViajeData.destino) return;
+
+    const directionsService = new google.maps.DirectionsService();
+
+    directionsService.route(
+      {
+        origin: this.currentViajeData.origen,
+        destination: this.currentViajeData.destino,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK && result) {
+          const duracionTexto = result.routes[0]?.legs[0]?.duration?.text || 'No especificado';
+          
+          this.currentViajeData.ruta_seleccionada = {
+            ...result,
+            tiempoTotal: duracionTexto 
+          };
+          
+          if (this.directionsRenderer) {
+            this.directionsRenderer.setDirections(result);
+          }
+
+          this.calcularHoraLlegada(this.currentViajeData.hora_salida, duracionTexto);
+        } else {
+          this.currentViajeData.ruta_seleccionada = { routes: [], tiempoTotal: 'No especificado' };
+          console.error('Error al recalcular ruta:', status);
+        }
+      }
+    );
   }
 
   /**
@@ -393,11 +469,8 @@ export class ResumenViajeComponent implements OnInit {
    */
   seleccionarLocalidadOrigen(localidad: any) {
     this.origen = localidad.display_name.split(',')[0].trim();
-    const viajeData = {
-      ...this.travelService.getViajeData(),
-      origen: this.origen,
-    };
-    this.travelService.setViajeData(viajeData);
+    this.currentViajeData.origen = this.origen;
+    this.travelService.setViajeData(this.currentViajeData);
     this.funcionesComunes.sugerenciasOrigen = [];
   }
 
@@ -408,11 +481,8 @@ export class ResumenViajeComponent implements OnInit {
    */
   seleccionarLocalidadDestino(localidad: any) {
     this.destino = localidad.display_name.split(',')[0].trim();
-    const viajeData = {
-      ...this.travelService.getViajeData(),
-      destino: this.destino,
-    };
-    this.travelService.setViajeData(viajeData);
+    this.currentViajeData.destino = this.destino;
+    this.travelService.setViajeData(this.currentViajeData);
     this.funcionesComunes.sugerenciasDestino = [];
   }
 
@@ -424,9 +494,17 @@ export class ResumenViajeComponent implements OnInit {
     this.travelService.viajeData$
       .pipe(takeUntil(this.destroy$))
       .subscribe((viajeData) => {
-        this.currentViajeData = viajeData ?? {};
-        this.origen = this.currentViajeData?.origen || '';
-        // this.selectedRoute = this.currentViajeData?.ruta_seleccionada || null;
+        if (viajeData) {
+          this.currentViajeData = { ...viajeData };
+          this.origen = this.currentViajeData?.origen || '';
+          this.destino = this.currentViajeData?.destino || '';
+          
+          this.editableFields.precio_viaje = this.currentViajeData?.precio_viaje || 0;
+          
+          if (this.currentViajeData?.coche && this.vehiculosUsuario.length > 0) {
+            this.setInitialCoche();
+          }
+        }
       });
   }
 
@@ -453,9 +531,17 @@ export class ResumenViajeComponent implements OnInit {
    * @returns --> Devuelve la lista de vehículos del usuario
    */
   obtenerVehiculosUsuario(usuario_id: number) {
-    return this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(vehiculos => {
-      this.vehiculosUsuario = vehiculos;
+    this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(res => {
+      this.vehiculosUsuario = Array.isArray(res) ? res : (res.vehiculos || []);
+      this.setInitialCoche();
     });
+  }
+
+  /**
+   * Función para conocer el vehículo seleccionado para el viaje
+   */
+  compareVehiculos(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
 }

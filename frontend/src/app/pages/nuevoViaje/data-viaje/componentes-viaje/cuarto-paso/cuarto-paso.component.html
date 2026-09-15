@@ -1,31 +1,41 @@
-<div id="cuarto_paso">
-  <div class="container">
-    <h4>Estamos a un paso de terminar.</h4>
-    <h1>Fija el precio por plaza</h1>
-    <span class="recommend">  Precio recomendado: {{ precioMinRecomendado }}€ - {{ precioMaxRecomendado }}€ </span>
-    <br>
-    <span class="recommend_info"> Conseguirás pasajeros más fácilmente si no abusas del precio. </span>
-  </div>
-
-  <!-- Selector de precio -->
-  <div class="container d-flex justify-content-center ms-3">
-    <div class="input-container">
-      <button class="precio_btn" (click)="restarCantidad()" [disabled]="precio <= min">-</button>
-      <span class="font_precio" [ngStyle]="{ color: getprecioColor() }">{{ precio }}</span> <span class="currency">€</span>
-      <button class="precio_btn" (click)="sumarCantidad()" [disabled]="precio >= max">+</button>
-      <mat-icon class="help-icon" matTooltip="Recuerda poner un precio justo a tu viaje." matTooltipClass="custom-tooltip" (click)="ayudaPrecio()">question_mark</mat-icon>
+<div id="cuarto_paso" class="animate__animated animate__fadeIn">
+  
+  <div class="container text-center pt-2 pb-4 shadow-container">
+    <div class="badge-step mb-2">Último paso</div>
+    <h1 class="main-step-title">Fija el precio por plaza</h1>
+    
+    <div class="recommendation-box mt-3 mx-auto">
+      <span class="recommend-tag">
+        <i class="fi fi-rr-coins me-1"></i> Rango recomendado: <strong>{{ precioMinRecomendado }}€ - {{ precioMaxRecomendado }}€</strong>
+      </span>
+      <p class="recommend_info mt-2 mb-0">
+        Conseguirás pasajeros más fácilmente si configuras un precio cercano al recomendado.
+      </p>
     </div>
-    <p-toast position="bottom-center"></p-toast>
   </div>
 
-  <div class="d-flex justify-content-center mt-3 mb-3 btn-banner">
-    <!-- Botón Atrás -->
-    <button type="button" mat-raised-button class="btn_bg" (click)="onCuartoPasoBack()">
-      Atrás
-    </button>
-    <!-- Botón Finalizar viaje -->
-    <button type="button" mat-raised-button class="btn_bg" (click)="onCuartoPasoComplete()">
-      Finalizar viaje
-    </button>
+  <div class="container d-flex justify-content-center mt-4 mb-4">
+    <div class="price-counter-wrapper">
+      
+      <button type="button" class="precio_btn btn-restar" (click)="restarCantidad()" [disabled]="precio <= 1">
+        <i class="fi fi-rr-minus"></i>
+      </button>
+      
+      <div class="price-display-box" [style.color]="getprecioColor()">
+        <span class="font_precio">{{ precio }}</span>
+        <span class="currency-label">€</span>
+      </div>
+      
+      <button type="button" class="precio_btn btn-sumar" (click)="sumarCantidad()" [disabled]="precio >= 99">
+        <i class="fi fi-rr-plus"></i>
+      </button>
+
+      <div class="help-icon-wrapper" (click)="ayudaPrecio()" matTooltip="¿Cómo se calcula?" matTooltipPosition="above">
+        <i class="fi fi-rr-interrogation"></i>
+      </div>
+      
+    </div>
   </div>
+
+  <p-toast position="bottom-center" key="precioToast"></p-toast>
 </div>

@@ -10,3 +10,7 @@ from .mensaje import Conversacion, Mensaje
 from .tokenPush import TokenPush
 from .evento import Evento
 from .ordenes_paypal import Ordenes_Paypal
+from .encuestaSatsfaccion import EncuestaSatisfaccion
+from .historial_cambios_viaje import HistorialCambiosViaje
+from .cancelacion import Cancelacion
+from .monedero import Monedero, MovimientoMonedero

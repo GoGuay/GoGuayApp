@@ -1,0 +1,71 @@
+<app-navbar-admin></app-navbar-admin>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="admin-container">
+    
+    <div class="d-flex align-items-center mb-4">
+      <ion-button fill="clear" (click)="goBack()" color="dark">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+      <h1 class="m-0 ms-2">Feedback de la Comunidad</h1>
+    </div>
+
+    <div class="filters-section mb-4">
+      <ion-searchbar placeholder="Buscar en sugerencias..." (ionInput)="buscar($event)"></ion-searchbar>
+      
+      <div class="chips-filters mt-2">
+        <ion-chip [outline]="filtroNota !== 'todas'" (click)="filtrarPorNota('todas')">Todas</ion-chip>
+        <ion-chip color="success" [outline]="filtroNota !== 5" (click)="filtrarPorNota(5)">Excelentes (5⭐)</ion-chip>
+        <ion-chip color="danger" [outline]="filtroNota !== 1" (click)="filtrarPorNota(1)">Críticas (1⭐)</ion-chip>
+      </div>
+    </div>
+
+    <div class="encuestas-list">
+      <div *ngIf="encuestasFiltradas.length === 0" class="text-center no-data py-5">
+        <i class="fi fi-rr-search-alt mb-3"></i>
+        <p>No se han encontrado encuestas que coincidan.</p>
+      </div>
+
+      <ion-card class="encuesta-card animate__animated animate__fadeInUp" *ngFor="let e of encuestasFiltradas">
+        <ion-card-content>
+          <div class="card-top">
+            <div class="user-info">
+              <span class="date-badge">{{ e.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span class="user-id">ID Usuario: {{ e.usuario_id || 'Anónimo' }}</span>
+            </div>
+            <div class="rating-display">
+              <span class="stars">{{ getEstrellas(e.calificacion) }}</span>
+              <span class="nota">{{ e.calificacion }}/5</span>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="aspects-summary">
+            <div class="aspect-dot" [class]="e.aspectos.diseno" matTooltip="Diseño">
+              <i class="fi fi-rr-palette"></i>
+            </div>
+            <div class="aspect-dot" [class]="e.aspectos.busqueda" matTooltip="Búsqueda">
+              <i class="fi fi-rr-search"></i>
+            </div>
+            <div class="aspect-dot" [class]="e.aspectos.mensajes" matTooltip="Mensajería">
+              <i class="fi fi-rr-comments"></i>
+            </div>
+            <div class="aspect-dot" [class]="e.aspectos.seguridad" matTooltip="Seguridad">
+              <i class="fi fi-rr-shield-check"></i>
+            </div>
+            <div class="aspect-dot" [class]="e.aspectos.normas" matTooltip="Normas">
+              <i class="fi fi-rr-interrogation"></i>
+            </div>
+          </div>
+
+          <div class="feedback-text mt-3" *ngIf="e.sugerencias">
+            <h6><i class="fi fi-rr-comment-dots me-2"></i>Sugerencia del usuario:</h6>
+            <p>"{{ e.sugerencias }}"</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+  </div>
+</ion-content>

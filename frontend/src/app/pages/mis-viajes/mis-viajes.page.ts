@@ -1,153 +1,210 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule, registerLocaleData } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { AlertController, IonicModule, NavController } from '@ionic/angular';
-import { Viaje } from '../../models/travel/viaje.model';
-import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
-import { Usuario } from '../../models/user/usuario.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, Observable, catchError, of } from 'rxjs';
+
+// Ionic & Angular Material
+import { PopoverController } from '@ionic/angular/standalone';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { PuntuacionesComponent } from '../../components/puntuaciones/puntuaciones.component';
-import { forkJoin, Observable } from 'rxjs';
-import { UserServicesService } from '../../core/user-services/user-services.service';
-import { ViajeSeleccionadoComponent } from '../../components/viaje-seleccionado/viaje-seleccionado.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { TravelService } from '../../core/travel-services/travel.service';
-import { ActivatedRoute } from '@angular/router';
-import { JumbotronComponent } from '../jumbotron/jumbotron.component';
-import { SpinnerComponent } from "../../components/spinner/spinner.component";
-import { catchError, of } from 'rxjs';
+import { AlertController, IonicModule, NavController } from '@ionic/angular';
+
+// PrimeNG & Traducciones
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PopoverController } from '@ionic/angular/standalone';
-import localeEs from '@angular/common/locales/es';
+
+// Componentes y Modelos Propios
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { JumbotronComponent } from '../jumbotron/jumbotron.component';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { TarjetaViajeComponent } from 'src/app/components/tarjeta-viaje/tarjeta-viaje.component';
+import { Viaje } from '../../models/travel/viaje.model';
+import { Usuario } from '../../models/user/usuario.model';
+
+// Servicios Core
+import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
+import { UserServicesService } from '../../core/user-services/user-services.service';
+import { TravelService } from '../../core/travel-services/travel.service';
 
 @Component({
   selector: 'app-mis-viajes',
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [IonicModule, 
-    CommonModule, 
-    FormsModule, 
-    NavbarComponent, 
-    MatIcon, 
-    JumbotronComponent, 
-    SpinnerComponent, 
-    ToastModule, 
-    TranslateModule],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    NavbarComponent,
+    JumbotronComponent,
+    SpinnerComponent,
+    ToastModule,
+    TranslateModule,
+    TarjetaViajeComponent,
+  ],
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {
-
-  /**
-   * Parámetros para navbar
-   */
+  // Estado de sesión y navegación
   userLoggedIn: boolean = false;
   urlParaVolver: string = '';
 
-  filtroViajes: string = 'todos';
+  // Datos del Usuario
+  userData: any = {} as Usuario;
+  usuarioParams: any = {};
+  preferenciasViaje: string[] = [];
+
+  // Universo de Datos de Viajes
   misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
   misSolicitudesPendientes: Viaje[] = [];
 
+  // Filtros activos por pestaña/segmento
+  filtroViajes: string = 'todos';
+  filtroSeleccionado: string = 'horaSalida';
   pasajero: boolean = false;
   conductor: boolean = false;
+  solicitudesPendientes: boolean = false;
 
-  preferenciasViaje: string[] = [];
+  // Estado de los Toggles de visualización
+  filtrosEstados: { [key: string]: boolean } = {
+    en_curso: false,
+    proximos_viajes: true,
+    finalizados_anulados: false,
+  };
 
-  cargando = false;
+  // Banderas de control de interfaz
   mostrarAyuda: boolean = false;
-
   cargandoViajes: boolean = true;
+  mostrarJumbotron = true;
+
+  constructor(
+    public funcionesComunes: FuncionesComunes,
+    private navCtrl: NavController,
+    private userService: UserServicesService,
+    private travelService: TravelService,
+    private route: ActivatedRoute,
+    public translate: TranslateService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      this.usuarioParams = params;
+      let finalUserId: number | null = null;
+
+      const cache = localStorage.getItem('userData');
+      if (cache) {
+        this.userData = JSON.parse(cache);
+        this.userLoggedIn = true;
+
+        const cachedId =
+          this.userData.id ||
+          (this.userData.usuario ? this.userData.usuario.id : null);
+        if (cachedId) {
+          finalUserId = Number(cachedId);
+        }
+      }
+
+      if (this.usuarioParams && this.usuarioParams.id) {
+        const urlId = parseInt(this.usuarioParams.id, 10);
+        if (!isNaN(urlId)) {
+          finalUserId = urlId;
+        }
+      }
+
+      if (finalUserId && !isNaN(finalUserId)) {
+        this.cargarTodosLosViajes(finalUserId);
+        this.recuperarUsuarioServidor(finalUserId, !!cache);
+      } else {
+        console.warn(
+          'No se detectó un ID de usuario válido en la inicialización.',
+        );
+        this.cargandoViajes = false;
+      }
+    });
+  }
 
   /**
-   * Datos del usuario
+   * ==========================================
+   * COMUNICACIÓN CON EL SERVIDOR (API)
+   * ==========================================
    */
-  userData: any = {} as Usuario;
-  usuarioParams: any = {};
 
-  mostrarJumbotron = true;
-  filtroSeleccionado: string = 'horaSalida';
+  /**
+   * Función para recuperar los datos del usuario desde el servidor,
+   * actualizando la información en la aplicación y en localStorage.
+   *
+   * Si ya teníamos datos en caché, solo actualizamos la información
+   * del usuario sin recargar los viajes, para evitar llamadas innecesarias al servidor.
+   * Si no teníamos datos en caché, después de recuperar la información del usuario,
+   * forzamos la carga de los viajes para asegurarnos de que tenemos la información más actualizada.
+   *
+   * @param userId Recibe el ID del usuario para recuperar su información desde el servidor.
+   * @param tieneCache Indica si ya teníamos datos del usuario en caché, para decidir si recargamos los viajes o no.
+   */
+  private recuperarUsuarioServidor(userId: number, tieneCache: boolean) {
+    this.userService.obtenerUsuarioPorID(userId).subscribe({
+      next: (res) => {
+        this.userData = res.usuario ? res : { usuario: res };
+        this.userLoggedIn = true;
+        localStorage.setItem('userData', JSON.stringify(this.userData));
 
-  // private _bottomSheet = inject(MatBottomSheet);
-
-  constructor(public funcionesComunes: FuncionesComunes,
-    private navCtrl: NavController, private userService: UserServicesService,
-    private dialog: MatDialog, private travelService: TravelService,
-    private route: ActivatedRoute, private _bottomSheet: MatBottomSheet,
-    private messageService: MessageService, private popoverCtrl: PopoverController,
-    private alertCtrl: AlertController, public translate: TranslateService,
-    private cdr: ChangeDetectorRef) { }
-
-    ngOnInit() {
-      this.route.queryParams.subscribe((params) => {
-        this.usuarioParams = params;
-        const userId = parseInt(this.usuarioParams.id, 10);
-
-        const cache = localStorage.getItem('userData');
-        if (cache) {
-          this.userData = JSON.parse(cache);
-          this.userLoggedIn = true;
+        if (!tieneCache) {
           this.cargarTodosLosViajes(userId);
         }
+      },
+      error: (err) => {
+        console.error('Error al actualizar el usuario desde el servidor:', err);
+      },
+    });
+  }
 
-        this.userService.obtenerUsuarioPorID(userId).subscribe({
-          next: (res) => {
-            this.userData = res.usuario ? res : { usuario: res };
-            
-            this.userLoggedIn = true;
-            localStorage.setItem('userData', JSON.stringify(this.userData));
-
-            if (!cache) {
-              this.cargarTodosLosViajes(userId);
-            }
-          },
-          error: (err) => {
-            // if (err.status === 401) this.navCtrl.navigateRoot('/login');
-          }
-        });
-      });
-    }
-
-    
   /**
    * Función para cargar todos los viajes del usuario (creados y como acompañante)
    * @param userId Recibe el ID del usuario
    */
   cargarTodosLosViajes(userId: number) {
     this.cargandoViajes = true;
-    
-    // Ejecutamos las 3 peticiones de viajes en paralelo
+
     forkJoin({
-      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(catchError(() => of([]))),
-      creados: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
-      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([])))
+      pasajero: this.travelService
+        .getViajesComoAcompañante(userId)
+        .pipe(catchError(() => of([]))),
+      conductor: this.travelService
+        .getViajesUsuario(userId)
+        .pipe(catchError(() => of({ viajes: [] }))),
+      solicitudesPendientes: this.travelService
+        .getMisSolicitudesPendientes(userId)
+        .pipe(catchError(() => of([]))),
     }).subscribe({
-      next: ({ acompanante, creados, solicitudes }) => {
-        this.misViajesAcompanante = acompanante;
-        this.misViajesCreados = creados?.viajes || [];
-        this.misSolicitudesPendientes = solicitudes;
+      next: ({ pasajero, conductor, solicitudesPendientes }) => {
+        this.misViajesAcompanante = pasajero;
+        this.misViajesCreados = conductor?.viajes || [];
+        this.misSolicitudesPendientes = solicitudesPendientes;
 
-        this.misViajesCreados.forEach(v => v.usuario = this.userData);
+        this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
 
-        this.filtrarViajes();
+        const hayEnCursoReal = this.HayAlgunViajeEnCursoReal();
+        if (hayEnCursoReal) {
+          this.filtrosEstados['en_curso'] = true;
+          this.filtrosEstados['proximos_viajes'] = true;
+          this.filtrosEstados['finalizados_anulados'] = false;
+        } else {
+          this.filtrosEstados['en_curso'] = false;
+          this.filtrosEstados['proximos_viajes'] = true;
+          this.filtrosEstados['finalizados_anulados'] = false;
+        }
+
+        this.aplicarFiltrosCombinados();
         this.cargandoViajes = false;
       },
-      error: () => this.cargandoViajes = false
+      error: () => (this.cargandoViajes = false),
     });
-  }
-
-  /**
-   * Función para cargar la configuración del jumbotron desde localStorage
-   * Si no hay configuración guardada, se muestra por defecto
-   */
-  loadJumbotronSetting() {
-    const jumbotronSetting = localStorage.getItem('mostrarJumbotron');
-    this.mostrarJumbotron = jumbotronSetting === null ? true : jumbotronSetting === 'true';
   }
 
   /**
@@ -155,16 +212,20 @@ export class MisViajesPage implements OnInit {
    * @param id_usuario Recibe el ID del usuario que está logado
    */
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
-      this.userData = resultadoUsuario;
-      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.userData);
-    });
+    this.userService
+      .obtenerUsuarioPorID(id_usuario)
+      .subscribe((resultadoUsuario) => {
+        this.userData = resultadoUsuario;
+        this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(
+          this.userData,
+        );
+      });
   }
 
   /**
-   * Función para obtener los datos de un usuario a través del servicio, 
+   * Función para obtener los datos de un usuario a través del servicio,
    * devuelve un Observable con la información del usuario
-   * 
+   *
    * @param id_usuario --> Recibe el ID del usuario que está logado
    * @returns --> Devuelve un Observable con la información del usuario
    */
@@ -173,30 +234,17 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para validar si el perfil es el del usuario logueado
-   * 
-   * @param id_usuario Recibe el ID del usuario.
-   */
-  validacionPerilLogeado(id_usuario: number) {
-    this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (id_usuario === this.userData.usuario.id) {
-      // this.editar_perfil = true;
-    } else {
-      // this.editar_perfil = false;
-    }
-  }
-
-  /**
    * Función para obtener la lista de viajes que ha creado el usuario
    */
   obtenerViajesCreados() {
-    this.travelService.getViajesUsuario(this.userData.usuario.id)
+    this.travelService
+      .getViajesUsuario(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesCreados = result.viajes;
         this.misViajesCreados.forEach((viaje) => {
           viaje.usuario = this.userData;
-        })
-        this.filtrarViajes();
+        });
+        this.aplicarFiltrosCombinados();
       });
   }
 
@@ -205,22 +253,75 @@ export class MisViajesPage implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
-    this.travelService.getViajesComoAcompañante(this.userData.usuario.id)
+    this.travelService
+      .getViajesComoAcompañante(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesAcompanante = result;
         this.cargandoViajes = false;
-        this.filtrarViajes();
+        this.aplicarFiltrosCombinados();
       });
   }
 
   /**
+   * ==========================================
+   * LOGICA DE NEGOCIO, FILTROS Y EVALUACIÓN
+   * ==========================================
+   */
+
+  /**
+   * Comprueba si hay un viaje en curso en el día actual, entre la hora de salida y llegada del viaje.
+   * @param viaje
+   * @returns
+   */
+  esViajeEnCurso(viaje: Viaje): boolean {
+    if (!viaje.fecha_salida || !viaje.hora_salida || !viaje.hora_llegada) {
+      return false;
+    }
+    const ahora = new Date();
+    const fechaViaje = new Date(viaje.fecha_salida);
+
+    const esHoy =
+      ahora.getFullYear() === fechaViaje.getFullYear() &&
+      ahora.getMonth() === fechaViaje.getMonth() &&
+      ahora.getDate() === fechaViaje.getDate();
+
+    if (!esHoy) return false;
+
+    const [horaDeSalida, minutosDeSalida] = viaje.hora_salida
+      .split(':')
+      .map(Number);
+    const [horaDeLlegada, minutosDeLlegada] = viaje.hora_llegada
+      .split(':')
+      .map(Number);
+    const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+    const minutosSalida = horaDeSalida * 60 + minutosDeSalida;
+    const minutosLlegada = horaDeLlegada * 60 + minutosDeLlegada;
+
+    return minutosAhora >= minutosSalida && minutosAhora <= minutosLlegada;
+  }
+
+  /**
+   * Comprueba si en el universo total de viajes hay uno ocurriendo hoy y ahora
+   */
+  HayAlgunViajeEnCursoReal(): boolean {
+    const pool = [
+      ...(this.misViajesAcompanante || []),
+      ...(this.misViajesCreados || []),
+    ];
+    return pool.some((v) => this.esViajeEnCurso(v));
+  }
+
+  /**
    * Función para validar si se puede puntuar un viaje o no.
-   * 
-   * @param viaje 
+   *
+   * @param viaje
    */
   puedePuntuar(viaje: Viaje): boolean {
-    const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
-    const esPasajero = this.misViajesAcompanante.some(v => v.id === viaje.id);
+    const esFinalizado = this.funcionesComunes.esViajeFinalizado(
+      viaje.fecha_salida,
+      viaje.hora_salida,
+    );
+    const esPasajero = this.misViajesAcompanante.some((v) => v.id === viaje.id);
     const esCreador = viaje.usuario_id === this.userData.id;
 
     // Solo se puede puntuar si el viaje ha finalizado, si es pasajero (no creador) y si no es el creador
@@ -228,152 +329,164 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para filtrar los viajes según el filtro seleccionado
+   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
    */
-  filtrarViajes() {
-    const acompañante = this.misViajesAcompanante || [];
-    const creados = this.misViajesCreados || [];
-    const solicitudes = this.misSolicitudesPendientes || [];
+  /**
+   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
+   */
+  onFiltroChange(event: any, valorFiltro: string) {
+    const checked = event.detail.checked;
+    const hayEnCurso = this.HayAlgunViajeEnCursoReal();
 
+    // --- REGLA 1: VIAJE EN CURSO (BLOQUEADO SI NO HAY VIAJES EN CURSO) ---
+    if (valorFiltro === 'en_curso') {
+      if (!hayEnCurso && checked) {
+        // Si NO hay viaje en curso y el usuario intenta activarlo:
+        // Revertimos el estado en el siguiente ciclo para forzar a Ionic a refrescar el UI
+        setTimeout(() => {
+          this.filtrosEstados = { ...this.filtrosEstados, en_curso: false };
+          this.cdr.detectChanges();
+        }, 0);
+        return;
+      }
+
+      if (hayEnCurso && !checked) {
+        // Si SÍ hay un viaje en curso, no dejamos que lo desactive
+        setTimeout(() => {
+          this.filtrosEstados = { ...this.filtrosEstados, en_curso: true };
+          this.cdr.detectChanges();
+        }, 0);
+        return;
+      }
+
+      this.filtrosEstados['en_curso'] = hayEnCurso;
+      this.aplicarFiltrosCombinados();
+      return;
+    }
+
+    // --- REGLA 2: EXCLUSIVIDAD ENTRE PRÓXIMOS Y FINALIZADOS ---
+    if (valorFiltro === 'proximos_viajes') {
+      if (checked) {
+        this.filtrosEstados['proximos_viajes'] = true;
+        this.filtrosEstados['finalizados_anulados'] = false;
+      } else {
+        // Garantizamos que al menos uno de los dos principales esté activo
+        this.filtrosEstados['proximos_viajes'] = false;
+        this.filtrosEstados['finalizados_anulados'] = true;
+      }
+    }
+
+    if (valorFiltro === 'finalizados_anulados') {
+      if (checked) {
+        this.filtrosEstados['finalizados_anulados'] = true;
+        this.filtrosEstados['proximos_viajes'] = false;
+      } else {
+        this.filtrosEstados['finalizados_anulados'] = false;
+        this.filtrosEstados['proximos_viajes'] = true;
+      }
+    }
+
+    // Clonamos el objeto para forzar la detección de cambios de Angular
+    this.filtrosEstados = { ...this.filtrosEstados };
+    this.aplicarFiltrosCombinados();
+  }
+
+  aplicarFiltrosCombinados() {
+    const filtroPasajero = this.misViajesAcompanante || [];
+    const filtroConductor = this.misViajesCreados || [];
+    const filtroSolicitudesPendientes = this.misSolicitudesPendientes || [];
+    let viajesBase: Viaje[] = [];
+
+    const poolTotalViajes = [...filtroPasajero, ...filtroConductor];
+    poolTotalViajes.forEach((v) => ((v as any).enCursoReal = false));
+
+    // 1. Filtrar por tipo (Todos, Pasajero, Conductor, Solicitudes)
     switch (this.filtroViajes) {
       case 'todos':
-        this.misViajes = [...acompañante, ...creados];
+        viajesBase = [...filtroPasajero, ...filtroConductor];
         this.conductor = false;
         this.pasajero = false;
-        break;
-
-      case 'conductor':
-        this.misViajes = [...creados];
-        this.conductor = true;
-        this.pasajero = false;
+        this.solicitudesPendientes = false;
         break;
 
       case 'pasajero':
-        this.misViajes = [...acompañante];
+        viajesBase = [...filtroPasajero];
         this.conductor = false;
+        this.solicitudesPendientes = false;
         this.pasajero = true;
         break;
 
-      case 'solicitudes': 
-        const misViajesConSolicitudes = creados.filter(v => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
-        
-        this.misViajes = [...solicitudes, ...misViajesConSolicitudes];
-        
-        this.conductor = false;
+      case 'conductor':
+        viajesBase = [...filtroConductor];
+        this.conductor = true;
+        this.solicitudesPendientes = false;
         this.pasajero = false;
         break;
 
-      case 'antiguos':
-        this.misViajes.sort((a, b) => {
-          return new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime();
-        });
-        break;
-
-      case 'pendientes':
-        this.misViajes.sort((a, b) => {
-          const aFinalizado = this.funcionesComunes.esViajeFinalizado(a.fecha_salida, a.hora_salida);
-          const bFinalizado = this.funcionesComunes.esViajeFinalizado(b.fecha_salida, b.hora_salida);
-          return aFinalizado === bFinalizado ? 0 : aFinalizado ? 1 : -1;
-        });
+      case 'solicitudes':
+        viajesBase = [...filtroSolicitudesPendientes];
+        this.conductor = false;
+        this.pasajero = false;
+        this.solicitudesPendientes = true;
         break;
 
       default:
-        this.misViajes = [];
+        viajesBase = [];
         break;
     }
-    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => { } });
-  }
 
+    // 2. Filtrar por estado (En Curso, Próximos, Finalizados/Anulados)
+    const { en_curso, proximos_viajes, finalizados_anulados } =
+      this.filtrosEstados;
 
-  /**
-   * Función para puntuar un viaje
-   */
-  puntuarViaje(viaje: Viaje) {
-    const bottomSheetRef = this._bottomSheet.open(PuntuacionesComponent, {
-      data: {
-        viaje: viaje
-      }
-    });
+    if (en_curso || proximos_viajes || finalizados_anulados) {
+      viajesBase = viajesBase.filter((v) => {
+        const esEnCurso =
+          this.esViajeEnCurso(v) || v.estado_viaje === 'En Curso';
 
-    bottomSheetRef.afterDismissed().subscribe((result) => {
-      if (result) {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Puntuación guardada',
-          detail: 'Muchas gracias por realizar nuestra encuesta de satisfacción.',
-          life: 3000
-        });
+        if (en_curso && esEnCurso) {
+          return true;
+        }
 
-        const userId = parseInt(this.usuarioParams.id, 10);
-        this.cargarTodosLosViajes(userId);
-      }
-    });
+        if (proximos_viajes && !esEnCurso && v.estado_viaje === 'Próximo') {
+          return true;
+        }
 
-  }
+        if (
+          finalizados_anulados &&
+          !esEnCurso &&
+          (v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado')
+        ) {
+          return true;
+        }
 
-  /**
-   * Función para poder editar un viaje
-   * @param viaje_id 
-   */
-  editarViaje(viaje_id: number) {
-    const viaje = {
-      id: viaje_id,
-      origin: 'mis-viajes'
+        return false;
+      });
     }
-    this.navCtrl.navigateRoot('/resumen-viaje', {
-      queryParams: viaje
+
+    // 3. Anclar viajes en curso al principio
+    const viajesParaAnclar = poolTotalViajes.filter((v) =>
+      this.esViajeEnCurso(v),
+    );
+
+    if (viajesParaAnclar.length > 0) {
+      viajesParaAnclar.forEach((v) => ((v as any).enCursoReal = true));
+    }
+
+    viajesParaAnclar.forEach((viajeAnclado) => {
+      viajesBase = viajesBase.filter((v) => v.id !== viajeAnclado.id);
+      viajesBase.unshift(viajeAnclado);
     });
+
+    this.misViajes = viajesBase;
+    this.cdr.detectChanges();
   }
 
   /**
-   * Función para abrir una modal con los detalles del viaje seleccionado
-   * @param viaje Recibe la información del viaje seleccionado.
+   * ==========================================
+   * NAVEGACIÓN Y AJUSTES VISUALES
+   * ==========================================
    */
-  openDetalleViaje(viaje: Viaje) {
-    this.obtenerUsuario(viaje.usuario_id).subscribe((usuario: any) => {
-      viaje.usuario = usuario;
-    });
-    this.dialog.open(ViajeSeleccionadoComponent, {
-      data: { viaje }
-    });
-  }
-
-  /**
-   * Función para eliminar un viaje.
-   * 
-   * @param viajeId 
-   */
-  eliminarViaje(viajeId: number) {
-    this.travelService.eliminarViaje(viajeId).subscribe({
-      next: () => {
-        console.log('Viaje eliminado con éxito.');
-        this.obtenerViajesCreados();
-      },
-      error: (error) => {
-        console.error('Error al eliminar el viaje:', error);
-      }
-    });
-  }
-
-  /**
-   * Función para que un usuario salga de un viaje
-   * @param viajeId ID del viaje
-   */
-  salirDeViaje(viajeId: number) {
-    this.cargando = true;
-    this.travelService.salirDeViaje(viajeId).subscribe({
-      next: () => {
-        this.cargando = false;
-        console.log('El usuario ha salido del viaje con éxito');
-        this.obtenerViajesComoAcompanante();
-        this.obtenerViajesCreados();
-      },
-      error: (error) => {
-        this.cargando = false;
-        console.error('Error al salir del viaje:', error);
-      }
-    });
-  }
 
   /**
    * Función para mostrar/ocultar la ayuda
@@ -395,320 +508,4 @@ export class MisViajesPage implements OnInit {
   goToNuevoViaje() {
     this.navCtrl.navigateRoot('/nuevo-viaje');
   }
-
-  /**
-   * Función para manejar el cambio de filtro de los viajes, actualiza la lista de viajes mostrados según el filtro seleccionado
-   * y cierra el popover de filtros si está abierto.
-   * @param event --> Recibe el evento del cambio de filtro, que contiene el valor del filtro seleccionado.
-   * @param popover --> Recibe el popover de filtros para poder cerrarlo después de aplicar el filtro.
-   */
-  onFiltroChange(event: any, popover: any) {
-    this.filtroSeleccionado = event.detail.value;
-
-    const acompanante = this.misViajesAcompanante || [];
-    const creados = this.misViajesCreados || [];
-    const solicitudes = this.misSolicitudesPendientes || [];
-
-    let viajesBase: any[] = [];
-
-    switch (this.filtroViajes) {
-      case 'todos':
-        viajesBase = [...acompanante, ...creados];
-        break;
-      case 'conductor':
-        viajesBase = [...creados];
-        break;
-      case 'pasajero':
-        viajesBase = [...acompanante];
-        break;
-      case 'solicitudes':
-        const misViajesConSoli = creados.filter(v => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
-        viajesBase = [...solicitudes, ...misViajesConSoli];
-        break;
-    }
-
-    switch (this.filtroSeleccionado) {
-      case 'en_curso':
-        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'En curso');
-        break;
-      
-      case 'finalizado':
-        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Finalizado');
-        break;
-        
-      case 'cancelado':
-        this.misViajes = viajesBase.filter(v => v.estado_viaje === 'Cancelado');
-        break;
-
-      case 'horaSalida':
-        this.misViajes = [...viajesBase].sort((a, b) => (a.hora_salida || '').localeCompare(b.hora_salida || ''));
-        break;
-
-      case 'recientes':
-        this.misViajes = [...viajesBase].sort((a, b) => 
-          new Date(b.fecha_salida).getTime() - new Date(a.fecha_salida).getTime()
-        );
-        break;
-
-      case 'antiguos':
-        this.misViajes = [...viajesBase].sort((a, b) => 
-          new Date(a.fecha_salida).getTime() - new Date(b.fecha_salida).getTime()
-        );
-        break;
-
-      case 'precioAsc':
-        this.misViajes = [...viajesBase].sort((a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0));
-        break;
-
-      case 'pendientes':
-        this.misViajes = [...viajesBase].sort((a, b) => {
-          const orden: any = { 'En curso': 1, 'Próximo': 2, 'Finalizado': 3, 'Cancelado': 4 };
-          return (orden[a.estado_viaje] || 5) - (orden[b.estado_viaje] || 5);
-        });
-        break;
-
-      default:
-        this.misViajes = viajesBase;
-        break;
-    }
-
-    if (popover && typeof popover.dismiss === 'function') {
-      popover.dismiss();
-    }
-    
-    this.cdr.detectChanges();
-  }
-
-  async reportar(ev: any, viaje: any) {
-    ev.stopPropagation();
-
-    await this.popoverCtrl.create({
-      component: 'popover-opciones',
-      event: ev,
-      translucent: true,
-      mode: 'ios',
-      componentProps: { pasajeros: viaje }
-    });
-    this.mostrarMenuAcciones(viaje);
-  }
-
-  /**
-   * Función para mostrar el menú para reportar al pasajero o pasajeros
-   * que no han aparecido en el punto de encuentro.
-   * 
-   * @param viaje --> Datos del viaje seleccionado.
-   * 
-   * @returns 
-   */
-  async mostrarMenuAcciones(viaje: any) {
-    if (!viaje.acompanantes || viaje.acompanantes.length === 0) {
-      const alertVacio = await this.alertCtrl.create({
-        header: 'Reportar pasajero',
-        message: 'No hay pasajeros apuntados en este viaje.',
-        cssClass: 'custom-alert-chat',
-        buttons: [
-          {
-            text: 'Ok',
-            role: 'cancel'
-          },
-        ]
-      });
-      await alertVacio.present();
-      return;
-    }
-
-    const inputsAcompanantes = viaje.acompanantes.map((pasajero: any) => ({
-      type: 'checkbox',
-      label: pasajero.nombre + ' ' + (pasajero.apellidos || ''),
-      value: pasajero,
-      checked: false
-    }));
-
-    const actionSheet = await this.alertCtrl.create({
-      header: 'Reportar pasajero',
-      subHeader: '¿A quién deseas reportar por no presentarse?',
-      cssClass: 'custom-alert-chat',
-      inputs: inputsAcompanantes,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Reportar ausencias',
-          role: 'destructive',
-          handler: (pasajerosSeleccionados: any[]) => {
-            if (!pasajerosSeleccionados || pasajerosSeleccionados.length === 0) {
-              console.warn('No se seleccionó ningún pasajero');
-              return false;
-            }
-
-            this.confirmarReporte(pasajerosSeleccionados, viaje.id);
-            return true;
-          }
-        }
-      ]
-    });
-
-    await actionSheet.present();
-  }
-
-
-  /**
-   * Función para confirmar el reporte al pasajero
-   * 
-   * @param pasajeros --> Listado de pasajeros seleccionados para el reporte.
-   * 
-   * @param viajeId --> ID del viaje seleccionado.
-   */
-  confirmarReporte(pasajeros: any[], viajeId: number) {
-    console.log(`Reportando ${pasajeros.length} pasajero(s) en el viaje ${viajeId}:`, pasajeros);
-
-    pasajeros.forEach(pasajero => {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Reporte enviado',
-        detail: `Se ha registrado la ausencia de ${pasajero.nombre}.`,
-        life: 2000
-      });
-    });
-
-    /*
-    this.travelService.reportarAusencia(viajeId, pasajero.id).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Reporte enviado',
-          detail: `Se ha registrado la ausencia de ${pasajero.nombre}.`
-        });
-      }
-    });
-    */
-  }
-
-
-  /**
-   * Función para que el conductor acepte una solicitud manual.
-   * @param viajeId 
-   * @param pasajeroId El ID del usuario que solicita
-   */
-  aceptarPasajero(viajeId: number, pasajeroId: number) {
-    this.cargandoViajes = true;
-    
-    this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Pasajero aceptado',
-          detail: 'El pasajero ya tiene su plaza confirmada.',
-          life: 3000
-        });
-        this.cargarTodosLosViajes(this.userData.usuario.id);
-      },
-      error: (err) => {
-        this.cargandoViajes = false;
-        console.error('Error al aceptar pasajero', err);
-      }
-    });
-  }
-
-  /**
-   * Función para que el conductor rechace una solicitud manual.
-   */
-  async rechazarPasajero(viajeId: number, pasajeroId: number) {
-    const alert = await this.alertCtrl.create({
-      header: 'Rechazar solicitud',
-      message: '¿Estás seguro de que deseas rechazar a este pasajero?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        { 
-          text: 'Rechazar', 
-          role: 'destructive',
-          handler: () => {
-            this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
-              next: () => {
-                this.cargarTodosLosViajes(this.userData.usuario.id);
-              }
-            });
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  /**
-   * Función para que el conductor cancele una solicitud manual.
-   * El conductor puede cancelar una solicitud que aún no ha aceptado, retirando la solicitud de plaza del pasajero.
-   * Esto es útil en caso de que el conductor decida que no quiere aceptar a ese pasajero o 
-   * si el pasajero se ha puesto en contacto con el conductor para retirar su solicitud.
-   * 
-   * @param solicitudId --> El ID de la solicitud que se desea cancelar. Este ID corresponde a 
-   * la solicitud pendiente que el pasajero ha hecho para unirse al viaje, y 
-   * que aún no ha sido aceptada por el conductor. Al cancelar esta solicitud, 
-   * se elimina del sistema y el pasajero ya no aparecerá como solicitante para ese viaje.
-   */
-  async cancelarSolicitud(solicitudId: number) {
-    const alert = await this.alertCtrl.create({
-      header: 'Cancelar Solicitud',
-      message: '¿Estás seguro de que deseas retirar tu solicitud de plaza?',
-      buttons: [
-        { text: 'No', role: 'cancel' },
-        { 
-          text: 'Sí, retirar', 
-          handler: () => {
-            this.travelService.cancelarSolicitudManual(solicitudId).subscribe(() => {
-              this.cargarTodosLosViajes(this.userData.usuario.id);
-            });
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  /**
-   * Función para obtener la clase CSS según el estado del viaje
-   * @param estado --> Estado del viaje (Pendiente, En curso, Finalizado, Cancelado)
-   * @returns --> Devuelve la clase CSS correspondiente al estado del viaje
-   * Si el estado es "Pendiente" o "Próximo", devuelve "badge-proximo"
-   * Si el estado es "En curso", devuelve "badge-en-curso"
-   * Si el estado es "Finalizado", devuelve "badge-finalizado"
-   * Si el estado es "Cancelado", devuelve "badge-cancelado"
-   * Si no se proporciona un estado o no coincide con ninguno de los casos anteriores, devuelve "badge-proximo" por defecto
-   * 
-   * Esta función se utiliza para asignar estilos visuales a los viajes según su estado, facilitando la identificación rápida del estado de cada viaje en la interfaz de usuario.
-   */
-  getClaseEstado(estado?: string): string {
-    if (!estado) return 'badge-proximo';
-
-    switch (estado) {
-      case 'Próximo': 
-      case 'Pendiente': return 'badge-proximo'; 
-      case 'En curso': return 'badge-en-curso';
-      case 'Finalizado': return 'badge-finalizado';
-      case 'Cancelado': return 'badge-cancelado';
-      default: return 'badge-proximo';
-    }
-  }
-
-
-  /**
-   * Función para obtener el icono según el estado del viaje
-   * @param estado --> Estado del viaje (Pendiente, En curso, Finalizado, Cancelado)
-   * @returns --> Devuelve la clase del icono correspondiente al estado del viaje
-   */
-  getIconoEstado(estado?: string): string {
-    if (!estado) return 'fi-rr-calendar-clock me-1';
-
-    switch (estado) {
-      case 'Próximo': 
-      case 'Pendiente': return 'fi-rr-calendar-clock me-1';
-      case 'En curso': return 'fi-rr-play me-1';
-      case 'Finalizado': return 'fi-rr-check me-1';
-      case 'Cancelado': return 'fi-rr-cross-circle me-1';
-      default: return 'fi-rr-info me-1';
-    }
-  }
-
 }

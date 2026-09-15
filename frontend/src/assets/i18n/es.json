@@ -1,21 +1,23 @@
 {
   "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
   "SELECTOR_GENERO": {
-    "LABEL": "Género con el que te identificas",
-    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita sólo a hombre o mujer.",
+    "LABEL": "Tu género",
+    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita solo a hombre o mujer.",
     "SELECCIONA": "Selecciona tu género",
-    "H_CIS": "Hombre Cis",
-    "M_CIS": "Mujer Cis",
+    "AYUDA": "Se muestran las opciones para elegir tu género",
+    "H_CIS": "Hombre cis",
+    "M_CIS": "Mujer cis",
     "TRANS": "Transexual",
     "NO_BINARIO": "No binario",
     "INTER": "Intergénero",
-    "NO_FLUIDO": "No Fluido",
+    "NO_FLUIDO": "No fluido",
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
   "SELECTOR_ORIENTACION": {
-    "LABEL": "¿Cuál es tu orientación sexual?",
-    "INFO": "Es la atracción emocional, romántica  y/o sexual que se siente hacia otras personas.",
+    "LABEL": "¿Orientación sexual?",
+    "INFO": "Es la atracción emocional, romántica y/o sexual que se siente hacia otras personas.",
+    "AYUDA": "Se muestran las opciones para elegir tu orientación",
     "SELECCIONA": "Selecciona tu orientación",
     "GAY": "Gay",
     "LESBIANA": "Lesbiana",
@@ -28,11 +30,95 @@
     "OTRO": "Otro",
     "NO_RESPONDE": "Prefiero no responder"
   },
+  "SELECTOR_COLOR": {
+    "BLANCO": "Blanco",
+    "NEGRO": "Negro",
+    "ROJO": "Rojo",
+    "AMARILLO": "Amarillo",
+    "VERDE": "Verde",
+    "GRIS": "Gris",
+    "DORADO": "Dorado",
+    "MARRON": "Marrón",
+    "MORADO": "Morado",
+    "BEIGE": "Beige",
+    "PERLA": "Perla",
+    "OTRO": "Otro"
+  },
+  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
+  "MIPERFIL": {
+    "TITULO": "Mi perfil",
+    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
+    "INFO_PERSONAL": {
+      "TITULO": "Información personal",
+      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
+      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
+      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
+      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
+      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
+      "LABEL_NOMBRE": "Nombre",
+      "LABEL_APELLIDOS": "Apellidos",
+      "PRONOMBRE": {
+        "LABEL": "Pronombre",
+        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
+        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
+        "ESCOGE_OPCION": "Escoge tu pronombre",
+        "OPC_EL": "Él / He / Him",
+        "OPC_ELLA": "Ella / She / Her",
+        "OPC_ELLE": "Elle / They / Them",
+        "OPC_OTROS": "Otros",
+        "OPC_NOUSO": "No uso ninguno",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
+      "LABEL_EDAD": "Edad",
+      "LABEL_SOBRETI": "Sobre ti",
+      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
+      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
+      "CARACTERES": "Caracteres usados",
+      "SPINNER_TRADUCIENDO": "Traduciendo..."
+    },
+    "PREF_VIAJE": {
+      "LABEL": "Mis preferencias de viaje",
+      "SUBTITULO": "Cuando viajo prefiero...",
+      "OPC_HABLAR": "Hablar",
+      "OPC_MUSICA": "Escuchar música",
+      "OPC_DORMIR": "Dormir",
+      "OPC_SILENCIO": "Ir en silencio",
+      "LABEL_OTRAS": "Otras preferencias de viaje",
+      "MASCOTAS": "Admito mascotas / Puedo ir con mi mascota",
+      "FUMAR": "Se puede fumar"
+    }
+  },
+  "TABLA_VEHICULOS": {
+    "TITULO": "Mis vehículos",
+    "SIN_VEHICULOS": "No tienes vehículos añadidos",
+    "BTN_ANADIR_VEHICULO": "Añadir vehículo",
+    "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
+    "ADVERTENCIA_MODIFICACION": "Recuerda que si cambias la marca, debes modificar también el modelo",
+    "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
+    "GUARDAR_VEHICULO": "Guardar vehículo",
+    "BOTON_GUARDAR_HELP": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "GUARDAR_CAMBIOS": "Guardar cambios",
+    "BOTON_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "BOTON_ELIMINAR_HELP": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "CANCELAR": "Cancelar",
+    "SELECTOR": {
+      "MARCA": "Marca",
+      "AYUDA_MARCA": "Selector de marca del vehículo",
+      "MODELO": "Modelo",
+      "AYUDA_MODELO": "Selector de modelo del vehículo",
+      "COLOR": "Color",
+      "COLOR_VEHICULO": "Color del vehículo: {{color}}",
+      "AYUDA_COLOR": "Selector del color del vehículo"
+    },
+    "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:",
+    "ENVIAR_CORREO": "Enviar correo electrónico de contacto"
+  },
+
   "BOTON": {
-    "ANADIR_VEHICULO": "Añadir vehículo",
     "GUARDAR": "Guardar",
     "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
-    "GUARDAR_VEHICULO": "Guardar vehículo",
     "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
     "ELEGIR_ARCHIVOS": "Elegir archivos",
     "CAMBIAR": "Cambiar!",
@@ -112,116 +198,42 @@
     },
     "SECCION_PUBLICAR": {
       "TITULO": "¿Quieres compartir tu próximo viaje?",
-      "AYUDA": "Publica tu próximo viaje aquí."
+      "SUBTITULO": "Selecciona la ciudad que quieras y encuentra el evento perfecto",
+      "AYUDA": "Publica tu próximo viaje aquí.",
+      "DESCRIPCION": "Publica y viaja en compañía"
     },
     "SECCION_BUSCAR": {
       "TITULO": "¿Quieres buscar un viaje?",
-      "AYUDA": "Busca un viaje aquí."
+      "AYUDA": "Busca un viaje aquí.",
+      "DESCRIPCION": "Encuentra rutas con gente afín"
     },
     "SECCION_DUDAS": {
       "TITULO": "¿TIENES DUDAS?"
+    },
+    "EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
+      "INFO_SELECTOR": "Elige una ciudad de la lista",
+      "SELECTOR": "Elige una ciudad",
+      "PROXIMOS_EN": "Próximos eventos en ",
+      "FINICIO": "Fecha de inicio",
+      "FFIN": "Fecha de fin",
+      "IMAGEN": "Imagen del evento",
+      "ENLACE": "+Info",
+      "BOTONES": {
+        "CREAR_VIAJE": "Crear viaje",
+        "PARA": "para",
+        "BUSCAR_VIAJE": "Buscar viaje"
+      },
+      "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
+      "PREPARANDO_EVENTOS": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
+      "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
     }
   },
-  "__Eventos": "Sección Eventos del Home",
-  "EVENTOS": {
-    "TITULO": "¿Quieres ir a algún evento?",
-    "INFO_SELECTOR": "Consulta eventos de diferentes ciudades para crear o unirte a un viaje compartido",
-    "SELECTOR": "Consulta los eventos de estas ciudades",
-    "FINICIO": "Fecha de inicio",
-    "FFIN": "Fecha de fin",
-    "IMAGEN": "Imagen del evento",
-    "ENLACE": "Más información del evento",
-    "BOTONES": {
-      "CREAR_VIAJE": "Crear viaje",
-      "PARA": "para",
-      "BUSCAR_VIAJE": "Buscar viaje"
-    },
-    "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
-  },
-  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO OCTUBRE 2025",
-  "MIPERFIL": {
-    "TITULO": "Mi perfil",
-    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
-    "BTN_GUARDAR": "Guardar",
-    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
-    "INFO_PERSONAL": {
-      "TITULO": "Información personal",
-      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
-      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
-      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
-      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
-      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
-      "LABEL_NOMBRE": "Nombre",
-      "LABEL_APELLIDOS": "Apellidos",
-      "PRONOMBRE": {
-        "LABEL": "Pronombre",
-        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
-        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
-        "ESCOGE_OPCION": "Escoge tu pronombre",
-        "OPC_OTROS": "Otros",
-        "OPC_NOUSO": "No uso ninguno",
-        "OPC_NORESPONDO": "Prefiero no responder"
-      },
-      "ORIENTACION": {
-        "LABEL": "Orientación",
-        "INFO": "Sobre quién te atrae o con quién quieres formar vínculos afectivos o sexuales.",
-        "AYUDA": "Se muestran las opciones para elegir tu orientación",
-        "ESCOGE_OPCION": "Escoge tu orientación",
-        "OPC_GAY": "Gay",
-        "OPC_LESBIANA": "Lesbiana",
-        "OPC_BISEXUAL": "Bisexual",
-        "OPC_PANSEXUAL": "Pansexual",
-        "OPC_ASEXUAL": "Asexual",
-        "OPC_DEMISEXUAL": "Demisexual",
-        "OPC_QUEER": "Queer",
-        "OPC_OTROS": "Otros",
-        "OPC_NORESPONDO": "Prefiero no responder"
-      },
-      "GENERO": {
-        "LABEL": "Género"
-      },
-      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
-      "LABEL_EDAD": "Edad",
-      "LABEL_SOBRETI": "Sobre ti",
-      "PLACEHOLDER_SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
-      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
-      "CARACTERES": "Caracteres usados"
-    },
-    "MIS_VEHICULOS": {
-      "TITULO": "Mis vehículos",
-      "SIN_VEHICULOS": "No tienes vehículos añadidos",
-      "BTN_ANADIR_VEHICULO": "Añadir vehículo",
-      "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
-      "ADVERTENCIA_MODIFICACION": "Recuerda que si cambiar la marca, debes modificar también el modelo",
-      "SELECTOR": {
-        "MARCA": "Marca",
-        "AYUDA_MARCA": "Selector de marca del vehículo",
-        "MODELO": "Modelo",
-        "AYUDA_MODELO": "Selector de modelo del vehículo",
-        "COLOR": "Color"
-      },
-      "TABLA": {
-        "COL_MARCA": "Marca",
-        "COL_MODELO": "Marca",
-        "COL_COLOR": "Marca",
-        "COL_OPCIONES": "Marca",
-        "BTN_EDITAR_TOOLTIP": "Edita los datos de tu vehículo si están erróneos",
-        "BTN_ELIMINAR_TOOLTIP": "Elimina este vehículo",
-        "BTN_GUARDAR_TOOLTIP": "Guarda los nuevos datos del vehículo"
-      },
-      "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:"
-    },
-    "PREF_VIAJE": {
-      "LABEL": "Mis preferencias de viaje",
-      "SUBTITULO": "Cuando viajo prefiero...",
-      "OPC_HABLAR": "Hablar",
-      "OPC_MUSICA": "Escuchar música",
-      "OPC_DORMIR": "Dormir",
-      "OPC_SILENCIO": "Ir en silencio"
-    }
-  },
+
   "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
   "REGISTRO": {
+    "OBLIGATORIO": "Obligatorio",
     "FORM1": {
       "BIENVENIDE": "BIENVENIDE",
       "SUBTITULO": "Aquí puedes empezar a registrarte",
@@ -234,6 +246,13 @@
         "FORMATO": "El formato del correo no es correcto.",
         "YAEXISTE": "Este correo ya está registrado."
       },
+      "SILOPREFIERES": "O si lo prefieres"
+    },
+    "FORM2": {
+      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "NOMBRE_OBLIGATORIO": "El nombre es obligatorio",
+      "APELLIDOS_OBLIGATORIO": "El apellido es obligatorio",
       "FNACIMIENTO": {
         "LABEL": "Fecha de nacimiento",
         "AYUDA": "Campo para introducir tu fecha de nacimiento",
@@ -241,21 +260,21 @@
         "OBLIGATORIA": "La fecha de nacimiento es obligatoria.",
         "MENOR_EDAD": "Debes tener más de 18 años para usar este servicio.",
         "SUPERIORACTUAL": "No puedes elegir una fecha superior a la actual."
-      }
-    },
-    "FORM2": {
-      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
-      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      },
       "LABEL_NOMBRE": "Nombre",
       "LABEL_APELLIDOS": "Apellidos",
       "TELEFONO": {
         "LABEL": "Teléfono",
         "OBLIGATORIO": "El número de teléfono es obligatorio",
-        "FORMATO": "El formato no es correcto. Debe contener 9 dígitos numéricos.",
+        "FORMATO": "Formato incorrecto: debe contener 9 dígitos numéricos.",
         "YAEXISTE": "Este teléfono ya nos consta registrado."
       },
-      "GÉNERO": {},
-      "ORIENTACION": {}
+      "GÉNERO": {
+        "LABEL": "Género"
+      },
+      "ORIENTACION": {
+        "LABEL": "Orientación"
+      }
     },
     "FORM3": {
       "TITULO": "ALGO IMPORTANTE: TU CONTRASEÑA",
@@ -269,6 +288,9 @@
         "FORMATO": "El formato de la contraseña no es correcto."
       }
     },
+    "BOTONES": {
+      "ATRAS_PASO": "Atrás (Paso {{paso}}"
+    },
     "RESUMEN_REGISTRO": {
       "TUS_DATOS": "Estos son los datos que nos has facilitado.",
       "INFO": "No te preocupes si alguno es incorrecto: puedes modificarlo pulsando el icono del lápiz",
@@ -281,17 +303,19 @@
         "GENERO": "Género",
         "ORIENTACION": "Orientación"
       },
-      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado nuestras Normas y condiciones del Servicio.",
+      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado las Condiciones del Servicio.",
+      "DEBES_BAJAR": "Debes abrir y leer las condiciones hasta el final para poder continuar.",
       "BOTONES": {
         "ACEPTAR": "Aceptar y registrar",
         "RECHAZAR": "Rechazar y salir"
       },
       "SELECCIONA": "Selecciona una opción"
     },
-    "BOTONES": {
-      "ATRAS": "Atrás",
+    "BOTONES2": {
       "SIGUIENTE": "Siguiente",
-      "FINALIZAR_REGISTRO": "Finalizar registro"
+      "FINALIZAR_REGISTRO": "Finalizar registro",
+      "FINALIZAR_CREAR": "Finalizar y crear cuenta",
+      "RECHAZAR": "Rechazar y salir"
     }
   },
   "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
@@ -325,14 +349,14 @@
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
-    "BOTÓN_VERIFICAR_TELEFONO": "Confirmar código",
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
     "VERIF_IDENTIDAD": "Verifica tu identidad:",
     "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
     "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
     "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
     "NUMERO_DOCUMENTO": "Número de documento sin espacios",
     "PLACEHOLDER_DOCUMENTO": "12345678A / X1234567F",
-    "BOTÓN_VERIFICAR_IDENTIDAD": "Confirmar documento",
+    "BOTON_VERIFICAR_IDENTIDAD": "Confirmar documento",
     "VAVANZADA": {
       "TITULO": "Verificación avanzada",
       "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
@@ -356,6 +380,10 @@
       "SUBTITULO": "Oculta o muestra el banner que aparece en algunas pantallas de la aplicación.",
       "ALERT_TITULO": "Ajustes del banner",
       "ALERT_MENSAJE": "Se han modificado los ajustes del banner correctamente."
+    },
+    "CAMBIOS_GUARDADOS": {
+      "TITULO": "Datos guardados",
+      "SUBTITULO": "Se han guardado correctamente los datos"
     },
     "OPCION_NOTIFICACION": {
       "TITULO": "Notificaciones",
@@ -507,7 +535,7 @@
     "HELP_CENTER_TITLE": "Centro de ayuda",
     "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
   },
-  "__CENTRO DE MENSAJES":"Centro de mensajes",
+  "__CENTRO DE MENSAJES": "Centro de mensajes",
   "CENTRO_MENSAJES": {
     "TITULO": "Centro de mensajes",
     "VACIO_TITULO": "Tu buzón está vacío",
@@ -522,7 +550,7 @@
       "ELIMINAR": "Eliminar conversación",
       "CANCELAR": "Cancelar"
     }
-  },  
+  },
   "__Eventos_Administracion": "Sección Eventos de Administración",
   "EVENTOS_ADMIN": "",
   "MENSAJES": {
@@ -561,5 +589,4 @@
       "LEER_MENOS": "Leer menos"
     }
   }
-
 }

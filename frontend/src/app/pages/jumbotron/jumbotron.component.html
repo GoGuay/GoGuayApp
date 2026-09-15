@@ -1,11 +1,23 @@
 <div class="jumbotron">
   <div class="title">
     <h1>
-      <img class="img" src="../../../assets/sistema/bandera.gif">
+      <img
+        class="img"
+        src="../../../assets/sistema/bandera.gif"
+        alt=""
+      />
       {{ title }}
-      <img class="img" src="../../../assets/sistema/bandera.gif">
+      <img
+        class="img"
+        src="../../../assets/sistema/bandera.gif"
+        alt=""
+      />
     </h1>
   </div>
 
-  <img [src]="imageSrc" class="jumbotron-img" [title]="helpText | translate" />
+  <img
+    [src]="imageSrc"
+    class="jumbotron-img"
+    [alt]="helpText | translate"
+  />
 </div>

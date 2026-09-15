@@ -13,8 +13,10 @@
         Este sitio utiliza cookies para mejorar tu experiencia. Consulta nuestra
         <a routerLink="/cookies-policy">Política de Cookies</a>.
       </p>
-      <button mat-raised-button class="me-1" (click)="acceptAllCookies()">Aceptar todas</button>
+      <button mat-raised-button class="me-1 btn btn_bg" (click)="acceptAllCookies()">Aceptar todas</button>
       <button mat-raised-button class="me-1" (click)="rejectAllCookies()">Rechazar todas</button>
+    </div>
+    <div class="d-flex justify-content-center mt-2">
       <button mat-raised-button (click)="openCookiePreferences()">Gestionar preferencias</button>
     </div>
   </mat-dialog-content>

@@ -2,8 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { TerminosComponent } from 'src/app/components/terminos/terminos.component';
-import { CookiesComponent } from 'src/app/components/cookies/cookies.component';
+import { TerminosComponent } from '../../components/terminos/terminos.component';
+import { CookiesComponent } from '../../components/cookies/cookies.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 
@@ -38,5 +38,17 @@ export class FooterComponent implements OnInit {
 
   openAdmin() {
     this.navCtrl.navigateRoot('/login-admin', {});
+  }
+
+  openFAQs() {
+    this.navCtrl.navigateRoot('/faqs', {});
+  }
+
+  openDecalogo() {
+    this.navCtrl.navigateRoot('/decalogo', {});
+  }
+
+  openQuienesSomos() {
+    this.navCtrl.navigateRoot('/sobre-nosotros', {});
   }
 }

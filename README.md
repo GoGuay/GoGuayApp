@@ -92,4 +92,6 @@ docker build -t prideride .
 
 1. cd docs
 2. npm start
-3.
+
+
+GROQ_API_KEY=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

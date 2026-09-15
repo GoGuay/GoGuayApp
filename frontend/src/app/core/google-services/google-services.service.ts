@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable } from 'rxjs';
+import { catchError, Observable, timeout } from 'rxjs';
 import { API_URL_BASE } from 'src/app/models/constantes/constantes.model';
 
 @Injectable({
@@ -11,15 +11,18 @@ export class GoogleServices {
   // private geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
   // private apiKey = 'AIzaSyD2GJTw7EJR95V_4UQj_zIOTHw_RVGvkOM';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   obtenerLocalidad(localidad: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/apigoogle/buscar_localidad?q=${localidad}`).pipe(
-      catchError((error) => {
-        console.error('Error al obtener la localidad:', error);
-        throw error;
-      }),
-    );
+    return this.http
+      .get<any>(`${this.apiUrl}/apigoogle/buscar_localidad?q=${localidad}`)
+      .pipe(
+        timeout(10000), // Aumenta el tiempo límite a 10 segundos (10000 ms)
+        catchError((error) => {
+          console.error('Error al obtener la localidad:', error);
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -32,12 +35,14 @@ export class GoogleServices {
    */
   detectarIdiomaTexto(idiomaDetectado: string): Observable<string> {
     const body = { texto: idiomaDetectado };
-    return this.http.post<any>(`${this.apiUrl}/apigoogle/detectar_idioma`, body).pipe(
-      catchError((error) => {
-        console.error('Error al obtener el idioma:', error);
-        throw error;
-      }),
-    );
+    return this.http
+      .post<any>(`${this.apiUrl}/apigoogle/detectar_idioma`, body)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al obtener el idioma:', error);
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -52,18 +57,24 @@ export class GoogleServices {
    * @returns devuelve un objeto con el texto traducido (esto se ve en la función del backend)
    */
 
-  traducirIdiomaTexto(textoUsuario: string, idioma_destino: string, idioma_origen: string): Observable<any> {
+  traducirIdiomaTexto(
+    textoUsuario: string,
+    idioma_destino: string,
+    idioma_origen: string,
+  ): Observable<any> {
     const body = {
       texto: textoUsuario,
       idioma_destino: idioma_destino,
       idioma_origen: idioma_origen,
     };
-    return this.http.post<any>(`${this.apiUrl}/apigoogle/traducir_texto`, body).pipe(
-      catchError((error) => {
-        console.error('Error al traducir el texto:', error);
-        throw error;
-      }),
-    );
+    return this.http
+      .post<any>(`${this.apiUrl}/apigoogle/traducir_texto`, body)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al traducir el texto:', error);
+          throw error;
+        }),
+      );
   }
 
   // reverseGeocode(lat: number, lng: number): Observable<any> {

@@ -6,16 +6,17 @@
 from datetime import datetime
 import random
 import requests
-from flask import Blueprint, jsonify, render_template,  request
+from flask import Blueprint, jsonify, render_template,  request, current_app
 from itsdangerous import SignatureExpired, BadSignature
 import nexmo
+import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje
+from models import Usuario, RolUsuarioEnum, Viaje, Monedero, MovimientoMonedero
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -28,6 +29,12 @@ from twilio.rest import Client
 from sqlalchemy import func
 from datetime import datetime, timezone
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from jwt import PyJWKClient
+
+
+GOOGLE_CERTS_URL = 'https://www.googleapis.com/oauth2/v3/certs'
 
 
 # Nombre único para evitar conflictos
@@ -52,10 +59,13 @@ PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
 PAYPAL_API = os.getenv('PAYPAL_API')
 
+##Configuración Token Google
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+
 
 ## --- RUTAS DE USUARIO --- ##
 
-## CREAR NUEVO USUARIO ##
+## CREAR NUEVO USUARIO - REGISTRO MANUAL ##
 @user_blueprint.route('/registro', methods=['POST'])
 def crear_usuario():
     """
@@ -70,17 +80,27 @@ def crear_usuario():
     """
     data = request.json
 
-    campos_obligatorios = ['nombre', 'apellidos', 'email', 'password']
+    campos_obligatorios = ['nombre', 'apellidos', 'email', 'fecha_nacimiento', 'telefono']
     for campo in campos_obligatorios:
-        if campo not in data:
+        if not data.get(campo):
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
+    
+    es_registro_google = str(data.get('es_google', False)).lower() in ['true', '1']
+    password_raw = data.get('password')
+
+    if not es_registro_google and not password_raw:
+        return jsonify({"error": "La contraseña es obligatoria para el registro por la web"})
 
     email_normalizado = data['email'].lower()
-
     if Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first():
         return jsonify({"error": "El correo electrónico ya existe"}), 400
 
-    codificar_password = generate_password_hash(data['password'])
+    codificar_password = generate_password_hash(password_raw) if password_raw else None
+
+    try:
+        fecha_nac = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d')
+    except (ValueError, TypeError):
+        return jsonify({"error": "El formato de la fecha de nacimiento no es válido. Usa YYYY-MM-DD"}), 400
 
     nuevo_usuario = Usuario(
         nombre=data['nombre'],
@@ -88,31 +108,94 @@ def crear_usuario():
         email=email_normalizado,
         password=codificar_password,
         telefono=data.get('telefono'),
+        fotoPerfil=data.get('fotoPerfil'),
         orientacion=data.get('orientacion'),
         genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
-        fecha_nacimiento=datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d') if data.get('fecha_nacimiento') else None,
+        fecha_nacimiento=fecha_nac
     )
+    try:
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error": f"Error al guardar en la base de datos: {str(e)}"}), 500
 
-    db.session.add(nuevo_usuario)
+    # Crear monedero para el nuevo usuario
+    monedero = Monedero(usuario_id=nuevo_usuario.id)
+    db.session.add(monedero)
     db.session.commit()
 
-    
-    access_token = create_access_token(identity=nuevo_usuario.id)
+    access_token = create_access_token(identity=str(nuevo_usuario.id))
 
-    salt = 'email-verify'
-    token = serializer.dumps(nuevo_usuario.email, salt=salt)
-    link_verificacion = f"http://localhost:4200/verificar-email/{token}"
-    msg = Message("Bienvenidx a GoGuay",recipients=[nuevo_usuario.email])
-    msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
-    mail.send(msg)
-    nuevo_usuario.id
+    try:
+        salt = 'email-verify'
+        token = serializer.dumps(nuevo_usuario.email, salt=salt)
+        link_verificacion = f"http://localhost:4200/verificar-email/{token}"
+        msg = Message("Bienvenidx a GoGuay", recipients=[nuevo_usuario.email])
+        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
+
     return jsonify({
         "mensaje": "Nuevo usuario creado correctamente",
         "access_token": access_token,
         "usuario": nuevo_usuario.serialize()
     }), 201
+
+
+## CREAR NUEVO USUARIO - REGISTRO POR BOTÓN DE GOOGLE ##
+@user_blueprint.route('/google-login', methods=['POST'])
+def login_google():
+    """
+    1.Recibe el idTolen enviado desde el frontend tras pulsar el botón de Google
+    2. Valida el token usando la librería de google.
+    3. Extrae la información del perfil (email, nombre, apellidos)
+    4. Comprueba si el correo ya está registrado en la base de datos:
+        - Si existe inicia sesión directamente y devuelve el token de acceso JWT
+        - Si no existe: Devuelve los datos para que el frontend redirija el flujo de registro. 
+    """
+    data = request.json or {}
+    id_token_google = data.get('idToken') or data.get('token')
+    if not id_token_google:
+        return jsonify({"error": "falta el token de Google"}), 400
+    
+    try:
+        id_info = id_token.verify_oauth2_token(
+            id_token_google,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID
+        )
+        email = id_info.get('email', '').lower()
+        nombre = id_info.get('given_name', id_info.get('name',''))
+        apellidos = id_info.get('family_name', '')
+        foto_perfil = id_info.get('picture')
+
+        usuario_existente = Usuario.query.filter(Usuario.email.ilike(email)).first()
+
+        if usuario_existente:
+            access_token = create_access_token(identity=str(usuario_existente.id))
+            return jsonify({
+                "usuarioExistente": True,
+                "mensaje": "Inicio de sesión correcto",
+                "access_token": access_token,
+                "usuario": usuario_existente.serialize()
+            }),200
+        else:                   
+            return jsonify({
+                "usuarioExistente": False,
+                "datosGoogle": {
+                    "email": email,
+                    "nombre": nombre,
+                    "apellidos": apellidos,
+                    "foto_perfil": foto_perfil
+                }
+            }),200
+    except ValueError:
+            return jsonify({"error": "Token de Google inválido o expirado"}), 401
+    except Exception as e:
+            return jsonify({"error": f"Error en la verificación de Google: {str(e)}"}),500
 
 
 ## COMPOBAR SI YA EXISTE UN MAIL DURANTE EL REGISTRO ##
@@ -131,7 +214,7 @@ def verificar_email_existente():
     email_normalizado = email.lower()
 
     existe = Usuario.query.filter(Usuario.email.ilike(email_normalizado)).first() is not None
-    return jsonify ({"Ya existe correo": existe}), 200
+    return jsonify ({"existe": existe}), 200
 
 
 ## COMPOBAR SI YA EXISTE UN TELÉFONO DURANTE EL REGISTRO ##
@@ -142,7 +225,7 @@ def verificar_telefono_existente():
     if not telefono:
         return jsonify({"Error": "Teléfono no encontrado"}), 400
     existe = Usuario.query.filter_by(telefono=telefono).first() is not None
-    return jsonify ({"Ya existe teléfono": existe}), 200
+    return jsonify({"existe": existe}), 200
 
 
 ## LOGIN DEL USUARIO AL SISTEMA ##
@@ -168,11 +251,23 @@ def login():
         return jsonify({'Error': 'Contraseña incorrecta'}), 401
 
     access_token = create_access_token(identity=str(usuario.id))
+    refresh_token = create_refresh_token(identity=str(usuario.id))
 
     return jsonify({
         'usuario': usuario.serialize(),
-        'access_token': access_token
+        'access_token': access_token,
+        "refresh_token": refresh_token,
     }), 200
+
+# Para generar un token de refresco -- para que la sesión no se bloquee a los 15 minutos que es la duración del token "normal"
+@user_blueprint.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    usuario_id = get_jwt_identity()
+    nuevo_access_token = create_access_token(identity=str(usuario_id))
+
+    return jsonify({"access_token": nuevo_access_token}), 200
+
 
 
 ## #OBTENER TODOS LOS USUARIOS ##
@@ -219,10 +314,10 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     
     return jsonify(usuario.serialize_public()), 200
 
-## EDITAR INFORMACIÓN DE UN USUAURIO ##
-@user_blueprint.route('/editarusuario/<int:user_id>', methods=['PUT'])
+## EDITAR INFORMACIÓN DE UN USUARIO ##
+@user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
-def actualizar_usuario(user_id):
+def actualizar_usuario(usuario_id):
     """
     1. Con el método PUT actualizamos un recurso que ya existe.
     2. get_or_404(user_id) --> busca al usuario por ID, si lo encuentra lo guarda en usuario, si no devuelve error y para la función. Equivale a "if usuario is None"
@@ -234,15 +329,17 @@ def actualizar_usuario(user_id):
     8. commit: guarda en base de datos los cambios.
     9 Devuelve la información de los cambios en formato json.
     """
+    
     current_user_id = get_jwt_identity()
+    print('current_user_id: ', current_user_id)
 
-    if current_user_id != user_id:
+    if int(current_user_id) != usuario_id:
         return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     
-    usuario = Usuario.query.get_or_404(user_id)
+    usuario = Usuario.query.get_or_404(usuario_id)
     data = request.json
 
-    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros']:
+    for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros', 'paypal_email', 'tarjeta_info', 'metodo_cobro_preferido', 'cobro_paypal_email', 'cobro_iban',  'cobro_titular' ]:
         if key in data and data[key] is not None:  
             if key == 'fecha_nacimiento' and data[key]:
                 setattr(usuario, key, datetime.strptime(data[key], '%Y-%m-%d'))  
@@ -343,8 +440,8 @@ def reducir_imagen(imagen, max_size=10485760):
 
 
 ## ACTUALIZAR IMAGEN DE PERFIL ##
-@user_blueprint.route('/actualizar_imagen_perfil/<int:user_id>', methods=['PUT'])
-def actualizar_imagen_perfil(user_id):
+@user_blueprint.route('/actualizar_imagen_perfil/<int:usuario_id>', methods=['PUT'])
+def actualizar_imagen_perfil(usuario_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
     2. request.files.get --> captura la imagen que el usuario subió bajo el nombre imagenPerfil y la guarda en imagen. Si no envió ninguna imagen, se detiene la función.
@@ -357,7 +454,7 @@ def actualizar_imagen_perfil(user_id):
     9. db.session.commit --> Guarda los cambios en la BD
     10. Devuelve un Json con mensaje de exito y la nueva URL para que el front pueda mostrar la nueva imagen actualizada inmediatamente sin tener que recargar.
     """
-    user = Usuario.query.get_or_404(user_id)
+    user = Usuario.query.get_or_404(usuario_id)
 
     imagen = request.files.get('imagenPerfil')
     if not imagen:
@@ -368,7 +465,7 @@ def actualizar_imagen_perfil(user_id):
 
     imagen = reducir_imagen(imagen) 
 
-    carpeta_usuario = f"user_{user_id}"
+    carpeta_usuario = f"user_{usuario_id}"
     result = uploader.upload(imagen, folder=carpeta_usuario)
 
     user.fotoPerfil = result['secure_url']
@@ -379,7 +476,7 @@ def actualizar_imagen_perfil(user_id):
 
 
 ## ELIMINAR IMAGEN DE PERFIL ##
-@user_blueprint.route('/eliminar_imagen_perfil/<int:user_id>', methods=['DELETE'])
+@user_blueprint.route('/eliminar_imagen_perfil/<int:usuario_id>', methods=['DELETE'])
 def eliminar_imagen_perfil(user_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
@@ -407,7 +504,7 @@ def eliminar_imagen_perfil(user_id):
 
 
 ## CLOUDINARY -- ACTUALIZAR IMAGEN DE CABECERA - Componente: Perfil pùblico ##
-@user_blueprint.route('/actualizar_imagen_cabecera/<int:user_id>', methods=['PUT'])
+@user_blueprint.route('/actualizar_imagen_cabecera/<int:usuario_id>', methods=['PUT'])
 def actualizar_imagen_cabecera(user_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario (404 si no existe).
@@ -689,17 +786,19 @@ def comprobarpwactual():
     4. Hace el print de la contraseña hasheada. 
     5. check_password_hash -->  toma la contraseña que escribió el usuario, le aplica el mismo algoritmo de cifrado y comprueba si el resultado coincide con el hash guardado (usuario.password). Si coinciden devuelve un True (el usuario ha acreaditado quien es), si no devuelve un false y devuelve un código de estado (no autorizado) 
     """
-    id = request.json.get('id')
-    password = request.json.get('password')
-    # print(f"id: {id}")
-    # print(f"Password ingresada: {password}")
+    data = request.get_json()
+    id_usuario = data.get('id')
+    password = data.get('password', '').strip()
 
-    usuario = Usuario.query.filter_by(id=id).first()
+    usuario = Usuario.query.filter_by(id=id_usuario).first()
 
     if usuario is None:
         return jsonify({'error:': 'usuario no encontrado'}), 404
     
-    print (f"Hash de contraseña almacenada: {usuario.password}")
+    print("\n========== SPRINT DE DIAGNÓSTICO ==========")
+    print(f"Contraseña limpia recibida del front: '{password}'")
+    print(f"Hash real en tu Base de Datos: '{usuario.password}'")
+    print("===========================================\n")
 
     if check_password_hash(usuario.password, password):
         return jsonify({'isValid': True}), 200
@@ -756,24 +855,52 @@ def get_access_token():
 # Recibe los datos del viaje con el precio de este. 
 @user_blueprint.route("/create-order", methods=['POST'])
 def create_order():
+    """
+    1. Obtenemos los datos en el json desde el front y sacamos el viaje_id. Si no lo hay, se devuelve error y sale.
+    2. Accede a la bd (tabla Viaje) y mediante el id se obtiene el viaje en concreto, el usuario que lo ha creado y todos los datos del viaje.
+    3. Si no se encuentra el viaje, devuelve un error y sale. 
+    4. Obtenemos el email de paypal que tenga el conductor del viaje y lo guardamos en email_conductor, si no lo tuviese el dinero pasa temporalmente al email de la empresa. 
+    5. Se guarda en precio_formateado el precio del viaje con dos decimales. 
+    6. Se obtiene el token del acceso  paypal, se guarda en token
+    7. headers --> configuración necesaria para la petición a paypal. 
+    8. payload - Petición que vamos a hacer a paypal. 
+    """
     data = request.get_json()
     viaje_id = data.get('viaje_id')
 
     if not viaje_id:
-        return {"error": "Falta el id del viaje"}, 400
+        return jsonify({"error": "Falta el id del viaje"}), 400
     
     viaje = db.session.query(Viaje).options(
         joinedload(Viaje.usuario)
     ).filter(Viaje.id == viaje_id).first()
-    precio_real = viaje.precio_viaje 
+    
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+        
+    email_conductor = viaje.creador.paypal_email or "goguay_empresa@business.example.com"
+    
+    precio_formateado = f"{viaje.precio_viaje:.2f}"
     
     token = get_access_token()
-    print ("token:", token)
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
     payload = {
         "intent": "CAPTURE",
-        "purchase_units": [{"reference_id": str(viaje_id), "amount": {"currency_code": "EUR", "value": precio_real}}],
-         "application_context": { 
+        "purchase_units": [{
+            "reference_id": str(viaje_id),
+            "amount": {
+                "currency_code": "EUR", 
+                "value": precio_formateado
+            },
+            "payee": {
+                "email_address": email_conductor  
+            },
+            "description": f"Reserva de plaza en GoGuay - Destino {viaje.destino}"
+        }],
+        "application_context": { 
+            "shipping_preference": "NO_SHIPPING", 
+            "user_action": "PAY_NOW",
             "return_url": "http://localhost:4200/payment-success",
             "cancel_url": "http://localhost:4200/payment-cancel"
         }
@@ -782,19 +909,167 @@ def create_order():
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
     order = response.json()
 
-    approve_link = next(
-        link["href"] for link in order["links"] if link["rel"] == "approve"
-    )
+    if response.status_code not in [200, 201]:
+        print("DETALLE DE ERROR EN PAYPAL API:", order)
+        return jsonify({"error": "Error al comunicarse con la pasarela", "detalle": order}), response.status_code
 
-    return {
-        "order_id": order["id"],
-        "approve_url": approve_link
-    }
+    try:
+        approve_link = next(
+            link["href"] for link in order["links"] if link["rel"] == "approve"
+        )
+        return jsonify({
+            "order_id": order["id"],
+            "approve_url": approve_link
+        }), 200
+    except KeyError:
+        return jsonify({"error": "No se pudo generar el enlace de aprobación", "detalle": order}), 500
 
-
+# Captura el pago de la orden creada en PayPal
+# 
 @user_blueprint.route("/capture-order/<order_id>", methods=['POST'])
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
-    return response.json()
+    
+    capture_data = response.json()
+    
+    if response.status_code not in [200, 201]:
+        print(f"❌ Error al capturar la orden {order_id}:", capture_data)
+        return jsonify(capture_data), response.status_code
+        
+    return jsonify(capture_data), 200
+
+
+## --- RUTAS DE RECARGA DE MONEDERO CON PAYPAL --- ##
+
+@user_blueprint.route("/create-wallet-order", methods=['POST'])
+@jwt_required()
+def create_wallet_order():
+    """
+    1. Recibe el monto (cantidad) que el usuario desea añadir a su monedero desde el frontend.
+    2. Valida que el usuario esté autenticado mediante JWT y tenga un monedero activo.
+    3. Crea una orden en PayPal configurada para capturar fondos destinados a la cuenta de la empresa.
+    """
+    current_user_id = get_jwt_identity()
+    data = request.get_json() or {}
+    
+    cantidad = data.get('cantidad')
+
+    if not cantidad or float(cantidad) <= 0:
+        return jsonify({"error": "La cantidad de recarga no es válida"}), 400
+
+    usuario = Usuario.query.get(current_user_id)
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Formatear el precio a dos decimales requerido por PayPal
+    precio_formateado = f"{float(cantidad):.2f}"
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
+    # El dinero de la recarga va directamente a la cuenta business de la empresa
+    email_empresa = "goguay_empresa@business.example.com"
+    
+    payload = {
+        "intent": "CAPTURE",
+        "purchase_units": [{
+            "reference_id": f"wallet_recharge_{current_user_id}",
+            "amount": {
+                "currency_code": "EUR", 
+                "value": precio_formateado
+            },
+            "payee": {
+                "email_address": email_empresa
+            },
+            "description": f"Recarga de saldo en monedero GoGuay - Usuario {usuario.email}"
+        }],
+        "application_context": { 
+            "shipping_preference": "NO_SHIPPING", 
+            "user_action": "PAY_NOW",
+            "return_url": "http://localhost:4200/saldo-transferencias?success=true",
+            "cancel_url": "http://localhost:4200/saldo-transferencias?cancel=true"
+        }
+    }
+
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
+    order = response.json()
+
+    if response.status_code not in [200, 201]:
+        print("❌ DETALLE DE ERROR EN PAYPAL API (Monedero):", order)
+        return jsonify({"error": "Error al comunicarse con la pasarela de PayPal", "detalle": order}), response.status_code
+
+    try:
+        approve_link = next(
+            link["href"] for link in order["links"] if link["rel"] == "approve"
+        )
+        return jsonify({
+            "order_id": order["id"],
+            "approve_url": approve_link
+        }), 200
+    except KeyError:
+        return jsonify({"error": "No se pudo generar el enlace de aprobación de PayPal", "detalle": order}), 500
+
+
+@user_blueprint.route("/capture-wallet-order/<order_id>", methods=['POST'])
+@jwt_required()
+def capture_wallet_order(order_id: str):
+    """
+    1. Captura la orden de PayPal una vez el usuario aprueba el pago.
+    2. Si el pago es exitoso ('COMPLETED'), busca el monedero del usuario autenticado.
+    3. Incrementa el saldo actual y registra un nuevo movimiento en el historial.
+    4. Guarda los cambios en la base de datos de forma segura.
+    """
+    current_user_id = get_jwt_identity()
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
+    
+    capture_data = response.json()
+    
+    if response.status_code not in [200, 201] or capture_data.get("status") != "COMPLETED":
+        print(f"❌ Error al capturar la orden de recarga {order_id}:", capture_data)
+        return jsonify({"error": "El pago no pudo ser completado o capturado", "detalle": capture_data}), 400
+        
+    try:
+        # Extraer la cantidad pagada desde la respuesta de PayPal
+        unidad_compra = capture_data["purchase_units"][0]
+        captura = unidad_compra["payments"]["captures"][0]
+        monto_recargado = float(captura["amount"]["value"])
+        
+        # Buscar o inicializar el monedero del usuario
+        usuario = Usuario.query.get(current_user_id)
+        if not usuario:
+            return jsonify({"error": "Usuario asociado no encontrado"}), 404
+            
+        monedero = Monedero.query.filter_by(usuario_id=usuario.id).first()
+        if not monedero:
+            monedero = Monedero(usuario_id=usuario.id, saldo=0.0)
+            db.session.add(monedero)
+            db.session.flush() # Para obtener el ID del monedero antes del commit final
+
+        # Actualizar saldo
+        monedero.saldo += monto_recargado
+        
+        # Registrar el movimiento en el historial
+        nuevo_movimiento = MovimientoMonedero(
+            monedero_id=monedero.id,
+            concepto="Recarga de saldo vía PayPal",
+            cantidad=monto_recargado,
+            saldo_final=monedero.saldo
+        )
+        db.session.add(nuevo_movimiento)
+        db.session.commit()
+
+        return jsonify({
+            "mensaje": "Saldo añadido correctamente al monedero",
+            "nuevo_saldo": monedero.saldo,
+            "detalles_pago": capture_data
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error interno al actualizar el monedero: {str(e)}")
+        return jsonify({"error": f"Error interno al procesar la recarga: {str(e)}"}), 500

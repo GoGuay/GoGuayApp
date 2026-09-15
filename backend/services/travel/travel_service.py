@@ -2,16 +2,21 @@
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DE LOS VIAJES  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+import os
+
 from flask import Blueprint, jsonify, request
+import requests
 from datetime import datetime
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush
+from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
 
-travel_blueprint = Blueprint('travel', __name__)
+import json
 
+travel_blueprint = Blueprint('travel', __name__)
 
 # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA CREAR UN VIAJE NUEVO
@@ -94,6 +99,142 @@ def crear_viaje():
         "viaje": nuevo_viaje.serialize()
     }), 201
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA EDITAR UN VIAJE CON DETALLES E HISTORIAL
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/editar_viaje/<int:viaje_id>', methods=['PUT'])
+def editar_viaje(viaje_id):
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
+
+    cambios_detectados = {}
+
+    
+    if 'fecha_salida' in data:
+        fecha_salida_str = data['fecha_salida']
+        formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d']
+        fecha_salida = None
+        for formato in formatos_fecha:
+            try:
+                fecha_salida = datetime.strptime(fecha_salida_str, formato)
+                break
+            except ValueError:
+                continue
+        if fecha_salida and viaje.fecha_salida != fecha_salida:
+            cambios_detectados['fecha'] = (viaje.fecha_salida.strftime('%d-%m-%Y'), fecha_salida.strftime('%d-%m-%Y'))
+            viaje.fecha_salida = fecha_salida
+
+    if 'coche' in data:
+        coche = data.get('coche')
+        vehiculo_id = coche.get('id') if isinstance(coche, dict) else coche
+        usuario_id = data.get('usuario_id', viaje.usuario_id)
+        
+        vehiculo = Vehiculo.query.filter_by(id=vehiculo_id, usuario_id=usuario_id).first()
+        if not vehiculo:
+            return jsonify({"error": "El nuevo vehículo no pertenece al usuario"}), 400
+        
+        if viaje.vehiculo != vehiculo_id:
+            cambios_detectados['vehiculo'] = (str(viaje.vehiculo), str(vehiculo_id))
+            viaje.vehiculo = vehiculo_id
+
+    campos_simples = [
+        ('origen', str),
+        ('destino', str),
+        ('plazas', int),
+        ('hora_salida', str),
+        ('hora_llegada', str),
+        ('precio_viaje', float),
+        ('reserva_automatica', bool)
+    ]
+
+    for campo, tipo in campos_simples:
+        if campo in data:
+            nuevo_valor = tipo(data[campo])
+            valor_actual = getattr(viaje, campo)
+            if valor_actual != nuevo_valor:
+                cambios_detectados[campo] = (str(valor_actual), str(nuevo_valor))
+                setattr(viaje, campo, nuevo_valor)
+
+    if 'ruta_seleccionada' in data:
+        nuevo_tiempo = data['ruta_seleccionada'].get('tiempoTotal', viaje.duracion_viaje)
+        if viaje.duracion_viaje != nuevo_tiempo:
+            cambios_detectados['duracion_viaje'] = (str(viaje.duracion_viaje), str(nuevo_tiempo))
+            viaje.duracion_viaje = nuevo_tiempo
+        viaje.ruta_seleccionada = data['ruta_seleccionada']
+
+    try:
+        if not cambios_detectados:
+            db.session.commit()
+            return jsonify({"mensaje": "No se detectaron cambios", "viaje": viaje.serialize()}), 200
+
+        db.session.commit()
+
+        for campo, valores in cambios_detectados.items():
+            val_anterior, val_nuevo = valores
+            historial = HistorialCambiosViaje(
+                viaje_id=viaje.id,
+                campo_modificado=campo,
+                valor_anterior=val_anterior,
+                valor_nuevo=val_nuevo
+            )
+            db.session.add(historial)
+
+     
+        traducciones = {
+            'origen': 'el punto de salida', 'destino': 'el destino final',
+            'plazas': 'las plazas disponibles', 'hora_salida': 'la hora de salida',
+            'hora_llegada': 'la hora estimada de llegada', 'precio_viaje': 'la aportación por plaza',
+            'reserva_automatica': 'el modo de reserva', 'fecha': 'la fecha del viaje',
+            'vehiculo': 'el vehículo asignado', 'duracion_viaje': 'la duración del trayecto'
+        }
+
+        detalles_cambios = [traducciones.get(k, k) for k in cambios_detectados.keys()]
+        
+        if len(detalles_cambios) > 1:
+            texto_cambios = ", ".join(detalles_cambios[:-1]) + f" y {detalles_cambios[-1]}"
+        else:
+            texto_cambios = detalles_cambios[0]
+
+        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado == 'accepted' or p.estado == 'aceptado']
+        
+        if pasajeros_a_notificar:
+            mensaje_aviso = f"Atención: El conductor ha modificado {texto_cambios} en tu viaje de {viaje.origen} a {viaje.destino}. Revisa los nuevos detalles."
+            titulo_notif = "Modificación importante en tu viaje"
+
+            for pasajero in pasajeros_a_notificar:
+                nueva_notif = Notificacion(
+                    usuario_id=pasajero.usuario_id,
+                    viaje_id=viaje.id,
+                    mensaje=mensaje_aviso
+                )
+                db.session.add(nueva_notif)
+                
+                enviar_notificacion_push(
+                    usuario_id=pasajero.usuario_id,
+                    titulo=titulo_notif,
+                    cuerpo=mensaje_aviso,
+                    data={"viaje_id": str(viaje.id), "tipo": "viaje_editado"}
+                )
+            
+        db.session.commit()
+
+        return jsonify({
+            "mensaje": "Viaje actualizado, historial registrado y acompañantes notificados",
+            "cambios": list(cambios_detectados.keys()),
+            "viaje": viaje.serialize()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error en la actualización", "detalle": str(e)}), 500
+    
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LA LISTA DE VIAJES DE UN USUARIO
@@ -237,23 +378,46 @@ def eliminar_viaje(viaje_id):
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
+    data = request.get_json() if request.is_json else {}
+    motivo = data.get('motivo_cancelacion', 'No especificado')
+
+    ids_pasajeros_afectados = []
+    
     for pasajero in viaje.pasajeros:
-        mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor."
-        
-        notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
-        db.session.add(notif_db)
-        
-        enviar_notificacion_push(
-            usuario_id=pasajero.usuario_id,
-            titulo="Viaje cancelado",
-            cuerpo=mensaje_cancelacion
-        )
+        if pasajero.estado in ['aceptado', 'accepted', 'pendiente']:
+            ids_pasajeros_afectados.append(pasajero.usuario_id)
+            
+            mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
+            
+            notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
+            db.session.add(notif_db)
+            
+            enviar_notificacion_push(
+                usuario_id=pasajero.usuario_id,
+                titulo="Viaje cancelado por el conductor",
+                cuerpo=mensaje_cancelacion,
+                data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
+            )
+            
+            pasajero.estado = 'cancelado'
 
-    PasajeroViaje.query.filter_by(viaje_id=viaje_id).delete()
-    db.session.delete(viaje)
-    db.session.commit()
+    viaje.estado_viaje = 'Cancelado'
 
-    return jsonify({"mensaje": "Viaje eliminado correctamente y pasajeros notificados"}), 200
+    nueva_cancelacion = Cancelacion(
+        viaje_id=viaje.id,
+        cancelado_por_id=viaje.usuario_id,
+        pasajeros_afectados=ids_pasajeros_afectados,
+        motivo_cancelacion_cond=motivo,
+        motivo_cancelacion_pasaj=MotivosCancelacionPasajero.NO_SE_CANCELA.value 
+    )
+    db.session.add(nueva_cancelacion)
+
+    try:
+        db.session.commit()
+        return jsonify({"mensaje": "Viaje cancelado correctamente, motivos registrados y pasajeros notificados"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al procesar la cancelación", "detalle": str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -267,30 +431,49 @@ def eliminar_pasajero(viaje_id, usuario_id):
 
     pasajero_rel = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
     if not pasajero_rel:
-        return jsonify({"error": "El pasajero no está en este viaje"}), 404
+        return jsonify({"error": "El pasajero no está registrado en este viaje"}), 404
+
+    data = request.get_json() if request.is_json else {}
+    motivo = data.get('motivo_cancelacion', 'No especificado')
 
     usuario = pasajero_rel.usuario
     nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
     creador_id = viaje.usuario_id
 
-    db.session.delete(pasajero_rel)
-    viaje.plazas += 1
+    # Si estaba aceptado, devolvemos la plaza al coche
+    if pasajero_rel.estado in ['aceptado', 'accepted']:
+        viaje.plazas += 1
+
+    nueva_cancelacion = Cancelacion(
+        viaje_id=viaje_id,
+        cancelado_por_id=usuario_id,
+        pasajeros_afectados=[usuario_id],
+        motivo_cancelacion_cond=MotivosCancelacionConductor.NO_SE_CANCELA.value,
+        motivo_cancelacion_pasaj=motivo
+    )
+    db.session.add(nueva_cancelacion)
+
+    pasajero_rel.estado = 'cancelado'
 
     if creador_id != usuario_id:
-        mensaje_salida = f"El pasajero {nombre_completo} ha cancelado su participación en el viaje a {viaje.destino}."
+        mensaje_salida = f"El pasajero {nombre_completo} se ha dado de baja en tu viaje a {viaje.destino}. Motivo: {motivo}"
         
         notificacion = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=mensaje_salida)
         db.session.add(notificacion)
 
         enviar_notificacion_push(
             usuario_id=creador_id,
-            titulo="Baja en tu viaje",
+            titulo="Baja de pasajero en tu viaje",
             cuerpo=mensaje_salida,
-            data={"viaje_id": str(viaje_id)}
+            data={"viaje_id": str(viaje_id), "tipo": "baja_pasajero"}
         )
 
-    db.session.commit()
-    return jsonify({"mensaje": "Pasajero eliminado y conductor notificado"}), 200
+    try:
+        db.session.commit()
+        return jsonify({"mensaje": "Participación cancelada y conductor notificado con el motivo"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al procesar la baja", "detalle": str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -341,18 +524,38 @@ def buscar_viajes_filtrados():
 def post_puntuacion():
     body = request.get_json()
 
+    viaje_id = body.get('viaje_id')
+    evaluador_id = body.get('evaluador_id')
+    usuario_id = body.get('usuario_id')
+
+    if not viaje_id or not evaluador_id or not usuario_id:
+        return jsonify({"error": "Faltan datos obligatorios para registrar la puntuación"}), 400
+
+    puntuacion_existente = Puntuacion.query.filter_by(
+        viaje_id=viaje_id,
+        evaluador_id=evaluador_id
+    ).first()
+
+    if puntuacion_existente:
+        return jsonify({
+            "error": "Ya has valorado este viaje anteriormente. No se permiten valoraciones duplicadas."
+        }), 409  
+
     nueva_puntuacion = Puntuacion(
         puntuacion=body['puntuacion'],
         comentario=body.get('comentario'),
-        usuario_id=body['usuario_id'],
-        evaluador_id=body['evaluador_id'],
-        viaje_id=body['viaje_id']
+        usuario_id=usuario_id,
+        evaluador_id=evaluador_id,
+        viaje_id=viaje_id
     )
 
-    db.session.add(nueva_puntuacion)
-    db.session.commit()
-
-    return jsonify({"msg": "Puntuación registrada correctamente"}), 200
+    try:
+        db.session.add(nueva_puntuacion)
+        db.session.commit()
+        return jsonify({"msg": "Puntuación registrada correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al guardar la puntuación", "detalle": str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -534,3 +737,173 @@ def notificar_llegada():
         return jsonify({"mensaje": "Llegada notificada"}), 200
     
     return jsonify({"error": "No se encontró la reserva"}), 404
+
+#
+# SERVICIO PARA OBTENER RECOMENDACIONES DE VIAJES BASADAS EN PREFERENCIAS DEL USUARIO
+# UTILIZANDO IA
+#
+@travel_blueprint.route('/recomendados/<int:user_id>', methods=['GET'])
+def obtener_viajes_recomendados(user_id):
+    try:
+        usuario = Usuario.query.get(user_id)
+        if not usuario:
+            return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
+
+        # Extraer y estructurar las preferencias del campo JSON de forma segura
+        preferencias_crudas = usuario.preferencias
+        if isinstance(preferencias_crudas, str):
+            try:
+                preferencias_usuario = json.loads(preferencias_crudas)
+            except json.JSONDecodeError:
+                preferencias_usuario = {}
+        elif isinstance(preferencias_crudas, dict):
+            preferencias_usuario = preferencias_crudas
+        else:
+            preferencias_usuario = {}
+
+        convivencia = preferencias_usuario.get("convivencia_viaje", {
+            "acepta_mascotas": preferencias_usuario.get("acepta_mascotas", True),
+            "fuma": preferencias_usuario.get("fuma", False),
+            "conversacion": preferencias_usuario.get("conversacion", "moderada")
+        })
+        
+        intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
+
+        # Recopilar el historial de viajes previos del usuario
+        viajes_como_conductor = [
+            {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
+            for v in usuario.viajes_publicados
+        ]
+        
+        viajes_como_pasajero = [
+            {"origen": r.viaje.origen, "destino": r.viaje.destino, "fecha": r.viaje.fecha_salida.isoformat()}
+            for r in usuario.reservas_realizadas if r.viaje
+        ]
+
+        historial_viajes = {
+            "publicados_como_conductor": viajes_como_conductor,
+            "reservas_como_pasajero": viajes_como_pasajero
+        }
+
+        perfil_analitico = {
+            "nombre": usuario.nombre,
+            "genero": usuario.genero,
+            "orientacion": usuario.orientacion,
+            "biografia": usuario.biografia,
+            "preferencias_convivencia": convivencia,
+            "intereses_ocio": intereses_ocio,
+            "reputacion_estrellas": usuario.estrellas_por_opiniones,
+            "estado_perfil": usuario.estado_perfil,
+            "historial_viajes": historial_viajes
+        }
+
+        # NUEVO PROMPT: Formato plano por líneas delimitadas (CERO errores de comillas)
+        prompt = f"""
+        Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
+        Analiza el perfil analítico del usuario y selecciona EXACTAMENTE 3 destinos o eventos reales en España que encajen con su personalidad.
+        
+        REQUISITO DE FORMATO ESTRICTO:
+        No devuelvas JSON. Devuelve única y exclusivamente las recomendaciones en formato de texto plano, una por línea, separando sus campos exactamente con el carácter barra vertical (|) de esta forma:
+        ID_SLUG | NOMBRE_DESTINO | PUNTUACION_AFINIDAD | MOTIVO_PERSONALIZADO
+        
+        Ejemplo:
+        sitges-playa | Sitges (Barcelona) | 95 | Daniel, las playas mediterráneas combinan con tu afición por el aire libre.
+        
+        Perfil del usuario: {json.dumps(perfil_analitico, ensure_ascii=False)}
+        """
+
+        groq_api_key = os.getenv("GROQ_API_KEY")
+        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+        
+        payload = {
+            "model": "openai/gpt-oss-20b",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.6, 
+            "max_tokens": 1000
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {groq_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(endpoint, json=payload, headers=headers)
+        data = response.json()
+
+        recomendaciones = []
+
+        if response.status_code == 200:
+            try:
+                texto_generado = data['choices'][0]['message']['content'].strip()
+                
+                # 🔍 NUEVO: Imprime esto en la consola para ver qué formato exacto está mandando la IA
+                print(f"🤖 Texto bruto recibido de la IA:\n{texto_generado}\n-------------------")
+
+                lineas = texto_generado.split('\n')
+                
+                for linea in lineas:
+                    partes = [p.strip() for p in linea.split('|')]
+                    if len(partes) >= 4:
+                        destino_id = partes[0]
+                        nombre_destino = partes[1]
+                        try:
+                            afinidad = int(partes[2])
+                        except ValueError:
+                            afinidad = 85
+                        motivo = partes[3]
+                        
+                        recomendaciones.append({
+                            "destino_id": destino_id,
+                            "nombre_destino": nombre_destino,
+                            "puntuacion_afinidad": afinidad,
+                            "motivo": motivo,
+                            "fuente": "ia"
+                        })
+            except Exception as parse_error:
+                print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
+                recomendaciones = []
+
+        # Recortamos estrictamente a 3 elementos
+        recomendaciones = recomendaciones[:3]
+
+        # Fallback dinámico por si la IA no devuelve líneas válidas
+        if not recomendaciones:
+            nombre_usuario = usuario.nombre or "viajero"
+            intereses_lower = [i.lower() for i in intereses_ocio]
+            
+            destinos_fallback = [
+                {
+                    "id": "sitges-playa",
+                    "destino": "Sitges (Barcelona)",
+                    "afinidad": 96 if "playa" in intereses_lower else 85,
+                    "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero y su gran oferta de ocio inclusivo."
+                },
+                {
+                    "id": "madrid-chueca",
+                    "destino": "Madrid",
+                    "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
+                    "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y vivir una vibrante experiencia cultural y de ocio."
+                },
+                {
+                    "id": "valencia-carmen",
+                    "destino": "Valencia",
+                    "afinidad": 95 if "cultura" in intereses_lower else 82,
+                    "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas llenas de arte y planes alternativos."
+                }
+            ]
+            recomendaciones = [
+                {
+                    "destino_id": d["id"],
+                    "nombre_destino": d["destino"],
+                    "puntuacion_afinidad": d["afinidad"],
+                    "motivo": d["motivo"],
+                    "fuente": "fallback"
+                } for d in destinos_fallback
+            ]
+            recomendaciones = sorted(recomendaciones, key=lambda x: x["puntuacion_afinidad"], reverse=True)
+
+        return jsonify({"success": True, "recomendaciones": recomendaciones}), 200
+
+    except Exception as e:
+        print(f"Error crítico en recomendación: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500

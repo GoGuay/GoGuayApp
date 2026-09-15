@@ -1,45 +1,125 @@
-<div class="container box_normas shadow-sm p-4 mt-3" style="border-radius: 20px; background: #fff;">
-  <h2 class="fw-bold text-center mb-3">ÚLTIMO PASO: TU COMPROMISO</h2>
-
-  <p class="text-center text-muted">
-    Al unirte a <strong>GoGuay</strong>, te comprometes a mantener un espacio seguro y legal.
-    Por favor, marca las casillas para confirmar:
-  </p>
-
-  <div class="check-legal-group mb-4">
-    <div class="d-flex align-items-start mb-3 p-2 rounded shadow-sm">
-      <ion-checkbox [(ngModel)]="checkEdadTerminos" class="me-3 mt-1"></ion-checkbox>
-      <label class="text-small">
-        Confirmo que soy <strong>mayor de 18 años</strong> y acepto las
-        <a (click)="verCondiciones()" class="link-primary text-decoration-underline" style="cursor:pointer">Condiciones
-          Generales de Uso</a>.
-      </label>
-    </div>
-
-    <div class="d-flex align-items-start mb-3 p-2  rounded shadow-sm">
-      <ion-checkbox [(ngModel)]="checkCarnet" class="me-3 mt-1"></ion-checkbox>
-      <label class="text-small">
-        Declaro bajo mi responsabilidad que, en caso de publicar viajes, dispongo de
-        <strong>carnet de conducir y seguro en vigor</strong>.
-      </label>
-    </div>
-
-    <div class="d-flex align-items-start mb-3 p-2  rounded shadow-sm">
-      <ion-checkbox [(ngModel)]="checkDecalogo" class="me-3 mt-1"></ion-checkbox>
-      <label class="text-small">
-        Me comprometo a respetar el <strong>Decálogo de Comunidad</strong>: cero tolerancia al acoso o discriminación.
-      </label>
-    </div>
+<div class="modal-contenedor shadow-lg">
+  <!-- Encabezado: La 'X' solo aparece cuando se ha leído todo -->
+  <div
+    class="modal-header-custom p-3 d-flex justify-content-between align-items-center border-bottom"
+  >
+    <h5 class="m-0 fw-bold">Condiciones Generales del Servicio</h5>
+    @if (leido) {
+      <button
+        type="button"
+        class="btn-close"
+        (click)="notificarCierre()"
+      ></button>
+    }
   </div>
 
-  <div class="text-center d-grid gap-2 d-md-block">
-    <button type="button" class="btn btn_bg btn-lg px-5 me-md-3 mb-2 mb-md-0"
-      [disabled]="!checkEdadTerminos || !checkCarnet || !checkDecalogo" (click)="aceptarNormas()">
-      Aceptar condiciones
-    </button>
+  <!-- Cuerpo del Modal (Scrollable) -->
+  <div class="modal-body-custom p-4">
+    <div class="contenido-legal">
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+      <h3>1. Términos de uso...</h3>
+      <p>
+        En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
+        mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
+        antigua, rocín flaco y galgo corredor...
+      </p>
+      <h3>2. Términos de respeto...</h3>
+      <p>
+        Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba
+        ocioso, que eran los más del año, se daba a leer libros de
+        caballerías...
+      </p>
+    </div>
 
-    <button type="button" routerLink="/home" class="btn btn-outline-secondary btn-lg px-4">
-      Rechazar y salir
-    </button>
+    <!-- Centinela al final del texto -->
+    <div
+      #elementoFinal
+      class="centinela-scroll"
+    ></div>
+  </div>
+
+  <!-- Pie del Modal -->
+  <div
+    class="modal-footer-custom p-3 border-top d-flex justify-content-between align-items-center"
+  >
+    <span class="text-muted small">
+      @if (!leido) {
+        <i class="fi fi-rr-arrow-down-to-line me-1 text-primary"></i>
+      }
+      {{
+        leido
+          ? '¡Has completado la lectura!'
+          : 'Desplázate hasta el final para habilitar el cierre'
+      }}
+    </span>
+
+    @if (leido) {
+      <button
+        type="button"
+        class="btn btn_bg"
+        (click)="notificarCierre()"
+      >
+        Cerrar
+      </button>
+    }
   </div>
 </div>

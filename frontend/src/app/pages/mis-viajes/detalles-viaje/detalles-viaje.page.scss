@@ -1,0 +1,220 @@
+// ========================================================
+// REGLAS GENERALES DE LA PÁGINA Y HEADER DE IONIC
+// ========================================================
+.custom-toolbar-goguay {
+  --background: #F0D7B4; 
+  --color: #000000;
+  
+  ion-back-button {
+    --color: #000000;
+  }
+}
+
+.main-page-container {
+  max-width: 960px; 
+  margin: 0 auto;
+}
+
+// TARJETAS CONTENEDORAS ESTILO COMPONENTE
+.details-card {
+  background-color: #ffffff;
+  border-radius: 35px;
+  border: 1px solid #f0f0f0;
+}
+
+.rounded-card {
+  border-radius: 35px !important;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  mat-icon {
+    color: #b3b5e6;
+  }
+}
+
+.info-item-box {
+  p {
+    font-size: 0.95rem;
+    color: #444444;
+    margin-bottom: 12px;
+    
+    strong {
+      color: #222222;
+      display: inline-block;
+      width: 160px; 
+    }
+  }
+}
+
+// BADGE DE PRECIO INTEGRADO
+.price-badge {
+  background-color: #F0D7B4; 
+  border-radius: 35px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(240, 215, 180, 0.3);
+
+  .price-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #000000;
+  }
+  
+  &.no-price {
+    background-color: #e8f5e9;
+    .price-value { color: #2e7d32; }
+  }
+}
+
+// ACORDEONES PERSONALIZADOS
+.custom-goguay-accordion {
+  .border-card {
+    border-radius: 35px !important;
+    overflow: hidden;
+    border: 1px solid #eef0f5;
+    box-shadow: none !important;
+  }
+  
+  .custom-header {
+    background-color: #fafafa !important;
+    height: 54px;
+  }
+}
+
+.imgPerfilAcordeon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #b3b5e6;
+}
+
+.badge-stars {
+  background-color: #fffde7;
+  border: 1px solid #fbc02d;
+  color: #f57f17;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.card-reservation-info {
+  background-color: #f9fafc !important;
+  border: 1px dashed #b3b5e6 !important;
+}
+
+// ========================================================
+// SISTEMA DE BOTONES COMPORTAMIENTO PÍLDORA (35PX)
+// ========================================================
+.btn-goguay-primary {
+  background-color: #b3b5e6 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  border-radius: 35px !important; 
+  padding: 12px 32px !important;
+  box-shadow: 0 4px 12px rgba(179, 181, 230, 0.4) !important;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(179, 181, 230, 0.5) !important;
+  }
+}
+
+.btn-goguay-secondary {
+  background-color: #F0D7B4 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  border-radius: 35px !important;
+  padding: 6px 16px !important;
+}
+
+// ========================================================
+// PANEL EN TIEMPO REAL ("VIAJE EN CURSO")
+// ========================================================
+.acciones-en-curso {
+  background-color: #fff9f0; 
+  border: 2px solid #F0D7B4;
+  border-radius: 16px;
+
+  .text-live-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #d87d00;
+  }
+}
+
+.live-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #e65100;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseLive 1.5s infinite;
+}
+
+.btn-llegada-pasajero {
+  background-color: #4caf50 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-radius: 35px !important;
+  padding: 14px 20px !important;
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3) !important;
+
+  &:disabled {
+    background-color: #bcffc5 !important;
+    color: #2e7d32 !important;
+    box-shadow: none !important;
+  }
+}
+
+.card-passenger-row {
+  background-color: #ffffff !important;
+  border: 1px solid #f2f2f2 !important;
+}
+
+.badge-live-status {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: 1px solid #2e7d32;
+}
+
+.btn-confirm-arrival {
+  background-color: #e1f5fe !important;
+  color: #0288d1 !important;
+  font-weight: 700 !important;
+  border-radius: 20px !important;
+  
+  &:hover { background-color: #0288d1 !important; color: #fff !important;}
+}
+
+.max-width-button { max-width: 380px; }
+.max-width-panel { max-width: 600px; }
+
+@keyframes pulseLive {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+// RESPONSIVE REJUSTES
+@media (max-width: 767px) {
+  .info-item-box p strong {
+    width: 100%; 
+    display: block;
+    margin-bottom: 2px;
+  }
+}

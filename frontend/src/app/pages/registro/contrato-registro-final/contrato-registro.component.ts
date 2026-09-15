@@ -1,41 +1,75 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { NavController } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
-import { IonCheckbox } from '@ionic/angular/standalone';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-contrato-registro',
-  imports: [RouterModule, IonCheckbox, CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './contrato-registro.component.html',
-  styleUrl: './contrato-registro.component.scss',
+  styleUrls: ['./contrato-registro.component.scss'],
 })
-export class ContratoRegistroComponent implements OnInit {
-  @Output() terminosAceptados = new EventEmitter<void>();
+export class ContratoRegistroComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('elementoFinal')
+  private elementoFinal!: ElementRef<HTMLDivElement>;
 
-  checkEdadTerminos: boolean = false;
-  checkCarnet: boolean = false;
-  checkDecalogo: boolean = false;
+  @Output() lecturaCompletada = new EventEmitter<void>();
+  @Output() solicitarCierre = new EventEmitter<void>();
 
-  constructor(
-    private userService: UserServicesService,
-    private navCtrl: NavController
-  ) { }
+  leido: boolean = false;
+  private observer?: IntersectionObserver;
 
-  ngOnInit(): void {
-    const datosRegistro = this.userService.getUsuarioData();
-    if (datosRegistro === null) {
-      this.navCtrl.navigateRoot('/registro');
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit(): void {
+    this.iniciarObservadorScroll();
+  }
+
+  private iniciarObservadorScroll(): void {
+    if (!this.elementoFinal?.nativeElement) return;
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !this.leido) {
+          this.leido = true;
+          // Notifica al componente padre
+          this.lecturaCompletada.emit();
+          // Fuerza la actualización del DOM local
+          this.cdr.detectChanges();
+          // Detiene el observador una vez alcanzado el final
+          this.destruirObservador();
+        }
+      },
+      {
+        // Detección flexible cuando el centinela entra en vista
+        threshold: 0.1,
+      },
+    );
+
+    this.observer.observe(this.elementoFinal.nativeElement);
+  }
+
+  notificarCierre(): void {
+    this.solicitarCierre.emit();
+  }
+
+  private destruirObservador(): void {
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = undefined;
     }
   }
 
-  aceptarNormas() {
-    this.terminosAceptados.emit();
-  }
-
-  verCondiciones() {
-    this.navCtrl.navigateRoot('/condiciones-generales');
+  ngOnDestroy(): void {
+    this.destruirObservador();
   }
 }
