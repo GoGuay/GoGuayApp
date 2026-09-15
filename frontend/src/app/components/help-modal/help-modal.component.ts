@@ -9,24 +9,23 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-help-modal',
   standalone: true,
-  imports: [MatButtonModule, MatIcon, MatDivider, CommonModule],
+  imports: [MatButtonModule, MatIcon, MatDivider, CommonModule, TranslateModule],
   templateUrl: './help-modal.component.html',
   styleUrls: ['./help-modal.component.scss'],
   animations: [
     trigger('dialogAnimation', [
       transition(':enter', [
         style({ opacity: 0, transform: 'scale(0.9)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+        animate('300ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
       ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({ opacity: 0, transform: 'scale(0.9)' }))
-      ])
-    ])
-  ]
+      transition(':leave', [animate('300ms ease-in', style({ opacity: 0, transform: 'scale(0.9)' }))]),
+    ]),
+  ],
 })
 export class HelpModalComponent implements OnInit {
   /**
@@ -38,21 +37,23 @@ export class HelpModalComponent implements OnInit {
   title: string;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
-      title: string; message: string;
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      title: string;
+      message: string;
       showAcceptButton: boolean;
-      showMoreInfoButton: boolean,
+      showMoreInfoButton: boolean;
       showReturnTripButton?: boolean;
     },
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<HelpModalComponent>,
-    private navCtrl: NavController) {
+    private navCtrl: NavController
+  ) {
     this.title = data.title;
     this.message = this.sanitizer.bypassSecurityTrustHtml(data.message);
   }
 
-  ngOnInit() { }
-
+  ngOnInit() {}
 
   close() {
     this.dialogRef.close();
@@ -71,7 +72,7 @@ export class HelpModalComponent implements OnInit {
     this.dialogRef.close(accepted);
   }
 
-  crearVuelta(){
+  crearVuelta() {
     this.dialogRef.close();
     this.navCtrl.navigateRoot('/data-viaje');
   }

@@ -8,15 +8,9 @@
   border-radius: 4px;
 }
 
-.pronombre {
-  width: 200px;
-}
 
-.tabla {
-  margin-left: 50px;
-  width: auto;
 
-}
+
 
 .bloque-selectores {
   width: 100%;
@@ -35,6 +29,9 @@
   justify-content: center;
 }
 
+.alternate-add-box {
+  background-color: transparent;
+}
 
 
 
@@ -47,12 +44,18 @@
   margin-bottom: 4px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
+
   &::part(native) {
     border-radius: 16px !important;
   }
 
-  &:hover {
+  &.selected {
     --background: #f0d7b4;
+  }
+
+  &:hover {
+    --background: #f0d7b456;
+
     transform: translateY(-2px);
   }
 
@@ -60,6 +63,11 @@
     --color: #b0b0b0;
     --color-checked: #e0a667;
     margin-inline-end: 4px;
+
+    &::part(mark) {
+      border-color: #111111 !important;
+    }
+
   }
 
   h2 {
@@ -74,7 +82,7 @@
 }
 
 .custom-goguay-list {
-  background: transparent !important;
+  background: white !important;
   border-radius: 24px !important;
   padding: 8px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
@@ -102,16 +110,13 @@
 
 
 
-
 .botones_tabla {
   border-radius: 15%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 
 }
 
-.boton_anadir {
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-}
+
 
 .cards-vehiculos .card {
   background-color: transparent !important;
@@ -157,35 +162,6 @@
 }
 
 
-.table {
-  border-collapse: separate;
-  border-spacing: 0;
-  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);
-}
-
-.table thead tr:first-child th:first-child {
-  border-top-left-radius: 15px;
-}
-
-.table thead tr:first-child th:last-child {
-  border-top-right-radius: 15px;
-}
-
-.table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 15px;
-}
-
-.table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 15px;
-}
-
-.table tbody tr:last-child th:first-child {
-  border-bottom-left-radius: 15px;
-}
-
-.inputs_selectores {
-  width: 200px;
-}
 
 .cards-vehiculos .card-body select.form-select {
   font-size: 0.8rem;

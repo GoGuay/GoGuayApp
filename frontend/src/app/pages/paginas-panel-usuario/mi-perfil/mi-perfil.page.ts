@@ -297,7 +297,7 @@ export class MiPerfilPage implements OnInit {
 
     const preferenciasActualesEstructuradas = {
       convivencia_viaje: this.preferenciasSeleccionadas,
-      intereses_ocio: this.interesesOcioSeleccionados
+      intereses_ocio: this.interesesOcioSeleccionados,
     };
 
     // Comparar los valores editados con los valores originales
@@ -407,7 +407,7 @@ export class MiPerfilPage implements OnInit {
       biografia: this.bioEditada,
       preferencias: {
         convivencia_viaje: this.preferenciasSeleccionadas,
-        intereses_ocio: this.interesesOcioSeleccionados
+        intereses_ocio: this.interesesOcioSeleccionados,
       },
       email: this.emailEditado,
       telefono: this.telefonoEditado,
@@ -575,54 +575,6 @@ export class MiPerfilPage implements OnInit {
     });
   }
 
-  /**
-   * Función para eliminar un vehículo del usuario
-   * @param vehiculo
-   */
-  // eliminarVehiculo(vehiculo: any): any {
-  //   this.vehiculosServicesService.eliminarVehiculo(vehiculo.id, vehiculo).subscribe({
-  //     next: (resultado) => {
-  //       // 1. Actualizamos el array local de vehículos de forma segura
-  //       if (this.userData?.usuario?.vehiculos) {
-  //         this.userData.usuario.vehiculos = this.userData.usuario.vehiculos.filter((coche: any) => coche.id !== vehiculo.id);
-  //       }
-
-  //       // 2. Sincronizamos inmediatamente el localStorage y el servicio de usuario
-  //       const userDataActual = this.userService.getUsuarioData() || JSON.parse(localStorage.getItem('userData') || '{}');
-
-  //       if (!this.userData.usuario && this.userData.id) {
-  //         this.userData = { usuario: this.userData };
-  //       }
-
-  //       if (userDataActual && userDataActual.usuario) {
-  //         userDataActual.usuario.vehiculos = this.userData.usuario.vehiculos;
-  //         localStorage.setItem('userData', JSON.stringify(userDataActual));
-
-  //         // Si tu servicio tiene un método de actualización de estado, úsalo:
-  //         if (typeof this.userService.setUsuarioData === 'function') {
-  //           this.userService.setUsuarioData(userDataActual);
-  //         }
-  //       }
-  //       if (this.userData?.usuario?.id) {
-  //         this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((usuarioActualizado) => {
-  //           this.userData = usuarioActualizado;
-  //           localStorage.setItem('userData', JSON.stringify(this.userData));
-  //           this.cdr.detectChanges();
-  //         });
-  //       }
-  //       this.cdr.detectChanges();
-  //       this.messageService.add({
-  //         severity: 'success',
-  //         summary: 'Vehículo eliminado',
-  //         detail: 'El vehículo se ha eliminado correctamente.',
-  //       });
-  //     },
-  //     error: (err) => {
-  //       console.error('Error al eliminar el vehículo en backend:', err);
-  //     },
-  //   });
-  // }
-
   eliminarVehiculo(vehiculo: any): any {
     this.vehiculosServicesService.eliminarVehiculo(vehiculo.id, vehiculo).subscribe({
       next: () => {
@@ -643,28 +595,51 @@ export class MiPerfilPage implements OnInit {
           });
         }
 
+        const colorKey = vehiculo.color ? `TABLA_VEHICULOS.SELECTOR_COLOR.${vehiculo.color.toUpperCase()}` : '';
+        const colorTraducido = colorKey ? this.translate.instant(colorKey) : vehiculo.color;
+
         this.messageService.add({
           severity: 'success',
-          summary: 'Vehículo eliminado',
-          detail: 'El vehículo se ha eliminado correctamente.',
+          summary: this.translate.instant('TABLA_VEHICULOS.ELIMINAR.CONFIRMACION_TITULO'),
+          detail: this.translate.instant('TABLA_VEHICULOS.ELIMINAR.CONFIRMACION_MENSAJE', {
+            marca: vehiculo.marca,
+            modelo: vehiculo.modelo,
+            color: colorTraducido,
+          }),
         });
       },
       error: (err) => {
         console.error('Error al eliminar el vehículo en backend:', err);
+
+        const colorKey = vehiculo.color ? `TABLA_VEHICULOS.SELECTOR_COLOR.${vehiculo.color.toUpperCase()}` : '';
+        const colorTraducido = colorKey ? this.translate.instant(colorKey) : vehiculo.color;
+
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo eliminar el vehículo.',
+          summary: this.translate.instant('TABLA_VEHICULOS.ELIMINAR.ERROR_AL_ELIMINAR'),
+          detail: this.translate.instant('TABLA_VEHICULOS.ELIMINAR.ERROR_AL_ELIMINAR', {
+            marca: vehiculo.marca,
+            modelo: vehiculo.modelo,
+            color: colorTraducido,
+          }),
         });
       },
     });
   }
 
   modalEliminarVehiculo(cocheAEliminar: any) {
-    const titulo: string = '¡ATENCIÓN: Vas a eliminar un vehículo';
-    const mensaje: string = `¿Estás seguro que deseas eliminar ${cocheAEliminar.marca} ${cocheAEliminar.modelo} ?`;
+    const titulo = this.translate.instant('TABLA_VEHICULOS.ELIMINAR.MODAL_TITULO');
+    const colorKey = cocheAEliminar.color ? `SELECTOR_COLOR.${cocheAEliminar.color.toUpperCase()}` : '';
+    const colorTraducido = colorKey ? this.translate.instant(colorKey) : cocheAEliminar.color;
+    const mensaje = this.translate.instant('TABLA_VEHICULOS.ELIMINAR.MODAL_PREGUNTA', {
+      marca: cocheAEliminar.marca,
+      modelo: cocheAEliminar?.modelo || cocheAEliminar.modelo,
+      color: colorTraducido,
+    });
     const dialogRef = this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje, showAcceptButton: true },
+      width: '700px',
+      maxWidth: '95vw',
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((confirmar) => {

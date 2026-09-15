@@ -52,6 +52,13 @@
     "BUSCA_LOCALIDAD": "Busca una localidad",
     "EMAIL_EJEMPLO": "email@ejemplo.com"
   },
+  "MODAL_HELP": {
+    "VER_MAS_DETALLES": "Ver más detalles",
+    "CERRAR": "Cerrar",
+    "CREAR_VIAJE_VUELTA": "Crear viaje de vuelta",
+    "ACEPTAR": "Aceptar",
+    "NO_ACEPTAR": "No aceptar"
+  },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -108,7 +115,20 @@
     "BOTON_GUARDAR_HELP": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
     "GUARDAR_CAMBIOS": "Guardar cambios",
     "BOTON_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
-    "BOTON_ELIMINAR_HELP": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+    "ELIMINAR": {
+      "AYUDA_BOTON": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "MODAL_TITULO": "¡ATENCIÓN!: Vas a eliminar un vehículo",
+      "MODAL_PREGUNTA": "¿Estás seguro de que deseas eliminar el {{marca}} {{modelo}} de color {{color}}?",
+      "CONFIRMACION_TITULO": "Vehículo eliminado",
+      "CONFIRMACION_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha eliminado correctamente.",
+      "ERROR_AL_ELIMINAR": "No se pudo eliminar el vehículo {{marca}} {{modelo}} de color {{color}}"
+    },
+    "ANADIR_NUEVO": {
+      "AYUDA": "Para añadir un nuevo vehículo",
+      "MODAL_ANADIDO": "Vehículo guardado",
+      "MODAL_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha guardado correctamente.",
+      "MODAL_ANADIDO_ERROR": "No se pudo guardar el vehículo {{marca}} {{modelo}} de color {{color}}"
+    },
     "CANCELAR": "Cancelar",
     "SELECTOR": {
       "MARCA": "Marca",
