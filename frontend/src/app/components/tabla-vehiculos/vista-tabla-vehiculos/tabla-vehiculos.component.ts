@@ -9,10 +9,8 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { CARS, Coches, COLORES, COLOURS } from 'src/app/models/vehiculos/marcas_modelos.model';
 import { VehiculosServicesService } from '../../../core/vehiculos-services/vehiculos-services.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MessageService } from 'primeng/api';
 import { SelectorGeneralComponent } from '../../selector-general/selector-general.component';
 
@@ -21,17 +19,7 @@ import { SelectorGeneralComponent } from '../../selector-general/selector-genera
   templateUrl: './tabla-vehiculos.component.html',
   styleUrls: ['./tabla-vehiculos.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    MatIcon,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatTooltipModule,
-    SelectorGeneralComponent,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
 })
 export class TablaVehiculosComponent implements OnInit {
   @Input() vehiculos: any[] = [];
@@ -54,12 +42,9 @@ export class TablaVehiculosComponent implements OnInit {
   @Output() mostrarSelectorVehiculoChange = new EventEmitter<boolean>();
 
   userData: any = {} as Usuario;
-  userLoggedIn: boolean = false;
 
   listColours: string[] = COLOURS;
-  vehiculos_usuario: any[] = [];
   listadoCoches = CARS;
-  listadoColores: string[] = COLORES;
   modelosFiltrados: string[] = [];
   cocheEnEdicion: any = null;
   editandoCoche: boolean = false;
@@ -214,12 +199,10 @@ export class TablaVehiculosComponent implements OnInit {
           this.vehiculos = [...usuarioActualizado.usuario.vehiculos];
         }
 
-        this.translate.get('VEHICULOS.TITULO_GUARDANDOALEDITAR').subscribe((vehiculoGuardadoMessage: string) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: vehiculoGuardadoMessage,
-            detail: this.translate.instant('VEHICULOS.GUARDANDONUEVO'),
-          });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Vehículo eliminado',
+          detail: 'El vehículo se ha eliminado correctamente.',
         });
 
         this.marcaSeleccionada = '';
@@ -307,5 +290,24 @@ export class TablaVehiculosComponent implements OnInit {
    */
   trackByVehiculo(index: number, coche: any) {
     return coche.id;
+  }
+
+  /**
+   * Comprueba si el coche del bucle es el mismo que está seleccionado por defecto.
+   */
+  isCocheSeleccionado(coche: any): boolean {
+    if (!this.cocheSeleccionado || !coche) return false;
+
+    // Si tienen un ID único, los comparamos por ID
+    if (this.cocheSeleccionado.id !== undefined && coche.id !== undefined) {
+      return this.cocheSeleccionado.id === coche.id;
+    }
+
+    // Si no tienen ID, comparamos sus propiedades principales
+    return (
+      this.cocheSeleccionado.marca === coche.marca &&
+      this.cocheSeleccionado.modelo === coche.modelo &&
+      this.cocheSeleccionado.color === coche.color
+    );
   }
 }

@@ -1,5 +1,8 @@
 <div class="mb-5 container">
-  <h4 class="text-center mb-1 mb-sm-1 mb-md-5">
+  <h4
+    class="text-center mb-1 mb-sm-1 mb-md-5"
+    id="titulo-vehiculos"
+  >
     {{ 'TABLA_VEHICULOS.TITULO' | translate }}
   </h4>
   <div class="contenedor_seccion">
@@ -10,6 +13,8 @@
           <ion-list
             class="scrollable-list custom-goguay-list"
             lines="none"
+            role="radiogroup"
+            [attr.aria-labelledby]="'titulo-vehiculos'"
           >
             <ion-radio-group
               [(ngModel)]="cocheSeleccionado"
@@ -20,6 +25,9 @@
                 *ngFor="let coche of vehiculos; trackBy: trackByVehiculo"
                 (click)="seleccionarCoche(coche)"
                 class="goguay-list-item"
+                [class.selected]="isCocheSeleccionado(coche)"
+                [attr.aria-checked]="isCocheSeleccionado(coche)"
+                tabindex="0"
               >
                 <ion-label class="d-flex align-items-center">
                   <div class="car-icon-wrapper me-3">
@@ -35,6 +43,7 @@
                   slot="end"
                   [value]="coche"
                   mode="ios"
+                  [attr.aria-label]="coche.marca + ' ' + coche.modelo + ', ' + coche.color"
                 ></ion-radio>
               </ion-item>
             </ion-radio-group>
@@ -48,12 +57,13 @@
               type="button"
               class="btn-goguay-mini"
               (click)="irARegistrarVehiculo.emit()"
+              [attr.aria-label]="'TABLA_VEHICULOS.ANADIR_NUEVO_AYUDA' | translate"
             >
               <i
                 class="fi fi-rr-plus me-1"
                 aria-hidden="true"
               ></i>
-              Añadir vehículo
+              {{ 'TABLA_VEHICULOS.BTN_ANADIR_VEHICULO' | translate }}
             </button>
           </div>
         </ng-container>
@@ -103,7 +113,7 @@
                 <button
                   mat-icon-button
                   [attr.aria-label]="
-                    'TABLA_VEHICULOS.BOTON_ELIMINAR_HELP'
+                    'TABLA_VEHICULOS.ELIMINAR.AYUDA_BOTON'
                       | translate
                         : {
                             marca: coche.marca,

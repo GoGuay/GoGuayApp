@@ -6,11 +6,16 @@
   justify-content: space-between;
 }
 
+h2 {
+  display: flex;
+  align-items: center;
+}
+
+
+
 .icon-red {
   color: #cf9456;
-  font-size: 2rem;
-  width: 45px;
-  height: 30px;
+  font-size: 1.7rem;
 }
 
 .close-button {
@@ -47,4 +52,12 @@
 .container {
   overflow: hidden;
   padding: 1rem;
+}
+
+@media (max-width: 576px) {
+
+  h2 {
+    font-size: 1.1rem;
+
+  }
 }

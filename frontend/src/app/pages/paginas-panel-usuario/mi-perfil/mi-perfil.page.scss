@@ -16,6 +16,10 @@
   position: relative;
 }
 
+.modal_eliminar {
+  width: 200px;
+}
+
 .lista_sugerencias {
   max-height: 220px;
   overflow-y: auto;
@@ -330,5 +334,29 @@
       top: 76%;
       transform: translateY(-50%);
     }
+  }
+}
+
+/* móviles (pantallas menores a 768px) */
+@media (max-width: 767px) {
+
+  ::ng-deep .custom-responsive-modal .mat-mdc-dialog-container,
+  ::ng-deep .custom-responsive-modal .mat-dialog-container {
+
+    max-width: 92vw !important;
+    /* Ocupa casi todo el ancho de la pantalla del móvil */
+    width: 92vw !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* pantallas medianas y grandes (tablets y PC) */
+@media (min-width: 768px) {
+
+  ::ng-deep .custom-responsive-modal .mat-mdc-dialog-container,
+  ::ng-deep .custom-responsive-modal .mat-dialog-container {
+    max-width: 500px !important;
+    /* Ancho fijo máximo en ordenadores */
+    width: 100% !important;
   }
 }
