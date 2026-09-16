@@ -184,6 +184,7 @@ export class TarjetaViajeComponent implements OnInit {
       error: () => (this.cargandoViajes = false),
     });
   }
+
   filtrarViajes() {
     const acompañante = this.misViajesAcompanante || [];
     const creados = this.misViajesCreados || [];
@@ -849,4 +850,6 @@ export class TarjetaViajeComponent implements OnInit {
         this.filtrarViajes();
       });
   }
+
+  abrirPerfil(){}
 }

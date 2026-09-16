@@ -26,8 +26,6 @@
   }
 }
 
-
-
 .viaje-en-curso-real {
   border: 2px solid rgb(12, 230, 219) !important;
   box-shadow: 0 0 15px rgba(12, 230, 219, 0.4) !important;
@@ -470,7 +468,7 @@ ion-segment-button {
   align-items: center;
   justify-content: center;
   font-size: 9px;
-  box-br: 2px solid white;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .avatar-acompanante {
