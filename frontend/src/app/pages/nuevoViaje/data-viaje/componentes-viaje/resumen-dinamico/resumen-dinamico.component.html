@@ -26,7 +26,7 @@
     >
       <div class="d-flex justify-content-center">
         <i class="fi fi-rr-marker me-1 colours"></i>
-        <ion-label>RESUMEN DEL VIAJE</ion-label>
+        <ion-label>{{ 'NUEVOVIAJE.RESUMEN_DINAMICO.RESUMEN_VIAJE' | translate }}</ion-label>
       </div>
 
       <div
@@ -40,7 +40,7 @@
               <ul>
                 <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
-                  <strong>Lugar de origen:</strong>
+                  <strong>{{ 'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate }}</strong>
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.origen }}
                   </span>
@@ -51,20 +51,9 @@
                     type="text"
                     class="input-viaje form-control"
                     [(ngModel)]="origenCtrl.valorTexto"
-                    (blur)="
-                      origenCtrl.estaActivo = false;
-                      buscadorLocalidadesService.validarSeleccion(
-                        origenCtrl,
-                        inputOrigen
-                      )
-                    "
+                    (blur)="origenCtrl.estaActivo = false; buscadorLocalidadesService.validarSeleccion(origenCtrl, inputOrigen)"
                     (focus)="origenCtrl.estaActivo = true"
-                    (input)="
-                      buscadorLocalidadesService.obtenerSugerencias(
-                        origenCtrl,
-                        $event
-                      )
-                    "
+                    (input)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"
                     (keydown)="manejarNavegacionTeclado($event, 'origen')"
                     autocomplete="off"
                     spellcheck="false"
@@ -74,16 +63,8 @@
                     aria-haspopup="listbox"
                     aria-describedby="instrucciones-busqueda"
                     [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
-                    [attr.aria-controls]="
-                      origenCtrl.sugerencias.length > 0
-                        ? 'lista-origen-resultados'
-                        : null
-                    "
-                    [attr.aria-activedescendant]="
-                      origenCtrl.indiceActivo >= 0
-                        ? 'opt-orig-' + origenCtrl.indiceActivo
-                        : null
-                    "
+                    [attr.aria-controls]="origenCtrl.sugerencias.length > 0 ? 'lista-origen-resultados' : null"
+                    [attr.aria-activedescendant]="origenCtrl.indiceActivo >= 0 ? 'opt-orig-' + origenCtrl.indiceActivo : null"
                   />
 
                   <ul
@@ -95,36 +76,16 @@
                   >
                     <li
                       [id]="'opt-orig-' + i"
-                      *ngFor="
-                        let localidad of origenCtrl.sugerencias;
-                        let i = index
-                      "
+                      *ngFor="let localidad of origenCtrl.sugerencias; let i = index"
                       class="list-group-item"
                       (mousedown)="
-                        $event.preventDefault();
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          origenCtrl,
-                          localidad,
-                          inputOrigen
-                        )
+                        $event.preventDefault(); buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)
                       "
                       [class.active]="i === origenCtrl.indiceActivo"
                       role="option"
                       tabindex="-1"
-                      (click)="
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          origenCtrl,
-                          localidad,
-                          inputOrigen
-                        )
-                      "
-                      (keyup.enter)="
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          origenCtrl,
-                          localidad,
-                          inputOrigen
-                        )
-                      "
+                      (click)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
+                      (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, localidad, inputOrigen)"
                       (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
                     >
                       {{ localidad.descripcion }}
@@ -135,7 +96,7 @@
                 <!-- Selección de destino  -->
                 <li class="colours">
                   <i class="fi fi-rr-spain-map me-1"></i>
-                  <strong>Lugar de destino:</strong>
+                  <strong>{{ 'NUEVOVIAJE.NUEVO_VIAJE.DESTINO' | translate }}</strong>
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.destino }}
                   </span>
@@ -146,20 +107,9 @@
                     type="text"
                     class="input-viaje form-control"
                     [(ngModel)]="destinoCtrl.valorTexto"
-                    (blur)="
-                      destinoCtrl.estaActivo = false;
-                      buscadorLocalidadesService.validarSeleccion(
-                        destinoCtrl,
-                        inputDestino
-                      )
-                    "
+                    (blur)="destinoCtrl.estaActivo = false; buscadorLocalidadesService.validarSeleccion(destinoCtrl, inputDestino)"
                     (focus)="destinoCtrl.estaActivo = true"
-                    (input)="
-                      buscadorLocalidadesService.obtenerSugerencias(
-                        destinoCtrl,
-                        $event
-                      )
-                    "
+                    (input)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event)"
                     (keydown)="manejarNavegacionTeclado($event, 'destino')"
                     autocomplete="off"
                     spellcheck="false"
@@ -169,16 +119,8 @@
                     aria-haspopup="listbox"
                     aria-describedby="instrucciones-busqueda"
                     [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
-                    [attr.aria-controls]="
-                      destinoCtrl.sugerencias.length > 0
-                        ? 'lista-destino-resultados'
-                        : null
-                    "
-                    [attr.aria-activedescendant]="
-                      indiceActivoDestino >= 0
-                        ? 'opt-dest-' + indiceActivoDestino
-                        : null
-                    "
+                    [attr.aria-controls]="destinoCtrl.sugerencias.length > 0 ? 'lista-destino-resultados' : null"
+                    [attr.aria-activedescendant]="indiceActivoDestino >= 0 ? 'opt-dest-' + indiceActivoDestino : null"
                   />
 
                   <ul
@@ -190,37 +132,17 @@
                   >
                     <li
                       [id]="'opt-dest-' + i"
-                      *ngFor="
-                        let localidad of destinoCtrl.sugerencias;
-                        let i = index
-                      "
+                      *ngFor="let localidad of destinoCtrl.sugerencias; let i = index"
                       class="list-group-item"
                       [class.active]="i === indiceActivoDestino"
                       (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
                       (mousedown)="
-                        $event.preventDefault();
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          destinoCtrl,
-                          localidad,
-                          inputDestino
-                        )
+                        $event.preventDefault(); buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)
                       "
                       role="option"
                       tabindex="-1"
-                      (click)="
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          destinoCtrl,
-                          localidad,
-                          inputDestino
-                        )
-                      "
-                      (keyup.enter)="
-                        buscadorLocalidadesService.seleccionarLocalidad(
-                          destinoCtrl,
-                          localidad,
-                          inputDestino
-                        )
-                      "
+                      (click)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
+                      (keyup.enter)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, localidad, inputDestino)"
                     >
                       {{ localidad.descripcion }}
                     </li>
@@ -230,7 +152,7 @@
                 <!-- Selección de coches  -->
                 <li class="colours">
                   <i class="fi fi-rr-car me-1"></i>
-                  <strong>Coche seleccionado:</strong>
+                  <strong>{{ 'NUEVOVIAJE.RESUMEN_DINAMICO.COCHE_SELECCIONADO' | translate }}</strong>
 
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.coche?.marca }}
@@ -251,11 +173,7 @@
 
                     <div class="selected-value">
                       {{
-                        currentViajeData?.coche
-                          ? currentViajeData.coche.marca +
-                            ' ' +
-                            currentViajeData.coche.modelo
-                          : 'Selecciona un coche'
+                        currentViajeData?.coche ? currentViajeData.coche.marca + ' ' + currentViajeData.coche.modelo : 'Selecciona un coche'
                       }}
                     </div>
 
@@ -266,9 +184,7 @@
                       <li
                         *ngFor="let coche of userData?.usuario?.vehiculos"
                         (click)="selectCoche(coche); $event.stopPropagation()"
-                        [class.selected]="
-                          currentViajeData?.coche?.id === coche.id
-                        "
+                        [class.selected]="currentViajeData?.coche?.id === coche.id"
                       >
                         {{ coche.marca }} {{ coche.modelo }}
                         <small style="opacity: 0.7">({{ coche.color }})</small>
@@ -289,7 +205,7 @@
               <ul>
                 <li class="colours">
                   <i class="fi fi-rs-users-alt me-1"></i>
-                  <strong>Plazas disponibles:</strong>
+                  <strong>{{ 'NUEVOVIAJE.NUEVO_VIAJE.PLAZAS_DISPONIBLES' | translate }}</strong>
 
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.plazas }}
@@ -308,10 +224,7 @@
                     />
 
                     <div class="selected-value">
-                      {{
-                        currentViajeData?.plazas ||
-                          ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate)
-                      }}
+                      {{ currentViajeData?.plazas || ('NUEVOVIAJE.PLACE_NUM_PLAZAS' | translate) }}
                     </div>
 
                     <ul
@@ -347,7 +260,7 @@
                 </li>
                 <li class="colours">
                   <i class="fi fi-rr-calendar me-1"></i>
-                  <strong>Fecha de salida:</strong>
+                  <strong>{{ 'NUEVOVIAJE.PRIMER_PASO.FECHA_SELECCIONADA' | translate }}</strong>
                   <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
                   <input
                     *ngIf="editandoViaje"
@@ -358,7 +271,7 @@
                 </li>
                 <li class="colours">
                   <i class="fi fi-rr-calendar-clock me-1"></i>
-                  <strong>Hora de salida:</strong>
+                  <strong>{{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SELECCIONADA' | translate }}</strong>
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.hora_salida }}
                   </span>
@@ -380,7 +293,7 @@
                 (click)="toggleEditarViaje()"
               >
                 <i class="fi fi-rr-edit me-1"></i>
-                Modificar viaje
+                {{ 'NUEVOVIAJE.RESUMEN_DINAMICO.BOTON_MODIFICAR_VIAJE' | translate }}
               </button>
               <button
                 *ngIf="editandoViaje"

@@ -151,22 +151,27 @@
   "_NuevoViaje": "/nuevo-viaje",
   "NUEVOVIAJE": {
     "NUEVO_VIAJE": {
-      "ORIGEN": "Origen",
-      "BOTÓN_MI_UBICACION": "Mi ubicación",
+      "ORIGEN": "Origen: ",
+      "BOTÓN_MI_UBICACION": "Mi ubicación:",
       "ARIALABEL_BOTON_MI_UBICACION": "Obtener mi ubicación actual automáticamente",
-      "DESTINO": "Destino",
-      "PLAZAS_DISPONIBLES": "Plazas disponibles",
+      "DESTINO": "Destino: ",
+      "PLAZAS_DISPONIBLES": "Plazas disponibles: ",
       "ARIALABEL_AVISO_INICIOSESION": "Aviso de inicio de sesión",
       "ARIALABEL_AYUDA_INICIO_REGISTRO": "Ayuda para iniciar sesión o registrarse",
       "BOTÓN_PUBLICA_TU_VIAJE": "Publica tu viaje",
       "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores."
     },
+    "RESUMEN_DINAMICO": {
+      "RESUMEN_VIAJE": "RESUMEN DEL VIAJE",
+      "COCHE_SELECCIONADO": "Coche seleccionado: ",
+      "BOTON_MODIFICAR_VIAJE": "Modificar viaje"
+    },
     "PRIMER_PASO": {
       "ELIGE_FECHA": "Elige la fecha del viaje",
       "FECHA_SELECCIONADA": "Fecha seleccionada: ",
-      "HORA_SALIDA": "Hora de salida",
+      "HORA_SALIDA": "Hora de salida: ",
       "SELECCIONA_HORA": "Selecciona la hora",
-      "HORA_SELECCIONADA": "Hora seleccionada",
+      "HORA_SELECCIONADA": "Hora seleccionada: ",
       "ERROR_HORA_MINIMA": "La hora de salida debe ser, como mínimo, una hora más a la actual.",
       "NUMERO_PLAZAS_LIBRES": "NÚMERO DE PLAZAS LIBRES",
       "SELECCIONA_NUMERO_PASAJEROS": "Selecciona el número de pasajeros que pueden viajar contigo:",
