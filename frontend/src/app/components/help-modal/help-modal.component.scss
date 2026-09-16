@@ -6,11 +6,23 @@
   justify-content: space-between;
 }
 
+.modal-title-flex {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  margin: 0 1rem;
+}
+
+
+
+
 .icon-red {
   color: #cf9456;
-  font-size: 2rem;
-  width: 45px;
-  height: 30px;
+  font-size: 1.7rem;
 }
 
 .close-button {
@@ -36,15 +48,27 @@
 .modal-body {
   font-size: 1rem;
   margin: 1rem 0;
+  overflow-x: hidden;
+  word-break: break-word;
+  text-align: center;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+.modal-body p {
+  margin: 0;
+  padding: 0;
 }
+
+
 
 .container {
   overflow: hidden;
   padding: 1rem;
+}
+
+@media (max-width: 576px) {
+
+  h2 {
+    font-size: 1.1rem;
+
+  }
 }
