@@ -127,7 +127,7 @@ export class PrimerPasoComponent implements OnInit {
 
     if (viajeData && viajeData.fecha_salida) {
       this.fecha_seleccionada = viajeData.fecha_salida;
-      this.calcularHoraMinima(); // Primero calculamos el mínimo para saber qué es válido hoy
+      this.calcularHoraMinima();
 
       if (viajeData.hora_salida) {
         let hDate = new Date();
@@ -152,7 +152,6 @@ export class PrimerPasoComponent implements OnInit {
         }
 
         if (esInvalida || isNaN(hDate.getTime())) {
-          // Si la hora guardada ya no es válida para hoy, autocalculamos una hora correcta (+1h)
           this.establecerHoraSegunFecha();
         } else {
           this.hora_seleccionada = hDate;
@@ -177,7 +176,6 @@ export class PrimerPasoComponent implements OnInit {
 
       this.reservaAutomatica = viajeData.reserva_automatica ?? false;
     } else {
-      // Si es la primera vez que entra: Fecha de hoy y hora actual + 1h
       const date = new Date();
       this.fecha_seleccionada = date.toISOString();
 
