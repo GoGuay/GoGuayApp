@@ -188,13 +188,20 @@ export class PrimerPasoComponent implements OnInit {
     // Suscripción a los cambios del servicio
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
-        if (viajeData.fecha_salida === this.fecha_seleccionada && viajeData.coche === this.cocheSeleccionado) {
-          return;
+        if (viajeData.plazas !== this.plazas) {
+          this.plazas = viajeData.plazas || '';
         }
-        this.cocheSeleccionado = viajeData.coche || '';
-        this.plazas = viajeData.plazas || '';
-        this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
-        this.calcularHoraMinima();
+
+        const cocheActualId = this.cocheSeleccionado?.id || this.cocheSeleccionado?.matricula || this.cocheSeleccionado;
+        const cocheNuevoId = viajeData.coche?.id || viajeData.coche?.matricula || viajeData.coche;
+        if (cocheActualId !== cocheNuevoId) {
+          this.cocheSeleccionado = viajeData.coche || null;
+        }
+
+        if (viajeData.fecha_salida && viajeData.fecha_salida !== this.fecha_seleccionada) {
+          this.fecha_seleccionada = viajeData.fecha_salida;
+          this.calcularHoraMinima();
+        }
 
         if (viajeData.hora_salida && typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
           const [horas, minutos] = viajeData.hora_salida.split(':');
@@ -211,6 +218,8 @@ export class PrimerPasoComponent implements OnInit {
             this.invalid_date = false;
           }
         }
+
+        this.cdr.detectChanges();
       }
     });
   }
@@ -517,5 +526,6 @@ export class PrimerPasoComponent implements OnInit {
    */
   seleccionarPlazas(opcion: any) {
     this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
+    this.guardaDatosDelViajeEnServicio('plazas', this.plazas);
   }
 }
