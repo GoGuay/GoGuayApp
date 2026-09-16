@@ -54,9 +54,14 @@
   },
   "MODAL_HELP": {
     "VER_MAS_DETALLES": "Ver más detalles",
+    "ARIA_VER_MAS_DETALLES": "Ver más detalles",
     "CERRAR": "Cerrar",
+    "ARIA_CERRAR": "Cerrar ventana",
     "CREAR_VIAJE_VUELTA": "Crear viaje de vuelta",
+    "ARIA_CREAR_VIAJE_VUELTA": "Crear un viaje de vuelta",
     "ACEPTAR": "Aceptar",
+    "ARIA_ACEPTAR": "Aceptar",
+    "ARIA_ACEPTAR_CONDICIONES": "Aceptar las condiciones",
     "NO_ACEPTAR": "No aceptar"
   },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
@@ -172,6 +177,11 @@
         "ACEPTACION_MANUAL_DESCRIPCION": "Tu decides quien viaja contigo aceptando cada reserva. ",
         "ACEPTACION_AUTO_TITULO": "Aceptación automática",
         "ACEPTACION_AUTO_DESCRIPCION": "La reserva se acepta automaticamente sin tu intervención"
+      },
+      "RECORDATORIO_TODOS_DATOS": "Recuerda que debes introducir todos los datos para poder continuar.",
+      "MENSAJE_ERROR": {
+        "TITULO": "Faltan datos",
+        "MENSAJE": "Por favor, completa todos los campos para poder continuar."
       }
     },
 

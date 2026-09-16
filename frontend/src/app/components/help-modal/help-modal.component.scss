@@ -6,10 +6,17 @@
   justify-content: space-between;
 }
 
-h2 {
+.modal-title-flex {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  margin: 0 1rem;
 }
+
 
 
 
@@ -41,13 +48,17 @@ h2 {
 .modal-body {
   font-size: 1rem;
   margin: 1rem 0;
+  overflow-x: hidden;
+  word-break: break-word;
+  text-align: center;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+.modal-body p {
+  margin: 0;
+  padding: 0;
 }
+
+
 
 .container {
   overflow: hidden;

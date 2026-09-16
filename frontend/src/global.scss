@@ -309,10 +309,30 @@ ion-content::-webkit-scrollbar-thumb:hover,
   border-top-color: #ffb3ba !important;
 }
 
+
 .icon {
   width: 20px;
   height: 20px;
 }
+
+// Mensajes emergentes centrados
+p-toast {
+
+  .ui-toast-message-content,
+  .p-toast-message-content {
+    text-align: center;
+  }
+
+  .ui-toast-summary,
+  .p-toast-summary {
+    font-weight: bold;
+    display: block;
+    /* Asegura que ocupe toda la línea para centrarse bien */
+    margin-bottom: 0.25rem;
+  }
+}
+
+
 
 // AJUSTES PARA EL MENU LATERAL
 

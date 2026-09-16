@@ -13,9 +13,8 @@
 
 
 .bloque-selectores {
-  width: 100%;
-  max-width: 750px;
-  margin: 0 auto;
+  width: 800px;
+  margin: 1 auto;
 
   ion-row {
     width: 100%;
@@ -36,6 +35,9 @@
 
 
 .goguay-list-item {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   --background: transparent;
   --padding-start: 12px;
   --inner-padding-end: 12px;
@@ -55,7 +57,6 @@
 
   &:hover {
     --background: #f0d7b456;
-
     transform: translateY(-2px);
   }
 
@@ -81,12 +82,17 @@
   }
 }
 
+
+
+
 .custom-goguay-list {
   background: white !important;
   border-radius: 24px !important;
   padding: 8px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
   border: 1px solid #f6f6f6;
+  max-width: 450px !important;
+  margin: 0 auto !important;
 }
 
 .btn-goguay-mini {

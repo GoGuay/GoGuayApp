@@ -85,8 +85,13 @@
 
 .contenedor_calendario,
 .contenedor_inputs {
-  width: 80%;
+  width: 85%;
   margin: 0 auto;
+}
+
+.contenedor_vehiculos {
+  width: 90%;
+  margin: 0 auto
 }
 
 .contenedor_hora {
@@ -103,6 +108,8 @@
   border: 1px solid #f6f6f6;
 }
 
+
+
 .goguay-list-item {
   --background: transparent;
   --padding-start: 12px;
@@ -116,19 +123,29 @@
     border-radius: 16px !important;
   }
 
+  &.selected {
+    --background: #f0d7b4;
+  }
+
+
   &:hover {
-    --background: rgba(224, 166, 103, 0.06);
+    --background: #f0d7b456;
     transform: translateY(-2px);
   }
+
 
   ion-radio {
     --color: #b0b0b0;
     --color-checked: #e0a667;
     margin-inline-end: 4px;
+
+    &::part(mark) {
+      border-color: #111111 !important;
+    }
   }
 
   h2 {
-    font-size: 0.95rem !important;
+    font-size: 0.85rem !important;
     color: #111111;
   }
 

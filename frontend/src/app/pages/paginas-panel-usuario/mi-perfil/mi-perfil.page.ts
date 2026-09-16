@@ -638,8 +638,9 @@ export class MiPerfilPage implements OnInit {
     });
     const dialogRef = this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje, showAcceptButton: true },
-      width: '700px',
-      maxWidth: '95vw',
+
+      width: '750px',
+      maxWidth: '90vw',
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((confirmar) => {

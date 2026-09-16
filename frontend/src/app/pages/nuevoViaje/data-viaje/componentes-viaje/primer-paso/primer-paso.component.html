@@ -5,7 +5,8 @@
       size="12"
       size-xl="6"
     >
-      <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.ELIGE_FECHA' | translate }}</h1>
+      <!-- Calendario para elegir fecha -->
+      <h2 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.ELIGE_FECHA' | translate }}</h2>
       <div class="contenedor_calendario">
         <div class="d-flex justify-content-center">
           <ion-datetime
@@ -18,14 +19,18 @@
             class="custom-calendar-box"
           ></ion-datetime>
         </div>
-        <p class="mt-3 text-center date-feedback">
+        <p
+          class="mt-3 text-center date-feedback"
+          aria-live="polite"
+        >
           {{ 'NUEVOVIAJE.PRIMER_PASO.FECHA_SELECCIONADA' | translate }}
           <strong>{{ getFormattedDate() }}</strong>
         </p>
       </div>
 
+      <!-- Input para elegir hora -->
       <div class="contenedor_seccion mt-4">
-        <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SALIDA' | translate }}</h1>
+        <h2 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SALIDA' | translate }}</h2>
         <div class="contenedor_hora">
           <div
             *ngIf="isDesktop"
@@ -64,7 +69,10 @@
               lines="none"
               class="time-button-item"
             >
-              <ion-datetime-button datetime="timePicker"></ion-datetime-button>
+              <ion-datetime-button
+                datetime="timePicker"
+                [attr.aria-label]="'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_HORA' | translate"
+              ></ion-datetime-button>
               <ion-modal
                 [keepContentsMounted]="true"
                 mode="ios"
@@ -88,9 +96,13 @@
 
         <p
           *ngIf="invalid_date"
+          role="alert"
           class="error-text text-center mt-2"
         >
-          <i class="fi fi-rr-cross-circle me-1"></i>
+          <i
+            class="fi fi-rr-cross-circle me-1"
+            aria-hidden="true"
+          ></i>
           {{ 'NUEVOVIAJE.PRIMER_PASO.ERROR_HORA_MINIMA' | translate }}
         </p>
         <p
@@ -108,18 +120,15 @@
       size-xl="6"
     >
       <div class="d-flex flex-column align-items-center text-center w-100">
-        <!-- Título centrado -->
-        <h1 class="section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.NUMERO_PLAZAS_LIBRES' | translate }}</h1>
-
-        <!-- Label centrado -->
+        <!-- Selector de numero de plazas libres
+          -->
+        <h2 class="section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.NUMERO_PLAZAS_LIBRES' | translate }}</h2>
         <label
           id="label-plazas"
           class="mt-4"
         >
           {{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_NUMERO_PASAJEROS' | translate }}
         </label>
-
-        <!-- Input/Selector centrado y con ancho controlado -->
         <div class="input-container mb-3 w-100 d-flex justify-content-center">
           <app-selector-general
             idUnico="input-plazas"
@@ -137,8 +146,10 @@
         </div>
       </div>
 
-      <div class="contenedor_seccion">
-        <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.COCHE_PARA_VIAJAR' | translate }}</h1>
+      <!-- Selección de coche para viajar -->
+      <div class="contenedor_vehiculos">
+        <h2 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.COCHE_PARA_VIAJAR' | translate }}</h2>
+
         <app-tabla-vehiculos
           [modoSeleccion]="true"
           [vehiculos]="userData?.usuario?.vehiculos"
@@ -147,19 +158,22 @@
           (irARegistrarVehiculo)="botonAnadirVehiculo()"
         ></app-tabla-vehiculos>
 
+        <!-- Modo de reserva -->
         <div class="contenedor_inputs mt-4">
-          <h1 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.TITULO' | translate }}</h1>
+          <h2 class="d-flex justify-content-center section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.TITULO' | translate }}</h2>
           <ion-list
-            class="reserva-list custom-goguay-list"
+            class="custom-goguay-list"
             lines="none"
           >
             <ion-radio-group [value]="reservaAutomatica">
+              <!-- Opcion manual -->
               <ion-item
                 (click)="seleccionarTipoReserva(false)"
                 class="goguay-list-item py-1"
+                [class.selected]="reservaAutomatica === false"
               >
                 <ion-radio
-                  slot="start"
+                  slot="end"
                   [value]="false"
                   mode="ios"
                 ></ion-radio>
@@ -167,20 +181,16 @@
                   <h2 class="fw-bold mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_MANUAL_TITULO' | translate }}</h2>
                   <p class="text-muted small mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_MANUAL_DESCRIPCION' | translate }}</p>
                 </ion-label>
-                <ion-icon
-                  name="hand-right-outline"
-                  slot="end"
-                  color="primary"
-                  class="fs-4"
-                ></ion-icon>
               </ion-item>
 
+              <!-- Opción Automática -->
               <ion-item
                 (click)="seleccionarTipoReserva(true)"
                 class="goguay-list-item py-1 mt-2"
+                [class.selected]="reservaAutomatica === true"
               >
                 <ion-radio
-                  slot="start"
+                  slot="end"
                   [value]="true"
                   mode="ios"
                 ></ion-radio>
@@ -188,12 +198,6 @@
                   <h2 class="fw-bold mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_AUTO_TITULO' | translate }}</h2>
                   <p class="text-muted small mb-0">{{ 'NUEVOVIAJE.PRIMER_PASO.MODO_RESERVA.ACEPTACION_AUTO_DESCRIPCION' | translate }}</p>
                 </ion-label>
-                <ion-icon
-                  name="flash-outline"
-                  slot="end"
-                  color="warning"
-                  class="fs-4"
-                ></ion-icon>
               </ion-item>
             </ion-radio-group>
           </ion-list>
@@ -204,8 +208,11 @@
 
   <div class="d-flex justify-content-center align-items-center mt-4 mb-3">
     <span class="info_message text-secondary text-center">
-      <i class="fi fi-rr-info-todo me-1 text-primary"></i>
-      Recuerda que debes introducir todos los datos para poder continuar.
+      <i
+        class="fi fi-rr-info-todo me-1 text-primary"
+        aria-hidden="true"
+      ></i>
+      {{ 'NUEVOVIAJE.PRIMER_PASO.RECORDATORIO_TODOS_DATOS' | translate }}
     </span>
   </div>
 </ion-grid>

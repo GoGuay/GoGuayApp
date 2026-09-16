@@ -1,16 +1,29 @@
 <div
   class="container"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'modal-title'"
   @dialogAnimation
 >
   <div class="modal-header d-flex align-items-center justify-content-between">
-    <mat-icon class="icon-red">question_mark</mat-icon>
+    <mat-icon
+      class="icon-red"
+      aria-hidden="true"
+    >
+      question_mark
+    </mat-icon>
 
-    <h2 class="modal-title-flex">{{ data.title }}</h2>
+    <h2
+      id="modal-title"
+      class="modal-title-flex"
+    >
+      {{ data.title }}
+    </h2>
     <button
       mat-icon-button
       class="close-button"
       (click)="close()"
-      aria-label="Cerrar"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
     >
       <mat-icon>close</mat-icon>
     </button>
@@ -26,6 +39,7 @@
         mat-raised-button
         class="btn_bg"
         (click)="abrirMasDetalles()"
+        [attr.aria-label]="'MODAL_HELP.ARIA_VER_MAS_DETALLES' | translate"
       >
         {{ 'MODAL_HELP.VER_MAS_DETALLES' | translate }}
         <mat-icon>info</mat-icon>
@@ -38,6 +52,7 @@
       (click)="close()"
       class="me-2"
       *ngIf="!data.showMoreInfoButton"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
     >
       {{ 'MODAL_HELP.CERRAR' | translate }}
     </button>
@@ -47,6 +62,7 @@
       class="me-2"
       (click)="crearVuelta()"
       *ngIf="data.showReturnTripButton"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CREAR_VIAJE_VUELTA' | translate"
     >
       {{ 'MODAL_HELP.CREAR_VIAJE_VUELTA' | translate }}
     </button>
@@ -56,6 +72,7 @@
       (click)="aceptarCondiciones('registro')"
       *ngIf="data.showAcceptButton"
       cdkFocusInitial
+      [attr.aria-label]="'MODAL_HELP.ARIA_ACEPTAR_CONDICIONES' | translate"
     >
       {{ 'MODAL_HELP.ACEPTAR' | translate }}
     </button>
