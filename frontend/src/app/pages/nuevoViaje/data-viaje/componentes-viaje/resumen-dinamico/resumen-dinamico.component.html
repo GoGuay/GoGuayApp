@@ -1,40 +1,114 @@
 <div class="container resumen-container">
-  <div *ngIf="!isDesktop" class="d-flex justify-content-center mb-2 d-md-none">
-    <button type="button" mat-stroked-button class="btn-toggle-resumen" (click)="toggleResumenMobile()">
-      <i class="fi" [ngClass]="mostrarResumenMobile ? 'fi-rr-eye-crossed' : 'fi-rr-eye'"></i>
+  <div
+    *ngIf="!isDesktop"
+    class="d-flex justify-content-center mb-2 d-md-none"
+  >
+    <button
+      type="button"
+      mat-stroked-button
+      class="btn-toggle-resumen"
+      (click)="toggleResumenMobile()"
+    >
+      <i
+        class="fi"
+        [ngClass]="mostrarResumenMobile ? 'fi-rr-eye-crossed' : 'fi-rr-eye'"
+      ></i>
       {{ mostrarResumenMobile ? 'Ocultar resumen' : 'Ver resumen del viaje' }}
     </button>
   </div>
 
-  <div class="resumen-content" *ngIf="isDesktop || (!isDesktop && mostrarResumenMobile)">
-    <div class="container" id="resumen_viaje">
+  <div
+    class="resumen-content"
+    *ngIf="isDesktop || (!isDesktop && mostrarResumenMobile)"
+  >
+    <div
+      class="container"
+      id="resumen_viaje"
+    >
       <div class="d-flex justify-content-center">
         <i class="fi fi-rr-marker me-1 colours"></i>
         <ion-label>{{ 'NUEVOVIAJE.RESUMEN_DINAMICO.RESUMEN_VIAJE' | translate }}</ion-label>
       </div>
 
-      <div class="ion-padding" slot="content">
+      <div
+        class="ion-padding"
+        slot="content"
+      >
         <div class="container d-flex justify-content-center dialog-animate">
           <div class="row w-100">
             <!-- Columna izquierda -->
             <div class="col-md-6 col-12">
               <ul>
                 <!-- Origen -->
-                <li class="colours">
-                  <i class="fi fi-rr-spain-map me-1"></i>
-                  <strong>{{ 'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate }}</strong>
+                <li class="colours d-flex flex-column mb-3">
+                  <div class="d-flex align-items-center w-100 position-relative">
+                    <i class="fi fi-rr-spain-map me-1 flex-shrink-0"></i>
+                    <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate }}:</strong>
 
-                  <span *ngIf="!editandoViaje">
-                    {{ currentViajeData?.origen }}
-                  </span>
+                    <!-- Visualización normal (Cuando no se está editando) -->
+                    <div class="flex-grow-1 min-width-0 d-flex">
+                      <span
+                        *ngIf="!editandoOrigen"
+                        class="text-truncate d-block"
+                      >
+                        {{ currentViajeData?.origen }}
+                      </span>
 
-                  <div *ngIf="editandoViaje" class="mt-2 mb-2 w-100">
-                    <app-selector-general idUnico="input-origen-resumen" placeholderKey="PLACEHOLDER.DONDE_COMIENZA"
-                      class="w-100" [opciones]="origenCtrl.sugerencias" [(ngModel)]="origenCtrl.valorTexto"
-                      [soloLectura]="false" [mostrarFlechaSelector]="false"
-                      (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event); onFieldChange()"
-                      (alAbrir)="origenCtrl.estaActivo = true"
-                      (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event); onFieldChange()"></app-selector-general>
+                      <!-- Selector de edición (Cuando se está editando) -->
+                      <div
+                        *ngIf="editandoOrigen"
+                        class="w-100"
+                      >
+                        <app-selector-general
+                          idUnico="input-origen-resumen"
+                          placeholderKey="PLACEHOLDER.DONDE_COMIENZA"
+                          class="w-100"
+                          [opciones]="origenCtrl.sugerencias"
+                          [(ngModel)]="origenCtrl.valorTexto"
+                          [soloLectura]="false"
+                          [mostrarFlechaSelector]="false"
+                          (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event); onFieldChange()"
+                          (alAbrir)="origenCtrl.estaActivo = true"
+                          (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event); onFieldChange()"
+                        ></app-selector-general>
+                      </div>
+                    </div>
+
+                    <!-- Botones de Acción (Siempre muestran el lápiz; al editar muestran X y opcionalmente Guardar) -->
+                    <div class="botones_editar ms-2 d-flex align-items-center">
+                      <!-- 1. Botón Editar (Lápiz): Aparece siempre que NO se esté editando -->
+                      <ng-container *ngIf="!editandoOrigen">
+                        <i
+                          class="fi fi-rr-pencil icon-btn"
+                          style="cursor: pointer"
+                          (click)="activarEdicionOrigen()"
+                        ></i>
+                      </ng-container>
+
+                      <!-- 2. Controles en modo edición -->
+                      <ng-container *ngIf="editandoOrigen">
+                        <!-- Botón Guardar (Disco): Aparece SÓLO si se detecta un cambio -->
+                        <button
+                          *ngIf="hayCambioOrigen() && esSeleccionOrigenValida"
+                          type="button"
+                          class="btn btn-link p-0 me-2 text-dark"
+                          (click)="guardarOrigen()"
+                          title="Guardar cambios"
+                        >
+                          <i class="fi fi-rs-disk"></i>
+                        </button>
+
+                        <!-- Botón Cancelar (X): Aparece siempre que está editando (haya cambios o no) -->
+                        <button
+                          type="button"
+                          class="btn btn-link p-0 text-dark"
+                          (click)="cancelarEdicionOrigen()"
+                          title="Cancelar"
+                        >
+                          <i class="fi fi-rr-circle-xmark"></i>
+                        </button>
+                      </ng-container>
+                    </div>
                   </div>
                 </li>
 
@@ -47,13 +121,22 @@
                     {{ currentViajeData?.destino }}
                   </span>
 
-                  <div *ngIf="editandoViaje" class="mt-2 mb-2 w-100">
-                    <app-selector-general idUnico="input-destino-resumen" placeholderKey="PLACEHOLDER.HASTA_DONDE"
-                      class="w-100" [opciones]="destinoCtrl.sugerencias" [(ngModel)]="destinoCtrl.valorTexto"
-                      [soloLectura]="false" [mostrarFlechaSelector]="false"
+                  <div
+                    *ngIf="editandoViaje"
+                    class="mt-2 mb-2 w-100"
+                  >
+                    <app-selector-general
+                      idUnico="input-destino-resumen"
+                      placeholderKey="PLACEHOLDER.HASTA_DONDE"
+                      class="w-100"
+                      [opciones]="destinoCtrl.sugerencias"
+                      [(ngModel)]="destinoCtrl.valorTexto"
+                      [soloLectura]="false"
+                      [mostrarFlechaSelector]="false"
                       (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, $event); onFieldChange()"
                       (alAbrir)="destinoCtrl.estaActivo = true"
-                      (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event); onFieldChange()"></app-selector-general>
+                      (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event); onFieldChange()"
+                    ></app-selector-general>
                   </div>
                 </li>
 
@@ -62,16 +145,23 @@
                   <i class="fi fi-rr-car me-1"></i>
                   <strong>{{ 'NUEVOVIAJE.RESUMEN_DINAMICO.COCHE_SELECCIONADO' | translate }}</strong>
 
-                  <span *ngIf="!editandoViaje">
-                    {{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo }}
-                  </span>
+                  <span *ngIf="!editandoViaje">{{ currentViajeData?.coche?.marca }} {{ currentViajeData?.coche?.modelo }}</span>
 
-                  <div *ngIf="editandoViaje" class="mt-2 mb-2 w-100">
-                    <app-selector-general idUnico="input-coche-resumen"
-                      placeholderKey="NUEVOVIAJE.PRIMER_PASO.COCHE_PARA_VIAJAR" class="w-100"
-                      [opciones]="opcionesVehiculos" [ngModel]="getCocheIdActual()" [valor]="getCocheIdActual()"
-                      [soloLectura]="true" [mostrarFlechaSelector]="true"
-                      (seleccionCambiada)="onCocheCambiado($event)"></app-selector-general>
+                  <div
+                    *ngIf="editandoViaje"
+                    class="mt-2 mb-2 w-100"
+                  >
+                    <app-selector-general
+                      idUnico="input-coche-resumen"
+                      placeholderKey="NUEVOVIAJE.PRIMER_PASO.COCHE_PARA_VIAJAR"
+                      class="w-100"
+                      [opciones]="opcionesVehiculos"
+                      [ngModel]="getCocheIdActual()"
+                      [valor]="getCocheIdActual()"
+                      [soloLectura]="true"
+                      [mostrarFlechaSelector]="true"
+                      (seleccionCambiada)="onCocheCambiado($event)"
+                    ></app-selector-general>
                   </div>
                 </li>
               </ul>
@@ -89,11 +179,21 @@
                     {{ currentViajeData?.plazas }}
                   </span>
 
-                  <div *ngIf="editandoViaje" class="mt-2 mb-2 w-100">
-                    <app-selector-general idUnico="input-plazas-resumen" placeholderKey="PLACEHOLDER.NUM_PLAZAS"
-                      class="w-100" [opciones]="opcionesPlazas" [(ngModel)]="currentViajeData.plazas"
-                      [valor]="currentViajeData.plazas" [soloLectura]="true" [mostrarFlechaSelector]="true"
-                      (seleccionCambiada)="onPlazasCambiadas($event)"></app-selector-general>
+                  <div
+                    *ngIf="editandoViaje"
+                    class="mt-2 mb-2 w-100"
+                  >
+                    <app-selector-general
+                      idUnico="input-plazas-resumen"
+                      placeholderKey="PLACEHOLDER.NUM_PLAZAS"
+                      class="w-100"
+                      [opciones]="opcionesPlazas"
+                      [(ngModel)]="currentViajeData.plazas"
+                      [valor]="currentViajeData.plazas"
+                      [soloLectura]="true"
+                      [mostrarFlechaSelector]="true"
+                      (seleccionCambiada)="onPlazasCambiadas($event)"
+                    ></app-selector-general>
                   </div>
                 </li>
 
@@ -102,8 +202,13 @@
                   <i class="fi fi-rr-calendar me-1"></i>
                   <strong>{{ 'NUEVOVIAJE.PRIMER_PASO.FECHA_SELECCIONADA' | translate }}</strong>
                   <span *ngIf="!editandoViaje">{{ getFormattedDate() }}</span>
-                  <input *ngIf="editandoViaje" type="date" [(ngModel)]="currentViajeData.fecha_salida"
-                    (ngModelChange)="onFieldChange()" class="form-control selectDate mt-1" />
+                  <input
+                    *ngIf="editandoViaje"
+                    type="date"
+                    [(ngModel)]="currentViajeData.fecha_salida"
+                    (ngModelChange)="onFieldChange()"
+                    class="form-control selectDate mt-1"
+                  />
                 </li>
 
                 <!-- Hora de Salida -->
@@ -113,25 +218,45 @@
                   <span *ngIf="!editandoViaje">
                     {{ currentViajeData?.hora_salida }}
                   </span>
-                  <input *ngIf="editandoViaje" type="time" [(ngModel)]="currentViajeData.hora_salida"
-                    (ngModelChange)="onFieldChange()" class="form-control selecthour mt-1" />
+                  <input
+                    *ngIf="editandoViaje"
+                    type="time"
+                    [(ngModel)]="currentViajeData.hora_salida"
+                    (ngModelChange)="onFieldChange()"
+                    class="form-control selecthour mt-1"
+                  />
                 </li>
               </ul>
             </div>
 
             <!-- Botones de Acción -->
             <div class="container d-flex justify-content-center mt-3">
-              <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg"
-                (click)="toggleEditarViaje()">
+              <button
+                *ngIf="!editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg"
+                (click)="toggleEditarViaje()"
+              >
                 <i class="fi fi-rr-edit me-1"></i>
                 {{ 'NUEVOVIAJE.RESUMEN_DINAMICO.BOTON_MODIFICAR_VIAJE' | translate }}
               </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2"
-                (click)="guardarCambios()">
+              <button
+                *ngIf="editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg me-2"
+                (click)="guardarCambios()"
+              >
                 Guardar
               </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg_cancel"
-                (click)="cancelarEdicion()">
+              <button
+                *ngIf="editandoViaje"
+                type="button"
+                mat-raised-button
+                class="btn_bg_cancel"
+                (click)="cancelarEdicion()"
+              >
                 Cancelar
               </button>
             </div>

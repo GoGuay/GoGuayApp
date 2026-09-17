@@ -1,10 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  HostListener,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,10 +35,12 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   currentViajeData: any = {};
   private destroy$ = new Subject<void>();
   editandoViaje: boolean = false;
-
+  editandoOrigen: boolean = false;
+  valorOriginalOrigen: string = '';
   copiaViajeData: any = {};
   isDesktop: boolean = false;
   mostrarResumenMobile: boolean = false;
+  esSeleccionOrigenValida: boolean = false; // Controla si escogió de la lista o es válido
 
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
@@ -67,7 +64,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     private travelService: TravelService,
     private vehiculosServicesService: VehiculosServicesService,
     private platform: Platform,
-    public buscadorLocalidadesService: BuscadorLocalidadesService,
+    public buscadorLocalidadesService: BuscadorLocalidadesService
   ) {
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
     this.destinoCtrl = this.buscadorLocalidadesService.crearEstadoControl();
@@ -99,7 +96,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     }
   }
 
-
   getCocheIdActual(): string {
     const coche = this.currentViajeData?.coche;
     if (!coche) return '';
@@ -110,20 +106,18 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
    * Sincronización bidireccional en tiempo real con el servicio de viajes
    */
   actualizarInformacion() {
-    this.travelService.viajeData$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((viajeData) => {
-        if (viajeData) {
-          this.currentViajeData = { ...viajeData };
+    this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
+      if (viajeData) {
+        this.currentViajeData = { ...viajeData };
 
-          if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto) {
-            this.origenCtrl.valorTexto = viajeData.origen;
-          }
-          if (viajeData.destino && viajeData.destino !== this.destinoCtrl.valorTexto) {
-            this.destinoCtrl.valorTexto = viajeData.destino;
-          }
+        if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto) {
+          this.origenCtrl.valorTexto = viajeData.origen;
         }
-      });
+        if (viajeData.destino && viajeData.destino !== this.destinoCtrl.valorTexto) {
+          this.destinoCtrl.valorTexto = viajeData.destino;
+        }
+      }
+    });
   }
 
   getFormattedDate(): string {
@@ -164,13 +158,13 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
    * Captura y sincroniza instantáneamente el cambio de plazas
    */
   onPlazasCambiadas(opcion: any) {
-    const plazas = typeof opcion === 'object' && opcion !== null ? (opcion.valor || opcion.descripcion) : opcion;
+    const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
     this.currentViajeData.plazas = plazas;
     this.onFieldChange();
   }
 
   onCocheCambiado(opcion: any) {
-    const idSeleccionado = typeof opcion === 'object' && opcion !== null ? (opcion.valor || opcion) : opcion;
+    const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
 
     const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
     this.currentViajeData.coche = cocheObjeto;
@@ -194,28 +188,75 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   obtenerVehiculos() {
     const usuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
     if (usuarioLocal?.usuario?.id) {
-      this.vehiculosServicesService
-        .obtenerVehiculosUsuario(usuarioLocal.usuario.id)
-        .subscribe((resultado) => {
-          if (resultado?.vehiculos) {
-            this.userData.usuario.vehiculos = resultado.vehiculos;
-            this.mapaVehiculos.clear();
+      this.vehiculosServicesService.obtenerVehiculosUsuario(usuarioLocal.usuario.id).subscribe((resultado) => {
+        if (resultado?.vehiculos) {
+          this.userData.usuario.vehiculos = resultado.vehiculos;
+          this.mapaVehiculos.clear();
 
-            this.opcionesVehiculos = resultado.vehiculos.map((coche: any) => {
-              const idUnicoCoche = coche.matricula || `${coche.marca}-${coche.modelo}-${coche.color}`;
-              this.mapaVehiculos.set(idUnicoCoche, coche);
+          this.opcionesVehiculos = resultado.vehiculos.map((coche: any) => {
+            const idUnicoCoche = coche.matricula || `${coche.marca}-${coche.modelo}-${coche.color}`;
+            this.mapaVehiculos.set(idUnicoCoche, coche);
 
-              return {
-                valor: idUnicoCoche,
-                descripcion: `${coche.marca} ${coche.modelo || ''} (${coche.color || ''})`.trim()
-              };
-            });
-          }
-        });
+            return {
+              valor: idUnicoCoche,
+              descripcion: `${coche.marca} ${coche.modelo || ''} (${coche.color || ''})`.trim(),
+            };
+          });
+        }
+      });
     }
   }
 
   toggleResumenMobile() {
     this.mostrarResumenMobile = !this.mostrarResumenMobile;
+  }
+
+  activarEdicionOrigen(): void {
+    this.valorOriginalOrigen = this.currentViajeData?.origen || '';
+    this.origenCtrl.valorTexto = this.currentViajeData?.origen || '';
+    this.editandoOrigen = true;
+  }
+
+  cancelarEdicionOrigen(): void {
+    this.origenCtrl.valorTexto = this.valorOriginalOrigen;
+    this.editandoOrigen = false;
+  }
+
+  // Se ejecuta cuando el usuario escribe texto libremente en el input
+  onTextoOrigenCambiado(texto: any): void {
+    // Llamamos a tu servicio para que busque sugerencias
+    this.buscadorLocalidadesService.obtenerSugerencias(this.origenCtrl, texto);
+
+    // Si el usuario escribe algo a mano que no ha seleccionado formalmente de la lista,
+    // invalidamos temporalmente la opción de guardar (a menos que coincida exactamente con el original)
+    if (this.origenCtrl.valorTexto === this.valorOriginalOrigen) {
+      this.esSeleccionOrigenValida = true;
+    } else {
+      this.esSeleccionOrigenValida = false;
+    }
+  }
+
+  // Se ejecuta específicamente cuando el usuario HACE CLIC en una opción de la lista desplegable
+  onSeleccionOrigenCambiada(evento: any): void {
+    this.buscadorLocalidadesService.seleccionarLocalidad(this.origenCtrl, evento);
+
+    // Como seleccionó un elemento de la lista, marcamos la selección como 100% válida
+    this.esSeleccionOrigenValida = true;
+  }
+
+  hayCambioOrigen(): boolean {
+    return this.origenCtrl.valorTexto !== this.valorOriginalOrigen;
+  }
+
+  guardarOrigen(): void {
+    if (!this.esSeleccionOrigenValida) {
+      return; // Doble seguridad por si intentan forzarlo
+    }
+
+    this.currentViajeData.origen = this.origenCtrl.valorTexto;
+    this.editandoOrigen = false;
+    this.esSeleccionOrigenValida = false;
+
+    // Aquí tu lógica para persistir el cambio en API/Servicio
   }
 }
