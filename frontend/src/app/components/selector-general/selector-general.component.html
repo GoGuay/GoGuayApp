@@ -4,7 +4,6 @@
     class="form-label d-flex align-items-center gap-2"
   >
     <span>{{ labelKey | translate }}</span>
-    <!-- Opcional: Tooltip si se envía -->
     <span
       *ngIf="tooltipKey"
       tabindex="0"
@@ -65,7 +64,6 @@
   >
     <li
       *ngFor="let opcion of sugerencias; let i = index"
-      [id]="'sugerencia-' + idUnico + '-' + i"
       class="list-group-item"
       (mousedown)="$event.preventDefault(); seleccionarOpcion(opcion)"
       [class.active]="i === indiceActivo"
