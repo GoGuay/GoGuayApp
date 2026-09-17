@@ -12,7 +12,6 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
 import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
 import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
-import { CARS } from '../../../../../models/vehiculos/marcas_modelos.model';
 
 @Component({
   selector: 'app-resumen-dinamico',
@@ -34,13 +33,30 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   userData: Usuario = {} as Usuario;
   currentViajeData: any = {};
   private destroy$ = new Subject<void>();
+
+  // Estado global y estados de edición individual por campo
   editandoViaje: boolean = false;
   editandoOrigen: boolean = false;
+  editandoDestino: boolean = false;
+  editandoCoche: boolean = false;
+  editandoPlazas: boolean = false;
+  editandoFecha: boolean = false;
+  editandoHora: boolean = false;
+
+  // Valores originales para la cancelación individual
   valorOriginalOrigen: string = '';
+  valorOriginalDestino: string = '';
+  valorOriginalCoche: any = null;
+  valorOriginalPlazas: string = '';
+  valorOriginalFecha: string = '';
+  valorOriginalHora: string = '';
+
   copiaViajeData: any = {};
   isDesktop: boolean = false;
   mostrarResumenMobile: boolean = false;
-  esSeleccionOrigenValida: boolean = false; // Controla si escogió de la lista o es válido
+
+  esSeleccionOrigenValida: boolean = false;
+  esSeleccionDestinoValida: boolean = false;
 
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
@@ -102,9 +118,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     return coche.matricula || `${coche.marca}-${coche.modelo}-${coche.color}`;
   }
 
-  /**
-   * Sincronización bidireccional en tiempo real con el servicio de viajes
-   */
   actualizarInformacion() {
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
@@ -132,6 +145,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     return '';
   }
 
+  // Activa la edición global (todos los campos se vuelven editables a la vez)
   toggleEditarViaje() {
     const datosUltimos = this.travelService.getViajeData();
     if (datosUltimos) {
@@ -141,6 +155,14 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     }
     this.copiaViajeData = JSON.parse(JSON.stringify(this.currentViajeData));
     this.editandoViaje = true;
+
+    // Dejamos los campos individuales en falso para que aparezcan los lápices
+    this.editandoOrigen = false;
+    this.editandoDestino = false;
+    this.editandoCoche = false;
+    this.editandoPlazas = false;
+    this.editandoFecha = false;
+    this.editandoHora = false;
   }
 
   onFieldChange() {
@@ -154,26 +176,15 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Captura y sincroniza instantáneamente el cambio de plazas
-   */
-  onPlazasCambiadas(opcion: any) {
-    const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
-    this.currentViajeData.plazas = plazas;
-    this.onFieldChange();
-  }
-
-  onCocheCambiado(opcion: any) {
-    const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
-
-    const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
-    this.currentViajeData.coche = cocheObjeto;
-    this.onFieldChange();
-  }
-
   guardarCambios() {
     this.onFieldChange();
     this.editandoViaje = false;
+    this.editandoOrigen = false;
+    this.editandoDestino = false;
+    this.editandoCoche = false;
+    this.editandoPlazas = false;
+    this.editandoFecha = false;
+    this.editandoHora = false;
   }
 
   cancelarEdicion() {
@@ -183,6 +194,12 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
     this.travelService.setViajeData(this.currentViajeData);
     this.editandoViaje = false;
+    this.editandoOrigen = false;
+    this.editandoDestino = false;
+    this.editandoCoche = false;
+    this.editandoPlazas = false;
+    this.editandoFecha = false;
+    this.editandoHora = false;
   }
 
   obtenerVehiculos() {
@@ -211,10 +228,12 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.mostrarResumenMobile = !this.mostrarResumenMobile;
   }
 
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (ORIGEN) ---
   activarEdicionOrigen(): void {
     this.valorOriginalOrigen = this.currentViajeData?.origen || '';
     this.origenCtrl.valorTexto = this.currentViajeData?.origen || '';
     this.editandoOrigen = true;
+    this.esSeleccionOrigenValida = true;
   }
 
   cancelarEdicionOrigen(): void {
@@ -222,41 +241,139 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.editandoOrigen = false;
   }
 
-  // Se ejecuta cuando el usuario escribe texto libremente en el input
-  onTextoOrigenCambiado(texto: any): void {
-    // Llamamos a tu servicio para que busque sugerencias
-    this.buscadorLocalidadesService.obtenerSugerencias(this.origenCtrl, texto);
-
-    // Si el usuario escribe algo a mano que no ha seleccionado formalmente de la lista,
-    // invalidamos temporalmente la opción de guardar (a menos que coincida exactamente con el original)
-    if (this.origenCtrl.valorTexto === this.valorOriginalOrigen) {
-      this.esSeleccionOrigenValida = true;
-    } else {
-      this.esSeleccionOrigenValida = false;
-    }
-  }
-
-  // Se ejecuta específicamente cuando el usuario HACE CLIC en una opción de la lista desplegable
-  onSeleccionOrigenCambiada(evento: any): void {
-    this.buscadorLocalidadesService.seleccionarLocalidad(this.origenCtrl, evento);
-
-    // Como seleccionó un elemento de la lista, marcamos la selección como 100% válida
-    this.esSeleccionOrigenValida = true;
-  }
-
   hayCambioOrigen(): boolean {
     return this.origenCtrl.valorTexto !== this.valorOriginalOrigen;
   }
 
   guardarOrigen(): void {
-    if (!this.esSeleccionOrigenValida) {
-      return; // Doble seguridad por si intentan forzarlo
-    }
-
+    if (!this.esSeleccionOrigenValida) return;
     this.currentViajeData.origen = this.origenCtrl.valorTexto;
+    this.travelService.setViajeData({ ...this.currentViajeData, origen: this.origenCtrl.valorTexto });
     this.editandoOrigen = false;
-    this.esSeleccionOrigenValida = false;
+  }
 
-    // Aquí tu lógica para persistir el cambio en API/Servicio
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (DESTINO) ---
+  activarEdicionDestino(): void {
+    this.valorOriginalDestino = this.currentViajeData?.destino || '';
+    this.destinoCtrl.valorTexto = this.currentViajeData?.destino || '';
+    this.editandoDestino = true;
+    this.esSeleccionDestinoValida = true;
+  }
+
+  cancelarEdicionDestino(): void {
+    this.destinoCtrl.valorTexto = this.valorOriginalDestino;
+    this.editandoDestino = false;
+  }
+
+  hayCambioDestino(): boolean {
+    return this.destinoCtrl.valorTexto !== this.valorOriginalDestino;
+  }
+
+  guardarDestino(): void {
+    if (!this.esSeleccionDestinoValida) return;
+    this.currentViajeData.destino = this.destinoCtrl.valorTexto;
+    this.travelService.setViajeData({ ...this.currentViajeData, destino: this.destinoCtrl.valorTexto });
+    this.editandoDestino = false;
+  }
+
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (COCHE) ---
+  activarEdicionCoche(): void {
+    this.valorOriginalCoche = this.currentViajeData?.coche || null;
+    this.editandoCoche = true;
+  }
+
+  cancelarEdicionCoche(): void {
+    this.currentViajeData.coche = this.valorOriginalCoche;
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoCoche = false;
+  }
+
+  hayCambioCoche(): boolean {
+    return this.currentViajeData?.coche !== this.valorOriginalCoche;
+  }
+
+  guardarCoche(): void {
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoCoche = false;
+  }
+
+  onCocheCambiado(opcion: any) {
+    const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
+    const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
+    this.currentViajeData.coche = cocheObjeto;
+    if (!this.editandoViaje) {
+      this.travelService.setViajeData({ ...this.currentViajeData });
+    }
+  }
+
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (PLAZAS) ---
+  activarEdicionPlazas(): void {
+    this.valorOriginalPlazas = this.currentViajeData?.plazas || '';
+    this.editandoPlazas = true;
+  }
+
+  cancelarEdicionPlazas(): void {
+    this.currentViajeData.plazas = this.valorOriginalPlazas;
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoPlazas = false;
+  }
+
+  hayCambioPlazas(): boolean {
+    return this.currentViajeData?.plazas !== this.valorOriginalPlazas;
+  }
+
+  guardarPlazas(): void {
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoPlazas = false;
+  }
+
+  onPlazasCambiadas(opcion: any) {
+    const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
+    this.currentViajeData.plazas = plazas;
+    if (!this.editandoViaje) {
+      this.travelService.setViajeData({ ...this.currentViajeData });
+    }
+  }
+
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (FECHA) ---
+  activarEdicionFecha(): void {
+    this.valorOriginalFecha = this.currentViajeData?.fecha_salida || '';
+    this.editandoFecha = true;
+  }
+
+  cancelarEdicionFecha(): void {
+    this.currentViajeData.fecha_salida = this.valorOriginalFecha;
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoFecha = false;
+  }
+
+  hayCambioFecha(): boolean {
+    return this.currentViajeData?.fecha_salida !== this.valorOriginalFecha;
+  }
+
+  guardarFecha(): void {
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoFecha = false;
+  }
+
+  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (HORA) ---
+  activarEdicionHora(): void {
+    this.valorOriginalHora = this.currentViajeData?.hora_salida || '';
+    this.editandoHora = true;
+  }
+
+  cancelarEdicionHora(): void {
+    this.currentViajeData.hora_salida = this.valorOriginalHora;
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoHora = false;
+  }
+
+  hayCambioHora(): boolean {
+    return this.currentViajeData?.hora_salida !== this.valorOriginalHora;
+  }
+
+  guardarHora(): void {
+    this.travelService.setViajeData({ ...this.currentViajeData });
+    this.editandoHora = false;
   }
 }

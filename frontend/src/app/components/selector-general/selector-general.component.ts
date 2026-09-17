@@ -45,8 +45,9 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   @Input() ariaLabel: string = '';
   @Input() mostrarFlechaSelector: boolean = true;
   @Input() iconoPath: string = '';
+  @Input() permitirTextoLibre: boolean = false; // ⭐️ NUEVO: Controla si permite texto libre o exige selección estricta
 
-  @Output() seleccionCambiada = new EventEmitter<any>(); //para usar sin formulario reactivos
+  @Output() seleccionCambiada = new EventEmitter<any>();
   @Output() alAbrir = new EventEmitter<void>();
   @Output() textoCambiado = new EventEmitter<string>();
 
@@ -99,7 +100,6 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   writeValue(value: any): void {
-    console.log('📥 [HIJO writeValue] Recibido del padre:', value);
     if (value === this.valorTexto) {
       return;
     }
@@ -109,6 +109,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       this.actualizarTextoVisual();
     } else {
       this.valorGuardadoActual = null;
+      this.valorTexto = '';
       this.cdr.detectChanges();
     }
   }
@@ -125,9 +126,10 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     const textoSeleccionado = this.obtenerTextoOpcion(opcion);
     this.valorTexto = textoSeleccionado;
 
-    const valorParaGuardar = typeof opcion === 'string' ? opcion : opcion.valor;
+    const valorParaGuardar = typeof opcion === 'string' ? opcion : (opcion.valor !== undefined ? opcion.valor : textoSeleccionado);
+    this.valorGuardadoActual = valorParaGuardar;
+    
     this.onChange(valorParaGuardar);
-
     this.seleccionCambiada.emit(opcion);
 
     this.sugerencias = [];
@@ -160,8 +162,13 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   filtrarOpciones(event: any) {
     const texto = event.target.value;
     this.valorTexto = texto;
-    this.onChange(texto);
-    this.seleccionCambiada.emit(texto);
+    
+    // Si permite texto libre, propagamos el texto directamente
+    if (this.permitirTextoLibre) {
+      this.onChange(texto);
+      this.seleccionCambiada.emit(texto);
+    }
+
     this.textoCambiado.emit(texto);
     this.estaActivo = true;
     this.indiceActivo = -1;
@@ -178,7 +185,6 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
 
   manejarNavegacionTeclado(event: KeyboardEvent) {
     if (event.key === 'Tab') {
-      // Permitir que el Tab navegue libremente cerrando las sugerencias
       this.sugerencias = [];
       this.estaActivo = false;
       return;
@@ -214,8 +220,25 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       this.estaActivo = false;
       this.sugerencias = [];
       this.indiceActivo = -1;
+
+      // ⭐️ VALIDACIÓN ESTRICTA: Si no permite texto libre, verificamos si lo escrito coincide con una opción válida
+      if (!this.permitirTextoLibre && this.valorTexto.trim() !== '') {
+        const opcionValida = this.opciones.find(
+          (op) => this.obtenerTextoOpcion(op).toLowerCase() === this.valorTexto.toLowerCase()
+        );
+
+        if (!opcionValida) {
+          // Si no coincide con ninguna opción de la lista, limpiamos el campo
+          this.valorTexto = '';
+          this.valorGuardadoActual = null;
+          this.onChange('');
+          this.seleccionCambiada.emit(null);
+          this.textoCambiado.emit('');
+        }
+      }
+
       this.cdr.detectChanges();
-    }, 100);
+    }, 150);
     this.onTouched();
   }
 
@@ -241,7 +264,9 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
 
   obtenerTextoOpcion(opcion: any): string {
     if (typeof opcion === 'string') return opcion;
-    return opcion.descripcion.includes('.') ? this.translate.instant(opcion.descripcion) : opcion.descripcion;
+    if (!opcion) return '';
+    const desc = opcion.descripcion || opcion.nombre || '';
+    return desc.includes('.') ? this.translate.instant(desc) : desc;
   }
 
   presentPopover(event: Event) {
@@ -255,18 +280,13 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.sugerencias = [...this.opciones];
     this.estaActivo = true;
     this.indiceActivo = -1;
-
     this.alAbrir.emit();
   }
 
-  // Método centralizado para buscar la opción y traducirla correctamente
   private actualizarTextoVisual() {
-    console.log('🔍 [HIJO actualizarTextoVisual] Buscando valor guardado:', this.valorGuardadoActual);
-    console.log('📋 [HIJO] Opciones disponibles:', this.opciones);
-
     if (!this.valorGuardadoActual) {
       this.valorTexto = '';
-      this.cdr.detectChanges(); // ⭐️ Añadido aquí para limpiar al instante
+      this.cdr.detectChanges();
       return;
     }
 
@@ -274,17 +294,14 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       return;
     }
 
-    const opcionEncontrada = this.opciones.find((op) => (typeof op === 'string' ? op : op.valor) === this.valorGuardadoActual);
-    console.log('🎯 [HIJO] Opción encontrada en la lista:', opcionEncontrada);
+    const opcionEncontrada = this.opciones.find(
+      (op) => (typeof op === 'string' ? op : op.valor) === this.valorGuardadoActual
+    );
 
-    if (opcionEncontrada && typeof opcionEncontrada === 'object') {
-      if (opcionEncontrada.descripcion && opcionEncontrada.descripcion.includes('.')) {
-        this.valorTexto = this.translate.instant(opcionEncontrada.descripcion);
-      } else {
-        this.valorTexto = opcionEncontrada.descripcion;
-      }
+    if (opcionEncontrada) {
+      this.valorTexto = this.obtenerTextoOpcion(opcionEncontrada);
     } else {
-      this.valorTexto = this.valorGuardadoActual;
+      this.valorTexto = typeof this.valorGuardadoActual === 'string' ? this.valorGuardadoActual : '';
     }
 
     this.cdr.detectChanges();
