@@ -45,7 +45,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   @Input() ariaLabel: string = '';
   @Input() mostrarFlechaSelector: boolean = true;
   @Input() iconoPath: string = '';
-  @Input() permitirTextoLibre: boolean = false;
+  @Input() permitirTextoLibre: boolean = false; // ⭐️ NUEVO: Controla si permite texto libre o exige selección estricta
 
   @Output() seleccionCambiada = new EventEmitter<any>();
   @Output() alAbrir = new EventEmitter<void>();
@@ -56,10 +56,8 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   indiceActivo: number = -1;
   valorTexto: string = '';
   private valorGuardadoActual: any = null;
-  private seleccionandoOpcionEnProceso: boolean = false; 
-
-  onChange = (val: any) => { };
-  onTouched = () => { };
+  onChange = (val: any) => {};
+  onTouched = () => {};
   isOpen: boolean = false;
   isDesktop: boolean = window.innerWidth >= 992;
 
@@ -125,24 +123,18 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   seleccionarOpcion(opcion: any) {
-    this.seleccionandoOpcionEnProceso = true; 
-
     const textoSeleccionado = this.obtenerTextoOpcion(opcion);
     this.valorTexto = textoSeleccionado;
 
     const valorParaGuardar = typeof opcion === 'string' ? opcion : (opcion.valor !== undefined ? opcion.valor : textoSeleccionado);
     this.valorGuardadoActual = valorParaGuardar;
-
+    
     this.onChange(valorParaGuardar);
     this.seleccionCambiada.emit(opcion);
 
     this.sugerencias = [];
     this.estaActivo = false;
     this.indiceActivo = -1;
-
-    setTimeout(() => {
-      this.seleccionandoOpcionEnProceso = false;
-    }, 400);
 
     if (this.inputRef && this.inputRef.nativeElement) {
       setTimeout(() => {
@@ -170,7 +162,8 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   filtrarOpciones(event: any) {
     const texto = event.target.value;
     this.valorTexto = texto;
-
+    
+    // Si permite texto libre, propagamos el texto directamente
     if (this.permitirTextoLibre) {
       this.onChange(texto);
       this.seleccionCambiada.emit(texto);
@@ -224,20 +217,18 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
 
   onInputBlur() {
     setTimeout(() => {
-      if (this.seleccionandoOpcionEnProceso) {
-        return;
-      }
-
       this.estaActivo = false;
       this.sugerencias = [];
       this.indiceActivo = -1;
 
+      // ⭐️ VALIDACIÓN ESTRICTA: Si no permite texto libre, verificamos si lo escrito coincide con una opción válida
       if (!this.permitirTextoLibre && this.valorTexto.trim() !== '') {
         const opcionValida = this.opciones.find(
           (op) => this.obtenerTextoOpcion(op).toLowerCase() === this.valorTexto.toLowerCase()
         );
 
         if (!opcionValida) {
+          // Si no coincide con ninguna opción de la lista, limpiamos el campo
           this.valorTexto = '';
           this.valorGuardadoActual = null;
           this.onChange('');
@@ -247,7 +238,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
       }
 
       this.cdr.detectChanges();
-    }, 200);
+    }, 150);
     this.onTouched();
   }
 

@@ -10,7 +10,6 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
@@ -99,7 +98,6 @@ export class PrimerPasoComponent implements OnInit {
     private travelService: TravelService,
     private platform: Platform,
     private vehiculosServicesService: VehiculosServicesService,
-    private router: Router,
     private elementRef: ElementRef,
     private userService: UserServicesService,
     private cdr: ChangeDetectorRef
@@ -114,7 +112,6 @@ export class PrimerPasoComponent implements OnInit {
 
   ngOnInit() {
     const datosUsuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
-
     if (datosUsuarioLocal) {
       this.userData = datosUsuarioLocal;
     }
@@ -122,101 +119,40 @@ export class PrimerPasoComponent implements OnInit {
     this.checkScreenSize();
     this.obtenerVehiculos();
 
-    const viajeData = this.travelService.getViajeData();
-    console.log('[PrimerPaso] Datos del viaje obtenidos al iniciar:', viajeData);
+    const viajeData = this.travelService.getViajeData() || {};
 
-    if (viajeData && viajeData.fecha_salida) {
+    if (viajeData.fecha_salida) {
       this.fecha_seleccionada = viajeData.fecha_salida;
-      this.calcularHoraMinima();
-
-      if (viajeData.hora_salida) {
-        let hDate = new Date();
-        if (typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
-          const [horas, minutos] = viajeData.hora_salida.split(':');
-          hDate.setHours(Number(horas), Number(minutos), 0, 0);
-        } else {
-          hDate = new Date(viajeData.hora_salida);
-        }
-
-        // Comprobamos de forma segura que la fecha seleccionada existe antes de usarla
-        let esInvalida = false;
-        if (this.fecha_seleccionada) {
-          const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
-          const fechaHoy = new Date().toDateString();
-
-          if (fechaViaje === fechaHoy && this.horaMinimaPermitida) {
-            if (hDate < this.horaMinimaPermitida) {
-              esInvalida = true;
-            }
-          }
-        }
-
-        if (esInvalida || isNaN(hDate.getTime())) {
-          this.establecerHoraSegunFecha();
-        } else {
-          this.hora_seleccionada = hDate;
-          this.invalid_date = false;
-        }
-      } else {
-        this.establecerHoraSegunFecha();
-      }
-
-      this.viajeros = viajeData.viajeros || '0';
-      this.plazas = viajeData.plazas || '';
-
-      const cocheEnServicio = viajeData.coche;
-      const existeVehiculo = cocheEnServicio && this.userData?.usuario?.vehiculos?.some((v: any) => v.id === cocheEnServicio.id);
-
-      if (existeVehiculo) {
-        this.cocheSeleccionado = cocheEnServicio;
-      } else {
-        this.cocheSeleccionado = null;
-        this.guardaDatosDelViajeEnServicio('coche', null);
-      }
-
-      this.reservaAutomatica = viajeData.reserva_automatica ?? false;
     } else {
-      const date = new Date();
-      this.fecha_seleccionada = date.toISOString();
-
-      this.calcularHoraMinima();
-      this.establecerHoraSegunFecha();
-
-      this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
+      this.fecha_seleccionada = new Date().toISOString();
     }
 
-    // Suscripción a los cambios del servicio
+    this.calcularHoraMinima();
+
+    if (viajeData.hora_salida && typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
+      const [horas, minutos] = viajeData.hora_salida.split(':');
+      const hDate = new Date();
+      hDate.setHours(Number(horas), Number(minutos), 0, 0);
+      this.hora_seleccionada = hDate;
+    } else {
+      const horaBase = new Date();
+      horaBase.setTime(horaBase.getTime() + 60 * 60 * 1000);
+      this.hora_seleccionada = horaBase;
+    }
+
+    this.plazas = viajeData.plazas || '';
+    this.reservaAutomatica = viajeData.reserva_automatica ?? false;
+    this.cocheSeleccionado = viajeData.coche || null;
+
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
-        if (viajeData.plazas !== this.plazas) {
-          this.plazas = viajeData.plazas || '';
-        }
-
-        const cocheActualId = this.cocheSeleccionado?.id || this.cocheSeleccionado?.matricula || this.cocheSeleccionado;
-        const cocheNuevoId = viajeData.coche?.id || viajeData.coche?.matricula || viajeData.coche;
-        if (cocheActualId !== cocheNuevoId) {
-          this.cocheSeleccionado = viajeData.coche || null;
+        if (viajeData.plazas && viajeData.plazas !== this.plazas) {
+          this.plazas = viajeData.plazas;
         }
 
         if (viajeData.fecha_salida && viajeData.fecha_salida !== this.fecha_seleccionada) {
           this.fecha_seleccionada = viajeData.fecha_salida;
           this.calcularHoraMinima();
-        }
-
-        if (viajeData.hora_salida && typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
-          const [horas, minutos] = viajeData.hora_salida.split(':');
-          const hDate = new Date();
-          hDate.setHours(Number(horas), Number(minutos), 0, 0);
-
-          const fechaViaje = new Date(this.fecha_seleccionada || '').toDateString();
-          const fechaHoy = new Date().toDateString();
-
-          if (fechaViaje === fechaHoy && this.horaMinimaPermitida && hDate < this.horaMinimaPermitida) {
-            this.establecerHoraSegunFecha();
-          } else {
-            this.hora_seleccionada = hDate;
-            this.invalid_date = false;
-          }
         }
 
         this.cdr.detectChanges();
@@ -436,7 +372,6 @@ export class PrimerPasoComponent implements OnInit {
 
     const fechaViaje = new Date(this.fecha_seleccionada).toDateString();
     const fechaHoy = new Date().toDateString();
-
     const horaBase = new Date();
 
     if (fechaViaje === fechaHoy) {
@@ -446,12 +381,16 @@ export class PrimerPasoComponent implements OnInit {
     }
     this.hora_seleccionada = horaBase;
     this.invalid_date = false;
-
     this.calcularHoraMinima();
 
     const horasStr = String(horaBase.getHours()).padStart(2, '0');
     const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
-    this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
+
+    const actual = this.travelService.getViajeData()?.hora_salida;
+    const nuevoFormato = `${horasStr}:${minutosStr}`;
+    if (actual !== nuevoFormato) {
+      this.guardaDatosDelViajeEnServicio('hora_salida', nuevoFormato);
+    }
   }
 
   private validarHoraSeleccionadaConContexto() {
@@ -525,7 +464,13 @@ export class PrimerPasoComponent implements OnInit {
    * Captura la selección de plazas del selector general.
    */
   seleccionarPlazas(opcion: any) {
-    this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
-    this.guardaDatosDelViajeEnServicio('plazas', this.plazas);
+    const nuevaPlaza = typeof opcion === 'object' && opcion !== null
+      ? (opcion.descripcion || opcion.valor || '')
+      : String(opcion);
+
+    if (this.plazas !== nuevaPlaza) {
+      this.plazas = nuevaPlaza;
+      this.guardaDatosDelViajeEnServicio('plazas', this.plazas);
+    }
   }
 }

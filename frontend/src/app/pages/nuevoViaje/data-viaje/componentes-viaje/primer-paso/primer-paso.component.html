@@ -129,7 +129,7 @@
         >
           {{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_NUMERO_PASAJEROS' | translate }}
         </label>
-        <div class="input-container mb-3 w-100 d-flex justify-content-center">
+<div class="input-container mb-3 w-100 d-flex justify-content-center">
           <app-selector-general
             idUnico="input-plazas"
             aria-labelledby="label-plazas"
@@ -137,7 +137,6 @@
             class="w-100 selector-compacto"
             [style.max-width.px]="280"
             [opciones]="opcionesPlazas"
-            [(ngModel)]="plazas"
             [valor]="plazas"
             [soloLectura]="true"
             [mostrarFlechaSelector]="true"

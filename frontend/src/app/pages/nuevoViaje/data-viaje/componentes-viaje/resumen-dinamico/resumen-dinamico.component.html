@@ -167,7 +167,7 @@
                           idUnico="input-plazas-resumen"
                           placeholderKey="PLACEHOLDER.NUM_PLAZAS"
                           [opciones]="opcionesPlazas"
-                          [ngModel]="currentViajeData.plazas"
+                          [(ngModel)]="currentViajeData.plazas"
                           [valor]="currentViajeData.plazas"
                           [soloLectura]="true"
                           [mostrarFlechaSelector]="true"
@@ -204,7 +204,7 @@
                       <span *ngIf="!editandoFecha" class="text-truncate d-block">
                         {{ getFormattedDate() }}
                       </span>
-                      <input *ngIf="editandoFecha" type="date" [(ngModel)]="currentViajeData.fecha_salida" class="form-control selectDate mt-0 w-100" />
+                      <input *ngIf="editandoFecha" type="date" [(ngModel)]="currentViajeData.fecha_salida" (ngModelChange)="onFieldChange()" class="form-control selectDate mt-0 w-100" />
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
@@ -235,7 +235,7 @@
                       <span *ngIf="!editandoHora" class="text-truncate d-block">
                         {{ currentViajeData?.hora_salida }}
                       </span>
-                      <input *ngIf="editandoHora" type="time" [(ngModel)]="currentViajeData.hora_salida" class="form-control selecthour mt-0 w-100" />
+                      <input *ngIf="editandoHora" type="time" [(ngModel)]="currentViajeData.hora_salida" (ngModelChange)="onFieldChange()" class="form-control selecthour mt-0 w-100" />
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
