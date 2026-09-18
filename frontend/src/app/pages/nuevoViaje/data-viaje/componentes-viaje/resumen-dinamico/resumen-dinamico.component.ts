@@ -34,7 +34,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   currentViajeData: any = {};
   private destroy$ = new Subject<void>();
 
-  // Estado global y estados de edición individual por campo
   editandoViaje: boolean = false;
   editandoOrigen: boolean = false;
   editandoDestino: boolean = false;
@@ -43,7 +42,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   editandoFecha: boolean = false;
   editandoHora: boolean = false;
 
-  // Valores originales para la cancelación individual
   valorOriginalOrigen: string = '';
   valorOriginalDestino: string = '';
   valorOriginalCoche: any = null;
@@ -121,13 +119,19 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   actualizarInformacion() {
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
-        this.currentViajeData = { ...viajeData };
+        // Evitamos sobrescribir si los datos son exactamente iguales para prevenir bucles
+        const jsonActual = JSON.stringify(this.currentViajeData);
+        const jsonNuevo = JSON.stringify(viajeData);
+        
+        if (jsonActual !== jsonNuevo) {
+          this.currentViajeData = { ...viajeData };
 
-        if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto) {
-          this.origenCtrl.valorTexto = viajeData.origen;
-        }
-        if (viajeData.destino && viajeData.destino !== this.destinoCtrl.valorTexto) {
-          this.destinoCtrl.valorTexto = viajeData.destino;
+          if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto && !this.editandoOrigen) {
+            this.origenCtrl.valorTexto = viajeData.origen;
+          }
+          if (viajeData.destino && viajeData.destino !== this.destinoCtrl.valorTexto && !this.editandoDestino) {
+            this.destinoCtrl.valorTexto = viajeData.destino;
+          }
         }
       }
     });
@@ -145,7 +149,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  // Activa la edición global (todos los campos se vuelven editables a la vez)
   toggleEditarViaje() {
     const datosUltimos = this.travelService.getViajeData();
     if (datosUltimos) {
@@ -156,7 +159,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.copiaViajeData = JSON.parse(JSON.stringify(this.currentViajeData));
     this.editandoViaje = true;
 
-    // Dejamos los campos individuales en falso para que aparezcan los lápices
     this.editandoOrigen = false;
     this.editandoDestino = false;
     this.editandoCoche = false;
@@ -165,19 +167,15 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.editandoHora = false;
   }
 
-  onFieldChange() {
-    if (this.editandoViaje) {
-      const viajeActualizado = {
-        ...this.currentViajeData,
-        origen: this.origenCtrl.valorTexto,
-        destino: this.destinoCtrl.valorTexto,
-      };
-      this.travelService.setViajeData(viajeActualizado);
-    }
-  }
-
+  // Guardado global de todos los campos modificados
   guardarCambios() {
-    this.onFieldChange();
+    const viajeActualizado = {
+      ...this.currentViajeData,
+      origen: this.origenCtrl.valorTexto,
+      destino: this.destinoCtrl.valorTexto,
+    };
+    this.travelService.setViajeData(viajeActualizado);
+    
     this.editandoViaje = false;
     this.editandoOrigen = false;
     this.editandoDestino = false;
@@ -248,7 +246,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   guardarOrigen(): void {
     if (!this.esSeleccionOrigenValida) return;
     this.currentViajeData.origen = this.origenCtrl.valorTexto;
-    this.travelService.setViajeData({ ...this.currentViajeData, origen: this.origenCtrl.valorTexto });
+    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoOrigen = false;
   }
 
@@ -272,7 +270,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   guardarDestino(): void {
     if (!this.esSeleccionDestinoValida) return;
     this.currentViajeData.destino = this.destinoCtrl.valorTexto;
-    this.travelService.setViajeData({ ...this.currentViajeData, destino: this.destinoCtrl.valorTexto });
+    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoDestino = false;
   }
 
@@ -284,12 +282,11 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
   cancelarEdicionCoche(): void {
     this.currentViajeData.coche = this.valorOriginalCoche;
-    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoCoche = false;
   }
 
   hayCambioCoche(): boolean {
-    return this.currentViajeData?.coche !== this.valorOriginalCoche;
+    return JSON.stringify(this.currentViajeData?.coche) !== JSON.stringify(this.valorOriginalCoche);
   }
 
   guardarCoche(): void {
@@ -301,9 +298,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
     const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
     this.currentViajeData.coche = cocheObjeto;
-    if (!this.editandoViaje) {
-      this.travelService.setViajeData({ ...this.currentViajeData });
-    }
+    // ⚠️ Ya NO se llama a setViajeData() aquí de forma automática para evitar el bucle infinito
   }
 
   // --- MÉTODOS DE EDICIÓN INDIVIDUAL (PLAZAS) ---
@@ -314,7 +309,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
   cancelarEdicionPlazas(): void {
     this.currentViajeData.plazas = this.valorOriginalPlazas;
-    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoPlazas = false;
   }
 
@@ -330,9 +324,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   onPlazasCambiadas(opcion: any) {
     const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
     this.currentViajeData.plazas = plazas;
-    if (!this.editandoViaje) {
-      this.travelService.setViajeData({ ...this.currentViajeData });
-    }
+    // ⚠️ Ya NO se llama a setViajeData() aquí de forma automática para evitar el bucle infinito
   }
 
   // --- MÉTODOS DE EDICIÓN INDIVIDUAL (FECHA) ---
@@ -343,7 +335,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
   cancelarEdicionFecha(): void {
     this.currentViajeData.fecha_salida = this.valorOriginalFecha;
-    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoFecha = false;
   }
 
@@ -364,7 +355,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
   cancelarEdicionHora(): void {
     this.currentViajeData.hora_salida = this.valorOriginalHora;
-    this.travelService.setViajeData({ ...this.currentViajeData });
     this.editandoHora = false;
   }
 
