@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoOrigen">
+                      <ng-container *ngIf="!editandoOrigen">
                         <button type="button" class="icon-btn" (click)="activarEdicionOrigen()" title="Editar origen">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoDestino">
+                      <ng-container *ngIf="!editandoDestino">
                         <button type="button" class="icon-btn" (click)="activarEdicionDestino()" title="Editar destino">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -130,7 +130,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoCoche">
+                      <ng-container *ngIf="!editandoCoche">
                         <button type="button" class="icon-btn" (click)="activarEdicionCoche()" title="Editar coche">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoPlazas">
+                      <ng-container *ngIf="!editandoPlazas">
                         <button type="button" class="icon-btn" (click)="activarEdicionPlazas()" title="Editar plazas">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -208,7 +208,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoFecha">
+                      <ng-container *ngIf="!editandoFecha">
                         <button type="button" class="icon-btn" (click)="activarEdicionFecha()" title="Editar fecha">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -239,7 +239,7 @@
                     </div>
 
                     <div class="botones_editar ms-2 d-flex align-items-center">
-                      <ng-container *ngIf="editandoViaje && !editandoHora">
+                      <ng-container *ngIf="!editandoHora">
                         <button type="button" class="icon-btn" (click)="activarEdicionHora()" title="Editar hora">
                           <i class="fi fi-rr-pencil"></i>
                         </button>
@@ -256,20 +256,6 @@
                   </div>
                 </li>
               </ul>
-            </div>
-
-            <!-- Botones de Acción Globales -->
-            <div class="container d-flex justify-content-center mt-3">
-              <button *ngIf="!editandoViaje" type="button" mat-raised-button class="btn_bg" (click)="toggleEditarViaje()">
-                <i class="fi fi-rr-edit me-1"></i>
-                {{ 'NUEVOVIAJE.RESUMEN_DINAMICO.BOTON_MODIFICAR_VIAJE' | translate }}
-              </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg me-2" (click)="guardarCambios()">
-                Guardar
-              </button>
-              <button *ngIf="editandoViaje" type="button" mat-raised-button class="btn_bg_cancel" (click)="cancelarEdicion()">
-                Cancelar
-              </button>
             </div>
           </div>
         </div>
