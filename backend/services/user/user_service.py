@@ -1095,3 +1095,16 @@ def capture_wallet_order(order_id: str):
         db.session.rollback()
         print(f"❌ Error interno al actualizar el monedero: {str(e)}")
         return jsonify({"error": f"Error interno al procesar la recarga: {str(e)}"}), 500
+    
+
+@user_blueprint.route("/saldo-actual", methods=['GET'])
+@jwt_required()
+def get_wallet_balance():
+    current_user_id = get_jwt_identity()
+    
+    monedero = Monedero.query.filter_by(usuario_id=current_user_id).first()
+    if not monedero:
+        # Si aún no tiene monedero creado, devolvemos saldo 0
+        return jsonify({"saldo": 0.0}), 200
+        
+    return jsonify({"saldo": monedero.saldo}), 200
