@@ -16,11 +16,9 @@ import { IonicModule } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Subject, forkJoin, Observable, from, takeUntil } from 'rxjs';
-import { SpinnerComponent } from '../../../../../components/spinner/spinner.component';
+import { Subject, forkJoin, from, takeUntil } from 'rxjs';
 import { TravelService } from '../../../../../core/travel-services/travel.service';
 
-// Interfaz extendida para saber si una ruta concreta devuelta por la API tiene peajes o no
 interface RutaExtendida {
   route: google.maps.DirectionsRoute;
   tienePeajes: boolean;
@@ -71,7 +69,6 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     mapTypeControl: false,
   };
 
-  //Sobreescribe la linea que pinta google en los mapas.
   public directionsOptions: google.maps.DirectionsRendererOptions = {
     polylineOptions: {
       strokeColor: '#7B61FF',
@@ -143,10 +140,6 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  /**
-   * Obtiene de forma simultánea rutas con peajes y rutas sin peajes, las unifica
-   * y preselecciona la primera alternativa por defecto de manera limpia.
-   */
   buscarRutasCombinadas(): void {
     if (!this.origen || !this.destino) return;
     this.isLoadingRoutes = true;
@@ -246,9 +239,6 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  /**
-   * Se ejecuta al hacer click en cualquier tarjeta o cambiar el Radio Button de la ruta.
-   */
   selectRoute(index: number): void {
     if (!this.rutasCombinadas?.[index]) return;
 
@@ -289,21 +279,6 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.travelService.setViajeData(info);
     localStorage.setItem('rutaSeleccionada', JSON.stringify(info));
-  }
-
-  onMapClick(event: google.maps.MapMouseEvent) {
-    if (event.latLng) {
-      this.markerOrigin = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-      new google.maps.Geocoder().geocode(
-        { location: event.latLng },
-        (res, stat) => {
-          if (stat === 'OK' && res?.[0]) {
-            this.origen = res[0].formatted_address;
-            this.buscarRutasCombinadas();
-          }
-        },
-      );
-    }
   }
 
   ngOnDestroy() {
