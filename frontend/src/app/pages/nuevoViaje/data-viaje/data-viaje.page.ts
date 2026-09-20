@@ -14,9 +14,10 @@ import { TravelService } from '../../../core/travel-services/travel.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ResumenDinamicoComponent } from './componentes-viaje/resumen-dinamico/resumen-dinamico.component';
-import { TercerPasoComponent } from "./componentes-viaje/tercer-paso/tercer-paso.component";
+import { TercerPasoComponent } from './componentes-viaje/tercer-paso/tercer-paso.component';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
-import { CuartoPasoComponent } from "./componentes-viaje/cuarto-paso/cuarto-paso.component";
+import { CuartoPasoComponent } from './componentes-viaje/cuarto-paso/cuarto-paso.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-data-viaje',
@@ -36,7 +37,7 @@ import { CuartoPasoComponent } from "./componentes-viaje/cuarto-paso/cuarto-paso
     NavbarComponent,
     ResumenDinamicoComponent,
     TercerPasoComponent,
-    CuartoPasoComponent
+    CuartoPasoComponent,
   ],
   providers: [provideNativeDateAdapter(), MessageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -58,6 +59,7 @@ export class DataViajePage implements OnInit {
     private navCtrl: NavController,
     private travelService: TravelService,
     private messageService: MessageService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -78,6 +80,8 @@ export class DataViajePage implements OnInit {
     const currentViajeData = this.travelService.getViajeData();
 
     if (!currentViajeData?.hora_salida || !currentViajeData?.plazas || !currentViajeData?.coche) {
+      const tituloError = this.translate.instant('NUEVOVIAJE.PRIMER_PASO.MENSAJE_ERROR.TITULO');
+      const detalleError = this.translate.instant('NUEVOVIAJE.PRIMER_PASO.MENSAJE_ERROR.MENSAJE');
       this.messageService.add({
         severity: 'error',
         summary: 'Faltan datos',
@@ -167,11 +171,11 @@ export class DataViajePage implements OnInit {
         severity: 'error',
         summary: 'Error de flujo',
         detail: 'Faltan parámetros esenciales de la ruta. Por favor, revisa los pasos anteriores.',
-        life: 3000
+        life: 3000,
       });
     } else {
       this.navCtrl.navigateRoot(['/resumen-viaje'], {
-        queryParams: currentViajeData
+        queryParams: currentViajeData,
       });
       this.reiniciarPasos();
     }
@@ -182,13 +186,13 @@ export class DataViajePage implements OnInit {
 
     if (guardadoCorrecto) {
       const viajeDataFinalizado = this.travelService.getViajeData();
-      
+
       console.log('Navegando al resumen con datos completos:', viajeDataFinalizado);
-      
+
       this.navCtrl.navigateRoot(['/resumen-viaje'], {
-        queryParams: { origin: 'creacion' } 
+        queryParams: { origin: 'creacion' },
       });
-      
+
       this.cuarto_paso = false;
     }
   }

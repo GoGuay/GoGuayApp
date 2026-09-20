@@ -88,7 +88,7 @@
             <ion-row class="align-items-center justify-content-center">
 
               <ion-col size="auto" class="text-center">
-                <div class="conductor-container position-relative d-inline-block">
+                <div class="conductor-container position-relative d-inline-block" data-tooltip="Ver perfil">
                   <ion-avatar class="avatar-conductor">
                     <img [alt]="fotoPerfil || 'Conductor'"
                       [src]="fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
@@ -105,7 +105,7 @@
 
               <ion-col size="auto" class="d-flex justify-content-center align-items-center gap-2 flex-wrap"
                 *ngIf="viaje.acompanantes && viaje.acompanantes.length > 0">
-                <ion-avatar class="avatar-acompanante" *ngFor="let ac of viaje.acompanantes">
+                <ion-avatar class="avatar-acompanante" *ngFor="let ac of viaje.acompanantes" (click)="abrirPerfil()" matTooltip="Ver perfil">
                   <img [alt]="ac.nombre || 'Pasajero'"
                     [src]="ac.fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
                 </ion-avatar>

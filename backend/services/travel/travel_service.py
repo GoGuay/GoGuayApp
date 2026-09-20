@@ -8,13 +8,16 @@ from flask import Blueprint, jsonify, request
 import requests
 from datetime import datetime
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario
+from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 import json
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_API = os.getenv('PAYPAL_API')
 
 travel_blueprint = Blueprint('travel', __name__)
 
@@ -269,73 +272,7 @@ def obtener_viajes():
 
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#           SERVICIO PARA UNIRSE A UN VIAJE
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/unirse_viaje', methods=['POST'])
-def unirse_viaje():
-    try:
-        data = request.get_json()
-    except Exception as e:
-        return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
 
-    usuario_id = data.get('usuario_id')
-    viaje_id = data.get('viaje_id')
-
-    if not usuario_id or not viaje_id:
-        return jsonify({"error": "Faltan datos obligatorios (usuario_id y/o viaje_id)"}), 400
-
-    viaje = Viaje.query.get(viaje_id)
-    if not viaje:
-        return jsonify({"error": "El viaje no existe"}), 404
-
-    if viaje.plazas <= 0:
-        return jsonify({"error": "No hay plazas disponibles en este viaje"}), 400
-
-    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=usuario_id, viaje_id=viaje_id).first()
-    if pasajero_existente:
-        return jsonify({"error": "El usuario ya está registrado en este viaje"}), 400
-
-    estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
-
-    nuevo_pasajero = PasajeroViaje(
-        usuario_id=usuario_id, 
-        viaje_id=viaje_id, 
-        estado=estado_inicial
-    )
-    db.session.add(nuevo_pasajero)
-
-    if viaje.reserva_automatica:
-        viaje.plazas -= 1
-    
-    db.session.commit()
-
-    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
-    usuario = pasajero.usuario 
-    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
-    
-    if not usuario:
-        return jsonify({"error": "El usuario no existe"}), 404
-    
-    creador_id = viaje.usuario_id
-    if creador_id != usuario_id:
-        usuario_solicitante = nuevo_pasajero.usuario
-        nombre = f"{usuario_solicitante.nombre} {usuario_solicitante.apellidos}"
-        
-        if viaje.reserva_automatica:
-            msg = f"{nombre} se ha unido automáticamente a tu viaje."
-            titulo = "¡Nuevo pasajero!"
-        else:
-            msg = f"{nombre} ha solicitado una plaza en tu viaje. Revisa la solicitud."
-            titulo = "Nueva solicitud de plaza"
-
-        notif = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=msg)
-        db.session.add(notif)
-        db.session.commit()
-
-        enviar_notificacion_push(usuario_id=creador_id, titulo=titulo, cuerpo=msg, data={"viaje_id": str(viaje_id)})
-
-    return jsonify({"mensaje": "Solicitud procesada", "viaje": viaje.serialize()}), 200
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -587,7 +524,104 @@ def registrar_token():
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA CONFIRMAR UN PASAJERO MANUALMENTE
+#           SERVICIO PARA UNIRSE A UN VIAJE - ACEPTACIÓN AUTOMÁTICA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@travel_blueprint.route('/unirse_viaje', methods=['POST'])
+def unirse_viaje():
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
+
+    usuario_id = data.get('usuario_id')
+    viaje_id = data.get('viaje_id')
+    paypal_order_id = data.get('paypal_order_id')
+
+    if not usuario_id or not viaje_id or not paypal_order_id:
+        return jsonify({"error": "Faltan datos obligatorios (usuario_id, viaje_id y/o paypal_order_id)"}), 400
+    
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "El viaje no existe"}), 404
+
+    if viaje.plazas <= 0:
+        return jsonify({"error": "No hay plazas disponibles en este viaje"}), 400
+
+    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=usuario_id, viaje_id=viaje_id).first()
+    if pasajero_existente:
+        return jsonify({"error": "El usuario ya está registrado en este viaje"}), 400
+
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    orden_paypal_db = Ordenes_Paypal.query.filter_by(paypal_order_id=paypal_order_id).first()
+    # importe_a_cobrar = f"{orden_paypal_db.importe_total:.2f}" if orden_paypal_db else f"{viaje.precio_viaje:.2f}"
+
+    auth_id = None
+
+    if viaje.reserva_automatica:
+        # CASO A: Automática -> Cobro inmediato (CAPTURE)
+        response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/capture", headers=headers)
+        res_data = response.json()
+        if response.status_code not in [200, 201]:
+            return jsonify({"error": "Error al procesar el pago automático en PayPal", "detalle": res_data}), response.status_code
+    else:
+        # CASO B: Manual -> Solo congelamos el dinero (AUTHORIZE)
+        response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize", headers=headers)
+        res_data = response.json()
+        if response.status_code not in [200, 201]:
+            return jsonify({"error": "Error al congelar el pago en PayPal", "detalle": res_data}), response.status_code
+        
+        try:
+            auth_id = res_data['purchase_units'][0]['payments']['authorizations'][0]['id']
+        except (KeyError, IndexError):
+            return jsonify({"error": "No se pudo obtener la autorización de PayPal", "detalle": res_data}), 500
+
+    estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
+
+    nuevo_pasajero = PasajeroViaje(
+        usuario_id=usuario_id, 
+        viaje_id=viaje_id, 
+        estado=estado_inicial,
+        paypal_auth_id=auth_id
+    )
+    db.session.add(nuevo_pasajero)
+
+    if viaje.reserva_automatica:
+        viaje.plazas -= 1
+    
+    db.session.commit()
+
+    pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
+    usuario = pasajero.usuario 
+    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
+    
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
+    
+    creador_id = viaje.usuario_id
+    if creador_id != usuario_id:
+        usuario_solicitante = nuevo_pasajero.usuario
+        nombre = f"{usuario_solicitante.nombre} {usuario_solicitante.apellidos}"
+        
+        if viaje.reserva_automatica:
+            msg = f"{nombre} se ha unido automáticamente a tu viaje."
+            titulo = "¡Nuevo pasajero!"
+        else:
+            msg = f"{nombre} ha solicitado una plaza en tu viaje. Revisa la solicitud."
+            titulo = "Nueva solicitud de plaza"
+
+        notif = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=msg)
+        db.session.add(notif)
+        db.session.commit()
+
+        enviar_notificacion_push(usuario_id=creador_id, titulo=titulo, cuerpo=msg, data={"viaje_id": str(viaje_id)})
+
+    return jsonify({"mensaje": "Solicitud procesada", "viaje": viaje.serialize()}), 200
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA CONFIRMAR UN PASAJERO - ACEPTACIÓN MANUAL
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/confirmar_pasajero_manual', methods=['POST'])
 def confirmar_pasajero_manual():
@@ -617,6 +651,34 @@ def confirmar_pasajero_manual():
 
     if viaje.plazas <= 0:
         return jsonify({"error": "No quedan plazas disponibles"}), 400
+    
+    if solicitud.paypal_auth_id:
+        token = get_access_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        
+        # Obtenemos el importe de la orden guardada o del viaje
+        orden_paypal = Ordenes_Paypal.query.filter_by(viaje_id=viaje_id, pasajero_id=pasajero_id).first()
+        importe_a_cobrar = f"{orden_paypal.importe_total:.2f}" if orden_paypal else f"{viaje.precio_viaje:.2f}"
+
+        payload = {
+            "amount": {
+                "currency_code": "EUR",
+                "value": importe_a_cobrar
+            },
+            "is_final_capture": True
+        }
+
+        # Petición de captura a la API de PayPal usando la autorización guardada
+        response = requests.post(
+            f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/capture", 
+            json=payload, 
+            headers=headers
+        )
+        capture_data = response.json()
+
+        if response.status_code not in [200, 201]:
+            print("❌ Error al capturar el pago al confirmar:", capture_data)
+            return jsonify({"error": "Error al procesar el cobro final en PayPal", "detalle": capture_data}), response.status_code
 
     try:
         solicitud.estado = 'aceptado'
@@ -652,7 +714,7 @@ def confirmar_pasajero_manual():
     
 
 #
-# SERVICIO PARA CANCELAR UNA SOLICITUD PENDIENTE DE UN PASAJERO
+# SERVICIO PARA  QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR
 #
 @travel_blueprint.route('/api/travel/cancelar_solicitud_manual', methods=['POST'])
 def cancelar_solicitud():
@@ -681,11 +743,15 @@ def obtener_mis_solicitudes(usuario_id):
     return jsonify([s.viaje.serialize(current_user_id=usuario_id) for s in solicitudes]), 200
 
 #
-# SERVICIO PARA RECHAZAR UNA SOLICITUD PENDIENTE DE UN PASAJERO
+# SERVICIO PARA QUE UN CONDUCTOR RECHACE UNA SOLICITUD DE PLAZA DE UN PASAJERO
 #
 @travel_blueprint.route('/rechazar_pasajero_manual', methods=['POST'])
 def rechazar_pasajero_manual():
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
+    
     viaje_id = data.get('viaje_id')
     pasajero_id = data.get('pasajero_id')
 
@@ -697,19 +763,44 @@ def rechazar_pasajero_manual():
 
     if not solicitud:
         return jsonify({"error": "Solicitud no encontrada"}), 404
+    
+    if solicitud.paypal_auth_id:
+        token = get_access_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        
+        response = requests.post(
+            f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/void", 
+            headers=headers
+        )
+        
+        # PayPal suele devolver 204 (No Content) en los voids exitosos, pero aceptamos 200/201 por seguridad
+        if response.status_code not in [200, 201, 204]:
+            try:
+                void_data = response.json()
+            except Exception:
+                void_data = {"error_text": response.text}
+                
+            print("❌ Error al liberar fondos en PayPal al rechazar:", void_data)
+            return jsonify({
+                "error": "No se pudo liberar el dinero retenido en PayPal", 
+                "detalle": void_data
+            }), response.status_code
+    try:
+        solicitud.estado = 'rechazado'
+        db.session.commit()
 
-    solicitud.estado = 'rechazado'
-    db.session.commit()
+        viaje = Viaje.query.get(viaje_id)
+        enviar_notificacion_push(
+            usuario_id=pasajero_id,
+            titulo="Solicitud rechazada",
+            cuerpo=f"Lo sentimos, el conductor ha rechazado tu solicitud para el viaje a {viaje.destino}.",
+            data={"viaje_id": str(viaje_id), "tipo": "solicitud_rechazada"}
+        )
 
-    viaje = Viaje.query.get(viaje_id)
-    enviar_notificacion_push(
-        usuario_id=pasajero_id,
-        titulo="Solicitud rechazada",
-        cuerpo=f"Lo sentimos, el conductor ha rechazado tu solicitud para el viaje a {viaje.destino}.",
-        data={"viaje_id": str(viaje_id), "tipo": "solicitud_rechazada"}
-    )
-
-    return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
+        return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al procesar el rechazo en la base de datos", "detalle": str(e)}), 500
 
 
 #
@@ -907,3 +998,17 @@ def obtener_viajes_recomendados(user_id):
     except Exception as e:
         print(f"Error crítico en recomendación: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
+    
+    #Obtener el access_token de paypal
+def get_access_token():
+    """
+    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
+    2. Se le pasan otros permisos aparte del id y la clave secreta
+    3. Devuelve un json el access_token
+    """
+    res = requests.post(
+        f"{PAYPAL_API}/v1/oauth2/token",
+        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+        data={'grant_type': 'client_credentials'}
+    )
+    return res.json()['access_token']

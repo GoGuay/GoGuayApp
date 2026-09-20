@@ -429,14 +429,10 @@ export class UserServicesService {
     const token = localStorage.getItem('access_token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
-    return this.http.post<any>(
-      `${this.apiUrl}/user/create-wallet-order`,
-      { cantidad },
-      { headers }
-    ).pipe(
+    return this.http.post<any>(`${this.apiUrl}/user/create-wallet-order`, { cantidad }, { headers }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error al crear la orden de recarga del monedero:', error);
         return throwError(() => error);
@@ -453,20 +449,34 @@ export class UserServicesService {
     const token = localStorage.getItem('access_token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
-    return this.http.post<any>(
-      `${this.apiUrl}/user/capture-wallet-order/${orderId}`,
-      {},
-      { headers }
-    ).pipe(
+    return this.http.post<any>(`${this.apiUrl}/user/capture-wallet-order/${orderId}`, {}, { headers }).pipe(
       map((response) => {
         // Opcional: si quieres actualizar el estado del usuario o emitir algo si es necesario
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al capturar la orden de recarga del monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Obtiene el saldo actual del monedero del usuario autenticado.
+   */
+  obtenerSaldoMonedero(): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.get<any>(`${this.apiUrl}/user/saldo-actual`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error al obtener el saldo del monedero:', error);
         return throwError(() => error);
       })
     );

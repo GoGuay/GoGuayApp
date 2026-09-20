@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,6 @@ import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { Location } from '@angular/common';
-import { Subject } from 'rxjs';
 import { ControlLocalidad } from '../../../models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from '../../../core/buscador-localidades/buscador-localidades.service';
 import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
@@ -37,12 +36,14 @@ import { SelectorGeneralComponent } from 'src/app/components/selector-general/se
     MatTooltipModule,
     ToastModule,
     SelectorGeneralComponent,
+    SpinnerComponent,
   ],
 })
 export class NuevoViajePage implements OnInit {
+  // ==========================================
+  // PROPIEDADES PÚBLICAS Y DE ESTADO
+  // ==========================================
   userLoggedIn: boolean = false;
-  isOpen: boolean = false;
-
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
   plazas: string = '';
@@ -51,15 +52,9 @@ export class NuevoViajePage implements OnInit {
   title_help_carnet: string = '';
   message_help_carnet: string = '';
   message_help_auth: string = '';
+  texto_spinner: string = 'Buscando ubicación...';
 
-  sugerenciasOrigen: any[] = [];
-  sugerenciasDestino: any[] = [];
-
-  cargandoOrigen: boolean = false;
-  cargandoDestino: boolean = false;
-
-  indiceActivoOrigen: number = -1;
-  indiceActivoDestino: number = -1;
+  spinnerActivo: boolean = false;
 
   irAtrasImg: string = '../../../assets/sistema/atras.png';
 
@@ -70,37 +65,13 @@ export class NuevoViajePage implements OnInit {
     { id: '4', descripcion: '4' },
   ];
 
-  private buscadorOrigen$ = new Subject<string>();
-  private buscadorDestino$ = new Subject<string>();
-  estaEnOrigen: boolean = false;
-  estaEnDestino: boolean = false;
-  private ultimaLocalidadValidaOrigen: any = null;
-  private ultimaLocalidadValidaDestino: any = null;
-
-  private cacheConsultas: { [key: string]: any[] } = {};
-
-  @ViewChild('inputOrigen') inputOrigen!: ElementRef;
-  @ViewChild('inputDestino') inputDestino!: ElementRef;
-
-  mapCenter: { lat: number; lng: number } = { lat: 40.4168, lng: -3.7038 };
-
-  toggleDropdown() {
-    this.isOpen = !this.isOpen;
-  }
-
-  selectOption(valor: string) {
-    this.plazas = valor;
-    this.isOpen = false;
-  }
-
   // Opcional: Cerrar si el usuario hace click fuera
   @HostListener('document:click', ['$event'])
-  closeDropdown(event: Event) {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.isOpen = false;
-    }
-  }
+  closeDropdown(event: Event) {}
 
+  // ==========================================
+  // CONSTRUCTOR (Inyección y traducciones)
+  // ==========================================
   constructor(
     private navCtrl: NavController,
     private viajesService: TravelService,
@@ -108,7 +79,6 @@ export class NuevoViajePage implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private location: Location,
-    private elementRef: ElementRef,
     private travelService: TravelService,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
     private route: ActivatedRoute
@@ -119,6 +89,7 @@ export class NuevoViajePage implements OnInit {
 
     this.buscadorLocalidadesService.inicializarBuscador(this.origenCtrl);
     this.buscadorLocalidadesService.inicializarBuscador(this.destinoCtrl);
+
     this.translate.get('NUEVOVIAJE.MENSAJE_AYUDA_CARNET').subscribe((traduccion: string) => {
       this.message_help_carnet = traduccion;
     });
@@ -129,7 +100,9 @@ export class NuevoViajePage implements OnInit {
       this.message_help_auth = traduccion;
     });
   }
-
+  // ==========================================
+  // CICLOS DE VIDA DEL COMPONENTE
+  // ==========================================
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
 
@@ -138,8 +111,6 @@ export class NuevoViajePage implements OnInit {
         const destinoSugerido = params['destino'];
 
         this.destinoCtrl.valorTexto = destinoSugerido;
-
-        this.ultimaLocalidadValidaDestino = { descripcion: destinoSugerido };
 
         const viajeActual = this.travelService.getViajeData() || {};
         this.travelService.setViajeData({
@@ -152,7 +123,9 @@ export class NuevoViajePage implements OnInit {
     });
   }
 
-  // Getters auxiliares para mantener compatibilidad con el HTML existente
+  // ==========================================
+  // GETTERS Y SETTERS
+  // ==========================================
   get origen(): string {
     return this.origenCtrl.valorTexto;
   }
@@ -167,9 +140,12 @@ export class NuevoViajePage implements OnInit {
     this.destinoCtrl.valorTexto = val;
   }
 
+  // ==========================================
+  // 5. MÉTODOS PÚBLICOS (Lógica de Negocio)
+  // ==========================================
+
   /**
    * Función para navegar hasta la página "data-viaje"
-   *
    */
   goTo() {
     const viajeData = {
@@ -182,12 +158,16 @@ export class NuevoViajePage implements OnInit {
     if (!this.userLoggedIn) {
       this.funcionesComunes.openConfirmModal(this.title_help_carnet, this.message_help_auth);
     } else {
-      /**
-       * Se almacena temporalmente los datos del viaje.
-       */
       this.viajesService.setViajeData(viajeData);
       this.navCtrl.navigateRoot('/data-viaje', { replaceUrl: true });
     }
+  }
+
+  /**
+   * Vuelve a la pantalla anterior en el historial de navegación.
+   */
+  goBack() {
+    this.location.back();
   }
 
   /**
@@ -195,13 +175,12 @@ export class NuevoViajePage implements OnInit {
    * Se actualiza el campo de origen con la ciudad obtenida.
    */
   buscarUbicacion() {
-    this.cargandoOrigen = true;
+    this.spinnerActivo = true;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          this.mapCenter = { lat, lng };
 
           // Llamada a Nominatim para obtener la dirección inversa
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
@@ -218,8 +197,8 @@ export class NuevoViajePage implements OnInit {
                     origen: city,
                   };
                   this.travelService.setViajeData(viajeData);
-                  this.cargandoOrigen = false;
                   this.cdr.detectChanges();
+                  this.spinnerActivo = false;
                 } else {
                   console.log('No se pudo obtener la ciudad.');
                 }
@@ -237,103 +216,8 @@ export class NuevoViajePage implements OnInit {
   }
 
   /**
-   *
-   * @param event --> información de la tecla pulsada (flecha abajo, Esc, etc)
-   * @param tipo --> para saber si estamos trabajando con el input de 'origen' o 'destino'.
-   * @param index --> si es -1 el usuario pulsó la tecla estando dentro del input. Si es 0,1,2...significa que el usuario ya esta navegando en la lista de sugerencias.
-   *
-   * Condicional sugerencias: si el tipo es origen, elige sugerenciasOrigen. Si no es ese tipo, coge sugerenciasDestino. Si el array de sugerencias es 0 sale de la función.
-   * Condicional indiceActual: si el tipo es origen indiceActual pasa a valer lo que esté en la definición de indiceActivoOrigen (-1), si no pasa a valor lo que tenga indiceActivoDestino (-1).
-   * Si el evento es tecla abajo:
-   *  -event.preventDefault --> indicamos que somos nosotros quienes vamos a manejar con la tecla, impedimos la accion natural que tiene el navegador.
-   *  - Si indiceActual es menor que el array de sugerencias -1 (para igual el tamaño del array al número del índice), le sumamos 1 indiceActual y llamamos a actualizarIndiceyFoco
-   * Si el evento es tecla arriba:
-   *  -
+   * Captura la selección de plazas del selector general.
    */
-
-  private actualizarIndiceYFoco(tipo: 'origen' | 'destino', nuevoIndice: number) {
-    if (tipo === 'origen') {
-      this.indiceActivoOrigen = nuevoIndice;
-    } else {
-      this.indiceActivoDestino = nuevoIndice;
-    }
-
-    if (nuevoIndice !== -1) {
-      // Selector dinámico basado en el tipo
-      const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
-      setTimeout(() => {
-        const elementos = document.querySelectorAll(selector);
-        (elementos[nuevoIndice] as HTMLElement)?.focus();
-      }, 10);
-    }
-  }
-
-  limpiarSugerencias(tipo: 'origen' | 'destino', devolverFoco: boolean = false) {
-    if (tipo === 'origen') {
-      this.sugerenciasOrigen = [];
-      this.indiceActivoOrigen = -1;
-      this.buscadorOrigen$.next('');
-      if (devolverFoco) {
-        this.inputOrigen.nativeElement.focus();
-      }
-    } else {
-      this.sugerenciasDestino = [];
-      this.indiceActivoDestino = -1;
-      this.buscadorDestino$.next('');
-      if (devolverFoco) {
-        this.inputDestino.nativeElement.focus();
-      }
-    }
-  }
-
-  manejarNavegacionTeclado(event: KeyboardEvent, tipo: 'origen' | 'destino', index: number = -1) {
-    const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
-    const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
-    const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
-
-    this.buscadorLocalidadesService.manejarNavegacionTeclado(event, control, selector, inputRef);
-  }
-
-  validarSeleccion(tipo: 'origen' | 'destino') {
-    setTimeout(() => {
-      if (tipo === 'origen') {
-        const textoActual = this.origen.trim();
-        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion.split(',')[0].trim();
-
-        if (textoActual === '') {
-          this.ultimaLocalidadValidaOrigen = null;
-          this.limpiarSugerencias('origen', false);
-          return;
-        }
-
-        if (!this.ultimaLocalidadValidaOrigen || textoActual !== textoValido) {
-          this.origen = '';
-          this.ultimaLocalidadValidaOrigen = null;
-          this.limpiarSugerencias('origen', true);
-        }
-      } else {
-        const textoActual = this.destino.trim();
-
-        if (textoActual === '') {
-          this.ultimaLocalidadValidaDestino = null;
-          this.limpiarSugerencias('destino', false);
-          return;
-        }
-        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion.split(',')[0].trim();
-
-        if (!this.ultimaLocalidadValidaDestino || textoActual !== textoValido) {
-          this.destino = '';
-          this.ultimaLocalidadValidaDestino = null;
-          this.limpiarSugerencias('destino', true);
-        }
-      }
-    }, 250);
-  }
-
-  goBack() {
-    this.location.back();
-  }
-
   seleccionarPlazas(opcion: any) {
     this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
   }

@@ -1,37 +1,87 @@
-<div class="container" @dialogAnimation>
-  <div class="modal-header d-flex align-items-center">
-    <div class="d-flex align-items-center">
-      <mat-icon class="icon-red">question_mark</mat-icon>
-      <h2 class="ms-2">{{ data.title }}</h2>
-    </div>
-    <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
+<div
+  class="container"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'modal-title'"
+  @dialogAnimation
+>
+  <div class="modal-header d-flex align-items-center justify-content-between">
+    <mat-icon
+      class="icon-red"
+      aria-hidden="true"
+    >
+      question_mark
+    </mat-icon>
+
+    <h2
+      id="modal-title"
+      class="modal-title-flex"
+    >
+      {{ data.title }}
+    </h2>
+    <button
+      mat-icon-button
+      class="close-button"
+      (click)="close()"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
+    >
       <mat-icon>close</mat-icon>
     </button>
-
-
   </div>
   <mat-divider></mat-divider>
   <div class="modal-body">
     <p [innerHTML]="message"></p>
-    <div class="button-container" *ngIf="data.showMoreInfoButton">
-      <button mat-raised-button class="btn_bg" (click)="abrirMasDetalles()">
-        Ver más detalles <mat-icon>info</mat-icon>
+    <div
+      class="button-container"
+      *ngIf="data.showMoreInfoButton"
+    >
+      <button
+        mat-raised-button
+        class="btn_bg"
+        (click)="abrirMasDetalles()"
+        [attr.aria-label]="'MODAL_HELP.ARIA_VER_MAS_DETALLES' | translate"
+      >
+        {{ 'MODAL_HELP.VER_MAS_DETALLES' | translate }}
+        <mat-icon>info</mat-icon>
       </button>
     </div>
   </div>
   <div class="modal-footer d-flex justify-content-center">
-    <button mat-button (click)="close()" class="me-2" *ngIf="!data.showMoreInfoButton">
-      Cerrar
+    <button
+      mat-button
+      (click)="close()"
+      class="me-2"
+      *ngIf="!data.showMoreInfoButton"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
+    >
+      {{ 'MODAL_HELP.CERRAR' | translate }}
     </button>
-    <button mat-raised-button color="primary" class="me-2" (click)="crearVuelta()" *ngIf="data.showReturnTripButton">
-      Crear viaje de vuelta
+    <button
+      mat-raised-button
+      color="primary"
+      class="me-2"
+      (click)="crearVuelta()"
+      *ngIf="data.showReturnTripButton"
+      [attr.aria-label]="'MODAL_HELP.ARIA_CREAR_VIAJE_VUELTA' | translate"
+    >
+      {{ 'MODAL_HELP.CREAR_VIAJE_VUELTA' | translate }}
     </button>
-    <button mat-button class="btn_bg" (click)="aceptarCondiciones('registro')" *ngIf="data.showAcceptButton"
-      cdkFocusInitial>
-      Aceptar
+    <button
+      mat-button
+      class="btn_bg"
+      (click)="aceptarCondiciones('registro')"
+      *ngIf="data.showAcceptButton"
+      cdkFocusInitial
+      [attr.aria-label]="'MODAL_HELP.ARIA_ACEPTAR_CONDICIONES' | translate"
+    >
+      {{ 'MODAL_HELP.ACEPTAR' | translate }}
     </button>
-    <button mat-button (click)="cerrarParaMasInfo('home')" *ngIf="data.showMoreInfoButton">
-      No aceptar
+    <button
+      mat-button
+      (click)="cerrarParaMasInfo('home')"
+      *ngIf="data.showMoreInfoButton"
+    >
+      {{ 'MODAL_HELP.NO_ACEPTAR' | translate }}
     </button>
   </div>
 </div>

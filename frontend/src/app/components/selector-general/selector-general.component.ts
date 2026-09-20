@@ -45,8 +45,9 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   @Input() ariaLabel: string = '';
   @Input() mostrarFlechaSelector: boolean = true;
   @Input() iconoPath: string = '';
+  @Input() permitirTextoLibre: boolean = false;
 
-  @Output() seleccionCambiada = new EventEmitter<any>(); //para usar sin formulario reactivos
+  @Output() seleccionCambiada = new EventEmitter<any>();
   @Output() alAbrir = new EventEmitter<void>();
   @Output() textoCambiado = new EventEmitter<string>();
 
@@ -55,8 +56,11 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   indiceActivo: number = -1;
   valorTexto: string = '';
   private valorGuardadoActual: any = null;
-  onChange = (val: any) => {};
-  onTouched = () => {};
+  private seleccionandoOpcionEnProceso: boolean = false;
+  private _valorValidoPrevio: string = '';
+
+  onChange = (val: any) => { };
+  onTouched = () => { };
   isOpen: boolean = false;
   isDesktop: boolean = window.innerWidth >= 992;
 
@@ -99,16 +103,13 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   writeValue(value: any): void {
-    console.log('📥 [HIJO writeValue] Recibido del padre:', value);
-    if (value === this.valorTexto) {
-      return;
-    }
     if (value !== undefined && value !== null && value !== '') {
       this.valorGuardadoActual = value;
-      this.valorTexto = value;
       this.actualizarTextoVisual();
     } else {
       this.valorGuardadoActual = null;
+      this.valorTexto = '';
+      this._valorValidoPrevio = '';
       this.cdr.detectChanges();
     }
   }
@@ -122,23 +123,32 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   }
 
   seleccionarOpcion(opcion: any) {
+    this.seleccionandoOpcionEnProceso = true;
+
     const textoSeleccionado = this.obtenerTextoOpcion(opcion);
     this.valorTexto = textoSeleccionado;
+    this._valorValidoPrevio = textoSeleccionado;
 
-    const valorParaGuardar = typeof opcion === 'string' ? opcion : opcion.valor;
+    const valorParaGuardar = typeof opcion === 'string' ? opcion : (opcion.valor !== undefined ? opcion.valor : textoSeleccionado);
+
+    this.valorGuardadoActual = valorParaGuardar;
     this.onChange(valorParaGuardar);
-
     this.seleccionCambiada.emit(opcion);
 
     this.sugerencias = [];
     this.estaActivo = false;
     this.indiceActivo = -1;
 
+    setTimeout(() => {
+      this.seleccionandoOpcionEnProceso = false;
+    }, 400);
+
     if (this.inputRef && this.inputRef.nativeElement) {
       setTimeout(() => {
         this.enfocarSiguienteElemento(this.inputRef.nativeElement);
       }, 50);
     }
+    this.cdr.detectChanges();
   }
 
   private enfocarSiguienteElemento(elementoActual: HTMLElement) {
@@ -160,8 +170,12 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   filtrarOpciones(event: any) {
     const texto = event.target.value;
     this.valorTexto = texto;
-    this.onChange(texto);
-    this.seleccionCambiada.emit(texto);
+
+    if (this.permitirTextoLibre) {
+      this.onChange(texto);
+      this.seleccionCambiada.emit(texto);
+    }
+
     this.textoCambiado.emit(texto);
     this.estaActivo = true;
     this.indiceActivo = -1;
@@ -178,7 +192,6 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
 
   manejarNavegacionTeclado(event: KeyboardEvent) {
     if (event.key === 'Tab') {
-      // Permitir que el Tab navegue libremente cerrando las sugerencias
       this.sugerencias = [];
       this.estaActivo = false;
       return;
@@ -209,13 +222,46 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     }
   }
 
-  onInputBlur() {
-    setTimeout(() => {
-      this.estaActivo = false;
-      this.sugerencias = [];
-      this.indiceActivo = -1;
-      this.cdr.detectChanges();
-    }, 100);
+onInputBlur() {
+    if (this.seleccionandoOpcionEnProceso) {
+      return;
+    }
+
+    this.estaActivo = false;
+    this.sugerencias = [];
+    this.indiceActivo = -1;
+
+    if (!this.permitirTextoLibre) {
+      const textoEscrito = this.valorTexto ? this.valorTexto.trim() : '';
+
+      if (textoEscrito === '') {
+        this.valorGuardadoActual = null;
+        this._valorValidoPrevio = '';
+        this.valorTexto = '';
+        this.onChange('');
+        this.seleccionCambiada.emit(null);
+        this.textoCambiado.emit('');
+      } else {
+        const opcionEnSugerencias = this.opciones.find(
+          (op) => this.obtenerTextoOpcion(op).toLowerCase() === textoEscrito.toLowerCase()
+        );
+
+        if (opcionEnSugerencias) {
+          this.seleccionarOpcion(opcionEnSugerencias);
+        } else {
+          this.valorTexto = this._valorValidoPrevio;
+
+          if (this.inputRef && this.inputRef.nativeElement) {
+            this.inputRef.nativeElement.value = this._valorValidoPrevio;
+          }
+
+          this.onChange(this.valorGuardadoActual);
+          this.textoCambiado.emit(this._valorValidoPrevio);
+        }
+      }
+    }
+
+    this.cdr.detectChanges();
     this.onTouched();
   }
 
@@ -241,7 +287,10 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
 
   obtenerTextoOpcion(opcion: any): string {
     if (typeof opcion === 'string') return opcion;
-    return opcion.descripcion.includes('.') ? this.translate.instant(opcion.descripcion) : opcion.descripcion;
+    if (!opcion) return '';
+    const desc = opcion.descripcion || opcion.nombre || opcion.valor || '';
+    const textoStr = String(desc);
+    return textoStr.includes('.') ? this.translate.instant(textoStr) : textoStr;
   }
 
   presentPopover(event: Event) {
@@ -255,36 +304,39 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.sugerencias = [...this.opciones];
     this.estaActivo = true;
     this.indiceActivo = -1;
-
     this.alAbrir.emit();
   }
 
-  // Método centralizado para buscar la opción y traducirla correctamente
   private actualizarTextoVisual() {
-    console.log('🔍 [HIJO actualizarTextoVisual] Buscando valor guardado:', this.valorGuardadoActual);
-    console.log('📋 [HIJO] Opciones disponibles:', this.opciones);
-
     if (!this.valorGuardadoActual) {
       this.valorTexto = '';
-      this.cdr.detectChanges(); // ⭐️ Añadido aquí para limpiar al instante
+      this._valorValidoPrevio = '';
+      this.cdr.detectChanges();
       return;
     }
 
     if (!this.opciones || this.opciones.length === 0) {
+      const textoFallback = typeof this.valorGuardadoActual === 'string' ? this.valorGuardadoActual : '';
+      this.valorTexto = textoFallback;
+      this._valorValidoPrevio = textoFallback;
+      this.cdr.detectChanges();
       return;
     }
 
-    const opcionEncontrada = this.opciones.find((op) => (typeof op === 'string' ? op : op.valor) === this.valorGuardadoActual);
-    console.log('🎯 [HIJO] Opción encontrada en la lista:', opcionEncontrada);
+    const opcionEncontrada = this.opciones.find(
+      (op) => (typeof op === 'string' ? op : (op.valor || op.descripcion || op.nombre)) === this.valorGuardadoActual
+    );
 
-    if (opcionEncontrada && typeof opcionEncontrada === 'object') {
-      if (opcionEncontrada.descripcion && opcionEncontrada.descripcion.includes('.')) {
-        this.valorTexto = this.translate.instant(opcionEncontrada.descripcion);
-      } else {
-        this.valorTexto = opcionEncontrada.descripcion;
-      }
+    if (opcionEncontrada) {
+      this.valorTexto = this.obtenerTextoOpcion(opcionEncontrada);
     } else {
-      this.valorTexto = this.valorGuardadoActual;
+      this.valorTexto = typeof this.valorGuardadoActual === 'string' ? this.valorGuardadoActual : '';
+    }
+
+    this._valorValidoPrevio = this.valorTexto;
+
+    if (this.inputRef && this.inputRef.nativeElement) {
+      this.inputRef.nativeElement.value = this.valorTexto;
     }
 
     this.cdr.detectChanges();
