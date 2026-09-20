@@ -65,8 +65,7 @@
 
         <ion-col #mapContainer id="mapContainer" size="12" size-md="12" size-xl="6">
           <div class="contenedor_mapa shadow-lg rounded-4 overflow-hidden">
-            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="480px" width="100%"
-              (mapClick)="onMapClick($event)">
+            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="480px" width="100%">
               <map-marker *ngIf="markerOrigin" [position]="markerOrigin"></map-marker>
             </google-map>
           </div>

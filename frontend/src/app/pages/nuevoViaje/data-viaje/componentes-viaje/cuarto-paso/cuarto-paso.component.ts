@@ -55,30 +55,46 @@ export class CuartoPasoComponent implements OnInit {
     const distanciaKm = leg.distance.value / 1000;
     const numPlazas = Number(viajeData.plazas) || 3;
 
-    this.calcularLimites(distanciaKm);
-    this.precio = this.calcularPrecioRecomendado(distanciaKm, 6, 1.55, numPlazas);
+    // Estimación justa basada en datos reales de combustible en España (aprox. 1.55€/L y consumo de 6.5L/100km)
+    const consumoMedio = 6.5; 
+    const precioCombustible = 1.55; 
+
+    this.calcularLimites(distanciaKm, consumoMedio, precioCombustible, numPlazas);
+    this.precio = this.calcularPrecioRecomendado(distanciaKm, consumoMedio, precioCombustible, numPlazas);
 
     this.precioMinRecomendado = Math.round(this.min);
     this.precioMaxRecomendado = Math.round(this.max);
   }
 
   /**
-   * Calcula el precio recomendado basado en la distancia, consumo y número de plazas
+   * Calcula el precio recomendado justo por plaza compartido entre los pasajeros y el conductor
    */
-  calcularPrecioRecomendado(distanciaKm: number, consumo: number, precioGasolina: number, plazas: number): number {
-    const costeViaje = (distanciaKm / 100) * consumo * precioGasolina;
-    let precioSugerido = (costeViaje / plazas) * 1.15;
+  calcularPrecioRecomendado(distanciaKm: number, consumo: number, precioCombustible: number, plazas: number): number {
+    // Coste total del combustible del viaje
+    const costeViajeCombustible = (distanciaKm / 100) * consumo * precioCombustible;
+    
+    // Se divide el coste entre el número de plazas + el conductor (o ajuste equitativo) y se añade un factor de desgaste base
+    const plazasTotales = plazas > 0 ? plazas : 3;
+    const costePorPlaza = costeViajeCombustible / plazasTotales;
+
+    // Añadimos un pequeño margen justo (15%) para mantenimiento y peajes/desgaste general
+    let precioSugerido = costePorPlaza * 1.15;
     
     precioSugerido = Math.max(this.min, Math.min(this.max, precioSugerido));
     return Math.round(precioSugerido) || 5;
   }
 
   /**
-   * Calcula los límites del precio basados en la distancia
+   * Calcula los límites inferior y superior recomendados basados en la distancia y el combustible
    */
-  calcularLimites(distanciaKm: number) {
-    this.min = Math.max(2, Math.round(distanciaKm * 0.04));
-    this.max = Math.round(distanciaKm * 0.14);
+  calcularLimites(distanciaKm: number, consumo: number, precioCombustible: number, plazas: number) {
+    const costeViaje = (distanciaKm / 100) * consumo * precioCombustible;
+    const plazasTotales = plazas > 0 ? plazas : 3;
+
+    // El mínimo cubre una parte proporcional justa del combustible
+    this.min = Math.max(2, Math.round((costeViaje / plazasTotales) * 0.6));
+    // El máximo cubre el combustible y una estimación justa de desgaste sin abusar
+    this.max = Math.max(this.min + 2, Math.round((costeViaje / plazasTotales) * 1.5));
   }
 
   /**
@@ -102,7 +118,7 @@ export class CuartoPasoComponent implements OnInit {
   }
 
   /**
-   * Lanza mensajes de aviso sin bloquear la interacción si el precio es muy elevado o muy bajo
+   * Lanza mensajes informativos si el precio se sale de los umbrales justos recomendados
    */
   private comprobarUmbralesPrecio() {
     if (this.precio > this.max) {
@@ -118,14 +134,14 @@ export class CuartoPasoComponent implements OnInit {
         key: 'precioToast',
         severity: 'info',
         summary: 'Precio económico',
-        detail: `Estás por debajo del mínimo recomendado (${this.min}€). ¡Un chollo para los pasajeros!`,
+        detail: `Estás por debajo del mínimo recomendado (${this.min}€). ¡Un viaje muy económico para los pasajeros!`,
         life: 2500
       });
     }
   }
 
   /**
-   * Devuelve el color del precio según su valor
+   * Devuelve el color del precio según su valor con respecto al rango recomendado
    */
   getprecioColor(): string {
     if (this.precio < this.min) {
@@ -138,7 +154,7 @@ export class CuartoPasoComponent implements OnInit {
   }
 
   /**
-   * Maneja la finalización del cuarto paso
+   * Maneja la finalización del cuarto paso guardando el precio final
    */
   onCuartoPasoComplete(): boolean {
     const viajeData = this.travelService.getViajeData();
@@ -164,13 +180,11 @@ export class CuartoPasoComponent implements OnInit {
     };
 
     this.travelService.setViajeData(viajeDataFinal);
-    console.log('Precio inyectado con éxito en el servicio:', viajeDataFinal);
-    
     return true; 
   }
 
   /**
-   * Calcula la hora de llegada basada en la hora de salida y la duración del viaje
+   * Calcula la hora de llegada estimada
    */
   calcularHoraLlegada(hora_salida: string, duracion_viaje: string): string | null {
     try {
@@ -199,15 +213,15 @@ export class CuartoPasoComponent implements OnInit {
   }
 
   /**
-   * Muestra información de ayuda sobre la estrategia de precios
+   * Muestra ayuda detallada sobre el cálculo del precio justo
    */
   ayudaPrecio() {
     this.messageService.add({
       key: 'precioToast',
       severity: 'info',
-      summary: 'Estrategia de precios',
-      detail: 'El precio se calcula según la distancia del trayecto y el coste medio de combustible dividido entre las plazas.',
-      life: 5000
+      summary: '¿Cómo calculamos el precio?',
+      detail: 'Se calcula estimando el consumo medio de combustible en función de los kilómetros de la ruta y dividiéndolo equitativamente entre las plazas disponibles, añadiendo un pequeño margen justo para el mantenimiento.',
+      life: 6000
     });
   }
 }
