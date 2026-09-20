@@ -8,7 +8,7 @@
   [fullscreen]="true"
   class="saldo-content"
 >
-  <div class="container py-4">
+  <div class="container py-1">
     <!-- Cabecera de la sección -->
     <div class="d-flex justify-content-center text-center mb-3">
       <h1>{{ 'SALDO.TITULO' | translate }}</h1>
@@ -17,150 +17,96 @@
     <p class="d-flex justify-content-center text-center text-muted mb-4">{{ 'SALDO.SUBTITULO2' | translate }}</p>
 
     <ion-grid>
-      <ion-row>
-        <!-- Columna Izquierda: Monedero y Historial de Movimientos -->
-        <ion-col
-          size="12"
-          size-md="6"
-          class="mb-4"
-        >
-          <!-- Bloque de Saldo Actual -->
-          <ion-row class="d-flex justify-content-center mb-4">
-            <div class="card-saldo-box text-center p-4 shadow-sm w-100">
-              <h3>TU SALDO</h3>
-              <span
-                *ngIf="monedero; else sinSaldo"
-                class="d-flex justify-content-center text-primary"
-                style="font-size: 32px; font-weight: bold"
-              >
-                {{ monedero.saldo | currency: 'EUR' }}
-              </span>
-              <ng-template #sinSaldo>
-                <span
-                  class="d-flex justify-content-center text-muted"
-                  style="font-size: 24px; font-weight: bold"
-                >
-                  {{ 0 | currency: 'EUR' }}
-                </span>
-              </ng-template>
-            </div>
-          </ion-row>
-
-          <!-- Tabla de Movimientos del Monedero -->
-          <ion-row class="d-flex justify-content-center">
-            <div class="table-responsive w-100">
-              <h4 class="mb-3 text-center">{{ "SALDO.TRANSF_TITULO" | translate }}</h4>
-              <table class="table table-striped tabla-saldos mx-auto shadow-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">{{ 'SALDO.MOV_FECHA' | translate }}</th>
-                    <th scope="col">{{ 'SALDO.MOV_CONCEPTO' | translate }}</th>
-                    <th scope="col">{{ 'SALDO.MOV_ABONO_GASTO' | translate }}</th>
-                    <th scope="col">{{ 'SALDO.MOV_SALDO_FINAL' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngIf="movimientos && movimientos.length > 0; else noMovimientos">
-                    <tr *ngFor="let mov of movimientos">
-                      <th scope="row">{{ mov.fecha | date: 'dd/MM/yyyy' }}</th>
-                      <td>{{ mov.concepto }}</td>
-                      <td [ngClass]="mov.cantidad >= 0 ? 'text-success fw-bold' : 'text-danger fw-bold'">
-                        {{ mov.cantidad >= 0 ? '+' : '' }}{{ mov.cantidad | currency: 'EUR' }}
-                      </td>
-                      <td>{{ mov.saldo_final | currency: 'EUR' }}</td>
-                    </tr>
-                  </ng-container>
-                </tbody>
-                <ng-template #noMovimientos>
-                  <tr>
-                    <td
-                      colspan="4"
-                      class="text-center py-3 text-muted"
-                    >
-                      {{ 'SALDO.NO_HAY_MOVIMIENTOS' | translate }}
-                    </td>
-                  </tr>
-                </ng-template>
-              </table>
-            </div>
-          </ion-row>
-        </ion-col>
-
-        <!-- Columna Derecha: Recarga de Saldo con PayPal (Usando método de pago preferido) -->
-        <ion-col
-          size="12"
-          size-md="6"
-        >
-          <ion-row class="d-flex justify-content-center">
-            <div class="card-metodos-box p-4 shadow-sm w-100">
-              <h3 class="d-flex justify-content-center mb-3">{{ 'SALDO.METODOS_TITULO' | translate }}</h3>
-
-              <p class="d-flex justify-content-center text-muted mb-3">Mis tarjetas vinculadas:</p>
-
-              <!-- Si el usuario tiene tarjeta vinculada -->
-              <ng-container *ngIf="userData?.usuario?.tarjeta_info?.numero; else sinTarjeta">
-                <ul class="list-unstyled mb-4">
-                  <li class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white">
-                    <span>{{ userData.usuario.tarjeta_info.numero }}</span>
-                    <div class="card tarjeta1"></div>
-                  </li>
-                </ul>
-              </ng-container>
-
-              <!-- Si el usuario NO tiene tarjeta vinculada -->
-              <ng-template #sinTarjeta>
-                <div
-                  class="alert alert-warning text-center small p-3 mb-4 rounded-3"
-                  role="alert"
-                >
-                  No tienes ninguna tarjeta configurada. Puedes añadir esta información desde los
-                  <a
-                    routerLink="/ajustes-aplicacion"
-                    [queryParams]="{ tab: 'cuenta' }"
-                    class="alert-link fw-bold"
-                  >
-                    ajustes de la cuenta
-                  </a>
-                  .
-                </div>
-              </ng-template>
-
-              <!-- Sección de Recarga con PayPal -->
-              <hr class="my-4" />
-
-              <div class="text-center mb-3">
-                <p class="text-muted fw-bold">Añadir saldo con PayPal</p>
-                <p class="small text-muted">Indica cuánto saldo deseas añadir</p>
-              </div>
-
-              <!-- Input para seleccionar la cantidad a recargar -->
-              <div class="d-flex justify-content-center mb-3">
-                <input
-                  type="number"
-                  class="form-control form-input text-center fw-bold text-primary"
-                  [(ngModel)]="cantidadRecarga"
-                  min="1"
-                  step="5"
-                  placeholder="Cantidad a recargar (€)"
-                  style="max-width: 220px; font-size: 1.1rem"
-                />
-              </div>
-
-              <!-- Botón con estilo corporativo unificado y radio de 35px -->
-              <div class="d-flex justify-content-center align-items-center mt-3">
-                <button
-                  type="button"
-                  class="btn btn_bg w-100 py-3"
-                  (click)="recargarConPayPalPersonalizado()"
-                >
-                  Añadir saldo con PayPal
-                </button>
-              </div>
-              <div id="paypal-button-container"></div>
-            </div>
-          </ion-row>
-        </ion-col>
+      <!-- Bloque de Saldo Actual -->
+      <ion-row class="d-flex justify-content-center mb-4">
+        <div class="card-saldo-box text-center p-4 shadow-sm w-50">
+          <h3>TU SALDO</h3>
+          <span
+            *ngIf="monedero; else sinSaldo"
+            class="d-flex justify-content-center text-primary"
+            style="font-size: 32px; font-weight: bold"
+          >
+            {{ monedero.saldo | number:'1.2-2' }} €
+          </span>
+          <ng-template #sinSaldo>
+            <span
+              class="d-flex justify-content-center text-muted"
+              style="font-size: 24px; font-weight: bold"
+            >
+              {{ 0 | currency: 'EUR' }}
+            </span>
+          </ng-template>
+          <p class="d-flex justify-content-center">Recarga tu monedero:</p>
+          <div class="d-flex justify-content-center mb-3">
+            <input
+              type="number"
+              class="form-control form-input text-center fw-bold text-primary"
+              [(ngModel)]="cantidadRecarga"
+              min="1"
+              step="5"
+              placeholder="Cantidad a recargar (€)"
+              style="max-width: 220px; font-size: 1.1rem"
+            />
+          </div>
+          <div id="paypal-button-container"></div>
+        </div>
       </ion-row>
+
+      <!-- Tabla de Movimientos del Monedero -->
+      <ion-row class="d-flex justify-content-center">
+        <div class="table-responsive w-100">
+          <h4 class="d-flex justify-content-center">Movimientos</h4>
+          <table class="table table-striped tabla-saldos mx-auto shadow-sm">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'SALDO.MOV_FECHA' | translate }}</th>
+                <th scope="col">{{ 'SALDO.MOV_HORA' | translate }}</th>
+                <!-- Nueva cabecera opcional para hora -->
+                <th scope="col">{{ 'SALDO.MOV_CONCEPTO' | translate }}</th>
+                <th scope="col">{{ 'SALDO.MOV_SALDO_ANTERIOR' | translate }}</th>
+                <th scope="col">{{ 'SALDO.MOV_SALDO_ACTUAL' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="movimientos && movimientos.length > 0; else noMovimientos">
+                <tr *ngFor="let mov of movimientos">
+                  <!-- Fecha -->
+                  <th scope="row">{{ mov.fecha | date: 'dd/MM/yyyy' }}</th>
+
+                  <!-- Hora -->
+                  <td>{{ mov.fecha | date: 'HH:mm' }}</td>
+
+                  <!-- Concepto (Recarga, Pago de viaje, Retirada...) -->
+                  <td>{{ mov.concepto }}</td>
+
+                  <!-- Saldo Anterior -->
+                  <td>{{ mov.saldo_anterior | number:'1.2-2' }} €</td>
+
+                  <!-- Saldo Actual (con color verde si aumentó, rojo si disminuyó, o neutro) -->
+                  <td
+                    class="fw-bold"
+                    [ngClass]="mov.saldo_actual >= mov.saldo_anterior ? 'text-success' : 'text-dark'"
+                  >
+                    {{ mov.saldo_actual | number:'1.2-2'}} €
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+            <ng-template #noMovimientos>
+              <tr>
+                <td
+                  colspan="5"
+                  class="text-center py-3 text-muted"
+                >
+                  {{ 'SALDO.NO_HAY_MOVIMIENTOS' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </table>
+        </div>
+      </ion-row>
+
+      <!-- Columna Derecha: Recarga de Saldo con PayPal (Usando método de pago preferido) -->
     </ion-grid>
   </div>
 </ion-content>

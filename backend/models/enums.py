@@ -78,4 +78,13 @@ class MotivosCancelacionPasajero (str, Enum):
     OTRAFORMAVIAJE = "He encontrado otra forma para hacer el viaje"
     OTROS = "Otros motivos" #Campo abierto
 
+class MovimientosMonederoEnum(str, Enum):
+    RECARGA_PAYPAL = "Recarga vía Paypal",
+    RECARGA_TARJETA = "Recarga por tarjeta",
+    ANULACIÓN_RECARGA = "Anulación de la recarga: ",
+    PAGO_VIAJE = "Pago del viaje a: ",
+    ANULACIÓN_PAGO_VIAJE = "Devolución del viaje a: ",
+    PROMOCION = "Promoción",
+    RETIRADA_FONDOS = "Retirada de fondos a cuenta bancaria"
+
 
