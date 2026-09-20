@@ -39,8 +39,24 @@
   border: none;
   border-radius: 16px;
   background-color: #fff;
+  overflow: hidden;
   transition: all 0.2s ease-in-out;
-  border-left: 5px solid #3f51b5;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px; 
+    height: 100%;
+    background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    z-index: 1;
+  }
 
   &:hover {
     transform: translateY(-3px);

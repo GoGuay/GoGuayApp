@@ -1,4 +1,4 @@
-@use "@angular/material" as mat;
+@use '@angular/material' as mat;
 
 :host {
   --mdc-filled-text-field-container-color: white;
@@ -16,7 +16,7 @@
   ::ng-deep .mat-mdc-text-field-wrapper {
     background-color: white !important;
     border-radius: 35px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
     border: 1px solid #f0f0f0 !important;
     padding: 4px 16px !important;
     max-width: 280px !important;
@@ -37,6 +37,13 @@
   ::ng-deep .mat-mdc-form-field .mdc-line-ripple::before {
     display: none !important;
     content: none !important;
+  }
+
+  ::ng-deep app-selector-general input,
+  ::ng-deep app-selector-general select {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
   }
 
   ::ng-deep .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
@@ -95,7 +102,7 @@ ion-content {
 
 .contenedor_vehiculos {
   width: 90%;
-  margin: 0 auto
+  margin: 0 auto;
 }
 
 .contenedor_hora {
@@ -108,11 +115,9 @@ ion-content {
   background: #ffffff !important;
   border-radius: 24px !important;
   padding: 8px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
   border: 1px solid #f6f6f6;
 }
-
-
 
 .goguay-list-item {
   --background: transparent;
@@ -131,12 +136,10 @@ ion-content {
     --background: #f0d7b4;
   }
 
-
   &:hover {
     --background: #f0d7b456;
     transform: translateY(-2px);
   }
-
 
   ion-radio {
     --color: #b0b0b0;
@@ -164,7 +167,7 @@ ion-content {
 }
 
 ion-datetime {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
   border-radius: 35px !important;
   border: 1px solid #f3f3f3;
   overflow: hidden;
@@ -178,7 +181,7 @@ ion-datetime {
 ion-datetime-button {
   background: #ffffff;
   border-radius: 35px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
   padding: 4px;
 
   ::ng-deep button {
@@ -206,7 +209,7 @@ ion-datetime-button {
   font-size: 0.8rem;
   font-weight: 600;
   border-radius: 35px;
-  box-shadow: 0 4px 12px rgba(224, 166, 103, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
   transition: all 0.2s ease;
 
   &:hover {
@@ -256,17 +259,15 @@ ion-datetime-button {
 }
 
 ::ng-deep {
-
   .mat-mdc-select-panel,
   .mat-mdc-autocomplete-panel,
   .mat-timepicker-panel,
   cdk-overlay-pane {
-
     mat-option.mat-mdc-option,
     .mat-mdc-option {
       cursor: pointer;
       transition: background-color 0.2s ease;
-      background-color: white !important; // Forzar fondo transparente por defecto
+      background-color: white !important; 
 
       // Elimina el color gris inicial de Material en elementos activos o con foco
       &.mat-mdc-option-active,
@@ -280,8 +281,8 @@ ion-datetime-button {
       &.active,
       &.mat-selected,
       &.mat-mdc-option-selected,
-      &[aria-selected="true"] {
-        background-color: #F0D7B4 !important;
+      &[aria-selected='true'] {
+        background-color: #f0d7b4 !important;
         color: black !important;
 
         .mdc-list-item__primary-text,
@@ -303,15 +304,11 @@ ion-datetime-button {
     text-align: center !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
   }
 }
 
-
-
-
-
 @media (max-width: 992px) {
-
   .contenedor_calendario,
   .contenedor_hora,
   .contenedor_inputs {
