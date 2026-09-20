@@ -1,4 +1,4 @@
-<div class="mb-3 position-relative">
+<div class="mb-3">
   <label
     [for]="'input-' + idUnico"
     class="form-label d-flex align-items-center gap-2"
@@ -28,33 +28,35 @@
     </ion-popover>
   </label>
 
-<input
-    #inputRef
-    [id]="'input-' + idUnico"
-    type="text"
-    style="cursor: pointer"
-    class="form-control text-start pe-5"
-    [value]="valorTexto"
-    (input)="filtrarOpciones($event)"
-    (blur)="onInputBlur()"
-    (focusout)="onInputBlur()"
-    (click)="manejarClickInput()"
-    (keydown)="manejarNavegacionTeclado($event)"
-    autocomplete="off"
-    spellcheck="false"
-    [placeholder]="placeholderKey | translate"
-    role="combobox"
-    aria-autocomplete="list"
-    [attr.aria-expanded]="sugerencias.length > 0 && estaActivo"
-    [attr.aria-label]="ariaLabel || (placeholderKey | translate)"
-    [readonly]="soloLectura"
-  />
+  <div class="position-relative w-100">
+    <input
+      #inputRef
+      [id]="'input-' + idUnico"
+      type="text"
+      style="cursor: pointer"
+      class="form-control text-start pe-5"
+      [value]="valorTexto"
+      (input)="filtrarOpciones($event)"
+      (blur)="onInputBlur()"
+      (focusout)="onInputBlur()"
+      (click)="manejarClickInput()"
+      (keydown)="manejarNavegacionTeclado($event)"
+      autocomplete="off"
+      spellcheck="false"
+      [placeholder]="placeholderKey | translate"
+      role="combobox"
+      aria-autocomplete="list"
+      [attr.aria-expanded]="sugerencias.length > 0 && estaActivo"
+      [attr.aria-label]="ariaLabel || (placeholderKey | translate)"
+      [readonly]="soloLectura"
+    />
 
-  <i
-    *ngIf="mostrarFlechaSelector"
-    class="bi bi-chevron-down position-absolute text-muted flecha_selector"
-    aria-hidden="true"
-  ></i>
+    <i
+      *ngIf="mostrarFlechaSelector"
+      class="bi bi-chevron-down position-absolute text-muted flecha_selector"
+      aria-hidden="true"
+    ></i>
+  </div>
 
   <!-- Lista desplegable con scroll integrado -->
   <ul
