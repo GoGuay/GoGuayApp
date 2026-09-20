@@ -28,7 +28,7 @@
     </ion-popover>
   </label>
 
-  <input
+<input
     #inputRef
     [id]="'input-' + idUnico"
     type="text"
@@ -37,6 +37,7 @@
     [value]="valorTexto"
     (input)="filtrarOpciones($event)"
     (blur)="onInputBlur()"
+    (focusout)="onInputBlur()"
     (click)="manejarClickInput()"
     (keydown)="manejarNavegacionTeclado($event)"
     autocomplete="off"

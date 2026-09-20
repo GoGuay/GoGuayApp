@@ -67,7 +67,7 @@ html,
 body {
   height: 100%;
   background-color: #e9edd5;
-  overflow: hidden !important;
+ // overflow: hidden !important;
   scroll-behavior: smooth;
 }
 
@@ -75,7 +75,7 @@ body {
   margin: 0;
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #e9edd5;
-  overflow: hidden !important;
+  //overflow: hidden !important;
   scroll-behavior: smooth;
 }
 
@@ -332,10 +332,7 @@ p-toast {
   }
 }
 
-
-
 // AJUSTES PARA EL MENU LATERAL
-
 .list-md {
   margin-left: 0;
   margin-right: 0;
@@ -595,7 +592,6 @@ button:focus-visible,
   transition: box-shadow 0.2s ease;
 }
 
-// Opcional: Eliminar el borde azul por defecto de los navegadores (Chrome/Edge)
 :focus {
   outline: none;
 }
@@ -609,13 +605,6 @@ button:focus-visible,
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
 }
 
-
-
-
-
-
-
-
 .form-control:focus,
 input:focus,
 select:focus,
@@ -628,7 +617,6 @@ span:focus {
 
 ::ng-deep .calendario-bajo-boton {
   margin-top: 5px;
-  /* Ya no necesita el transform-origin manual, Angular lo calculará al detectar el input */
 }
 
 .select-form-field .mat-mdc-text-field-wrapper {
@@ -728,7 +716,6 @@ span:focus {
         margin-bottom: 0;
       }
 
-      // EFECTO HOVER
       &:hover {
         background-color: #f0d7b4;
         color: black;
@@ -795,4 +782,36 @@ span:focus {
   color: black !important;
   text-decoration: none;
   font-weight: 600;
+}
+
+/* ==========================================================================
+   CORRECCIÓN GLOBAL PARA OVERLAYS Y SELECTORES DE MATERIAL (Timepicker, Select, Datepicker)
+   ================================================================---------- */
+
+.cdk-overlay-container {
+  position: fixed !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.cdk-overlay-pane {
+  pointer-events: auto !important;
+  position: absolute !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  border-radius: 20px !important;
+  background-color: #ffffff !important;
+  overflow: hidden !important;
+  z-index: 1000000 !important;
+}
+
+/* Panel específico del selector de hora */
+.mat-timepicker-panel {
+  max-height: 260px !important;
+  overflow-y: auto !important;
+  background-color: #ffffff !important;
+  border-radius: 20px !important;
 }

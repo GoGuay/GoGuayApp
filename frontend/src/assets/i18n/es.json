@@ -152,7 +152,7 @@
   "NUEVOVIAJE": {
     "NUEVO_VIAJE": {
       "ORIGEN": "Origen: ",
-      "BOTÓN_MI_UBICACION": "Mi ubicación:",
+      "BOTÓN_MI_UBICACION": "Mi ubicación",
       "ARIALABEL_BOTON_MI_UBICACION": "Obtener mi ubicación actual automáticamente",
       "DESTINO": "Destino: ",
       "PLAZAS_DISPONIBLES": "Plazas disponibles: ",

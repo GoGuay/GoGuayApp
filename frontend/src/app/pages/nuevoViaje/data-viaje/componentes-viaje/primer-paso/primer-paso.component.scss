@@ -67,6 +67,10 @@
   }
 }
 
+ion-content {
+  --overflow: auto;
+}
+
 .section-title {
   font-size: 1.15rem !important;
   font-weight: 700 !important;

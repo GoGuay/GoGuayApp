@@ -34,8 +34,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   currentViajeData: any = {};
   private destroy$ = new Subject<void>();
 
-  // Estado global y estados de edición individual por campo
-  editandoViaje: boolean = false;
   editandoOrigen: boolean = false;
   editandoDestino: boolean = false;
   editandoCoche: boolean = false;
@@ -43,7 +41,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   editandoFecha: boolean = false;
   editandoHora: boolean = false;
 
-  // Valores originales para la cancelación individual
   valorOriginalOrigen: string = '';
   valorOriginalDestino: string = '';
   valorOriginalCoche: any = null;
@@ -145,7 +142,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  // Activa la edición global (todos los campos se vuelven editables a la vez)
   toggleEditarViaje() {
     const datosUltimos = this.travelService.getViajeData();
     if (datosUltimos) {
@@ -154,9 +150,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
       this.destinoCtrl.valorTexto = this.currentViajeData.destino || '';
     }
     this.copiaViajeData = JSON.parse(JSON.stringify(this.currentViajeData));
-    this.editandoViaje = true;
 
-    // Dejamos los campos individuales en falso para que aparezcan los lápices
     this.editandoOrigen = false;
     this.editandoDestino = false;
     this.editandoCoche = false;
@@ -166,19 +160,17 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   }
 
   onFieldChange() {
-    if (this.editandoViaje) {
-      const viajeActualizado = {
-        ...this.currentViajeData,
-        origen: this.origenCtrl.valorTexto,
-        destino: this.destinoCtrl.valorTexto,
-      };
-      this.travelService.setViajeData(viajeActualizado);
-    }
+    const viajeActualizado = {
+      ...this.currentViajeData,
+      origen: this.origenCtrl.valorTexto,
+      destino: this.destinoCtrl.valorTexto,
+    };
+    this.travelService.setViajeData(viajeActualizado);
+
   }
 
   guardarCambios() {
     this.onFieldChange();
-    this.editandoViaje = false;
     this.editandoOrigen = false;
     this.editandoDestino = false;
     this.editandoCoche = false;
@@ -193,7 +185,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     if (this.copiaViajeData.destino) this.destinoCtrl.valorTexto = this.copiaViajeData.destino;
 
     this.travelService.setViajeData(this.currentViajeData);
-    this.editandoViaje = false;
     this.editandoOrigen = false;
     this.editandoDestino = false;
     this.editandoCoche = false;
@@ -228,7 +219,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.mostrarResumenMobile = !this.mostrarResumenMobile;
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (ORIGEN) ---
   activarEdicionOrigen(): void {
     this.valorOriginalOrigen = this.currentViajeData?.origen || '';
     this.origenCtrl.valorTexto = this.currentViajeData?.origen || '';
@@ -252,7 +242,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.editandoOrigen = false;
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (DESTINO) ---
   activarEdicionDestino(): void {
     this.valorOriginalDestino = this.currentViajeData?.destino || '';
     this.destinoCtrl.valorTexto = this.currentViajeData?.destino || '';
@@ -276,7 +265,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.editandoDestino = false;
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (COCHE) ---
   activarEdicionCoche(): void {
     this.valorOriginalCoche = this.currentViajeData?.coche || null;
     this.editandoCoche = true;
@@ -301,12 +289,11 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
     const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
     this.currentViajeData.coche = cocheObjeto;
-    if (!this.editandoViaje) {
-      this.travelService.setViajeData({ ...this.currentViajeData });
-    }
+
+    this.travelService.setViajeData({ ...this.currentViajeData });
+
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (PLAZAS) ---
   activarEdicionPlazas(): void {
     this.valorOriginalPlazas = this.currentViajeData?.plazas || '';
     this.editandoPlazas = true;
@@ -330,12 +317,11 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   onPlazasCambiadas(opcion: any) {
     const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
     this.currentViajeData.plazas = plazas;
-    if (!this.editandoViaje) {
-      this.travelService.setViajeData({ ...this.currentViajeData });
-    }
+
+    this.travelService.setViajeData({ ...this.currentViajeData });
+
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (FECHA) ---
   activarEdicionFecha(): void {
     this.valorOriginalFecha = this.currentViajeData?.fecha_salida || '';
     this.editandoFecha = true;
@@ -356,7 +342,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     this.editandoFecha = false;
   }
 
-  // --- MÉTODOS DE EDICIÓN INDIVIDUAL (HORA) ---
   activarEdicionHora(): void {
     this.valorOriginalHora = this.currentViajeData?.hora_salida || '';
     this.editandoHora = true;

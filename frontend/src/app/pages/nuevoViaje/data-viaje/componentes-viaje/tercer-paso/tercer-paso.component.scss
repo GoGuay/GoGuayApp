@@ -41,15 +41,15 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-    border-color: #b3b5e6;
+    // border-color: #b3b5e6;
   }
 
   /* ESTILO PARA LA RUTA SELECCIONADA */
   &.active-route {
     background-color: #f0d7b4;  
-    border-color: #b3b5e6;      
-    border-left-width: 8px;     
-    box-shadow: 0 8px 20px rgba(179, 181, 230, 0.3);
+    // border-color: #b3b5e6;      
+    // border-left-width: 8px;     
+    // box-shadow: 0 8px 20px rgba(179, 181, 230, 0.3);
     
     .route-title {
       color: #000000;
@@ -82,7 +82,7 @@
 .route-radio-side {
   ion-radio {
     --color: #b0b0b0;
-    --color-checked: #b3b5e6; 
+    --color-checked: black; 
     margin: 0;
     transform: scale(1.2);    
   }

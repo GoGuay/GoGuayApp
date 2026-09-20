@@ -57,24 +57,25 @@ button {
 .botones_editar {
   display: flex;
   align-items: center;
-  gap: 6px; // Espacio entre el botón de guardar y cancelar si aparecen juntos
+  gap: 6px; 
 
   button, .icon-btn {
     width: 32px !important;
     height: 32px !important;
-    border-radius: 50% !important; // Forma perfectamente circular
+    border-radius: 50% !important; 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
     padding: 0 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+    background-color: transparent;
     transition: background-color 0.2s ease;
 
     &:hover {
       background-color: #e2e6ea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
     }
 
     i {
@@ -85,7 +86,6 @@ button {
   }
 }
 
-// Botones principales grandes en forma de píldora
 button.btn_bg, button.btn_bg_cancel, .btn-toggle-resumen, .action-buttons {
   border-radius: 50px !important;
 }
@@ -213,11 +213,10 @@ select {
         margin-bottom: 0;
       }
 
-      // EFECTO HOVER
       &:hover {
         background-color: #F0D7B4;
         color: black;
-        transform: translateX(5px); // Un pequeño efecto visual
+        transform: translateX(5px); 
       }
 
       &.selected {
