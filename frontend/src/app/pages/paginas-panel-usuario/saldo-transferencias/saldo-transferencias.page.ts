@@ -8,6 +8,7 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { MovimientosMonedero } from 'src/app/models/movimientos_monedero/movimientos-monedero.model';
 declare var paypal: any;
 @Component({
   selector: 'app-saldo-transferencias',
@@ -21,7 +22,7 @@ export class SaldoTransferenciasPage implements OnInit {
   userData: any = {};
 
   monedero: any = null;
-  movimientos: any[] = [];
+  movimientos: MovimientosMonedero[] = [];
   cantidadRecarga: number = 10;
 
   private usuarioSub!: Subscription;
@@ -39,7 +40,7 @@ export class SaldoTransferenciasPage implements OnInit {
         this.userData = { usuario: usuarioActual };
         this.userLoggedIn = true;
         this.cargarMonedero();
-        this.cargarMovimientos();
+        this.cargarMovimientos(this.userData.usuario.id);
       } else {
         const rawData = localStorage.getItem('userData');
         if (rawData) {
@@ -47,7 +48,7 @@ export class SaldoTransferenciasPage implements OnInit {
           this.userLoggedIn = !!(this.userData && (this.userData.usuario?.email || this.userData.email));
           if (this.userLoggedIn) {
             this.cargarMonedero();
-            this.cargarMovimientos();
+            this.cargarMovimientos(this.userData.usuario.id);
           }
         }
       }
@@ -84,8 +85,15 @@ export class SaldoTransferenciasPage implements OnInit {
     });
   }
 
-  cargarMovimientos() {
-    // Lógica para obtener el historial
+  cargarMovimientos(usuario_id: number) {
+    this.userService.obtenerMovimientosMonedero(usuario_id).subscribe({
+      next: (response) => {
+        this.movimientos = response.movimientos;
+      },
+      error: (err) => {
+        console.error('Error al obtener los movimientos del monedero:', err);
+      },
+    });
   }
 
   recargarConPayPalPersonalizado() {
@@ -111,35 +119,45 @@ export class SaldoTransferenciasPage implements OnInit {
       .Buttons({
         style: {
           layout: 'vertical',
-          color: 'blue',
-          shape: 'rect',
-          label: 'pay',
+          color: 'silver',
+          shape: 'pill',
+          label: 'checkout',
+          height: 40,
         },
         createOrder: (data: any, actions: any) => {
-          return fetch('http://localhost:5000/api/user/create-order', {
+          // 1. Obtén el token de autenticación (ajústalo según cómo lo guardes en tu app)
+          const token = localStorage.getItem('access_token') || '';
+          console.log('Token recuperado:', token); // <-- Revisa esto en la consola del navegador
+
+          return fetch('http://localhost:5000/api/user/create-wallet-order', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`, // <-- ¡Añadido aquí!
+            },
             body: JSON.stringify({ cantidad: this.cantidadRecarga }),
           })
-            .then((res) => res.json())
-            .then((order) => order.order_id);
+            .then((res) => {
+              if (!res.ok) {
+                return res.json().then((err) => {
+                  throw err;
+                });
+              }
+              return res.json();
+            })
+            .then((order) => {
+              const orderId = order.order_id || order.id;
+              if (!orderId) {
+                console.error('El backend no devolvió un ID de orden válido:', order);
+              }
+              return orderId;
+            })
+            .catch((error) => {
+              console.error('Error al crear la orden de PayPal:', error);
+            });
         },
         onApprove: (data: any, actions: any) => {
-          return fetch(`http://localhost:5000/api/user/capture-order/${data.orderID}`, {
-            method: 'POST',
-          })
-            .then((res) => res.json())
-            .then((response) => {
-              console.log('Pago de monedero completado:', response);
-
-              // Actualizamos la vista y el saldo localmente o llamamos a tus funciones
-              if (response.nuevo_saldo !== undefined) {
-                this.monedero = { saldo: response.nuevo_saldo };
-              }
-              this.cargarMonedero();
-              this.cargarMovimientos();
-              this.cdRef.detectChanges();
-            });
+          this.capturarPagoPayPal(data.orderID);
         },
       })
       .render('#paypal-button-container');
@@ -153,7 +171,7 @@ export class SaldoTransferenciasPage implements OnInit {
           this.monedero = { saldo: response.nuevo_saldo };
         }
         this.cargarMonedero();
-        this.cargarMovimientos();
+        this.cargarMovimientos(this.userData.usuario.id);
         this.cdRef.detectChanges();
 
         this.router.navigate([], {
@@ -174,4 +192,6 @@ export class SaldoTransferenciasPage implements OnInit {
       },
     });
   }
+
+  obtener_movimientos_monedero() {}
 }

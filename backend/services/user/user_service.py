@@ -16,7 +16,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero
+from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -969,7 +969,7 @@ def capture_order(order_id: str):
 @jwt_required()
 def create_wallet_order():
     """
-    1. Recibe el monto (cantidad) que el usuario desea añadir a su monedero desde el frontend.
+    1. Recibe la cantidad que el usuario desea añadir a su monedero desde el frontend.
     2. Valida que el usuario esté autenticado mediante JWT y tenga un monedero activo.
     3. Crea una orden en PayPal configurada para capturar fondos destinados a la cuenta de la empresa.
     """
@@ -1052,50 +1052,35 @@ def capture_wallet_order(order_id: str):
     capture_data = response.json()
     
     if response.status_code not in [200, 201] or capture_data.get("status") != "COMPLETED":
-        print(f"❌ Error al capturar la orden de recarga {order_id}:", capture_data)
+        print(f"Error al capturar la orden de recarga {order_id}:", capture_data)
         return jsonify({"error": "El pago no pudo ser completado o capturado", "detalle": capture_data}), 400
         
     try:
-        # Extraer la cantidad pagada desde la respuesta de PayPal
         unidad_compra = capture_data["purchase_units"][0]
         captura = unidad_compra["payments"]["captures"][0]
-        monto_recargado = float(captura["amount"]["value"])
+        importe_recargado = float(captura["amount"]["value"])
         
-        # Buscar o inicializar el monedero del usuario
-        usuario = Usuario.query.get(current_user_id)
-        if not usuario:
-            return jsonify({"error": "Usuario asociado no encontrado"}), 404
-            
-        monedero = Monedero.query.filter_by(usuario_id=usuario.id).first()
-        if not monedero:
-            monedero = Monedero(usuario_id=usuario.id, saldo=0.0)
-            db.session.add(monedero)
-            db.session.flush() # Para obtener el ID del monedero antes del commit final
-
-        # Actualizar saldo
-        monedero.saldo += monto_recargado
-        
-        # Registrar el movimiento en el historial
-        nuevo_movimiento = MovimientoMonedero(
-            monedero_id=monedero.id,
-            concepto="Recarga de saldo vía PayPal",
-            cantidad=monto_recargado,
-            saldo_final=monedero.saldo
+        movimiento = registro_movimientos_monedero(
+            usuario_id = current_user_id,
+            concepto = MovimientosMonederoEnum.RECARGA_PAYPAL ,
+            cantidad=importe_recargado,
+            referencia_id = order_id
         )
-        db.session.add(nuevo_movimiento)
-        db.session.commit()
-
         return jsonify({
             "mensaje": "Saldo añadido correctamente al monedero",
-            "nuevo_saldo": monedero.saldo,
+            "nuevo_saldo": movimiento.saldo_actual,
             "detalles_pago": capture_data
         }), 200
-
+    
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error interno al actualizar el monedero: {str(e)}")
+        print(f"Error interno al actualizar el monedero: {str(e)}")
         return jsonify({"error": f"Error interno al procesar la recarga: {str(e)}"}), 500
-    
+
+       
 
 @user_blueprint.route("/saldo-actual", methods=['GET'])
 @jwt_required()
@@ -1104,7 +1089,59 @@ def get_wallet_balance():
     
     monedero = Monedero.query.filter_by(usuario_id=current_user_id).first()
     if not monedero:
-        # Si aún no tiene monedero creado, devolvemos saldo 0
         return jsonify({"saldo": 0.0}), 200
         
     return jsonify({"saldo": monedero.saldo}), 200
+
+# Registro de movimientos en el monedero
+def registro_movimientos_monedero(usuario_id, concepto, cantidad, referencia_id=None):
+    """
+    Función centralizada: busca el monedero, calcula saldos y registra el movimiento.
+    Lanza ValueError si hay algún problema contable.
+    """
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        monedero = Monedero(usuario_id=usuario_id, saldo=0.0)
+        db.session.add(monedero)
+        db.session.flush()
+    
+    saldo_anterior = monedero.saldo
+    saldo_actual = saldo_anterior + cantidad
+
+    if saldo_actual<0:
+        raise ValueError("Saldo negativo no es posible")
+    
+    monedero.saldo = saldo_actual
+
+    nuevo_movimiento = MovimientoMonedero(
+        monedero_id=monedero.id,
+        concepto=concepto,
+        cantidad=cantidad,
+        saldo_anterior=saldo_anterior,
+        saldo_actual=saldo_actual,
+        referencia_id=referencia_id
+    )
+    db.session.add(nuevo_movimiento)
+    db.session.commit()
+
+    return nuevo_movimiento
+
+# Para obtener los movimientos en el monedero de un usuario
+@user_blueprint.route("/obtener-movimientos-monedero/<int:usuario_id>", methods=['GET'])
+def obtener_movimientos_monedero(usuario_id):
+    usuario = Usuario.query.get(usuario_id)
+    if not usuario:
+        return jsonify({"error": "Falta el campo 'usuario_id' en la solicitud"}), 400
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        return jsonify({"error": "El usuario no tiene monedero"}), 404
+    
+    movimientos = MovimientoMonedero.query.filter_by(monedero_id=monedero.id).all()
+
+    if not movimientos:
+        return jsonify({"error": "El usuario no tiene movimientos en su monedero"}), 404
+    
+    return jsonify({
+        "movimientos":[movimiento.serializeMovimientoMonedero() for movimiento in movimientos]
+    }), 200
+
