@@ -35,8 +35,7 @@ PrideRide es un proyecto desarrollado con pasión y compromiso por dos personas 
 
 - **Daniel G.D.** → Full Stack Developer.
 
-- **[Juan Tomás P.H.]** → Full Stack Developer.  
-
+- **[Juan Tomás P.H.]** → Full Stack Developer.
 
 ---
 
@@ -92,4 +91,3 @@ docker build -t prideride .
 
 1. cd docs
 2. npm start
-3.
