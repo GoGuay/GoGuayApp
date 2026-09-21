@@ -27,7 +27,6 @@ class MovimientoMonedero(db.Model):
     saldo_actual = db.Column(db.Float, nullable=False)
     referencia_id = db.Column(db.String(100), nullable=True)
 
-    monedero = db.relationship('Monedero', backref='movimientos')
 
     def serializeMovimientoMonedero(self):
         return{

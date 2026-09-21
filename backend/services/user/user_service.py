@@ -1037,7 +1037,7 @@ def capture_wallet_order(order_id: str):
         # Extraer la cantidad pagada desde la respuesta de PayPal
         unidad_compra = capture_data["purchase_units"][0]
         captura = unidad_compra["payments"]["captures"][0]
-        monto_recargado = float(captura["amount"]["value"])
+        importe_recargado = float(captura["amount"]["value"])
         
         # Buscar o inicializar el monedero del usuario
         usuario = Usuario.query.get(current_user_id)
@@ -1051,14 +1051,14 @@ def capture_wallet_order(order_id: str):
             db.session.flush() # Para obtener el ID del monedero antes del commit final
 
         # Actualizar saldo
-        monedero.saldo += monto_recargado
+        monedero.saldo += importe_recargado
         
         # Registrar el movimiento en el historial
         nuevo_movimiento = MovimientoMonedero(
             monedero_id=monedero.id,
             concepto="Recarga de saldo vía PayPal",
-            cantidad=monto_recargado,
-            saldo_final=monedero.saldo
+            cantidad=importe_recargado,
+            saldo_actual=monedero.saldo
         )
         db.session.add(nuevo_movimiento)
         db.session.commit()
