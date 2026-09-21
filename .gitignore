@@ -92,4 +92,4 @@ frontend/typings/
 frontend/.vscode/typings/
 
 service-account.json
-google_service_account.json
+google-service-account.json

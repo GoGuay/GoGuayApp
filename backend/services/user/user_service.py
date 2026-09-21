@@ -126,6 +126,11 @@ def crear_usuario():
     db.session.add(monedero)
     db.session.commit()
 
+    # Crear monedero para el nuevo usuario
+    monedero = Monedero(usuario_id=nuevo_usuario.id)
+    db.session.add(monedero)
+    db.session.commit()
+
     access_token = create_access_token(identity=str(nuevo_usuario.id))
 
     try:
@@ -314,6 +319,7 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     
     return jsonify(usuario.serialize_public()), 200
 
+## EDITAR INFORMACIÓN DE UN USUARIO ##
 ## EDITAR INFORMACIÓN DE UN USUARIO ##
 @user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
