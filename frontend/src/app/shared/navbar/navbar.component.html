@@ -1,15 +1,14 @@
 <ion-header class="boxHeader">
   <ng-container>
     <nav class="navbar navbar-diseno">
+
       <!-- CONTENEDOR DE ESCRITORIO (ÚNICO Y SIN DUPLICADOS) -->
       <div class="container-desktop-nav desktop-only">
         <ul class="opciones-centradas m-0 p-0">
+
           <!-- 1. Columna Izquierda: Buscar Viaje -->
           <li class="nav-item">
-            <a
-              class="nav-link active"
-              href="/busqueda-viajes"
-            >
+            <a class="nav-link active" href="/busqueda-viajes">
               {{ 'NAVBAR.BUSCAR_VIAJE' | translate }}
             </a>
           </li>
@@ -17,90 +16,47 @@
           <!-- 2. Columna Central: Logo y Título (Centrado absoluto en la pantalla) -->
           <li class="nav-item logo-central-item">
             <a href="#">
-              <img
-                src="../../../assets/logo/PRIDECAR.png"
-                alt="Logo"
-                class="logo"
-              />
+              <img src="../../../assets/logo/PRIDECAR.png" alt="Logo" class="logo" />
             </a>
             <h1 class="m-0 text-center">{{ 'TITLE' | translate }}</h1>
           </li>
 
           <!-- 3. Columna Derecha: Publicar Viaje + Controles de Usuario -->
           <li class="nav-item right-actions-wrapper">
-            <a
-              class="nav-link active"
-              href="/nuevo-viaje"
-            >
+            <a class="nav-link active" href="/nuevo-viaje">
               {{ 'NAVBAR.PUBLICAR_VIAJE' | translate }}
             </a>
 
             <!-- Controles agrupados a la extrema derecha -->
             <div class="right-user-controls d-flex align-items-center">
+
               <!-- Selector de Idiomas -->
               <div class="idiomas-container d-flex flex-column align-items-center justify-content-center me-2">
-                <img
-                  src="../../../assets/sistema/bandera_es.svg"
-                  class="icon-idioma"
-                  [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }"
-                  (click)="changeLanguage('es')"
-                />
-                <img
-                  src="../../../assets/sistema/bandera_uk.svg"
-                  class="icon-idioma mt-1"
-                  [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }"
-                  (click)="changeLanguage('en')"
-                />
+                <img src="../../../assets/sistema/bandera_es.svg" class="icon-idioma"
+                  [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }" (click)="changeLanguage('es')" />
+                <img src="../../../assets/sistema/bandera_uk.svg" class="icon-idioma mt-1"
+                  [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }" (click)="changeLanguage('en')" />
               </div>
 
               <!-- Botón Notificaciones -->
-              <button
-                class="btn btnNotificaciones position-relative"
-                type="button"
-                *ngIf="isLoggedIn"
-              >
-                <a
-                  class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
-                  href="/notificaciones"
-                >
-                  <img
-                    class="icono-notificacion"
-                    [class.animar-icono]="numNotificaciones > 0"
-                    src="../../../assets/sistema/campana.png"
-                    alt="Notificaciones"
-                  />
+              <button class="btn btnNotificaciones position-relative" type="button" *ngIf="isLoggedIn">
+                <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
+                  href="/notificaciones">
+                  <img class="icono-notificacion" [class.animar-icono]="numNotificaciones > 0"
+                    src="../../../assets/sistema/campana.png" alt="Notificaciones" />
                 </a>
-                <span
-                  class="badge-notificaciones"
-                  *ngIf="numNotificaciones > 0"
-                >
-                  {{ numNotificaciones }}
-                </span>
+                <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
               </button>
 
               <!-- Botón Mensajes -->
-              <button
-                class="btn btnMensajes position-relative"
-                type="button"
-                *ngIf="isLoggedIn"
-              >
-                <a
-                  class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
-                  href="/messaging-center"
-                >
-                  <img
-                    class="icono-mensaje"
-                    [class.animar-icono]="numNotificacionesMensajes > 0"
-                    src="../../../assets/sistema/messaging.png"
-                    alt="Mensajes"
-                  />
+              <button class="btn btnMensajes position-relative" type="button" *ngIf="isLoggedIn">
+                <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
+                  href="/messaging-center">
+                  <img class="icono-mensaje" [class.animar-icono]="numNotificacionesMensajes > 0"
+                    src="../../../assets/sistema/messaging.png" alt="Mensajes" />
                 </a>
-                <span
-                  class="badge-notificaciones_mensajes"
-                  *ngIf="numNotificacionesMensajes > 0"
-                >
-                  {{ numNotificacionesMensajes }}
-                </span>
+                <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{
+                  numNotificacionesMensajes }}</span>
               </button>
 
               <!-- Menú Desplegable de Usuario -->
@@ -114,87 +70,39 @@
                       <img [src]="usuario?.fotoPerfil"
                         alt="Foto de perfil" referrerpolicy="no-referrer" />
                     </div>
-                    <mat-icon
-                      class="flecha-icono ms-1 flecha-animada"
-                      [class.rotada]="isDropdownOpen"
-                    >
-                      expand_more
-                    </mat-icon>
+                    <mat-icon class="flecha-icono ms-1 flecha-animada"
+                      [class.rotada]="isDropdownOpen">expand_more</mat-icon>
                   </a>
 
-                  <ul
-                    class="dropdown-menu menuusuario"
-                    aria-labelledby="navbarDropdown"
-                    data-bs-auto-close="false"
-                    [class.show]="isDropdownOpen"
-                  >
+                  <ul class="dropdown-menu menuusuario" aria-labelledby="navbarDropdown" data-bs-auto-close="false"
+                    [class.show]="isDropdownOpen">
                     <nav class="nav nav-pills flex-column">
                       <ul>
-                        <li class="perfil nav-item dropdown">
-                          <a
-                            class="nav-link"
-                            href="/mi-perfil"
-                          >
-                            <i class="fi fi-rr-user icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.MI_PERFIL' | translate }}
-                          </a>
-                        </li>
-                        <li class="perfil nav-item dropdown">
-                          <a
-                            class="nav-link"
-                            (click)="irAMisViajes()"
-                          >
-                            <i class="fi fi-rr-cars icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.MIS_VIAJES' | translate }}
-                          </a>
-                        </li>
-                        <li class="perfil nav-item dropdown">
-                          <a
-                            class="nav-link"
-                            href="/datos-contacto"
-                          >
-                            <i class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.DATOS_CONTACTO' | translate }}
-                          </a>
-                        </li>
-                        <li class="perfil nav-item dropdown">
-                          <a
-                            class="nav-link"
-                            href="/verificaciones-perfil"
-                          >
-                            <i class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.VERIFICACION' | translate }}
-                          </a>
-                        </li>
-                        <li class="perfil nav-item dropdown">
-                          <a
-                            class="nav-link"
-                            href="/saldo-transferencias"
-                          >
-                            <i class="fi fi-rr-wallet icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.SALDO' | translate }}
-                          </a>
-                        </li>
-                        <li class="perfil nav-item dropdow">
-                          <a
-                            class="nav-link"
-                            href="/ajustes-aplicacion"
-                          >
-                            <i class="fi fi-rr-settings icono_ajsutes me-1"></i>
-                            {{ 'NAVBAR.MENUUSUARIO.AJUSTES' | translate }}
-                          </a>
-                        </li>
+                        <li class="perfil nav-item dropdown"><a class="nav-link" href="/mi-perfil"><i
+                              class="fi fi-rr-user icono_ajsutes me-1"></i> {{ 'NAVBAR.MENUUSUARIO.MI_PERFIL' |
+                            translate }}</a></li>
+                        <li class="perfil nav-item dropdown"><a class="nav-link" (click)="irAMisViajes()"><i
+                              class="fi fi-rr-cars icono_ajsutes me-1"></i> {{ 'NAVBAR.MENUUSUARIO.MIS_VIAJES' |
+                            translate }}</a></li>
+                        <li class="perfil nav-item dropdown"><a class="nav-link" href="/datos-contacto"><i
+                              class="fi fi-rr-attribution-pen icono_ajsutes me-1"></i> {{
+                            'NAVBAR.MENUUSUARIO.DATOS_CONTACTO' | translate }}</a></li>
+                        <li class="perfil nav-item dropdown"><a class="nav-link" href="/verificaciones-perfil"><i
+                              class="fi fi-rs-badget-check-alt icono_ajsutes me-1"></i> {{
+                            'NAVBAR.MENUUSUARIO.VERIFICACION' | translate }}</a></li>
+                        <li class="perfil nav-item dropdown"><a class="nav-link" href="/saldo-transferencias"><i
+                              class="fi fi-rr-wallet icono_ajsutes me-1"></i> {{ 'NAVBAR.MENUUSUARIO.SALDO' | translate
+                            }}</a></li>
+                        <li class="perfil nav-item dropdow"><a class="nav-link" href="/ajustes-aplicacion"><i
+                              class="fi fi-rr-settings icono_ajsutes me-1"></i> {{ 'NAVBAR.MENUUSUARIO.AJUSTES' |
+                            translate }}</a></li>
                       </ul>
                     </nav>
                     <mat-divider class="mt-1 mb-1"></mat-divider>
                     <li class="logout d-flex align-items-center justify-content-center">
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        (click)="modalCerrarSesion()"
-                        type="button"
-                      >
-                        <mat-icon class="me-2">power_settings_new</mat-icon>
-                        {{ 'NAVBAR.MENUUSUARIO.SALIR' | translate }}
+                      <a class="dropdown-item d-flex align-items-center" (click)="modalCerrarSesion()" type="button">
+                        <mat-icon class="me-2">power_settings_new</mat-icon> {{ 'NAVBAR.MENUUSUARIO.SALIR' | translate
+                        }}
                       </a>
                     </li>
                   </ul>
@@ -204,51 +112,24 @@
               <!-- Menú Login / Registro (No logueado) -->
               <ng-template #loggedOutNav>
                 <div class="nav-item dropdown ms-2">
-                  <a
-                    class="nav-link dropdown-toggle d-flex align-items-center p-0"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    (click)="cambioDireccionFlecha()"
-                  >
-                    <div class="caja_imagen_perfil">
-                      <img
-                        class="tamano-icono"
-                        src="../../../assets/user/logOff.gif"
-                      />
+                  <a class="nav-link dropdown-toggle d-flex align-items-center p-0" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" (click)="cambioDireccionFlecha()">
+                    <div class="caja_imagen_perfil"><img class="tamano-icono" src="../../../assets/user/logOff.gif" />
                     </div>
-                    <mat-icon
-                      class="flecha-icono ms-1 flecha-animada"
-                      [class.rotada]="isDropdownOpen"
-                    >
-                      expand_more
-                    </mat-icon>
+                    <mat-icon class="flecha-icono ms-1 flecha-animada"
+                      [class.rotada]="isDropdownOpen">expand_more</mat-icon>
                   </a>
-                  <ul
-                    class="dropdown-menu menuusuario"
-                    [class.show]="isDropdownOpen"
-                  >
-                    <li>
-                      <a
-                        class="dropdown-item"
-                        href="/login"
-                      >
-                        {{ 'NAVBAR.MENUUSUARIO.LOGIN' | translate }}
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item"
-                        href="/registro"
-                      >
-                        {{ 'NAVBAR.MENUUSUARIO.REGISTRO' | translate }}
-                      </a>
+                  <ul class="dropdown-menu menuusuario" [class.show]="isDropdownOpen">
+                    <li><a class="dropdown-item" href="/login">{{ 'NAVBAR.MENUUSUARIO.LOGIN' | translate }}</a></li>
+                    <li><a class="dropdown-item" href="/registro">{{ 'NAVBAR.MENUUSUARIO.REGISTRO' | translate }}</a>
                     </li>
                   </ul>
                 </div>
               </ng-template>
+
             </div>
           </li>
+
         </ul>
       </div>
 
@@ -279,36 +160,17 @@
                 <img class="icono-notificacion" [class.animar-icono]="numNotificaciones > 0"
                   src="../../../assets/sistema/campana.png" alt="Notificaciones" />
               </a>
-              <span
-                class="badge-notificaciones"
-                *ngIf="numNotificaciones > 0"
-              >
-                {{ numNotificaciones }}
-              </span>
+              <span class="badge-notificaciones" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
             </button>
 
-            <button
-              class="btn btnMensajes position-relative"
-              type="button"
-              *ngIf="isLoggedIn"
-            >
-              <a
-                class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
-                href="/messaging-center"
-              >
-                <img
-                  class="icono-mensaje"
-                  [class.animar-icono]="numNotificacionesMensajes > 0"
-                  src="../../../assets/sistema/messaging.png"
-                  alt="Mensajes"
-                />
+            <button class="btn btnMensajes position-relative" type="button" *ngIf="isLoggedIn">
+              <a class="nav-link active p-0 d-flex align-items-center justify-content-center w-100 h-100"
+                href="/messaging-center">
+                <img class="icono-mensaje" [class.animar-icono]="numNotificacionesMensajes > 0"
+                  src="../../../assets/sistema/messaging.png" alt="Mensajes" />
               </a>
-              <span
-                class="badge-notificaciones_mensajes"
-                *ngIf="numNotificacionesMensajes > 0"
-              >
-                {{ numNotificacionesMensajes }}
-              </span>
+              <span class="badge-notificaciones_mensajes" *ngIf="numNotificacionesMensajes > 0">{{
+                numNotificacionesMensajes }}</span>
             </button>
 
             <ng-container *ngIf="isLoggedIn; else loggedOutNavMobile">
@@ -365,6 +227,7 @@
 
         </ul>
       </div>
+
     </nav>
   </ng-container>
 </ion-header>
