@@ -2,6 +2,7 @@ from .usuario import Usuario
 from .vehiculo import Vehiculo
 from .puntuacion import Puntuacion
 from .enums import RolUsuarioEnum
+from .enums import MovimientosMonederoEnum
 from .viaje import Viaje
 from .pasajeroViaje import PasajeroViaje
 from .notificaciones import Notificacion

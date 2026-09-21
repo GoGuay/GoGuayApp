@@ -481,4 +481,18 @@ export class UserServicesService {
       })
     );
   }
+
+  obtenerMovimientosMonedero(usuarioId: number): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+    return this.http.get<any>(`${this.apiUrl}/user/obtener-movimientos-monedero/${usuarioId}`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error al obtener el saldo del monedero:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }
