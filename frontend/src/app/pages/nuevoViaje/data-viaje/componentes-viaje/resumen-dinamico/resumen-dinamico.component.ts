@@ -118,14 +118,15 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   actualizarInformacion() {
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
-        // Aseguramos que si no viene fecha u hora de salida por defecto, se establezcan valores iniciales o se mantengan
         this.currentViajeData = { ...viajeData };
-
         if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto) {
           this.origenCtrl.valorTexto = viajeData.origen;
         }
         if (viajeData.destino && viajeData.destino !== this.destinoCtrl.valorTexto) {
           this.destinoCtrl.valorTexto = viajeData.destino;
+        }
+        if (viajeData.plazas !== undefined) {
+          this.currentViajeData.plazas = viajeData.plazas;
         }
       }
     });

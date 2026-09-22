@@ -63,8 +63,7 @@
 
     <ion-col size="12" size-xl="6">
       <div class="d-flex flex-column align-items-center text-center w-100">
-        <!-- Selector de numero de plazas libres
-          -->
+        <!-- Selector de numero de plazas libres -->
         <h2 class="section-title">{{ 'NUEVOVIAJE.PRIMER_PASO.NUMERO_PLAZAS_LIBRES' | translate }}</h2>
         <label id="label-plazas" class="mt-4">
           {{ 'NUEVOVIAJE.PRIMER_PASO.SELECCIONA_NUMERO_PASAJEROS' | translate }}
@@ -72,8 +71,9 @@
         <div class="input-container mb-3 w-100 d-flex justify-content-center">
           <app-selector-general idUnico="input-plazas" aria-labelledby="label-plazas"
             placeholderKey="PLACEHOLDER.NUM_PLAZAS" class="w-100 selector-compacto" [style.max-width.px]="280"
-            [opciones]="opcionesPlazas" [valor]="plazas" [soloLectura]="true" [mostrarFlechaSelector]="true"
-            (seleccionCambiada)="seleccionarPlazas($event)"></app-selector-general>
+            [opciones]="opcionesPlazas" [(ngModel)]="plazas" [valor]="plazas" [soloLectura]="true"
+            [mostrarFlechaSelector]="true" (seleccionCambiada)="seleccionarPlazas($event)">
+          </app-selector-general>
         </div>
       </div>
 
