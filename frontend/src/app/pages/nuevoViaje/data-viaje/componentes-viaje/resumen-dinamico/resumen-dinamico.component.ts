@@ -118,6 +118,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   actualizarInformacion() {
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
+        // Aseguramos que si no viene fecha u hora de salida por defecto, se establezcan valores iniciales o se mantengan
         this.currentViajeData = { ...viajeData };
 
         if (viajeData.origen && viajeData.origen !== this.origenCtrl.valorTexto) {
@@ -130,16 +131,51 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Devuelve la fecha formateada legible para el usuario
   getFormattedDate(): string {
-    if (this.currentViajeData?.fecha_salida) {
-      const date = new Date(this.currentViajeData.fecha_salida);
-      return date.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      });
+   const fecha = this.currentViajeData?.fecha_salida;
+    if (fecha) {
+      const date = new Date(fecha);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        });
+      }
+      return fecha; 
     }
     return '';
+  }
+
+  // Prepara la fecha en formato YYYY-MM-DD para que el input type="date" la reconozca al editar
+  getInputDateValue(): string {
+    const fecha = this.currentViajeData?.fecha_salida;
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0];
+    }
+    return fecha;
+  }
+
+  getFormattedTime(): string {
+    if (this.currentViajeData?.hora_salida) {
+      const hora = this.currentViajeData.hora_salida;
+      if (hora.includes('T')) {
+        const date = new Date(hora);
+        return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      }
+      return hora;
+    }
+    return '';
+  }
+
+  getFormattedCoche(): string {
+    const coche = this.currentViajeData?.coche;
+    if (!coche) return '';
+    if (typeof coche === 'string') return coche;
+    return `${coche.marca || ''} ${coche.modelo || ''} (${coche.color || ''})`.trim();
   }
 
   toggleEditarViaje() {
@@ -166,7 +202,6 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
       destino: this.destinoCtrl.valorTexto,
     };
     this.travelService.setViajeData(viajeActualizado);
-
   }
 
   guardarCambios() {
@@ -289,9 +324,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     const idSeleccionado = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion : opcion;
     const cocheObjeto = this.mapaVehiculos.get(idSeleccionado) || idSeleccionado;
     this.currentViajeData.coche = cocheObjeto;
-
     this.travelService.setViajeData({ ...this.currentViajeData });
-
   }
 
   activarEdicionPlazas(): void {
@@ -317,9 +350,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   onPlazasCambiadas(opcion: any) {
     const plazas = typeof opcion === 'object' && opcion !== null ? opcion.valor || opcion.descripcion : opcion;
     this.currentViajeData.plazas = plazas;
-
     this.travelService.setViajeData({ ...this.currentViajeData });
-
   }
 
   activarEdicionFecha(): void {

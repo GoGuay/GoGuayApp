@@ -121,14 +121,17 @@ export class PrimerPasoComponent implements OnInit {
 
     const viajeData = this.travelService.getViajeData() || {};
 
+    // 1. Gestión de fecha por defecto y sincronización con el servicio
     if (viajeData.fecha_salida) {
       this.fecha_seleccionada = viajeData.fecha_salida;
     } else {
       this.fecha_seleccionada = new Date().toISOString();
+      this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     }
 
     this.calcularHoraMinima();
 
+    // 2. Gestión de hora por defecto y sincronización con el servicio
     if (viajeData.hora_salida && typeof viajeData.hora_salida === 'string' && viajeData.hora_salida.includes(':')) {
       const [horas, minutos] = viajeData.hora_salida.split(':');
       const hDate = new Date();
@@ -138,18 +141,23 @@ export class PrimerPasoComponent implements OnInit {
       const horaBase = new Date();
       horaBase.setTime(horaBase.getTime() + 60 * 60 * 1000);
       this.hora_seleccionada = horaBase;
+      
+      const horasStr = String(horaBase.getHours()).padStart(2, '0');
+      const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
+      this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
     }
 
     this.plazas = viajeData.plazas || '';
     this.reservaAutomatica = viajeData.reserva_automatica ?? false;
     this.cocheSeleccionado = viajeData.coche || null;
-
+    
     this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
       if (viajeData) {
         if (viajeData.plazas && viajeData.plazas !== this.plazas) {
           this.plazas = viajeData.plazas;
         }
 
+        this.fecha_seleccionada = viajeData.fecha_salida || this.fecha_seleccionada;
         if (viajeData.fecha_salida && viajeData.fecha_salida !== this.fecha_seleccionada) {
           this.fecha_seleccionada = viajeData.fecha_salida;
           this.calcularHoraMinima();

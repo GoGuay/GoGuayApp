@@ -14,12 +14,10 @@
   <!-- Texto informativo -->
   <p class="text-muted small mb-3">
     <i class="fi fi-rr-info me-1"></i>
-    Sugerencias de eventos y destinos LGTBI en España elegidas por inteligencia artificial según tus gustos. ¡Elige un
-    destino y crea un viaje para compartir coche!
+    Sugerencias de eventos y destinos LGTBI en España elegidas por inteligencia artificial según tus gustos. ¡Elige un destino y crea un viaje para compartir coche!
   </p>
 
-
- 
+  <!-- Spinner de carga -->
   <div *ngIf="cargando" class="text-center py-3">
     <app-spinner></app-spinner>
     <p class="small text-muted mt-2">Buscando destinos ideales para ti...</p>
@@ -29,13 +27,10 @@
   <div class="row g-3" *ngIf="!cargando && recomendaciones.length > 0">
     <div class="col-12 col-md-4" *ngFor="let rec of recomendaciones">
 
-      <!-- Usamos un div con flex-column para gestionar las alturas -->
+      <!-- Tarjeta principal -->
       <div class="card ia-card shadow-sm h-100 p-3 d-flex flex-column">
 
-        <!-- Afinidad -->
-      <a class="card ia-card shadow-sm h-100 p-3 text-decoration-none d-block">
-
-        <!-- Afinidad  -->
+        <!-- Afinidad y Icono -->
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="badge bg-light text-dark border">Afinidad: {{ rec.puntuacion_afinidad }}%</span>
           <div class="ia-icon-wrapper">
@@ -54,24 +49,18 @@
           {{ rec.motivo }}
         </p>
 
-        <!-- Contenedor de botones con mt-auto para fijarlo siempre abajo -->
+        <!-- Contenedor de acciones inferior fijo con mt-auto -->
         <div class="mt-auto pt-3 d-flex justify-content-center align-items-center gap-4 action-container">
-          <span class="small fw-bold action-link" (click)="buscarViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button" (click)="buscarViajeDesde(rec.nombre_destino)">
             Buscar viaje aquí <i class="fi fi-rr-search"></i>
           </span>
-          <span class="small fw-bold action-link" (click)="crearViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button" (click)="crearViajeDesde(rec.nombre_destino)">
             Crear viaje aquí <i class="fi fi-rr-plus"></i>
           </span>
         </div>
 
       </div>
 
-        <div class="mt-3 d-flex justify-content-center align-items-center gap-4">
-          <span class="text-primary small fw-bold action-link" (click)="buscarViajeDesde(rec.nombre_destino)">Buscar viaje aquí <i class="fi fi-rr-search"></i></span>
-          <span class="text-primary small fw-bold action-link" (click)="crearViajeDesde(rec.nombre_destino)">Crear viaje aquí <i class="fi fi-rr-plus"></i></span>
-        </div>
-
-      </a>
     </div>
   </div>
 
