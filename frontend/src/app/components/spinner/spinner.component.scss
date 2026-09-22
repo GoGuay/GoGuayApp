@@ -7,9 +7,9 @@
   height: 100%;
   z-index: 999;
   border-radius: 35px;
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(255, 255, 255, 0.473);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   animation: fadeInOverlay 0.2s ease-in-out;
 

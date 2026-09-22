@@ -176,6 +176,11 @@ export class LoginPage implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Función para inicializar el botón de inicio de sesión con Google.
+   * @param intentos - Número de intentos realizados para inicializar el botón. 
+   * Se utiliza para reintentar en caso de que la API de Google no esté disponible.
+   */
   private inicializarBotonGoogle(intentos = 0): void {
     if (typeof google !== 'undefined' && google?.accounts?.id) {
       google.accounts.id.initialize({
@@ -199,7 +204,14 @@ export class LoginPage implements OnInit, AfterViewInit {
       console.error('No se pudo cargar la API de Google Identity');
     }
   }
+  /**
+   * Función para procesar el login con Google. 
+   * Se encarga de enviar el token de Google al backend para autenticar al usuario.
+   * 
+   * @param idToken - Token de identificación proporcionado por Google después de la autenticación.
+   */
   private procesarLoginGoogle(idToken: string): void {
+    this.spinner_de_carga = true;
     this.ngZone.run(() => {
       this.userService.loginConGoogle(idToken).subscribe({
         next: (res: any) => {
@@ -208,6 +220,7 @@ export class LoginPage implements OnInit, AfterViewInit {
               localStorage.setItem('userData', JSON.stringify(res.usuario));
               this.userService.actualizarEstadoUsuario(res.usuario);
             }
+            this.spinner_de_carga = false;
             this.navCtrl.navigateRoot('/home');
           }
         },
