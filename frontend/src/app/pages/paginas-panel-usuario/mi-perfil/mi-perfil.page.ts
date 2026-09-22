@@ -295,12 +295,19 @@ export class MiPerfilPage implements OnInit {
       return;
     }
 
+    const nombreVacio = !this.nombreEditado || this.nombreEditado.trim() === '';
+    const apellidosVacios = !this.apellidosEditados || this.apellidosEditados.trim() === '';
+
+    if (nombreVacio || apellidosVacios) {
+      this.botonHabilitado = false;
+      return;
+    }
+
     const preferenciasActualesEstructuradas = {
       convivencia_viaje: this.preferenciasSeleccionadas,
       intereses_ocio: this.interesesOcioSeleccionados,
     };
 
-    // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
     const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
     const pronombreChanged = this.pronombreEditado !== this.userData.usuario?.pronombre;
@@ -310,7 +317,6 @@ export class MiPerfilPage implements OnInit {
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
     const preferenciasChanged = JSON.stringify(preferenciasActualesEstructuradas) !== JSON.stringify(this.userData.usuario.preferencias);
 
-    //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
       nombreChanged ||
       apellidosChanged ||
@@ -387,8 +393,10 @@ export class MiPerfilPage implements OnInit {
     console.log('userData:', this.userData);
 
     if (
-      !this.userData.usuario.nombre ||
-      !this.userData.usuario.apellidos ||
+      !this.nombreEditado ||
+      this.nombreEditado.trim() === '' ||
+      !this.apellidosEditados ||
+      this.apellidosEditados.trim() === '' ||
       !this.userData.usuario.genero ||
       !this.userData.usuario.orientacion ||
       !this.userData.usuario.fecha_nacimiento
@@ -398,8 +406,8 @@ export class MiPerfilPage implements OnInit {
     }
 
     const nuevoUsuario = {
-      nombre: this.nombreEditado,
-      apellidos: this.apellidosEditados,
+      nombre: this.nombreEditado.trim(),
+      apellidos: this.apellidosEditados.trim(),
       pronombre: this.pronombreEditado,
       genero: this.generoEditado,
       orientacion: this.orientacionEditada,

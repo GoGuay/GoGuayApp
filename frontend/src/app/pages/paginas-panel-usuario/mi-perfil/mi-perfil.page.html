@@ -112,8 +112,16 @@
                 id="nombre"
                 [(ngModel)]="nombreEditado"
                 name="nombre"
+                #nombreInput="ngModel"
+                required
                 (ngModelChange)="onInputChange()"
               />
+              <div
+                *ngIf="nombreInput.invalid && (nombreInput.dirty || nombreInput.touched)"
+                class="text-danger mt-1 small"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.NOMBRE_OBLIGATORIO' | translate}}
+              </div>
             </div>
             <div class="mb-3">
               <label
@@ -128,8 +136,16 @@
                 id="apellidos"
                 [(ngModel)]="apellidosEditados"
                 name="apellidos"
+                #apellidosInput="ngModel"
+                required
                 (ngModelChange)="onInputChange()"
               />
+              <div
+                *ngIf="apellidosInput.invalid && (apellidosInput.dirty || apellidosInput.touched)"
+                class="text-danger mt-1 small"
+              >
+                {{'MIPERFIL.INFO_PERSONAL.APELLIDOS_OBLIGATORIO' | translate}}
+              </div>
             </div>
           </ion-col>
         </ion-row>

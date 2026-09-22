@@ -77,7 +77,9 @@
       "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
       "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
       "LABEL_NOMBRE": "Nombre",
+      "NOMBRE_OBLIGATORIO": "El nombre es un dato obligatorio",
       "LABEL_APELLIDOS": "Apellidos",
+      "APELLIDOS_OBLIGATORIO": "El apellido es un dato obligatorio",
       "PRONOMBRE": {
         "LABEL": "Pronombre",
         "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
