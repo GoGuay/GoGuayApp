@@ -64,6 +64,16 @@
     "ARIA_ACEPTAR_CONDICIONES": "Aceptar las condiciones",
     "NO_ACEPTAR": "No aceptar"
   },
+  "BOTONES": {
+    "MIPERFIL": {
+      "ANADIR_FOTO_PERFIL_MATTOOLTIP": "Añadir o cambiar la foto de perfil",
+      "ANADIR_FOTO_PERFIL_ARIALABEL": "Añadir o cambiar la foto de perfil",
+
+      "ELIMINAR_FOTO_PERFIL_MATTOOLTIP": "Eliminar la foto de perfil",
+      "ELIMINAR_FOTO_PERFIL_ARIALABEL": "Eliminar la foto de perfil",
+      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás"
+    }
+  },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -71,11 +81,8 @@
     "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
     "INFO_PERSONAL": {
       "TITULO": "Información personal",
-      "BTN_ANADIR_FOTO": "Añadir o cambiar la foto de perfil",
       "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
-      "BTN_ELIMINAR_FOTO": "Eliminar la foto de perfil",
-      "BTN_PERFIL_PUBLICO": "Aquí puedes ver tu perfil público",
-      "BTN_PERFIL_PUBLICO_TEXTO": "Así me ven los demás",
+
       "LABEL_NOMBRE": "Nombre",
       "NOMBRE_OBLIGATORIO": "El nombre es un dato obligatorio",
       "LABEL_APELLIDOS": "Apellidos",
@@ -109,6 +116,14 @@
       "LABEL_OTRAS": "Otras preferencias de viaje",
       "MASCOTAS": "Admito mascotas / Puedo ir con mi mascota",
       "FUMAR": "Se puede fumar"
+    },
+    "PREF_IA": {
+      "LABEL": "Tus intereses para la IA",
+      "SUBTITULO": "Selecciona tus planes y destinos favoritos para recibir mejores sugerencias de viaje:",
+      "PLAYA": "Playa y escapadas costeras",
+      "OCIO_NOCTURNO": "Ocio nocturno y festivales / Orgullo",
+      "CULTURA": "Cultura, museos y arte urbano",
+      "RURAL": "Naturaleza y escapadas rurales"
     }
   },
   "TABLA_VEHICULOS": {

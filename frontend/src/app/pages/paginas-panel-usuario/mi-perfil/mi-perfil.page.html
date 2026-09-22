@@ -27,13 +27,15 @@
               <button
                 type="button"
                 class="btn btn_bg boton"
-                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
+                [matTooltip]="'BOTONES.MIPERFIL.ANADIR_FOTO_PERFIL_MATTOOLTIP' | translate"
+                [attr.aria-label]="'BOTONES.MIPERFIL.ANADIR_FOTO_PERFIL_ARIALABEL' | translate"
                 (click)="fileInputPerfil.click()"
               >
                 <img
                   class="edit_btn"
                   src="../../../../assets/sistema/mas.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ANADIR_FOTO' | translate"
+                  alt=""
+                  aria-hidden="true"
                 />
               </button>
               <input
@@ -69,13 +71,15 @@
               <button
                 type="button"
                 class="btn btn_bg boton btn_delete"
-                [matTooltip]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
+                [matTooltip]="'BOTONES.MIPERFIL.ELIMINAR_FOTO_PERFIL_MATTOOLTIP' | translate"
+                [attr.aria-label]="'BOTONES.MIPERFIL.ELIMINAR_FOTO_PERFIL_ARIALABEL' | translate"
                 (click)="modalEliminarFotoPerfil(userData.usuario)"
               >
                 <img
                   class="edit_btn"
                   src="../../../../assets/sistema/cruz.png"
-                  [attr.alt]="'MIPERFIL.INFO_PERSONAL.BTN_ELIMINAR_FOTO' | translate"
+                  alt=""
+                  aria-hidden="true"
                 />
               </button>
             </div>
@@ -87,11 +91,10 @@
               <button
                 type="button"
                 class="btn btn_bg ver-perfil-btn"
-                matTooltip="{{ 'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate }}"
-                [attr.aria-label]="'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO' | translate"
+                matTooltip="{{ 'BOTONES.MIPERFIL.ASI_ME_VEN_LOS_DEMAS' | translate }}"
                 (click)="verPerfilPublico()"
               >
-                {{'MIPERFIL.INFO_PERSONAL.BTN_PERFIL_PUBLICO_TEXTO' | translate}}
+                {{'BOTONES.MIPERFIL.ASI_ME_VEN_LOS_DEMAS' | translate}}
               </button>
             </div>
           </div>
@@ -453,7 +456,7 @@
         <!-- Legend para lectores de pantalla -->
         <legend class="visually-hidden">Intereses de ocio y destinos</legend>
 
-        <h4 class="text-center mb-4">Tus intereses para la IA</h4>
+        <h4 class="text-center mb-4">{{ 'MIPERFIL.PREF_IA.LABEL' | translate }}</h4>
 
         <div
           role="group"
@@ -463,7 +466,7 @@
             id="intereses-label"
             class="form-label mb-3"
           >
-            <strong>Selecciona tus planes y destinos favoritos para recibir mejores sugerencias de viaje:</strong>
+            <strong>{{ 'MIPERFIL.PREF_IA.SUBTITULO' | translate }}</strong>
           </label>
 
           <!-- PLAYA -->
@@ -479,7 +482,7 @@
               class="form-check-label"
               for="ocio-playa"
             >
-              Playa y escapadas costeras
+              {{ 'MIPERFIL.PREF_IA.PLAYA' | translate }}
             </label>
           </div>
 
@@ -496,7 +499,7 @@
               class="form-check-label"
               for="ocio-festivo"
             >
-              Ocio nocturno y festivales / Orgullo
+              {{ 'MIPERFIL.PREF_IA.OCIO_NOCTURNO' | translate }}
             </label>
           </div>
 
@@ -513,7 +516,7 @@
               class="form-check-label"
               for="ocio-cultura"
             >
-              Cultura, museos y arte urbano
+              {{ 'MIPERFIL.PREF_IA.CULTURA' | translate }}
             </label>
           </div>
 
@@ -530,7 +533,7 @@
               class="form-check-label"
               for="ocio-rural"
             >
-              Naturaleza y escapadas rurales
+              {{ 'MIPERFIL.PREF_IA.RURAL' | translate }}
             </label>
           </div>
         </div>

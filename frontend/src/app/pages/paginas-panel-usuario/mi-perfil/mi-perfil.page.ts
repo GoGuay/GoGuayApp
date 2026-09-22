@@ -70,11 +70,11 @@ export class MiPerfilPage implements OnInit {
   emailEditado: string = '';
   telefonoEditado: string = '';
   isOpen = false;
-  edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
+  edad: number = 0;
   marcaSeleccionada: string = '';
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
-  lang: string = this.languageService.getLanguage() || 'es';
+  lang: string = 'es';
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
   imagenPerfilUsuario: string | null = null;
   cargando = false;
@@ -147,6 +147,7 @@ export class MiPerfilPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
+    this.lang = this.languageService.getLanguage() || 'es';
     this.loadUserData();
     const usr = this.userData?.usuario || (this.userData?.id ? this.userData : null);
     if (!usr) {
@@ -160,7 +161,7 @@ export class MiPerfilPage implements OnInit {
 
     const usuarioValido = this.userData.usuario;
     this.fechaNacimientoEditada = usuarioValido?.fecha_nacimiento || '';
-    this.lang = this.translate.currentLang;
+    this.edad = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
     this.emailEditado = usuarioValido?.email || '';
     this.telefonoEditado = usuarioValido?.telefono || '';
     this.comunComerciales = usuarioValido?.comunic_comerciales || false;
