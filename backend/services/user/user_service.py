@@ -483,14 +483,14 @@ def actualizar_imagen_perfil(usuario_id):
 
 ## ELIMINAR IMAGEN DE PERFIL ##
 @user_blueprint.route('/eliminar_imagen_perfil/<int:usuario_id>', methods=['DELETE'])
-def eliminar_imagen_perfil(user_id):
+def eliminar_imagen_perfil(usuario_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
     2. Si el usuario no tiene foto de perfil, detiene el proceso.
     3. uploader.destroy --> método para destruir la imagen del perfil que tenga el usuario. A continuación pone los valores fotoPerfil y fotoPublicId a en nulos y guarda los cambios con el commit.
     4. Devuelve un mensaje de éxito en la función. Si el intento de eliminarla tiene algun fallo devuelve otro mensaje de error.
     """
-    user = Usuario.query.get_or_404(user_id)
+    user = Usuario.query.get_or_404(usuario_id)
 
     if not user.fotoPublicId:
         return jsonify({"error": "El usuario no tiene una imagen de perfil."}), 404
