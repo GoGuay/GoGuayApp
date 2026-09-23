@@ -816,3 +816,16 @@ span:focus {
   background-color: #ffffff !important;
   border-radius: 20px !important;
 }
+
+/**
+  * CONFIGURACIÓN PARA EL MENSAJE DE RECORDATORIO DE ALERTA en EL PANEL DE USUARIO
+  */
+.recordatorio-alerta a {
+  color: #b3b5e6 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: #0056b3 !important;
+  }
+}
