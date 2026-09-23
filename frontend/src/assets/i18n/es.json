@@ -429,34 +429,26 @@
 
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIFICACION": {
-    "TITULO": "Verificación del perfil",
-    "SUBT_VERIF_BASICA": "Verificación básica: confirma tu correo, teléfono y número de documento de identidad",
-    "SUBT_VERIF_AVANZADA": "Verificación avanzada: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
-    "TABLA_VBASICA": {
-      "TITULO": "Verificación básica",
-      "COL_CORREO": "Correo electrónico",
-      "COL_TELÉFONO": "Teléfono",
-      "COL_DOCUMENTO": "Documento de identidad"
+    "TITULO": "Verificación de tu perfil",
+    "SUBT_VERIF_BASICA": "Verificar tus datos te convierte en un usuarie más fiable ante los demás",
+    "TABLA": {
+      "TITULO": "Datos verificados",
+      "LABEL_CORREO": "Correo electrónico",
+      "CORREO_VERIFICADO_ARIALABEL": "Correo electrónico verificado",
+      "CORREO_NO_VERIFICADO_ARIALABEL": "Correo electrónico no verificado",
+      "LABEL_TELÉFONO": "Teléfono",
+      "TELEFONO_VERIFICADO_ARIALABEL": "Teléfono verificado",
+      "TELEFONO_NO_VERIFICADO_ARIALABEL": "Teléfono no verificado",
+      "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no"
     },
-    "TABLA_VAVANZADA": {
-      "TITULO": "Verificación avanzada",
-      "COL_CARNETCONDUCIR": "Carnet de conducir"
-    },
+
+    "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/mi-perfil\">Mi perfil</a>",
+    "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil verificado!",
     "VERIFICA_CORREO": "Verifica tu correo:",
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
-    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
-    "VERIF_IDENTIDAD": "Verifica tu identidad:",
-    "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
-    "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
-    "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
-    "NUMERO_DOCUMENTO": "Número de documento sin espacios",
-    "BOTON_VERIFICAR_IDENTIDAD": "Confirmar documento",
-    "VAVANZADA": {
-      "TITULO": "Verificación avanzada",
-      "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
-    }
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código"
   },
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
   "AJUSTESAPP": {
