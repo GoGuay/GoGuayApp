@@ -74,6 +74,14 @@
       "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás",
 
       "GUARDAR": "Guardar"
+    },
+    "TABLAVEHICULOS": {
+      "ANADIR_VEHICULO": "Añadir vehículo",
+      "EDITAR_ARIALABEL": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "ELIMINAR_ARIALABEL": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_TRAS_EDITAR_ARIALABEL": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_VEHICULO": "Guardar vehículo",
+      "CANCELAR": "Cancelar"
     }
   },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
@@ -131,16 +139,11 @@
   "TABLA_VEHICULOS": {
     "TITULO": "Mis vehículos",
     "SIN_VEHICULOS": "No tienes vehículos añadidos",
-    "BTN_ANADIR_VEHICULO": "Añadir vehículo",
-    "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
     "ADVERTENCIA_MODIFICACION": "Recuerda que si cambias la marca, debes modificar también el modelo",
     "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
-    "GUARDAR_VEHICULO": "Guardar vehículo",
-    "BOTON_GUARDAR_HELP": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+
     "GUARDAR_CAMBIOS": "Guardar cambios",
-    "BOTON_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
     "ELIMINAR": {
-      "AYUDA_BOTON": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
       "MODAL_TITULO": "¡ATENCIÓN!: Vas a eliminar un vehículo",
       "MODAL_PREGUNTA": "¿Estás seguro de que deseas eliminar el {{marca}} {{modelo}} de color {{color}}?",
       "CONFIRMACION_TITULO": "Vehículo eliminado",
@@ -148,12 +151,11 @@
       "ERROR_AL_ELIMINAR": "No se pudo eliminar el vehículo {{marca}} {{modelo}} de color {{color}}"
     },
     "ANADIR_NUEVO": {
-      "AYUDA": "Para añadir un nuevo vehículo",
       "MODAL_ANADIDO": "Vehículo guardado",
       "MODAL_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha guardado correctamente.",
       "MODAL_ANADIDO_ERROR": "No se pudo guardar el vehículo {{marca}} {{modelo}} de color {{color}}"
     },
-    "CANCELAR": "Cancelar",
+
     "SELECTOR": {
       "MARCA": "Marca",
       "AYUDA_MARCA": "Selector de marca del vehículo",

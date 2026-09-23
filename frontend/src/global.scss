@@ -67,7 +67,7 @@ html,
 body {
   height: 100%;
   background-color: #e9edd5;
- // overflow: hidden !important;
+  // overflow: hidden !important;
   scroll-behavior: smooth;
 }
 
@@ -98,7 +98,8 @@ textarea,
 label,
 small,
 span,
-ul {
+ul,
+legend {
   font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #000 !important;
 }
