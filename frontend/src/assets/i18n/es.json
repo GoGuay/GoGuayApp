@@ -71,10 +71,22 @@
 
       "ELIMINAR_FOTO_PERFIL_MATTOOLTIP": "Eliminar la foto de perfil",
       "ELIMINAR_FOTO_PERFIL_ARIALABEL": "Eliminar la foto de perfil",
-      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás"
+      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás",
+
+      "GUARDAR": "Guardar"
+    },
+    "TABLAVEHICULOS": {
+      "ANADIR_VEHICULO": "Añadir vehículo",
+      "EDITAR_ARIALABEL": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "ELIMINAR_ARIALABEL": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_TRAS_EDITAR_ARIALABEL": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_VEHICULO": "Guardar vehículo",
+      "CANCELAR": "Cancelar"
+    },
+    "DATOSCONTACTO": {
+      "GUARDAR": "Guardar"
     }
   },
-  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
     "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
@@ -126,19 +138,32 @@
       "RURAL": "Naturaleza y escapadas rurales"
     }
   },
+
+  "DATOS_CONTACTO": {
+    "TITULO": "Datos de contacto",
+    "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
+    "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
+    "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
+    "MI_CORREO": "Mi correo electrónico",
+    "CORREO_OBLIGATORIO_ERROR": "El correo es obligatorio",
+    "CORREO_INVALIDO_ERROR": "El formato del correo no es correcto",
+    "MI_TFNO": "Mi teléfono",
+    "TELEFONO_OBLIGATORIO_ERROR": "El teléfono es obligatorio",
+    "TELEFONO_INVALIDO_ERROR": "Formato incorrecto: debe tener 9 dígitos numéricos",
+    "COM_COMERCIALES": "Comunicaciones comerciales",
+    "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
+    "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros",
+    "TITULO_DATOSGUARDADOS": "Datos guardados",
+    "MENSAJE_DATOSGUARDADOS": "Se han guardado correctamente los datos"
+  },
   "TABLA_VEHICULOS": {
     "TITULO": "Mis vehículos",
     "SIN_VEHICULOS": "No tienes vehículos añadidos",
-    "BTN_ANADIR_VEHICULO": "Añadir vehículo",
-    "BTN_AYUDA_ANADIR_VEHICULO": "Para añadir un nuevo vehículo",
     "ADVERTENCIA_MODIFICACION": "Recuerda que si cambias la marca, debes modificar también el modelo",
     "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
-    "GUARDAR_VEHICULO": "Guardar vehículo",
-    "BOTON_GUARDAR_HELP": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+
     "GUARDAR_CAMBIOS": "Guardar cambios",
-    "BOTON_EDITAR_HELP": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
     "ELIMINAR": {
-      "AYUDA_BOTON": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
       "MODAL_TITULO": "¡ATENCIÓN!: Vas a eliminar un vehículo",
       "MODAL_PREGUNTA": "¿Estás seguro de que deseas eliminar el {{marca}} {{modelo}} de color {{color}}?",
       "CONFIRMACION_TITULO": "Vehículo eliminado",
@@ -146,12 +171,11 @@
       "ERROR_AL_ELIMINAR": "No se pudo eliminar el vehículo {{marca}} {{modelo}} de color {{color}}"
     },
     "ANADIR_NUEVO": {
-      "AYUDA": "Para añadir un nuevo vehículo",
       "MODAL_ANADIDO": "Vehículo guardado",
       "MODAL_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha guardado correctamente.",
       "MODAL_ANADIDO_ERROR": "No se pudo guardar el vehículo {{marca}} {{modelo}} de color {{color}}"
     },
-    "CANCELAR": "Cancelar",
+
     "SELECTOR": {
       "MARCA": "Marca",
       "AYUDA_MARCA": "Selector de marca del vehículo",
@@ -216,20 +240,6 @@
     "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
   },
 
-  "BOTON": {
-    "GUARDAR": "Guardar",
-    "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
-    "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
-    "ELEGIR_ARCHIVOS": "Elegir archivos",
-    "CAMBIAR": "Cambiar!",
-    "ELIMINAR_CTA": "Eliminar mi cuenta",
-    "ELIMINAR": "Eliminar perfil",
-    "CANCELAR:": "Cancelar",
-    "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
-    "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
-    "CONSULTA_AQUI": "Consulta aquí",
-    "CENTROAYUDA": "Consulta nuestro centro de ayuda"
-  },
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
   "BUSCADOR": {
     "TITULO": "¿Estás buscando un viaje?",
@@ -416,48 +426,29 @@
       "RECHAZAR": "Rechazar y salir"
     }
   },
-  "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
-  "DATOS_CONTACTO": {
-    "TITULO": "Datos de contacto",
-    "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
-    "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
-    "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
-    "MI_CORREO": "Mi correo electrónico",
-    "MI_TFNO": "Mi teléfono",
-    "COM_COMERCIALES": "Comunicaciones comerciales",
-    "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
-    "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
-  },
+
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIFICACION": {
-    "TITULO": "Verificación del perfil",
-    "SUBT_VERIF_BASICA": "Verificación básica: confirma tu correo, teléfono y número de documento de identidad",
-    "SUBT_VERIF_AVANZADA": "Verificación avanzada: si en algún momento serás tu el conductor, debes adjuntar foto de tu permiso/carnet de conducir",
-    "TABLA_VBASICA": {
-      "TITULO": "Verificación básica",
-      "COL_CORREO": "Correo electrónico",
-      "COL_TELÉFONO": "Teléfono",
-      "COL_DOCUMENTO": "Documento de identidad"
+    "TITULO": "Verificación de tu perfil",
+    "SUBT_VERIF_BASICA": "Verificar tus datos te convierte en un usuarie más fiable ante los demás",
+    "TABLA": {
+      "TITULO": "Datos verificados",
+      "LABEL_CORREO": "Correo electrónico",
+      "CORREO_VERIFICADO_ARIALABEL": "Correo electrónico verificado",
+      "CORREO_NO_VERIFICADO_ARIALABEL": "Correo electrónico no verificado",
+      "LABEL_TELÉFONO": "Teléfono",
+      "TELEFONO_VERIFICADO_ARIALABEL": "Teléfono verificado",
+      "TELEFONO_NO_VERIFICADO_ARIALABEL": "Teléfono no verificado",
+      "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no"
     },
-    "TABLA_VAVANZADA": {
-      "TITULO": "Verificación avanzada",
-      "COL_CARNETCONDUCIR": "Carnet de conducir"
-    },
+
+    "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/mi-perfil\">Mi perfil</a>",
+    "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil verificado!",
     "VERIFICA_CORREO": "Verifica tu correo:",
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
-    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
-    "VERIF_IDENTIDAD": "Verifica tu identidad:",
-    "INFO_VERIF_IDENTIDAD": "Elije el tipo de documento e indica tu número. No olvides modificarlo si es necesario",
-    "TIPO_DOCUMENTO": "Selecciona el tipo de documento",
-    "ESCOGE_TIPO_DOCUMENTO": "Escoge tu tipo de documento",
-    "NUMERO_DOCUMENTO": "Número de documento sin espacios",
-    "BOTON_VERIFICAR_IDENTIDAD": "Confirmar documento",
-    "VAVANZADA": {
-      "TITULO": "Verificación avanzada",
-      "INFO": "Esta verificación es obligatoria sólo si vas a publicar algún viaje como conductor"
-    }
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código"
   },
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
   "AJUSTESAPP": {

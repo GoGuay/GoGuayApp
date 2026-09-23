@@ -3,6 +3,16 @@ h1 {
   font-size: 1.52rem;
 }
 
+.error-mensaje {
+  color: red !important;
+  font-size: 0.955rem;
+  margin-top: 0.50rem;
+}
+
+.texto-error {
+  color: red !important;
+}
+
 input,
 button {
   box-shadow: 0 4px 6px rgba(0 0 0 / 28%);

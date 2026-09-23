@@ -32,45 +32,52 @@
     >
       <p class="mb-2 verified-message">
         <i class="fi fi-rr-badget-check-alt"></i>
-        Actualmente tienes tu perfil verificado.
+        {{'VERIFICACION.INFO_PERFIL_SI_VERIFICADO' | translate}}
       </p>
     </div>
 
-    <!-- Tablas -->
+    <!-- Tabla -->
     <div class="container mt-5 mb-5">
       <div class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper">
         <div class="verif-col">
-          <h5>{{'VERIFICACION.TABLA_VBASICA.TITULO' | translate}}</h5>
-          <table class="verification-table mt-3 mx-auto">
+          <h5><strong>{{'VERIFICACION.TABLA.TITULO' | translate}}</strong></h5>
+          <table
+            class="verification-table mt-3 mx-auto"
+            [attr.aria-label]="'VERIFICACION.TABLA.TABLA_ARIALABEL' | translate"
+          >
             <tr>
-              <td>{{'VERIFICACION.TABLA_VBASICA.COL_CORREO' | translate}}</td>
+              <td>{{'VERIFICACION.TABLA.LABEL_CORREO' | translate}}</td>
               <td>
                 <span
                   *ngIf="usuario.emailVerificado"
                   class="check"
+                  [attr.aria-label]="'VERIFICACION.TABLA.CORREO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ✔️
                 </span>
                 <span
                   *ngIf="!usuario.emailVerificado"
                   class="cross"
+                  [attr.aria-label]="'VERIFICACION.TABLA.CORREO_NO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ❌
                 </span>
               </td>
             </tr>
             <tr>
-              <td>{{'VERIFICACION.TABLA_VBASICA.COL_TELÉFONO' | translate}}</td>
+              <td>{{'VERIFICACION.TABLA.LABEL_TELÉFONO' | translate}}</td>
               <td>
                 <span
                   *ngIf="usuario.telefonoVerificado"
                   class="check"
+                  [attr.aria-label]="'VERIFICACION.TABLA.TELEFONO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ✔️
                 </span>
                 <span
                   *ngIf="!usuario.telefonoVerificado"
                   class="cross"
+                  [attr.aria-label]="'VERIFICACION.TABLA.TELEFONO_NO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ❌
                 </span>
@@ -80,9 +87,13 @@
         </div>
       </div>
     </div>
+    <div
+      class="text-center recordatorio-alerta"
+      [innerHTML]="'VERIFICACION.RECORDATORIO' | translate"
+    ></div>
 
     <div class="container-fluid d-flex justify-content-center">
-      <!-- Correo, teléfono e identidad -->
+      <!-- Para verificar el correo y el teléfono-->
       <ion-row class="ion-justify-content-center fila_superior">
         <!-- Verificación de correo -->
         <ion-col

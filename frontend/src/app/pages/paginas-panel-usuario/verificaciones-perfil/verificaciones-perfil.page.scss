@@ -15,6 +15,22 @@
 
 }
 
+.recordatorio-alerta {
+  color: red !important;
+  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  a,
+  a span,
+  a strong {
+    color: #007bff !important;
+    text-decoration: underline !important;
+
+    &:hover {
+      color: #0056b3 !important;
+    }
+  }
+}
+
 .caja {
   margin-top: 10% !important;
 
