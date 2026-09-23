@@ -71,7 +71,9 @@
 
       "ELIMINAR_FOTO_PERFIL_MATTOOLTIP": "Eliminar la foto de perfil",
       "ELIMINAR_FOTO_PERFIL_ARIALABEL": "Eliminar la foto de perfil",
-      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás"
+      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás",
+
+      "GUARDAR": "Guardar"
     }
   },
   "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",

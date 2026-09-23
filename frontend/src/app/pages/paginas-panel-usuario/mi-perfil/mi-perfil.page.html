@@ -281,6 +281,8 @@
               <div
                 [ngStyle]="{'color': (bioEditada.length || 0) >= 200 ? 'red' : 'gray'}"
                 style="text-align: right; font-size: 0.8rem; margin-top: 5px"
+                aria-live="polite"
+                aria-atomic="true"
               >
                 {{ bioEditada.length || 0 }} / 250 {{ 'MIPERFIL.INFO_PERSONAL.CARACTERES' | translate }}
               </div>
@@ -548,7 +550,7 @@
         <button
           type="button"
           class="btn btn_bg"
-          [attr.aria-label]="'MIPERFIL.BTN_GUARDAR_HELP' | translate"
+          [attr.aria-label]="'BOTONES.MIPERFIL.GUARDAR' | translate"
           mat-raised-button
           [disabled]="!botonHabilitado"
           (click)="editarDatos()"
