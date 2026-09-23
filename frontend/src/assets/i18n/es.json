@@ -82,9 +82,11 @@
       "GUARDAR_TRAS_EDITAR_ARIALABEL": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
       "GUARDAR_VEHICULO": "Guardar vehículo",
       "CANCELAR": "Cancelar"
+    },
+    "DATOSCONTACTO": {
+      "GUARDAR": "Guardar"
     }
   },
-  "__MiPerfil": "Componente MI PERFIL - /mi-perfil --------- FINALIZADO agosto 2026",
   "MIPERFIL": {
     "TITULO": "Mi perfil",
     "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
@@ -135,6 +137,24 @@
       "CULTURA": "Cultura, museos y arte urbano",
       "RURAL": "Naturaleza y escapadas rurales"
     }
+  },
+
+  "DATOS_CONTACTO": {
+    "TITULO": "Datos de contacto",
+    "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
+    "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
+    "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
+    "MI_CORREO": "Mi correo electrónico",
+    "CORREO_OBLIGATORIO_ERROR": "El correo es obligatorio",
+    "CORREO_INVALIDO_ERROR": "El formato del correo no es correcto",
+    "MI_TFNO": "Mi teléfono",
+    "TELEFONO_OBLIGATORIO_ERROR": "El teléfono es obligatorio",
+    "TELEFONO_INVALIDO_ERROR": "Formato incorrecto: debe tener 9 dígitos numéricos",
+    "COM_COMERCIALES": "Comunicaciones comerciales",
+    "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
+    "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros",
+    "TITULO_DATOSGUARDADOS": "Datos guardados",
+    "MENSAJE_DATOSGUARDADOS": "Se han guardado correctamente los datos"
   },
   "TABLA_VEHICULOS": {
     "TITULO": "Mis vehículos",
@@ -220,20 +240,6 @@
     "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
   },
 
-  "BOTON": {
-    "GUARDAR": "Guardar",
-    "VERIF_TU_IDENTIDAD": "Verifica tu identidad",
-    "CONFIRMAR_CODIGO_TFNO": "Confirmar código",
-    "ELEGIR_ARCHIVOS": "Elegir archivos",
-    "CAMBIAR": "Cambiar!",
-    "ELIMINAR_CTA": "Eliminar mi cuenta",
-    "ELIMINAR": "Eliminar perfil",
-    "CANCELAR:": "Cancelar",
-    "PUBLICA_TU_VIAJE_AQUI": "Publica tu próximo viaje aquí",
-    "BUSCA_TU_VIAJE_AQUI": "Busca tu próximo viaje aquí",
-    "CONSULTA_AQUI": "Consulta aquí",
-    "CENTROAYUDA": "Consulta nuestro centro de ayuda"
-  },
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
   "BUSCADOR": {
     "TITULO": "¿Estás buscando un viaje?",
@@ -420,18 +426,7 @@
       "RECHAZAR": "Rechazar y salir"
     }
   },
-  "__DatosContacto": "OK OK OK OK OK OK OK , página de contacto",
-  "DATOS_CONTACTO": {
-    "TITULO": "Datos de contacto",
-    "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
-    "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
-    "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
-    "MI_CORREO": "Mi correo electrónico",
-    "MI_TFNO": "Mi teléfono",
-    "COM_COMERCIALES": "Comunicaciones comerciales",
-    "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
-    "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros"
-  },
+
   "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
   "VERIFICACION": {
     "TITULO": "Verificación del perfil",

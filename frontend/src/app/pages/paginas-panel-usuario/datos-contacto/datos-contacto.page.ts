@@ -48,7 +48,7 @@ export class DatosContactoPage implements OnInit {
     private translate: TranslateService,
     public funcionesUsuario: FuncionesUsuario,
     private userService: UserServicesService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     this.formEmailTfno = new FormGroup({
       emailControl: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
@@ -65,6 +65,11 @@ export class DatosContactoPage implements OnInit {
       // Asignar valores iniciales
       this.emailEditado = this.userData.usuario.email || '';
       this.telefonoEditado = this.userData.usuario.telefono || '';
+      this.formEmailTfno.patchValue({
+        emailControl: this.emailEditado,
+        telefonoControl: this.telefonoEditado,
+      });
+
       this.comunComerciales = !!this.userData.usuario.comunic_comerciales;
       this.comunTerceros = !!this.userData.usuario.comunic_terceros;
     } else {
@@ -113,15 +118,14 @@ export class DatosContactoPage implements OnInit {
         console.error('❌ Error al actualizar los datos', error);
       },
       complete: () => {
-        console.log('🏁 complete');
         this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
         localStorage.setItem('userData', JSON.stringify(this.userData));
         this.funcionesUsuario.obtenerUsuario();
         this.botonHabilitadoContacto = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Datos guardados',
-          detail: 'Se han guardado correctamente los datos',
+          summary: this.translate.instant('DATOS_CONTACTO.TITULO_DATOSGUARDADOS'),
+          detail: this.translate.instant('DATOS_CONTACTO.MENSAJE_DATOSGUARDADOS'),
         });
       },
     });
@@ -172,7 +176,7 @@ export class DatosContactoPage implements OnInit {
       },
       (error) => {
         console.error('Error al actualizar los datos', error);
-      },
+      }
     );
   }
 }
