@@ -350,9 +350,9 @@ def actualizar_usuario(usuario_id):
         if email_existente:
             return jsonify({"error": "el correo electrónico ya está registrado en base de datos"})
         
-    if 'telefono' in data and data ['telefono'] and data ['telefono'] != usuario.email:
-        email_existente = Usuario.query.filter_by(telefono=data['telefono'].first())
-        if email_existente:
+    if 'telefono' in data and data ['telefono'] and data ['telefono'] != usuario.telefono:
+        telefono_existente = Usuario.query.filter_by(telefono=data['telefono']).first()
+        if telefono_existente:
             return jsonify({"error": "el teléfono ya está registrado en base de datos"})     
 
     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros', 'paypal_email', 'tarjeta_info', 'metodo_cobro_preferido', 'cobro_paypal_email', 'cobro_iban',  'cobro_titular' ]:
