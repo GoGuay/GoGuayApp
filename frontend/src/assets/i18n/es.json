@@ -147,14 +147,19 @@
     "MI_CORREO": "Mi correo electrónico",
     "CORREO_OBLIGATORIO_ERROR": "El correo es obligatorio",
     "CORREO_INVALIDO_ERROR": "El formato del correo no es correcto",
+    "CORREO_REPETIDO_ERROR": "El email indicado ya consta registrado",
+
     "MI_TFNO": "Mi teléfono",
     "TELEFONO_OBLIGATORIO_ERROR": "El teléfono es obligatorio",
     "TELEFONO_INVALIDO_ERROR": "Formato incorrecto: debe tener 9 dígitos numéricos",
+    "TELEFONO_REPETIDO_ERROR": "El número indicado ya consta registrado",
     "COM_COMERCIALES": "Comunicaciones comerciales",
     "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
     "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros",
     "TITULO_DATOSGUARDADOS": "Datos guardados",
-    "MENSAJE_DATOSGUARDADOS": "Se han guardado correctamente los datos"
+    "MENSAJE_DATOSGUARDADOS": "Se han guardado correctamente los datos",
+    "ERROR_TITULO": "No se ha guardado el dato",
+    "ERROR_MENSAJE_YAEXISTEDATO": "El dato que has introducido ya está registrado"
   },
   "TABLA_VEHICULOS": {
     "TITULO": "Mis vehículos",
@@ -442,7 +447,7 @@
       "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no"
     },
 
-    "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/mi-perfil\">Mi perfil</a>",
+    "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/datos-contacto\">Datos de contacto",
     "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil verificado!",
     "VERIFICA_CORREO": "Verifica tu correo:",
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",

@@ -49,13 +49,19 @@
                   role="alert"
                   class="error-mensaje"
                 >
+                  <!-- Error de campo requerido -->
                   <div *ngIf="formEmailTfno.get('emailControl')?.hasError('required')">
                     <span class="texto-error">{{'DATOS_CONTACTO.CORREO_OBLIGATORIO_ERROR' | translate}}</span>
                   </div>
+                  <!-- Error de formato inválido -->
                   <div
                     *ngIf="formEmailTfno.get('emailControl')?.hasError('pattern') || formEmailTfno.get('emailControl')?.hasError('email')"
                   >
                     <span class="texto-error">{{'DATOS_CONTACTO.CORREO_INVALIDO_ERROR' | translate}}</span>
+                  </div>
+                  <!-- Error de correo ya registrado -->
+                  <div *ngIf="formEmailTfno.get('emailControl')?.errors?.['emailRepetido']">
+                    <span class="texto-error">{{'DATOS_CONTACTO.CORREO_REPETIDO_ERROR' | translate}}</span>
                   </div>
                 </div>
               </div>
@@ -86,21 +92,17 @@
                   role="alert"
                   class="error-mensaje"
                 >
-                  <div>
-                    <span
-                      class="texto-error"
-                      *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']"
-                    >
-                      {{'DATOS_CONTACTO.TELEFONO_OBLIGATORIO_ERROR' | translate}}
-                    </span>
+                  <!-- Error de campo requerido -->
+                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']">
+                    <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_OBLIGATORIO_ERROR' | translate}}</span>
                   </div>
-                  <div>
-                    <span
-                      class="texto-error"
-                      *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']"
-                    >
-                      {{'DATOS_CONTACTO.TELEFONO_INVALIDO_ERROR' | translate}}
-                    </span>
+                  <!-- Error de formato inválido -->
+                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']">
+                    <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_INVALIDO_ERROR' | translate}}</span>
+                  </div>
+                  <!-- Error de teléfono ya registrado -->
+                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['telefonoRepetido']">
+                    <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_REPETIDO_ERROR' | translate}}</span>
                   </div>
                 </div>
               </div>

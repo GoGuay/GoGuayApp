@@ -75,12 +75,88 @@ export class DatosContactoPage implements OnInit {
     } else {
       this.userLoggedIn = false;
     }
+
+    this.formEmailTfno.get('telefonoControl')?.valueChanges.subscribe((telefono) => {
+      if (telefono && telefono.length === 9) {
+        const inputTelefono = document.getElementById('telefonoControl');
+        if (inputTelefono) {
+          inputTelefono.blur(); // 👈 Quita el foco automáticamente
+        }
+        this.comprobarTelefonoRegistrado(telefono);
+      }
+    });
+    this.formEmailTfno.get('emailControl')?.valueChanges.subscribe((email) => {
+      const emailControl = this.formEmailTfno.get('emailControl');
+      if (email && emailControl?.valid && email.includes('@') && email.includes('.')) {
+        const inputEmail = document.getElementById('emailControl');
+        if (inputEmail && document.activeElement === inputEmail) {
+          inputEmail.blur();
+        }
+
+        this.comprobarEmailRegistrado(email);
+      }
+    });
   }
 
-  //Para cambiar idioma -- no se está usando
-  changeLanguage(lang: string) {
-    this.translate.use(lang);
-    localStorage.setItem('language', lang);
+  comprobarTelefonoRegistrado(telefono: string) {
+    const control = this.formEmailTfno.get('telefonoControl');
+    if (!control || control.invalid || telefono.length !== 9) return;
+
+    if (telefono === this.userData.usuario.telefono) {
+      this.removerErrorControl(control, 'telefonoRepetido');
+      this.onInputChange();
+      return;
+    }
+    this.userService.verificarTelefonoExistente(telefono).subscribe({
+      next: (existe: boolean) => {
+        if (existe) {
+          control.setErrors({ ...control.errors, telefonoRepetido: true });
+        } else {
+          this.removerErrorControl(control, 'telefonoRepetido');
+        }
+        this.onInputChange();
+      },
+      error: (err: any) => {
+        console.error('Error al verificar el teléfono:', err);
+        this.onInputChange();
+      },
+    });
+  }
+
+  comprobarEmailRegistrado(email: string) {
+    const control = this.formEmailTfno.get('emailControl');
+    if (!control || control.invalid || !email) return;
+
+    if (email === this.userData.usuario.email) {
+      this.removerErrorControl(control, 'emailRepetido');
+      this.onInputChange();
+      return;
+    }
+
+    this.userService.verificarEmailExistente(email).subscribe({
+      next: (existe: boolean) => {
+        if (existe) {
+          // Si ya está registrado por otra persona, ponemos el error
+          control.setErrors({ ...control.errors, emailRepetido: true });
+        } else {
+          // Si está libre, quitamos el error de repetido
+          this.removerErrorControl(control, 'emailRepetido');
+        }
+        this.onInputChange(); // Actualiza el estado del botón de guardar
+      },
+      error: (err: any) => {
+        console.error('Error al verificar el correo:', err);
+        this.onInputChange();
+      },
+    });
+  }
+
+  // Función auxiliar para limpiar solo el error de repetición sin romper otros validadores
+  removerErrorControl(control: any, nombreError: string) {
+    if (control.errors?.[nombreError]) {
+      const { [nombreError]: removed, ...rest } = control.errors;
+      control.setErrors(Object.keys(rest).length > 0 ? rest : null);
+    }
   }
 
   editarCorreoTelefono(): any {
@@ -96,6 +172,7 @@ export class DatosContactoPage implements OnInit {
       console.log('Falta algún dato obligatorio');
       return;
     }
+    const formValues = this.formEmailTfno.value;
     const nuevoUsuario = {
       nombre: this.userData.usuario.nombre,
       apellidos: this.userData.usuario.apellidos,
@@ -105,17 +182,22 @@ export class DatosContactoPage implements OnInit {
       fecha_nacimiento: this.userData.usuario.fecha_nacimiento,
       biografia: this.userData.usuario.biografia,
       preferencias: this.userData.usuario.preferencias,
-      email: this.emailEditado,
-      telefono: this.telefonoEditado,
+      email: formValues.emailControl,
+      telefono: formValues.telefonoControl,
     };
     console.log('Objeto modificado: ', nuevoUsuario);
-    console.log('➡️ Llamando a editarDatosUsuario()...');
     this.userService.editarDatosUsuario(this.userData.usuario.id, nuevoUsuario).subscribe({
       next: (response) => {
-        console.log('✅ Datos actualizados con éxito', response);
+        console.log('Datos actualizados con éxito', response);
       },
       error: (error) => {
-        console.error('❌ Error al actualizar los datos', error);
+        console.error('Error al actualizar los datos', error);
+        const mensajeError = error.error?.error || 'Error al actualizar los datos';
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('DATOS_CONTACTO.ERROR_TITULO'),
+          detail: this.translate.instant('DATOS_CONTACTO.ERROR_MENSAJE_YAEXISTEDATO'),
+        });
       },
       complete: () => {
         this.userData.usuario = { ...this.userData.usuario, ...nuevoUsuario };
