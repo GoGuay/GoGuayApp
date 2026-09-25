@@ -5,7 +5,7 @@ import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { MatDivider } from '@angular/material/divider';
 import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom } from 'rxjs';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
@@ -18,16 +18,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './verificaciones-perfil.page.html',
   styleUrls: ['./verificaciones-perfil.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    NavbarComponent,
-    MatDivider,
-    TranslateModule,
-    SpinnerComponent,
-    ToastModule,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
   providers: [MessageService],
 })
 export class VerificacionesPerfilPage implements OnInit {
@@ -37,8 +28,7 @@ export class VerificacionesPerfilPage implements OnInit {
   emailUsuario: string = '';
   telefonoUsuario: string = '';
   subiendoDocumento: boolean = false;
-  sinDocumentoDelantera: string =
-    '../../../../assets/user/SinFotoDelantera.png';
+  sinDocumentoDelantera: string = '../../../../assets/user/SinFotoDelantera.png';
   sinDocumentoTrasera: string = '../../../../assets/user/SinFotoTrasera.png';
 
   cargandoDelantera: boolean = false;
@@ -49,7 +39,7 @@ export class VerificacionesPerfilPage implements OnInit {
   documentoTrasera: string = '';
   carnetTrasera: string = '';
   carnetDelantera: string = '';
-  codigoArray: string[] = ['', '', '', ''];
+  codigoArray: string[] = ['', '', '', '', '', ''];
   codigo: string = '';
   focusedInput: number | null = null;
   botonCorreoVerificado: boolean = false;
@@ -62,6 +52,8 @@ export class VerificacionesPerfilPage implements OnInit {
   inputsHabilitados: boolean = false;
   sms_enviado: boolean = false;
   codigo_erroneo: boolean = false;
+  cargandoEnvioEmail: boolean = false;
+  cargandoEnvioSms: boolean = false;
 
   cargando: boolean = false;
 
@@ -69,6 +61,7 @@ export class VerificacionesPerfilPage implements OnInit {
     private userService: UserServicesService,
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private translate: TranslateService
   ) {}
 
   async ngOnInit() {
@@ -78,80 +71,79 @@ export class VerificacionesPerfilPage implements OnInit {
       this.tiempo_restante_sms();
 
       this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (this.userData?.usuario) {
-          this.userLoggedIn = true;
-          this.emailUsuario = this.userData.usuario.email || '';
-          this.telefonoUsuario = this.userData.usuario.telefono || '';
-        }
+      if (this.userData?.usuario) {
+        this.userLoggedIn = true;
+        this.emailUsuario = this.userData.usuario.email || '';
+        this.telefonoUsuario = this.userData.usuario.telefono || '';
+      }
 
-        const token = this.route.snapshot.queryParamMap.get('token');
-        if (token) {
-          const verificado = await lastValueFrom(this.userService.verificar_email(token));
-          this.botonCorreoVerificado = !!verificado;
-          this.cargando = false;
-        }
+      const token = this.route.snapshot.queryParamMap.get('token');
+      if (token) {
+        const verificado = await lastValueFrom(this.userService.verificar_email(token));
+        this.botonCorreoVerificado = !!verificado;
+        this.cargando = false;
+      }
 
-        if (this.userData?.usuario?.id) {
-          await this.obtenerDatosUsuario(this.userData.usuario.id);
-        }
-
+      if (this.userData?.usuario?.id) {
+        await this.obtenerDatosUsuario(this.userData.usuario.id);
+      }
     } catch (error) {
-      console.error("Error durante la carga:", error);
+      console.error('Error durante la carga:', error);
     } finally {
       this.cargando = false;
     }
   }
 
   /**
-   * Función para enviar el correo de verificación al usuario. 
-   * Si el correo ya ha sido verificado, muestra un mensaje de error. 
+   * Función para enviar el correo de verificación al usuario.
+   * Si el correo ya ha sido verificado, muestra un mensaje de error.
    * Si no, envía el correo y desactiva el botón durante 30 minutos para evitar múltiples envíos.
-   * 
+   *
    * @param email --> Recibe el correo del usuario para enviarle el email de verificación
-   * 
+   *
    */
   envio_mail_verificar_correo(email: string) {
-    this.botonCorreoVerificado = true; 
+    this.cargandoEnvioEmail = true;
+    this.botonCorreoVerificado = true;
     if (this.usuario.emailVerificado) {
+      this.cargandoEnvioEmail = false;
       this.messageService.add({
         severity: 'error',
-        summary: 'Correo ya verificado',
-        detail: 'Este correo ya ha sido verificado anteriormente',
+        summary: this.translate.instant('VERIFICACION.TITULO_CORREO_YAVERIFICADO'),
+        detail: this.translate.instant('VERIFICACION.MENSAJE_CORREO_YAVERIFICADO'),
         life: 3000,
       });
     } else {
       this.userService.enviar_email_verif(email).subscribe(
         (respuesta) => {
-          console.log(respuesta);
+          this.cargandoEnvioEmail = false;
           this.messageService.add({
             severity: 'success',
-            summary: 'Correo enviado',
-            detail: 'Por favor, verifica tu correo y sigue las instrucciones.',
+            summary: this.translate.instant('VERIFICACION.TITULO_CORREO_ENVIADO'),
+            detail: this.translate.instant('VERIFICACION.MENSAJE_CORREO_ENVIADO'),
             life: 3000,
           });
           setTimeout(() => {
             this.botonCorreoVerificado = false;
-          }, 1800 * 1000); // 1800 segundos * 1000 ms
+          }, 1800 * 1000);
         },
         (error) => {
+          this.cargandoEnvioEmail = false;
           console.error(error);
-          // Si hubo error, puedes reactivar el botón inmediatamente
           this.botonCorreoVerificado = false;
-        },
+        }
       );
     }
   }
 
   /**
-   * Función para obtener los datos de un usuario por su ID. 
+   * Función para obtener los datos de un usuario por su ID.
    * Se utiliza para actualizar la información del usuario después de realizar verificaciones o cambios en el perfil.
-   * 
+   *
    * @param id_usuario --> Recibe el ID del usuario que está logado para obtener su información actualizada desde el backend
    */
   async obtenerDatosUsuario(id_usuario: number) {
-    this.usuario = await lastValueFrom(
-      this.userService.obtenerUsuarioPorID(id_usuario),
-    );
+    this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
   }
 
   /**
@@ -159,11 +151,9 @@ export class VerificacionesPerfilPage implements OnInit {
    * @param id_usuario Recibe el ID del usuario que está logado
    */
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService
-      .obtenerUsuarioPorID(id_usuario)
-      .subscribe((resultadoUsuario) => {
-        this.usuario = resultadoUsuario;
-      });
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.usuario = resultadoUsuario;
+    });
   }
 
   /**
@@ -172,46 +162,45 @@ export class VerificacionesPerfilPage implements OnInit {
    * Si el envío es exitoso, se guarda el ID de verificación y se habilitan los inputs para ingresar el código.
    * Además, se guarda un timestamp en localStorage para controlar el tiempo de espera antes de permitir otro envío.
    * Después de 10 minutos, se deshabilita la bandera de envío y se limpia el timestamp de localStorage.
-   * 
+   *
    * @param telefono --> Recibe el número de teléfono del usuario al que se le enviará el código de verificación por SMS
    */
   enviar_sms(telefono: string) {
+    this.cargandoEnvioSms = true;
     const teléfonoConPrefijo = '+34' + telefono;
-    this.userService
-      .enviar_sms(teléfonoConPrefijo)
-      .subscribe((respuesta: any) => {
+
+    this.userService.enviar_sms(teléfonoConPrefijo).subscribe({
+      next: (respuesta: any) => {
+        this.cargandoEnvioSms = false;
         console.log('Respuesta: ', respuesta);
         if (respuesta.verification_sid) {
           this.verification_id_sms = respuesta.verification_sid;
           this.inputsHabilitados = true;
           this.sms_enviado = true;
-          // Guardar el timestamp del envío en localStorage
+
           const ahora = Date.now();
           localStorage.setItem('sms_enviado_timestamp', ahora.toString());
           setTimeout(() => {
             this.sms_enviado = false;
-            /*
-          Borra la hora a la que se ha enviado el sms de la caché
-          */
             localStorage.removeItem('sms_enviado_timestamp');
           }, 600000);
         }
-      });
+      },
+      error: (err) => {
+        this.cargandoEnvioSms = false;
+        console.error(err);
+      },
+    });
   }
 
   // Para concatener los 4 digitos del codigo sms
   updateCodigo() {
     this.codigo = this.codigoArray.join('');
-    this.codigoCompleto =
-      this.codigo.length === 6 && /^\d{6}$/.test(this.codigo);
+    this.codigoCompleto = this.codigo.length === 6 && /^\d{6}$/.test(this.codigo);
   }
 
   // Avanzar al siguiente input automáticamente
-  moveNext(
-    currentInput: HTMLInputElement,
-    nextInput: HTMLInputElement,
-    index: number,
-  ) {
+  moveNext(currentInput: HTMLInputElement, nextInput: HTMLInputElement, index: number) {
     if (currentInput.value.length === 1 && nextInput) {
       nextInput.focus();
     }
@@ -247,16 +236,14 @@ export class VerificacionesPerfilPage implements OnInit {
    */
   verificar_codigo_sms(codigo: string) {
     try {
-      this.userService
-        .verificar_codigo_sms(codigo, this.usuario.telefono)
-        .subscribe((respuesta: any) => {
-          console.log('Respuesta: ', respuesta);
-          if (respuesta.success) {
-            this.codigo_erroneo = false;
-            this.usuario.telefonoVerificado = true;
-            this.codigoArray = [];
-          }
-        });
+      this.userService.verificar_codigo_sms(codigo, this.usuario.telefono).subscribe((respuesta: any) => {
+        console.log('Respuesta: ', respuesta);
+        if (respuesta.success) {
+          this.codigo_erroneo = false;
+          this.usuario.telefonoVerificado = true;
+          this.codigoArray = [];
+        }
+      });
     } catch (e) {
       this.codigo_erroneo = true;
     }
@@ -283,10 +270,7 @@ export class VerificacionesPerfilPage implements OnInit {
     // Opcional: poner el foco en el primer input vacío
     const firstEmptyIndex = this.codigoArray.findIndex((c) => !c);
     if (firstEmptyIndex !== -1) {
-      const input =
-        document.querySelectorAll<HTMLInputElement>('.digit-input')[
-          firstEmptyIndex
-        ];
+      const input = document.querySelectorAll<HTMLInputElement>('.digit-input')[firstEmptyIndex];
       input?.focus();
     }
   }

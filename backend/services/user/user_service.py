@@ -62,6 +62,8 @@ PAYPAL_API = os.getenv('PAYPAL_API')
 ##Configuración Token Google
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
+CODIGOS_SIMULADOS = {}
+
 
 ## --- RUTAS DE USUARIO --- ##
 
@@ -572,6 +574,27 @@ def enviar_sms():
     if not telefonoAVerificar:
         return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
 
+    # MODO DESARROLLO / SIMULACIÓN PARA ESPAÑA (+34)#########################################
+    if str(telefonoAVerificar).startswith('+34') or str(telefonoAVerificar).startswith('34') or len(str(telefonoAVerificar)) == 9:
+        # Aseguramos formato limpio para la clave
+        num_limpio = str(telefonoAVerificar).replace('+34', '')
+        
+        # Generamos un código aleatorio de 6 dígitos
+        codigo_simulado = str(random.randint(100000, 999999))
+        CODIGOS_SIMULADOS[num_limpio] = codigo_simulado
+        
+        # 🖨️ IMPRIME EL CÓDIGO EN TU TERMINAL DE PYTHON
+        print(f"\n==================================================")
+        print(f" [DEV MODE] Código SMS para {telefonoAVerificar}: {codigo_simulado}")
+        print(f"==================================================\n")
+        
+        return jsonify({
+            "success": True,
+            "message": "Código de verificación enviado correctamente (Simulado)",
+            "verification_sid": "mock_sid_123"
+        })
+    ####################################################################################
+
     try:
         verification = client.verify.v2.services(SERVICE_SID).verifications.create(
             to=telefonoAVerificar,
@@ -605,6 +628,27 @@ def verificar_codigo():
 
     if not phone_number  or not codigo:
         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+    
+    # MODO DESARROLLO / VALIDACIÓN SIMULADA#######################################
+    num_limpio = str(phone_number).replace('+34', '')
+    if num_limpio in CODIGOS_SIMULADOS:
+        codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
+        
+        if str(codigo) == str(codigo_correcto):
+            # Limpiamos el código usado
+            del CODIGOS_SIMULADOS[num_limpio]
+            
+            # Actualizamos la base de datos igual que en el flujo real
+            usuario = Usuario.query.filter_by(telefono=num_limpio).first()
+            if usuario:
+                usuario.telefonoVerificado = True
+                db.session.commit()
+                db.session.refresh(usuario)
+            
+            return jsonify({"success": True, "message": "Teléfono verificado ✅ (Simulado)"}), 200
+        else:
+            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+    #############################################################################
 
     try:
         telefono_formateado = "+34" + str(phone_number)

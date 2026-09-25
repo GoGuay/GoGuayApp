@@ -136,13 +136,11 @@ export class DatosContactoPage implements OnInit {
     this.userService.verificarEmailExistente(email).subscribe({
       next: (existe: boolean) => {
         if (existe) {
-          // Si ya está registrado por otra persona, ponemos el error
           control.setErrors({ ...control.errors, emailRepetido: true });
         } else {
-          // Si está libre, quitamos el error de repetido
           this.removerErrorControl(control, 'emailRepetido');
         }
-        this.onInputChange(); // Actualiza el estado del botón de guardar
+        this.onInputChange();
       },
       error: (err: any) => {
         console.error('Error al verificar el correo:', err);
@@ -160,7 +158,7 @@ export class DatosContactoPage implements OnInit {
   }
 
   editarCorreoTelefono(): any {
-    console.log('userData:', this.userData); // Verifica que userData tenga los datos correctos
+    console.log('userData:', this.userData);
 
     if (
       !this.userData.usuario.nombre ||

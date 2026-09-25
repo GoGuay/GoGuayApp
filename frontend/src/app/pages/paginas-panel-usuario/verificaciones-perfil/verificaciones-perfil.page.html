@@ -93,14 +93,18 @@
     ></div>
 
     <div class="container-fluid d-flex justify-content-center">
-      <!-- Para verificar el correo y el teléfono-->
       <ion-row class="ion-justify-content-center fila_superior">
         <!-- Verificación de correo -->
         <ion-col
           size="12"
           size-md="5"
-          class="ion-padding d-flex justify-content-center"
+          class="ion-padding d-flex justify-content-center position-relative"
         >
+          <app-spinner
+            *ngIf="cargandoEnvioEmail"
+            [tamano_completo]="false"
+            [texto_spinner]="'Enviando un email...'"
+          ></app-spinner>
           <div class="mt-2 text-center">
             <p class="mb-4">
               <strong>{{'VERIFICACION.VERIFICA_CORREO' | translate}}</strong>
@@ -116,16 +120,19 @@
               </ion-col>
             </ion-row>
             <ion-col>
-              <button
-                type="btn"
-                class="btn btn_bg mb-4 w-100"
-                mat-raised-button
-                (click)="envio_mail_verificar_correo(emailUsuario)"
-                [disabled]="usuario.emailVerificado || botonCorreoVerificado"
-              >
-                {{emailUsuario}}
-              </button>
-              <p-toast position="bottom-center"></p-toast>
+              <div class="d-flex justify-content-center">
+                <button
+                  type="button"
+                  class="btn btn_bg mb-4 w-100 d-flex justify-content-center align-items-center"
+                  style="min-height: 48px; max-width: 320px; padding: 6px 16px"
+                  mat-raised-button
+                  (click)="envio_mail_verificar_correo(emailUsuario)"
+                  [disabled]="usuario.emailVerificado || botonCorreoVerificado || cargandoEnvioEmail"
+                >
+                  <span *ngIf="!cargandoEnvioEmail">{{emailUsuario}}</span>
+                </button>
+                <p-toast position="bottom-center"></p-toast>
+              </div>
             </ion-col>
           </div>
         </ion-col>

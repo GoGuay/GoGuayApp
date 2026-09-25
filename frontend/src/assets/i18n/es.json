@@ -438,19 +438,24 @@
     "SUBT_VERIF_BASICA": "Verificar tus datos te convierte en un usuarie más fiable ante los demás",
     "TABLA": {
       "TITULO": "Datos verificados",
+      "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no",
       "LABEL_CORREO": "Correo electrónico",
       "CORREO_VERIFICADO_ARIALABEL": "Correo electrónico verificado",
       "CORREO_NO_VERIFICADO_ARIALABEL": "Correo electrónico no verificado",
       "LABEL_TELÉFONO": "Teléfono",
       "TELEFONO_VERIFICADO_ARIALABEL": "Teléfono verificado",
-      "TELEFONO_NO_VERIFICADO_ARIALABEL": "Teléfono no verificado",
-      "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no"
+      "TELEFONO_NO_VERIFICADO_ARIALABEL": "Teléfono no verificado"
     },
 
     "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/datos-contacto\">Datos de contacto",
     "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil verificado!",
     "VERIFICA_CORREO": "Verifica tu correo:",
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
+    "TITULO_CORREO_YAVERIFICADO": "Correo ya verificado",
+    "MENSAJE_CORREO_YAVERIFICADO": "Este correo ya ha sido verificado anteriormente",
+    "TITULO_CORREO_ENVIADO": "Correo enviado",
+    "MENSAJE_CORREO_ENVIADO": "Por favor, verifica tu correo y sigue las instrucciones",
+
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
     "BOTON_VERIFICAR_TELEFONO": "Confirmar código"
