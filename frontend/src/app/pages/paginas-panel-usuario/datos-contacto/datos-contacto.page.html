@@ -31,6 +31,7 @@
                     >
                       {{'DATOS_CONTACTO.MI_CORREO' | translate}}
                     </label>
+                    <p>Nota aviso cambio</p>
                   </div>
                 </div>
                 <input
@@ -43,6 +44,7 @@
                   name="emailControl"
                   (ngModelChange)="onInputChange()"
                 />
+                <button (click)="enviar_email_modificacion(userData.usuario.email)">Enviar</button>
                 <div
                   *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched"
                   id="emailError"

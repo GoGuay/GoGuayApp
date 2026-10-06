@@ -54,6 +54,7 @@ export class VerificacionesPerfilPage implements OnInit {
   codigo_erroneo: boolean = false;
   cargandoEnvioEmail: boolean = false;
   cargandoEnvioSms: boolean = false;
+  texto_spinner_cargando = 'Cargando verificaciones...';
 
   cargando: boolean = false;
 
@@ -177,6 +178,12 @@ export class VerificacionesPerfilPage implements OnInit {
           this.verification_id_sms = respuesta.verification_sid;
           this.inputsHabilitados = true;
           this.sms_enviado = true;
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('VERIFICACION.TITULO_SMS_ENVIADO'),
+            detail: this.translate.instant('VERIFICACION.MENSAJE_SMS_ENVIADO'),
+            life: 3000,
+          });
 
           const ahora = Date.now();
           localStorage.setItem('sms_enviado_timestamp', ahora.toString());
@@ -189,6 +196,12 @@ export class VerificacionesPerfilPage implements OnInit {
       error: (err) => {
         this.cargandoEnvioSms = false;
         console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('VERIFICACION.TITULO_SMS_ERROR'),
+          detail: this.translate.instant('VERIFICACION.MENSAJE_SMS_ERROR'),
+          life: 3000,
+        });
       },
     });
   }
@@ -215,11 +228,9 @@ export class VerificacionesPerfilPage implements OnInit {
       event.preventDefault();
 
       if (this.codigoArray[index]) {
-        // Borra el dígito actual
         this.codigoArray[index] = '';
         this.updateCodigo();
       } else if (index > 0) {
-        // Si el input está vacío, retrocede al anterior
         const prevInput = input.previousElementSibling as HTMLInputElement;
         if (prevInput) {
           prevInput.focus();
@@ -242,6 +253,12 @@ export class VerificacionesPerfilPage implements OnInit {
           this.codigo_erroneo = false;
           this.usuario.telefonoVerificado = true;
           this.codigoArray = [];
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('VERIFICACION.TITULO_TELEFONO_VERIFICADO'),
+            detail: this.translate.instant('VERIFICACION.MENSAJE_TELEFONO_VERIFICADO'),
+            life: 3000,
+          });
         }
       });
     } catch (e) {
@@ -251,7 +268,7 @@ export class VerificacionesPerfilPage implements OnInit {
 
   //Para que el usuario pueda pegar el codigo del sms en los inputs
   handlePaste(event: ClipboardEvent) {
-    event.preventDefault(); // Evita que el texto se pegue automáticamente en el input
+    event.preventDefault();
 
     const pasteData = event.clipboardData?.getData('text') || '';
     const digits = pasteData.replace(/\D/g, '').slice(0, 6); // Solo números, máximo 6 dígitos
@@ -265,9 +282,8 @@ export class VerificacionesPerfilPage implements OnInit {
       this.codigoArray[i] = '';
     }
 
-    this.updateCodigo(); // Actualiza el string completo y habilita el botón si hay 6 dígitos
+    this.updateCodigo();
 
-    // Opcional: poner el foco en el primer input vacío
     const firstEmptyIndex = this.codigoArray.findIndex((c) => !c);
     if (firstEmptyIndex !== -1) {
       const input = document.querySelectorAll<HTMLInputElement>('.digit-input')[firstEmptyIndex];
@@ -283,12 +299,11 @@ export class VerificacionesPerfilPage implements OnInit {
     const timestamp = localStorage.getItem('sms_enviado_timestamp');
     if (timestamp) {
       const tiempoPasado = Date.now() - parseInt(timestamp, 10);
-      const diezMinutos = 600000; // 10 minutos en ms
+      const diezMinutos = 300; // 10 minutos en ms
 
       if (tiempoPasado < diezMinutos) {
         this.sms_enviado = true;
 
-        // Calcular cuánto falta para reactivar el botón
         const tiempoRestante = diezMinutos - tiempoPasado;
         setTimeout(() => {
           this.sms_enviado = false;

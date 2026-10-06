@@ -150,7 +150,8 @@ export const routes: Routes = [
   },
   {
     path: 'contrato-registro',
-    loadComponent: () => import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
+    loadComponent: () =>
+      import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
   },
   {
     path: 'admin-app',
@@ -166,10 +167,17 @@ export const routes: Routes = [
   },
   {
     path: 'pago-reserva/:id',
-    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then((m) => m.PagoReservaPage),
   },
   {
     path: 'gestion-encuestas',
-    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then(m => m.GestionEncuestasPage)
-  }
+    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then((m) => m.GestionEncuestasPage),
+  },
+  {
+    path: 'modificacion-email/:token',
+    loadComponent: () =>
+      import('./pages/paginas-panel-usuario/datos-contacto/modificacion-email/modificacion-email.page').then(
+        (m) => m.ModificacionEmailPage
+      ),
+  },
 ];

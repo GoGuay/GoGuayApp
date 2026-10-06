@@ -318,7 +318,8 @@ export class UserServicesService {
   }
 
   enviar_sms(telefono: string) {
-    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+    const idioma_app = localStorage.getItem('language');
+    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono, idioma_app });
   }
 
   verificar_codigo_sms(codigo: string, telefono: string) {

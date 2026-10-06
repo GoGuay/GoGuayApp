@@ -829,3 +829,33 @@ span:focus {
     color: #0056b3 !important;
   }
 }
+
+.idiomas {
+  width: 40px;
+  height: 40px;
+  border-radius: 35%;
+  mix-blend-mode: multiply;
+}
+
+.idiomas-container {
+  min-width: 30px;
+  top: 10px !important;
+  position: fixed;
+  right: 15%;
+}
+
+.icon-idioma {
+  width: 20px !important;
+  height: auto;
+  cursor: pointer;
+  transition: filter 0.3s;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+}
+
+.grayscale-filter {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}

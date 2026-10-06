@@ -64,6 +64,11 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 CODIGOS_SIMULADOS = {}
 
+##Configuración Whatsapp
+WHATSAPP_TOKEN = "EAAPpcmD3hPgBSiuS8GVIjfJxi7YXXAhYHDZAiZBffXi9R8p0gFTZA8RouuSx8nW3qykA6qbVijF6Fj4zK3JqJd3JkxliPUdJACDjm0eGvBQNj5f3LrEFk5HGpFBI59wQP9S0MrJhqpZCerp5fQbQeKqq3L3GCasxhuuOJOGvCT9mEYwssZBtqomQ3dTcYdo0mqpOZCDcjsFv9I35hKgKbadmUPQc14UH6jtgZDZD"
+WHATSAPP_PHONE_NUMBER_ID = "1353039247897514"
+
+
 
 ## --- RUTAS DE USUARIO --- ##
 
@@ -321,7 +326,7 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     
     return jsonify(usuario.serialize_public()), 200
 
-## EDITAR INFORMACIÓN DE UN USUARIO ##
+
 ## EDITAR INFORMACIÓN DE UN USUARIO ##
 @user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
@@ -348,7 +353,7 @@ def actualizar_usuario(usuario_id):
     data = request.json
 
     if 'email' in data and data ['email'] and data ['email'] != usuario.email:
-        email_existente = Usuario.query.filter_by(email=data['email'].first())
+        email_existente = Usuario.query.filter_by(email=data['email']).first()
         if email_existente:
             return jsonify({"error": "el correo electrónico ya está registrado en base de datos"})
         
@@ -559,121 +564,213 @@ def actualizar_imagen_cabecera(user_id):
 
 
 ## ENVÍO DE SMS AL TFNO DEL USUARIO PARA VERIFICAR PERFIL ##
-@user_blueprint.route('/enviar_sms', methods=['POST'])
-def enviar_sms():
-    """
-    1. Obtiene el json desde el front y accede al campo 'teléfono' y le pasa el dato a 'telefonoAVerificar'.
-    2. Si no hay teléfonoAVerificar, lanza un error y detiene la función.
-    3. try: Se llama al servicio de Twilio para enviar el mensaje. Se le pasa a 'to' el numero y se elige 'sms' como canal. 
-    4. Devolvemos un json con la respuesta y con el verification_sid (sólo es un id para identificar si el mensaje se ha enviado correctamente.)
-    5. Si lo anterior da algun error, lo mostramos con el except. 
-    """
-    data = request.get_json()
-    telefonoAVerificar = data.get('telefono')
+# @user_blueprint.route('/enviar_sms', methods=['POST'])
+# def enviar_sms():
+#     """
+#     1. Obtiene el json desde el front y accede al campo 'teléfono' y le pasa el dato a 'telefonoAVerificar'.
+#     2. Si no hay teléfonoAVerificar, lanza un error y detiene la función.
+#     3. try: Se llama al servicio de Twilio para enviar el mensaje. Se le pasa a 'to' el numero y se elige 'sms' como canal. 
+#     4. Devolvemos un json con la respuesta y con el verification_sid (sólo es un id para identificar si el mensaje se ha enviado correctamente.)
+#     5. Si lo anterior da algun error, lo mostramos con el except. 
+#     """
+#     data = request.get_json()
+#     telefonoAVerificar = data.get('telefono')
 
-    if not telefonoAVerificar:
-        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+#     if not telefonoAVerificar:
+#         return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
 
-    # MODO DESARROLLO / SIMULACIÓN PARA ESPAÑA (+34)#########################################
-    if str(telefonoAVerificar).startswith('+34') or str(telefonoAVerificar).startswith('34') or len(str(telefonoAVerificar)) == 9:
-        # Aseguramos formato limpio para la clave
-        num_limpio = str(telefonoAVerificar).replace('+34', '')
+#     # MODO DESARROLLO / SIMULACIÓN PARA ESPAÑA (+34)#########################################
+#     if str(telefonoAVerificar).startswith('+34') or str(telefonoAVerificar).startswith('34') or len(str(telefonoAVerificar)) == 9:
+#         # Aseguramos formato limpio para la clave
+#         num_limpio = str(telefonoAVerificar).replace('+34', '')
         
-        # Generamos un código aleatorio de 6 dígitos
-        codigo_simulado = str(random.randint(100000, 999999))
-        CODIGOS_SIMULADOS[num_limpio] = codigo_simulado
+#         # Generamos un código aleatorio de 6 dígitos
+#         codigo_simulado = str(random.randint(100000, 999999))
+#         CODIGOS_SIMULADOS[num_limpio] = codigo_simulado
         
-        # 🖨️ IMPRIME EL CÓDIGO EN TU TERMINAL DE PYTHON
-        print(f"\n==================================================")
-        print(f" [DEV MODE] Código SMS para {telefonoAVerificar}: {codigo_simulado}")
-        print(f"==================================================\n")
+#         # 🖨️ IMPRIME EL CÓDIGO EN TU TERMINAL DE PYTHON
+#         print(f"\n==================================================")
+#         print(f" [DEV MODE] Código SMS para {telefonoAVerificar}: {codigo_simulado}")
+#         print(f"==================================================\n")
         
-        return jsonify({
-            "success": True,
-            "message": "Código de verificación enviado correctamente (Simulado)",
-            "verification_sid": "mock_sid_123"
-        })
-    ####################################################################################
+#         return jsonify({
+#             "success": True,
+#             "message": "Código de verificación enviado correctamente (Simulado)",
+#             "verification_sid": "mock_sid_123"
+#         })
+#     ####################################################################################
 
-    try:
-        verification = client.verify.v2.services(SERVICE_SID).verifications.create(
-            to=telefonoAVerificar,
-            channel="sms"
-        )
+#     try:
+#         verification = client.verify.v2.services(SERVICE_SID).verifications.create(
+#             to=telefonoAVerificar,
+#             channel="sms"
+#         )
 
-        # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
-        return jsonify({
-            "success": True,
-            "message": "Código de verificación enviado correctamente",
-            "verification_sid": verification.sid
-        })
+#         # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
+#         return jsonify({
+#             "success": True,
+#             "message": "Código de verificación enviado correctamente",
+#             "verification_sid": verification.sid
+#         })
 
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+#     except Exception as e:
+#         return jsonify({'success': False, 'message': str(e)}), 500
 
 
 ## COMPROBACIÓN DEL CÓDIGO ENVIADO POR SMS ##
-@user_blueprint.route('/verificar_codigo', methods=['POST'])
-def verificar_codigo():
-    """
-    1. Se accede al json enviado desde el front, se extrae el dato 'telefono' y el dato 'codigo'.
-    2. Si no hay telefono devuelve error y detiene la función.
-    3. Añade al número de teléfono el prefijo de España y lo convertimos a string por petición de la API, llama al servicio de Twilio (verification_checks_create) y le pasa el teléfono ya con el prefijo y el codigo. La respuesta de ese servicio se guarda en la variable 'result'.
-    4. Si la respuesta es 'approved', busca en la BD de la tabla Usuarios por número de tfno, coge el primer resultado y si ademas si hay usuario pasa el atributo telefonoVerificado a True, guarda los cambios y con el refresh actualiza todo para obtener todos los datos del usuario actualizados. Si todo está correcto devuelve un json con un mensaje de OK, sino devuelve un mensaje de error. 
-    5. Except: devuelve un mensaje si el proceso ha fallado. 
-    """
-    data = request.get_json()
-    phone_number = data.get('telefono')
-    codigo = data.get('codigo')
+# @user_blueprint.route('/verificar_codigo', methods=['POST'])
+# def verificar_codigo():
+#     """
+#     1. Se accede al json enviado desde el front, se extrae el dato 'telefono' y el dato 'codigo'.
+#     2. Si no hay telefono devuelve error y detiene la función.
+#     3. Añade al número de teléfono el prefijo de España y lo convertimos a string por petición de la API, llama al servicio de Twilio (verification_checks_create) y le pasa el teléfono ya con el prefijo y el codigo. La respuesta de ese servicio se guarda en la variable 'result'.
+#     4. Si la respuesta es 'approved', busca en la BD de la tabla Usuarios por número de tfno, coge el primer resultado y si ademas si hay usuario pasa el atributo telefonoVerificado a True, guarda los cambios y con el refresh actualiza todo para obtener todos los datos del usuario actualizados. Si todo está correcto devuelve un json con un mensaje de OK, sino devuelve un mensaje de error. 
+#     5. Except: devuelve un mensaje si el proceso ha fallado. 
+#     """
+#     data = request.get_json()
+#     phone_number = data.get('telefono')
+#     codigo = data.get('codigo')
 
-    if not phone_number  or not codigo:
-        return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+#     if not phone_number  or not codigo:
+#         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
     
-    # MODO DESARROLLO / VALIDACIÓN SIMULADA#######################################
-    num_limpio = str(phone_number).replace('+34', '')
-    if num_limpio in CODIGOS_SIMULADOS:
-        codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
+#     # MODO DESARROLLO / VALIDACIÓN SIMULADA#######################################
+#     num_limpio = str(phone_number).replace('+34', '')
+#     if num_limpio in CODIGOS_SIMULADOS:
+#         codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
         
-        if str(codigo) == str(codigo_correcto):
-            # Limpiamos el código usado
-            del CODIGOS_SIMULADOS[num_limpio]
+#         if str(codigo) == str(codigo_correcto):
+#             # Limpiamos el código usado
+#             del CODIGOS_SIMULADOS[num_limpio]
             
-            # Actualizamos la base de datos igual que en el flujo real
-            usuario = Usuario.query.filter_by(telefono=num_limpio).first()
-            if usuario:
-                usuario.telefonoVerificado = True
-                db.session.commit()
-                db.session.refresh(usuario)
+#             # Actualizamos la base de datos igual que en el flujo real
+#             usuario = Usuario.query.filter_by(telefono=num_limpio).first()
+#             if usuario:
+#                 usuario.telefonoVerificado = True
+#                 db.session.commit()
+#                 db.session.refresh(usuario)
             
-            return jsonify({"success": True, "message": "Teléfono verificado ✅ (Simulado)"}), 200
-        else:
-            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
-    #############################################################################
+#             return jsonify({"success": True, "message": "Teléfono verificado ✅ (Simulado)"}), 200
+#         else:
+#             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+#     #############################################################################
+
+#     try:
+#         telefono_formateado = "+34" + str(phone_number)
+#         result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
+#             to=telefono_formateado,
+#             code=codigo
+#         )
+        
+#         if result.status == "approved":
+#             usuario = Usuario.query.filter_by(telefono=phone_number).first()
+#             if usuario:
+#                 usuario.telefonoVerificado = True
+#                 db.session.commit()
+#                 db.session.refresh(usuario)
+            
+#             return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
+#         else:
+#             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+
+#     except Exception as e:
+#         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# NUEVA FUNCIÓN DE ENVIO DE CODIGO ALEATORIO POR WHATSAPP
+@user_blueprint.route('/enviar_sms', methods=['POST'])
+def enviar_sms():
+    data = request.get_json()
+    idioma = data.get('idioma_app')
+    telefonoAVerificar = data.get('telefono')
+
+    if not telefonoAVerificar:
+        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'})
+    
+    num_limpio = str(telefonoAVerificar).replace('+','').strip()
+    if not num_limpio.startswith('34') and len (num_limpio) == 9:
+            num_limpio = '34' + num_limpio
+    
+    codigo_verificacion = str(random.randint(100000, 999999))
+    CODIGOS_SIMULADOS[num_limpio] = codigo_verificacion
+    cuerpo_mensaje_ingles = f"Your code verification of GoGuay is: {codigo_verificacion}"
+    cuerpo_mensaje_espanol = f"Tu código de verificación de GoGuay es: {codigo_verificacion}"
+
+    if idioma == 'es':
+        cuerpo_mensaje = cuerpo_mensaje_espanol
+    else:
+        cuerpo_mensaje = cuerpo_mensaje_ingles
+
+
+
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
+
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": num_limpio,
+        "type": "text",
+        "text": {
+            "body": cuerpo_mensaje
+        }
+    }
 
     try:
-        telefono_formateado = "+34" + str(phone_number)
-        result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
-            to=telefono_formateado,
-            code=codigo
-        )
-        
-        if result.status == "approved":
-            usuario = Usuario.query.filter_by(telefono=phone_number).first()
-            if usuario:
-                usuario.telefonoVerificado = True
-                db.session.commit()
-                db.session.refresh(usuario)
-            
-            return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
-        else:
-            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+        response = requests.post(url, json=payload, headers=headers)
+        res_data = response.json()
 
+        if response.status_code == 200 and 'messages' in res_data:
+            return jsonify ({
+                "success": True,
+                "message": "Código de verificación enviado por WhatsApp correctamente",
+                "verification_sid": res_data['messages'][0]['id']
+            })
+        else:
+            print("Error devuelto por Meta:", res_data)
+            return jsonify({
+                'success': False, 
+                'message': res_data.get('error', {}).get('message', 'Error al enviar WhatsApp')
+            }), 400
+    
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+@user_blueprint.route('/verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    data = request.get_json()
+    telefono_usuario = data.get('telefono')
+    codigo = data.get('codigo')
 
+    if not telefono_usuario or not codigo:
+        return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
     
+    num_limpio = str(telefono_usuario).replace('+', '').strip()
+    if not num_limpio.startswith('34') and len(num_limpio) == 9:
+        num_limpio = '34' + num_limpio
+
+    if num_limpio in CODIGOS_SIMULADOS:
+        codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
+
+        if str(codigo) == str(codigo_correcto):
+            del CODIGOS_SIMULADOS[num_limpio]
+
+            usuario = Usuario.query.filter_by(telefono=telefono_usuario).first()
+            if usuario:
+                usuario.telefonoVerificado = True
+                db.session.commit()
+                db.session.refresh(usuario)
+            return jsonify({"success": True, "message": "Teléfono verificado"}), 200
+        else:
+            return jsonify({"success": False, "message": "Código incorrecto"}), 400
+    else:
+        return jsonify({"success": False, "message": "No hay ningún código pendiente para este número o ha expirado"}), 400
+    
+
+
 ## ENVIAR CORREO DE VERIFICACIÓN DE EMAIL AL USUARIO ##
 @user_blueprint.route('/enviar_email', methods=['POST'])
 def enviar_email():
@@ -693,11 +790,31 @@ def enviar_email():
     print('Token generado: ', token)
     link= f"http://localhost:4200/verificar-email/{token}"
     msg = Message("Verifica tu correo", recipients=[email])
-    msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
+    msg.body = f"Por favor haz click en el siguiente enlace para verificar tu correo: {link}"
     
     mail.send(msg)
 
     return jsonify({'message': 'Correo enviado'}), 200
+
+
+## ENVIAR CORREO DE PARA MODIFICAR EL CORREO ELECTRÓNICO DE UN USUARIO ##
+@user_blueprint.route('/mail_modificacion_correo', methods=['POST'])
+def mail_modificacion_correo():
+    """
+    """
+    email_nuevo = request.json['email']
+
+    salt = 'email-verify'
+    token = serializer.dumps(email_nuevo, salt=salt)
+
+    link = f"http://localhost:4200/modificacion-correo/{token}"
+    msg = Message("Modifica tu correo de GoGuay", recipients=[email_nuevo])
+    msg.body = f"Por favor haz click en el siguiente enlace para modificar tu correo: {link}"
+    mail.send(msg)
+
+    return jsonify({'message': 'Correo enviado'}), 200
+
+
 
 
 ## PONER COMO VERIFICADO EL CAMPO 'EMAIL' CUANDO EL USUARIO CLICA EN EL ENLACE RECIBIDO ##

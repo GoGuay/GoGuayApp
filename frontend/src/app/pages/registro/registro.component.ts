@@ -5,11 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { LanguageService } from '../../core/lenguajes/languaje.service';
+import { MessageService } from 'primeng/api';
 declare const google: any;
 
 @Component({
@@ -44,6 +46,8 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   esGoogle: boolean = false;
 
+  selectedLanguage: string = 'es';
+
   /** Regex estándar para emails con extensión (.com, .es, etc.) */
   readonly EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -57,7 +61,10 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private languageService: LanguageService,
+    private messageService: MessageService,
+    private translate: TranslateService
 
     /**
      * Con el formBuilder creamos un grupo de formularios.
@@ -115,6 +122,25 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     const mm = String(hoy.getMonth() + 1).padStart(2, '0');
     const yyyy = hoy.getFullYear();
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  changeLanguage(selectedLanguage: string) {
+    if (this.selectedLanguage === selectedLanguage) {
+      return;
+    }
+    console.log(selectedLanguage);
+
+    this.languageService.setLanguage(selectedLanguage);
+    this.selectedLanguage = selectedLanguage;
+    this.translate.use(selectedLanguage);
+    this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+        life: 3000,
+      });
+    });
   }
 
   // ------------------------------------------------------------------
