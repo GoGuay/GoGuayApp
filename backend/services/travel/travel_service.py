@@ -735,8 +735,8 @@ def cancelar_solicitud():
 #
 @travel_blueprint.route('/mis_solicitudes/<int:usuario_id>', methods=['GET'])
 def obtener_mis_solicitudes(usuario_id):
-    solicitudes = PasajeroViaje.query.filter(
-        PasajeroViaje.usuario_id == usuario_id,
+    solicitudes = PasajeroViaje.query.join(Viaje).filter(
+        Viaje.usuario_id == usuario_id,
         (PasajeroViaje.estado == 'pendiente') | (PasajeroViaje.estado == 'rechazado') | (PasajeroViaje.estado == None)
     ).options(joinedload(PasajeroViaje.viaje)).all()
 
