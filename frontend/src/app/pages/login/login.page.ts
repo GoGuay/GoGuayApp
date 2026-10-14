@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { MessageService } from 'primeng/api';
+import { DialogConfig, DialogRef } from 'node_modules/@angular/cdk/dialog';
 
 declare const google: any;
 
@@ -172,9 +173,21 @@ export class LoginPage implements OnInit, AfterViewInit {
    * @param message Mensaje de error que recibe la ventana modal.
    */
   openError(title: string, message: string) {
-    this.dialog.open(ModalErrorComponent, {
-      data: { title, message },
+    const dialogRef = this.dialog.open(ModalErrorComponent, {
+      data: { title, message, mostrarBotonRegistro: true },
       panelClass: 'dialog-animate',
+    });
+
+    dialogRef.afterClosed().subscribe((condicion) => {
+      if (condicion === 'registro') {
+        this.navCtrl.navigateRoot(['/registro'], {
+          animated: false,
+        });
+      } else {
+        this.navCtrl.navigateRoot(['/home'], {
+          animated: false,
+        });
+      }
     });
   }
 
@@ -216,13 +229,13 @@ export class LoginPage implements OnInit, AfterViewInit {
     this.ngZone.run(() => {
       this.userService.loginConGoogle(idToken).subscribe({
         next: (res: any) => {
-          if (res.usuarioExistente) {
-            if (res.usuario) {
-              localStorage.setItem('userData', JSON.stringify(res.usuario));
-              this.userService.actualizarEstadoUsuario(res.usuario);
-            }
-            this.spinner_de_carga = false;
+          if (res.usuarioExistente && res.usuario) {
+            localStorage.setItem('userData', JSON.stringify(res.usuario));
+            this.userService.actualizarEstadoUsuario(res.usuario);
             this.navCtrl.navigateRoot('/home');
+          } else {
+            localStorage.setItem('tempGoogleToken', idToken);
+            this.openError('Acceso denegado', 'Este correo de Google no está registrado en nuestra base de datos.');
           }
         },
         error: (err) => {

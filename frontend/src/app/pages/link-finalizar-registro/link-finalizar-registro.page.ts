@@ -7,19 +7,19 @@ import { HttpClient } from '@angular/common/http';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
-  selector: 'app-verificar-email',
-  templateUrl: './verificar-email.page.html',
-  styleUrls: ['./verificar-email.page.scss'],
+  selector: 'app-link-finalizar-registro',
+  templateUrl: './link-finalizar-registro.page.html',
+  styleUrls: ['./link-finalizar-registro.page.scss'],
   standalone: true,
   imports: [IonContent, CommonModule, FormsModule],
 })
-export class VerificarEmailPage implements OnInit {
+export class LinkFinalizarRegistroPage implements OnInit {
   verified = false;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserServicesService,
-    private navCtrl: NavController,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class VerificarEmailPage implements OnInit {
   }
 
   boton_volver() {
-    window.open('http://localhost:4200/verificaciones-perfil', '_blank');
+    window.open('http://localhost:4200/home', '_blank');
     window.close();
   }
 }

@@ -99,7 +99,12 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    const usuarioPrevio = localStorage.getItem('userData');
+    const tokenGoogle = localStorage.getItem('tempGoogleToken');
     this.configurarEscalera();
+    if (tokenGoogle) {
+      this.procesarLoginGoogle(tokenGoogle);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -182,7 +187,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
-    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/resumen-registro');
   }

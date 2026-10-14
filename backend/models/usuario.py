@@ -16,10 +16,11 @@ class Usuario(db.Model):
     apellidos = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     emailVerificado = db.Column(db.Boolean, default=False)
+    registroPrevio = db.Column(db.Boolean, default=False)
     genero = db.Column(db.String(50), nullable=False, default=Genero.defecto.value)
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
-    password = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=True)
     telefono = db.Column(db.String(15), unique=True, nullable=True)
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
@@ -166,6 +167,7 @@ class Usuario(db.Model):
             "apellidos": self.apellidos,
             "email": self.email,
             "emailVerificado": self.emailVerificado,
+            "registroPrevio": self.registroPrevio,
             "genero": self.genero,
             "orientacion": self.orientacion,
             "pronombre": self.pronombre,  

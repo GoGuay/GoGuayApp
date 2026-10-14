@@ -92,8 +92,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then((m) => m.EncuestaSatisfaccionPage),
   },
   {
-    path: 'verificar-email/:token',
-    loadComponent: () => import('./pages/verificar-email/verificar-email.page').then((m) => m.VerificarEmailPage),
+    path: 'finalizar-registro/:token',
+    loadComponent: () => import('./pages/link-finalizar-registro/link-finalizar-registro.page').then((m) => m.LinkFinalizarRegistroPage),
   },
   {
     path: 'centro-contacto',

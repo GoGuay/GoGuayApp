@@ -6,14 +6,14 @@
         alt="GoGuay"
         class="logo"
       />
-      <h2 *ngIf="verified; else errorMsg">¡CORREO VERIFICADO CORRECTAMENTE!</h2>
+      <h2 *ngIf="verified; else errorMsg">¡ TU CUENTA SE HA CREADO CORRECTAMENTE</h2>
+      <p *ngIf="verified; else errorMsg">Además tu correo electrónico ha quedado verificado</p>
     </div>
 
     <ng-template #errorMsg>
       <h2>El enlace de verificación no es valido o ha expirado</h2>
     </ng-template>
     <div class="mt-4">
-      <p>Puedes seguir verificando tu teléfono si aún no lo has hecho</p>
       <button
         type="button"
         class="btn btn_bg"

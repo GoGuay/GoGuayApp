@@ -133,20 +133,17 @@ def crear_usuario():
     db.session.add(monedero)
     db.session.commit()
 
-    # Crear monedero para el nuevo usuario
-    monedero = Monedero(usuario_id=nuevo_usuario.id)
-    db.session.add(monedero)
-    db.session.commit()
-
+    
     access_token = create_access_token(identity=str(nuevo_usuario.id))
 
     try:
         salt = 'email-verify'
         token = serializer.dumps(nuevo_usuario.email, salt=salt)
-        link_verificacion = f"http://localhost:4200/verificar-email/{token}"
+        link_verificacion = f"http://localhost:4200/finalizar-registro/{token}"
         msg = Message("Bienvenidx a GoGuay", recipients=[nuevo_usuario.email])
         msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
         mail.send(msg)
+        
     except Exception as e:
         print(f"Error al enviar correo: {e}")
 
@@ -155,6 +152,7 @@ def crear_usuario():
         "access_token": access_token,
         "usuario": nuevo_usuario.serialize()
     }), 201
+
 
 
 ## CREAR NUEVO USUARIO - REGISTRO POR BOTÓN DE GOOGLE ##
@@ -788,7 +786,7 @@ def enviar_email():
     token = serializer.dumps(email, salt=salt)
 
     print('Token generado: ', token)
-    link= f"http://localhost:4200/verificar-email/{token}"
+    link= f"http://localhost:4200/finalizar-registro/{token}"
     msg = Message("Verifica tu correo", recipients=[email])
     msg.body = f"Por favor haz click en el siguiente enlace para verificar tu correo: {link}"
     
@@ -836,6 +834,7 @@ def verificar_email():
         usuario = Usuario.query.filter_by(email=email).first()
         if usuario:
             usuario.emailVerificado = True
+            usuario.registroPrevio = True
             db.session.commit()
             return jsonify({'message': 'Correo verificado correctamente'}), 200
         else:
