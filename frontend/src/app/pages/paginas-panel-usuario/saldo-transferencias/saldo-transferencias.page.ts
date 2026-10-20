@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonRow, IonCol, IonGrid } from '@ionic/angular/standalone';
+import { IonContent, IonRow, IonGrid } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MovimientosMonedero } from 'src/app/models/movimientos_monedero/movimientos-monedero.model';
 declare var paypal: any;
@@ -15,7 +15,7 @@ declare var paypal: any;
   templateUrl: './saldo-transferencias.page.html',
   styleUrls: ['./saldo-transferencias.page.scss'],
   standalone: true,
-  imports: [IonGrid, IonCol, IonRow, IonContent, CommonModule, FormsModule, NavbarComponent, TranslateModule, RouterLink],
+  imports: [IonGrid, IonRow, IonContent, CommonModule, FormsModule, NavbarComponent, TranslateModule],
 })
 export class SaldoTransferenciasPage implements OnInit {
   userLoggedIn: boolean = false;

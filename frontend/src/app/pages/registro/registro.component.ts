@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,8 +25,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   // ------------------------------------------------------------------
   // 1. PROPIEDADES Y ESTADOS
   // ------------------------------------------------------------------
-  pasoActual: number = 1;
-  paso1: boolean = true;
 
   formulario1: FormGroup;
   formulario2: FormGroup;
@@ -44,7 +42,10 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   cargandoTelefono: boolean = false;
 
-  esGoogle: boolean = false;
+  esGoogle: boolean = !!localStorage.getItem('tempGoogleToken');
+
+  pasoActual: number = this.esGoogle ? 2 : 1;
+  paso1: boolean = !this.esGoogle;
 
   selectedLanguage: string = 'es';
 
@@ -99,7 +100,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const usuarioPrevio = localStorage.getItem('userData');
+    this.inicializarBotonGoogle();
     const tokenGoogle = localStorage.getItem('tempGoogleToken');
     this.configurarEscalera();
     if (tokenGoogle) {
@@ -107,8 +108,35 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     }
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: any) {
+
+    if (this.esGoogle && this.pasoActual === 2) {
+      console.log('Cancelando flujo de Google y volviendo al login...');
+      localStorage.removeItem('tempGoogleToken');
+      localStorage.removeItem('userData');
+      sessionStorage.clear();
+      localStorage.setItem('google_flow_cancelled', 'true');
+      this.ngZone.run(() => {
+      this.navCtrl.navigateRoot(['/login']);
+    });
+      return;
+    }
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
+    } else {
+      this.navCtrl.navigateRoot(['/home']);
+    }
+  }
   ngAfterViewInit(): void {
     this.inicializarBotonGoogle();
+  }
+
+  ionViewDidEnter(): void {
+    setTimeout(() => {
+      this.inicializarBotonGoogle();
+    }, 100);
   }
 
   // ------------------------------------------------------------------
@@ -156,8 +184,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid && this.emailValido) {
       this.formulario1.markAllAsTouched();
-      this.pasoActual++;
-      this.paso1 = false;
+      this.avanzarPasoInterno(2);
       this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
     } else if (this.pasoActual === 2 && this.isPaso2Valido) {
       this.formulario2.markAllAsTouched();
@@ -165,14 +192,19 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       if (this.esGoogle) {
         this.mostrarContrato();
       } else {
-        this.pasoActual++;
-        this.paso1 = false;
+        this.avanzarPasoInterno(3);
       }
     } else if (this.pasoActual === 3 && this.formulario3.valid) {
       this.formulario3.markAllAsTouched();
       this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
       this.mostrarContrato();
     }
+  }
+
+  private avanzarPasoInterno(nuevoPaso: number) {
+    this.pasoActual = nuevoPaso;
+    this.paso1 = nuevoPaso === 1;
+    history.pushState({ paso: this.pasoActual }, '');
   }
 
   // Función para retroceder al formulario anterior
@@ -663,6 +695,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
       const contenedor = document.getElementById('btnGoogleContainer');
       if (contenedor) {
+        contenedor.innerHTML = '';
         google.accounts.id.renderButton(contenedor, {
           theme: 'outline',
           size: 'large',
@@ -704,7 +737,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       console.warn('No se recibieron datosGoogle para precargar');
       return;
     }
-
+    this.avanzarPasoInterno(2);
     this.esGoogle = true;
     this.formulario1.patchValue({ email: datosGoogle.email });
     this.emailValido = true;
@@ -725,8 +758,5 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     }
     this.validarCampo('fecha_nacimiento', this.formulario2);
     this.validarCampo('telefono', this.formulario2);
-
-    this.pasoActual = 2;
-    this.paso1 = false;
   }
 }

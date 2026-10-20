@@ -1,7 +1,7 @@
 import { Component, forwardRef, OnInit, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, NavController } from '@ionic/angular/standalone';
+import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -9,24 +9,24 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { EncuestaService } from '../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service';
-import { 
-  Chart, 
-  BarController, 
-  BarElement, 
-  CategoryScale, 
-  LinearScale, 
-  Tooltip, 
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
   Legend,
   Title
 } from 'chart.js';
 
 
 Chart.register(
-  BarController, 
-  BarElement, 
-  CategoryScale, 
-  LinearScale, 
-  Tooltip, 
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
   Legend,
   Title
 );
@@ -37,13 +37,13 @@ Chart.register(
   styleUrls: ['./encuesta-satisfaccion.page.scss'],
   standalone: true,
   imports: [
-    IonContent,  
-    CommonModule, 
-    FormsModule, 
-    MatButtonModule, 
-    MatRadioModule, 
-    MatCheckboxModule, 
-    ReactiveFormsModule, 
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    ReactiveFormsModule,
     MatSliderModule,
   ],
   providers: [
@@ -60,21 +60,21 @@ export class EncuestaSatisfaccionPage implements OnInit {
   aspectos = [
     { nombre: 'Diseño y apariencia', icono: 'fi-rr-palette' },
     { nombre: 'Facilidad para buscar viajes', icono: 'fi-rr-search' },
-    { nombre: 'Uso del Centro de Mensajes', icono: 'fi-rr-comments' }, 
-    { nombre: 'Sensación de seguridad y respeto', icono: 'fi-rr-shield-check' }, 
+    { nombre: 'Uso del Centro de Mensajes', icono: 'fi-rr-comments' },
+    { nombre: 'Sensación de seguridad y respeto', icono: 'fi-rr-shield-check' },
     { nombre: 'Comprensión de las normas', icono: 'fi-rr-interrogation' }
   ];
 
-  calificacionSeleccionada: number = 0; 
+  calificacionSeleccionada: number = 0;
   estrellas = [1, 2, 3, 4, 5];
 
   constructor(
-    private dialog: MatDialog, 
-    private navCtrl: NavController, 
+    private dialog: MatDialog,
+    private navCtrl: NavController,
     private fb: FormBuilder,
     private encuestaService: EncuestaService)
-    
-  { 
+
+  {
     this.encuestaForm = this.fb.group({
       recomendacion: [0, Validators.required],
       sugerencias: ['']
@@ -97,10 +97,10 @@ export class EncuestaSatisfaccionPage implements OnInit {
 
   seleccionarCalificacion(valor: number) {
     if (this.calificacionSeleccionada === valor) {
-      this.calificacionSeleccionada = 0; 
+      this.calificacionSeleccionada = 0;
       this.encuestaForm.patchValue({ recomendacion: 0 });
     } else {
-      this.calificacionSeleccionada = valor; 
+      this.calificacionSeleccionada = valor;
       this.encuestaForm.patchValue({ recomendacion: valor });
     }
     console.log('Calificación seleccionada:', this.calificacionSeleccionada);
@@ -115,10 +115,10 @@ export class EncuestaSatisfaccionPage implements OnInit {
     this.encuestaService.enviarEncuesta(this.encuestaForm.value, userId).subscribe({
       next: () => {
         const dialogRef = this.dialog.open(HelpModalComponent, {
-          data: { 
-            title: '¡Gracias!', 
-            message: 'Tu opinión nos ayuda a hacer de GoGuay un lugar más seguro.', 
-            showAcceptButton: true 
+          data: {
+            title: '¡Gracias!',
+            message: 'Tu opinión nos ayuda a hacer de GoGuay un lugar más seguro.',
+            showAcceptButton: true
           },
           disableClose: true
         });
@@ -131,7 +131,7 @@ export class EncuestaSatisfaccionPage implements OnInit {
         console.error('Error al enviar la encuesta', err);
       }
     });
-  
+
   }
 
   getLabelRating(valor: number): string {

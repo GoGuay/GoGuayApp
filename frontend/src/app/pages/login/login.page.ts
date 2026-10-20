@@ -72,6 +72,12 @@ export class LoginPage implements OnInit, AfterViewInit {
     this.inicializarBotonGoogle();
   }
 
+  ionViewDidEnter(): void {
+    setTimeout(() => {
+      this.inicializarBotonGoogle();
+    }, 100);
+  }
+
   changeLanguage(selectedLanguage: string) {
     if (this.selectedLanguage === selectedLanguage) {
       return;

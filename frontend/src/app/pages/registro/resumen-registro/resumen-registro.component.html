@@ -39,33 +39,25 @@
                     @for (campo of camposColumna1; track campo) {
                       <li class="d-flex flex-column mb-3">
                         <!-- Fila principal con posiciones controladas -->
-                        <div
-                          class="d-flex align-items-center w-100 position-relative"
-                        >
+                        <div class="d-flex align-items-center w-100 position-relative">
                           <i
                             [ngClass]="{
                               'fi fi-rr-at': campo === 'email',
-                              'fi fi-rr-cake-birthday':
-                                campo === 'fecha_de_nacimiento',
-                              'fi fi-rr-id-card':
-                                campo === 'nombre' || campo === 'apellidos',
+                              'fi fi-rr-cake-birthday': campo === 'fecha_de_nacimiento',
+                              'fi fi-rr-id-card': campo === 'nombre' || campo === 'apellidos',
                               'fi fi-rr-phone-call': campo === 'telefono',
                             }"
                             class="me-2 flex-shrink-0"
                           ></i>
 
-                          <strong class="me-2 text-nowrap flex-shrink-0">
-                            {{ transformToTitleCase(campo) }}:
-                          </strong>
+                          <strong class="me-2 text-nowrap flex-shrink-0">{{ transformToTitleCase(campo) }}:</strong>
 
                           <!-- Contenedor con ancho estático estricto para fecha o flexible para el resto -->
                           <div class="flex-grow-1 min-width-0 d-flex">
                             @if (!editando[campo]) {
                               <span class="text-truncate d-block">
                                 @if (campo === 'fecha_de_nacimiento') {
-                                  {{
-                                    getValorCampo(campo) | date: 'dd/MM/yyyy'
-                                  }}
+                                  {{ getValorCampo(campo) | date: 'dd/MM/yyyy' }}
                                 } @else {
                                   {{ getValorCampo(campo) }}
                                 }
@@ -89,10 +81,7 @@
                                   id="fnacimientoHelp"
                                   class="visually-hidden"
                                 >
-                                  {{
-                                    'REGISTRO.FORM1.FNACIMIENTO.AYUDA'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM1.FNACIMIENTO.AYUDA' | translate }}
                                 </span>
                               }
 
@@ -113,26 +102,17 @@
                                   id="emailHelp"
                                   class="visually-hidden"
                                 >
-                                  {{
-                                    'REGISTRO.FORM1.CORREO.AYUDA' | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}
                                 </span>
                               }
 
                               <!-- Campos de Texto Generales (Nombre, Apellidos, Teléfono) -->
-                              @if (
-                                campo !== 'fecha_de_nacimiento' &&
-                                campo !== 'email'
-                              ) {
+                              @if (campo !== 'fecha_de_nacimiento' && campo !== 'email') {
                                 <input
                                   type="text"
                                   class="form-control form-control-sm w-100"
                                   [formControlName]="campo"
-                                  (input)="
-                                    campo === 'telefono'
-                                      ? validarCampo('telefono')
-                                      : null
-                                  "
+                                  (input)="campo === 'telefono' ? validarCampo('telefono') : null"
                                 />
                               }
                             }
@@ -169,110 +149,74 @@
 
                         <!-- Mensajes de error en línea independiente -->
                         @if (campoInvalidYTouched(campo)) {
-                          <div
-                            class="text-danger small mt-1 w-100 ps-2 ps-md-4"
-                          >
+                          <div class="text-danger small mt-1 w-100 ps-2 ps-md-4">
                             @if (campo === 'email') {
                               @if (tieneError('email', 'required')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM1.CORREO.OBLIGATORIO'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}
                                 </div>
                               }
                               @if (tieneError('email', 'pattern')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM1.CORREO.FORMATO' | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}
                                 </div>
                               }
                               @if (tieneError('email', 'emailRepetido')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM1.CORREO.YAEXISTE' | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM1.CORREO.YAEXISTE' | translate }}
                                 </div>
                               }
                             }
                             @if (campo === 'nombre') {
                               @if (tieneError('nombre', 'required')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.NOMBRE_OBLIGATORIO'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.NOMBRE_OBLIGATORIO' | translate }}
                                 </div>
                               }
                             }
                             @if (campo === 'apellidos') {
                               @if (tieneError('apellidos', 'required')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.APELLIDOS_OBLIGATORIO'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.APELLIDOS_OBLIGATORIO' | translate }}
                                 </div>
                               }
                             }
                             @if (campo === 'telefono') {
                               @if (tieneError('telefono', 'required')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.TELEFONO.OBLIGATORIO'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
                                 </div>
                               }
                               @if (tieneError('telefono', 'pattern')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.TELEFONO.FORMATO'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.TELEFONO.FORMATO' | translate }}
                                 </div>
                               }
                               @if (tieneError('telefono', 'telefonoRepetido')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.TELEFONO.YAEXISTE'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.TELEFONO.YAEXISTE' | translate }}
                                 </div>
                               }
                             }
                             @if (campo === 'fecha_de_nacimiento') {
                               @if (tieneError(campo, 'fechalimite')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA' | translate }}
                                 </div>
                               }
                               @if (tieneError(campo, 'required')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.FNACIMIENTO.OBLIGATORIA'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.FNACIMIENTO.OBLIGATORIA' | translate }}
                                 </div>
                               }
                               @if (tieneError(campo, 'menorDeEdad')) {
                                 <div class="error_menor">
-                                  {{
-                                    'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD' | translate }}
                                 </div>
                               }
                               @if (tieneError(campo, 'fechaFutura')) {
                                 <div>
-                                  {{
-                                    'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL' | translate }}
                                 </div>
                               }
                             }
@@ -288,21 +232,16 @@
                   <ul class="list-unstyled p-0">
                     @for (campo of camposColumna2; track campo) {
                       <li class="d-flex flex-column mb-3">
-                        <div
-                          class="d-flex align-items-center w-100 position-relative"
-                        >
+                        <div class="d-flex align-items-center w-100 position-relative">
                           <i
                             [ngClass]="{
                               'fi fi-rr-venus-mars': campo === 'genero',
-                              'fi fi-rs-heart-half-stroke':
-                                campo === 'orientacion',
+                              'fi fi-rs-heart-half-stroke': campo === 'orientacion',
                             }"
                             class="me-2 flex-shrink-0"
                           ></i>
 
-                          <strong class="me-2 text-nowrap flex-shrink-0">
-                            {{ transformToTitleCase(campo) }}:
-                          </strong>
+                          <strong class="me-2 text-nowrap flex-shrink-0">{{ transformToTitleCase(campo) }}:</strong>
 
                           <div class="flex-grow-1 min-width-0">
                             @if (!editando[campo]) {
@@ -310,9 +249,7 @@
                                 @if (campo === 'genero') {
                                   {{ validacionGenero(getValorCampo(campo)) }}
                                 } @else {
-                                  {{
-                                    validacionOrientacion(getValorCampo(campo))
-                                  }}
+                                  {{ validacionOrientacion(getValorCampo(campo)) }}
                                 }
                               </span>
                             } @else {
@@ -325,23 +262,11 @@
                                   disabled
                                   hidden
                                 >
-                                  {{
-                                    'REGISTRO.RESUMEN_REGISTRO.SELECCIONA'
-                                      | translate
-                                  }}
+                                  {{ 'REGISTRO.RESUMEN_REGISTRO.SELECCIONA' | translate }}
                                 </option>
-                                @for (
-                                  opcion of campo === 'genero'
-                                    ? generos
-                                    : orientaciones;
-                                  track opcion
-                                ) {
+                                @for (opcion of campo === 'genero' ? generos : orientaciones; track opcion) {
                                   <option [value]="opcion">
-                                    {{
-                                      campo === 'genero'
-                                        ? validacionGenero(opcion)
-                                        : validacionOrientacion(opcion)
-                                    }}
+                                    {{ campo === 'genero' ? validacionGenero(opcion) : validacionOrientacion(opcion) }}
                                   </option>
                                 }
                               </select>
@@ -392,7 +317,9 @@
   @if (condicionesAceptadas) {
     <div class="alert alert-success text-center mx-4 mt-3">
       <i class="fi fi-rr-check-circle me-2"></i>
-      ¡Has leído las condiciones de uso! Ahora puedes finalizar tu registro.
+      <p>¡Has leído las condiciones de uso!</p>
+      <p>Pulsa en el botón Finalizar y crear cuenta</p>
+      <p>Recibirás un correo con un enlace que debes pulsar para completar tu registro</p>
     </div>
   }
 

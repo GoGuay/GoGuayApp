@@ -133,9 +133,6 @@ def crear_usuario():
     db.session.add(monedero)
     db.session.commit()
 
-    
-    access_token = create_access_token(identity=str(nuevo_usuario.id))
-
     try:
         salt = 'email-verify'
         token = serializer.dumps(nuevo_usuario.email, salt=salt)
@@ -148,9 +145,7 @@ def crear_usuario():
         print(f"Error al enviar correo: {e}")
 
     return jsonify({
-        "mensaje": "Nuevo usuario creado correctamente",
-        "access_token": access_token,
-        "usuario": nuevo_usuario.serialize()
+        "mensaje": "Usuario registrado correctamente. Por favor, verifica tu correo electrónico."
     }), 201
 
 

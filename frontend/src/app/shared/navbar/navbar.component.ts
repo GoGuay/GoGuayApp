@@ -86,21 +86,34 @@ export class NavbarComponent implements OnInit {
   async ngOnInit() {
     this.loadUserData();
     this.setupPlatformConfig();
+    const isUserDataEmpty = !this.userData || Object.keys(this.userData).length === 0;
+    if (!isUserDataEmpty) {
+      this.usuario = this.userData.usuario;
+      this.isLoggedIn = true;
 
-    this.usuarioSub = this.userService.usuario$.subscribe((usuarioActualizado) => {
-      if (usuarioActualizado) {
-        this.usuario = usuarioActualizado;
-        this.isLoggedIn = true;
-
-        const id = usuarioActualizado.id;
-        this.obtenerNotificaciones(id);
-        this.obtenerNotificacionesMensajes(id);
-        this.iniciarPolling();
-      } else {
-        this.resetUserStatus();
-      }
+      const id = this.userData.usuario.id;
+      this.obtenerNotificaciones(id);
+      this.obtenerNotificacionesMensajes(id);
+      this.iniciarPolling();
       this.cdr.detectChanges();
-    });
+    } else {
+      this.usuarioSub = this.userService.usuario$.subscribe((usuarioActualizado) => {
+        if (usuarioActualizado && Object.keys(usuarioActualizado).length > 0) {
+          this.usuario = usuarioActualizado;
+          console.log('usuario: ', this.usuario);
+
+          this.isLoggedIn = true;
+
+          const id = usuarioActualizado.id;
+          this.obtenerNotificaciones(id);
+          this.obtenerNotificacionesMensajes(id);
+          this.iniciarPolling();
+        } else {
+          this.resetUserStatus();
+        }
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   /**

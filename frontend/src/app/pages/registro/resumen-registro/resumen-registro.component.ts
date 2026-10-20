@@ -1,12 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular/standalone';
@@ -21,15 +15,7 @@ const EMAIL_REGEX =
 @Component({
   selector: 'app-resumen-registro',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    MatIconModule,
-    TranslateModule,
-    ContratoRegistroComponent,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, MatIconModule, TranslateModule, ContratoRegistroComponent],
   templateUrl: './resumen-registro.component.html',
   styleUrl: './resumen-registro.component.scss',
 })
@@ -39,13 +25,7 @@ export class ResumenRegistroComponent implements OnInit {
   formularioResumen!: FormGroup;
 
   // Colecciones de campos para la plantilla
-  readonly camposColumna1 = [
-    'email',
-    'fecha_de_nacimiento',
-    'nombre',
-    'apellidos',
-    'telefono',
-  ];
+  readonly camposColumna1 = ['email', 'fecha_de_nacimiento', 'nombre', 'apellidos', 'telefono'];
   readonly camposColumna2 = ['genero', 'orientacion'];
 
   // Estados de interfaz y validaciones
@@ -64,16 +44,7 @@ export class ResumenRegistroComponent implements OnInit {
   original: Record<string, any> = {};
   editando: Record<string, boolean> = {};
 
-  readonly generos: string[] = [
-    'H_CIS',
-    'M_CIS',
-    'TRANS',
-    'NO_BINARIO',
-    'INTER',
-    'NO_FLUIDO',
-    'OTRO',
-    'NO_RESPONDE',
-  ];
+  readonly generos: string[] = ['H_CIS', 'M_CIS', 'TRANS', 'NO_BINARIO', 'INTER', 'NO_FLUIDO', 'OTRO', 'NO_RESPONDE'];
 
   readonly orientaciones: string[] = [
     'GAY',
@@ -93,7 +64,7 @@ export class ResumenRegistroComponent implements OnInit {
     private userService: UserServicesService,
     private navCtrl: NavController,
     private translateService: TranslateService,
-    private modalCtrl: ModalController,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit(): void {
@@ -110,38 +81,16 @@ export class ResumenRegistroComponent implements OnInit {
 
   private inicializarFormulario(data: any): void {
     const usuarioInfo = data?.datosGoogle ?? data;
-    const emailObtenido =
-      usuarioInfo?.email ?? data?.usuario?.email ?? data?.email ?? '';
+    const emailObtenido = usuarioInfo?.email ?? data?.usuario?.email ?? data?.email ?? '';
 
     this.formularioResumen = this.fb.group({
-      email: [
-        emailObtenido,
-        [Validators.required, Validators.pattern(EMAIL_REGEX)],
-      ],
-      fecha_de_nacimiento: [
-        usuarioInfo?.fecha_nacimiento ?? data?.fecha_nacimiento ?? '',
-        [Validators.required],
-      ],
-      nombre: [
-        usuarioInfo?.nombre ?? data?.nombre ?? '',
-        [Validators.required],
-      ],
-      apellidos: [
-        usuarioInfo?.apellidos ?? data?.apellidos ?? '',
-        [Validators.required],
-      ],
-      telefono: [
-        usuarioInfo?.telefono ?? data?.telefono ?? '',
-        [Validators.required, Validators.pattern(/^[0-9]{9}$/)],
-      ],
-      genero: [
-        usuarioInfo?.genero ?? data?.genero ?? '',
-        [Validators.required],
-      ],
-      orientacion: [
-        usuarioInfo?.orientacion ?? data?.orientacion ?? '',
-        [Validators.required],
-      ],
+      email: [emailObtenido, [Validators.required, Validators.pattern(EMAIL_REGEX)]],
+      fecha_de_nacimiento: [usuarioInfo?.fecha_nacimiento ?? data?.fecha_nacimiento ?? '', [Validators.required]],
+      nombre: [usuarioInfo?.nombre ?? data?.nombre ?? '', [Validators.required]],
+      apellidos: [usuarioInfo?.apellidos ?? data?.apellidos ?? '', [Validators.required]],
+      telefono: [usuarioInfo?.telefono ?? data?.telefono ?? '', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+      genero: [usuarioInfo?.genero ?? data?.genero ?? '', [Validators.required]],
+      orientacion: [usuarioInfo?.orientacion ?? data?.orientacion ?? '', [Validators.required]],
     });
   }
 
@@ -211,10 +160,7 @@ export class ResumenRegistroComponent implements OnInit {
         this.comprobarTelefonoRegistrado(control.value);
       }
     } else {
-      this.limpiarErrorAsincrono(
-        control,
-        controlName === 'email' ? 'emailRepetido' : 'telefonoRepetido',
-      );
+      this.limpiarErrorAsincrono(control, controlName === 'email' ? 'emailRepetido' : 'telefonoRepetido');
     }
   }
 
@@ -281,12 +227,7 @@ export class ResumenRegistroComponent implements OnInit {
     const fechaControl = this.formularioResumen.get('fecha_de_nacimiento');
     const fechaValor = fechaControl?.value;
 
-    if (
-      !fechaValor ||
-      fechaValor.length !== 10 ||
-      fechaValor.includes('a') ||
-      fechaValor.includes('A')
-    ) {
+    if (!fechaValor || fechaValor.length !== 10 || fechaValor.includes('a') || fechaValor.includes('A')) {
       fechaControl?.setErrors({ fechalimite: true });
       this.fechaValida = false;
       return;
@@ -391,17 +332,11 @@ export class ResumenRegistroComponent implements OnInit {
   }
 
   validacionGenero(genero: string): string {
-    return genero
-      ? this.translateService.instant(`SELECTOR_GENERO.${genero.toUpperCase()}`)
-      : '';
+    return genero ? this.translateService.instant(`SELECTOR_GENERO.${genero.toUpperCase()}`) : '';
   }
 
   validacionOrientacion(orientacion: string): string {
-    return orientacion
-      ? this.translateService.instant(
-          `SELECTOR_ORIENTACION.${orientacion.toUpperCase()}`,
-        )
-      : '';
+    return orientacion ? this.translateService.instant(`SELECTOR_ORIENTACION.${orientacion.toUpperCase()}`) : '';
   }
 
   // --- MANEJO DE MODALES Y REGISTRO ---
@@ -432,15 +367,11 @@ export class ResumenRegistroComponent implements OnInit {
 
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
-        if (response && response.access_token) {
-          localStorage.setItem('access_token', response.access_token);
-          if (response.refresh_token) {
-            localStorage.setItem('refresh_token', response.refresh_token);
-          }
-        }
-
-        localStorage.setItem('userData', JSON.stringify(response.usuario));
-        this.userService.actualizarEstadoUsuario(response.usuario);
+        localStorage.setItem('pendienteConfirmacionRegistro', 'true');
+        // if (response.usuario) {
+        //   localStorage.setItem('userData', JSON.stringify(response.usuario));
+        // }
+        localStorage.clear();
         this.navCtrl.navigateRoot('/home');
       },
       error: (err) => {
