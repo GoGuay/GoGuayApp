@@ -146,6 +146,13 @@ ion-content {
   outline-offset: 2px;
 }
 
+.btn_bg:disabled {
+  background-color: #cccccc !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .logo {
   width: 60px;
   border-radius: 30px;
