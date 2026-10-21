@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-    <ion-toolbar color="light">
+    <ion-toolbar class="diseno">
         <ion-title>
             <div class="d-flex align-items-center">
                 <div class="maricar-chat-avatar me-2">
@@ -20,16 +20,16 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding bg-light">
+<ion-content class="ion-padding content">
     <div class="chat-container d-flex flex-column gap-3 py-2">
         <div *ngFor="let mensaje of mensajes" class="d-flex w-100"
             [ngClass]="mensaje.remitente === 'usuario' ? 'justify-content-end' : 'justify-content-start'">
 
             <!-- Mensaje de la IA -->
             <div *ngIf="mensaje.remitente === 'ia'" class="d-flex align-items-start gap-2 max-w-85">
-                <div class="ia-avatar-bubble shadow-sm bg-white rounded-circle p-1 d-flex align-items-center justify-content-center"
+                <div class="ia-avatar-bubble shadow-sm rounded-circle p-1 d-flex align-items-center justify-content-center"
                     style="min-width: 35px; height: 35px;">
-                    <ion-icon name="sparkles" color="primary" style="font-size: 1.1rem;"></ion-icon>
+                    <ion-icon name="sparkles" class="icon-sparkle-animado" style="font-size: 1.1rem;"></ion-icon>
                 </div>
                 <div class="mensaje-bubble ia-bubble p-3 shadow-sm rounded-4 bg-white text-dark">
                     <p class="mb-0" style="font-size: 0.95rem; line-height: 1.4;">{{ mensaje.texto }}</p>
@@ -48,7 +48,7 @@
     </div>
 </ion-content>
 
-<ion-footer class="ion-no-border bg-white p-2 shadow-lg">
+<ion-footer class="ion-no-border diseno p-2 shadow-lg">
     <div class="d-flex align-items-center gap-2 px-2">
         <ion-item lines="none" class="flex-grow-1 bg-light rounded-pill custom-input-container">
             <ion-input [(ngModel)]="inputUsuario" (ionInput)="onInputUsuarioChange($event)"
@@ -56,7 +56,7 @@
                 style="font-size: 0.95rem; text-transform: capitalize;">
             </ion-input>
         </ion-item>
-        <ion-button (click)="enviarMensaje()" shape="round" color="primary" class="m-0"
+        <ion-button (click)="enviarMensaje()" shape="round" class="m-0 btn-enviar-maricar"
             [disabled]="!inputUsuario.trim()">
             <ion-icon name="send" slot="icon-only"></ion-icon>
         </ion-button>

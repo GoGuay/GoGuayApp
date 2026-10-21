@@ -9,11 +9,11 @@
 }
 
 ::ng-deep {
-  .form-control:focus, 
-  input:focus, 
-  select:focus, 
-  .form-check:focus, 
-  .form-check-input:focus, 
+  .form-control:focus,
+  input:focus,
+  select:focus,
+  .form-check:focus,
+  .form-check-input:focus,
   span:focus,
   ion-input input:focus {
     border: none !important;
@@ -23,8 +23,8 @@
 }
 
 ::ng-deep .custom-input-container {
-  .form-control:focus, 
-  input:focus, 
+  .form-control:focus,
+  input:focus,
   ion-input input:focus {
     border: none !important;
     outline: none !important;
@@ -40,24 +40,57 @@ ion-content {
 ion-footer {
   display: block;
   position: relative;
-  background-color: #ffffff !important;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
   z-index: 10;
+}
+
+ion-toolbar.diseno {
+  --background: transparent;
+}
+
+ion-footer.diseno {
+  --background: transparent;
+  background-color: inherit;
+}
+
+ion-button.btn-enviar-maricar {
+  --background: #b3b5e6 !important;
+  --color: black !important;
+  --box-shadow: 0 4px 10px rgba(179, 181, 230, 0.4);
+
+  &[disabled] {
+    --background: #e0e0e0 !important;
+    --color: #a0a0a0 !important;
+    opacity: 0.7;
+  }
 }
 
 .max-w-85 {
   max-width: 85%;
 }
 
+.ia-avatar-bubble {
+  background-color: #ffffff !important;
+  border: 1.5px solid #90caf9 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-sparkle-animado {
+  color: #1565c0 !important;
+  animation: brilloMovimiento 4s ease infinite;
+}
+
 .ia-bubble {
   background-color: #ffffff !important;
-  color: #333333 !important;
+  color: #1a237e !important;
   border-top-left-radius: 4px !important;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid #90caf9 !important; 
 
   p {
-    color: #333333 !important;
+    color: black !important;
   }
 }
 
@@ -76,12 +109,12 @@ ion-footer {
   width: 36px;
   height: 36px;
   background: #fdfbf7;
-  border: 1.5px solid #e0a667;
+  border: 1.5px solid #90caf9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 
   .chat-car {
     font-size: 1.2rem;
@@ -93,6 +126,22 @@ ion-footer {
     top: -2px;
     right: -2px;
     font-size: 0.75rem;
-    color: #e0a667;
+    color: #1565c0;
+    animation: brilloMovimiento 4s ease infinite;
+  }
+}
+
+@keyframes brilloMovimiento {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }

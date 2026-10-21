@@ -75,12 +75,6 @@
   left: 20px !important;
   right: auto !important;
   bottom: 30px;
-}
-
-.fab-maricar-izquierda {
-  left: 20px !important;
-  right: auto !important;
-  bottom: 30px;
   z-index: 1000;
 
   .maricar-fab-button {
@@ -90,6 +84,7 @@
 
     &:hover {
       transform: scale(1.08);
+      --background: #F0D7B4; 
     }
 
     .maricar-icon-wrapper {
@@ -108,7 +103,7 @@
         top: -8px;
         right: -8px;
         font-size: 1rem;
-        color: #e0a667; 
+        color: #1565c0; 
         animation: pulse-sparkle 2s infinite ease-in-out;
       }
     }
@@ -132,12 +127,17 @@
     bottom: 65px; 
     left: 15px;
     background: #ffffff;
-    border: 1.5px solid #e0a667;
+    border: 1.5px solid #1565c0;
     border-radius: 16px;
     padding: 10px 32px 10px 14px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     white-space: nowrap;
     z-index: 1001;
+    cursor: pointer;
+
+    &hover {
+      transform: scale(1.08);
+    }
 
     .popover-text {
       font-size: 0.85rem;
@@ -175,8 +175,8 @@
       width: 12px;
       height: 12px;
       background: #ffffff;
-      border-right: 1.5px solid #e0a667;
-      border-bottom: 1.5px solid #e0a667;
+      border-right: 1.5px solid #1565c0;
+      border-bottom: 1.5px solid #1565c0;
       transform: rotate(45deg);
     }
   }

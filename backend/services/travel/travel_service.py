@@ -1082,6 +1082,9 @@ def crear_viaje_ia():
         "viaje": nuevo_viaje.serialize(current_user_id=current_user_id)
     }), 201
 
+#
+#   FUNCIONALIDAD DE CHAT CON MARI-CAR PARA CREAR UN VIAJE
+#
 @travel_blueprint.route('/chat-maricar', methods=['POST'])
 @jwt_required()
 def chat_maricar():
@@ -1093,23 +1096,24 @@ def chat_maricar():
     Tu objetivo es recopilar de forma natural los datos para publicar un viaje:
     1. Origen (debe ser una ciudad, pueblo o ubicación real válida en España).
     2. Destino (debe ser una ciudad, pueblo o ubicación real válida, diferente del origen).
-    3. Fecha de salida (formato YYYY-MM-DD).
+    3. Fecha de salida (formato preferido del usuario: DD-MM-YYYY).
     4. Hora de salida (formato HH:MM).
 
     REGLAS DE VALIDACIÓN ESTRICTAS:
     - Si el usuario indica un origen o destino no válido (por ejemplo, nombres de persona como "pepe", "juan", palabras sueltas o lugares inexistentes), indícale amablemente que no reconoces ese lugar como una ubicación válida en España y pídele que lo especifique de nuevo.
     - Si el origen y destino son idénticos, pídele que cambie uno de los dos.
-    - Puedes capturar varios datos de una sola vez si el usuario los proporciona en un solo mensaje.
+    - Si el usuario escribe la fecha en formato español (ej: 15-11-2026 o 15/11/2026), interprétala correctamente.
+    - Si el usuario escribe la hora en formato HH:MM (ej: 15:30 o 19.30), interprétala correctamente.
 
     FORMATO DE RESPUESTA OBLIGATORIO (JSON estricto):
     {
-      "mensaje_respuesta": "Texto amigable dirigido al usuario (si hay error, explícalo aquí con amabilidad)",
-      "datos_completos": true_o_false,
+      "mensaje_respuesta": "Texto amigable dirigido al usuario confirmando los datos o pidiendo lo que falta",
+      "datos_completos": false,
       "viaje_data": {
-        "origen": "Madrid" o null,
-        "destino": "Valencia" o null,
-        "fecha_salida": "2026-11-15" o null,
-        "hora_salida": "09:30" o null
+        "origen": null,
+        "destino": null,
+        "fecha_salida": null,
+        "hora_salida": null
       }
     }
     """
@@ -1137,18 +1141,65 @@ def chat_maricar():
     try:
         response = requests.post(endpoint, json=payload, headers=headers)
         res_data = response.json()
-        contenido_ia = json.loads(res_data['choices'][0]['message']['content'])
-        return jsonify(contenido_ia), 200
+        
+        if response.status_code == 200 and 'choices' in res_data:
+            contenido_ia = json.loads(res_data['choices'][0]['message']['content'])
+            
+            if contenido_ia.get('datos_completos') and contenido_ia.get('viaje_data'):
+                fecha_raw = contenido_ia['viaje_data'].get('fecha_salida')
+                hora_raw = contenido_ia['viaje_data'].get('hora_salida')
+                
+                if fecha_raw:
+                    contenido_ia['viaje_data']['fecha_salida'] = normalizar_fecha(fecha_raw)
+                if hora_raw:
+                    contenido_ia['viaje_data']['hora_salida'] = normalizar_hora(hora_raw)
+
+            return jsonify(contenido_ia), 200
+        else:
+            raise Exception(res_data.get('error', {}).get('message', 'Error en Groq'))
 
     except Exception as e:
-            print("\n--------------------------------------------------")
-            print("ERROR EN GROQ / CHAT-MARICAR:", str(e))
-            if 'response' in locals() and hasattr(response, 'text'):
-                print("📄 Respuesta de la API de Groq:", response.text)
-            print("--------------------------------------------------\n")
-            
-            return jsonify({
-                "mensaje_respuesta": "Lo siento, me he despistado un segundo. ¿Podrías indicarme de nuevo desde dónde quieres salir?",
-                "datos_completos": False,
-                "viaje_data": None
-            }), 200
+        print("\n--------------------------------------------------")
+        print("ERROR EN GROQ / CHAT-MARICAR:", str(e))
+        if 'response' in locals() and hasattr(response, 'text'):
+            print("📄 Respuesta de la API de Groq:", response.text)
+        print("--------------------------------------------------\n")
+        
+        return jsonify({
+            "mensaje_respuesta": "Lo siento, me he despistado un segundo. ¿Podrías indicarme de nuevo los datos del viaje?",
+            "datos_completos": False,
+            "viaje_data": None
+        }), 200
+
+
+def normalizar_fecha(fecha_str):
+    """
+    Convierte cualquier formato de fecha (DD-MM-YYYY, DD/MM/YYYY) a YYYY-MM-DD para la BD.
+    """
+    import re
+    if not fecha_str:
+        return fecha_str
+    
+    match_es = re.match(r"^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$", fecha_str.strip())
+    if match_es:
+        dia, mes, anio = match_es.groups()
+        return f"{anio}-{mes.zfill(2)}-{dia.zfill(2)}"
+    
+    return fecha_str
+
+def normalizar_hora(hora_str):
+    """
+    Convierte cualquier formato de hora (19.30, 9:30, 19:30) a HH:MM para la BD.
+    """
+    import re
+    if not hora_str:
+        return hora_str
+    
+    hora_limpia = hora_str.strip().replace('.', ':')
+    
+    match_hora = re.match(r"^(\d{1,2}):(\d{2})$", hora_limpia)
+    if match_hora:
+        horas, minutos = match_hora.groups()
+        return f"{horas.zfill(2)}:{minutos}"
+    
+    return hora_limpia
