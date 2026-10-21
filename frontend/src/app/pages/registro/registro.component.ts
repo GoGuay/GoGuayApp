@@ -43,6 +43,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   cargandoTelefono: boolean = false;
 
   esGoogle: boolean = !!localStorage.getItem('tempGoogleToken');
+  esRegistroDesdeGoogle: boolean = !!localStorage.getItem('registro_desde_google');
 
   pasoActual: number = this.esGoogle ? 2 : 1;
   paso1: boolean = !this.esGoogle;
@@ -66,7 +67,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     private languageService: LanguageService,
     private messageService: MessageService,
     private translate: TranslateService
-
+  ) {
     /**
      * Con el formBuilder creamos un grupo de formularios.
      * El formulario 1 va a tener:
@@ -74,7 +75,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
      */
 
     // Formulario 1: Email
-  ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
     });
@@ -110,25 +110,35 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event: any) {
+    const flujoRegistroDesdeGoogle = localStorage.getItem('registro_desde_google');
+
+    if (flujoRegistroDesdeGoogle) {
+      this.esGoogle = false;
+      this.formulario1.get('email')?.setValue('');
+      localStorage.removeItem('registro_desde_google');
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
+      return;
+    }
 
     if (this.esGoogle && this.pasoActual === 2) {
-      console.log('Cancelando flujo de Google y volviendo al login...');
       localStorage.removeItem('tempGoogleToken');
       localStorage.removeItem('userData');
       sessionStorage.clear();
       localStorage.setItem('google_flow_cancelled', 'true');
-      this.ngZone.run(() => {
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
       this.navCtrl.navigateRoot(['/login']);
-    });
       return;
     }
     if (this.pasoActual > 1) {
       this.pasoActual--;
       this.paso1 = this.pasoActual === 1;
     } else {
-      this.navCtrl.navigateRoot(['/home']);
+      this.navCtrl.navigateRoot(['/registro']);
     }
   }
+
   ngAfterViewInit(): void {
     this.inicializarBotonGoogle();
   }
@@ -699,7 +709,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
         google.accounts.id.renderButton(contenedor, {
           theme: 'outline',
           size: 'large',
-          text: 'signup_with',
+          text: 'continue_with',
           locale: 'es',
         });
       }
@@ -737,15 +747,18 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       console.warn('No se recibieron datosGoogle para precargar');
       return;
     }
-    this.avanzarPasoInterno(2);
     this.esGoogle = true;
+    if (this.pasoActual === 1) {
+      localStorage.setItem('registro_desde_google', 'true');
+    }
+    this.avanzarPasoInterno(2);
     this.formulario1.patchValue({ email: datosGoogle.email });
     this.emailValido = true;
     this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
-    const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
-    if (foto) {
-      this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
-    }
+    // const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
+    // if (foto) {
+    //   this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
+    // }
     if (datosGoogle.nombre) {
       const controlNombre = this.formulario2.get('nombre');
       controlNombre?.enable();

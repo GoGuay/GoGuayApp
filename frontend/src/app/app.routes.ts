@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { TokenValidGuard } from './guards/token-valid.guard';
+import { googleCancelGuard } from './guards/googleCancelGuard.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
   {
     path: 'registro',
     loadComponent: () => import('./pages/registro/registro.component').then((m) => m.RegistroComponent),
+    canActivate: [googleCancelGuard]
   },
   {
     path: 'sobre-nosotros',
