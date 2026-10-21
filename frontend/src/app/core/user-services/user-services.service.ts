@@ -311,7 +311,7 @@ export class UserServicesService {
    * @returns
    */
   verificar_email(token: any): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/user/verificar_email`, { token }).pipe(
+    return this.http.post(`${this.apiUrl}/user/email_finalizar_registro`, { token }).pipe(
       map(() => true),
       catchError(() => of(false))
     );

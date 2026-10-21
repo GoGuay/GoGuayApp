@@ -120,7 +120,8 @@ def crear_usuario():
         genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
-        fecha_nacimiento=fecha_nac
+        fecha_nacimiento=fecha_nac,
+        registroPrevio = True
     )
     try:
         db.session.add(nuevo_usuario)
@@ -134,12 +135,7 @@ def crear_usuario():
     db.session.commit()
 
     try:
-        salt = 'email-verify'
-        token = serializer.dumps(nuevo_usuario.email, salt=salt)
-        link_verificacion = f"http://localhost:4200/finalizar-registro/{token}"
-        msg = Message("Bienvenidx a GoGuay", recipients=[nuevo_usuario.email])
-        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
-        mail.send(msg)
+        reenviar_correo_finreg(nuevo_usuario)
         
     except Exception as e:
         print(f"Error al enviar correo: {e}")
@@ -148,6 +144,17 @@ def crear_usuario():
         "mensaje": "Usuario registrado correctamente. Por favor, verifica tu correo electrónico."
     }), 201
 
+def reenviar_correo_finreg(usuario):
+    try:
+        salt = 'email-verify'
+        token = serializer.dumps(usuario.email, salt=salt)
+        link_verificacion = f"http://localhost:4200/finalizar-registro/{token}"
+        msg = Message("Bienvenidx a GoGuay", recipients=[usuario.email])
+        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
+        mail.send(msg)
+        
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
 
 
 ## CREAR NUEVO USUARIO - REGISTRO POR BOTÓN DE GOOGLE ##
@@ -810,30 +817,28 @@ def mail_modificacion_correo():
 
 
 
-## PONER COMO VERIFICADO EL CAMPO 'EMAIL' CUANDO EL USUARIO CLICA EN EL ENLACE RECIBIDO ##
-@user_blueprint.route('/verificar_email', methods=['POST'])
-def verificar_email():
+## Pone al usuario como RegistroFinalizado en True y verifica el email del usuario a la vez ##
+@user_blueprint.route('/email_finalizar_registro', methods=['POST'])
+def email_finalizar_registro():
     """
-    Esta función recoge información que le llega desde el front con el token
-    1. Recoge el 'token' desde el json y lo pasa a 'token'.
-    2. Guarda en 'email' la configuración para verificar el token, comprueba que el salt sea de email-verify y comprueba cuando se ha enviado el email (comprueba la hora de envío y la resta de la hora actual.)
-    3. Busca al usuario en la bd por email y obtiene el primero. Si encuentra usuario, pone su atributo emailVerificado en True y guarda los datos. Devuelve un mensaje de exito o error.
-    4. except: Si el proceso ha fallado devuelve un mensaje de error. 
     """
     token = request.json['token']
     salt = 'email-verify'
     try:
 
-        email = serializer.loads(token, salt=salt, max_age=1800)
+        email = serializer.loads(token, salt=salt)
         print(f"Email extraído del token: {email}") 
         usuario = Usuario.query.filter_by(email=email).first()
-        if usuario:
-            usuario.emailVerificado = True
-            usuario.registroPrevio = True
-            db.session.commit()
-            return jsonify({'message': 'Correo verificado correctamente'}), 200
-        else:
+        if not usuario:
             return jsonify({'error': 'Usuario no encontrado'}), 404
+        if usuario.emailVerificado or usuario.registroFinalizado:
+            return jsonify({'error': 'Este enlace de verificación ya ha sido utilizado'}), 400
+        
+        usuario.emailVerificado = True
+        usuario.registroFinalizado = True
+        db.session.commit()
+        return jsonify({'message': 'Correo verificado correctamente'}), 200
+        
 
     except Exception as e:
         print(f"Error al verificar token: {e}")

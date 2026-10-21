@@ -29,6 +29,15 @@
     >
       Registrarme
     </button>
+
+    <button
+      *ngIf="data?.mostrarBotonReenvioEmail"
+      mat-button
+      class="btn_bg btn"
+      (click)="reenviarCorreoFinalizarReg('reenviarCorreo')"
+    >
+      Reenviar email
+    </button>
     <button
       mat-button
       (click)="close()"

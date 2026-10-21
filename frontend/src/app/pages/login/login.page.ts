@@ -37,7 +37,7 @@ export class LoginPage implements OnInit, AfterViewInit {
     private ngZone: NgZone,
     private translate: TranslateService,
     private languageService: LanguageService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     this.loginForm = new FormGroup({
       emailFormControl: new FormControl('', [Validators.required, Validators.email]),
@@ -188,6 +188,10 @@ export class LoginPage implements OnInit, AfterViewInit {
         this.navCtrl.navigateRoot(['/registro'], {
           animated: false,
         });
+      } else if (condicion === 'reenviarCorreo') {
+        this.navCtrl.navigateRoot(['/home'], {
+          animated: false,
+        });
       } else {
         this.navCtrl.navigateRoot(['/home'], {
           animated: false,
@@ -237,6 +241,11 @@ export class LoginPage implements OnInit, AfterViewInit {
           if (res.usuarioExistente && res.usuario) {
             localStorage.setItem('userData', JSON.stringify(res.usuario));
             this.userService.actualizarEstadoUsuario(res.usuario);
+            if (res.usuario.registroFinalizado === false && res.usuario.emailVerificado === false) {
+              const title = 'Error!';
+              const errorMsg = 'Error al iniciar sesión. Inténtalo de nuevo.';
+              this.openError(title, errorMsg);
+            }
             this.navCtrl.navigateRoot('/home');
           } else {
             localStorage.setItem('tempGoogleToken', idToken);
@@ -248,5 +257,9 @@ export class LoginPage implements OnInit, AfterViewInit {
         },
       });
     });
+  }
+
+  reenviarCorreoFinReg(){
+
   }
 }

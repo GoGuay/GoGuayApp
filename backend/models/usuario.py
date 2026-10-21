@@ -17,6 +17,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     emailVerificado = db.Column(db.Boolean, default=False)
     registroPrevio = db.Column(db.Boolean, default=False)
+    registroFinalizado = db.Column(db.Boolean, default=False)
     genero = db.Column(db.String(50), nullable=False, default=Genero.defecto.value)
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
@@ -168,6 +169,7 @@ class Usuario(db.Model):
             "email": self.email,
             "emailVerificado": self.emailVerificado,
             "registroPrevio": self.registroPrevio,
+            "registroFinalizado": self.registroFinalizado,
             "genero": self.genero,
             "orientacion": self.orientacion,
             "pronombre": self.pronombre,  

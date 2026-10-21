@@ -25,7 +25,7 @@ import { NavController } from 'node_modules/@ionic/angular';
 })
 export class ModalErrorComponent implements OnInit {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; mostrarBotonRegistro?: boolean },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; mostrarBotonRegistro?: boolean; mostrarBotonReenvioEmail?:boolean },
     private dialogRef: MatDialogRef<ModalErrorComponent>,
     private navCtrl: NavController
   ) {}
@@ -36,6 +36,13 @@ export class ModalErrorComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  reenviarCorreoFinalizarReg(condicion: string) {
+    this.navCtrl.navigateRoot(['/home'], {
+      animated: false,
+    });
+    this.dialogRef.close(condicion);
   }
 
   toRegistro(condicion: string) {

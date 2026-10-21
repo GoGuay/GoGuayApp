@@ -7,6 +7,7 @@ export interface Usuario {
     apellidos: string;
     email?: string;
     registroPrevio?: boolean;
+    registroFinalizado?:boolean;
     pronombre?: string;
     genero?: string;
     orientacion?: string;
