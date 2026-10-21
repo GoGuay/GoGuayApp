@@ -10,10 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { NavController } from '@ionic/angular';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { environment } from 'src/environments/environment';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { MessageService } from 'primeng/api';
-import { DialogConfig, DialogRef } from 'node_modules/@angular/cdk/dialog';
 
 declare const google: any;
 
@@ -22,7 +21,7 @@ declare const google: any;
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, ReactiveFormsModule, SpinnerComponent],
+  imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, ReactiveFormsModule, SpinnerComponent, TranslateModule],
   providers: [MessageService],
 })
 export class LoginPage implements OnInit, AfterViewInit {
@@ -38,7 +37,7 @@ export class LoginPage implements OnInit, AfterViewInit {
     private ngZone: NgZone,
     private translate: TranslateService,
     private languageService: LanguageService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {
     this.loginForm = new FormGroup({
       emailFormControl: new FormControl('', [Validators.required, Validators.email]),

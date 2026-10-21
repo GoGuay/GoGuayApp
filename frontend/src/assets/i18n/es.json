@@ -45,6 +45,8 @@
     "OTRO": "Otro"
   },
   "PLACEHOLDER": {
+    "ESCRIBE_TU_MAIL": "Escribe tu email aquí",
+    "ESCRIBE_PASSWORD": "Escribe tu constraseña aquí",
     "SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
     "DONDE_COMIENZA": "¿Dónde comienza el viaje?",
     "HASTA_DONDE": "¿Hasta donde es el viaje?",
@@ -65,6 +67,9 @@
     "NO_ACEPTAR": "No aceptar"
   },
   "BOTONES": {
+    "LOGIN":{
+      "INICIAR_SESION": "Iniciar sesión"
+    },
     "MIPERFIL": {
       "ANADIR_FOTO_PERFIL_MATTOOLTIP": "Añadir o cambiar la foto de perfil",
       "ANADIR_FOTO_PERFIL_ARIALABEL": "Añadir o cambiar la foto de perfil",
@@ -86,6 +91,18 @@
     "DATOSCONTACTO": {
       "GUARDAR": "Guardar"
     }
+  },
+  "LOGIN":{
+    "TITULO": "Introduce tu correo y contraseña",
+    "EMAIL_LABEL": "Email",
+    "ERROR_EMAIL_OGLIGATORIO": "El email es obligatorio",
+    "ERROR_EMAIL_NOVALIDO": "Por favor, introduce un email correcto",
+    "PASSWORD_LABEL": "Contraseña",
+    "ERROR_PASSWORD_OGLIGATORIO": "La contraseña es obligatoria",
+    "RECUERDAME_CHECK":"Recuérdame",
+    "PASSWORD_OLVIDADO":"¿No recuerdas tu contraseña actual?",
+    "REGISTRARSE_TEXTO": "¿Aún no estás registrado?",
+    "REGISTRARSE_BOTON": "Regístrate aquí"
   },
   "MIPERFIL": {
     "TITULO": "Mi perfil",

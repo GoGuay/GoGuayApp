@@ -1,36 +1,47 @@
-<div class="contenedor_login">
+<main class="contenedor_login">
   <div class="container">
+    <!-- Selector de Idiomas -->
     <div class="idiomas-container d-flex flex-row align-items-end justify-content-end gap-3">
       <img
         src="../../../assets/sistema/bandera_es.svg"
         class="icon-idioma"
         [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }"
         (click)="changeLanguage('es')"
+        tabindex="0"
+        role="button"
+        aria-label="Cambiar a español"
+        (keydown.enter)="changeLanguage('es')"
       />
       <img
         src="../../../assets/sistema/bandera_uk.svg"
         class="icon-idioma mt-1"
         [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }"
         (click)="changeLanguage('en')"
+        tabindex="0"
+        role="button"
+        aria-label="Cambiar a inglés"
+        (keydown.enter)="changeLanguage('en')"
       />
     </div>
     <div class="d-flex justify-content-center mt-4">
       <img
         src="../../../assets/logo/PRIDECAR.png"
-        alt="Logo"
+        alt="Logo de Pridecar, ir a la página de inicio"
         class="logo_login"
-        type="button"
+        role="button"
+        tabindex="0"
         [routerLink]="['/home']"
       />
     </div>
 
     <div>
       <div class="box_login container">
-        <h1>INTRODUCE TU CORREO Y CONTRASEÑA</h1>
+        <h1>{{ 'LOGIN.TITULO' | translate }}</h1>
         <form
           [formGroup]="loginForm"
           class="formulario"
           (ngSubmit)="login()"
+          novalidate
         >
           <!-- Email -->
           <div class="mb-3 row">
@@ -38,7 +49,7 @@
               for="emailFormControl"
               class="form-label"
             >
-              Email
+              {{ 'LOGIN.EMAIL_LABEL' | translate }}
             </label>
             <input
               type="email"
@@ -46,18 +57,22 @@
               class="form-control"
               formControlName="emailFormControl"
               aria-describedby="emailHelpBlock"
-              placeholder="Escribe tu email aquí"
+              [attr.aria-invalid]="isFieldInvalid('emailFormControl')"
+              placeholder="{{ 'PLACEHOLDER.ESCRIBE_TU_MAIL' | translate }}"
             />
             <div
+              id="emailError"
               *ngIf="isFieldInvalid('emailFormControl')"
               class="error-message"
+              aria-live="polite"
             >
               <small *ngIf="loginForm.get('emailFormControl')?.hasError('required')">
-                El email es
-                <strong>obligatorio</strong>
+                <strong>{{ 'LOGIN.ERROR_EMAIL_OGLIGATORIO' | translate }}</strong>
                 .
               </small>
-              <small *ngIf="loginForm.get('emailFormControl')?.hasError('email')">Por favor, introduce un email válido.</small>
+              <small *ngIf="loginForm.get('emailFormControl')?.hasError('email')">
+                <strong>{{ 'LOGIN.ERROR_EMAIL_NOVALIDO' | translate }}</strong>
+              </small>
             </div>
           </div>
 
@@ -67,23 +82,25 @@
               for="passwordFormControl"
               class="form-label"
             >
-              Contraseña
+              {{ 'LOGIN.PASSWORD_LABEL' | translate }}
             </label>
             <input
               type="password"
               id="passwordFormControl"
               class="form-control"
               formControlName="passwordFormControl"
-              aria-describedby="passwordHelpBlock"
-              placeholder="Escribe tu contraseña aquí"
+              aria-describedby="passwordError"
+              [attr.aria-invalid]="isFieldInvalid('passwordFormControl')"
+              placeholder="{{ 'PLACEHOLDER.ESCRIBE_PASSWORD' | translate }}"
             />
             <div
+              id="passwordError"
               *ngIf="isFieldInvalid('passwordFormControl')"
               class="error-message"
+              aria-live="polite"
             >
               <small *ngIf="loginForm.get('passwordFormControl')?.hasError('required')">
-                La contraseña es
-                <strong>obligatoria</strong>
+                <strong>{{ 'LOGIN.ERROR_PASSWORD_OGLIGATORIO' | translate }}</strong>
                 .
               </small>
             </div>
@@ -101,36 +118,33 @@
               class="form-check-label"
               for="check"
             >
-              Recuérdame
+              {{ 'LOGIN.RECUERDAME_CHECK' | translate }}
             </label>
           </div>
           <div class="text-start mb-4">
             <a
               class="small"
-              href="'../../../forgot-password//forgot-password.page.html"
+              [routerLink]="['/forgot-password']"
             >
-              ¿No recuerdas tu contraseña actual?
+              {{ 'LOGIN.PASSWORD_OLVIDADO' | translate }}
             </a>
           </div>
-           <!-- Opción Login por Google-->
+          <!-- Opción Login por Google-->
           <div
             id="btnGoogleContainer"
             class="d-flex justify-content-center mb-3"
           ></div>
+          <!-- Texto de Registro -->
           <div class="mb-3 row">
-            <label
-              class="form-label"
-              for="register"
-            >
-              ¿Aún no estás registrado?
+            <span class="form-label">
+              {{ 'LOGIN.REGISTRARSE_TEXTO' | translate }}
               <a
-                type="button"
-                href="/registro"
+                [routerLink]="['/registro']"
                 class="enlace"
               >
-                <strong>Registrarse</strong>
+                <strong>{{ 'LOGIN.REGISTRARSE_BOTON' | translate }}</strong>
               </a>
-            </label>
+            </span>
           </div>
           <button
             mat-raised-button
@@ -138,7 +152,7 @@
             type="submit"
             [disabled]="loginForm.invalid"
           >
-            Iniciar sesión
+            {{ 'BOTONES.LOGIN.INICIAR_SESION' | translate }}
           </button>
         </form>
       </div>
@@ -147,4 +161,4 @@
       </div>
     </div>
   </div>
-</div>
+</main>
