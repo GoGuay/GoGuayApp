@@ -9,13 +9,17 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { BuscadorViajeHomeComponent } from '../components/buscador_viaje_home/buscador_viaje_home.component';
 import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
 import { Usuario } from '../models/user/usuario.model';
 import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados-ia/viajes-recomendados-ia.component";
+import { MaricarChatComponent } from '../components/chat-maricar/chat-maricar.component';
+import { sparkles, carSportOutline, closeOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +41,17 @@ import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados
     CommonModule,
     ViajesRecomendadosIaComponent
 ],
+animations: [
+    trigger('popoverAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(12px) scale(0.92)' }),
+        animate('250ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0) scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0, transform: 'translateY(10px) scale(0.92)' }))
+      ])
+    ])
+  ]
 })
 export class HomePage implements OnInit {
   userLoggedIn: boolean = false;
@@ -48,6 +63,8 @@ export class HomePage implements OnInit {
 
   mostrarBannerEncuesta: boolean = false;
   private tiempoNavegacion: any;
+  maricarHabilitada: boolean = true;
+  mostrarPopoverMaricar: boolean = true;
 
   constructor(
     private translate: TranslateService,
@@ -55,7 +72,9 @@ export class HomePage implements OnInit {
     private notificacionesService: NotificacionesService,
     private userService: UserServicesService,
     private navCtrl: NavController,
+    private modalController: ModalController
   ) {
+    addIcons({ sparkles, carSportOutline, closeOutline });
     this.loadUserData();
   }
 
@@ -149,5 +168,19 @@ export class HomePage implements OnInit {
     this.mostrarBannerEncuesta = false;
     localStorage.setItem('encuesta_goguay_cerrada', 'true');
     this.navCtrl.navigateForward('/encuesta-satisfaccion');
+  }
+
+  async abrirChatMariCar(){
+    const modal = await this.modalController.create({
+      component: MaricarChatComponent,
+      cssClass: 'maricar-custom-modal'
+    });
+    await modal.present();
+  }
+
+  cerrarPopoverMaricar(event: Event) {
+    event.stopPropagation(); 
+    this.mostrarPopoverMaricar = false;
+    localStorage.setItem('maricar_popover_visto', 'true'); 
   }
 }

@@ -829,3 +829,8 @@ span:focus {
     color: #0056b3 !important;
   }
 }
+
+.maricar-custom-modal {
+  --border-radius: 35px;
+  overflow: hidden;
+}

@@ -1,0 +1,64 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar color="light">
+        <ion-title>
+            <div class="d-flex align-items-center">
+                <div class="maricar-chat-avatar me-2">
+                    <ion-icon name="car-sport-outline" class="chat-car"></ion-icon>
+                    <ion-icon name="sparkles" class="chat-sparkle"></ion-icon>
+                </div>
+                <div class="d-flex flex-column">
+                    <span style="line-height: 1.2; font-weight: 600;">MariCar</span>
+                    <small class="text-muted" style="font-size: 0.75rem; line-height: 1;">Tu asistente de viajes</small>
+                </div>
+            </div>
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()" color="medium">
+                <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding bg-light">
+    <div class="chat-container d-flex flex-column gap-3 py-2">
+        <div *ngFor="let mensaje of mensajes" class="d-flex w-100"
+            [ngClass]="mensaje.remitente === 'usuario' ? 'justify-content-end' : 'justify-content-start'">
+
+            <!-- Mensaje de la IA -->
+            <div *ngIf="mensaje.remitente === 'ia'" class="d-flex align-items-start gap-2 max-w-85">
+                <div class="ia-avatar-bubble shadow-sm bg-white rounded-circle p-1 d-flex align-items-center justify-content-center"
+                    style="min-width: 35px; height: 35px;">
+                    <ion-icon name="sparkles" color="primary" style="font-size: 1.1rem;"></ion-icon>
+                </div>
+                <div class="mensaje-bubble ia-bubble p-3 shadow-sm rounded-4 bg-white text-dark">
+                    <p class="mb-0" style="font-size: 0.95rem; line-height: 1.4;">{{ mensaje.texto }}</p>
+                </div>
+            </div>
+
+            <!-- Mensaje del Usuario -->
+            <div *ngIf="mensaje.remitente === 'usuario'"
+                class="d-flex align-items-end gap-2 max-w-85 justify-content-end">
+                <div class="mensaje-bubble usuario-bubble p-3 shadow-sm rounded-4 text-white">
+                    <p class="mb-0" style="font-size: 0.95rem; line-height: 1.4;">{{ mensaje.texto }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer class="ion-no-border bg-white p-2 shadow-lg">
+    <div class="d-flex align-items-center gap-2 px-2">
+        <ion-item lines="none" class="flex-grow-1 bg-light rounded-pill custom-input-container">
+            <ion-input [(ngModel)]="inputUsuario" (ionInput)="onInputUsuarioChange($event)"
+                (keyup.enter)="enviarMensaje()" placeholder="Escribe tu respuesta..." clearInput="true"
+                style="font-size: 0.95rem; text-transform: capitalize;">
+            </ion-input>
+        </ion-item>
+        <ion-button (click)="enviarMensaje()" shape="round" color="primary" class="m-0"
+            [disabled]="!inputUsuario.trim()">
+            <ion-icon name="send" slot="icon-only"></ion-icon>
+        </ion-button>
+    </div>
+</ion-footer>

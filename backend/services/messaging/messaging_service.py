@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
-from models import Usuario, Notificacion, PasajeroViaje
+from models import Usuario, Notificacion, PasajeroViaje, Viaje
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
@@ -259,10 +259,13 @@ def solicitar_unirse():
     receptor_id = data.get('receptor_id') 
     conv_id = data.get('conversacion_id')
 
-   
     existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
     if existente:
-        return jsonify({"error": "Ya has solicitado unirte a este viaje anteriormente"}), 400
+        return jsonify({"error": "Ya has solicitado unirse a este viaje anteriormente"}), 400
+
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
 
     nueva_solicitud = PasajeroViaje(
         usuario_id=emisor_id,
@@ -271,7 +274,7 @@ def solicitar_unirse():
     )
     db.session.add(nueva_solicitud)
 
-    texto_solicitud = f"Solicitud para unirse al viaje: {viaje_id}"
+    texto_solicitud = f"Solicitud para unirse al viaje de {viaje.origen} a {viaje.destino}."
     nuevo_msj = Mensaje(
         conversacion_id=conv_id,
         emisor_id=emisor_id,
@@ -281,12 +284,14 @@ def solicitar_unirse():
     )
     db.session.add(nuevo_msj)
     
+    cuerpo_notificacion = f"Un pasajero quiere unirse a tu viaje de {viaje.origen} a {viaje.destino}."
+
     nueva_notif = Notificacion(
         usuario_id=receptor_id,
         viaje_id=viaje_id,
         conversacion_id=conv_id,
         tipo="mensaje", 
-        mensaje="Alguien ha solicitado unirse a tu viaje a través del chat.",
+        mensaje=cuerpo_notificacion,
         leida=False
     )
     db.session.add(nueva_notif)
@@ -296,7 +301,7 @@ def solicitar_unirse():
     enviar_notificacion_push(
         usuario_id=receptor_id,
         titulo="Nueva solicitud de viaje",
-        cuerpo="Un pasajero quiere unirse a tu viaje. Responde en el chat.",
+        cuerpo=cuerpo_notificacion,
         data={
             "tipo": "mensaje", 
             "viaje_id": str(viaje_id),
