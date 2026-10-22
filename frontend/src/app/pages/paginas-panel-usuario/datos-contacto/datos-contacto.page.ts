@@ -34,7 +34,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class DatosContactoPage implements OnInit {
   userLoggedIn: boolean = false;
-  userData: Usuario = {} as Usuario;
+  userData: any = {} as Usuario;
   emailRef: any;
   telefonoRef: any;
   comunTerceros: boolean = false;
@@ -43,6 +43,8 @@ export class DatosContactoPage implements OnInit {
   emailEditado: string = '';
   telefonoEditado: string = '';
   comunComerciales: boolean = false;
+  cargandoEnvioEmail: boolean = false;
+  botonCorreoVerificado: boolean = false;
 
   constructor(
     private translate: TranslateService,
@@ -51,7 +53,7 @@ export class DatosContactoPage implements OnInit {
     private messageService: MessageService
   ) {
     this.formEmailTfno = new FormGroup({
-      emailControl: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
+      emailControl: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/)]),
       telefonoControl: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
     });
     this.comunTerceros = this.userData.usuario?.comunic_terceros || false;
@@ -62,7 +64,6 @@ export class DatosContactoPage implements OnInit {
     if (this.userData?.usuario) {
       this.userLoggedIn = true;
 
-      // Asignar valores iniciales
       this.emailEditado = this.userData.usuario.email || '';
       this.telefonoEditado = this.userData.usuario.telefono || '';
       this.formEmailTfno.patchValue({
@@ -80,7 +81,7 @@ export class DatosContactoPage implements OnInit {
       if (telefono && telefono.length === 9) {
         const inputTelefono = document.getElementById('telefonoControl');
         if (inputTelefono) {
-          inputTelefono.blur(); // 👈 Quita el foco automáticamente
+          inputTelefono.blur();
         }
         this.comprobarTelefonoRegistrado(telefono);
       }
@@ -121,6 +122,40 @@ export class DatosContactoPage implements OnInit {
         this.onInputChange();
       },
     });
+  }
+
+  enviar_email_modificacion(email: string) {
+    this.cargandoEnvioEmail = true;
+    this.botonCorreoVerificado = true;
+    if (this.userData?.usuario?.emailVerificado) {
+      this.cargandoEnvioEmail = false;
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant('VERIFICACION.TITULO_CORREO_YAVERIFICADO'),
+        detail: this.translate.instant('VERIFICACION.MENSAJE_CORREO_YAVERIFICADO'),
+        life: 3000,
+      });
+    } else {
+      this.userService.enviar_email_verif(email).subscribe(
+        (respuesta) => {
+          this.cargandoEnvioEmail = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('VERIFICACION.TITULO_CORREO_ENVIADO'),
+            detail: this.translate.instant('VERIFICACION.MENSAJE_CORREO_ENVIADO'),
+            life: 3000,
+          });
+          setTimeout(() => {
+            this.botonCorreoVerificado = false;
+          }, 1800 * 1000);
+        },
+        (error) => {
+          this.cargandoEnvioEmail = false;
+          console.error(error);
+          this.botonCorreoVerificado = false;
+        }
+      );
+    }
   }
 
   comprobarEmailRegistrado(email: string) {

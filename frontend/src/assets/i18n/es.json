@@ -45,6 +45,8 @@
     "OTRO": "Otro"
   },
   "PLACEHOLDER": {
+    "ESCRIBE_TU_MAIL": "Escribe tu email aquí",
+    "ESCRIBE_PASSWORD": "Escribe tu constraseña aquí",
     "SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
     "DONDE_COMIENZA": "¿Dónde comienza el viaje?",
     "HASTA_DONDE": "¿Hasta donde es el viaje?",
@@ -65,6 +67,9 @@
     "NO_ACEPTAR": "No aceptar"
   },
   "BOTONES": {
+    "LOGIN":{
+      "INICIAR_SESION": "Iniciar sesión"
+    },
     "MIPERFIL": {
       "ANADIR_FOTO_PERFIL_MATTOOLTIP": "Añadir o cambiar la foto de perfil",
       "ANADIR_FOTO_PERFIL_ARIALABEL": "Añadir o cambiar la foto de perfil",
@@ -86,6 +91,18 @@
     "DATOSCONTACTO": {
       "GUARDAR": "Guardar"
     }
+  },
+  "LOGIN":{
+    "TITULO": "Introduce tu correo y contraseña",
+    "EMAIL_LABEL": "Email",
+    "ERROR_EMAIL_OGLIGATORIO": "El email es obligatorio",
+    "ERROR_EMAIL_NOVALIDO": "Por favor, introduce un email correcto",
+    "PASSWORD_LABEL": "Contraseña",
+    "ERROR_PASSWORD_OGLIGATORIO": "La contraseña es obligatoria",
+    "RECUERDAME_CHECK":"Recuérdame",
+    "PASSWORD_OLVIDADO":"¿No recuerdas tu contraseña actual?",
+    "REGISTRARSE_TEXTO": "¿Aún no estás registrado?",
+    "REGISTRARSE_BOTON": "Regístrate aquí"
   },
   "MIPERFIL": {
     "TITULO": "Mi perfil",
@@ -436,8 +453,10 @@
   "VERIFICACION": {
     "TITULO": "Verificación de tu perfil",
     "SUBT_VERIF_BASICA": "Verificar tus datos te convierte en un usuarie más fiable ante los demás",
+    "SPINNER_CARGANDO": "Cargando verificaciones...",
     "TABLA": {
       "TITULO": "Datos verificados",
+      "REGION_ESTADO_ARIALABEL": "Estado de las verificaciones",
       "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no",
       "LABEL_CORREO": "Correo electrónico",
       "CORREO_VERIFICADO_ARIALABEL": "Correo electrónico verificado",
@@ -448,17 +467,26 @@
     },
 
     "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/datos-contacto\">Datos de contacto",
-    "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil verificado!",
+    "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil está verificado!",
     "VERIFICA_CORREO": "Verifica tu correo:",
     "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
+    "SPINNER_ENVIANDO_MAIL": "Enviando un email...",
     "TITULO_CORREO_YAVERIFICADO": "Correo ya verificado",
     "MENSAJE_CORREO_YAVERIFICADO": "Este correo ya ha sido verificado anteriormente",
     "TITULO_CORREO_ENVIADO": "Correo enviado",
     "MENSAJE_CORREO_ENVIADO": "Por favor, verifica tu correo y sigue las instrucciones",
 
     "VERIFICA_TELEFONO": "Verifica tu teléfono:",
+    "SPINNER_ENVIANDO_SMS": "Enviando un sms...",
+    "TITULO_SMS_ENVIADO": "Mensaje enviado",
+    "MENSAJE_SMS_ENVIADO": "Revisa tu teléfono para confirmar el código",
     "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
-    "BOTON_VERIFICAR_TELEFONO": "Confirmar código"
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
+    "TITULO_SMS_ERROR": "Error al enviar mensaje",
+    "MENSAJE_SMS_ERROR": "Ha habido un error. Inténtalo más tarde",
+    "TITULO_TELEFONO_VERIFICADO": "Teléfono verificado",
+    "MENSAJE_TELEFONO_VERIFICADO": "Tu número de teléfono ha sido verificado",
+    "ERROR_CODIGO_INCORRECTO": " Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos"
   },
   "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
   "AJUSTESAPP": {

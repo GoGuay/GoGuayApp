@@ -1,0 +1,42 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonContent, NavController } from '@ionic/angular/standalone';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+
+@Component({
+  selector: 'app-modificacion-email',
+  templateUrl: './modificacion-email.page.html',
+  styleUrls: ['./modificacion-email.page.scss'],
+  standalone: true,
+  imports: [IonContent, CommonModule, FormsModule],
+})
+export class ModificacionEmailPage implements OnInit {
+  verified = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private userService: UserServicesService,
+    private navCtrl: NavController
+  ) {}
+
+  ngOnInit() {
+    const token = this.route.snapshot.paramMap.get('token');
+    this.userService.verificar_email(token).subscribe((verificado) => {
+      console.log(verificado);
+
+      if (verificado) {
+        this.verified = true;
+      } else {
+        this.verified = false;
+      }
+    });
+  }
+
+  boton_volver() {
+    window.open('http://localhost:4200/verificaciones-perfil', '_blank');
+    window.close();
+  }
+}

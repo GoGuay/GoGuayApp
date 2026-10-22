@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
+import { LanguageService } from '../../core/lenguajes/languaje.service';
+import { MessageService } from 'primeng/api';
 declare const google: any;
 
 @Component({
@@ -23,8 +25,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   // ------------------------------------------------------------------
   // 1. PROPIEDADES Y ESTADOS
   // ------------------------------------------------------------------
-  pasoActual: number = 1;
-  paso1: boolean = true;
 
   formulario1: FormGroup;
   formulario2: FormGroup;
@@ -42,7 +42,13 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   cargandoTelefono: boolean = false;
 
-  esGoogle: boolean = false;
+  esGoogle: boolean = !!localStorage.getItem('tempGoogleToken');
+  esRegistroDesdeGoogle: boolean = !!localStorage.getItem('registro_desde_google');
+
+  pasoActual: number = this.esGoogle ? 2 : 1;
+  paso1: boolean = !this.esGoogle;
+
+  selectedLanguage: string = 'es';
 
   /** Regex estándar para emails con extensión (.com, .es, etc.) */
   readonly EMAIL_REGEX =
@@ -57,8 +63,11 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
-
+    private cdr: ChangeDetectorRef,
+    private languageService: LanguageService,
+    private messageService: MessageService,
+    private translate: TranslateService
+  ) {
     /**
      * Con el formBuilder creamos un grupo de formularios.
      * El formulario 1 va a tener:
@@ -66,7 +75,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
      */
 
     // Formulario 1: Email
-  ) {
     this.formulario1 = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(this.EMAIL_REGEX)]],
     });
@@ -92,11 +100,53 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.inicializarBotonGoogle();
+    const tokenGoogle = localStorage.getItem('tempGoogleToken');
     this.configurarEscalera();
+    if (tokenGoogle) {
+      this.procesarLoginGoogle(tokenGoogle);
+    }
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: any) {
+    const flujoRegistroDesdeGoogle = localStorage.getItem('registro_desde_google');
+
+    if (flujoRegistroDesdeGoogle) {
+      this.esGoogle = false;
+      this.formulario1.get('email')?.setValue('');
+      localStorage.removeItem('registro_desde_google');
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
+      return;
+    }
+
+    if (this.esGoogle && this.pasoActual === 2) {
+      localStorage.removeItem('tempGoogleToken');
+      localStorage.removeItem('userData');
+      sessionStorage.clear();
+      localStorage.setItem('google_flow_cancelled', 'true');
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
+      this.navCtrl.navigateRoot(['/login']);
+      return;
+    }
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+      this.paso1 = this.pasoActual === 1;
+    } else {
+      this.navCtrl.navigateRoot(['/registro']);
+    }
   }
 
   ngAfterViewInit(): void {
     this.inicializarBotonGoogle();
+  }
+
+  ionViewDidEnter(): void {
+    setTimeout(() => {
+      this.inicializarBotonGoogle();
+    }, 100);
   }
 
   // ------------------------------------------------------------------
@@ -117,6 +167,25 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 
+  changeLanguage(selectedLanguage: string) {
+    if (this.selectedLanguage === selectedLanguage) {
+      return;
+    }
+    console.log(selectedLanguage);
+
+    this.languageService.setLanguage(selectedLanguage);
+    this.selectedLanguage = selectedLanguage;
+    this.translate.use(selectedLanguage);
+    this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO'],
+        detail: translations['AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE'],
+        life: 3000,
+      });
+    });
+  }
+
   // ------------------------------------------------------------------
   // 4. FLUJO DE NAVEGACIÓN PASO A PASO
   // ------------------------------------------------------------------
@@ -125,8 +194,7 @@ export class RegistroComponent implements OnInit, AfterViewInit {
   siguientePaso() {
     if (this.pasoActual === 1 && this.formulario1.valid && this.emailValido) {
       this.formulario1.markAllAsTouched();
-      this.pasoActual++;
-      this.paso1 = false;
+      this.avanzarPasoInterno(2);
       this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
     } else if (this.pasoActual === 2 && this.isPaso2Valido) {
       this.formulario2.markAllAsTouched();
@@ -134,14 +202,19 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       if (this.esGoogle) {
         this.mostrarContrato();
       } else {
-        this.pasoActual++;
-        this.paso1 = false;
+        this.avanzarPasoInterno(3);
       }
     } else if (this.pasoActual === 3 && this.formulario3.valid) {
       this.formulario3.markAllAsTouched();
       this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
       this.mostrarContrato();
     }
+  }
+
+  private avanzarPasoInterno(nuevoPaso: number) {
+    this.pasoActual = nuevoPaso;
+    this.paso1 = nuevoPaso === 1;
+    history.pushState({ paso: this.pasoActual }, '');
   }
 
   // Función para retroceder al formulario anterior
@@ -156,7 +229,6 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
   // Función para mostrar el contrato de respeto
   mostrarContrato() {
-    this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.guardaDatosDelUsuarioEnServicio(this.formulario3.getRawValue());
     this.navCtrl.navigateRoot('/registro/resumen-registro');
   }
@@ -633,10 +705,11 @@ export class RegistroComponent implements OnInit, AfterViewInit {
 
       const contenedor = document.getElementById('btnGoogleContainer');
       if (contenedor) {
+        contenedor.innerHTML = '';
         google.accounts.id.renderButton(contenedor, {
           theme: 'outline',
           size: 'large',
-          text: 'signup_with',
+          text: 'continue_with',
           locale: 'es',
         });
       }
@@ -674,15 +747,18 @@ export class RegistroComponent implements OnInit, AfterViewInit {
       console.warn('No se recibieron datosGoogle para precargar');
       return;
     }
-
     this.esGoogle = true;
+    if (this.pasoActual === 1) {
+      localStorage.setItem('registro_desde_google', 'true');
+    }
+    this.avanzarPasoInterno(2);
     this.formulario1.patchValue({ email: datosGoogle.email });
     this.emailValido = true;
     this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
-    const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
-    if (foto) {
-      this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
-    }
+    // const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
+    // if (foto) {
+    //   this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
+    // }
     if (datosGoogle.nombre) {
       const controlNombre = this.formulario2.get('nombre');
       controlNombre?.enable();
@@ -695,8 +771,5 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     }
     this.validarCampo('fecha_nacimiento', this.formulario2);
     this.validarCampo('telefono', this.formulario2);
-
-    this.pasoActual = 2;
-    this.paso1 = false;
   }
 }

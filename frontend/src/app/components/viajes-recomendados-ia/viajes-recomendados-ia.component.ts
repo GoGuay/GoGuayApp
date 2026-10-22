@@ -4,14 +4,14 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SpinnerComponent } from "../spinner/spinner.component";
-import { NavigationExtras, RouterLink } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-viajes-recomendados-ia',
   templateUrl: './viajes-recomendados-ia.component.html',
   styleUrls: ['./viajes-recomendados-ia.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, SpinnerComponent, RouterLink],
+  imports: [CommonModule, IonicModule, TranslateModule, SpinnerComponent],
 })
 export class ViajesRecomendadosIaComponent implements OnInit {
   recomendaciones: any[] = [];

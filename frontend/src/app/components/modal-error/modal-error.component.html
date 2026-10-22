@@ -1,10 +1,18 @@
-<div class="container" @dialogAnimation>
+<div
+  class="container"
+  @dialogAnimation
+>
   <div class="modal-header d-flex align-items-center">
     <div class="d-flex align-items-center">
       <mat-icon class="icon-red">warning</mat-icon>
       <h2 class="ms-2">{{ data.title }}</h2>
     </div>
-    <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
+    <button
+      mat-icon-button
+      class="close-button"
+      (click)="close()"
+      aria-label="Cerrar"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -13,6 +21,28 @@
     <p>{{ data.message }}</p>
   </div>
   <div class="modal-footer">
-    <button mat-button (click)="close()">Cerrar</button>
+    <button
+      *ngIf="data?.mostrarBotonRegistro"
+      mat-button
+      class="btn_bg btn"
+      (click)="toRegistro('registro')"
+    >
+      Registrarme
+    </button>
+
+    <button
+      *ngIf="data?.mostrarBotonReenvioEmail"
+      mat-button
+      class="btn_bg btn"
+      (click)="reenviarCorreoFinalizarReg('reenviarCorreo')"
+    >
+      Reenviar email
+    </button>
+    <button
+      mat-button
+      (click)="close()"
+    >
+      Cerrar
+    </button>
   </div>
 </div>

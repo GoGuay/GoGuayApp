@@ -23,20 +23,20 @@
   list-style: none;
 
   /* Lado Izquierdo */
-  > li:nth-child(1) {
+  >li:nth-child(1) {
     display: flex;
     justify-content: flex-end;
     padding-right: 40px;
   }
 
-  > li.col-left {
+  >li.col-left {
     display: flex;
     justify-content: flex-end;
     padding-right: 30px;
   }
 
   /* 2. Centro Absoluto (Logo y Título) */
-  > li.logo-central-item {
+  >li.logo-central-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,14 +47,14 @@
   }
 
   /* 3. Lado Derecho (Publicar viaje + controles de usuario separados) */
-  > li.right-actions-wrapper {
+  >li.right-actions-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding-left: 40px;
   }
 
-  > li.col-right-link {
+  >li.col-right-link {
     display: flex;
     justify-content: flex-start;
     padding-left: 30px;
@@ -84,12 +84,6 @@
   cursor: pointer !important;
 }
 
-.idiomas {
-  width: 40px;
-  height: 40px;
-  border-radius: 35%;
-  mix-blend-mode: multiply;
-}
 
 .caja-icono {
   height: 50px !important;
@@ -190,25 +184,7 @@ ul {
   height: 24px;
 }
 
-.idiomas-container {
-  min-width: 30px;
-}
 
-.icon-idioma {
-  width: 20px !important;
-  height: auto;
-  cursor: pointer;
-  transition: filter 0.3s;
-}
-
-.icon-idioma:hover {
-  transform: scale(1.05);
-}
-
-.grayscale-filter {
-  filter: grayscale(100%);
-  opacity: 0.7;
-}
 
 .btnNotificaciones,
 .btnMensajes {
@@ -266,21 +242,27 @@ ul {
   0% {
     transform: rotate(0deg);
   }
+
   15% {
     transform: rotate(14deg);
   }
+
   30% {
     transform: rotate(-12deg);
   }
+
   45% {
     transform: rotate(10deg);
   }
+
   60% {
     transform: rotate(-8deg);
   }
+
   75% {
     transform: rotate(4deg);
   }
+
   100% {
     transform: rotate(0deg);
   }
@@ -313,22 +295,22 @@ ul {
     padding: 0 8px;
     list-style: none;
 
-    > li {
+    >li {
       display: flex;
       align-items: center;
     }
 
-    > li:nth-child(1) {
+    >li:nth-child(1) {
       justify-content: flex-start;
     }
 
-    > li:nth-child(2) {
+    >li:nth-child(2) {
       justify-content: center;
       justify-self: center;
       cursor: pointer;
     }
 
-    > li:nth-child(3) {
+    >li:nth-child(3) {
       justify-content: flex-end;
       gap: 6px;
     }

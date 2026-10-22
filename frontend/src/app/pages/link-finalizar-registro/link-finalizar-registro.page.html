@@ -1,0 +1,26 @@
+<ion-content [fullscreen]="true">
+  <div class="verify-message">
+    <div>
+      <img
+        src="https://res.cloudinary.com/dnrxptrb0/image/upload/v1749583413/logo/ahhqej3rrccdr6bdf7vg.png"
+        alt="GoGuay"
+        class="logo"
+      />
+      <h2 *ngIf="verified; else errorMsg">¡ TU CUENTA SE HA CREADO CORRECTAMENTE</h2>
+      <p *ngIf="verified; else errorMsg">Además tu correo electrónico ha quedado verificado</p>
+    </div>
+
+    <ng-template #errorMsg>
+      <h2>El enlace de verificación no es valido o ha expirado</h2>
+    </ng-template>
+    <div class="mt-4">
+      <button
+        type="button"
+        class="btn btn_bg"
+        (click)="boton_volver()"
+      >
+        Volver a GoGuay
+      </button>
+    </div>
+  </div>
+</ion-content>

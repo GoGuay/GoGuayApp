@@ -6,6 +6,8 @@ export interface Usuario {
     nombre: string;
     apellidos: string;
     email?: string;
+    registroPrevio?: boolean;
+    registroFinalizado?:boolean;
     pronombre?: string;
     genero?: string;
     orientacion?: string;
@@ -25,7 +27,7 @@ export interface Usuario {
     numero_documento?: string;
     dni_verificado?: boolean;
     numero_carnet_conducir?: string;
-    preferencias?: string[] | { convivencia_viaje: string[]; intereses_ocio: string[]; };
+    preferencias?: string[] | { convivencia_viaje: string[]; intereses_ocio: string[] };
     fecha_vencimiento_carnet?: string;
     comunic_comerciales?: boolean;
     comunic_terceros?: boolean;

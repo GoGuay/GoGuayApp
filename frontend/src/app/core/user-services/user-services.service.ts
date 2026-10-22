@@ -311,14 +311,15 @@ export class UserServicesService {
    * @returns
    */
   verificar_email(token: any): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/user/verificar_email`, { token }).pipe(
+    return this.http.post(`${this.apiUrl}/user/email_finalizar_registro`, { token }).pipe(
       map(() => true),
       catchError(() => of(false))
     );
   }
 
   enviar_sms(telefono: string) {
-    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+    const idioma_app = localStorage.getItem('language');
+    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono, idioma_app });
   }
 
   verificar_codigo_sms(codigo: string, telefono: string) {

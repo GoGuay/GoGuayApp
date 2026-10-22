@@ -9,9 +9,10 @@
     *ngIf="cargando"
     class="d-flex justify-content-center align-items-center"
     style="height: 80vh"
+    role="status"
+    aria-live="polite"
   >
-    <app-spinner></app-spinner>
-    <p class="mt-3">Cargando verificaciones...</p>
+    <app-spinner [texto_spinner]="'VERIFICACION.SPINNER_CARGANDO' | translate"></app-spinner>
   </div>
 
   <div
@@ -29,18 +30,23 @@
     <div
       class="text-center"
       *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"
+      role="region"
+      [attr.aria-label]="'VERIFICACION.TABLA.REGION_ESTADO_ARIALABEL' | translate"
     >
       <p class="mb-2 verified-message">
-        <i class="fi fi-rr-badget-check-alt"></i>
+        <i
+          class="fi fi-rr-badget-check-alt"
+          aria-hidden="true"
+        ></i>
         {{'VERIFICACION.INFO_PERFIL_SI_VERIFICADO' | translate}}
       </p>
     </div>
 
     <!-- Tabla -->
     <div class="container mt-5 mb-5">
-      <div class="d-flex justify-content-center align-items:flex-start gap-4 flex-wrap text-center verifications-wrapper">
+      <div class="d-flex justify-content-center align-items-start gap-4 flex-wrap text-center verifications-wrapper">
         <div class="verif-col">
-          <h5><strong>{{'VERIFICACION.TABLA.TITULO' | translate}}</strong></h5>
+          <h2><strong>{{'VERIFICACION.TABLA.TITULO' | translate}}</strong></h2>
           <table
             class="verification-table mt-3 mx-auto"
             [attr.aria-label]="'VERIFICACION.TABLA.TABLA_ARIALABEL' | translate"
@@ -103,7 +109,7 @@
           <app-spinner
             *ngIf="cargandoEnvioEmail"
             [tamano_completo]="false"
-            [texto_spinner]="'Enviando un email...'"
+            [texto_spinner]="'VERIFICACION.SPINNER_ENVIANDO_MAIL' | translate"
           ></app-spinner>
           <div class="mt-2 text-center">
             <p class="mb-4">
@@ -147,6 +153,11 @@
           size-md="5"
           class="ion-padding d-flex justify-content-center"
         >
+          <app-spinner
+            *ngIf="cargandoEnvioSms"
+            [tamano_completo]="false"
+            [texto_spinner]="'VERIFICACION.SPINNER_ENVIANDO_SMS' | translate"
+          ></app-spinner>
           <div class="mt-2 text-center">
             <p>
               <strong>{{'VERIFICACION.VERIFICA_TELEFONO' | translate}}</strong>
@@ -167,7 +178,6 @@
                 [disabled]="sms_enviado || usuario.telefonoVerificado"
                 class="btn btn_bg"
                 mat-raised-button
-                type="btn"
                 (click)="enviar_sms(telefonoUsuario)"
               >
                 {{telefonoUsuario}}
@@ -177,6 +187,8 @@
             <div
               class="input-container d-flex justify-content-center mb-3"
               *ngIf="!usuario.telefonoVerificado"
+              role="group"
+              aria-label="Código de verificación de 6 dígitos"
             >
               <input
                 #d0
@@ -252,7 +264,13 @@
                 [disabled]="!inputsHabilitados"
               />
             </div>
-            <span *ngIf="codigo_erroneo">Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos</span>
+            <span
+              *ngIf="codigo_erroneo"
+              class="text-danger d-block mt-2"
+              role="alert"
+            >
+              {{'VERIFICACION.ERROR_CODIGO_INCORRECTO' | translate}}
+            </span>
 
             <button
               (click)="verificar_codigo_sms(codigo)"

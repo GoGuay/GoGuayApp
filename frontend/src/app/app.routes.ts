@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { TokenValidGuard } from './guards/token-valid.guard';
+import { googleCancelGuard } from './guards/googleCancelGuard.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
   {
     path: 'registro',
     loadComponent: () => import('./pages/registro/registro.component').then((m) => m.RegistroComponent),
+    canActivate: [googleCancelGuard]
   },
   {
     path: 'sobre-nosotros',
@@ -92,8 +94,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then((m) => m.EncuestaSatisfaccionPage),
   },
   {
-    path: 'verificar-email/:token',
-    loadComponent: () => import('./pages/verificar-email/verificar-email.page').then((m) => m.VerificarEmailPage),
+    path: 'finalizar-registro/:token',
+    loadComponent: () => import('./pages/link-finalizar-registro/link-finalizar-registro.page').then((m) => m.LinkFinalizarRegistroPage),
   },
   {
     path: 'centro-contacto',
@@ -150,7 +152,8 @@ export const routes: Routes = [
   },
   {
     path: 'contrato-registro',
-    loadComponent: () => import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
+    loadComponent: () =>
+      import('./pages/registro/contrato-registro-final/contrato-registro.component').then((m) => m.ContratoRegistroComponent),
   },
   {
     path: 'admin-app',
@@ -166,10 +169,17 @@ export const routes: Routes = [
   },
   {
     path: 'pago-reserva/:id',
-    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then(m => m.PagoReservaPage)
+    loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then((m) => m.PagoReservaPage),
   },
   {
     path: 'gestion-encuestas',
-    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then(m => m.GestionEncuestasPage)
-  }
+    loadComponent: () => import('./pages/admin/encuestas-admin/gestion-encuestas.page').then((m) => m.GestionEncuestasPage),
+  },
+  {
+    path: 'modificacion-email/:token',
+    loadComponent: () =>
+      import('./pages/paginas-panel-usuario/datos-contacto/modificacion-email/modificacion-email.page').then(
+        (m) => m.ModificacionEmailPage
+      ),
+  },
 ];
