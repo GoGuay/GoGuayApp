@@ -62,7 +62,7 @@
   </div>
 
   <!-- MariCar -->
-  <div class="maricar-container-fixed" *ngIf="maricarHabilitada">
+  <div class="maricar-container-fixed" *ngIf="asistenteActiva">
     
     <div class="maricar-popover" @popoverAnimation *ngIf="mostrarPopoverMaricar">
       <button class="btn-close-popover" (click)="cerrarPopoverMaricar($event)" aria-label="Cerrar">

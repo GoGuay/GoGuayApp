@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
 
   mostrarBannerEncuesta: boolean = false;
   private tiempoNavegacion: any;
-  maricarHabilitada: boolean = true;
+  asistenteActiva: boolean = true;
   mostrarPopoverMaricar: boolean = true;
 
   constructor(
@@ -116,11 +116,15 @@ export class HomePage implements OnInit {
 
   loadIASetting() {
     const iaSetting = localStorage.getItem('iaActiva');
-    if (iaSetting === null) {
+    const asistenteSetting = localStorage.getItem('asistenteActiva');
+    if (iaSetting === null && asistenteSetting === null) {
       localStorage.setItem('iaActiva', 'true');
+      localStorage.setItem('asistenteActiva', 'true');
       this.iaActiva = true;
+      this.asistenteActiva = true;
     } else {
       this.iaActiva = iaSetting === 'true';
+      this.asistenteActiva = asistenteSetting === 'true';
     }
   }
 
