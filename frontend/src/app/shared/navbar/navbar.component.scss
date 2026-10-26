@@ -23,20 +23,20 @@
   list-style: none;
 
   /* Lado Izquierdo */
-  >li:nth-child(1) {
+  > li:nth-child(1) {
     display: flex;
     justify-content: flex-end;
     padding-right: 40px;
   }
 
-  >li.col-left {
+  > li.col-left {
     display: flex;
     justify-content: flex-end;
     padding-right: 30px;
   }
 
   /* 2. Centro Absoluto (Logo y Título) */
-  >li.logo-central-item {
+  > li.logo-central-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,14 +47,14 @@
   }
 
   /* 3. Lado Derecho (Publicar viaje + controles de usuario separados) */
-  >li.right-actions-wrapper {
+  > li.right-actions-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding-left: 40px;
   }
 
-  >li.col-right-link {
+  > li.col-right-link {
     display: flex;
     justify-content: flex-start;
     padding-left: 30px;
@@ -83,7 +83,6 @@
 .perfil .nav-link {
   cursor: pointer !important;
 }
-
 
 .caja-icono {
   height: 50px !important;
@@ -184,7 +183,12 @@ ul {
   height: 24px;
 }
 
-
+.idiomas-container {
+  min-width: 30px;
+  top: 29px !important;
+  position: fixed;
+  right: 18% !important;
+}
 
 .btnNotificaciones,
 .btnMensajes {
@@ -295,22 +299,22 @@ ul {
     padding: 0 8px;
     list-style: none;
 
-    >li {
+    > li {
       display: flex;
       align-items: center;
     }
 
-    >li:nth-child(1) {
+    > li:nth-child(1) {
       justify-content: flex-start;
     }
 
-    >li:nth-child(2) {
+    > li:nth-child(2) {
       justify-content: center;
       justify-self: center;
       cursor: pointer;
     }
 
-    >li:nth-child(3) {
+    > li:nth-child(3) {
       justify-content: flex-end;
       gap: 6px;
     }
