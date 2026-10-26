@@ -15,7 +15,10 @@ import { CommonModule } from '@angular/common';
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
 import { Usuario } from '../models/user/usuario.model';
-import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados-ia/viajes-recomendados-ia.component";
+import { ViajesRecomendadosIaComponent } from '../components/viajes-recomendados-ia/viajes-recomendados-ia.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-home',
@@ -35,8 +38,9 @@ import { ViajesRecomendadosIaComponent } from "../components/viajes-recomendados
     NavbarComponent,
     BuscadorViajeHomeComponent,
     CommonModule,
-    ViajesRecomendadosIaComponent
-],
+    ViajesRecomendadosIaComponent,
+    ToastModule
+  ],
 })
 export class HomePage implements OnInit {
   userLoggedIn: boolean = false;
@@ -55,18 +59,60 @@ export class HomePage implements OnInit {
     private notificacionesService: NotificacionesService,
     private userService: UserServicesService,
     private navCtrl: NavController,
+    private route: ActivatedRoute,
+    private router: Router,
+    private messageService: MessageService
   ) {
     this.loadUserData();
   }
 
   ngOnInit(): void {
-    this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
-    this.loadJumbotronSetting();
-    this.loadIASetting();
+    this.route.queryParams.subscribe((params) => {
+      const token = params['token'];
+      if (token) {
+        this.userService.verificar_email(token).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              key: 'home-toast',
+              severity: 'success',
+              summary: 'Cuenta confirmada',
+              detail: 'Tu cuenta se ha creado correctamente.',
+            });
+            localStorage.removeItem('pendienteConfirmacionRegistro');
+            this.router.navigate([], {
+              queryParams: {},
+              replaceUrl: true,
+            });
+            const usuarioId = response?.usuario?.id;
+            if (usuarioId) {
+              this.obtenerUsuarioPorID(usuarioId);
+              this.obtenerNotificaciones(usuarioId);
+            }
+          },
+          error: (err) => {
+            this.messageService.add({
+              key: 'home-toast',
+              severity: 'error',
+              summary: 'Cuenta no creada',
+              detail: 'Tu cuenta no se ha podido crear. Inténtalo de nuevo más tarde',
+            });
+            console.log('Error al crear la cuenta: ', err);
+          },
+        });
+      }
+    });
+    if (!this.route.snapshot.queryParams['token']) {
+      this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
+      this.loadJumbotronSetting();
+      this.loadIASetting();
 
-    if (this.userLoggedIn) {
-      this.obtenerUsuarioPorID(this.userData?.usuario?.id);
-      this.obtenerNotificaciones(this.userData?.usuario?.id);
+      if (this.userLoggedIn) {
+        this.obtenerUsuarioPorID(this.userData?.usuario?.id);
+        this.obtenerNotificaciones(this.userData?.usuario?.id);
+      }
+    } else {
+      this.loadJumbotronSetting();
+      this.loadIASetting();
     }
   }
 
@@ -137,7 +183,7 @@ export class HomePage implements OnInit {
 
     this.tiempoNavegacion = setTimeout(() => {
       this.mostrarBannerEncuesta = true;
-    }, 180000); 
+    }, 180000);
   }
 
   cerrarBannerEncuesta() {

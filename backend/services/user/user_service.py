@@ -148,7 +148,7 @@ def reenviar_correo_finreg(usuario):
     try:
         salt = 'email-verify'
         token = serializer.dumps(usuario.email, salt=salt)
-        link_verificacion = f"http://localhost:4200/finalizar-registro/{token}"
+        link_verificacion = f"http://localhost:4200/home?token={token}"
         msg = Message("Bienvenidx a GoGuay", recipients=[usuario.email])
         msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
         mail.send(msg)
@@ -837,7 +837,27 @@ def email_finalizar_registro():
         usuario.emailVerificado = True
         usuario.registroFinalizado = True
         db.session.commit()
-        return jsonify({'message': 'Correo verificado correctamente'}), 200
+        access_token = create_access_token(identity=str(usuario.id))
+        refresh_token = create_refresh_token(identity=str(usuario.id))
+        usuario_data = {
+            "id": usuario.id,
+            "nombre": usuario.nombre,
+            "apellidos": usuario.apellidos,
+            "fecha_nacimiento": usuario.fecha_nacimiento,
+            "genero": usuario.genero,
+            "orientacion": usuario.orientacion,
+            "telefono": usuario.telefono,
+            "email": usuario.email,
+            "fotoPerfil": usuario.fotoPerfil,
+            "rolPerfil": usuario.rolPerfil
+        }
+
+        return jsonify({
+            'message': 'Correo verificado correctamente',
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'usuario': usuario_data
+        }), 200
         
 
     except Exception as e:

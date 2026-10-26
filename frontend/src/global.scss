@@ -866,3 +866,7 @@ span:focus {
   filter: grayscale(100%);
   opacity: 0.7;
 }
+
+.home-toast-home.p-toast-bottom-center {
+  bottom: 80px !important;
+}
