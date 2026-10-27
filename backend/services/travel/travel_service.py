@@ -13,6 +13,7 @@ from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 import json
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
@@ -735,8 +736,8 @@ def cancelar_solicitud():
 #
 @travel_blueprint.route('/mis_solicitudes/<int:usuario_id>', methods=['GET'])
 def obtener_mis_solicitudes(usuario_id):
-    solicitudes = PasajeroViaje.query.filter(
-        PasajeroViaje.usuario_id == usuario_id,
+    solicitudes = PasajeroViaje.query.join(Viaje).filter(
+        Viaje.usuario_id == usuario_id,
         (PasajeroViaje.estado == 'pendiente') | (PasajeroViaje.estado == 'rechazado') | (PasajeroViaje.estado == None)
     ).options(joinedload(PasajeroViaje.viaje)).all()
 
@@ -1012,3 +1013,193 @@ def get_access_token():
         data={'grant_type': 'client_credentials'}
     )
     return res.json()['access_token']
+
+#
+# SERVICIO PARA CREAR UN VIAJE UTILIZANDO INTELIGENCIA ARTIFICIAL
+#
+@travel_blueprint.route('/crear-viaje-ia', methods=['POST'])
+@jwt_required() 
+def crear_viaje_ia():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    origen = data.get('origen')
+    destino = data.get('destino')
+    fecha_salida = data.get('fecha_salida')
+    hora_salida = data.get('hora_salida', '08:00')
+    distancia_km = data.get('distancia_km', 50.0) 
+    
+    if not origen or not destino or not fecha_salida:
+        return jsonify({"error": "Faltan datos requeridos por MariCar"}), 400
+        
+    consumo_medio = 6.5
+    precio_combustible = 1.55
+    plazas_totales = 3
+    
+    coste_viaje_combustible = (distancia_km / 100) * consumo_medio * precio_combustible
+    coste_por_plaza = coste_viaje_combustible / plazas_totales
+    precio_calculado = round(coste_por_plaza * 1.15, 2)
+    precio_final = max(5.0, precio_calculado) # Mínimo de 5€
+
+    try:
+        formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S.%fZ']
+        fecha_obj = None
+        for fmt in formatos_fecha:
+            try:
+                fecha_obj = datetime.strptime(fecha_salida.split('T')[0], fmt.split('T')[0])
+                break
+            except ValueError:
+                continue
+        if not fecha_obj:
+            fecha_obj = datetime.utcnow()
+    except Exception:
+        fecha_obj = datetime.utcnow()
+
+    vehiculo_defecto = Vehiculo.query.filter_by(usuario_id=current_user_id).first()
+    vehiculo_id = vehiculo_defecto.id if vehiculo_defecto else 1
+
+    nuevo_viaje = Viaje(
+        origen=origen,
+        destino=destino,
+        fecha_salida=fecha_obj,
+        hora_salida=hora_salida,
+        hora_llegada="10:00",
+        plazas=plazas_totales,
+        precio_viaje=precio_final,
+        duracion_viaje="1h 30min",
+        usuario_id=current_user_id,
+        vehiculo=vehiculo_id,
+        estado_viaje="Próximo",
+        ruta_seleccionada={"routes": [{"legs": [{"distance": {"value": distancia_km * 1000}}]}]}
+    )
+    
+    db.session.add(nuevo_viaje)
+    db.session.commit()
+    
+    return jsonify({
+        "mensaje": "¡Viaje creado con éxito por MariCar!",
+        "viaje_id": nuevo_viaje.id,
+        "viaje": nuevo_viaje.serialize(current_user_id=current_user_id)
+    }), 201
+
+#
+#   FUNCIONALIDAD DE CHAT CON MARI-CAR PARA CREAR UN VIAJE
+#
+@travel_blueprint.route('/chat-maricar', methods=['POST'])
+@jwt_required()
+def chat_maricar():
+    data = request.get_json()
+    historial_mensajes = data.get('historial', [])
+
+    system_prompt = """
+    Eres MariCar, la inteligente, simpática y atenta asistente de IA para la app de carpooling GoGuay.
+    Tu objetivo es recopilar de forma natural los datos para publicar un viaje:
+    1. Origen (debe ser una ciudad, pueblo o ubicación real válida en España).
+    2. Destino (debe ser una ciudad, pueblo o ubicación real válida, diferente del origen).
+    3. Fecha de salida (formato preferido del usuario: DD-MM-YYYY).
+    4. Hora de salida (formato HH:MM).
+
+    REGLAS DE VALIDACIÓN ESTRICTAS:
+    - Si el usuario indica un origen o destino no válido (por ejemplo, nombres de persona como "pepe", "juan", palabras sueltas o lugares inexistentes), indícale amablemente que no reconoces ese lugar como una ubicación válida en España y pídele que lo especifique de nuevo.
+    - Si el origen y destino son idénticos, pídele que cambie uno de los dos.
+    - Si el usuario escribe la fecha en formato español (ej: 15-11-2026 o 15/11/2026), interprétala correctamente.
+    - Si el usuario escribe la hora en formato HH:MM (ej: 15:30 o 19.30), interprétala correctamente.
+
+    FORMATO DE RESPUESTA OBLIGATORIO (JSON estricto):
+    {
+      "mensaje_respuesta": "Texto amigable dirigido al usuario confirmando los datos o pidiendo lo que falta",
+      "datos_completos": false,
+      "viaje_data": {
+        "origen": null,
+        "destino": null,
+        "fecha_salida": null,
+        "hora_salida": null
+      }
+    }
+    """
+
+    messages_for_groq = [{"role": "system", "content": system_prompt}]
+    for msg in historial_mensajes:
+        role = "assistant" if msg.get('remitente') == 'ia' else "user"
+        messages_for_groq.append({"role": role, "content": msg.get('texto')})
+
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    endpoint = "https://api.groq.com/openai/v1/chat/completions"
+
+    payload = {
+        "model": "openai/gpt-oss-20b",
+        "messages": messages_for_groq,
+        "temperature": 0.6,
+        "response_format": {"type": "json_object"}
+    }
+
+    headers = {
+        "Authorization": f"Bearer {groq_api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(endpoint, json=payload, headers=headers)
+        res_data = response.json()
+        
+        if response.status_code == 200 and 'choices' in res_data:
+            contenido_ia = json.loads(res_data['choices'][0]['message']['content'])
+            
+            if contenido_ia.get('datos_completos') and contenido_ia.get('viaje_data'):
+                fecha_raw = contenido_ia['viaje_data'].get('fecha_salida')
+                hora_raw = contenido_ia['viaje_data'].get('hora_salida')
+                
+                if fecha_raw:
+                    contenido_ia['viaje_data']['fecha_salida'] = normalizar_fecha(fecha_raw)
+                if hora_raw:
+                    contenido_ia['viaje_data']['hora_salida'] = normalizar_hora(hora_raw)
+
+            return jsonify(contenido_ia), 200
+        else:
+            raise Exception(res_data.get('error', {}).get('message', 'Error en Groq'))
+
+    except Exception as e:
+        print("\n--------------------------------------------------")
+        print("ERROR EN GROQ / CHAT-MARICAR:", str(e))
+        if 'response' in locals() and hasattr(response, 'text'):
+            print("📄 Respuesta de la API de Groq:", response.text)
+        print("--------------------------------------------------\n")
+        
+        return jsonify({
+            "mensaje_respuesta": "Lo siento, me he despistado un segundo. ¿Podrías indicarme de nuevo los datos del viaje?",
+            "datos_completos": False,
+            "viaje_data": None
+        }), 200
+
+
+def normalizar_fecha(fecha_str):
+    """
+    Convierte cualquier formato de fecha (DD-MM-YYYY, DD/MM/YYYY) a YYYY-MM-DD para la BD.
+    """
+    import re
+    if not fecha_str:
+        return fecha_str
+    
+    match_es = re.match(r"^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$", fecha_str.strip())
+    if match_es:
+        dia, mes, anio = match_es.groups()
+        return f"{anio}-{mes.zfill(2)}-{dia.zfill(2)}"
+    
+    return fecha_str
+
+def normalizar_hora(hora_str):
+    """
+    Convierte cualquier formato de hora (19.30, 9:30, 19:30) a HH:MM para la BD.
+    """
+    import re
+    if not hora_str:
+        return hora_str
+    
+    hora_limpia = hora_str.strip().replace('.', ':')
+    
+    match_hora = re.match(r"^(\d{1,2}):(\d{2})$", hora_limpia)
+    if match_hora:
+        horas, minutos = match_hora.groups()
+        return f"{horas.zfill(2)}:{minutos}"
+    
+    return hora_limpia

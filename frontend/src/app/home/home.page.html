@@ -4,29 +4,21 @@
 <ion-content fullscreen>
   <!-- COMPONENTE DEL JUMBOTRON -->
   <div *ngIf="mostrarJumbotron">
-    <app-jumbotron
-      [title]="'HOME.JUMBO.SLOGAN' | translate"
-      [imageSrc]="'../../assets/banco_imagenes/img1.png'"
-    ></app-jumbotron>
+    <app-jumbotron [title]="'HOME.JUMBO.SLOGAN' | translate"
+      [imageSrc]="'../../assets/banco_imagenes/img1.png'"></app-jumbotron>
   </div>
 
   <div class="contenido_principal">
     <ion-grid>
       <ion-row>
-        <ion-col
-          size="12"
-          size-md="6"
-        >
+        <ion-col size="12" size-md="6">
           <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
           <div id="publicar_viaje">
             <app-nuevo-viaje-general></app-nuevo-viaje-general>
           </div>
         </ion-col>
 
-        <ion-col
-          size="12"
-          size-md="6"
-        >
+        <ion-col size="12" size-md="6">
           <!-- COMPONENTE PARA PUBLICAR UN NUEVO VIAJE -->
           <div id="buscar_viaje">
             <app-buscador-viaje-home></app-buscador-viaje-home>
@@ -68,6 +60,31 @@
       </button>
     </div>
   </div>
+
+  <!-- MariCar -->
+  <div class="maricar-container-fixed" *ngIf="asistenteActiva">
+
+    <div class="maricar-popover" @popoverAnimation *ngIf="mostrarPopoverMaricar">
+      <button class="btn-close-popover" (click)="cerrarPopoverMaricar($event)" aria-label="Cerrar">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      <div class="popover-content d-flex align-items-center gap-2">
+        <span class="popover-text">Hola, soy <strong>MariCar</strong>, tu asistente virtual 🚗✨</span>
+      </div>
+      <div class="popover-arrow"></div>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-maricar-izquierda">
+      <ion-fab-button (click)="abrirChatMariCar()" class="maricar-fab-button" title="Hablar con MariCar">
+        <div class="maricar-icon-wrapper">
+          <ion-icon name="car-sport-outline" class="car-icon"></ion-icon>
+          <ion-icon name="sparkles" class="sparkle-icon"></ion-icon>
+        </div>
+      </ion-fab-button>
+    </ion-fab>
+
+  </div>
+
    <p-toast key="home-toast" styleClass="home-toast-home" position="bottom-center"></p-toast>
 </ion-content>
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
 import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { Viaje } from '../../models/travel/viaje.model';
@@ -408,4 +408,37 @@ export class TravelService {
       })
     );
   }
+
+  /**
+   * Función para crear un viaje automáticamente mediante la asistente de IA MariCar.
+   * @param datosIA Objeto con los parámetros devueltos por MariCar (origen, destino, fecha_salida, hora_salida, distancia_km)
+   * @returns Observable con la respuesta del backend y los datos del viaje creado.
+   */
+  crearViajeIA(datosIA: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/crear-viaje-ia`, datosIA).pipe(
+      catchError((error) => {
+        console.error('Error al crear el viaje con MariCar:', error);
+        return throwError(() => error);
+      }),
+      switchMap((response: any) => {
+        return this.obtenerTodosLosViajes().pipe(
+          tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
+          switchMap(() => of(response))
+        );
+      })
+    );
+  }
+
+  /**
+   * Envía el historial de la conversación a MariCar para ser procesado por Groq
+   */
+  conversarConMariCar(historial: any[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/chat-maricar`, { historial }).pipe(
+      catchError((error) => {
+        console.error('Error conversando con MariCar:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
 }

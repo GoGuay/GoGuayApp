@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
-import { logoPaypal, cardOutline, businessOutline } from 'ionicons/icons';
+import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline } from 'ionicons/icons';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
@@ -81,6 +81,7 @@ export class AjustesAplicacionPage implements OnInit {
   cobroTitular: string = '';
 
   iaActiva: boolean = true;
+  asistenteActiva: boolean = true;
 
   @ViewChild(IonContent) content!: IonContent;
 
@@ -95,7 +96,7 @@ export class AjustesAplicacionPage implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private _bottomSheet: MatBottomSheet
   ) {
-    addIcons({ logoPaypal, cardOutline, businessOutline });
+    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline });
   }
 
   ngOnInit() {
@@ -115,7 +116,9 @@ export class AjustesAplicacionPage implements OnInit {
     });
     
     const savedIASetting = localStorage.getItem('iaActiva');
+    const savedAsistenteSetting = localStorage.getItem('asistenteActiva');
     this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
+    this.asistenteActiva = savedAsistenteSetting === null ? true : savedAsistenteSetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.obtenerUsuario();
@@ -443,6 +446,16 @@ export class AjustesAplicacionPage implements OnInit {
       severity: 'success',
       summary: 'Ajuste actualizado',
       detail: this.iaActiva ? 'Recomendaciones de IA activadas.' : 'Recomendaciones de IA desactivadas.',
+      life: 2000,
+    });
+  }
+
+  guardarAjustesAsistente() {
+    localStorage.setItem('asistenteActiva', this.asistenteActiva.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: this.asistenteActiva ? 'Asistente MariCar activado.' : 'Asistente MariCar desactivado.',
       life: 2000,
     });
   }

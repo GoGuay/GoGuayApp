@@ -313,6 +313,34 @@ a {
   }
 }
 
+
+.maricar-chat-avatar {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  background: #fdfbf7;
+  border: 1.5px solid #90caf9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .chat-car {
+    font-size: 1.2rem;
+    color: #34495e;
+  }
+
+  .chat-sparkle {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 0.75rem;
+    color: #1565c0;
+    animation: brilloMovimiento 4s ease infinite;
+  }
+}
+
 @media (max-width: 768px) {
   .box-section {
     // height: 225px;

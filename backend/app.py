@@ -64,7 +64,7 @@ def create_app():
 
     # --- FIREBASE ---
     if not firebase_admin._apps:
-        cred = credentials.Certificate("prideride_firebase.json")
+        cred = credentials.Certificate("google_service_account.json")
         firebase_admin.initialize_app(cred)
 
 
