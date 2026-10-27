@@ -56,10 +56,10 @@ class Usuario(db.Model):
     notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
     
     # Viajes donde el usuario es el Conductor
-    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True)
+    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True, cascade='all, delete-orphan')
     
     # Reservas donde el usuario es el Pasajero
-    reservas_realizadas = db.relationship('PasajeroViaje', backref='pasajero_rel', lazy=True)
+    reservas_realizadas = db.relationship('PasajeroViaje', backref='pasajero_rel', lazy=True, cascade='all, delete-orphan')
 
     # Relaciones de valoraciones
     puntuaciones = db.relationship('Puntuacion', backref='usuario', cascade='all, delete-orphan', foreign_keys='Puntuacion.usuario_id')
@@ -75,7 +75,16 @@ class Usuario(db.Model):
         'Cancelacion', 
         foreign_keys='Cancelacion.cancelado_por_id', 
         back_populates='autor',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+
+    monedero = db.relationship(
+        'Monedero', 
+        backref='usuario', 
+        uselist=False, 
+        cascade='all, delete-orphan',
+        passive_deletes=True
     )
 
     # --- LÓGICA DE VALORACIONES (ESTRELLAS) ---

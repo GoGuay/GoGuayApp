@@ -233,7 +233,7 @@ export class UserServicesService {
       map((resultado: any) => {
         // Actualiza el BehaviorSubject con la nueva foto
         const usuarioActualizado: Partial<Usuario['usuario']> = {
-          ...this.userData.usuario, // solo el objeto interno
+          ...this.userData.usuario,
           fotoPerfil: resultado.url,
           fotoPublicId: resultado.publicId,
         };

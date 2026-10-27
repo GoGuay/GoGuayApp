@@ -3,6 +3,7 @@ from .vehiculo import Vehiculo
 from .puntuacion import Puntuacion
 from .enums import RolUsuarioEnum
 from .enums import MovimientosMonederoEnum
+from .enums import EstadoViajeEnum
 from .viaje import Viaje
 from .pasajeroViaje import PasajeroViaje
 from .notificaciones import Notificacion

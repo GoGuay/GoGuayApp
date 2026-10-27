@@ -160,7 +160,7 @@ export class MiPerfilPage implements OnInit {
     }
 
     const usuarioValido = this.userData.usuario;
-    this.fechaNacimientoEditada = usuarioValido?.fecha_nacimiento || '';
+    this.fechaNacimientoEditada = this.formatearFechaInput(usuarioValido?.fecha_nacimiento);
     this.edad = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
     this.emailEditado = usuarioValido?.email || '';
     this.telefonoEditado = usuarioValido?.telefono || '';
@@ -194,7 +194,7 @@ export class MiPerfilPage implements OnInit {
         this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
         this.cdr.detectChanges();
 
-        this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
+        this.fechaNacimientoEditada = this.formatearFechaInput(usuario.fecha_nacimiento);
         this.bioEditada = usuario.biografia || '';
 
         const prefsUsuario = usuario.preferencias as any;
@@ -355,6 +355,26 @@ export class MiPerfilPage implements OnInit {
     this.preferenciasSeleccionadas = prefs;
     this.checkForChanges();
     this.cdr.detectChanges();
+  }
+
+  private formatearFechaInput(fechaStr: string | undefined): string {
+    if (!fechaStr) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+      return fechaStr;
+    }
+
+    if (fechaStr.includes('T') && !fechaStr.includes(',')) {
+      return fechaStr.split('T')[0];
+    }
+    const fecha = new Date(fechaStr);
+    if (!isNaN(fecha.getTime())) {
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+    return '';
   }
 
   /**

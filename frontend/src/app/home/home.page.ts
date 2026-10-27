@@ -76,7 +76,7 @@ export class HomePage implements OnInit {
     private notificacionesService: NotificacionesService,
     private userService: UserServicesService,
     private navCtrl: NavController,
-    private modalController: ModalController
+    private modalController: ModalController,
     private route: ActivatedRoute,
     private router: Router,
     private messageService: MessageService

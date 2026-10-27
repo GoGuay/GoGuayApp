@@ -16,7 +16,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from models.tokensusados import TokenUsado
 from extensions import db
 from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum
+from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum, EstadoViajeEnum
 from cloudinary import uploader, utils
 import re
 from PIL import Image
@@ -27,7 +27,7 @@ from prelude_python_sdk import Prelude
 import os
 from twilio.rest import Client
 from sqlalchemy import func
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
@@ -384,15 +384,48 @@ def eliminar_usuario(id):
     """
     current_user_id = get_jwt_identity()
 
-    if current_user_id != id:
+    if int(current_user_id) != int(id):
         return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     
     usuario = Usuario.query.get(id)
     
     if usuario is None:
         return jsonify({"error": "No se ha encontrado al usuario"}), 404
+    
+    if usuario.monedero and usuario.monedero.saldo > 0:
+        return jsonify({
+            "error": "No se puede eliminar la cuenta. Debes vaciar tu monedero (saldo a 0) antes de proceder.",
+            "saldo_actual": usuario.monedero.saldo
+        }), 400
+    
+    ahora = datetime.utcnow()
+    hace_72h = ahora - timedelta(hours=72)
 
-    # Realiza el borrado físico y guarda cambios
+    viajes_como_conductor = usuario.viajes_publicados or []
+    viajes_como_pasajero = [reserva.viaje for reserva in usuario.reservas_realizadas if reserva.viaje]
+
+    todos_los_viajes = list(set(viajes_como_conductor + viajes_como_pasajero))
+
+    for v in todos_los_viajes:
+        if not v or not v.fecha_salida:
+            continue
+    
+        if hace_72h <= v.fecha_salida <= ahora:
+            return jsonify({
+                "error": "No puedes eliminar tu cuenta. Viaje realizado hace menos de 72h."
+            }), 400
+        
+        if v.estado_viaje == EstadoViajeEnum.EN_CURSO.value:
+            return jsonify({
+                "error": "No puedes eliminar tu cuenta mientras tengas un viaje en curso."
+            }), 400
+        
+        if v.fecha_salida > ahora or v.estado_viaje == EstadoViajeEnum.PROXIMO.value:
+            if v.estado_viaje != EstadoViajeEnum.CANCELADO.value:
+                return jsonify({
+                    "error": "Tienes viajes futuros programados o reservas activas. Debes cancelarlos antes de borrar tu cuenta."
+                }), 400
+
     db.session.delete(usuario)
     db.session.commit()
     
@@ -839,6 +872,7 @@ def email_finalizar_registro():
         db.session.commit()
         access_token = create_access_token(identity=str(usuario.id))
         refresh_token = create_refresh_token(identity=str(usuario.id))
+        print('usuario:', usuario)
         usuario_data = {
             "id": usuario.id,
             "nombre": usuario.nombre,
