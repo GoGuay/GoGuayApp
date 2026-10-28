@@ -24,6 +24,7 @@ import { sparkles, carSportOutline, closeOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { QrVerificacionComponent } from '../components/qr-verificacion/qr-verificacion.component';
+import { OnboardingModalComponent } from '../components/onboarding/onboarding-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -147,9 +148,10 @@ export class HomePage implements OnInit {
       this.qrComponent.comprobarViajeEnCurso();
     }
   }
-  
+
   ionViewDidEnter() {
     this.iniciarTemporizadorEncuesta();
+    this.evaluarMostrarOnboarding();
   }
 
   ionViewWillLeave() {
@@ -292,6 +294,23 @@ export class HomePage implements OnInit {
       }, 3000);
     } else {
       this.iniciarTemporizadorEncuesta();
+    }
+  }
+
+  async evaluarMostrarOnboarding() {
+    const onboardingVisto = localStorage.getItem('onboarding_visto');
+
+    if (!onboardingVisto && this.userLoggedIn) {
+      setTimeout(async () => {
+        const modal = await this.modalController.create({
+          component: OnboardingModalComponent,
+          cssClass: 'modal-qr-verificacion',
+          breakpoints: [0, 0.65],
+          initialBreakpoint: 0.65,
+          backdropDismiss: false
+        });
+        await modal.present();
+      }, 1000);
     }
   }
 }

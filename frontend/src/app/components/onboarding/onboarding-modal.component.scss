@@ -1,0 +1,88 @@
+ion-button {
+  --color: #666666;
+
+  &:hover {
+    --color: #1a1a1a;
+  }
+
+  &.btn-saltar,
+  &.btn-atras {
+    --border-radius: 35px !important;
+    --background-hover: rgba(0, 0, 0, 0.08) !important;
+    --color-hover: #1a1a1a;
+  }
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .logo-onboarding {
+    height: 55px;
+    width: auto;
+    border-radius: 50%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+  }
+}
+
+.paso-container {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h3 {
+    color: #2c2c2c;
+    font-size: 1.2rem;
+  }
+
+  p {
+    color: #5a6268;
+    line-height: 1.45;
+    padding: 0 10px;
+    
+    strong {
+      color: #2c2c2c;
+    }
+  }
+}
+
+.dots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #c4c9a8;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.active {
+      width: 20px;
+      border-radius: 10px;
+      background-color: #b3b5e6;
+    }
+  }
+}
+
+.btn-onboarding-next {
+  background: #b3b5e6;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 13px;
+  border-radius: 35px;
+  border: none;
+  box-shadow: 0 6px 20px rgba(179, 181, 230, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #9d9fe0;
+  }
+}

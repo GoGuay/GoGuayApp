@@ -1,14 +1,11 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
-@use "./animations.scss" as *;
-@use "./animations.scss";
+@use '@angular/material' as mat;
+@use './animations.scss' as *;
+@use './animations.scss';
 @use '@angular/cdk/a11y-prebuilt.css';
-@use "@ionic/angular/css/core.css";
-@use "@ionic/angular/css/normalize.css";
-
-
-
+@use '@ionic/angular/css/core.css';
+@use '@ionic/angular/css/normalize.css';
 
 /*
  * App Global CSS
@@ -21,18 +18,16 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-
-
-@use "@ionic/angular/css/structure.css";
-@use "@ionic/angular/css/typography.css";
-@use "@ionic/angular/css/display.css";
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+@use '@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@use "@ionic/angular/css/padding.css";
-@use "@ionic/angular/css/float-elements.css";
-@use "@ionic/angular/css/text-alignment.css";
-@use "@ionic/angular/css/text-transformation.css";
-@use "@ionic/angular/css/flex-utils.css";
+@use '@ionic/angular/css/padding.css';
+@use '@ionic/angular/css/float-elements.css';
+@use '@ionic/angular/css/text-alignment.css';
+@use '@ionic/angular/css/text-transformation.css';
+@use '@ionic/angular/css/flex-utils.css';
 
 /**
  * Ionic Dark Mode
@@ -43,22 +38,26 @@
 
 /* @use "@ionic/angular/css/palettes/dark.always.css"; */
 /* @use "@ionic/angular/css/palettes/dark.class.css"; */
-@use "@ionic/angular/css/palettes/dark.system.css";
-@import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
+@use '@ionic/angular/css/palettes/dark.system.css';
+@import url('https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css');
 
 html {
-  @include mat.theme((color: (theme-type: light,
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
-    ));
+    )
+  );
 }
 
 @font-face {
-  font-family: "Offside";
-  src: url("./assets/fonts/Offside-Regular.ttf") format("truetype");
+  font-family: 'Offside';
+  src: url('./assets/fonts/Offside-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -73,7 +72,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background-color: #e9edd5;
   //overflow: hidden !important;
   scroll-behavior: smooth;
@@ -100,12 +99,12 @@ small,
 span,
 ul,
 legend {
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #000 !important;
 }
 
 ::ng-deep mat-raised-button {
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 
 ion-content {
@@ -127,7 +126,7 @@ ion-content {
 .btn_bg {
   background-color: #b3b5e6 !important;
   color: black !important;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   border-radius: 35px;
 }
 
@@ -138,7 +137,7 @@ ion-content {
 
 .btn_bg_secondary {
   color: black;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .btn_bg_secondary:focus-visible {
@@ -226,26 +225,14 @@ html.cdk-global-scrollblock {
 
 /* Parte que puedes arrastrar */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #b3e6b3,
-      #99ccff,
-      #d1b3ff,
-      #ffb3d1);
+  background: linear-gradient(180deg, #ffb3b3, #ffcc99, #b3e6b3, #99ccff, #d1b3ff, #ffb3d1);
   border-radius: 10px;
   border: 2px solid #f5f5f5;
 }
 
 /* Cuando la barra de desplazamiento se encuentra en hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #99d699,
-      #66b2ff,
-      #c299ff,
-      #ff99c2);
+  background: linear-gradient(180deg, #ff9999, #ffb366, #99d699, #66b2ff, #c299ff, #ff99c2);
 }
 
 /*
@@ -273,37 +260,19 @@ ion-content::-webkit-scrollbar-track,
 
 ion-content::-webkit-scrollbar-thumb,
 ::part(scroll)::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #99e699,
-      #99ccff,
-      #c299ff,
-      #ff99cc);
+  background: linear-gradient(180deg, #ffb3b3, #ffcc99, #99e699, #99ccff, #c299ff, #ff99cc);
   border-radius: 10px;
   border: 2px solid #f0f0f0;
 }
 
 ion-content::-webkit-scrollbar-thumb:hover,
 ::part(scroll)::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #85d685,
-      #66b3ff,
-      #b366ff,
-      #ff66b3);
+  background: linear-gradient(180deg, #ff9999, #ffb366, #85d685, #66b3ff, #b366ff, #ff66b3);
 }
 
 /* AJUSTES PARA EL TOOLTIP */
 .custom-tooltip {
-  background: linear-gradient(45deg,
-      #ffb3ba,
-      #ffdfba,
-      #ffffba,
-      #baffc9,
-      #bae1ff,
-      #e0baff) !important;
+  background: linear-gradient(45deg, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff) !important;
   color: #333 !important;
   font-size: 14px !important;
   padding: 8px 12px !important;
@@ -317,7 +286,6 @@ ion-content::-webkit-scrollbar-thumb:hover,
   border-top-color: #ffb3ba !important;
 }
 
-
 .icon {
   width: 20px;
   height: 20px;
@@ -325,7 +293,6 @@ ion-content::-webkit-scrollbar-thumb:hover,
 
 // Mensajes emergentes centrados
 p-toast {
-
   .ui-toast-message-content,
   .p-toast-message-content {
     text-align: center;
@@ -468,7 +435,7 @@ ion-fab-button {
         }
       }
 
-      &[aria-checked="true"] {
+      &[aria-checked='true'] {
         background-color: rgba(224, 166, 103, 0.12) !important;
 
         .alert-radio-label {
@@ -586,9 +553,7 @@ ion-fab-button {
       color: #666666 !important;
     }
   }
-
 }
-
 
 // Solo se activa cuando se navega por teclado (TAB)
 button:focus-visible,
@@ -663,8 +628,6 @@ span:focus {
   font-weight: bold;
 }
 
-
-
 /********************************************
   FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA
 *********************************************/
@@ -674,7 +637,6 @@ span:focus {
   color: black;
   font-weight: bold;
   background-color: #f0d7b4;
-
 }
 
 /* Estilo para el contenedor y el select */
@@ -731,7 +693,7 @@ span:focus {
       }
 
       &.selected {
-        background-color: #F0D7B4;
+        background-color: #f0d7b4;
         color: black;
         font-weight: bold;
       }
@@ -766,7 +728,9 @@ span:focus {
   border-radius: 35px !important;
   padding: 8px 24px !important;
   font-weight: 600 !important;
-  transition: transform 0.2s ease, background-color 0.2s ease !important;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease !important;
 
   &:hover {
     transform: translateY(-1px);
@@ -875,34 +839,68 @@ span:focus {
   bottom: 80px !important;
 }
 
-
 .maricar-custom-modal {
   --border-radius: 35px;
   overflow: hidden;
 }
 
-
 /* Estilos globales para la ventana desplegable del QR */
 ion-modal.modal-qr-verificacion {
-  --background: #E9EDD5 !important;
-  --ion-background-color: #E9EDD5 !important;
+  --background: #e9edd5 !important;
+  --ion-background-color: #e9edd5 !important;
   --border-radius: 35px 35px 0 0;
 
   &::part(content) {
-    background: #E9EDD5 !important;
+    background: #e9edd5 !important;
     border-radius: 35px 35px 0 0 !important;
   }
 
   ion-header,
   ion-toolbar {
-    --background: #F0D7B4 !important;
-    --ion-toolbar-background: #F0D7B4 !important;
-    background-color: #F0D7B4 !important;
+    --background: #f0d7b4 !important;
+    --ion-toolbar-background: #f0d7b4 !important;
+    background-color: #f0d7b4 !important;
+  }
+
+  /* BOTONES DE CABECERA */
+  ion-button {
+    --color: #666666;
+    --background: transparent;
+    --box-shadow: none;
+
+    &:has(i.fi-rr-cross),
+    &[icon-only] {
+      --border-radius: 50% !important;
+      --background-hover: rgba(0, 0, 0, 0.08) !important;
+      --color-hover: #1a1a1a;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+    }
+
+    &:has(span),
+    &.btn-saltar {
+      --border-radius: 35px !important;
+      --background-hover: rgba(0, 0, 0, 0.08) !important;
+      --color-hover: #1a1a1a;
+      --padding-start: 14px;
+      --padding-end: 14px;
+      margin: 0;
+
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+
+      span {
+        position: relative;
+        z-index: 2;
+      }
+    }
   }
 
   ion-content {
-    --background: #E9EDD5 !important;
-    --ion-background-color: #E9EDD5 !important;
-    background-color: #E9EDD5 !important;
+    --background: #e9edd5 !important;
+    --ion-background-color: #e9edd5 !important;
+    background-color: #e9edd5 !important;
   }
 }
