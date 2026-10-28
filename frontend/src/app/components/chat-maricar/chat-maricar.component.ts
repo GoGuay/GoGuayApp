@@ -91,6 +91,7 @@ export class MaricarChatComponent {
 
         this.travelService.crearViajeIA(datosViaje).subscribe({
             next: () => {
+                localStorage.setItem('creacion_viaje_completado', 'true');
                 this.mensajes.push({ remitente: 'ia', texto: '¡Listo! Tu viaje ha sido creado con éxito. Redirigiendo...' });
                 setTimeout(() => {
                     this.modalCtrl.dismiss();

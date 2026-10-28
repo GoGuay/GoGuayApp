@@ -45,7 +45,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
     ViajesRecomendadosIaComponent,
     ToastModule
   ],
-animations: [
+  animations: [
     trigger('popoverAnimation', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(12px) scale(0.92)' }),
@@ -120,6 +120,7 @@ export class HomePage implements OnInit {
         });
       }
     });
+
     if (!this.route.snapshot.queryParams['token']) {
       this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
       this.loadJumbotronSetting();
@@ -133,6 +134,8 @@ export class HomePage implements OnInit {
       this.loadJumbotronSetting();
       this.loadIASetting();
     }
+
+    this.evaluarMostrarEncuesta();
   }
 
   ionViewDidEnter() {
@@ -200,27 +203,49 @@ export class HomePage implements OnInit {
     this.navCtrl.navigateRoot(['/messaging-center'], { animated: false });
   }
 
+  /**
+   * Inicia un temporizador para mostrar la encuesta de satisfacción después de un tiempo determinado.
+   * @returns  
+   */
   iniciarTemporizadorEncuesta() {
     const encuestaOculta = localStorage.getItem('encuesta_goguay_cerrada');
     if (encuestaOculta) return;
 
+    const TIEMPO_ESPERA = 15 * 60 * 1000;
+
     this.tiempoNavegacion = setTimeout(() => {
       this.mostrarBannerEncuesta = true;
-    }, 180000);
+    }, TIEMPO_ESPERA);
   }
 
+  /**
+   * Cierra el banner de encuesta de satisfacción y establece en el almacenamiento local que la encuesta ha sido cerrada.
+   * @returns void. No retorna ningún valor.
+   */
   cerrarBannerEncuesta() {
     this.mostrarBannerEncuesta = false;
     localStorage.setItem('encuesta_goguay_cerrada', 'true');
+    localStorage.removeItem('accion_valor_completada');
   }
 
+  /**
+   * Navega a la página de encuesta de satisfacción y oculta el banner de encuesta.
+   * También establece en el almacenamiento local que la encuesta ha sido cerrada.
+   * @returns void. No retorna ningún valor.
+   */
   irAEncuesta() {
     this.mostrarBannerEncuesta = false;
     localStorage.setItem('encuesta_goguay_cerrada', 'true');
+    localStorage.removeItem('accion_valor_completada');
     this.navCtrl.navigateForward('/encuesta-satisfaccion');
   }
 
-  async abrirChatMariCar(){
+  /**
+   * Abre un modal con el chat de MariCar.
+   * Este método crea un modal utilizando el componente MaricarChatComponent y lo presenta al usuario.
+   * @returns devuelve void. No retorna ningún valor.
+   */
+  async abrirChatMariCar() {
     const modal = await this.modalController.create({
       component: MaricarChatComponent,
       cssClass: 'maricar-custom-modal'
@@ -228,9 +253,35 @@ export class HomePage implements OnInit {
     await modal.present();
   }
 
+  /**
+   * Cierra el popover de MariCar y establece en el almacenamiento local que ha sido visto.
+   * @param event Evento que desencadena la acción de cerrar el popover.
+   */
   cerrarPopoverMaricar(event: Event) {
     event.stopPropagation();
     this.mostrarPopoverMaricar = false;
     localStorage.setItem('maricar_popover_visto', 'true');
+  }
+
+  /**
+   * Función para evaluar si se debe mostrar la encuesta de satisfacción al usuario.
+   * Se verifica si la encuesta ya fue cerrada o si el usuario completó una acción de valor.
+   * Si el usuario completó una acción de valor, se muestra la encuesta después de 3 segundos.
+   * Si no, se inicia un temporizador para mostrar la encuesta después de 15 minutos.
+   * @returns 
+   */
+  evaluarMostrarEncuesta() {
+    const encuestaCerrada = localStorage.getItem('encuesta_goguay_cerrada');
+    const realizoAccion = localStorage.getItem('creacion_viaje_completado');
+
+    if (encuestaCerrada) return;
+
+    if (realizoAccion === 'true') {
+      setTimeout(() => {
+        this.mostrarBannerEncuesta = true;
+      }, 3000);
+    } else {
+      this.iniciarTemporizadorEncuesta();
+    }
   }
 }
