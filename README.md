@@ -77,7 +77,7 @@ cada vez que quieras actualizar las migraciones, solo es necesario la primera ve
 
 python app.py
 
-Recovery Code Twilio: Q8FCGG71FFFUQ7H17DPJFCGD
+
 
 # Comando para construir build para DOCKER DESKTOP
 

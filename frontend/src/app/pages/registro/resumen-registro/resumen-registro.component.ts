@@ -368,9 +368,9 @@ export class ResumenRegistroComponent implements OnInit {
     this.userService.registrarUsuario(datosRegistro).subscribe({
       next: (response) => {
         localStorage.setItem('pendienteConfirmacionRegistro', 'true');
-        // if (response.usuario) {
-        //   localStorage.setItem('userData', JSON.stringify(response.usuario));
-        // }
+        this.userService.setUsuarioData(null);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.clear();
         this.navCtrl.navigateRoot('/home');
       },

@@ -63,7 +63,7 @@
 
   <!-- MariCar -->
   <div class="maricar-container-fixed" *ngIf="asistenteActiva">
-    
+
     <div class="maricar-popover" @popoverAnimation *ngIf="mostrarPopoverMaricar">
       <button class="btn-close-popover" (click)="cerrarPopoverMaricar($event)" aria-label="Cerrar">
         <ion-icon name="close-outline"></ion-icon>
@@ -85,6 +85,7 @@
 
   </div>
 
+   <p-toast key="home-toast" styleClass="home-toast-home" position="bottom-center"></p-toast>
 </ion-content>
 
 <ion-footer>

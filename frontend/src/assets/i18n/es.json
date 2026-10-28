@@ -67,6 +67,11 @@
     "NO_ACEPTAR": "No aceptar"
   },
   "BOTONES": {
+    "HOME":{
+      "PUBLICA_TU_VIAJE_AQUI": "Publica tu viaje aquí",
+      "BUSCA_TU_VIAJE_AQUI": "Busca tu viaje aquí",
+      "CENTRO_DE_AYUDA": "Consulta aquí"
+    },
     "LOGIN":{
       "INICIAR_SESION": "Iniciar sesión"
     },

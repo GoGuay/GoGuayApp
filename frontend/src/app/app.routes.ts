@@ -94,10 +94,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/encuesta-satisfaccion/encuesta-satisfaccion.page').then((m) => m.EncuestaSatisfaccionPage),
   },
   {
-    path: 'finalizar-registro/:token',
-    loadComponent: () => import('./pages/link-finalizar-registro/link-finalizar-registro.page').then((m) => m.LinkFinalizarRegistroPage),
-  },
-  {
     path: 'centro-contacto',
     loadComponent: () => import('./pages/centro-contacto/centro-contacto.page').then((m) => m.CentroContactoPage),
   },

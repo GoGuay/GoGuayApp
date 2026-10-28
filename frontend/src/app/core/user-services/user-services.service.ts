@@ -233,7 +233,7 @@ export class UserServicesService {
       map((resultado: any) => {
         // Actualiza el BehaviorSubject con la nueva foto
         const usuarioActualizado: Partial<Usuario['usuario']> = {
-          ...this.userData.usuario, // solo el objeto interno
+          ...this.userData.usuario,
           fotoPerfil: resultado.url,
           fotoPublicId: resultado.publicId,
         };
@@ -310,11 +310,26 @@ export class UserServicesService {
    * @param token
    * @returns
    */
-  verificar_email(token: any): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/user/email_finalizar_registro`, { token }).pipe(
-      map(() => true),
-      catchError(() => of(false))
-    );
+  verificar_email(token: any): Observable<any> {
+   return this.http.post<any>(`${this.apiUrl}/user/email_finalizar_registro`, { token }).pipe(
+    tap((response) => {
+      if (response && response.access_token) {
+        localStorage.setItem('access_token', response.access_token);
+
+        if (response.refresh_token) {
+          localStorage.setItem('refresh_token', response.refresh_token);
+        }
+
+        if (response.usuario) {
+          this.setUsuarioData({ usuario: response.usuario });
+        }
+      }
+    }),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Error al verificar el email:', error);
+      return throwError(() => error);
+    })
+  );
   }
 
   enviar_sms(telefono: string) {

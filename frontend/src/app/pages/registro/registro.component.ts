@@ -755,10 +755,10 @@ export class RegistroComponent implements OnInit, AfterViewInit {
     this.formulario1.patchValue({ email: datosGoogle.email });
     this.emailValido = true;
     this.guardaDatosDelUsuarioEnServicio(this.formulario1.getRawValue());
-    // const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
-    // if (foto) {
-    //   this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
-    // }
+    const foto = datosGoogle.fotoPerfil || datosGoogle.foto_perfil;
+    if (foto) {
+      this.guardaDatosDelUsuarioEnServicio({ fotoPerfil: foto });
+    }
     if (datosGoogle.nombre) {
       const controlNombre = this.formulario2.get('nombre');
       controlNombre?.enable();

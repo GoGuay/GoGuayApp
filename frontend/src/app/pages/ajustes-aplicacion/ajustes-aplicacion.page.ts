@@ -114,7 +114,7 @@ export class AjustesAplicacionPage implements OnInit {
         this.segmentoSeleccionado = 'cuenta';
       }
     });
-    
+
     const savedIASetting = localStorage.getItem('iaActiva');
     const savedAsistenteSetting = localStorage.getItem('asistenteActiva');
     this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
@@ -213,7 +213,7 @@ export class AjustesAplicacionPage implements OnInit {
 
     this.userService.eliminarUsuario(this.userData.usuario.id).subscribe(
       (res) => console.log('Respuesta del backend: ', res),
-      (err) => console.error('Error del backedn: ', err)
+      (err) => console.error('Error del backend: ', err)
     );
     localStorage.removeItem('userData');
     this.navCtrl.navigateRoot(['/'], {});
