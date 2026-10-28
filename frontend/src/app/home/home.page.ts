@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { FooterComponent } from '../shared/footer/footer.component';
@@ -23,6 +23,7 @@ import { MaricarChatComponent } from '../components/chat-maricar/chat-maricar.co
 import { sparkles, carSportOutline, closeOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { QrVerificacionComponent } from '../components/qr-verificacion/qr-verificacion.component';
 
 @Component({
   selector: 'app-home',
@@ -43,7 +44,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
     BuscadorViajeHomeComponent,
     CommonModule,
     ViajesRecomendadosIaComponent,
-    ToastModule
+    ToastModule,
+    QrVerificacionComponent
   ],
   animations: [
     trigger('popoverAnimation', [
@@ -58,6 +60,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ]
 })
 export class HomePage implements OnInit {
+  @ViewChild(QrVerificacionComponent) qrComponent!: QrVerificacionComponent;
+
   userLoggedIn: boolean = false;
   mostrarJumbotron = true;
   iaActiva: boolean = true;
@@ -138,6 +142,12 @@ export class HomePage implements OnInit {
     this.evaluarMostrarEncuesta();
   }
 
+  ionViewWillEnter() {
+    if (this.qrComponent) {
+      this.qrComponent.comprobarViajeEnCurso();
+    }
+  }
+  
   ionViewDidEnter() {
     this.iniciarTemporizadorEncuesta();
   }

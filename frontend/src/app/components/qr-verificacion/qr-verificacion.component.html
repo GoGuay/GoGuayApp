@@ -1,0 +1,10 @@
+<div class="qr-floating-container" *ngIf="mostrarBoton">
+  <button class="btn-qr-flotante" (click)="abrirModalQR()" [class.conductor]="esConductor">
+    <div class="icon-wrapper">
+      <i class="fi" [ngClass]="esConductor ? 'fi-rr-qr' : 'fi-rr-expand-arrows'"></i>
+    </div>
+    <span class="btn-label">
+      {{ esConductor ? 'Mi QR de Viaje' : 'Escanear QR Conductor' }}
+    </span>
+  </button>
+</div>

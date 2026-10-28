@@ -1220,3 +1220,45 @@ def normalizar_hora(hora_str):
         return f"{horas.zfill(2)}:{minutos}"
     
     return hora_limpia
+
+@travel_blueprint.route('/viaje_en_curso/<int:usuario_id>', methods=['GET'])
+def obtener_viaje_en_curso(usuario_id):
+    try:
+        viaje_conductor = Viaje.query.filter_by(usuario_id=usuario_id, estado_viaje='En curso').first()
+        if viaje_conductor:
+            return jsonify({'viaje': viaje_conductor.serialize()}), 200
+
+        pasajero_rel = (
+            PasajeroViaje.query
+            .join(Viaje)
+            .filter(PasajeroViaje.usuario_id == usuario_id, PasajeroViaje.estado == 'aceptado', Viaje.estado_viaje == 'En curso')
+            .first()
+        )
+        if pasajero_rel:
+            return jsonify({'viaje': pasajero_rel.viaje.serialize()}), 200
+
+        return jsonify({'viaje': None}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@travel_blueprint.route('/validar_embarque', methods=['POST'])
+@jwt_required()
+def validar_embarque():
+    try:
+        data = request.get_json()
+        viaje_id = data.get('viaje_id')
+        current_user_id = get_jwt_identity()
+
+        pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=current_user_id).first()
+        if pasajero:
+            pasajero.embarque_confirmado = True
+            db.session.commit()
+            return jsonify({'msg': 'Embarque confirmado correctamente'}), 200
+
+        return jsonify({'error': 'Reserva no encontrada'}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

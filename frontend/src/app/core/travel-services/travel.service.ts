@@ -443,4 +443,12 @@ export class TravelService {
     );
   }
 
+  getViajeEnCursoUsuario(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/travel/viaje_en_curso/${userId}`);
+  }
+
+  validarEmbarquePasajero(viajeId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/validar_embarque`, { viaje_id: viajeId });
+  }
+
 }

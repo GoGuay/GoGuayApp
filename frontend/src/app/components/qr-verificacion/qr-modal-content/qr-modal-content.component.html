@@ -1,0 +1,54 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="fw-bold">
+      {{ esConductor ? 'Verificación de Pasajeros' : 'Confirmar Abordo' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <i class="fi fi-rr-cross"></i>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding text-center">
+  <p-toast></p-toast>
+
+  <!-- VISTA DEL CONDUCTOR (Muestra su QR) -->
+  <div *ngIf="esConductor" class="qr-conductor-wrapper py-3">
+    <h5>Enfoca este código con el móvil de tu pasajero</h5>
+    <p class="text-muted small">Valida que todos están en el vehículo antes de iniciar la marcha.</p>
+
+    <div class="qr-box my-4 d-flex justify-content-center">
+      <canvas #qrCanvas class="shadow-sm rounded"></canvas>
+    </div>
+
+    <div class="info-trayecto-badge" *ngIf="viaje">
+      <i class="fi fi-rr-marker me-1 text-primary"></i>
+      <strong>{{ viaje?.origen }}</strong> → <strong>{{ viaje?.destino }}</strong>
+    </div>
+  </div>
+
+  <!-- VISTA DEL PASAJERO (Escáner de cámara) -->
+  <div *ngIf="!esConductor" class="qr-pasajero-wrapper py-3">
+    <div *ngIf="!verificacionCompletada">
+      <h5>Escanea el código QR del Conductor</h5>
+      <p class="text-muted small">Apunta con la cámara al móvil del conductor para validar tu viaje.</p>
+
+      <div class="scanner-container my-3" *ngIf="escaneando">
+        <zxing-scanner (scanSuccess)="onCodeScanned($event)"></zxing-scanner>
+      </div>
+
+      <button *ngIf="!escaneando" class="btn-iniciar-escaneo mt-3" (click)="escaneando = true">
+        <i class="fi fi-rr-camera me-2"></i> Abrir Cámara Escáner
+      </button>
+    </div>
+
+    <!-- Confirmación de Éxito -->
+    <div *ngIf="verificacionCompletada" class="exito-box py-4">
+      <i class="fi fi-rs-badge-check text-success display-1"></i>
+      <h4 class="mt-3 fw-bold text-success">¡Pasajero Verificado!</h4>
+      <p class="text-muted">Tu presencia ha sido confirmada en el trayecto.</p>
+    </div>
+  </div>
+</ion-content>

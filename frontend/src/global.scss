@@ -880,3 +880,19 @@ span:focus {
   --border-radius: 35px;
   overflow: hidden;
 }
+
+
+/* Estilos globales para la ventana desplegable del QR */
+ion-modal.modal-qr-verificacion {
+  --border-radius: 35px 35px 0 0; 
+  
+  &::part(content) {
+    border-radius: 35px 35px 0 0 !important;
+    overflow: hidden;
+  }
+
+  ion-header {
+    border-top-left-radius: 35px;
+    border-top-right-radius: 35px;
+  }
+}
