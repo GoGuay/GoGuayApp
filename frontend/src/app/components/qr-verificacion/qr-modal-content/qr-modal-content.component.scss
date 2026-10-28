@@ -1,32 +1,38 @@
 :host {
-  --ion-background-color: #f7f6ed;
   display: block;
+  --ion-background-color: #E9EDD5; 
 }
 
-ion-toolbar {
-  --background: #f7f6ed;
-  --color: #2c2c2c;
-  padding: 8px 12px 0 12px;
+ion-header {
+  background-color: #F0D7B4 !important;
+  
+  ion-toolbar {
+    --background: #F0D7B4 !important;
+    --color: #2c2c2c;
+    background: #F0D7B4 !important;
+    padding: 8px 12px 0 12px;
 
-  ion-title {
-    font-size: 1.25rem;
-    color: #2c2c2c;
-    text-align: center;
-  }
+    ion-title {
+      font-size: 1.25rem;
+      color: #2c2c2c;
+      text-align: center;
+      font-weight: 700;
+    }
 
-  ion-button {
-    --color: #666666;
-    font-size: 1.1rem;
-    
-    &:hover {
-      --color: #1a1a1a;
-      --border-radius: 50%;
+    ion-button {
+      --color: #666666;
+      font-size: 1.1rem;
+
+      &:hover {
+        --color: #1a1a1a;
+      }
     }
   }
 }
 
 ion-content {
-  --background: #f7f6ed;
+  --background: #E9EDD5 !important;
+  background-color: #E9EDD5 !important;
 }
 
 /* VISTA CONDUCTOR */
@@ -39,7 +45,7 @@ ion-content {
   }
 
   p {
-    color: #6c757d;
+    color: #5a6268;
     font-size: 0.9rem;
   }
 
@@ -81,7 +87,7 @@ ion-content {
   }
 
   p {
-    color: #6c757d;
+    color: #5a6268;
     font-size: 0.9rem;
   }
 

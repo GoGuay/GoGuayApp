@@ -4,7 +4,7 @@
 
 .qr-floating-container {
   position: fixed !important;
-  bottom: 90px !important; 
+  bottom: 100px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 9999 !important;
@@ -34,7 +34,7 @@
 
     &:hover {
       transform: scale(1.05);
-            background: #B3B5E6 !important;
+      background: #b3b5e6 !important;
       color: #1a1a1a;
     }
 

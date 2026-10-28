@@ -884,15 +884,25 @@ span:focus {
 
 /* Estilos globales para la ventana desplegable del QR */
 ion-modal.modal-qr-verificacion {
-  --border-radius: 35px 35px 0 0; 
-  
+  --background: #E9EDD5 !important;
+  --ion-background-color: #E9EDD5 !important;
+  --border-radius: 35px 35px 0 0;
+
   &::part(content) {
+    background: #E9EDD5 !important;
     border-radius: 35px 35px 0 0 !important;
-    overflow: hidden;
   }
 
-  ion-header {
-    border-top-left-radius: 35px;
-    border-top-right-radius: 35px;
+  ion-header,
+  ion-toolbar {
+    --background: #F0D7B4 !important;
+    --ion-toolbar-background: #F0D7B4 !important;
+    background-color: #F0D7B4 !important;
+  }
+
+  ion-content {
+    --background: #E9EDD5 !important;
+    --ion-background-color: #E9EDD5 !important;
+    background-color: #E9EDD5 !important;
   }
 }
