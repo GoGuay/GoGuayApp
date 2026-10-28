@@ -65,7 +65,7 @@
   margin-right: 10%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .logo {
@@ -184,10 +184,31 @@ ul {
 }
 
 .idiomas-container {
-  min-width: 30px;
-  top: 29px !important;
-  position: fixed;
-  right: 18% !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative !important; 
+  top: auto !important;
+  right: auto !important;
+  min-width: 24px;
+  cursor: pointer;
+
+  .icon-idioma {
+    width: 20px;
+    height: auto;
+    border-radius: 2px;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .grayscale-filter {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
 }
 
 .btnNotificaciones,
