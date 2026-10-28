@@ -252,11 +252,8 @@ def obtener_viajes_usuario():
 
     viajes = Viaje.query.filter_by(usuario_id=usuario_id).all()
 
-    if not viajes:
-        return jsonify({"mensaje": "El usuario no tiene viajes creados"}), 404
-
     return jsonify({
-        "viajes": [viaje.serialize() for viaje in viajes]
+        "viajes": [viaje.serialize() for viaje in viajes] if viajes else []
     }), 200
 
 
@@ -272,21 +269,41 @@ def obtener_viajes():
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
 
-
-
-
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LOS VIAJES A LOS QUE EL USUARIO SE HA UNIDO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/viajes_como_acompanante/<int:usuario_id>', methods=['GET'])
 def obtener_viajes_pasajero(usuario_id):
-    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).options(
-        joinedload(Viaje.usuario), 
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
-    ).all()
-    
-    return jsonify([viaje.serialize() for viaje in viajes]), 200
+    try:
+        print(f"\n--------------------------------------------------")
+        print(f"🔍 Petición recibida para usuario_id: {usuario_id} (Tipo: {type(usuario_id)})")
+
+        # Comprobar cuántos registros existen directos en la tabla intermedia
+        registros_directos = PasajeroViaje.query.filter_by(usuario_id=usuario_id).all()
+        print(f"📊 Registros directos en 'pasajeros_viaje' para usuario {usuario_id}: {len(registros_directos)}")
+        for r in registros_directos:
+            print(f"   -> ID PasajeroViaje: {r.id} | Viaje ID: {r.viaje_id} | Estado: '{r.estado}'")
+
+        # Consulta completa con JOIN
+        viajes = (
+            Viaje.query
+            .join(PasajeroViaje, Viaje.id == PasajeroViaje.viaje_id)
+            .filter(PasajeroViaje.usuario_id == usuario_id)
+            .options(
+                joinedload(Viaje.usuario),
+                joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+            )
+            .all()
+        )
+
+        print(f"✅ Viajes devueltos tras el JOIN: {len(viajes)}")
+        print(f"--------------------------------------------------\n")
+
+        return jsonify([v.serialize(current_user_id=usuario_id) for v in viajes]), 200
+
+    except Exception as e:
+        print("❌ Error en /viajes_como_acompanante:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

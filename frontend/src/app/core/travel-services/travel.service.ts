@@ -20,7 +20,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService
-  ) {}
+  ) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -112,10 +112,12 @@ export class TravelService {
    * @param usuarioId Recibe el id del usuario a consultar.
    * @returns Devuelve la lista de viajes de ese usuario.
    */
-  getViajesUsuario(usuarioId: number): Observable<any> {
-    return this.http.get(this.apiUrl + '/travel/obtener_viajes_usuario', {
-      params: { usuario_id: usuarioId.toString() },
-    });
+  getViajesUsuario(id_usuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/travel/obtener_viajes_usuario`, {
+      params: { usuario_id: id_usuario }
+    }).pipe(
+      catchError(() => of({ viajes: [] }))
+    );
   }
 
   /**

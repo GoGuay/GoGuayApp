@@ -35,21 +35,22 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
   editar_perfil: boolean = false;
   userData: Usuario = {} as Usuario;
   preferenciasViaje: string[] = [];
-  
+
   misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
-  
+
   // Imágenes
   imagenCabeceraSrc: string = '../../../assets/imgs/bridge1.jpg';
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
-  
+
   cargando = false;
   filtroViajes: string = 'todos';
   notificacionInterval: any;
   private destroy$ = new Subject<void>();
 
   urlParaVolver: string = '';
+  valoraciones: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -57,7 +58,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
     private userService: UserServicesService,
     private dialog: MatDialog,
     private navCtrl: NavController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -66,7 +67,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.usuarioParams = params;
       const userId = parseInt(this.usuarioParams.id, 10);
-      
+
       this.cargarDatosPerfil(userId);
       this.urlParaVolver = this.comprobarUrls(localStorage.getItem('url_anterior') || '');
     });
@@ -83,13 +84,13 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
    * 
    * @param userId --> Recibe el ID del usuario que va a mostrar sus datos
    */
-private cargarDatosPerfil(userId: number) {
-    this.cargando = true; 
+  private cargarDatosPerfil(userId: number) {
+    this.cargando = true;
 
     this.userService.obtenerUsuarioPorID(userId).subscribe({
-      next: (resultadoUsuario) => {
-        this.usuario = resultadoUsuario;
-        
+      next: (resultadoUsuario: any) => {
+        this.usuario = resultadoUsuario.usuario || resultadoUsuario;
+
         const prefs = this.usuario.preferencias;
         let listaPreferencias: string[] = [];
 
@@ -102,7 +103,41 @@ private cargarDatosPerfil(userId: number) {
         }
 
         this.preferenciasViaje = listaPreferencias;
-        
+
+        const opinionesRaw = this.usuario.opiniones || [];
+
+        this.valoraciones = opinionesRaw.map((op: any) => {
+          let fechaComentario = op.fecha || '';
+          if (fechaComentario && fechaComentario.includes('T')) {
+            fechaComentario = new Date(fechaComentario).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            });
+          }
+
+          let fechaViaje = op.viaje?.fecha_salida || op.fecha_viaje || '';
+          if (fechaViaje && fechaViaje.includes('T')) {
+            fechaViaje = new Date(fechaViaje).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            });
+          }
+
+          return {
+            id: op.id,
+            puntuacion: op.puntuacion || 5,
+            comentario: op.comentario || '',
+            fecha: fechaComentario,
+            autorNombre: op.evaluador?.nombre || 'Viajero de GoGuay',
+            autorFoto: op.evaluador?.fotoPerfil || '../../../assets/user/logOn.gif',
+            origen: op.viaje?.origen || op.origen || null,
+            destino: op.viaje?.destino || op.destino || null,
+            fechaViaje: fechaViaje || null
+          };
+        });
+
         this.validacionPerilLogeado(userId);
 
         setTimeout(() => {
@@ -111,7 +146,7 @@ private cargarDatosPerfil(userId: number) {
       },
       error: (error) => {
         console.error('Error al cargar perfil:', error);
-        this.cargando = false; 
+        this.cargando = false;
       }
     });
   }

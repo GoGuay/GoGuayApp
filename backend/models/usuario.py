@@ -87,6 +87,10 @@ class Usuario(db.Model):
         passive_deletes=True
     )
 
+    @property
+    def opiniones_recibidas(self):
+        return self.puntuaciones
+
     # --- LÓGICA DE VALORACIONES (ESTRELLAS) ---
     @property
     def estrellas_por_opiniones(self):
@@ -196,6 +200,26 @@ class Usuario(db.Model):
             "comunic_terceros": self.comunic_terceros,
             "estado_perfil": self.estado_perfil,
             "puntuaciones": self.estrellas_por_opiniones,
+            "opiniones": [
+                {
+                    "id": op.id,
+                    "puntuacion": op.puntuacion,
+                    "comentario": op.comentario,
+                    "fecha": op.fecha.isoformat() if op.fecha else None,
+                    "evaluador": {
+                        "id": op.evaluador.id,
+                        "nombre": op.evaluador.nombre,
+                        "fotoPerfil": op.evaluador.fotoPerfil
+                    } if getattr(op, 'evaluador', None) else None,
+                    "viaje": {
+                        "id": op.viaje.id,
+                        "origen": op.viaje.origen,
+                        "destino": op.viaje.destino,
+                        "fecha_salida": op.viaje.fecha_salida.isoformat() if op.viaje.fecha_salida else None
+                    } if getattr(op, 'viaje', None) else None
+                }
+                for op in self.puntuaciones
+            ],
             "metodo_pago_preferido": self.metodo_pago_preferido,
             "paypal_email": self.paypal_email,
             "tarjeta_info": {

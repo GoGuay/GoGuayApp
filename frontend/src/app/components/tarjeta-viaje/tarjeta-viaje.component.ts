@@ -56,7 +56,7 @@ export class TarjetaViajeComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -146,23 +146,47 @@ export class TarjetaViajeComponent implements OnInit {
   cargarTodosLosViajes(userId: number) {
     this.cargandoViajes = true;
 
-    // Ejecutamos las 3 peticiones de viajes en paralelo
     forkJoin({
-      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(catchError(() => of([]))),
-      creados: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
-      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
+      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(
+        catchError(err => {
+          console.error('❌ Error cargando viajes acompañante:', err);
+          return of([]);
+        })
+      ),
+      creados: this.travelService.getViajesUsuario(userId).pipe(
+        catchError(err => {
+          console.error('❌ Error cargando viajes creados:', err);
+          return of({ viajes: [] });
+        })
+      ),
+      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(
+        catchError(err => {
+          console.error('❌ Error cargando solicitudes:', err);
+          return of([]);
+        })
+      ),
     }).subscribe({
       next: ({ acompanante, creados, solicitudes }) => {
-        this.misViajesAcompanante = acompanante;
-        this.misViajesCreados = creados?.viajes || [];
-        this.misSolicitudesPendientes = solicitudes;
+        console.log('✅ Acompañantes recibidos en Angular:', acompanante);
 
-        this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+        this.misViajesAcompanante = Array.isArray(acompanante) ? acompanante : [];
+        this.misViajesCreados = creados?.viajes || [];
+        this.misSolicitudesPendientes = solicitudes || [];
+
+        this.misViajesAcompanante.forEach((v: any) => {
+          if (!v.usuario && v.usuario_creador) {
+            v.usuario = v.usuario_creador;
+          }
+        });
 
         this.filtrarViajes();
         this.cargandoViajes = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.cargandoViajes = false),
+      error: (err) => {
+        console.error('❌ Error general en forkJoin:', err);
+        this.cargandoViajes = false;
+      }
     });
   }
 
@@ -217,7 +241,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.misViajes = [];
         break;
     }
-    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => {} });
+    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => { } });
   }
 
   /**
@@ -227,7 +251,9 @@ export class TarjetaViajeComponent implements OnInit {
    * @param popover --> Recibe el popover de filtros para poder cerrarlo después de aplicar el filtro.
    */
   onFiltroChange(event: any, popover: any) {
-    this.filtroSeleccionado = event.detail.value;
+    if (event?.detail?.value) {
+      this.filtroSeleccionado = event.detail.value;
+    }
 
     const acompanante = this.misViajesAcompanante || [];
     const creados = this.misViajesCreados || [];
@@ -249,6 +275,9 @@ export class TarjetaViajeComponent implements OnInit {
         const misViajesConSoli = creados.filter((v) => v.solicitudes_pendientes && v.solicitudes_pendientes.length > 0);
         viajesBase = [...solicitudes, ...misViajesConSoli];
         break;
+      default:
+        viajesBase = [...acompanante, ...creados];
+        break;
     }
 
     switch (this.filtroSeleccionado) {
@@ -261,11 +290,11 @@ export class TarjetaViajeComponent implements OnInit {
         break;
 
       case 'proximo':
-        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Próximo');
+        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Próximo' || v.estado_viaje === 'Pendiente');
         break;
 
       default:
-        this.misViajes = viajesBase.filter((v) => v.estado_viaje === 'Finalizado');
+        this.misViajes = [...viajesBase];
         break;
     }
 
@@ -493,6 +522,19 @@ export class TarjetaViajeComponent implements OnInit {
    * Función para puntuar un viaje
    */
   puntuarViaje(viaje: Viaje) {
+    const esFinalizado = viaje.estado_viaje === 'Finalizado' ||
+      this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
+
+    if (!esFinalizado) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Viaje no finalizado',
+        detail: 'Solo puedes valorar el viaje una vez haya concluido el trayecto.',
+        life: 3000,
+      });
+      return;
+    }
+
     const bottomSheetRef = this._bottomSheet.open(PuntuacionesComponent, {
       data: {
         viaje: viaje,
@@ -501,15 +543,19 @@ export class TarjetaViajeComponent implements OnInit {
 
     bottomSheetRef.afterDismissed().subscribe((result) => {
       if (result) {
+        viaje.ya_puntuado = true;
+
         this.messageService.add({
           severity: 'success',
-          summary: 'Puntuación guardada',
-          detail: 'Muchas gracias por realizar nuestra encuesta de satisfacción.',
+          summary: '¡Puntuación guardada!',
+          detail: 'Muchas gracias por compartir tu experiencia con la comunidad.',
           life: 3000,
         });
 
-        const userId = parseInt(this.usuarioParams.id, 10);
-        this.cargarTodosLosViajes(userId);
+        const userId = this.userData?.usuario?.id || parseInt(this.usuarioParams.id, 10);
+        if (userId) {
+          this.cargarTodosLosViajes(userId);
+        }
       }
     });
   }
@@ -778,5 +824,5 @@ export class TarjetaViajeComponent implements OnInit {
     });
   }
 
-  abrirPerfil(){}
+  abrirPerfil() { }
 }

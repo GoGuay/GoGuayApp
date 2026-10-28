@@ -105,7 +105,8 @@
 
               <ion-col size="auto" class="d-flex justify-content-center align-items-center gap-2 flex-wrap"
                 *ngIf="viaje.acompanantes && viaje.acompanantes.length > 0">
-                <ion-avatar class="avatar-acompanante" *ngFor="let ac of viaje.acompanantes" (click)="abrirPerfil()" matTooltip="Ver perfil">
+                <ion-avatar class="avatar-acompanante" *ngFor="let ac of viaje.acompanantes" (click)="abrirPerfil()"
+                  matTooltip="Ver perfil">
                   <img [alt]="ac.nombre || 'Pasajero'"
                     [src]="ac.fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
                 </ion-avatar>
@@ -124,14 +125,19 @@
     <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
       <div class="acciones-grid d-grid gap-2">
         <button *ngIf="
-            pasajero &&
-            viaje.estado_viaje === 'Finalizado' &&
-            !viaje.ya_puntuado
-          " class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje"
+          (filtroViajes === 'pasajero' || viaje.estado_solicitud_propia === 'aceptado') &&
+          (viaje.estado_viaje?.toLowerCase() === 'finalizado' || funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)) &&
+          !viaje.ya_puntuado
+            " class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje"
           data-name="Puntuar" aria-label="Puntuar viaje">
-          <i class="fi fi-rr-survey-xmark"></i>
+          <i class="fi fi-rr-star"></i>
           <span class="btn-text">Puntuar</span>
         </button>
+
+        <span *ngIf="viaje.ya_puntuado"
+          class="badge bg-light text-muted fw-normal rounded-pill px-2 py-1 text-center small">
+          <i class="fi fi-rs-badge-check text-success me-1"></i> Ya valorado
+        </span>
 
         <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar"
           data-name="Reportar" aria-label="Reportar viaje">
