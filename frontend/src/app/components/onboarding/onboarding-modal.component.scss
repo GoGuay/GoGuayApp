@@ -27,24 +27,35 @@ ion-button {
   }
 }
 
-.paso-container {
-  min-height: 140px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.step-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  height: 220px; 
 
-  h3 {
-    color: #2c2c2c;
-    font-size: 1.2rem;
-  }
+  .paso-container {
+    grid-column: 1;
+    grid-row: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-  p {
-    color: #5a6268;
-    line-height: 1.45;
-    padding: 0 10px;
-    
-    strong {
+    h3 {
       color: #2c2c2c;
+      font-size: 1.2rem;
+    }
+
+    p {
+      color: #5a6268;
+      line-height: 1.45;
+      padding: 0 10px;
+      margin-bottom: 0;
+      
+      strong {
+        color: #2c2c2c;
+      }
     }
   }
 }

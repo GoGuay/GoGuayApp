@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonicModule, ModalController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { Router } from '@angular/router';
-import { send, closeOutline, sparkles, carSportOutline } from 'ionicons/icons';
+import { send, closeOutline, sparkles, carSportOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
 @Component({
@@ -16,7 +16,7 @@ import { addIcons } from 'ionicons';
 })
 export class MaricarChatComponent {
     @ViewChild(IonContent, { static: false }) ionContent!: IonContent;
-    
+
     mensajes: { remitente: 'ia' | 'usuario', texto: string }[] = [
         { remitente: 'ia', texto: '¡Hola! Soy MariCar, tu asistente de viajes. ¿A dónde te gustaría viajar y desde dónde salimos?' }
     ];
@@ -24,36 +24,33 @@ export class MaricarChatComponent {
     inputUsuario: string = '';
     cargandoIA: boolean = false;
 
+    creandoViajeEstado: boolean = false;
+    viajeCreadoExito: boolean = false;
+    mensajeCargaViaje: string = 'Calculando ruta y consumo de combustible...';
+
     constructor(
         private modalCtrl: ModalController,
         private travelService: TravelService,
         private router: Router
     ) {
-        addIcons({ send, closeOutline, sparkles, carSportOutline });
+        addIcons({ send, closeOutline, sparkles, carSportOutline, checkmarkCircleOutline });
     }
 
-    /**
-     * Función que se ejecuta cuando el usuario cambia el valor del input.
-     * Convierte la primera letra del input a mayúscula y actualiza el valor de inputUsuario.
-     * @param event representa el evento de cambio del input, que contiene el valor ingresado por el usuario.
-     */
     onInputUsuarioChange(event: any) {
         const val = event.detail?.value || this.inputUsuario;
         if (val && val.length > 0) {
             this.inputUsuario = val.charAt(0).toUpperCase() + val.slice(1);
+        } else {
+            this.inputUsuario = '';
         }
     }
 
-    /**
-     * Función para enviar un mensaje al asistente MariCar. 
-     * Valida que el input del usuario no esté vacío y que no haya una respuesta pendiente de la IA.
-     * Luego, agrega el mensaje del usuario a la lista de mensajes y llama al servicio para obtener la respuesta de la IA.
-     * @returns devuelve void. No retorna ningún valor.
-     */
     enviarMensaje() {
-        if (!this.inputUsuario.trim() || this.cargandoIA) return;
+        if (!this.inputUsuario.trim() || this.cargandoIA || this.creandoViajeEstado) return;
 
-        const texto = this.inputUsuario.trim().charAt(0).toUpperCase() + this.inputUsuario.trim().slice(1);
+        const raw = this.inputUsuario.trim();
+        const texto = raw.charAt(0).toUpperCase() + raw.slice(1);
+
         this.mensajes.push({ remitente: 'usuario', texto });
         this.inputUsuario = '';
         this.cargandoIA = true;
@@ -83,42 +80,48 @@ export class MaricarChatComponent {
     }
 
     /**
-     * Crea un viaje final basado en los datos proporcionados.
-     * @param datosViaje respuesta de la IA con los datos del viaje a crear.
+     * Crea un viaje final mostrando un indicador de carga visual progresivo.
      */
     private crearViajeFinal(datosViaje: any) {
-        this.mensajes.push({ remitente: 'ia', texto: '¡Excelente! Estoy calculando el combustible y registrando tu viaje...' });
+        this.creandoViajeEstado = true;
+        this.viajeCreadoExito = false;
+        this.mensajeCargaViaje = 'Calculando itinerario y huella de carbono...';
+        this.hacerScrollAbajo();
+
+        setTimeout(() => {
+            if (this.creandoViajeEstado && !this.viajeCreadoExito) {
+                this.mensajeCargaViaje = 'Guardando los datos de tu viaje en GoGuay...';
+            }
+        }, 1200);
 
         this.travelService.crearViajeIA(datosViaje).subscribe({
             next: () => {
                 localStorage.setItem('creacion_viaje_completado', 'true');
-                this.mensajes.push({ remitente: 'ia', texto: '¡Listo! Tu viaje ha sido creado con éxito. Redirigiendo...' });
+                this.viajeCreadoExito = true;
+                this.mensajeCargaViaje = '¡Viaje registrado con éxito! Redirigiendo a mis viajes...';
+                this.hacerScrollAbajo();
+
                 setTimeout(() => {
                     this.modalCtrl.dismiss();
                     this.router.navigate(['/mis-viajes']);
-                }, 1500);
+                }, 1800);
             },
             error: () => {
+                this.creandoViajeEstado = false;
                 this.mensajes.push({ remitente: 'ia', texto: 'Ocurrió un error guardando el viaje en la base de datos.' });
+                this.hacerScrollAbajo();
             }
         });
     }
 
-    /**
-     * Hace scroll hacia abajo del contenido del chat para mostrar el último mensaje.
-     * Se utiliza un setTimeout para esperar a que el DOM se actualice antes de hacer el scroll.
-     */
     private hacerScrollAbajo() {
         setTimeout(() => {
             if (this.ionContent) {
-                this.ionContent.scrollToBottom(300); // 300ms de animación suave
+                this.ionContent.scrollToBottom(300);
             }
         }, 100);
     }
 
-    /**
-     * Cierra el modal del chat de MariCar.
-     */
     cerrarModal() {
         this.modalCtrl.dismiss();
     }

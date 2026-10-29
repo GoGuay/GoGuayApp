@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border" style="background-color: #F0D7B4 !important;">
   <ion-toolbar style="--background: #F0D7B4 !important;">
-    
+
     <!-- Botón Atrás -->
     <ion-buttons slot="start">
       <ion-button *ngIf="pasoActual > 1" class="btn-atras" (click)="pasoAnterior()">
@@ -20,81 +20,90 @@
 
 <ion-content class="ion-padding text-center" style="--background: #E9EDD5 !important;">
 
-  <!-- PASO 1: Bienvenida -->
-  <div *ngIf="pasoActual === 1" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+  <div class="step-wrapper">
+    <!-- PASO 1: Bienvenida -->
+    <div *ngIf="pasoActual === 1" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">¡Bienvenidx a GoGuay!</h3>
+      <p class="text-muted small">
+        Tu plataforma inclusiva y segura para compartir coche con gente afín a ti. Encuentra o publica trayectos de
+        forma fácil.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">¡Bienvenidx a GoGuay!</h3>
-    <p class="text-muted small">
-      Tu plataforma inclusiva y segura para compartir coche con gente afín a ti. Encuentra o publica trayectos de forma fácil.
-    </p>
-  </div>
 
-  <!-- PASO 2: Buscar y Publicar Viajes -->
-  <div *ngIf="pasoActual === 2" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 2: Buscar y Publicar Viajes -->
+    <div *ngIf="pasoActual === 2" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Reserva o Publica tu Viaje</h3>
+      <p class="text-muted small">
+        Busca rutas por origen, destino y fecha. Si eres conductor, publica tus plazas libres. Podrás elegir entre
+        <strong>reserva automática</strong> o aprobación manual de solicitudes.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Reserva o Publica tu Viaje</h3>
-    <p class="text-muted small">
-      Busca rutas por origen, destino y fecha. Si eres conductor, publica tus plazas libres. Podrás elegir entre <strong>reserva automática</strong> o aprobación manual de solicitudes.
-    </p>
-  </div>
 
-  <!-- PASO 3: Verificación QR -->
-  <div *ngIf="pasoActual === 3" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 3: Verificación QR -->
+    <div *ngIf="pasoActual === 3" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Seguridad con Código QR</h3>
+      <p class="text-muted small">
+        Durante tus viajes activos, utiliza el botón flotante en la pantalla principal para mostrar o escanear el QR y
+        verificar a los pasajeros a bordo antes de arrancar.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Seguridad con Código QR</h3>
-    <p class="text-muted small">
-      Durante tus viajes activos, utiliza el botón flotante en la pantalla principal para mostrar o escanear el QR y verificar a los pasajeros a bordo antes de arrancar.
-    </p>
-  </div>
 
-  <!-- PASO 4: MariCar e IA -->
-  <div *ngIf="pasoActual === 4" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 4: MariCar e IA -->
+    <div *ngIf="pasoActual === 4" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Asistente MariCar e IA</h3>
+      <p class="text-muted small">
+        <strong>MariCar</strong> te ayuda a publicar y crear tus viajes paso a paso. Además, nuestro motor de IA aprende
+        de tus gustos (configurables en tu Perfil) para sugerirte trayectos afines.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Asistente MariCar e IA</h3>
-    <p class="text-muted small">
-      <strong>MariCar</strong> te ayuda a publicar y crear tus viajes paso a paso. Además, nuestro motor de IA aprende de tus gustos (configurables en tu Perfil) para sugerirte trayectos afines.
-    </p>
-  </div>
 
-  <!-- PASO 5: Mensajería y Notificaciones -->
-  <div *ngIf="pasoActual === 5" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 5: Mensajería y Notificaciones -->
+    <div *ngIf="pasoActual === 5" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Chat y Notificaciones</h3>
+      <p class="text-muted small">
+        Comunícate directamente con tus acompañantes para concretar el punto de encuentro y recibe avisos en tiempo real
+        sobre tus reservas y actualizaciones del trayecto.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Chat y Notificaciones</h3>
-    <p class="text-muted small">
-      Comunícate directamente con tus acompañantes para concretar el punto de encuentro y recibe avisos en tiempo real sobre tus reservas y actualizaciones del trayecto.
-    </p>
-  </div>
 
-  <!-- PASO 6: Monedero GoGuay -->
-  <div *ngIf="pasoActual === 6" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 6: Monedero GoGuay -->
+    <div *ngIf="pasoActual === 6" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Monedero y PayPal</h3>
+      <p class="text-muted small">
+        Gestiona tu saldo fácilmente. Acumula dinero recargando mediante <strong>PayPal</strong> de forma segura y
+        utilízalo directamente para pagar tus reservas sin complicaciones.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Monedero y PayPal</h3>
-    <p class="text-muted small">
-      Gestiona tu saldo fácilmente. Acumula dinero recargando mediante <strong>PayPal</strong> de forma segura y utilízalo directamente para pagar tus reservas sin complicaciones.
-    </p>
-  </div>
 
-  <!-- PASO 7: Ajustes y Control -->
-  <div *ngIf="pasoActual === 7" class="paso-container py-2">
-    <div class="logo-wrapper mb-3">
-      <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+    <!-- PASO 7: Ajustes y Control -->
+    <div *ngIf="pasoActual === 7" [@fadeSlide] class="paso-container py-2">
+      <div class="logo-wrapper mb-3">
+        <img src="../../../assets/logo/PRIDECAR.png" alt="Logo GoGuay" class="logo-onboarding" />
+      </div>
+      <h3 class="fw-bold mb-2">Tus Ajustes, tu Control</h3>
+      <p class="text-muted small">
+        Desde la ventana de Ajustes podrás activar o desactivar la IA y a MariCar, vincular PayPal o solicitar la
+        eliminación de tu cuenta en cualquier momento.
+      </p>
     </div>
-    <h3 class="fw-bold mb-2">Tus Ajustes, tu Control</h3>
-    <p class="text-muted small">
-      Desde la ventana de Ajustes podrás activar o desactivar la IA y a MariCar, vincular PayPal o solicitar la eliminación de tu cuenta en cualquier momento.
-    </p>
   </div>
 
   <!-- Indicadores de punto (7 Dots interactivos) -->
