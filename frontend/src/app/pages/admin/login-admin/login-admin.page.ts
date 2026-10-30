@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavController, IonicModule } from '@ionic/angular';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { addIcons } from 'ionicons';
+import { shieldOutline, mailOutline, lockClosedOutline, arrowBackOutline } from 'ionicons/icons';
 
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
@@ -31,6 +33,8 @@ export class AdminLoginPage implements OnInit {
         public navCtrl: NavController,
         private dialog: MatDialog
     ) {
+        addIcons({ shieldOutline, mailOutline, lockClosedOutline, arrowBackOutline });
+
         this.adminForm = new FormGroup({
             email: new FormControl('', [Validators.required, Validators.email]),
             password: new FormControl('', [Validators.required]),
@@ -45,9 +49,9 @@ export class AdminLoginPage implements OnInit {
 
         if (rememberMe && savedEmail) {
             this.adminForm.patchValue({
-                emailFormControl: savedEmail,
-                passwordFormControl: savedPassword ? atob(savedPassword) : '',
-                check: rememberMe,
+                email: savedEmail,
+                password: savedPassword ? atob(savedPassword) : '',
+                check: rememberMe
             });
         }
     }
@@ -62,11 +66,21 @@ export class AdminLoginPage implements OnInit {
         }
 
         this.spinner_de_carga = true;
-        const { email, password } = this.adminForm.value;
+        const { email, password, check } = this.adminForm.value;
 
         this.userService.login(email, password).subscribe({
             next: (usuarioCompleto) => {
                 if (usuarioCompleto.usuario.rolPerfil === 'admin') {
+
+                    if (check) {
+                        localStorage.setItem('email', email);
+                        localStorage.setItem('password', btoa(password));
+                        localStorage.setItem('remember_me', 'true');
+                    } else {
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('password');
+                        localStorage.setItem('remember_me', 'false');
+                    }
 
                     localStorage.setItem('userData', JSON.stringify(usuarioCompleto));
                     this.userService.actualizarEstadoUsuario(usuarioCompleto.usuario);

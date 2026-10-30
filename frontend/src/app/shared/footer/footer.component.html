@@ -5,9 +5,9 @@
         <ion-row class="footer-row align-items-center">
 
           <!-- Redes Sociales -->
-          <ion-col class="footer-item col-socials" size="6" size-md="4">
+          <ion-col class="footer-item col-socials" size="6" size-md="2">
             <div class="social-icons">
-              <a>
+              <a href="javascript:void(0)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z" />
@@ -15,7 +15,7 @@
                   <path d="M16.5 7.5l0 .01" />
                 </svg>
               </a>
-              <a>
+              <a href="javascript:void(0)">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-linecap="round" stroke-linejoin="round" width="18" height="18" stroke-width="2">
                   <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
@@ -25,34 +25,34 @@
             </div>
           </ion-col>
 
-          <!-- Marca / Logo -->
-          <ion-col class="footer-item col-brand" size="6" size-md="4">
-            <div class="brand-container">
-              <img class="footer-logo" src="../../../assets/logo/PRIDECAR.png" alt="Logo" />
-              <span class="footer-brand-name">GoGuay, 2026</span>
-            </div>
-          </ion-col>
-
-          <!-- Enlaces (con contenedor scrollable en móvil para evitar que salten de línea) -->
-          <ion-col class="footer-item col-links" size="12" size-md="4">
+          <!-- Enlaces (ampliado a size-md="8") -->
+          <ion-col class="footer-item col-links" size="12" size-md="8">
             <div class="links-scroll-wrapper">
-              <a type="button" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate }}</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate }}</a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate }}</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate }}</a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openCondiciones()">Condiciones</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openCondiciones()">Condiciones</a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openFAQs()">FAQs</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openFAQs()">FAQs</a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openDecalogo()">Decálogo</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openDecalogo()">Decálogo</a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openQuienesSomos()">Quienes somos</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openQuienesSomos()">Quienes somos</a>
               <span class="separator">|</span>
-              <a (click)="abrirOnboarding()" class="footer-link">
+              <a href="javascript:void(0)" class="footer-link" (click)="abrirOnboarding()">
                 <i class="fi fi-rr-info me-1"></i> Guía de uso / Onboarding
               </a>
               <span class="separator">|</span>
-              <a type="button" class="footer-link" (click)="openAdmin()">Admin</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openAdmin()">Admin</a>
+            </div>
+          </ion-col>
+
+          <!-- Marca / Logo -->
+          <ion-col class="footer-item col-brand" size="6" size-md="2">
+            <div class="brand-container">
+              <img class="footer-logo" src="../../../assets/logo/PRIDECAR.png" alt="Logo" />
+              <span class="footer-brand-name">GoGuay, 2026</span>
             </div>
           </ion-col>
 
