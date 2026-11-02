@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { TokenValidGuard } from './guards/token-valid.guard';
 import { googleCancelGuard } from './guards/googleCancelGuard.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -36,19 +37,23 @@ export const routes: Routes = [
   {
     path: 'panel-usuario',
     loadComponent: () => import('./pages/panel-usuario/panel-usuario.page').then((m) => m.PanelUsuarioPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'nuevo-viaje',
     loadComponent: () => import('./pages/nuevoViaje/nuevo-viaje/nuevo-viaje.page').then((m) => m.NuevoViajePage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'data-viaje',
     loadComponent: () => import('./pages/nuevoViaje/data-viaje/data-viaje.page').then((m) => m.DataViajePage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'resumen-viaje',
     loadComponent: () =>
       import('./pages/nuevoViaje/data-viaje/componentes-viaje/resumen-viaje/resumen-viaje.component').then((m) => m.ResumenViajeComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: 'centro-ayuda',
@@ -61,6 +66,7 @@ export const routes: Routes = [
   {
     path: 'mi-perfil',
     loadComponent: () => import('./pages/paginas-panel-usuario/mi-perfil/mi-perfil.page').then((m) => m.MiPerfilPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'datos-contacto',
@@ -74,6 +80,7 @@ export const routes: Routes = [
     path: 'saldo-transferencias',
     loadComponent: () =>
       import('./pages/paginas-panel-usuario/saldo-transferencias/saldo-transferencias.page').then((m) => m.SaldoTransferenciasPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'decalogo',
@@ -88,6 +95,7 @@ export const routes: Routes = [
     path: 'verificaciones-perfil',
     loadComponent: () =>
       import('./pages/paginas-panel-usuario/verificaciones-perfil/verificaciones-perfil.page').then((m) => m.VerificacionesPerfilPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'encuesta-satisfaccion',
@@ -121,6 +129,7 @@ export const routes: Routes = [
   {
     path: 'notificaciones',
     loadComponent: () => import('./pages/notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'registro/resumen-registro',
@@ -129,18 +138,22 @@ export const routes: Routes = [
   {
     path: 'mis-viajes',
     loadComponent: () => import('./pages/mis-viajes/mis-viajes.page').then((m) => m.MisViajesPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'detalles-viaje/:id',
     loadComponent: () => import('./pages/mis-viajes/detalles-viaje/detalles-viaje.page').then((m) => m.DetallesViajePage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'messaging-center',
     loadComponent: () => import('./pages/centro-mensajes/centro-mensajes.component').then((m) => m.CentroMensajesPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'chat/:id',
     loadComponent: () => import('./pages/centro-mensajes/chat/chat.component').then((m) => m.ChatPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'condiciones-generales',
@@ -154,6 +167,7 @@ export const routes: Routes = [
   {
     path: 'admin-app',
     loadComponent: () => import('./pages/admin/admin-app.page').then((m) => m.AdminApp),
+
   },
   {
     path: 'login-admin',
@@ -162,18 +176,22 @@ export const routes: Routes = [
   {
     path: 'events-admin',
     loadComponent: () => import('./pages/admin/eventos-admin/eventos-admin.page').then((m) => m.EventosAdmin),
+    canActivate: [AuthGuard]
   },
   {
     path: 'incidencias-admin',
     loadComponent: () => import('./pages/admin/incidencias-admin/incidencias-admin.page').then((m) => m.IncidenciasAdminPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'gestion-usuarios-admin',
     loadComponent: () => import('./pages/admin/gestion-usuarios-admin/gestion-usuarios-admin.page').then((m) => m.GestionUsuariosAdminPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'pago-reserva/:id',
     loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then((m) => m.PagoReservaPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'gestion-encuestas',

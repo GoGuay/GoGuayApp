@@ -18,6 +18,7 @@ import { addIcons } from 'ionicons';
 import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline } from 'ionicons/icons';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { log } from 'console';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -25,7 +26,7 @@ import { log } from 'console';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -83,6 +84,8 @@ export class AjustesAplicacionPage implements OnInit {
 
   iaActiva: boolean = true;
   asistenteActiva: boolean = true;
+
+  cargandoEliminacion: boolean = false;
 
   @ViewChild(IonContent) content!: IonContent;
 
@@ -214,7 +217,9 @@ export class AjustesAplicacionPage implements OnInit {
    * Funcion para eliminar el usuario. Se llama en el botón de confirmación de la modal
    */
   eliminar_usuario() {
-    console.log('Elminando al usuario con id: ', this.userData.usuario.id);
+    if (!this.userData?.usuario?.id) return;
+
+    this.cargandoEliminacion = true;
 
     this.userService.eliminarUsuario(this.userData.usuario.id).subscribe({
       next: (res) => {
@@ -226,13 +231,17 @@ export class AjustesAplicacionPage implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error del backend: ', err);
+        this.cargandoEliminacion = false;
+        const tituloError = err.error?.error || 'No se pudo eliminar';
+        const detalleError = err.error?.motivo || err.error?.message || 'Revisa los requisitos para poder eliminar la cuenta.';
+
         this.messageService.add({
-          key: 'home-toast',
           severity: 'error',
-          summary: 'No se pudo eliminar',
-          detail: err.error?.motivo || 'Revisa los requisitos para eliminar la cuenta.',
+          summary: tituloError,
+          detail: detalleError,
+          life: 5000,
         });
+
       },
     });
   }

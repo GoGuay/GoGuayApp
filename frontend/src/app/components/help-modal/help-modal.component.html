@@ -33,7 +33,7 @@
   <mat-divider></mat-divider>
   <div class="modal-body">
     <p [innerHTML]="message"></p>
-    <p [innerHTML]="descripcion"></p>
+    <p [innerHTML]="descripcion" *ngIf="data.eliminacion_cuenta"></p>
     <div
       class="button-container"
       *ngIf="data.showMoreInfoButton"

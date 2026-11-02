@@ -91,7 +91,8 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const token = params['token'];
-      const cuentaEliminada = params['cuentaEliminada'];
+      const cuentaEliminada = params['cuentaEliminada'] === 'true';
+
       if (cuentaEliminada === true) {
         this.messageService.add({
           key: 'home-toast',
@@ -315,7 +316,7 @@ export class HomePage implements OnInit {
   async evaluarMostrarOnboarding() {
     const onboardingVisto = localStorage.getItem('onboarding_visto');
 
-    if (!onboardingVisto && this.userLoggedIn) {
+    if (!onboardingVisto && !this.userLoggedIn) {
       setTimeout(async () => {
         const modal = await this.modalController.create({
           component: OnboardingModalComponent,

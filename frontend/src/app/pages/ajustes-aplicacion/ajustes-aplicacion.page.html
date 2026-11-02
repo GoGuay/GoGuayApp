@@ -105,8 +105,8 @@
             <div class="box-section goguay-border h-100">
               <h3>
                 <div class="maricar-chat-avatar me-2">
-                    <ion-icon name="car-sport-outline" class="chat-car"></ion-icon>
-                    <ion-icon name="sparkles" class="chat-sparkle"></ion-icon>
+                  <ion-icon name="car-sport-outline" class="chat-car"></ion-icon>
+                  <ion-icon name="sparkles" class="chat-sparkle"></ion-icon>
                 </div>
                 Asistente Maricar
               </h3>
@@ -233,6 +233,13 @@
                 <button class="btn btn-outline-danger w-100 mt-4" (click)="modalEliminarUsuario()">
                   {{ "BOTON.ELIMINAR_CTA" | translate }}
                 </button>
+              </div>
+              <div *ngIf="cargandoEliminacion" class="spinner-loading-overlay">
+                <div
+                  class="d-flex flex-column align-items-center justify-content-center bg-white p-4 rounded-4 shadow-lg">
+                  <app-spinner></app-spinner>
+                  <span class="fw-bold mt-3 text-dark small">Procesando solicitud de eliminación...</span>
+                </div>
               </div>
             </div>
           </div>
