@@ -2,7 +2,7 @@ from flask import json
 from models.enums import PreferenciasViajeEnum, RolUsuarioEnum, Genero, Orientacion
 from models.cancelacion import Cancelacion
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from sqlalchemy import JSON
 import statistics
@@ -10,54 +10,68 @@ import statistics
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
-
+    # --- 1. CLAVE PRIMARIA Y CREDENCIALES ---
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    password = db.Column(db.String(250), nullable=True)
+    emailVerificado = db.Column(db.Boolean, default=False)
+    telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
+    # --- 2. DATOS PERSONALES ---
     nombre = db.Column(db.String(120), nullable=False)
     apellidos = db.Column(db.String(250), nullable=False)
-    email = db.Column(db.String(250), unique=True, nullable=False)
-    emailVerificado = db.Column(db.Boolean, default=False)
-    registroPrevio = db.Column(db.Boolean, default=False)
-    registroFinalizado = db.Column(db.Boolean, default=False)
+    email = db.Column(db.String(250), unique=True, nullable=False)    
+    telefono = db.Column(db.String(15), unique=True, nullable=True)
     genero = db.Column(db.String(50), nullable=False, default=Genero.defecto.value)
     orientacion = db.Column(db.String(50), nullable=False, default=Orientacion.defecto.value) 
     pronombre = db.Column(db.String(250), nullable=True)
-    password = db.Column(db.String(250), nullable=True)
-    telefono = db.Column(db.String(15), unique=True, nullable=True)
-    telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
     biografia = db.Column(db.String(500), nullable=True) 
+    fecha_nacimiento = db.Column(db.Date)
+    
+    # --- 3. CONFIGURACIÓN Y PREFERENCIAS DE PERFIL ---
+    registroPrevio = db.Column(db.Boolean, default=False)
+    registroFinalizado = db.Column(db.Boolean, default=False)
     fotoPerfil = db.Column(db.String(250), nullable=True)
     fotoPublicId = db.Column(db.String(255), nullable=True) 
     fotoCabecera = db.Column(db.String(250), nullable=True)
-    preferencias = db.Column(JSON, nullable=True) 
-    rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)
-    fecha_nacimiento = db.Column(db.Date)
+    preferencias = db.Column(JSON, nullable=True)     
+    rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)    
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
+    # --- 4. MÉTODOS DE PAGO Y COBRO ---
     metodo_pago_preferido = db.Column(db.String(50), nullable=True, default='paypal')
+    metodo_cobro_preferido = db.Column(db.String(50), nullable=True, default='transferencia')
     paypal_email = db.Column(db.String(250), nullable=True)
     tarjeta_numero = db.Column(db.String(20), nullable=True) 
     tarjeta_caducidad = db.Column(db.String(7), nullable=True) 
-    tarjeta_titular = db.Column(db.String(120), nullable=True)
-    metodo_cobro_preferido = db.Column(db.String(50), nullable=True, default='transferencia')
+    tarjeta_titular = db.Column(db.String(120), nullable=True)    
     cobro_paypal_email = db.Column(db.String(250), nullable=True)
     cobro_iban = db.Column(db.String(34), nullable=True) 
     cobro_titular = db.Column(db.String(120), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # --- 5. CONTROL, SANCIONES Y BORRADO LÓGICO ---
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
-    # --- CAMPOS DE CONTROL Y SANCIONES ---
     bloqueado_desde = db.Column(db.DateTime, nullable=True)
     bloqueado_hasta = db.Column(db.DateTime, nullable=True) 
     ya_ha_sido_suspendido = db.Column(db.Boolean, default=False)     
     motivo_bloqueo = db.Column(db.String(255), nullable=True) 
+    # --- Eliminación del perfil ---
+    perfil_eliminado_por_usuario = db.Column(db.Boolean, default=False, nullable=False)
+    fecha_eliminacion_por_usuario = db.Column(db.DateTime, nullable=True)
+    fecha_limite_reactivacion = db.Column(db.DateTime, nullable=True)
+    fecha_prevista_borrado_definitivo = db.Column(db.DateTime, nullable=True)
+    contador_reactivaciones_perfil = db.Column(db.Integer, default=0, nullable=False)
+    # --- 6. ÍNDICES ÚNICOS PARCIALES ---
+    #La regla para que el email/telefono sea único sólo se aplica a los usuarios activos (perfil_eliminado_por_usuario  = False)
+    __table_args__ = (
+        db.Index('idx_email_activo', 'email', unique=True, postgresql_where=db.text('perfil_eliminado_por_usuario = false')),
+        db.Index('idx_telefono_activo', 'telefono', unique=True, postgresql_where=db.text('perfil_eliminado_por_usuario = false')),
+    )
     
-    # --- RELACIONES ---
+    # --- 7. RELACIONES ---
     vehiculos = db.relationship('Vehiculo', backref='usuario', cascade='all, delete-orphan')
     notificaciones = db.relationship('Notificacion', backref='usuario', cascade='all, delete-orphan')
-    
     # Viajes donde el usuario es el Conductor
-    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True, cascade='all, delete-orphan')
-    
+    viajes_publicados = db.relationship('Viaje', backref='creador', lazy=True, cascade='all, delete-orphan')    
     # Reservas donde el usuario es el Pasajero
     reservas_realizadas = db.relationship('PasajeroViaje', backref='pasajero_rel', lazy=True, cascade='all, delete-orphan')
 
@@ -91,7 +105,7 @@ class Usuario(db.Model):
     def opiniones_recibidas(self):
         return self.puntuaciones
 
-    # --- LÓGICA DE VALORACIONES (ESTRELLAS) ---
+    # --- 8. PROPIEDADES Y MÉTODOS ---
     @property
     def estrellas_por_opiniones(self):
         """Media de puntuación recibida por otros usuarios al finalizar viajes"""
@@ -150,7 +164,7 @@ class Usuario(db.Model):
     
     @property
     def estado_perfil(self):
-        if self.bloqueado_hasta and self.bloqueado_hasta > datetime.utcnow():
+        if self.bloqueado_hasta and self.bloqueado_hasta > datetime.now(timezone.utc):
             return "Sancionado (Suspensión temporal)"
         
         peor_ich = max(self.ich_conductor, self.ich_pasajero)
@@ -186,7 +200,7 @@ class Usuario(db.Model):
             "genero": self.genero,
             "orientacion": self.orientacion,
             "pronombre": self.pronombre,  
-            "password": "********",         
+            "password": "********",        
             "telefono": self.telefono,
             "telefonoVerificado": self.telefonoVerificado,
             "biografia": self.biografia,

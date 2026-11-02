@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from extensions import db
 import json
 from enum import Enum
@@ -29,7 +29,7 @@ class Viaje(db.Model):
 
     historial_cambios = db.relationship('HistorialCambiosViaje', backref='viaje', lazy=True, cascade="all, delete-orphan")
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def get_estado_para_usuario(self, user_id):
         if not user_id: return None

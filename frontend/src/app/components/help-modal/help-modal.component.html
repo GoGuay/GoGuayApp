@@ -9,9 +9,11 @@
     <mat-icon
       class="icon-red"
       aria-hidden="true"
+      *ngIf="!data.eliminacion_cuenta"
     >
       question_mark
     </mat-icon>
+    <mat-icon class="icon-red" *ngIf="data.eliminacion_cuenta">warning</mat-icon>
 
     <h2
       id="modal-title"
@@ -31,6 +33,7 @@
   <mat-divider></mat-divider>
   <div class="modal-body">
     <p [innerHTML]="message"></p>
+    <p [innerHTML]="descripcion"></p>
     <div
       class="button-container"
       *ngIf="data.showMoreInfoButton"

@@ -34,15 +34,17 @@ export class HelpModalComponent implements OnInit {
    */
   message: SafeHtml;
   title: string;
-
+  descripcion: SafeHtml;
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: {
       title: string;
       message: string;
+      descripcion: string;
       showAcceptButton: boolean;
       showMoreInfoButton: boolean;
       showReturnTripButton?: boolean;
+      eliminacion_cuenta?:boolean;
     },
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<HelpModalComponent>,
@@ -50,6 +52,7 @@ export class HelpModalComponent implements OnInit {
   ) {
     this.title = data.title;
     this.message = this.sanitizer.bypassSecurityTrustHtml(data.message);
+    this.descripcion = this.sanitizer.bypassSecurityTrustHtml(data.descripcion);
   }
 
   ngOnInit() {}

@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from models.enums import MotivosCancelacionConductor, MotivosCancelacionPasajero
 
 
@@ -15,7 +15,7 @@ class Cancelacion(db.Model):
     
     motivo_cancelacion_cond = db.Column(db.String(50), nullable=False, default=MotivosCancelacionConductor.NO_SE_CANCELA.value)
     motivo_cancelacion_pasaj = db.Column(db.String(50), nullable=False, default=MotivosCancelacionPasajero.NO_SE_CANCELA.value)
-    fecha_cancelacion = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_cancelacion = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # --- RELACIONES ---
     viaje = db.relationship('Viaje', backref=db.backref('datos_cancelacion', uselist=False))

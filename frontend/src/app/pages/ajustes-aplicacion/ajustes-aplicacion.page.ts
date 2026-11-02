@@ -12,11 +12,12 @@ import { UserServicesService } from '../../core/user-services/user-services.serv
 import { Usuario } from '../../models/user/usuario.model';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
 import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline } from 'ionicons/icons';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { log } from 'console';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -93,6 +94,7 @@ export class AjustesAplicacionPage implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private route: ActivatedRoute,
+    private router: Router,
     private funcionesComunes: FuncionesComunes,
     private _bottomSheet: MatBottomSheet
   ) {
@@ -109,7 +111,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['tab'] === 'cuenta') {
         this.segmentoSeleccionado = 'cuenta';
       }
@@ -189,20 +191,23 @@ export class AjustesAplicacionPage implements OnInit {
    * Modal que se muestra cuando se pulsa el botón de eliminar usuario.
    */
   modalEliminarUsuario() {
-    this.translate.get(['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO', 'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE']).subscribe((translations) => {
-      const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
-      const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+    this.translate
+      .get(['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO', 'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE', 'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'])
+      .subscribe((translations) => {
+        const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
+        const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+        const descripcion = translations['AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'];
 
-      const dialogRef = this.dialog.open(HelpModalComponent, {
-        data: { title: titulo, message: mensaje, showAcceptButton: true },
-        disableClose: true,
+        const dialogRef = this.dialog.open(HelpModalComponent, {
+          data: { title: titulo, message: mensaje, descripcion: descripcion, showAcceptButton: true, eliminacion_cuenta: true },
+          disableClose: true,
+        });
+        dialogRef.afterClosed().subscribe((confirmar) => {
+          if (confirmar) {
+            this.eliminar_usuario();
+          }
+        });
       });
-      dialogRef.afterClosed().subscribe((confirmar) => {
-        if (confirmar) {
-          this.eliminar_usuario();
-        }
-      });
-    });
   }
 
   /**
@@ -211,12 +216,25 @@ export class AjustesAplicacionPage implements OnInit {
   eliminar_usuario() {
     console.log('Elminando al usuario con id: ', this.userData.usuario.id);
 
-    this.userService.eliminarUsuario(this.userData.usuario.id).subscribe(
-      (res) => console.log('Respuesta del backend: ', res),
-      (err) => console.error('Error del backend: ', err)
-    );
-    localStorage.removeItem('userData');
-    this.navCtrl.navigateRoot(['/'], {});
+    this.userService.eliminarUsuario(this.userData.usuario.id).subscribe({
+      next: (res) => {
+        console.log('Respuesta backend eliminar usuario: ', res);
+        localStorage.clear();
+        this.router.navigate(['/home'], {
+          queryParams: { cuentaEliminada: 'true' },
+          replaceUrl: true,
+        });
+      },
+      error: (err) => {
+        console.error('Error del backend: ', err);
+        this.messageService.add({
+          key: 'home-toast',
+          severity: 'error',
+          summary: 'No se pudo eliminar',
+          detail: err.error?.motivo || 'Revisa los requisitos para eliminar la cuenta.',
+        });
+      },
+    });
   }
 
   /**

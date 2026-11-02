@@ -67,12 +67,12 @@
     "NO_ACEPTAR": "No aceptar"
   },
   "BOTONES": {
-    "HOME":{
+    "HOME": {
       "PUBLICA_TU_VIAJE_AQUI": "Publica tu viaje aquí",
       "BUSCA_TU_VIAJE_AQUI": "Busca tu viaje aquí",
       "CENTRO_DE_AYUDA": "Consulta aquí"
     },
-    "LOGIN":{
+    "LOGIN": {
       "INICIAR_SESION": "Iniciar sesión"
     },
     "MIPERFIL": {
@@ -97,15 +97,15 @@
       "GUARDAR": "Guardar"
     }
   },
-  "LOGIN":{
+  "LOGIN": {
     "TITULO": "Introduce tu correo y contraseña",
     "EMAIL_LABEL": "Email",
     "ERROR_EMAIL_OGLIGATORIO": "El email es obligatorio",
     "ERROR_EMAIL_NOVALIDO": "Por favor, introduce un email correcto",
     "PASSWORD_LABEL": "Contraseña",
     "ERROR_PASSWORD_OGLIGATORIO": "La contraseña es obligatoria",
-    "RECUERDAME_CHECK":"Recuérdame",
-    "PASSWORD_OLVIDADO":"¿No recuerdas tu contraseña actual?",
+    "RECUERDAME_CHECK": "Recuérdame",
+    "PASSWORD_OLVIDADO": "¿No recuerdas tu contraseña actual?",
     "REGISTRARSE_TEXTO": "¿Aún no estás registrado?",
     "REGISTRARSE_BOTON": "Regístrate aquí"
   },
@@ -536,8 +536,9 @@
     },
     "ELIMINARCTA": {
       "TITULO": "Eliminar la cuenta:",
-      "MODAL_TITULO": "ATENCIÓN: Vas a eliminar tu usuario",
+      "MODAL_TITULO": "Vas a eliminar tu usuario",
       "MODAL_MENSAJE": "¿Estás seguro que deseas eliminar usuario?",
+      "MODAL_DESCRIPCION": "<strong>¡ATENCIÓN!</strong> <br>Todos tus datos personales, vehículos y valoraciones serán eliminados",
       "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
       "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
     },

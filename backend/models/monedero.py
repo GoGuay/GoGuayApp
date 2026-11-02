@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 class Monedero(db.Model):
     __tablename__ = 'monederos'
@@ -8,6 +8,13 @@ class Monedero(db.Model):
     saldo = db.Column(db.Float, default=0.0, nullable=False)
     
     movimientos = db.relationship('MovimientoMonedero', backref='monedero', cascade='all, delete-orphan')
+
+    def obtener_ultima_retirada(self):
+        ultimo_movimiento = MovimientoMonedero.query.filter_by(monedero_id=self.id)\
+        .filter(MovimientoMonedero.cantidad < 0)\
+        .order_by(MovimientoMonedero.fecha.desc())\
+        .first()
+        return ultimo_movimiento.fecha if ultimo_movimiento else None
 
     def serializeMonedero(self):
         return{
@@ -20,12 +27,15 @@ class MovimientoMonedero(db.Model):
     __tablename__ = 'movimientos_monedero'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     monedero_id = db.Column(db.Integer, db.ForeignKey('monederos.id'), nullable=False)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     concepto = db.Column(db.String(255), nullable=False)
     cantidad = db.Column(db.Float, nullable=False) 
     saldo_anterior = db.Column(db.Float, nullable=False)
     saldo_actual = db.Column(db.Float, nullable=False)
     referencia_id = db.Column(db.String(100), nullable=True)
+
+
+
 
 
     def serializeMovimientoMonedero(self):

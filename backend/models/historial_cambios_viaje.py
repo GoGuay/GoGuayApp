@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from extensions import db
 
 # ==========================================
@@ -12,7 +12,7 @@ class HistorialCambiosViaje(db.Model):
     campo_modificado = db.Column(db.String(50), nullable=False) 
     valor_anterior = db.Column(db.Text, nullable=True)
     valor_nuevo = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def serialize(self):
         return {

@@ -46,19 +46,17 @@ import { OnboardingModalComponent } from '../components/onboarding/onboarding-mo
     CommonModule,
     ViajesRecomendadosIaComponent,
     ToastModule,
-    QrVerificacionComponent
+    QrVerificacionComponent,
   ],
   animations: [
     trigger('popoverAnimation', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(12px) scale(0.92)' }),
-        animate('250ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0) scale(1)' }))
+        animate('250ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0) scale(1)' })),
       ]),
-      transition(':leave', [
-        animate('200ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0, transform: 'translateY(10px) scale(0.92)' }))
-      ])
-    ])
-  ]
+      transition(':leave', [animate('200ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0, transform: 'translateY(10px) scale(0.92)' }))]),
+    ]),
+  ],
 })
 export class HomePage implements OnInit {
   @ViewChild(QrVerificacionComponent) qrComponent!: QrVerificacionComponent;
@@ -93,6 +91,20 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const token = params['token'];
+      const cuentaEliminada = params['cuentaEliminada'];
+      if (cuentaEliminada === true) {
+        this.messageService.add({
+          key: 'home-toast',
+          severity: 'success',
+          summary: 'Cuenta eliminada',
+          detail: 'Tu cuenta se ha eliminado correctamente',
+        });
+        this.router.navigate([], {
+          queryParams: { cuentaEliminada: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
+      }
       if (token) {
         this.userService.verificar_email(token).subscribe({
           next: (response) => {
@@ -132,8 +144,11 @@ export class HomePage implements OnInit {
       this.loadIASetting();
 
       if (this.userLoggedIn) {
-        this.obtenerUsuarioPorID(this.userData?.usuario?.id);
-        this.obtenerNotificaciones(this.userData?.usuario?.id);
+        const currentUserId = this.userData?.usuario?.id;
+        if (currentUserId) {
+          this.obtenerUsuarioPorID(currentUserId);
+          this.obtenerNotificaciones(currentUserId);
+        }
       }
     } else {
       this.loadJumbotronSetting();
@@ -151,7 +166,7 @@ export class HomePage implements OnInit {
 
   ionViewDidEnter() {
     this.iniciarTemporizadorEncuesta();
-    this.evaluarMostrarOnboarding();
+    // this.evaluarMostrarOnboarding();
   }
 
   ionViewWillLeave() {
@@ -217,7 +232,7 @@ export class HomePage implements OnInit {
 
   /**
    * Inicia un temporizador para mostrar la encuesta de satisfacción después de un tiempo determinado.
-   * @returns  
+   * @returns
    */
   iniciarTemporizadorEncuesta() {
     const encuestaOculta = localStorage.getItem('encuesta_goguay_cerrada');
@@ -260,7 +275,7 @@ export class HomePage implements OnInit {
   async abrirChatMariCar() {
     const modal = await this.modalController.create({
       component: MaricarChatComponent,
-      cssClass: 'maricar-custom-modal'
+      cssClass: 'maricar-custom-modal',
     });
     await modal.present();
   }
@@ -280,7 +295,7 @@ export class HomePage implements OnInit {
    * Se verifica si la encuesta ya fue cerrada o si el usuario completó una acción de valor.
    * Si el usuario completó una acción de valor, se muestra la encuesta después de 3 segundos.
    * Si no, se inicia un temporizador para mostrar la encuesta después de 15 minutos.
-   * @returns 
+   * @returns
    */
   evaluarMostrarEncuesta() {
     const encuestaCerrada = localStorage.getItem('encuesta_goguay_cerrada');
@@ -307,7 +322,7 @@ export class HomePage implements OnInit {
           cssClass: 'modal-qr-verificacion',
           breakpoints: [0, 0.65],
           initialBreakpoint: 0.65,
-          backdropDismiss: false
+          backdropDismiss: false,
         });
         await modal.present();
       }, 1000);
