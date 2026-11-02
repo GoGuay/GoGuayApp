@@ -6,7 +6,7 @@ import os
 
 from flask import Blueprint, jsonify, request
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
@@ -700,7 +700,7 @@ def confirmar_pasajero_manual():
 
     try:
         solicitud.estado = 'aceptado'
-        solicitud.fecha_confirmacion_reserva = datetime.utcnow()
+        solicitud.fecha_confirmacion_reserva = datetime.now(timezone.utc)
         
         viaje.plazas -= 1
         
@@ -1068,9 +1068,9 @@ def crear_viaje_ia():
             except ValueError:
                 continue
         if not fecha_obj:
-            fecha_obj = datetime.utcnow()
+            fecha_obj = datetime.now(timezone.utc)
     except Exception:
-        fecha_obj = datetime.utcnow()
+        fecha_obj = datetime.now(timezone.utc)
 
     vehiculo_defecto = Vehiculo.query.filter_by(usuario_id=current_user_id).first()
     vehiculo_id = vehiculo_defecto.id if vehiculo_defecto else 1

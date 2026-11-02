@@ -2,7 +2,7 @@ from flask import json
 from models.enums import PreferenciasViajeEnum, RolUsuarioEnum, Genero, Orientacion
 from models.cancelacion import Cancelacion
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from sqlalchemy import JSON
 import statistics
@@ -47,8 +47,8 @@ class Usuario(db.Model):
     cobro_iban = db.Column(db.String(34), nullable=True) 
     cobro_titular = db.Column(db.String(120), nullable=True)
     # --- 5. CONTROL, SANCIONES Y BORRADO LÓGICO ---
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     bloqueado_desde = db.Column(db.DateTime, nullable=True)
     bloqueado_hasta = db.Column(db.DateTime, nullable=True) 
@@ -164,7 +164,7 @@ class Usuario(db.Model):
     
     @property
     def estado_perfil(self):
-        if self.bloqueado_hasta and self.bloqueado_hasta > datetime.utcnow():
+        if self.bloqueado_hasta and self.bloqueado_hasta > datetime.now(timezone.utc):
             return "Sancionado (Suspensión temporal)"
         
         peor_ich = max(self.ich_conductor, self.ich_pasajero)

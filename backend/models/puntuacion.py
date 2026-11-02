@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 class Puntuacion(db.Model):
     __tablename__ = 'puntuaciones'
@@ -7,7 +7,7 @@ class Puntuacion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     puntuacion = db.Column(db.Integer, nullable=False)
     comentario = db.Column(db.String(500))
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', name="fk_puntuacion_usuario"), nullable=False)
     evaluador_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', name="fk_puntuacion_evaluador"), nullable=False)

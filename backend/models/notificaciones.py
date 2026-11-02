@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 class Notificacion(db.Model):
     __tablename__ = 'notificaciones'
@@ -11,8 +11,8 @@ class Notificacion(db.Model):
     conversacion_id = db.Column(db.Integer, nullable=True)
     mensaje = db.Column(db.String(500), nullable=False)
     leida = db.Column(db.Boolean, default=False)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def serialize(self):
         return {

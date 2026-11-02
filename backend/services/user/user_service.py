@@ -423,12 +423,15 @@ def procesar_eliminacion_usuario(usuario):
     for v in todos_los_viajes:
         if not v or not v.fecha_salida:
             continue
-        if hace_72h <= v.fecha_salida <= ahora:
+        fecha_salida = v.fecha_salida
+        if fecha_salida.tzinfo is None:
+            fecha_salida = fecha_salida.replace(tzinfo=timezone.utc)
+        if hace_72h <= fecha_salida <= ahora:
             return jsonify({
                 "error": "No puedes eliminar tu cuenta",
                 "motivo": "Tienes un viaje en curso en este momento."
             }), 400
-        if v.fecha_salida > ahora or v.estado_viaje == EstadoViajeEnum.PROXIMO.value:
+        if fecha_salida > ahora or v.estado_viaje == EstadoViajeEnum.PROXIMO.value:
             if v.estado_viaje != EstadoViajeEnum.CANCELADO.value:
                 return jsonify({
                     "error": "No puedes eliminar tu cuenta",

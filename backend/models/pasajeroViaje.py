@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from extensions import db
 from models.enums import EstadoSolicitudEnum
 
@@ -8,9 +8,9 @@ class PasajeroViaje(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    fecha_confirmacion_reserva = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_confirmacion_reserva = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     estado = db.Column(db.String(50), default=EstadoSolicitudEnum.PENDIENTE.value)
-    fecha_solicitud = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_solicitud = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     paypal_auth_id = db.Column(db.String(100), nullable=True)
     recordatorio_inicio_enviado = db.Column(db.Boolean, default=False)
     

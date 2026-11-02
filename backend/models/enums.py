@@ -64,7 +64,7 @@ class MotivosCancelacionConductor(str, Enum):
     PERSONAL = "Problema personal"
     CAMBIOSVIAJE = "Cambios de plan o anulación del viaje"
     ERRORPUBLICACION = "Se ha publicado el viaje por error"
-    OTROS = "Otros motivos" #Campo abierto
+    OTROS = "Otros motivos" 
 
 class MotivosCancelacionPasajero (str, Enum):
     NO_SE_CANCELA = ""
@@ -76,15 +76,44 @@ class MotivosCancelacionPasajero (str, Enum):
     CONDUCTORNORESPONDE = "Se ha intentado contactar con el conductor pero no responde"
     CAMBIOCONDICIONES = "Se ha cambiado el punto de encuentro y la hora y no me viene bien"
     OTRAFORMAVIAJE = "He encontrado otra forma para hacer el viaje"
-    OTROS = "Otros motivos" #Campo abierto
+    OTROS = "Otros motivos"
 
 class MovimientosMonederoEnum(str, Enum):
     RECARGA_PAYPAL = "Recarga vía Paypal",
     RECARGA_TARJETA = "Recarga por tarjeta",
-    ANULACIÓN_RECARGA = "Anulación de la recarga: ",
+    ANULACIÓN_RECARGA = "Anulación de la recarga: "
     PAGO_VIAJE = "Pago del viaje a: ",
-    ANULACIÓN_PAGO_VIAJE = "Devolución del viaje a: ",
-    PROMOCION = "Promoción",
+    ANULACIÓN_PAGO_VIAJE = "Devolución del viaje a: "
+    PROMOCION = "Promoción"
     RETIRADA_FONDOS = "Retirada de fondos a cuenta bancaria"
+
+#Enums relacionados con las incidencias
+class CategoriaIncidenciaEnum(str, Enum):
+    USUARIO = "USUARIO"
+    APP = "APP"
+
+class SubCategoriasIncidenciasEnum(str, Enum):
+    PAGO = "PAGO"
+    VIAJE_PRESENCIA_UBICACION = "VIAJE_PRESENCIA_UBICACION"
+    COMPORTAMIENTO = "COMPORTAMIENTO"
+    CREACION_VIAJE = "CREACION_VIAJE"
+    ERROR_TECNICO_GENERAL = "ERROR_TECNICO_GENERAL"
+    OTRO = "OTRO"
+
+class TipoAperturaIncidenciaEnum(str, Enum):
+    USUARIO = "USUARIO"
+    SISTEMA = "SISTEMA"
+
+
+class EstadoIncidenciaEnum (str, Enum):
+    INICIADA = "INICIADA"
+    EN_REVISION = "EN_REVISION"
+    FINALIZADA = "FINALIZADA"
+    CANCELADA = "CANCELADA"
+
+class TipoCancelacionIncidenciaEnum (str, Enum):
+    POR_USUARIO = "POR_USUARIO"
+    POR_SISTEMA_NO_PROCEDE = "POR_SISTEMA_NO_PROCEDE"
+
 
 

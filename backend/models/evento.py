@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 class Evento(db.Model):
     __tablename__ = 'eventos'
@@ -12,7 +12,7 @@ class Evento(db.Model):
     descripcion = db.Column(db.Text, nullable=False)
     imagen = db.Column(db.String(500), nullable=False)
     enlace_info = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def serialize(self):
         return {
