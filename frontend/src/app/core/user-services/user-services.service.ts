@@ -448,7 +448,7 @@ export class UserServicesService {
       'Content-Type': 'application/json',
     });
 
-    return this.http.post<any>(`${this.apiUrl}/user/create-wallet-order`, { cantidad }, { headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/monedero/create-wallet-order`, { cantidad }, { headers }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error al crear la orden de recarga del monedero:', error);
         return throwError(() => error);
@@ -468,9 +468,8 @@ export class UserServicesService {
       'Content-Type': 'application/json',
     });
 
-    return this.http.post<any>(`${this.apiUrl}/user/capture-wallet-order/${orderId}`, {}, { headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/monedero/capture-wallet-order/${orderId}`, {}, { headers }).pipe(
       map((response) => {
-        // Opcional: si quieres actualizar el estado del usuario o emitir algo si es necesario
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
@@ -490,7 +489,7 @@ export class UserServicesService {
       'Content-Type': 'application/json',
     });
 
-    return this.http.get<any>(`${this.apiUrl}/user/saldo-actual`, { headers }).pipe(
+    return this.http.get<any>(`${this.apiUrl}/monedero/saldo-actual`, { headers }).pipe(
       catchError((error) => {
         console.error('Error al obtener el saldo del monedero:', error);
         return throwError(() => error);
@@ -504,7 +503,7 @@ export class UserServicesService {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     });
-    return this.http.get<any>(`${this.apiUrl}/user/obtener-movimientos-monedero/${usuarioId}`, { headers }).pipe(
+    return this.http.get<any>(`${this.apiUrl}/monedero/obtener-movimientos-monedero/${usuarioId}`, { headers }).pipe(
       catchError((error) => {
         console.error('Error al obtener el saldo del monedero:', error);
         return throwError(() => error);

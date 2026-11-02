@@ -125,15 +125,14 @@ export class SaldoTransferenciasPage implements OnInit {
           height: 40,
         },
         createOrder: (data: any, actions: any) => {
-          // 1. Obtén el token de autenticación (ajústalo según cómo lo guardes en tu app)
           const token = localStorage.getItem('access_token') || '';
-          console.log('Token recuperado:', token); // <-- Revisa esto en la consola del navegador
+          console.log('Token recuperado:', token);
 
-          return fetch('http://localhost:5000/api/user/create-wallet-order', {
+          return fetch('http://localhost:5000/api/monedero/create-wallet-order', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`, // <-- ¡Añadido aquí!
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ cantidad: this.cantidadRecarga }),
           })
