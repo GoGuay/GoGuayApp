@@ -137,8 +137,7 @@
                         <span class="badge-status mt-1"
                             [class.status-danger]="usuarioSeleccionado.ya_ha_sido_suspendido"
                             [class.status-success]="!usuarioSeleccionado.ya_ha_sido_suspendido">
-                            {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Cuenta Restringida / Bloqueada' : 'Cuenta
-                            Activa' }}
+                            {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Cuenta Restringida / Bloqueada' : 'Cuenta Activa' }}
                         </span>
                     </div>
 
@@ -208,8 +207,7 @@
                             <ion-icon
                                 [name]="usuarioSeleccionado.ya_ha_sido_suspendido ? 'lock-open-outline' : 'lock-closed-outline'"
                                 class="me-2"></ion-icon>
-                            {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Desbloquear Usuario' : 'Bloquear / Suspender
-                            Usuario' }}
+                            {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Desbloquear Usuario' : 'Bloquear / Suspender Usuario' }}
                         </button>
                     </div>
 
