@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, jsonify, render_template,  request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import requests
+from decimal import Decimal
 
 # Importaciones de Modelos y Enums
 from extensions import db
@@ -16,17 +17,23 @@ PAYPAL_API = os.getenv('PAYPAL_API')
 
 #Obtener el access_token de paypal
 def get_access_token():
-    """
-    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
-    2. Se le pasan otros permisos aparte del id y la clave secreta
-    3. Devuelve un json el access_token
-    """
-    res = requests.post(
-        f"{PAYPAL_API}/v1/oauth2/token",
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
-        data={'grant_type': 'client_credentials'}
-    )
-    return res.json()['access_token']
+    try:
+        response=requests.post(
+            f"{PAYPAL_API}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+            data={'grant_type': 'client_credentials'},
+            headers={'Accept': 'application/json', 'Accept-Language': 'en_US'}
+        )
+        if response.status_code != 200:
+            print("Error al obtener el token de Paypal:", response.json())
+            return None
+        
+        data=response.json()
+        return data.get('access_token')
+    
+    except Exception as e:
+        print ("Excepción al conectar con Paypal para el token:", str(e))
+        return None
 
 
 ## --- RUTAS DE RECARGA DE MONEDERO CON PAYPAL --- ##
@@ -55,6 +62,8 @@ def create_wallet_order():
     precio_formateado = f"{float(cantidad):.2f}"
     
     token = get_access_token()
+    if not token:
+        return jsonify({"error": "No se pudo autenticar con la pasarela de pagos"}), 500
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
     # El dinero de la recarga va directamente a la cuenta business de la empresa
@@ -112,6 +121,8 @@ def capture_wallet_order(order_id: str):
     current_user_id = get_jwt_identity()
     
     token = get_access_token()
+    if not token:
+        return jsonify({"error": "No se pudo autenticar con la pasarela de pagos"}), 500
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
     
@@ -210,3 +221,72 @@ def obtener_movimientos_monedero(usuario_id):
     return jsonify({
         "movimientos":[movimiento.serializeMovimientoMonedero() for movimiento in movimientos]
     }), 200
+
+
+@monedero_blueprint.route("/transferencia_desde_monedero/<int:usuario_id>", methods=["POST"])
+@jwt_required()
+def transferencia_desde_monedero(usuario_id):
+    usuario = Usuario.query.get(usuario_id)
+    if not usuario:
+        return jsonify({"error": "Falta el campo 'usuario_id' en la solicitud"}), 400
+    monedero = Monedero.query.filter_by(usuario_id=usuario_id).first()
+    if not monedero:
+        return jsonify({"error": "El usuario no tiene monedero"}), 404
+    
+    data = request.get_json() or {}
+    cantidad_solicitada = data.get('cantidad')
+    metodo_transferencia = data.get('metodo')
+    cuenta_destino = data.get('cuenta_destino')
+
+    if not metodo_transferencia or not cuenta_destino:
+        return jsonify({"error": "Faltan datos obligatorios (método de pago o cuenta destino)"}), 400
+    
+    saldo_actual = Decimal(str(monedero.saldo))
+
+    if cantidad_solicitada is None or str(cantidad_solicitada).lower() == 'todo':
+        cantidad_a_retirar = saldo_actual
+    else:
+        try:
+            cantidad_a_retirar = Decimal(str(cantidad_solicitada))
+        except ValueError:
+            return jsonify({"error": "La cantidad especificada no es valida"}), 400
+    
+    if cantidad_a_retirar <= 0:
+        return jsonify({"error": "La cantidad a retirar debe ser mayor a 0"}), 400   
+    
+    if cantidad_a_retirar > saldo_actual:
+        return jsonify({"error": "No tienes suficiente saldo en el monedero"}), 400
+
+    if metodo_transferencia == 'banco':
+        if not usuario.cobro_iban or usuario.cobro_iban.strip().lower() != cuenta_destino.strip().lower():
+            return jsonify({"error": "La cuenta bancaria no coincide con la registrada por el usuario"}), 400
+    elif metodo_transferencia == 'paypal':
+        if not usuario.cobro_paypal_email or usuario.cobro_paypal_email.strip().lower() != cuenta_destino.strip().lower():
+           return jsonify({"error": "La cuenta de PayPal no coincide con la registrada por el usuario"}), 400
+    else:
+        return jsonify ({"error": "Método de pago no soportado"}), 400
+
+    try:
+        monedero.saldo = saldo_actual - cantidad_a_retirar
+        movimiento = registro_movimientos_monedero(
+            usuario_id=usuario_id,
+            concepto=MovimientosMonederoEnum.RETIRADA_FONDOS,
+            cantidad=float(cantidad_a_retirar),
+            referencia_id=f"retirada_{metodo_transferencia}_{usuario_id}"
+        )
+        db.session.commit()
+
+        return jsonify({
+            "mensaje": "Transferencia solicitada con éxito",
+            "nuevo_saldo": float(monedero.saldo),
+            "cantidad_retirada": float(cantidad_a_retirar),
+            "metodo": metodo_transferencia
+        }), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al procesar la retirada de fondos: {str(e)}")
+        return jsonify({"error": f"Error interno al procesar la transferencia: {str(e)}"}), 500
+
+    
+    

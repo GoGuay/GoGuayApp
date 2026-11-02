@@ -1061,18 +1061,23 @@ def cambiopassword(id):
 
 #Obtener el access_token de paypal
 def get_access_token():
-    """
-    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
-    2. Se le pasan otros permisos aparte del id y la clave secreta
-    3. Devuelve un json el access_token
-    """
-    res = requests.post(
-        f"{PAYPAL_API}/v1/oauth2/token",
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
-        data={'grant_type': 'client_credentials'}
-    )
-    return res.json()['access_token']
-
+    try:
+        response=requests.post(
+            f"{PAYPAL_API}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+            data={'grant_type': 'client_credentials'},
+            headers={'Accept': 'application/json', 'Accept-Language': 'en_US'}
+        )
+        if response.status_code != 200:
+            print("Error al obtener el token de Paypal:", response.json())
+            return None
+        
+        data=response.json()
+        return data.get('access_token')
+    
+    except Exception as e:
+        print ("Excepción al conectar con Paypal para el token:", str(e))
+        return None
 
 
 # Recibe los datos del viaje con el precio de este. 
