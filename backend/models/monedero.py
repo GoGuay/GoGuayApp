@@ -27,6 +27,13 @@ class MovimientoMonedero(db.Model):
     saldo_actual = db.Column(db.Float, nullable=False)
     referencia_id = db.Column(db.String(100), nullable=True)
 
+    def obtener_ultima_retirada(self):
+        ultimo_movimiento = MovimientoMonedero.query.filter_by(moneder_id=self.id)\
+        .filter(MovimientoMonedero.cantidad < 0)\
+        .order_by(MovimientoMonedero.fecha.desc())\
+        .first()
+        return ultimo_movimiento.fecha if ultimo_movimiento else None
+
 
     def serializeMovimientoMonedero(self):
         return{

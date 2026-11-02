@@ -3,7 +3,7 @@
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DEL USUARIO  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import random
 import requests
 from flask import Blueprint, jsonify, render_template,  request, current_app
@@ -372,6 +372,66 @@ def actualizar_usuario(usuario_id):
     db.session.commit()  
     return jsonify(usuario.serialize()), 200 
 
+
+def procesar_eliminacion_usuario(usuario):
+    ahora = datetime.now(timezone.utc)
+    hace_72h = ahora -timedelta(hours=72)
+
+    if usuario.monedero:
+        if usuario.monedero.saldo > 0:
+            return jsonify({
+                "error": "No se puede eliminar la cuenta",
+                "motivo": "Tienes saldo a favor en tu monedero. Debes solicitar la transferencia antes de proceder."
+            }), 400
+        
+        fecha_ultima_retirada = usuario.monedero.obtener_ultima_retirada()
+        if fecha_ultima_retirada:
+            if fecha_ultima_retirada.tzinfo is None:
+                fecha_ultima_retirada = fecha_ultima_retirada.replace(tzinfo=timezone.utc)
+            if fecha_ultima_retirada >= hace_72h:
+                return jsonify({
+                    "error": "No se puede eliminar tu cuenta",
+                    "motivo": "Has realizado una retirada de fondos hace menos de 72h. Debes esperar a que transcurra este plazo por seguridad"
+                }), 400
+    
+    viajes_como_conductor = usuario.viajes_publicados or []
+    viajes_como_pasajero = [reserva.viaje for reserva in usuario.reservas_realizadas if reserva.viajes]
+    todos_los_viajes = list(set(viajes_como_conductor+viajes_como_pasajero))
+    for v in todos_los_viajes:
+        if not v or not v.fecha_salida:
+            continue
+        if hace_72h <= v.fecha_slida <= ahora:
+            return jsonify({
+                "error": "No puedes eliminar tu cuenta",
+                "motivo": "Tienes un viaje en curso en este momento."
+            }), 400
+        if v.fecha_salida > ahora or v.estado_viaje == EstadoViajeEnum.PROXIMO.value:
+            if v.estado_viaje != EstadoViajeEnum.CANCELADO.value:
+                return jsonify({
+                    "error": "No puedes eliminar tu cuenta",
+                    "motivo": "Tienes viajes futuros programados o reservas activas. Debes cancelarlos antes de proceder."
+                }), 400
+    
+    usuario.perfil_eliminado_por_usuario = True
+    usuario.fecha_eliminacion_por_usuario = ahora
+    usuario.fecha_limite_reactivacion = ahora + timedelta(days=30)
+    usuario.fecha_prevista_borrado_definitivo = ahora + timedelta(days=180)
+
+    usuario.metodo_pago_preferido = None
+    usuario.paypal_email = None
+    usuario.tarjeta_numero = None
+    usuario.tarjeta_caducidad = None
+    usuario.tarjeta_titular = None
+    usuario.cobro_paypal_email = None
+    usuario.cobro_iban = None
+    usuario.cobro_titular = None
+    
+    db.session.commit()
+
+    return jsonify({
+        "mensaje": "Perfil eliminado correctamente. Tienes 30 días para reactivarlo simplemente iniciando sesion"
+    }), 200
+
 ## ELIMINAR USUARIO POR ID ##
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
 @jwt_required()
@@ -398,7 +458,7 @@ def eliminar_usuario(id):
             "saldo_actual": usuario.monedero.saldo
         }), 400
     
-    ahora = datetime.utcnow()
+    ahora = datetime.now(timezone.utc)
     hace_72h = ahora - timedelta(hours=72)
 
     viajes_como_conductor = usuario.viajes_publicados or []
