@@ -48,7 +48,6 @@ export interface Usuario {
     cobro_iban?: string;
     cobro_titular?: string;
 
-    // --- NUEVOS CAMPOS DE BORRADO LÓGICO Y CICLO DE VIDA ---
     perfil_eliminado_por_usuario?: boolean;
     fecha_eliminacion_por_usuario?: string;
     fecha_limite_reactivacion?: string;
