@@ -94,12 +94,15 @@ export class HomePage implements OnInit {
       const cuentaEliminada = params['cuentaEliminada'] === 'true';
 
       if (cuentaEliminada === true) {
-        this.messageService.add({
-          key: 'home-toast',
-          severity: 'success',
-          summary: 'Cuenta eliminada',
-          detail: 'Tu cuenta se ha eliminado correctamente',
-        });
+        setTimeout(() => {
+          this.messageService.add({
+            key: 'home-toast',
+            severity: 'success',
+            summary: 'Cuenta eliminada',
+            detail: 'Tu cuenta se ha eliminado correctamente',
+          });
+        },50);
+
         this.router.navigate([], {
           queryParams: { cuentaEliminada: null },
           queryParamsHandling: 'merge',

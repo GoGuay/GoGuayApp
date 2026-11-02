@@ -225,6 +225,7 @@ export class AjustesAplicacionPage implements OnInit {
       next: (res) => {
         console.log('Respuesta backend eliminar usuario: ', res);
         localStorage.clear();
+        this.userService.setUsuarioData(null);
         this.router.navigate(['/home'], {
           queryParams: { cuentaEliminada: 'true' },
           replaceUrl: true,
