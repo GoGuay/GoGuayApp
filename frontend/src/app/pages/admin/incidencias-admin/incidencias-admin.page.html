@@ -1,0 +1,189 @@
+<app-navbar-admin></app-navbar-admin>
+
+<ion-content [fullscreen]="true" class="ion-padding admin-content">
+    <div class="admin-container">
+
+        <!-- CABECERA DE LA PÁGINA -->
+        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <ion-button fill="clear" color="dark" (click)="volverDashboard()" class="btn-back">
+                    <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <div>
+                    <h2 class="fw-bold m-0 title-page">Centro de Incidencias</h2>
+                    <p class="text-muted small m-0">Gestión de reportes y soporte técnico de GoGuay</p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge-total">{{ incidenciasFiltradas.length }} Incidencias</span>
+            </div>
+        </div>
+
+        <!-- BUSCADOR Y FILTROS -->
+        <div class="bg-white p-3 rounded-4 shadow-sm mb-4">
+            <ion-row class="align-items-center g-2">
+                <!-- Buscador -->
+                <ion-col size="12" size-md="7">
+                    <ion-item lines="none" class="custom-search-item">
+                        <ion-icon name="search-outline" slot="start" class="text-muted"></ion-icon>
+                        <ion-input [(ngModel)]="busquedaQuery" (ionInput)="aplicarFiltros()"
+                            placeholder="Buscar por ID, usuario, email o asunto..." clearInput="true">
+                        </ion-input>
+                    </ion-item>
+                </ion-col>
+
+                <!-- Filtro por Estado -->
+                <ion-col size="12" size-md="5">
+                    <div class="d-flex align-items-center gap-2">
+                        <ion-icon name="filter-outline" class="text-muted fs-5"></ion-icon>
+                        <ion-select [(ngModel)]="filtroEstado" (ionChange)="aplicarFiltros()" interface="popover"
+                            class="custom-select w-100">
+                            <ion-select-option value="todas">Todas las Incidencias</ion-select-option>
+                            <ion-select-option value="pendiente">Pendientes</ion-select-option>
+                            <ion-select-option value="en_revision">En Revisión</ion-select-option>
+                            <ion-select-option value="resuelta">Resueltas</ion-select-option>
+                            <ion-select-option value="desestimada">Desestimadas</ion-select-option>
+                        </ion-select>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </div>
+
+        <!-- LISTADO Y PANEL DETALLE -->
+        <ion-row>
+            <!-- LISTA DE INCIDENCIAS -->
+            <ion-col size="12" [sizeMd]="incidenciaSeleccionada ? 6 : 12">
+                <div class="bg-white p-3 rounded-4 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                        <strong class="text-secondary small text-uppercase fw-bold">Listado de Reportes</strong>
+                    </div>
+
+                    <div class="incidencias-scroll-container">
+                        <div *ngFor="let item of incidenciasFiltradas"
+                            class="incidencia-card p-3 mb-3 rounded-4 cursor-pointer transition-all"
+                            [class.active]="incidenciaSeleccionada?.id === item.id"
+                            (click)="verDetalleIncidencia(item)">
+
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge-id">{{ item.id }}</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <!-- Prioridad -->
+                                    <span class="badge-prioridad" [class]="'prio-' + item.prioridad">
+                                        {{ item.prioridad | uppercase }}
+                                    </span>
+                                    <!-- Estado -->
+                                    <span class="badge-estado" [class]="'estado-' + item.estado">
+                                        {{ item.estado.replace('_', ' ') | titlecase }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <h4 class="fw-bold fs-6 mb-1 text-dark">{{ item.asunto }}</h4>
+                            <p class="text-muted small mb-2 line-clamp-2">{{ item.descripcion }}</p>
+
+                            <div
+                                class="d-flex align-items-center justify-content-between text-muted xsmall pt-2 border-top">
+                                <span><ion-icon name="person-outline" class="me-1"></ion-icon>{{
+                                    item.usuarioReporta.nombre }}</span>
+                                <span><ion-icon name="time-outline" class="me-1"></ion-icon>{{ item.fecha }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Sin Resultados -->
+                        <div *ngIf="incidenciasFiltradas.length === 0" class="text-center py-5 text-muted">
+                            <ion-icon name="alert-circle-outline" class="display-5 mb-2 text-warning"></ion-icon>
+                            <p class="m-0">No hay incidencias que coincidan con los filtros.</p>
+                        </div>
+                    </div>
+                </div>
+            </ion-col>
+
+            <!-- DETALLE Y GESTIÓN -->
+            <ion-col size="12" sizeMd="6" *ngIf="incidenciaSeleccionada">
+                <div class="bg-white p-4 rounded-4 shadow-sm border-start-highlight">
+                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                        <div>
+                            <span class="badge-id">{{ incidenciaSeleccionada.id }}</span>
+                            <span class="text-muted small ms-2">{{ incidenciaSeleccionada.tipo }}</span>
+                        </div>
+                        <ion-button fill="clear" color="medium" size="small" (click)="cerrarDetalle()">
+                            <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </div>
+
+                    <h3 class="fw-bold mb-3 text-dark">{{ incidenciaSeleccionada.asunto }}</h3>
+
+                    <!-- Información del Usuario -->
+                    <div class="user-info-box p-3 rounded-3 mb-3 bg-light">
+                        <div class="row g-2 small">
+                            <div class="col-6">
+                                <span class="text-muted d-block">Reportado por:</span>
+                                <strong class="text-dark">{{ incidenciaSeleccionada.usuarioReporta.nombre }}</strong>
+                                <div class="text-muted xsmall">{{ incidenciaSeleccionada.usuarioReporta.email }}</div>
+                            </div>
+                            <div class="col-6" *ngIf="incidenciaSeleccionada.usuarioReportado">
+                                <span class="text-muted d-block">Usuario implicado:</span>
+                                <strong class="text-danger">{{ incidenciaSeleccionada.usuarioReportado.nombre
+                                    }}</strong>
+                                <div class="text-muted xsmall">{{ incidenciaSeleccionada.usuarioReportado.email }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción completa -->
+                    <div class="mb-4">
+                        <label class="fw-bold small text-secondary mb-1">Descripción de los hechos:</label>
+                        <p class="p-3 rounded-3 bg-light text-dark small m-0 border" style="line-height: 1.5;">
+                            {{ incidenciaSeleccionada.descripcion }}
+                        </p>
+                    </div>
+
+                    <!-- Cambiar Estado -->
+                    <div class="mb-4">
+                        <label class="fw-bold small text-secondary mb-2 d-block">Cambiar Estado de la
+                            Incidencia:</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn-estado btn-pend"
+                                [class.active]="incidenciaSeleccionada.estado === 'pendiente'"
+                                (click)="cambiarEstado('pendiente')">
+                                Pendiente
+                            </button>
+                            <button class="btn-estado btn-rev"
+                                [class.active]="incidenciaSeleccionada.estado === 'en_revision'"
+                                (click)="cambiarEstado('en_revision')">
+                                En Revisión
+                            </button>
+                            <button class="btn-estado btn-res"
+                                [class.active]="incidenciaSeleccionada.estado === 'resuelta'"
+                                (click)="cambiarEstado('resuelta')">
+                                Resuelta
+                            </button>
+                            <button class="btn-estado btn-des"
+                                [class.active]="incidenciaSeleccionada.estado === 'desestimada'"
+                                (click)="cambiarEstado('desestimada')">
+                                Desestimada
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Respuesta o Notas de Soporte -->
+                    <div class="mb-3">
+                        <label class="fw-bold small text-secondary mb-1">Respuesta para el usuario / Notas
+                            internas:</label>
+                        <textarea [(ngModel)]="respuestaTexto" rows="4" class="form-control custom-textarea"
+                            placeholder="Escribe la solución o resolución para esta incidencia...">
+            </textarea>
+                    </div>
+
+                    <button class="btn-save-incidencia w-100 mt-2" (click)="guardarRespuesta()">
+                        <ion-icon name="checkmark-circle-outline" class="me-2"></ion-icon>
+                        Guardar Respuesta y Actualizar
+                    </button>
+
+                </div>
+            </ion-col>
+        </ion-row>
+
+    </div>
+</ion-content>

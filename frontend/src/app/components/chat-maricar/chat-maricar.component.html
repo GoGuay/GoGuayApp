@@ -43,8 +43,41 @@
                     <p class="mb-0" style="font-size: 0.95rem; line-height: 1.4;">{{ mensaje.texto }}</p>
                 </div>
             </div>
-
         </div>
+
+        <!-- Indicador de "Escribiendo..." mientras la IA responde -->
+        <div *ngIf="cargandoIA && !creandoViajeEstado" class="d-flex align-items-center gap-2">
+            <div class="ia-avatar-bubble shadow-sm rounded-circle p-1 d-flex align-items-center justify-content-center"
+                style="width: 35px; height: 35px;">
+                <ion-icon name="sparkles" class="icon-sparkle-animado" style="font-size: 1.1rem;"></ion-icon>
+            </div>
+            <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center gap-2">
+                <ion-spinner name="dots" color="primary"></ion-spinner>
+                <small class="text-muted fw-semibold">MariCar está pensando...</small>
+            </div>
+        </div>
+
+        <!-- TARJETA VISUAL DE CREACIÓN DE VIAJE -->
+        <div *ngIf="creandoViajeEstado"
+            class="card-creando-viaje p-3 shadow-sm rounded-4 my-2 d-flex align-items-center gap-3"
+            [ngClass]="viajeCreadoExito ? 'exito' : 'procesando'">
+
+            <div class="icon-status-container d-flex align-items-center justify-content-center">
+                <ion-spinner *ngIf="!viajeCreadoExito" name="crescent" color="primary"></ion-spinner>
+                <ion-icon *ngIf="viajeCreadoExito" name="checkmark-circle-outline"
+                    class="text-success display-6"></ion-icon>
+            </div>
+
+            <div class="d-flex flex-column flex-grow-1">
+                <strong class="title-status" style="font-size: 0.95rem;">
+                    {{ viajeCreadoExito ? '¡Viaje Publicado!' : 'Creando tu viaje...' }}
+                </strong>
+                <span class="text-muted" style="font-size: 0.85rem; line-height: 1.3;">
+                    {{ mensajeCargaViaje }}
+                </span>
+            </div>
+        </div>
+
     </div>
 </ion-content>
 
@@ -52,12 +85,12 @@
     <div class="d-flex align-items-center gap-2 px-2">
         <ion-item lines="none" class="flex-grow-1 bg-light rounded-pill custom-input-container">
             <ion-input [(ngModel)]="inputUsuario" (ionInput)="onInputUsuarioChange($event)"
-                (keyup.enter)="enviarMensaje()" placeholder="Escribe tu respuesta..." clearInput="true"
-                style="font-size: 0.95rem; text-transform: capitalize;">
+                (keyup.enter)="enviarMensaje()" placeholder="Responde a MariCar..." clearInput="true"
+                autocapitalize="sentences" [disabled]="creandoViajeEstado" style="font-size: 0.95rem;">
             </ion-input>
         </ion-item>
         <ion-button (click)="enviarMensaje()" shape="round" class="m-0 btn-enviar-maricar"
-            [disabled]="!inputUsuario.trim()">
+            [disabled]="!inputUsuario.trim() || creandoViajeEstado">
             <ion-icon name="send" slot="icon-only"></ion-icon>
         </ion-button>
     </div>

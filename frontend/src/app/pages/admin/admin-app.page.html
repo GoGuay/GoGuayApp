@@ -1,150 +1,197 @@
 <app-navbar-admin></app-navbar-admin>
-<ion-content [fullscreen]="true" class="ion-padding">
+
+<ion-content [fullscreen]="true" class="ion-padding admin-content">
     <div class="admin-container">
 
-        <!-- INFORMACIÓN USUARIO CONTECTADO  -->
-        <ion-row>
+        <!-- CABECERA: USUARIO Y RELOJ -->
+        <div class="admin-header-card p-3 shadow-sm rounded-4 mb-4">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="admin-avatar-bubble shadow-sm">
+                        <img [src]="usuario?.fotoPerfil || avatarDefault" alt="Admin Avatar" />
+                    </div>
+                    <div>
+                        <span class="badge-role">Administrador</span>
+                        <h2 class="m-0 fw-bold title-user">
+                            {{ usuario?.nombre ? (usuario?.nombre + ' ' + (usuario?.apellidos || '')) : 'Panel de
+                            Control' }}
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="clock-badge d-flex align-items-center gap-2 px-3 py-2 rounded-pill">
+                    <ion-icon name="time-outline"></ion-icon>
+                    <span class="fw-bold">{{ hours }}<span class="blink">:</span>{{ minutes }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETAS DE MÉTRICAS RÁPIDAS -->
+        <ion-row class="mb-2">
             <ion-col size="12" size-md="4">
-                <ion-card class="info_user" color="light" (click)="goEvents()">
-                    <ion-card-header>
-                        <ion-card-subtitle>
-                            <span><strong>Administrador: </strong>
-                                {{ usuario?.nombre }} {{ usuario?.apellidos }}
-                            </span>
-                        </ion-card-subtitle>
-                        <ion-card-subtitle class="ion-margin-top">
-                            <i class="fi fi-rr-clock"></i>
-                            <span>
-                                {{ hours }}</span><span class="blink">:</span><span>{{ minutes }}
-                            </span>
-                        </ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
+                <div
+                    class="metric-card card-purple p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="metric-number">{{ listaUsuarios.length }}</span>
+                        <p class="metric-label m-0">Usuarios Registrados</p>
+                    </div>
+                    <div class="metric-icon">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4">
+                <div
+                    class="metric-card card-beige p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="metric-number">{{ mensajesPendientes }}</span>
+                        <p class="metric-label m-0">Mensajes de Soporte</p>
+                    </div>
+                    <div class="metric-icon">
+                        <ion-icon name="mail-unread-outline"></ion-icon>
+                    </div>
+                </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4">
+                <div
+                    class="metric-card card-rose p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="metric-number">{{ usuariosRestringidosCount }}</span>
+                        <p class="metric-label m-0">Usuarios Restringidos</p>
+                    </div>
+                    <div class="metric-icon">
+                        <ion-icon name="warning-outline"></ion-icon>
+                    </div>
+                </div>
             </ion-col>
         </ion-row>
 
-        <!-- ESPACIO INFORMATIVO  -->
-        <ion-row>
+        <!-- BOTONES DE GESTIÓN -->
+        <ion-row class="mb-4">
             <ion-col size="12" size-md="4">
-                <ion-card color="tertiary">
-                    <ion-card-header>
-                        <ion-card-title>{{ listaUsuarios.length }}</ion-card-title>
-                        <ion-card-subtitle>Usuarios Totales</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
+                <button class="btn-gestion-card w-100" (click)="goEvents()">
+                    <ion-icon name="calendar-outline" class="me-2"></ion-icon>
+                    <span>Gestión de Eventos</span>
+                </button>
             </ion-col>
+
             <ion-col size="12" size-md="4">
-                <ion-card color="warning">
-                    <ion-card-header>
-                        <ion-card-title>{{ mensajesPendientes }}</ion-card-title>
-                        <ion-card-subtitle>Mensajes Soporte</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
+                <button class="btn-gestion-card w-100" (click)="goIncidencias()">
+                    <ion-icon name="warning-outline" class="me-2"></ion-icon>
+                    <span>Centro de Incidencias</span>
+                </button>
             </ion-col>
+
             <ion-col size="12" size-md="4">
-                <ion-card color="danger">
-                    <ion-card-header>
-                        <ion-card-title>{{ usuariosRestringidos }}</ion-card-title>
-                        <ion-card-subtitle>Usuarios Restringidos</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
+                <button class="btn-gestion-card w-100" (click)="goEncuestas()">
+                    <ion-icon name="clipboard-outline" class="me-2"></ion-icon>
+                    <span>Ver Encuestas</span>
+                </button>
             </ion-col>
         </ion-row>
 
-        <!-- ACCESOS A GESTIÓN  -->
-        <ion-row>
-            <ion-col size="12" size-md="4">
-                <ion-card class="button_gestion" color="secondary" (click)="goEvents()">
-                    <ion-card-header>
-                        <ion-card-subtitle>Gestión de eventos</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
-            </ion-col>
-
-            <ion-col size="12" size-md="4">
-                <ion-card class="button_gestion" color="secondary">
-                    <ion-card-header>
-                        <ion-card-subtitle>Centro de incidencias</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
-            </ion-col>
-
-            <ion-col size="12" size-md="4">
-                <ion-card class="button_gestion" color="secondary" (click)="goEncuestas()">
-                    <ion-card-header>
-                        <ion-card-subtitle>Ver Encuestas</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
-            </ion-col>
-        </ion-row>
-
-        <section class="ion-margin-top animate__animated animate__fadeIn">
-            <h2><ion-icon name="bar-chart-outline"></ion-icon> Análisis de Satisfacción</h2>
-            <ion-card class="chart-card">
+        <!-- GRÁFICO DE SATISFACCIÓN -->
+        <section class="mb-4">
+            <h3 class="section-title mb-3">
+                <ion-icon name="bar-chart-outline"></ion-icon>
+                Análisis de Satisfacción
+            </h3>
+            <div class="chart-card p-3 shadow-sm rounded-4 bg-white">
                 <div class="chart-container">
                     <canvas #barCanvas></canvas>
                 </div>
                 <div *ngIf="totalEncuestas === 0" class="text-center p-3">
-                    <p class="text-muted small">
-                        <i class="fi fi-rr-info me-1"></i>
-                        Las estadísticas se actualizarán automáticamente conforme lleguen valoraciones.
+                    <p class="text-muted small m-0">
+                        Las estadísticas se actualizarán automáticamente conforme lleguen las valoraciones.
                     </p>
                 </div>
-            </ion-card>
+            </div>
         </section>
 
-        <!-- GESTIÓN DE USUARIOS  -->
-        <section class="ion-margin-top">
-            <h2><ion-icon name="people-outline"></ion-icon> Gestión de Usuarios</h2>
-            <ion-searchbar placeholder="Buscar por nombre o email" (ionInput)="filtrarUsuarios($event)"></ion-searchbar>
+        <!-- GESTIÓN DE USUARIOS -->
+        <section class="mb-4">
+            <h3 class="section-title mb-3">
+                <ion-icon name="people-outline"></ion-icon>
+                Gestión de Usuarios
+            </h3>
 
-            <div class="user-list-container">
-                <ion-list lines="full" class="user-list">
-                    <ion-item *ngFor="let user of listaUsuarios">
-                        <ion-avatar slot="start">
-                            <img [src]="user.fotoPerfil || avatar" />
-                        </ion-avatar>
+            <button class="btn btn-sm text-dark fw-bold" style="background-color: #F0D7B4; border-radius: 20px;"
+                (click)="goGestionUsuarios()">
+                Ver Panel Completo ›
+            </button>
+
+            <div class="bg-white rounded-4 shadow-sm p-3">
+                <ion-searchbar placeholder="Buscar por nombre o email..." (ionInput)="filtrarUsuarios($event)"
+                    class="custom-searchbar mb-2">
+                </ion-searchbar>
+
+                <div class="user-list-container">
+                    <ion-list lines="full" class="user-list bg-transparent">
+                        <ion-item *ngFor="let user of listaUsuariosFiltrados" class="user-item">
+                            <ion-avatar slot="start" class="avatar-user">
+                                <img [src]="user.fotoPerfil || avatarDefault" alt="Foto perfil" />
+                            </ion-avatar>
+
+                            <ion-label>
+                                <h3 class="fw-bold m-0">{{ user.nombre }} {{ user.apellidos || '' }}</h3>
+                                <p class="text-muted small m-0">{{ user.email }}</p>
+                            </ion-label>
+
+                            <span
+                                [class]="user.ya_ha_sido_suspendido ? 'badge-status status-danger' : 'badge-status status-success'"
+                                slot="end">
+                                {{ user.ya_ha_sido_suspendido ? 'Restringido' : 'Activo' }}
+                            </span>
+
+                            <ion-button fill="clear" slot="end" (click)="verDetalles(user)" color="dark">
+                                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                            </ion-button>
+
+                            <ion-button fill="clear" slot="end" (click)="toggleRestriccion(user)"
+                                [color]="user.ya_ha_sido_suspendido ? 'success' : 'danger'">
+                                <ion-icon
+                                    [name]="user.ya_ha_sido_suspendido ? 'lock-open-outline' : 'lock-closed-outline'"
+                                    slot="icon-only"></ion-icon>
+                            </ion-button>
+                        </ion-item>
+
+                        <div *ngIf="listaUsuariosFiltrados.length === 0" class="text-center py-4 text-muted small">
+                            No se encontraron usuarios coincidentes.
+                        </div>
+                    </ion-list>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTRO DE MENSAJES -->
+        <section class="mb-4">
+            <h3 class="section-title mb-3">
+                <ion-icon name="mail-unread-outline"></ion-icon>
+                Centro de Mensajes
+            </h3>
+
+            <div class="bg-white rounded-4 shadow-sm p-2">
+                <ion-list lines="full" class="bg-transparent">
+                    <ion-item button *ngFor="let msg of mensajes" (click)="abrirMensaje(msg)" class="mensaje-item">
                         <ion-label>
-                            <h3>{{ user.nombre }}</h3>
-                            <p>{{ user.email }}</p>
+                            <h3 class="fw-bold m-0">{{ msg.asunto }}</h3>
+                            <p class="text-muted small m-0">{{ msg.remitente }} — {{ msg.fecha }}</p>
                         </ion-label>
-
-                        <ion-badge [color]="user.ya_ha_sido_suspendido ? 'danger' : 'success'" slot="end">
-                            {{ user.ya_ha_sido_suspendido ? 'Restringido' : 'Activo' }}
-                        </ion-badge>
-
-                        <ion-button fill="clear" slot="end" (click)="verDetalles(user)">
-                            <ion-icon name="eye-outline"></ion-icon>
-                        </ion-button>
-                        <ion-button fill="clear" color="medium" slot="end" (click)="toggleRestriccion(user)">
-                            <ion-icon
-                                [name]="user.ya_ha_sido_suspendido  ? 'lock-open-outline' : 'lock-closed-outline'"></ion-icon>
-                        </ion-button>
+                        <span *ngIf="!msg.leido" class="badge-status status-new" slot="end">Nuevo</span>
                     </ion-item>
                 </ion-list>
             </div>
-
         </section>
 
-        <!-- CENTRO DE MENSAJES  -->
-        <section class="ion-margin-top">
-            <h2><ion-icon name="mail-unread-outline"></ion-icon> Centro de Mensajes</h2>
-            <ion-card class="user-list-container">
-                <ion-list>
-                    <ion-item button *ngFor="let msg of mensajes" (click)="abrirMensaje(msg)" class="mensajes">
-                        <ion-label>
-                            <h3>{{ msg.asunto }}</h3>
-                            <p>{{ msg.remitente }} - {{ msg.fecha }}</p>
-                        </ion-label>
-                        <ion-note slot="end" color="primary" *ngIf="!msg.leido">Nuevo</ion-note>
-                    </ion-item>
-                </ion-list>
-            </ion-card>
-        </section>
-    </div>
+        <!-- BOTÓN IR A APP -->
+        <div class="d-flex justify-content-center my-4">
+            <button class="btn-go-app" (click)="goGuayApp()">
+                <span>Ir a la App GoGuay</span>
+                <ion-icon name="arrow-forward-outline" class="ms-2"></ion-icon>
+            </button>
+        </div>
 
-    <!-- BOTÓN PARA IR A APP PRINCIPAL  -->
-    <div class="d-flex justify-content-center mt-3">
-        <button class="btn btn_bg" (click)="goGuayApp()">Ir a GoGuay</button>
     </div>
 </ion-content>

@@ -1,91 +1,182 @@
-ion-content {
-    --display: flex;
-    --align-items: center;
-    --justify-content: center;
-}
-
-ion-button {
-    --border-radius: 35px !important;
-}
-
-.admin-bg {
-    --background: #f4f5f8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.form_container {
-    width: 100%;
-    max-width: 350px;
+ion-content.admin-bg {
+  --background: #E9EDD5 !important;
 }
 
 .login-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100%;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 16px;
+}
+
+.login-card {
+  background: #ffffff;
+  border-radius: 35px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+.icon-shield-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: #F0D7B4;
+  border-radius: 50%;
+  margin-bottom: 8px;
+
+  ion-icon {
+    font-size: 32px;
+    color: #2c2c2c;
+  }
+}
+
+.login-header {
+  h2 {
+    color: #2c2c2c;
+    font-size: 1.35rem;
+  }
+}
+
+.form-label-custom {
+  display: block;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5a6268;
+  margin-left: 12px;
+  margin-bottom: 4px;
 }
 
 .custom-input {
-    border-radius: 35px !important;
-    --background: #f9f9f9 !important;
-    --border-radius: 35px;
-    --highlight-height: 0;
-    --border-width: 0;
-    margin-bottom: 15px;
-    text-align: left;
-}
+  --background: #f8f9fa !important;
+  --border-radius: 35px !important;
+  --padding-start: 16px !important;
+  --padding-end: 16px !important;
+  --highlight-height: 0px !important;
+  --inner-padding-end: 0px !important;
+  --border-width: 0px !important;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 35px !important;
+  transition: all 0.25s ease;
 
-.custom-input input {
+  &:focus-within {
+    border-color: #b3b5e6 !important;
+    box-shadow: 0 0 0 3px rgba(179, 181, 230, 0.25) !important;
+  }
+
+  .input-icon {
+    color: #888888;
+    font-size: 1.1rem;
+    margin-right: 8px;
+  }
+
+  input {
     border: none !important;
     outline: none !important;
-    background: transparent;
+    box-shadow: none !important;
+    background: transparent !important;
     width: 100%;
-    padding: 10px 0;
-    font-family: inherit;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    color: #2c2c2c;
 
-}
-
-.custom-input input:focus {
-    outline: none !important;
-    border: none !important;
-}
-
-.login-container {
-    max-width: 300px;
-    margin: 10% auto;
-    text-align: center;
-
-    .header-section {
-        margin-bottom: 30px;
-
-        .logo-icon {
-            font-size: 64px;
-            color: var(--ion-color-primary);
-        }
-
-        h1 {
-            font-weight: 800;
-            color: #222;
-        }
-
-        p {
-            color: #666;
-        }
+    &:focus,
+    &:active,
+    &:-webkit-autofill {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      -webkit-box-shadow: 0 0 0px 1000px #f8f9fa inset !important;
     }
+  }
 }
 
-.primary-gradient {
-    --background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-    font-weight: bold;
+::ng-deep {
+  ion-item.custom-input {
+    .item-native {
+      --highlight-background: transparent !important;
+      --inner-border-width: 0px !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    &:checked ~ .checkmark {
+      background-color: #b3b5e6;
+      border-color: #b3b5e6;
+
+      &:after {
+        display: block;
+      }
+    }
+  }
+
+  .checkmark {
+    height: 18px;
+    width: 18px;
+    background-color: #ffffff;
+    border: 1.5px solid #cccccc;
+    border-radius: 6px;
+    margin-right: 8px;
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.btn-admin-submit {
+  --background: #b3b5e6 !important;
+  --color: #ffffff !important;
+  --border-radius: 35px !important;
+  font-weight: 700;
+  margin: 0;
+  box-shadow: 0 6px 18px rgba(179, 181, 230, 0.4);
+
+  &[disabled] {
+    opacity: 0.7;
+  }
 }
 
 .infoAdmin {
-    font-size: 14px;
-    color: #555;
-    margin-top: 20px;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.btn-volver {
+  --color: #5a6268;
+  font-weight: 600;
+  --border-radius: 35px;
 }

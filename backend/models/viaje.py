@@ -43,6 +43,16 @@ class Viaje(db.Model):
             existe = Puntuacion.query.filter_by(viaje_id=self.id, evaluador_id=current_user_id).first()
             ya_puntuado = existe is not None
 
+        usuario_creador_data = None
+        if self.usuario:
+            usuario_creador_data = {
+                "id": self.usuario.id,
+                "nombre": getattr(self.usuario, 'nombre', ''),
+                "email": getattr(self.usuario, 'email', ''),
+                "fotoPerfil": getattr(self.usuario, 'fotoPerfil', None),
+                "puntuacion_promedio": getattr(self.usuario, 'estrellas_por_opiniones', 0)
+            }
+
         return {
             "id": self.id,
             "origen": self.origen,
@@ -51,27 +61,22 @@ class Viaje(db.Model):
             "precio_viaje": self.precio_viaje,
             "hora_salida": self.hora_salida,
             "hora_llegada": self.hora_llegada,
-            "fecha_salida": self.fecha_salida.isoformat(),
+            "fecha_salida": self.fecha_salida.isoformat() if self.fecha_salida else None,
             "duracion_viaje": self.duracion_viaje,
             "ruta_seleccionada": self.ruta_seleccionada,
             "estado_viaje": self.estado_viaje,
             "usuario_id": self.usuario_id,
             "vehiculo": self.vehiculo,
             "reserva_automatica": self.reserva_automatica,
-            "usuario_creador": {
-                "id": self.usuario.id,
-                "nombre": self.usuario.nombre,
-                "email": self.usuario.email,
-                "fotoPerfil": self.usuario.fotoPerfil,
-                "puntuacion_promedio": self.usuario.estrellas_por_opiniones
-            },
+            "usuario_creador": usuario_creador_data,
             "acompanantes": [
                 {
                     "id": p.usuario.id, 
                     "nombre": p.usuario.nombre, 
-                    "fotoPerfil": p.usuario.fotoPerfil
+                    "fotoPerfil": getattr(p.usuario, 'fotoPerfil', None)
                 }
-                for p in self.pasajeros if p.estado == 'aceptado'
+                for p in self.pasajeros 
+                if p.usuario and p.estado == 'aceptado'
             ],
             "solicitudes_pendientes": [
                 {
@@ -80,10 +85,11 @@ class Viaje(db.Model):
                     "nombre": p.usuario.nombre,
                     "estado": p.estado
                 }
-                for p in self.pasajeros if p.estado == 'pendiente'
+                for p in self.pasajeros 
+                if p.usuario and p.estado == 'pendiente'
             ],
             "estado_solicitud_propia": self.get_estado_para_usuario(current_user_id),
-            "historial_cambios": [h.serialize() for h in self.historial_cambios],
+            "historial_cambios": [h.serialize() for h in self.historial_cambios] if self.historial_cambios else [],
             "ya_puntuado": ya_puntuado,
-            "created_at": self.created_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }

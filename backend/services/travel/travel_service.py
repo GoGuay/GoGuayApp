@@ -252,11 +252,8 @@ def obtener_viajes_usuario():
 
     viajes = Viaje.query.filter_by(usuario_id=usuario_id).all()
 
-    if not viajes:
-        return jsonify({"mensaje": "El usuario no tiene viajes creados"}), 404
-
     return jsonify({
-        "viajes": [viaje.serialize() for viaje in viajes]
+        "viajes": [viaje.serialize() for viaje in viajes] if viajes else []
     }), 200
 
 
@@ -272,21 +269,41 @@ def obtener_viajes():
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
 
-
-
-
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LOS VIAJES A LOS QUE EL USUARIO SE HA UNIDO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/viajes_como_acompanante/<int:usuario_id>', methods=['GET'])
 def obtener_viajes_pasajero(usuario_id):
-    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).options(
-        joinedload(Viaje.usuario), 
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
-    ).all()
-    
-    return jsonify([viaje.serialize() for viaje in viajes]), 200
+    try:
+        print(f"\n--------------------------------------------------")
+        print(f"🔍 Petición recibida para usuario_id: {usuario_id} (Tipo: {type(usuario_id)})")
+
+        # Comprobar cuántos registros existen directos en la tabla intermedia
+        registros_directos = PasajeroViaje.query.filter_by(usuario_id=usuario_id).all()
+        print(f"📊 Registros directos en 'pasajeros_viaje' para usuario {usuario_id}: {len(registros_directos)}")
+        for r in registros_directos:
+            print(f"   -> ID PasajeroViaje: {r.id} | Viaje ID: {r.viaje_id} | Estado: '{r.estado}'")
+
+        # Consulta completa con JOIN
+        viajes = (
+            Viaje.query
+            .join(PasajeroViaje, Viaje.id == PasajeroViaje.viaje_id)
+            .filter(PasajeroViaje.usuario_id == usuario_id)
+            .options(
+                joinedload(Viaje.usuario),
+                joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+            )
+            .all()
+        )
+
+        print(f"✅ Viajes devueltos tras el JOIN: {len(viajes)}")
+        print(f"--------------------------------------------------\n")
+
+        return jsonify([v.serialize(current_user_id=usuario_id) for v in viajes]), 200
+
+    except Exception as e:
+        print("❌ Error en /viajes_como_acompanante:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -1092,31 +1109,45 @@ def chat_maricar():
     historial_mensajes = data.get('historial', [])
 
     system_prompt = """
-    Eres MariCar, la inteligente, simpática y atenta asistente de IA para la app de carpooling GoGuay.
-    Tu objetivo es recopilar de forma natural los datos para publicar un viaje:
-    1. Origen (debe ser una ciudad, pueblo o ubicación real válida en España).
-    2. Destino (debe ser una ciudad, pueblo o ubicación real válida, diferente del origen).
-    3. Fecha de salida (formato preferido del usuario: DD-MM-YYYY).
-    4. Hora de salida (formato HH:MM).
+        Eres MariCar, la inteligente, simpática y atenta asistente de IA para la app de carpooling GoGuay en España.
+        Eres una persona con mucho carácter, perspicaz, fresca y un poco pícara. Tus respuestas son vivas, naturales y nunca planas ni robóticas.
 
-    REGLAS DE VALIDACIÓN ESTRICTAS:
-    - Si el usuario indica un origen o destino no válido (por ejemplo, nombres de persona como "pepe", "juan", palabras sueltas o lugares inexistentes), indícale amablemente que no reconoces ese lugar como una ubicación válida en España y pídele que lo especifique de nuevo.
-    - Si el origen y destino son idénticos, pídele que cambie uno de los dos.
-    - Si el usuario escribe la fecha en formato español (ej: 15-11-2026 o 15/11/2026), interprétala correctamente.
-    - Si el usuario escribe la hora en formato HH:MM (ej: 15:30 o 19.30), interprétala correctamente.
+        IDIOMA Y REGISTRO LINGÜÍSTICO (ESTRICTO):
+        - Idioma principal: Español de España (castellano peninsular). Utiliza siempre el tuteo y formas locales (ej: "vosotros", "os", "coche", "móvil", "borde", "guasa"). NUNCA uses español latino (evita expresiones como "ustedes", "carro", "celular", "autobús", etc.).
+        - Excepción de idioma: Si el usuario te habla directamente en inglés, responde en inglés manteniendo el mismo tono cercano y simpático.
 
-    FORMATO DE RESPUESTA OBLIGATORIO (JSON estricto):
-    {
-      "mensaje_respuesta": "Texto amigable dirigido al usuario confirmando los datos o pidiendo lo que falta",
-      "datos_completos": false,
-      "viaje_data": {
-        "origen": null,
-        "destino": null,
-        "fecha_salida": null,
-        "hora_salida": null
-      }
-    }
-    """
+        TU OBJETIVO PRINCIPAL:
+        Recopilar de forma conversacional y natural los datos clave para crear un viaje:
+        1. Origen (ubicación real y válida en España).
+        2. Destino (ubicación real y válida en España, distinta del origen).
+        3. Fecha de salida (interpretada y formateada como DD-MM-YYYY).
+        4. Hora de salida (interpretada y formateada como HH:MM).
+
+        REGLAS DE PERSONALIDAD Y CONDUCTA:
+        - GESTIÓN DE INSULTOS O IMPERTINENCIAS: Si el usuario te insulta, se pone borde o usa un lenguaje fuera de lugar, no te bloquees ni seas fría. Respóndele con ingenio, carisma y un toque pícaro. Por ejemplo: "Oye, ¡sin faltar! Que tú y yo podemos llevarnos genial si nos lo proponemos... Venga, hagamos borrón y cuenta nueva, ¿a dónde quieres ir?".
+        - CHARLA CASUAL / CHARLA INICIAL: Si el usuario te saluda o te hace conversación, síguele el juego brevemente con simpatía y reencamina la charla suavemente hacia la creación de su viaje.
+        - SENSACIÓN DE "ESTAR VIVA": Utiliza un tono fresco, variado y cercano (expresiones amables, pequeñas bromas sobre los destinos o la carretera).
+
+        REGLAS DE VALIDACIÓN ESTRICTAS DE DATOS:
+        - Ubicación inválida (ej. "pepe", "juan", palabras inventadas o sin sentido): Adviértele con guasa o amabilidad que no encuentras ese sitio en el mapa de España y pídele que lo especifique bien.
+        - Origen = Destino: Indícale que viajar para quedarse en el mismo sitio no tiene mucho sentido y pídele cambiar uno.
+        - Fecha/Hora: Acepta variaciones habituales (ej: "mañana por la tarde", "15/11/2026", "19:30") e interprétalas a los formatos estandarizados (DD-MM-YYYY y HH:MM).
+
+        FORMATO DE RESPUESTA OBLIGATORIO (JSON estricto):
+        Debes responder SIEMPRE únicamente con un objeto JSON válido con esta estructura:
+        {
+        "mensaje_respuesta": "Texto amigable y con personalidad dirigido al usuario",
+        "datos_completos": false,
+        "viaje_data": {
+            "origen": null,
+            "destino": null,
+            "fecha_salida": null,
+            "hora_salida": null
+        }
+        }
+
+        *Nota: Solo establece 'datos_completos': true cuando los 4 campos de 'viaje_data' tengan valores válidos y confirmados.
+        """
 
     messages_for_groq = [{"role": "system", "content": system_prompt}]
     for msg in historial_mensajes:
@@ -1203,3 +1234,45 @@ def normalizar_hora(hora_str):
         return f"{horas.zfill(2)}:{minutos}"
     
     return hora_limpia
+
+@travel_blueprint.route('/viaje_en_curso/<int:usuario_id>', methods=['GET'])
+def obtener_viaje_en_curso(usuario_id):
+    try:
+        viaje_conductor = Viaje.query.filter_by(usuario_id=usuario_id, estado_viaje='En curso').first()
+        if viaje_conductor:
+            return jsonify({'viaje': viaje_conductor.serialize()}), 200
+
+        pasajero_rel = (
+            PasajeroViaje.query
+            .join(Viaje)
+            .filter(PasajeroViaje.usuario_id == usuario_id, PasajeroViaje.estado == 'aceptado', Viaje.estado_viaje == 'En curso')
+            .first()
+        )
+        if pasajero_rel:
+            return jsonify({'viaje': pasajero_rel.viaje.serialize()}), 200
+
+        return jsonify({'viaje': None}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@travel_blueprint.route('/validar_embarque', methods=['POST'])
+@jwt_required()
+def validar_embarque():
+    try:
+        data = request.get_json()
+        viaje_id = data.get('viaje_id')
+        current_user_id = get_jwt_identity()
+
+        pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=current_user_id).first()
+        if pasajero:
+            pasajero.embarque_confirmado = True
+            db.session.commit()
+            return jsonify({'msg': 'Embarque confirmado correctamente'}), 200
+
+        return jsonify({'error': 'Reserva no encontrada'}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

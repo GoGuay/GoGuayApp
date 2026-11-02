@@ -164,6 +164,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin/eventos-admin/eventos-admin.page').then((m) => m.EventosAdmin),
   },
   {
+    path: 'incidencias-admin',
+    loadComponent: () => import('./pages/admin/incidencias-admin/incidencias-admin.page').then((m) => m.IncidenciasAdminPage),
+  },
+  {
+    path: 'gestion-usuarios-admin',
+    loadComponent: () => import('./pages/admin/gestion-usuarios-admin/gestion-usuarios-admin.page').then((m) => m.GestionUsuariosAdminPage),
+  },
+  {
     path: 'pago-reserva/:id',
     loadComponent: () => import('./pages/pago-reserva/pago-reserva.page').then((m) => m.PagoReservaPage),
   },

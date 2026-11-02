@@ -1,44 +1,62 @@
-<ion-content class="ion-padding">
+<ion-content class="admin-bg ion-padding">
     <div class="login-wrapper">
-        <div class="login-header">
-            <ion-icon name="shield-lock-outline" color="primary"></ion-icon>
-            <h1>Portal de Administración</h1>
-            <p>Gestión de GoGuay</p>
-        </div>
-
-        <form class="form_container" [formGroup]="adminForm" (ngSubmit)="login()">
-            <ion-list lines="none">
-                <ion-item class="custom-input">
-                    <ion-label position="stacked">Email Corporativo</ion-label>
-                    <input formControlName="email" type="email" placeholder="nombre@app.com">
-                </ion-item>
-
-                <ion-item class="custom-input ion-margin-top">
-                    <ion-label position="stacked">Contraseña</ion-label>
-                    <input formControlName="password" type="password" placeholder="••••••••">
-                </ion-item>
-
-
-                <input type="checkbox" class="form-check-input me-2" id="check" formControlName="check" />
-                <label class="form-check-label" for="check">Recuérdame</label>
-
-
-                <div class="ion-margin-top">
-                    <ion-button expand="block" type="submit" [disabled]="spinner_de_carga">
-                        <span *ngIf="!spinner_de_carga">Acceder al Panel</span>
-                        <app-spinner *ngIf="spinner_de_carga"></app-spinner>
-                    </ion-button>
+        <div class="login-card shadow-sm">
+            
+            <div class="login-header mb-4">
+                <div class="icon-shield-container mb-2">
+                    <ion-icon name="shield-lock-outline"></ion-icon>
                 </div>
-            </ion-list>
-        </form>
+                <h2 class="fw-bold mb-1">Portal de Administración</h2>
+                <p class="text-muted small">Gestión de la plataforma GoGuay</p>
+            </div>
 
-        <div class="footer-links">
-            <p class="text-center infoAdmin">
-                Acceso al portal de administración de <strong>GoGuay App</strong>. Solo el personal autorizado puede acceder a este espacio.
-            </p>
-            <ion-button fill="clear" color="medium" size="small" (click)="navCtrl.back()">
-                Volver a GoGuay
-            </ion-button>
+            <form class="form_container" [formGroup]="adminForm" (ngSubmit)="login()">
+                <ion-list lines="none" class="bg-transparent">
+                    
+                    <div class="input-group-custom mb-3">
+                        <label class="form-label-custom">Email Corporativo</label>
+                        <ion-item class="custom-input">
+                            <ion-icon name="mail-outline" slot="start" class="input-icon"></ion-icon>
+                            <input formControlName="email" type="email" placeholder="nombre@app.com" autocomplete="off">
+                        </ion-item>
+                    </div>
+
+                    <div class="input-group-custom mb-3">
+                        <label class="form-label-custom">Contraseña</label>
+                        <ion-item class="custom-input">
+                            <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+                            <input formControlName="password" type="password" placeholder="••••••••">
+                        </ion-item>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-start my-3 px-2">
+                        <label class="checkbox-container small text-muted">
+                            <input type="checkbox" formControlName="check" id="check">
+                            <span class="checkmark"></span>
+                            Recuérdame en este equipo
+                        </label>
+                    </div>
+
+                    <div class="mt-4">
+                        <ion-button expand="block" type="submit" class="btn-admin-submit" [disabled]="spinner_de_carga">
+                            <span *ngIf="!spinner_de_carga">Acceder al Panel</span>
+                            <app-spinner *ngIf="spinner_de_carga"></app-spinner>
+                        </ion-button>
+                    </div>
+
+                </ion-list>
+            </form>
+
+            <div class="footer-links mt-4 pt-2">
+                <p class="text-center infoAdmin small">
+                    Acceso exclusivo para el personal de administración de <strong>GoGuay App</strong>.
+                </p>
+                <ion-button fill="clear" color="dark" size="small" (click)="navCtrl.back()" class="btn-volver">
+                    <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+                    Volver a GoGuay
+                </ion-button>
+            </div>
+
         </div>
     </div>
 </ion-content>
