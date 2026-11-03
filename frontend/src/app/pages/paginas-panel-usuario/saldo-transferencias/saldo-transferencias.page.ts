@@ -63,7 +63,7 @@ export class SaldoTransferenciasPage implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private dialog: MatDialog,
-     private messageService: MessageService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -261,17 +261,20 @@ export class SaldoTransferenciasPage implements OnInit {
   onInputChange(valorSeleccionado?: any) {
     if (typeof valorSeleccionado === 'object' && valorSeleccionado !== null) {
       this.opcion_retirada_elegida = valorSeleccionado.valor;
-      this.modalConfirmarTransferencia(valorSeleccionado.desripcion)
+      this.modalConfirmarTransferencia(valorSeleccionado.desripcion);
     } else {
       this.opcion_retirada_elegida = valorSeleccionado;
     }
   }
 
-
   // TODO¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!
   modalConfirmarTransferencia(valorSeleccionado?: string) {
     this.translate
-      .get(['Transferencia a tu favor', `Vas a hacer una transferencia a través de........${valorSeleccionado}`, 'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'])
+      .get([
+        'Transferencia a tu favor',
+        `Vas a hacer una transferencia a través de........${valorSeleccionado}`,
+        'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION',
+      ])
       .subscribe((translations) => {
         const titulo = translations['Transferencia a tu favor'];
         const mensaje = translations[`Vas a hacer una transferencia a través de........${valorSeleccionado}`];
@@ -289,22 +292,15 @@ export class SaldoTransferenciasPage implements OnInit {
       });
   }
 
-    transferirSaldoMonedero() {
+  transferirSaldoMonedero() {
     if (!this.userData?.usuario?.id) return;
     this.monederoService.transferenciaSaldoMonedero(this.userData.usuario.id).subscribe({
       next: (res) => {
-        console.log('Respuesta backend eliminar usuario: ', res);
-        localStorage.clear();
-        this.userService.setUsuarioData(null);
-        this.router.navigate(['/home'], {
-          queryParams: { cuentaEliminada: 'true' },
-          replaceUrl: true,
-        });
+        console.log('Respuesta backend al realizar transferencia: ', res);
       },
       error: (err) => {
-        this.cargandoEliminacion = false;
-        const tituloError = err.error?.error || 'No se pudo eliminar';
-        const detalleError = err.error?.motivo || err.error?.message || 'Revisa los requisitos para poder eliminar la cuenta.';
+        const tituloError = err.error?.error || 'Transferencia no realizada';
+        const detalleError = err.error?.motivo || err.error?.message || 'Ha habido un error al hacer la transferencia.';
 
         this.messageService.add({
           severity: 'error',
@@ -312,7 +308,6 @@ export class SaldoTransferenciasPage implements OnInit {
           detail: detalleError,
           life: 5000,
         });
-
       },
     });
   }
