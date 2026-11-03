@@ -78,9 +78,9 @@ export class AjustesAplicacionPage implements OnInit {
   cvvTarjeta: string = '';
 
   metodoCobroPredeterminado: string = 'transferencia';
-  cobroEmailPaypal: string = '';
-  cobroIBAN: string = '';
-  cobroTitular: string = '';
+  cobroEmailPaypal: undefined | string;
+  numero_cuenta_bancaria: undefined | string;
+  titular_cuenta_bancaria: undefined | string;
 
   iaActiva: boolean = true;
   asistenteActiva: boolean = true;
@@ -126,6 +126,11 @@ export class AjustesAplicacionPage implements OnInit {
     this.asistenteActiva = savedAsistenteSetting === null ? true : savedAsistenteSetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (this.userData){
+      this.cobroEmailPaypal = this.userData.usuario?.cobro_paypal_email
+      this.titular_cuenta_bancaria = this.userData.usuario?.cobro_titular
+      this.numero_cuenta_bancaria = this.userData.usuario?.cobro_iban
+    }
     this.obtenerUsuario();
   }
 
@@ -432,8 +437,8 @@ export class AjustesAplicacionPage implements OnInit {
     const datosCobro = {
       metodo_cobro_preferido: this.metodoCobroPredeterminado,
       cobro_paypal_email: this.cobroEmailPaypal,
-      cobro_iban: this.cobroIBAN,
-      cobro_titular: this.cobroTitular,
+      cobro_iban: this.numero_cuenta_bancaria,
+      cobro_titular: this.titular_cuenta_bancaria,
     };
 
     this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({

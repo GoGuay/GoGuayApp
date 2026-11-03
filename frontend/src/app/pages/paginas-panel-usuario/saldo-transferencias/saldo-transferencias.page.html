@@ -18,39 +18,83 @@
 
     <ion-grid>
       <!-- Bloque de Saldo Actual -->
-      <ion-row class="d-flex justify-content-center mb-4">
-        <div class="card-saldo-box text-center p-4 shadow-sm w-50">
-          <h3>TU SALDO</h3>
-          <span
-            *ngIf="monedero; else sinSaldo"
-            class="d-flex justify-content-center text-primary"
-            style="font-size: 32px; font-weight: bold"
-          >
-            {{ monedero.saldo | number:'1.2-2' }} €
-          </span>
-          <ng-template #sinSaldo>
+      <div class="d-flex justify-content-center">
+        <ion-row class="card-saldo-box">
+          <ion-col size="4">
+            <h3>TU SALDO</h3>
             <span
-              class="d-flex justify-content-center text-muted"
-              style="font-size: 24px; font-weight: bold"
+              *ngIf="monedero; else sinSaldo"
+              class="d-flex justify-content-center text-primary"
+              style="font-size: 32px; font-weight: bold"
             >
-              {{ 0 | currency: 'EUR' }}
+              {{ monedero.saldo | number:'1.2-2' }} €
             </span>
-          </ng-template>
-          <p class="d-flex justify-content-center">Recarga tu monedero:</p>
-          <div class="d-flex justify-content-center mb-3">
-            <input
-              type="number"
-              class="form-control form-input text-center fw-bold text-primary"
-              [(ngModel)]="cantidadRecarga"
-              min="1"
-              step="5"
-              placeholder="Cantidad a recargar (€)"
-              style="max-width: 220px; font-size: 1.1rem"
-            />
-          </div>
-          <div id="paypal-button-container"></div>
-        </div>
-      </ion-row>
+            <ng-template #sinSaldo>
+              <span
+                class="d-flex justify-content-center text-muted"
+                style="font-size: 24px; font-weight: bold"
+              >
+                {{ 0 | currency: 'EUR' }}
+              </span>
+            </ng-template>
+          </ion-col>
+          <ion-col size="6">
+            <ion-row class="d-flex justify-content-center">
+              <p class="d-flex justify-content-center">Recarga tu monedero:</p>
+              <div class="d-flex justify-content-center mb-3">
+                <input
+                  type="number"
+                  class="form-control form-input text-center fw-bold text-primary"
+                  [(ngModel)]="cantidadRecarga"
+                  (blur)="onCantidadChange()"
+                  min="5"
+                  step="5"
+                  placeholder="Cantidad a recargar (€)"
+                  style="max-width: 220px; font-size: 1.1rem"
+                />
+              </div>
+              <div id="paypal-button-container"></div>
+            </ion-row>
+            <mat-divider class="mt-3 mb-3"></mat-divider>
+            <ion-row class="d-flex justify-content-center">
+              <p class="d-flex justify-content-center">Retira tu saldo</p>
+              <div class="d-flex justify-content-center mb-3">
+                <input
+                  type="number"
+                  class="form-control form-input text-center fw-bold text-primary"
+                  [(ngModel)]="cantidadRecarga"
+                  min="1"
+                  step="5"
+                  placeholder="Cantidad a recargar (€)"
+                  style="max-width: 220px; font-size: 1.1rem"
+                />
+              </div>
+              <div></div>
+              <button
+              *ngIf="tiene_cuenta_paypal"
+                type="button"
+                class="btn btn_bg mb-3 mt-2"
+              >
+                Retirar a Paypal
+              </button>
+              <button
+              *ngIf="tiene_cuenta_bancaria"
+                type="button"
+                class="btn btn_bg mb-3 mt-2"
+              >
+                Transferir a cuenta
+              </button>
+              <select
+              *ngIf="tiene_ambas"
+              >
+                <option>Selecciona una</option>
+                <option>Paypal</option>
+                <option>Cuenta</option>
+              </select>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </div>
 
       <!-- Tabla de Movimientos del Monedero -->
       <ion-row class="d-flex justify-content-center">

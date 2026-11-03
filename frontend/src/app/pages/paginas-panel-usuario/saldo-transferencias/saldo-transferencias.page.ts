@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonRow, IonGrid } from '@ionic/angular/standalone';
+import { IonContent, IonRow, IonGrid, IonCol } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -9,13 +9,15 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MovimientosMonedero } from 'src/app/models/movimientos_monedero/movimientos-monedero.model';
+import { MatDivider } from '@angular/material/divider';
+import { log } from 'console';
 declare var paypal: any;
 @Component({
   selector: 'app-saldo-transferencias',
   templateUrl: './saldo-transferencias.page.html',
   styleUrls: ['./saldo-transferencias.page.scss'],
   standalone: true,
-  imports: [IonGrid, IonRow, IonContent, CommonModule, FormsModule, NavbarComponent, TranslateModule],
+  imports: [IonCol, IonGrid, IonRow, IonContent, CommonModule, FormsModule, NavbarComponent, TranslateModule, MatDivider],
 })
 export class SaldoTransferenciasPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -23,7 +25,11 @@ export class SaldoTransferenciasPage implements OnInit {
 
   monedero: any = null;
   movimientos: MovimientosMonedero[] = [];
-  cantidadRecarga: number = 10;
+  cantidadRecarga: number = 5;
+
+  tiene_cuenta_paypal: boolean = false;
+  tiene_cuenta_bancaria: boolean = false;
+  tiene_ambas: boolean = false;
 
   private usuarioSub!: Subscription;
 
@@ -37,6 +43,28 @@ export class SaldoTransferenciasPage implements OnInit {
   ngOnInit() {
     this.usuarioSub = this.userService.usuario$.subscribe((usuarioActual) => {
       if (usuarioActual) {
+        const tienePayPal = !!usuarioActual.cobro_paypal_email;
+        const tieneBanco = !!(usuarioActual.cobro_titular && usuarioActual.cobro_iban);
+
+        console.log('Usuario actual: ', usuarioActual);
+        if (tienePayPal && tieneBanco) {
+          this.tiene_cuenta_paypal = false;
+          this.tiene_cuenta_bancaria = false;
+          this.tiene_ambas = true;
+        } else if (tienePayPal) {
+          this.tiene_cuenta_paypal = true;
+          this.tiene_cuenta_bancaria = false;
+          this.tiene_ambas = false;
+        } else if (tieneBanco) {
+          this.tiene_cuenta_paypal = false;
+          this.tiene_cuenta_bancaria = true;
+          this.tiene_ambas = false;
+        } else {
+          this.tiene_cuenta_paypal = false;
+          this.tiene_cuenta_bancaria = false;
+          this.tiene_ambas = false;
+        }
+
         this.userData = { usuario: usuarioActual };
         this.userLoggedIn = true;
         this.cargarMonedero();
@@ -190,6 +218,17 @@ export class SaldoTransferenciasPage implements OnInit {
         }
       },
     });
+  }
+
+  onCantidadChange() {
+    if (!this.cantidadRecarga || this.cantidadRecarga <= 0) {
+      this.cantidadRecarga = 5; // Mínimo por defecto
+    }
+    const container = document.getElementById('paypal-button-container');
+    if (container) {
+      container.innerHTML = '';
+    }
+    this.renderPaypal();
   }
 
   obtener_movimientos_monedero() {}

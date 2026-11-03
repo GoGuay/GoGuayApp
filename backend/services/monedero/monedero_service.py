@@ -263,6 +263,33 @@ def transferencia_desde_monedero(usuario_id):
     elif metodo_transferencia == 'paypal':
         if not usuario.cobro_paypal_email or usuario.cobro_paypal_email.strip().lower() != cuenta_destino.strip().lower():
            return jsonify({"error": "La cuenta de PayPal no coincide con la registrada por el usuario"}), 400
+        token = get_access_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        payout_payload = {
+            "sender_batch_header": {
+                "sender_batch_id": f"payout_{usuario_id}_{int(datetime.now(timezone.utc).timestamp())}",
+                "email_subject": "¡Has recibido una transferencia de GoGuay!",
+                "email_message": "Tienes fondos disponibles procedentes de tu monedero de GoGuay."
+            },
+            "items": [{
+                "recipient_type": "EMAIL",
+                "amount": {
+                    "value": f"{cantidad_a_retirar:.2f}",
+                    "currency": "EUR"
+                },
+                "receiver": cuenta_destino, # El email de PayPal del usuario
+                "note": "Retirada de saldo de monedero GoGuay",
+                "sender_item_id": f"transfer_{usuario_id}"
+            }]
+        }
+        response = requests.post(f"{PAYPAL_API}/v1/payments/payouts", json=payout_payload, headers=headers)
+        payout_data = response.json()
+        if response.status_code not in [200, 201]:
+            print("Error en Payout de PayPal:", payout_data)
+            return jsonify({"error": "No se pudo procesar la transferencia en PayPal", "detalle": payout_data}), 400
     else:
         return jsonify ({"error": "Método de pago no soportado"}), 400
 
