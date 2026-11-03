@@ -11,6 +11,8 @@
   display: flex;
   text-align: center;
   align-items: center;
+  width: 50%;
+  padding-right: 1%;
 
 }
 
@@ -72,4 +74,11 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center;
+}
+
+@media (max-width: 576px) {
+  .card-saldo-box{
+    width: 100%;
+    padding: 2%;
+  }
 }

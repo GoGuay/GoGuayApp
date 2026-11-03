@@ -189,7 +189,6 @@ export class MiPerfilPage implements OnInit {
         this.generoEditado = usuario.genero || '';
         this.orientacionEditada = usuario.orientacion || '';
 
-        this.orientacionEditada = usuario.orientacion || '';
         this.orientacionCtrl.valorTexto = usuario.orientacion || '';
         this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
         this.cdr.detectChanges();

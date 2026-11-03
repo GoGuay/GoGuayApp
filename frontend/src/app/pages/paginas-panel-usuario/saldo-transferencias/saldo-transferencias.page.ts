@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonRow, IonGrid, IonCol } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,13 +11,29 @@ import { Subscription } from 'rxjs';
 import { MovimientosMonedero } from 'src/app/models/movimientos_monedero/movimientos-monedero.model';
 import { MatDivider } from '@angular/material/divider';
 import { log } from 'console';
+import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
+import { MonederoService } from 'src/app/core/monedero-service/monedero.service';
+import { MessageService } from 'primeng/api';
 declare var paypal: any;
 @Component({
   selector: 'app-saldo-transferencias',
   templateUrl: './saldo-transferencias.page.html',
   styleUrls: ['./saldo-transferencias.page.scss'],
   standalone: true,
-  imports: [IonCol, IonGrid, IonRow, IonContent, CommonModule, FormsModule, NavbarComponent, TranslateModule, MatDivider],
+  imports: [
+    IonCol,
+    IonGrid,
+    IonRow,
+    IonContent,
+    CommonModule,
+    FormsModule,
+    NavbarComponent,
+    TranslateModule,
+    MatDivider,
+    SelectorGeneralComponent,
+  ],
 })
 export class SaldoTransferenciasPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -31,16 +47,27 @@ export class SaldoTransferenciasPage implements OnInit {
   tiene_cuenta_bancaria: boolean = false;
   tiene_ambas: boolean = false;
 
+  listaOpcionesTransferencias: any[] = [
+    { valor: 'paypal', descripcion: 'Cuenta Paypal' },
+    { valor: 'banco', descripcion: 'Cuenta Bancaria' },
+  ];
+
+  opcion_retirada_elegida: string = '';
   private usuarioSub!: Subscription;
 
   constructor(
     private userService: UserServicesService,
+    private monederoService: MonederoService,
     private route: ActivatedRoute,
     private cdRef: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService,
+    private dialog: MatDialog,
+     private messageService: MessageService,
   ) {}
 
   ngOnInit() {
+    console.log('Opciones de transferencia disponibles:', this.listaOpcionesTransferencias);
     this.usuarioSub = this.userService.usuario$.subscribe((usuarioActual) => {
       if (usuarioActual) {
         const tienePayPal = !!usuarioActual.cobro_paypal_email;
@@ -102,7 +129,7 @@ export class SaldoTransferenciasPage implements OnInit {
   }
 
   cargarMonedero() {
-    this.userService.obtenerSaldoMonedero().subscribe({
+    this.monederoService.obtenerSaldoMonedero().subscribe({
       next: (response) => {
         this.monedero = { saldo: response.saldo };
         this.cdRef.detectChanges();
@@ -114,7 +141,7 @@ export class SaldoTransferenciasPage implements OnInit {
   }
 
   cargarMovimientos(usuario_id: number) {
-    this.userService.obtenerMovimientosMonedero(usuario_id).subscribe({
+    this.monederoService.obtenerMovimientosMonedero(usuario_id).subscribe({
       next: (response) => {
         this.movimientos = response.movimientos;
       },
@@ -130,7 +157,7 @@ export class SaldoTransferenciasPage implements OnInit {
       return;
     }
 
-    this.userService.crearOrdenMonedero(this.cantidadRecarga).subscribe({
+    this.monederoService.crearOrdenMonedero(this.cantidadRecarga).subscribe({
       next: (response) => {
         if (response && response.approve_url) {
           window.location.href = response.approve_url;
@@ -191,7 +218,7 @@ export class SaldoTransferenciasPage implements OnInit {
   }
 
   capturarPagoPayPal(orderId: string) {
-    this.userService.capturarOrdenMonedero(orderId).subscribe({
+    this.monederoService.capturarOrdenMonedero(orderId).subscribe({
       next: (response) => {
         console.log('¡Recarga completada con éxito!', response);
         if (response.nuevo_saldo !== undefined) {
@@ -229,6 +256,65 @@ export class SaldoTransferenciasPage implements OnInit {
       container.innerHTML = '';
     }
     this.renderPaypal();
+  }
+
+  onInputChange(valorSeleccionado?: any) {
+    if (typeof valorSeleccionado === 'object' && valorSeleccionado !== null) {
+      this.opcion_retirada_elegida = valorSeleccionado.valor;
+      this.modalConfirmarTransferencia(valorSeleccionado.desripcion)
+    } else {
+      this.opcion_retirada_elegida = valorSeleccionado;
+    }
+  }
+
+
+  // TODO¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!
+  modalConfirmarTransferencia(valorSeleccionado?: string) {
+    this.translate
+      .get(['Transferencia a tu favor', `Vas a hacer una transferencia a través de........${valorSeleccionado}`, 'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'])
+      .subscribe((translations) => {
+        const titulo = translations['Transferencia a tu favor'];
+        const mensaje = translations[`Vas a hacer una transferencia a través de........${valorSeleccionado}`];
+        const descripcion = translations['AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'];
+
+        const dialogRef = this.dialog.open(HelpModalComponent, {
+          data: { title: titulo, message: mensaje, descripcion: descripcion, showAcceptButton: true, eliminacion_cuenta: true },
+          disableClose: true,
+        });
+        dialogRef.afterClosed().subscribe((confirmar) => {
+          if (confirmar) {
+            //
+          }
+        });
+      });
+  }
+
+    transferirSaldoMonedero() {
+    if (!this.userData?.usuario?.id) return;
+    this.monederoService.transferenciaSaldoMonedero(this.userData.usuario.id).subscribe({
+      next: (res) => {
+        console.log('Respuesta backend eliminar usuario: ', res);
+        localStorage.clear();
+        this.userService.setUsuarioData(null);
+        this.router.navigate(['/home'], {
+          queryParams: { cuentaEliminada: 'true' },
+          replaceUrl: true,
+        });
+      },
+      error: (err) => {
+        this.cargandoEliminacion = false;
+        const tituloError = err.error?.error || 'No se pudo eliminar';
+        const detalleError = err.error?.motivo || err.error?.message || 'Revisa los requisitos para poder eliminar la cuenta.';
+
+        this.messageService.add({
+          severity: 'error',
+          summary: tituloError,
+          detail: detalleError,
+          life: 5000,
+        });
+
+      },
+    });
   }
 
   obtener_movimientos_monedero() {}
