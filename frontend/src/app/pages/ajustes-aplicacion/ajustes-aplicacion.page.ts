@@ -126,7 +126,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.asistenteActiva = savedAsistenteSetting === null ? true : savedAsistenteSetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (this.userData){
+    if (this.userData) {
       this.cobroEmailPaypal = this.userData.usuario?.cobro_paypal_email
       this.titular_cuenta_bancaria = this.userData.usuario?.cobro_titular
       this.numero_cuenta_bancaria = this.userData.usuario?.cobro_iban
@@ -458,6 +458,14 @@ export class AjustesAplicacionPage implements OnInit {
   irACentroAyuda() {
     this.navCtrl.navigateForward('/centro-ayuda');
   }
+
+  /**
+   * Función para abrir el centro de incidencias al hacer click en la opción del menú. Redirige a la página de mis incidencias.
+   */
+  irACentroDeIncidencias() {
+    this.navCtrl.navigateForward('/mis-incidencias');
+  }
+
 
   /**
    * Función para abrir la página de términos y condiciones al hacer click en la opción del menú. Redirige a la página de términos y condiciones.

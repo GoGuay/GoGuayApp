@@ -73,6 +73,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/paginas-panel-usuario/datos-contacto/datos-contacto.page').then((m) => m.DatosContactoPage),
   },
   {
+    path: 'mis-incidencias',
+    loadComponent: () => import('./pages/paginas-panel-usuario/incidencias-usuario/incidencias-usuario.page').then((m) => m.IncidenciasUsuarioPage),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'terminos',
     loadComponent: () => import('./pages/terminos/terminos.page').then((m) => m.TerminosPage),
   },

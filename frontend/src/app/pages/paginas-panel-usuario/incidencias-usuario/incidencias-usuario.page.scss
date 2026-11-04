@@ -1,0 +1,156 @@
+ion-content.incidencias-content {
+  --background: #E9EDD5 !important;
+}
+
+.incidencias-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title-page {
+  font-size: 1.35rem;
+  color: #2c2c2c;
+}
+
+.btn-back-circle {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #2c2c2c;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background: #F0D7B4;
+  }
+}
+
+.tabs-filter-wrapper {
+  display: flex;
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 35px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 35px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &.active {
+      background: #b3b5e6;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(179, 181, 230, 0.4);
+    }
+  }
+}
+
+.incidencia-card {
+  border-radius: 28px !important;
+  border: 1.5px solid #e2e8f0;
+  cursor: pointer;
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+}
+
+.badge-id {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.75rem;
+  background: #e2e8f0;
+  color: #2c2c2c;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.badge-categoria {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #5a6268;
+  text-transform: uppercase;
+}
+
+.badge-estado {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+
+  &.estado-iniciada {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+  &.estado-resuelta {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+}
+
+.msg-bubble {
+  border-radius: 16px !important;
+
+  &.msg-propio {
+    background: #e8eaf6;
+    margin-left: 20px;
+  }
+
+  &.msg-soporte {
+    background: #F0D7B4;
+    margin-right: 20px;
+  }
+}
+
+.custom-input-msg {
+  border-radius: 35px;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+
+  &:focus {
+    border-color: #b3b5e6;
+    outline: none;
+  }
+}
+
+.btn-send-msg {
+  background: #b3b5e6;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.adjunto-pill {
+  font-size: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #ccc;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #2c2c2c;
+  text-decoration: none;
+}
+
+.xsmall {
+  font-size: 0.72rem;
+}
