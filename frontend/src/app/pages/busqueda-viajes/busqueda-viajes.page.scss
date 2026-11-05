@@ -117,3 +117,19 @@ ion-popover {
   text-transform: none;
   margin-bottom: 10px;
 }
+
+.btn-incidencia-search {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  border-radius: 35px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(248, 225, 150, 0.2);
+  }
+
+  .text-warning-pastel {
+    color: #F8E196 !important;
+    font-size: 1.1rem;
+  }
+}

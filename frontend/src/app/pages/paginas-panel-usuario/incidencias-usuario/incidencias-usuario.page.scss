@@ -96,9 +96,17 @@ ion-content.incidencias-content {
     background: #fff3e0;
     color: #ef6c00;
   }
-  &.estado-resuelta {
+  &.estado-revision {
+    background: #e8eaf6;
+    color: #283593;
+  }
+  &.estado-finalizada {
     background: #e8f5e9;
     color: #2e7d32;
+  }
+  &.estado-cancelada {
+    background: #efebe9;
+    color: #4e342e;
   }
 }
 

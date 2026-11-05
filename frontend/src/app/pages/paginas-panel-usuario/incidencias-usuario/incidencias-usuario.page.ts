@@ -16,9 +16,9 @@ import {
   sendOutline
 } from 'ionicons/icons';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { FooterComponent } from 'src/app/shared/footer/footer.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
+import { IncidenciasService } from 'src/app/core/incidencias-service/incidencias-service.service';
 
 export interface IncidenciaItem {
   id: number;
@@ -34,6 +34,7 @@ export interface IncidenciaItem {
   mensajes: Array<{ id: number; emisor_id: number; mensaje: string; created_at: string }>;
   desplegado?: boolean;
   nuevoMensaje?: string;
+  enviandoMensaje?: boolean;
 }
 
 @Component({
@@ -41,7 +42,7 @@ export interface IncidenciaItem {
   templateUrl: './incidencias-usuario.page.html',
   styleUrls: ['./incidencias-usuario.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarComponent, FooterComponent]
+  imports: [CommonModule, FormsModule, IonicModule, NavbarComponent]
 })
 export class IncidenciasUsuarioPage implements OnInit {
   incidencias: IncidenciaItem[] = [];
@@ -53,7 +54,8 @@ export class IncidenciasUsuarioPage implements OnInit {
   constructor(
     private navCtrl: NavController,
     private userService: UserServicesService,
-    private funcionesComunes: FuncionesComunes
+    private funcionesComunes: FuncionesComunes,
+    private incidenciasService: IncidenciasService
   ) {
     addIcons({
       warningOutline,
@@ -81,41 +83,24 @@ export class IncidenciasUsuarioPage implements OnInit {
   }
 
   cargarIncidencias() {
+    if (!this.userId) return;
     this.cargando = true;
-    setTimeout(() => {
-      this.incidencias = [
-        {
-          id: 1,
-          categoria: 'USUARIO',
-          subcategoria: 'CONDUCTA',
-          resumen: 'Pasajero no se presentó al punto de encuentro',
-          descripcion: 'Esperé 15 minutos en el lugar acordado y el pasajero no respondió al chat ni acudió al coche.',
-          estado: 'INICIADA',
-          created_at: '2026-11-02T10:30:00',
-          updated_at: '2026-11-02T10:30:00',
-          adjuntos: [],
-          mensajes: [
-            { id: 1, emisor_id: 99, mensaje: 'Hemos recibido tu reporte. Un agente revisará lo sucedido.', created_at: '2026-11-02T11:00:00' }
-          ]
-        },
-        {
-          id: 2,
-          categoria: 'PAGOS',
-          subcategoria: 'MONEDERO',
-          resumen: 'Cobro duplicado en reserva',
-          descripcion: 'Se me ha realizado dos veces el cargo al intentar reservar el trayecto a Madrid.',
-          estado: 'RESUELTA',
-          created_at: '2026-10-28T16:15:00',
-          updated_at: '2026-10-29T09:20:00',
-          resolucion_notas: 'Se ha devuelto el importe duplicado a tu Monedero GoGuay.',
-          adjuntos: [{ id: 10, url_archivo: 'https://via.placeholder.com/150' }],
-          mensajes: []
-        }
-      ];
 
-      this.aplicarFiltro();
-      this.cargando = false;
-    }, 600);
+    this.incidenciasService.obtenerIncidenciasUsuario(this.userId).subscribe({
+      next: (data: any[]) => {
+        this.incidencias = (data || []).map((item) => ({
+          ...item,
+          desplegado: false,
+          nuevoMensaje: ''
+        }));
+        this.aplicarFiltro();
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error cargando incidencias:', err);
+        this.cargando = false;
+      }
+    });
   }
 
   aplicarFiltro() {
@@ -133,16 +118,21 @@ export class IncidenciasUsuarioPage implements OnInit {
   }
 
   enviarRespuesta(item: IncidenciaItem) {
-    if (!item.nuevoMensaje || !item.nuevoMensaje.trim()) return;
+    if (!item.nuevoMensaje || !item.nuevoMensaje.trim() || !this.userId || item.enviandoMensaje) return;
 
     const texto = item.nuevoMensaje.trim();
-    item.nuevoMensaje = '';
+    item.enviandoMensaje = true;
 
-    item.mensajes.push({
-      id: Date.now(),
-      emisor_id: this.userId || 0,
-      mensaje: texto,
-      created_at: new Date().toISOString()
+    this.incidenciasService.enviarMensajeIncidencia(item.id, this.userId, texto).subscribe({
+      next: (nuevoMsgServidor) => {
+        item.mensajes.push(nuevoMsgServidor);
+        item.nuevoMensaje = '';
+        item.enviandoMensaje = false;
+      },
+      error: (err) => {
+        console.error('Error al enviar mensaje de incidencia:', err);
+        item.enviandoMensaje = false;
+      }
     });
   }
 

@@ -903,4 +903,22 @@ ion-modal.modal-qr-verificacion {
     --ion-background-color: #e9edd5 !important;
     background-color: #e9edd5 !important;
   }
+
+  /**
+   * CONFIGURACIÓN PARA EL MODAL DE ABRIR INCIDENCIA
+   */
+  .modal-incidencia-custom {
+    --width: 90%;
+    --max-width: 520px;
+    --height: auto;
+    --max-height: 90vh;
+    --border-radius: 35px !important;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    align-items: center;
+
+    &::part(content) {
+      border-radius: 35px;
+      overflow: hidden;
+    }
+  }
 }

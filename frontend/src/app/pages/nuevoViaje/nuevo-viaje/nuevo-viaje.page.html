@@ -1,137 +1,72 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
-<ion-content
-  [fullscreen]="true"
-  role="main"
->
+<ion-content [fullscreen]="true" role="main">
   <ion-row class="primera-seccion">
     <div class="imagen-fondo">
       <div class="formulario-viaje">
         <div class="contenido_formulario">
-          <label
-            id="label-origen"
-            class="text-start"
-          >
+          <label id="label-origen" class="text-start">
             {{'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate}}
           </label>
           <div class="input-container mb-4">
-            <app-selector-general
-              idUnico="input-origen"
-              aria-labelledby="label-origen"
-              placeholderKey="PLACEHOLDER.DONDE_COMIENZA"
-              class="w-100"
-              [opciones]="origenCtrl.sugerencias"
-              [(ngModel)]="origenCtrl.valorTexto"
-              [soloLectura]="false"
-              [mostrarFlechaSelector]="false"
+            <app-selector-general idUnico="input-origen" aria-labelledby="label-origen"
+              placeholderKey="PLACEHOLDER.DONDE_COMIENZA" class="w-100" [opciones]="origenCtrl.sugerencias"
+              [(ngModel)]="origenCtrl.valorTexto" [soloLectura]="false" [mostrarFlechaSelector]="false"
               (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event)"
               (alAbrir)="origenCtrl.estaActivo = true"
-              (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"
-            ></app-selector-general>
-            <app-spinner
-              *ngIf="spinnerActivo"
-              [texto_spinner]="texto_spinner | translate"
-              [tamano_completo]="false"
-              aria-live="polite"
-              role="status"
-            ></app-spinner>
+              (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"></app-selector-general>
+            <app-spinner *ngIf="spinnerActivo" [texto_spinner]="texto_spinner | translate" [tamano_completo]="false"
+              aria-live="polite" role="status"></app-spinner>
           </div>
 
           <div class="input-container">
-            <button
-              type="button"
-              class="btn btn_bg mb-3"
-              (click)="buscarUbicacion()"
-              [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_BOTON_MI_UBICACION' | translate"
-            >
+            <button type="button" class="btn btn_bg mb-3" (click)="buscarUbicacion()"
+              [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_BOTON_MI_UBICACION' | translate">
               <span>
-                <i
-                  class="fi fi-rr-marker"
-                  aria-hidden="true"
-                ></i>
+                <i class="fi fi-rr-marker" aria-hidden="true"></i>
                 {{'NUEVOVIAJE.NUEVO_VIAJE.BOTÓN_MI_UBICACION' | translate}}
               </span>
             </button>
           </div>
 
-          <label
-            id="label-destino"
-            class="text-start"
-          >
+          <label id="label-destino" class="text-start">
             {{'NUEVOVIAJE.NUEVO_VIAJE.DESTINO' | translate}}
           </label>
           <div class="input-container">
-            <app-selector-general
-              idUnico="input-destino"
-              aria-labelledby="label-destino"
-              placeholderKey="PLACEHOLDER.HASTA_DONDE"
-              class="w-100"
-              [opciones]="destinoCtrl.sugerencias"
-              [(ngModel)]="destinoCtrl.valorTexto"
-              [soloLectura]="false"
-              [mostrarFlechaSelector]="false"
+            <app-selector-general idUnico="input-destino" aria-labelledby="label-destino"
+              placeholderKey="PLACEHOLDER.HASTA_DONDE" class="w-100" [opciones]="destinoCtrl.sugerencias"
+              [(ngModel)]="destinoCtrl.valorTexto" [soloLectura]="false" [mostrarFlechaSelector]="false"
               (textoCambiado)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event)"
               (seleccionCambiada)="buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, $event)"
-              (alAbrir)="destinoCtrl.estaActivo = true"
-            ></app-selector-general>
+              (alAbrir)="destinoCtrl.estaActivo = true"></app-selector-general>
           </div>
 
           <!-- SELECTOR DE PLAZAS  -->
-          <label
-            id="label-plazas"
-            class="text-start mt-4"
-          >
+          <label id="label-plazas" class="text-start mt-4">
             {{'NUEVOVIAJE.NUEVO_VIAJE.PLAZAS_DISPONIBLES' | translate}}
           </label>
           <div class="input-container mb-3">
-            <app-selector-general
-              idUnico="input-plazas"
-              aria-labelledby="label-plazas"
-              placeholderKey="PLACEHOLDER.NUM_PLAZAS"
-              class="w-100"
-              [opciones]="opcionesPlazas"
-              [(ngModel)]="plazas"
-              [valor]="plazas"
-              [soloLectura]="true"
-              [mostrarFlechaSelector]="true"
-              (seleccionCambiada)="seleccionarPlazas($event)"
-            ></app-selector-general>
+            <app-selector-general idUnico="input-plazas" aria-labelledby="label-plazas"
+              placeholderKey="PLACEHOLDER.NUM_PLAZAS" class="w-100" [opciones]="opcionesPlazas" [(ngModel)]="plazas"
+              [valor]="plazas" [soloLectura]="true" [mostrarFlechaSelector]="true"
+              (seleccionCambiada)="seleccionarPlazas($event)"></app-selector-general>
           </div>
 
-          <div
-            class="alert"
-            *ngIf="!userLoggedIn"
-            role="region"
-            [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_AVISO_INICIOSESION' | translate"
-          >
+          <div class="alert" *ngIf="!userLoggedIn" role="region"
+            [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_AVISO_INICIOSESION' | translate">
             <p>{{ 'NUEVOVIAJE.NO_REGISTRADO_LOGIN' | translate }}</p>
             <div class="d-flex justify-content-center">
-              <button
-                type="button"
-                class="help_btn d-flex justify-content-center"
+              <button type="button" class="help_btn d-flex justify-content-center"
                 [attr.aria-label]="'NUEVOVIAJE.NUEVO_VIAJE.ARIALABEL_AYUDA_INICIO_REGISTRO' | translate"
-                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)"
-              >
-                <img
-                  src="../../../../assets/sistema/interrogatorio.png"
-                  class="marcador-icon input-icon"
-                  alt=""
-                  aria-hidden="true"
-                />
+                (click)="funcionesComunes.openConfirmModal(title_help_carnet, message_help_auth)">
+                <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" alt=""
+                  aria-hidden="true" />
               </button>
             </div>
           </div>
         </div>
         <!-- BOTÓN PUBLICAR  -->
-        <button
-          type="button"
-          class="btn-publicar ion-activatable ripple-parent circle"
-          (click)="goTo()"
-        >
+        <button type="button" class="btn-publicar ion-activatable ripple-parent circle" (click)="goTo()">
           {{'NUEVOVIAJE.NUEVO_VIAJE.BOTÓN_PUBLICA_TU_VIAJE' | translate}}
           <ion-ripple-effect></ion-ripple-effect>
         </button>
@@ -144,19 +79,27 @@
       <h2>{{ 'CENTRODEAYUDA.TITULO' | translate }}</h2>
       <p>{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
       <div class="d-flex justify-content-center">
-        <button
-          type="button"
-          mat-raised-button
-          class="btn consulta"
-          routerLink="/centro-ayuda"
-        >
-          <img
-            src="../../../../assets/sistema/interrogatorio.png"
-            class="marcador-icon input-icon"
-            alt=""
-            aria-hidden="true"
-          />
+        <button type="button"  class="btn btn_bg consulta" routerLink="/centro-ayuda">
+          <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" alt=""
+            aria-hidden="true" />
           {{ 'BOTON.CENTROAYUDA' | translate }}
+        </button>
+      </div>
+    </div>
+  </ion-row>
+
+  <ion-row class="segunda-seccion">
+    <div class="centro-incidencias p-4 w-100 text-center">
+      <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+        <i class="fi fi-rr-triangle-warning text-warning-pastel fs-4"></i>
+        <h3 class="fw-bold m-0 fs-5 text-dark">¿Tienes problemas al crear tu viaje?</h3>
+      </div>
+      <p class="text-muted small mb-3">Si experimentas fallos o dudas durante la publicación, puedes abrir un reporte
+        directo con nuestro soporte.</p>
+
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <button type="button" class="btn btn_bg px-4 py-2" (click)="abrirIncidenciaCreacionViaje()">
+          <i class="fi fi-rr-headset me-2"></i> Reportar una incidencia
         </button>
       </div>
     </div>

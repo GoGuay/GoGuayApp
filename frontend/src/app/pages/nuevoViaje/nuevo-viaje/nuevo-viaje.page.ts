@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,8 @@ import { Location } from '@angular/common';
 import { ControlLocalidad } from '../../../models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from '../../../core/buscador-localidades/buscador-localidades.service';
 import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
+import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-nuevo-viaje',
@@ -67,7 +69,7 @@ export class NuevoViajePage implements OnInit {
 
   // Opcional: Cerrar si el usuario hace click fuera
   @HostListener('document:click', ['$event'])
-  closeDropdown(event: Event) {}
+  closeDropdown(event: Event) { }
 
   // ==========================================
   // CONSTRUCTOR (Inyección y traducciones)
@@ -81,7 +83,9 @@ export class NuevoViajePage implements OnInit {
     private location: Location,
     private travelService: TravelService,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalController: ModalController,
+    public messageService: MessageService
   ) {
     // Inicialización de controles de origen y destino
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
@@ -220,5 +224,36 @@ export class NuevoViajePage implements OnInit {
    */
   seleccionarPlazas(opcion: any) {
     this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
+  }
+
+  /**
+   * Abre un modal para que el usuario pueda reportar una incidencia relacionada con la creación de un viaje.
+   * El modal se configura con la categoría "VIAJE" y la subcategoría predeterminada "ERROR_CREACION".
+   * Una vez que el usuario envía la incidencia, se muestra un mensaje de éxito.
+   * 
+   * @returns {Promise<void>} Una promesa que se resuelve cuando el modal se cierra.
+   */
+  async abrirIncidenciaCreacionViaje() {
+    const modal = await this.modalController.create({
+      component: AbrirIncidenciaModalComponent,
+      componentProps: {
+        categoria: 'VIAJE',
+        subcategoriaPredeterminada: 'ERROR_CREACION',
+        tituloContexto: 'Problema al crear el viaje'
+      },
+      cssClass: 'modal-incidencia-custom'
+    });
+
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Incidencia enviada',
+        detail: 'Hemos recibido tu consulta. Podrás ver el seguimiento en "Mis Incidencias".',
+        life: 4000
+      });
+    }
   }
 }

@@ -47,6 +47,7 @@
               </ion-content>
             </ng-template>
           </ion-popover>
+
         </ion-col>
 
         <ion-col size="12" size-md="8" size-lg="10">
@@ -56,6 +57,11 @@
       </ion-row>
     </ion-grid>
   </div>
+  <ion-button fill="clear" size="small" class="btn-incidencia-search" (click)="abrirIncidenciaBusqueda()"
+    title="Reportar problema en la búsqueda">
+    <i class="fi fi-rr-triangle-warning text-warning-pastel me-1"></i>
+    <span class="small text-muted">¿Fallo en la búsqueda?</span>
+  </ion-button>
 </ion-content>
 
 <!-- FAB: NUEVO VIAJE -->
