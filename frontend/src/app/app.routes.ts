@@ -133,7 +133,7 @@ export const routes: Routes = [
   },
   {
     path: 'notificaciones',
-    loadComponent: () => import('./pages/notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
+    loadComponent: () => import('./pages/centro-notificaciones/centro-notificaciones.page').then((m) => m.CentroNotificacionesPage),
     canActivate: [AuthGuard]
   },
   {

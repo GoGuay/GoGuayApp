@@ -18,13 +18,13 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 
 @Component({
-  selector: 'app-notificaciones',
-  templateUrl: './notificaciones.page.html',
-  styleUrls: ['./notificaciones.page.scss'],
+  selector: 'app-centro-notificaciones',
+  templateUrl: './centro-notificaciones.page.html',
+  styleUrls: ['./centro-notificaciones.page.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent, MatIcon, TranslateModule]
 })
-export class NotificacionesPage implements OnInit {
+export class CentroNotificacionesPage implements OnInit {
 
   usuario: any;
   userData: Usuario = {} as Usuario;

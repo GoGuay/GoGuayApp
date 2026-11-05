@@ -25,19 +25,37 @@
   width: 80%;
   max-width: 600px;
   margin: 0 auto;
-  max-height: 50vh;
-  overflow-y: auto;
   padding-right: 10px;
   border-radius: 35px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+  transform-origin: center center;
 }
 
 .lista_notificaciones {
   max-height: 600px;
-  // width: 650px;
   margin: 0 auto;
   overflow-y: auto;
   border-radius: 15px;
+  scroll-behavior: smooth;
+}
+
+@keyframes shrinkEdges {
+  0% {
+    transform: scale(0.75);
+    opacity: 0;
+  }
+  15% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  85% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.75);
+    opacity: 0;
+  }
 }
 
 .notificacion-leida {
@@ -59,7 +77,19 @@
 }
 
 .notificacion-item {
-  transition: all 0.6s ease;
+  transition:
+    background 0.3s ease,
+    border 0.3s ease;
+  view-timeline-name: --itemTimeline;
+  view-timeline-axis: block;
+  animation: shrinkEdges linear both;
+  animation-timeline: --itemTimeline;
+  animation-range: cover 0% cover 100%;
+  will-change: transform, opacity;
+  
+  &:hover {
+    cursor: pointer;
+  }
 
   &.resaltado {
     background: linear-gradient(135deg, #fff3cd, #ffecb5, #fff8e1, #f0d7b4) !important;
@@ -72,7 +102,7 @@
 }
 
 .notificacion-no-leida:not(.resaltado) {
-  background-color: #ffefef !important; 
+  background-color: #ffefef !important;
   border-left: 5px solid #ef4444;
 }
 
