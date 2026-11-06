@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import { AlertController, IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { 
-  warningOutline, 
-  timeOutline, 
-  checkmarkCircleOutline, 
-  closeCircleOutline, 
-  chatbubblesOutline, 
+import {
+  warningOutline,
+  timeOutline,
+  checkmarkCircleOutline,
+  closeCircleOutline,
+  chatbubblesOutline,
   attachOutline,
   chevronDownOutline,
   chevronUpOutline,
@@ -29,6 +29,7 @@ export interface IncidenciaItem {
   estado: string;
   created_at: string;
   updated_at: string;
+  motivo_cancelacion?: string;
   resolucion_notas?: string;
   adjuntos: Array<{ id: number; url_archivo: string }>;
   mensajes: Array<{ id: number; emisor_id: number; mensaje: string; created_at: string }>;
@@ -53,8 +54,7 @@ export class IncidenciasUsuarioPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private userService: UserServicesService,
-    private funcionesComunes: FuncionesComunes,
+    private alertController: AlertController,
     private incidenciasService: IncidenciasService
   ) {
     addIcons({
@@ -67,7 +67,7 @@ export class IncidenciasUsuarioPage implements OnInit {
       chevronDownOutline,
       chevronUpOutline,
       arrowBackOutline,
-      sendOutline
+      sendOutline,
     });
   }
 
@@ -106,9 +106,13 @@ export class IncidenciasUsuarioPage implements OnInit {
   aplicarFiltro() {
     if (this.filtroEstado === 'todas') {
       this.incidenciasFiltradas = [...this.incidencias];
-    } else {
+    } else if (this.filtroEstado === 'iniciada') {
       this.incidenciasFiltradas = this.incidencias.filter(
-        (i) => i.estado.toLowerCase() === this.filtroEstado.toLowerCase()
+        (i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION'
+      );
+    } else if (this.filtroEstado === 'finalizada') {
+      this.incidenciasFiltradas = this.incidencias.filter(
+        (i) => i.estado === 'FINALIZADA' || i.estado === 'CANCELADA'
       );
     }
   }
@@ -136,7 +140,62 @@ export class IncidenciasUsuarioPage implements OnInit {
     });
   }
 
+  /**
+   * Pide confirmación al usuario para cancelar la incidencia
+   */
+  async confirmarCancelacion(item: IncidenciaItem) {
+    const alert = await this.alertController.create({
+      header: 'Cancelar Incidencia',
+      message: `¿Estás seguro de que deseas cancelar la incidencia #${item.id}? Soporte no continuará revisando esta consulta.`,
+      cssClass: 'goguay-alert-custom',
+      buttons: [
+        {
+          text: 'No, mantener',
+          role: 'cancel',
+          cssClass: 'btn-alert-cancel'
+        },
+        {
+          text: 'Sí, cancelar',
+          role: 'destructive',
+          cssClass: 'btn-alert-confirm-danger',
+          handler: () => {
+            this.cancelarIncidencia(item);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * Ejecuta la llamada al servicio para cancelar la incidencia
+   */
+  private cancelarIncidencia(item: IncidenciaItem) {
+    this.incidenciasService.cancelarIncidenciaPorUsuario(item.id).subscribe({
+      next: (incidenciaActualizada) => {
+        item.estado = 'CANCELADA';
+        item.motivo_cancelacion = 'POR_USUARIO';
+        this.aplicarFiltro();
+      },
+      error: (err) => {
+        console.error('Error al cancelar la incidencia:', err);
+      }
+    });
+  }
+
   volver() {
     this.navCtrl.back();
+  }
+
+  /**
+   * Mapea los valores en Enum a texto amigable para la interfaz de usuario
+   */
+  formatearMotivoCancelacion(motivo?: string): string {
+    if (!motivo) return '';
+    if (motivo === 'POR_USUARIO') {
+      return 'Por el usuario';
+    }
+    return motivo.replace('_', ' ');
   }
 }

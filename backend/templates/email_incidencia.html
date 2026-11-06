@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f5f8; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+      
+      <div style="background: linear-gradient(135deg, #ffb3ba, #bae1ff, #e0baff); padding: 30px 20px; text-align: center;">
+        <img
+          src="https://res.cloudinary.com/dnrxptrb0/image/upload/v1749583413/logo/ahhqej3rrccdr6bdf7vg.png"
+          alt="GoGuay"
+          style="width: 140px; display: block; margin: 0 auto 10px;" />
+        <h2 style="color: #2d3436; margin: 0; font-size: 20px; font-weight: bold;">Centro de Soporte GoGuay</h2>
+      </div>
+
+      <div style="padding: 30px; color: #444444;">
+        <h3 style="color: #2d3436; margin-top: 0; font-size: 18px;">Hola, {{ usuario_nombre }}</h3>
+        
+        <p style="font-size: 15px; color: #555555; margin-bottom: 20px;">
+          {{ mensaje_introduccion }}
+        </p>
+
+        <div style="background-color: #f8f9ff; border-left: 5px solid #b3b5e6; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px;">
+          <p style="margin: 0 0 8px 0; font-size: 13px; color: #888888; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
+            Detalles de la Incidencia #{{ incidencia_id }}
+          </p>
+          <p style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #2d3436;">
+            {{ incidencia_resumen }}
+          </p>
+          <p style="margin: 0; font-size: 14px; color: #666666;">
+            <strong>Estado actual:</strong> 
+            <span style="background-color: #b3b5e6; color: #ffffff; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block;">
+              {{ incidencia_estado }}
+            </span>
+          </p>
+        </div>
+
+        {% if contenido_detallado %}
+        <div style="background-color: #ffffff; border: 1px dashed #cccccc; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px;">
+          <strong style="color: #2d3436; font-size: 14px; display: block; margin-bottom: 8px;">Mensaje de Soporte:</strong>
+          <p style="margin: 0; font-size: 14px; color: #444444; white-space: pre-line;">{{ contenido_detallado }}</p>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin: 30px 0 20px 0;">
+          <a
+            href="{{ link_incidencias }}"
+            style="
+              background-color: #b3b5e6;
+              color: #ffffff;
+              padding: 13px 28px;
+              text-decoration: none;
+              border-radius: 35px;
+              font-weight: bold;
+              font-size: 15px;
+              display: inline-block;
+              box-shadow: 0 4px 10px rgba(179, 181, 230, 0.4);
+            ">
+            Ver mi Incidencia en GoGuay
+          </a>
+        </div>
+
+        <p style="font-size: 13px; color: #888888; text-align: center; margin-top: 25px;">
+          Si tienes más información o capturas adicionales, puedes responder a través de la propia app.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #eeeeee; margin: 25px 0;" />
+
+        <p style="margin: 0; font-size: 14px; color: #555555;">
+          Saludos,<br />
+          <strong style="color: #2d3436;">El equipo de GoGuay</strong>
+        </p>
+      </div>
+
+      <div style="background-color: #fafafa; padding: 15px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #f0f0f0;">
+        <p style="margin: 0;">© 2026 GoGuay. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -922,3 +922,81 @@ ion-modal.modal-qr-verificacion {
     }
   }
 }
+
+/* ==========================================================================
+   VENTANA DE CANCELACIÓN DE INCIDENCIA
+   ========================================================================== */
+
+.goguay-alert-custom {
+  --background: #ffffff;
+  --border-radius: 24px;
+
+  .alert-wrapper {
+    border-radius: 24px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px 8px;
+    background: #ffffff;
+    border: 2px solid #f8f9fa;
+  }
+
+  .alert-head {
+    padding-bottom: 8px;
+    text-align: center;
+  }
+
+  .alert-title {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #2d3436 !important;
+    letter-spacing: -0.3px;
+    text-align: center;
+  }
+
+  .alert-message {
+    font-size: 0.9rem !important;
+    color: #636e72 !important;
+    line-height: 1.45;
+    text-align: center;
+    padding: 0 16px 16px 16px;
+  }
+
+  .alert-button-group {
+    padding: 8px 12px 4px 12px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .alert-button {
+    border-radius: 35px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    text-transform: none !important;
+    padding: 10px 18px !important;
+    margin: 0 !important;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-alert-cancel {
+    background-color: #f1f2f6 !important;
+    color: #636e72 !important;
+    border: 1px solid #dfe4ea !important;
+
+    &:hover {
+      background-color: #e4e7eb !important;
+    }
+  }
+
+  .btn-alert-confirm-danger {
+    background: linear-gradient(135deg, #ffb3ba, #ff8080) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(255, 128, 128, 0.3) !important;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

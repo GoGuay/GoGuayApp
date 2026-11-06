@@ -25,6 +25,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './nuevo-viaje.page.html',
   styleUrls: ['./nuevo-viaje.page.scss'],
   standalone: true,
+  providers: [MessageService], 
   imports: [
     CommonModule,
     FormsModule,
@@ -42,9 +43,6 @@ import { MessageService } from 'primeng/api';
   ],
 })
 export class NuevoViajePage implements OnInit {
-  // ==========================================
-  // PROPIEDADES PÚBLICAS Y DE ESTADO
-  // ==========================================
   userLoggedIn: boolean = false;
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
@@ -57,7 +55,6 @@ export class NuevoViajePage implements OnInit {
   texto_spinner: string = 'Buscando ubicación...';
 
   spinnerActivo: boolean = false;
-
   irAtrasImg: string = '../../../assets/sistema/atras.png';
 
   opcionesPlazas = [
@@ -67,13 +64,9 @@ export class NuevoViajePage implements OnInit {
     { id: '4', descripcion: '4' },
   ];
 
-  // Opcional: Cerrar si el usuario hace click fuera
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) { }
 
-  // ==========================================
-  // CONSTRUCTOR (Inyección y traducciones)
-  // ==========================================
   constructor(
     private navCtrl: NavController,
     private viajesService: TravelService,
@@ -87,7 +80,6 @@ export class NuevoViajePage implements OnInit {
     private modalController: ModalController,
     public messageService: MessageService
   ) {
-    // Inicialización de controles de origen y destino
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
     this.destinoCtrl = this.buscadorLocalidadesService.crearEstadoControl();
 
@@ -104,16 +96,13 @@ export class NuevoViajePage implements OnInit {
       this.message_help_auth = traduccion;
     });
   }
-  // ==========================================
-  // CICLOS DE VIDA DEL COMPONENTE
-  // ==========================================
+
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
 
     this.route.queryParams.subscribe((params) => {
       if (params['destino']) {
         const destinoSugerido = params['destino'];
-
         this.destinoCtrl.valorTexto = destinoSugerido;
 
         const viajeActual = this.travelService.getViajeData() || {};
@@ -127,9 +116,6 @@ export class NuevoViajePage implements OnInit {
     });
   }
 
-  // ==========================================
-  // GETTERS Y SETTERS
-  // ==========================================
   get origen(): string {
     return this.origenCtrl.valorTexto;
   }
@@ -144,13 +130,6 @@ export class NuevoViajePage implements OnInit {
     this.destinoCtrl.valorTexto = val;
   }
 
-  // ==========================================
-  // 5. MÉTODOS PÚBLICOS (Lógica de Negocio)
-  // ==========================================
-
-  /**
-   * Función para navegar hasta la página "data-viaje"
-   */
   goTo() {
     const viajeData = {
       origen: this.origen,
@@ -167,17 +146,10 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
-  /**
-   * Vuelve a la pantalla anterior en el historial de navegación.
-   */
   goBack() {
     this.location.back();
   }
 
-  /**
-   * Función para obtener la ubicación actual del usuario y buscar la ciudad correspondiente usando Nominatim.
-   * Se actualiza el campo de origen con la ciudad obtenida.
-   */
   buscarUbicacion() {
     this.spinnerActivo = true;
     if (navigator.geolocation) {
@@ -185,8 +157,6 @@ export class NuevoViajePage implements OnInit {
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-
-          // Llamada a Nominatim para obtener la dirección inversa
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
 
           fetch(url)
@@ -203,49 +173,38 @@ export class NuevoViajePage implements OnInit {
                   this.travelService.setViajeData(viajeData);
                   this.cdr.detectChanges();
                   this.spinnerActivo = false;
-                } else {
-                  console.log('No se pudo obtener la ciudad.');
                 }
               }
             })
-            .catch((error) => console.error('Error al obtener la ubicación con Leaflet:', error));
+            .catch((error) => console.error('Error al obtener la ubicación:', error));
         },
         (error) => {
           console.error('Error de geolocalización:', error.message);
         }
       );
-    } else {
-      console.error('La geolocalización no está soportada por este navegador.');
     }
   }
 
-  /**
-   * Captura la selección de plazas del selector general.
-   */
   seleccionarPlazas(opcion: any) {
     this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
   }
 
   /**
-   * Abre un modal para que el usuario pueda reportar una incidencia relacionada con la creación de un viaje.
-   * El modal se configura con la categoría "VIAJE" y la subcategoría predeterminada "ERROR_CREACION".
-   * Una vez que el usuario envía la incidencia, se muestra un mensaje de éxito.
-   * 
-   * @returns {Promise<void>} Una promesa que se resuelve cuando el modal se cierra.
+   * Abre el modal para reportar incidencias asociadas a la creación de un viaje.
    */
   async abrirIncidenciaCreacionViaje() {
     const modal = await this.modalController.create({
       component: AbrirIncidenciaModalComponent,
       componentProps: {
-        categoria: 'VIAJE',
-        subcategoriaPredeterminada: 'ERROR_CREACION',
+        categoria: 'APP',
+        subcategoriaPredeterminada: 'CREACION_VIAJE',
         tituloContexto: 'Problema al crear el viaje'
       },
       cssClass: 'modal-incidencia-custom'
     });
 
     await modal.present();
-    const { data, role } = await modal.onWillDismiss();
+    const { role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
       this.messageService.add({

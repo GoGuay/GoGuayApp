@@ -5,17 +5,19 @@
 <ion-content class="incidencias-content ion-padding">
   <div class="incidencias-container">
 
-    <div class="d-flex align-items-center gap-3 mb-4">
-      <button class="btn-back-circle" (click)="volver()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </button>
-      <div>
-        <h2 class="fw-bold m-0 title-page">Mis Incidencias</h2>
-        <p class="text-muted small m-0">Estado de tus consultas, reportes y reclamaciones</p>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn-back-circle" (click)="volver()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div>
+          <h2 class="fw-bold m-0 title-page">Mis Incidencias</h2>
+          <p class="text-muted small m-0">Estado de tus consultas, reportes y reclamaciones</p>
+        </div>
       </div>
     </div>
 
-    <!-- PESTAÑAS DE FILTRADO -->
+    <!-- FILTRO -->
     <div class="tabs-filter-wrapper mb-4">
       <button class="tab-btn" [class.active]="filtroEstado === 'todas'"
         (click)="filtroEstado = 'todas'; aplicarFiltro()">
@@ -25,8 +27,8 @@
         (click)="filtroEstado = 'iniciada'; aplicarFiltro()">
         Abiertas
       </button>
-      <button class="tab-btn" [class.active]="filtroEstado === 'resuelta'"
-        (click)="filtroEstado = 'resuelta'; aplicarFiltro()">
+      <button class="tab-btn" [class.active]="filtroEstado === 'finalizada'"
+        (click)="filtroEstado = 'finalizada'; aplicarFiltro()">
         Resueltas
       </button>
     </div>
@@ -89,6 +91,13 @@
             <p class="small text-dark m-0">{{ item.resolucion_notas }}</p>
           </div>
 
+          <div *ngIf="item.motivo_cancelacion" class="mb-3 p-3 rounded-3 bg-secondary-subtle border border-secondary">
+            <strong class="small text-secondary d-block fw-bold mb-1">
+              <ion-icon name="close-circle-outline" class="me-1"></ion-icon> Motivo de cancelación:
+            </strong>
+            <p class="small text-dark m-0">{{ formatearMotivoCancelacion(item.motivo_cancelacion) }}</p>
+          </div>
+
           <div *ngIf="item.adjuntos && item.adjuntos.length > 0" class="mb-3">
             <strong class="xsmall text-muted d-block uppercase fw-bold mb-1">Adjuntos:</strong>
             <div class="d-flex gap-2 flex-wrap">
@@ -98,6 +107,7 @@
             </div>
           </div>
 
+          <!-- MENSAJES -->
           <div class="mensajes-section mt-3">
             <strong class="xsmall text-muted d-block uppercase fw-bold mb-2">Mensajes de seguimiento:</strong>
 
@@ -110,13 +120,24 @@
               <p class="small m-0">{{ msg.mensaje }}</p>
             </div>
 
-            <div *ngIf="item.estado !== 'RESUELTA'" class="d-flex gap-2 mt-3">
+            <!-- ENVIAR RESPUESTA -->
+            <div *ngIf="item.estado !== 'FINALIZADA' && item.estado !== 'CANCELADA'" class="d-flex gap-2 mt-3">
               <input type="text" [(ngModel)]="item.nuevoMensaje" placeholder="Escribe un mensaje de respuesta..."
                 class="form-control custom-input-msg" (keyup.enter)="enviarRespuesta(item)">
-              <button class="btn-send-msg" (click)="enviarRespuesta(item)">
+              <button class="btn-send-msg" (click)="enviarRespuesta(item)" [disabled]="item.enviandoMensaje">
                 <ion-icon name="send-outline"></ion-icon>
               </button>
             </div>
+          </div>
+
+          <!-- BOTÓN CANCELAR -->
+          <div *ngIf="item.estado !== 'FINALIZADA' && item.estado !== 'CANCELADA'"
+            class="mt-4 pt-3 border-top d-flex justify-content-end">
+            <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 btn-cancelar-incidencia"
+              (click)="confirmarCancelacion(item)">
+              <ion-icon name="close-circle-outline"></ion-icon>
+              <span>Cancelar incidencia</span>
+            </button>
           </div>
 
         </div>
