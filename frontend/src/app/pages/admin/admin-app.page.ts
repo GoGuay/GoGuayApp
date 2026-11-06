@@ -21,8 +21,8 @@ import { FuncionesComunes } from "../../core/funciones-comunes/funciones-comunes
 import { Usuario } from "../../models/user/usuario.model";
 import { Chart, registerables } from 'chart.js';
 import { EncuestaService } from "../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service";
+import { IncidenciasService } from "../../core/incidencias-service/incidencias-service.service";
 
-// Registrar componentes de Chart.js
 Chart.register(...registerables);
 
 @Component({
@@ -46,6 +46,7 @@ export class AdminApp implements OnInit, AfterViewInit {
     userData: Usuario = {} as Usuario;
     userLoggedIn: boolean = false;
 
+    // Métricas / Notificaciones dinámicas
     mensajes: any[] = [
         { id: 101, asunto: 'Duda sobre verificación QR', remitente: 'Alex G.', fecha: '12/10', leido: false },
         { id: 102, asunto: 'Incidencia con monedero PayPal', remitente: 'Carla R.', fecha: '11/10', leido: true }
@@ -53,6 +54,8 @@ export class AdminApp implements OnInit, AfterViewInit {
 
     mensajesPendientes: number = 1;
     usuariosRestringidosCount: number = 0;
+    incidenciasPendientesCount: number = 0;
+    nuevosUsuariosHoyCount: number = 0;
 
     barChart: any;
     listaEncuestas: any[] = [];
@@ -63,7 +66,8 @@ export class AdminApp implements OnInit, AfterViewInit {
         public navCtrl: NavController,
         private userService: UserServicesService,
         private funcionesComunes: FuncionesComunes,
-        private encuestaService: EncuestaService
+        private encuestaService: EncuestaService,
+        private incidenciasService: IncidenciasService
     ) {
         addIcons({
             peopleOutline,
@@ -93,11 +97,10 @@ export class AdminApp implements OnInit, AfterViewInit {
 
         this.obtenerUsuariosApp();
         this.cargarEncuestas();
+        this.cargarNotificacionesIncidencias();
     }
 
-    ngAfterViewInit() {
-        // La inicialización del canvas se ejecuta en cargarEncuestas
-    }
+    ngAfterViewInit() {}
 
     loadUserData(): void {
         const data = localStorage.getItem('userData');
@@ -122,8 +125,23 @@ export class AdminApp implements OnInit, AfterViewInit {
                 this.listaUsuarios = respuesta || [];
                 this.listaUsuariosFiltrados = [...this.listaUsuarios];
                 this.calcularUsuariosRestringidos();
+                this.calcularNuevosUsuariosHoy();
             },
             error: (error) => console.error('Error al obtener la lista de usuarios:', error)
+        });
+    }
+
+    /**
+     * Consulta el backend para saber cuántas incidencias requieren atención (INICIADA o EN_REVISION)
+     */
+    cargarNotificacionesIncidencias() {
+        this.incidenciasService.obtenerTodasIncidenciasAdmin().subscribe({
+            next: (incidencias: any[]) => {
+                this.incidenciasPendientesCount = (incidencias || []).filter(
+                    (i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION'
+                ).length;
+            },
+            error: (err) => console.error('Error cargando incidencias para el resumen:', err)
         });
     }
 
@@ -131,6 +149,14 @@ export class AdminApp implements OnInit, AfterViewInit {
         this.usuariosRestringidosCount = this.listaUsuarios.filter(
             u => u.ya_ha_sido_suspendido || u.restringido
         ).length;
+    }
+
+    calcularNuevosUsuariosHoy() {
+        const hoy = new Date().toISOString().split('T')[0];
+        this.nuevosUsuariosHoyCount = this.listaUsuarios.filter(u => {
+            if (!u.created_at) return false;
+            return u.created_at.startsWith(hoy);
+        }).length;
     }
 
     toggleRestriccion(user: any) {
@@ -184,6 +210,7 @@ export class AdminApp implements OnInit, AfterViewInit {
     goGestionUsuarios() {
         this.navCtrl.navigateForward(['/gestion-usuarios-admin']);
     }
+
     updateTime() {
         const now = new Date();
         this.hours = now.getHours().toString().padStart(2, '0');

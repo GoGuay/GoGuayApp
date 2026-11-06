@@ -70,6 +70,13 @@ def enviar_email_y_notificacion(usuario, asunto, mensaje_texto, tipo_notificacio
         current_app.logger.error(f"Error al enviar correo a {usuario.email}: {e}")
 
 
+# OBTENER TODAS LAS INCIDENCIAS (Panel de Administración)
+@incidencias_bp.route('/admin/todas', methods=['GET'])
+def obtener_todas_incidencias_admin():
+    incidencias = Incidencia.query.order_by(Incidencia.created_at.desc()).all()
+    return jsonify([i.serialize() for i in incidencias]), 200
+
+
 # OBTENER INCIDENCIAS DE UN USUARIO
 @incidencias_bp.route('/usuario/<int:usuario_id>', methods=['GET'])
 def obtener_incidencias_usuario(usuario_id):

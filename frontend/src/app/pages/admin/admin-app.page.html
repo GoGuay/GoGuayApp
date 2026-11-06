@@ -13,8 +13,7 @@
                     <div>
                         <span class="badge-role">Administrador</span>
                         <h2 class="m-0 fw-bold title-user">
-                            {{ usuario?.nombre ? (usuario?.nombre + ' ' + (usuario?.apellidos || '')) : 'Panel de
-                            Control' }}
+                            {{ usuario?.nombre ? (usuario?.nombre + ' ' + (usuario?.apellidos || '')) : 'Panel deControl' }}
                         </h2>
                     </div>
                 </div>
@@ -27,42 +26,66 @@
         </div>
 
         <!-- TARJETAS DE MÉTRICAS RÁPIDAS -->
-        <ion-row class="mb-2">
+        <ion-row class="mb-3 g-3">
+            <!-- 1. NOTIFICACIÓN: USUARIOS REGISTRADOS -->
             <ion-col size="12" size-md="4">
-                <div
-                    class="metric-card card-purple p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                <div class="metric-card card-purple p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between cursor-pointer interactive-card"
+                    (click)="goGestionUsuarios()">
                     <div>
-                        <span class="metric-number">{{ listaUsuarios.length }}</span>
-                        <p class="metric-label m-0">Usuarios Registrados</p>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="metric-number">{{ listaUsuarios.length }}</span>
+                            <span class="badge-notif badge-notif-purple" *ngIf="nuevosUsuariosHoyCount > 0">
+                                +{{ nuevosUsuariosHoyCount }} hoy
+                            </span>
+                        </div>
+                        <p class="metric-label m-0 fw-bold">Usuarios Registrados</p>
+                        <small class="text-muted-custom">Ver listado de cuentas ›</small>
                     </div>
-                    <div class="metric-icon">
+                    <div class="metric-icon icon-purple">
                         <ion-icon name="people-outline"></ion-icon>
                     </div>
                 </div>
             </ion-col>
 
+            <!-- 2. NOTIFICACIÓN: INCIDENCIAS PENDIENTES -->
             <ion-col size="12" size-md="4">
-                <div
-                    class="metric-card card-beige p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                <div class="metric-card card-beige p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between cursor-pointer interactive-card"
+                    [class.card-alert-pulse]="incidenciasPendientesCount > 0" (click)="goIncidencias()">
                     <div>
-                        <span class="metric-number">{{ mensajesPendientes }}</span>
-                        <p class="metric-label m-0">Mensajes de Soporte</p>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="metric-number">{{ incidenciasPendientesCount }}</span>
+                            <span class="badge-notif badge-notif-orange" *ngIf="incidenciasPendientesCount > 0">
+                                Requiere atención
+                            </span>
+                            <span class="badge-notif badge-notif-success" *ngIf="incidenciasPendientesCount === 0">
+                                Al día
+                            </span>
+                        </div>
+                        <p class="metric-label m-0 fw-bold">Incidencias Pendientes</p>
+                        <small class="text-muted-custom">Revisar soporte técnico ›</small>
                     </div>
-                    <div class="metric-icon">
-                        <ion-icon name="mail-unread-outline"></ion-icon>
+                    <div class="metric-icon icon-orange">
+                        <ion-icon name="warning-outline"></ion-icon>
                     </div>
                 </div>
             </ion-col>
 
+            <!-- 3. NOTIFICACIÓN: USUARIOS RESTRINGIDOS -->
             <ion-col size="12" size-md="4">
-                <div
-                    class="metric-card card-rose p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between">
+                <div class="metric-card card-rose p-3 shadow-sm rounded-4 d-flex align-items-center justify-content-between cursor-pointer interactive-card"
+                    (click)="goGestionUsuarios()">
                     <div>
-                        <span class="metric-number">{{ usuariosRestringidosCount }}</span>
-                        <p class="metric-label m-0">Usuarios Restringidos</p>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="metric-number">{{ usuariosRestringidosCount }}</span>
+                            <span class="badge-notif badge-notif-red" *ngIf="usuariosRestringidosCount > 0">
+                                Suspendidos
+                            </span>
+                        </div>
+                        <p class="metric-label m-0 fw-bold">Usuarios Restringidos</p>
+                        <small class="text-muted-custom">Gestionar accesos ›</small>
                     </div>
-                    <div class="metric-icon">
-                        <ion-icon name="warning-outline"></ion-icon>
+                    <div class="metric-icon icon-red">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
                     </div>
                 </div>
             </ion-col>

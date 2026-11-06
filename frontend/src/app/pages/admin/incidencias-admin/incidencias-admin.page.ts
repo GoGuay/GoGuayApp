@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController, ModalController } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
   warningOutline, 
@@ -16,18 +16,26 @@ import {
   alertCircleOutline
 } from 'ionicons/icons';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
+import { IncidenciasService, EstadoIncidencia } from 'src/app/core/incidencias-service/incidencias-service.service';
 
-export interface Incidencia {
-  id: string;
-  usuarioReporta: { nombre: string; email: string; foto?: string };
-  usuarioReportado?: { nombre: string; email: string };
-  tipo: 'Conducta' | 'Pagos/Monedero' | 'Viaje/Reserva' | 'Fallo Técnico' | 'Otro';
-  asunto: string;
+export interface IncidenciaAdmin {
+  id: number;
+  categoria: string;
+  subcategoria: string;
+  resumen: string;
   descripcion: string;
-  fecha: string;
-  estado: 'pendiente' | 'en_revision' | 'resuelta' | 'desestimada';
-  prioridad: 'alta' | 'media' | 'baja';
-  respuestaAdmin?: string;
+  estado: EstadoIncidencia;
+  created_at: string;
+  updated_at: string;
+  usuario_remitente_id: number;
+  usuario_reportado_id?: number | null;
+  viaje_id?: number | null;
+  resolucion_notas?: string;
+  motivo_cancelacion?: string;
+  usuario_remitente?: { id: number; nombre: string; email: string };
+  usuario_reportado?: { id: number; nombre: string; email: string };
+  adjuntos?: Array<{ id: number; url_archivo: string }>;
+  mensajes?: Array<{ id: number; emisor_id: number; mensaje: string; created_at: string }>;
 }
 
 @Component({
@@ -40,48 +48,18 @@ export interface Incidencia {
 export class IncidenciasAdminPage implements OnInit {
   filtroEstado: string = 'todas';
   busquedaQuery: string = '';
-  incidenciaSeleccionada: Incidencia | null = null;
+  incidenciaSeleccionada: IncidenciaAdmin | null = null;
   respuestaTexto: string = '';
+  cargando: boolean = true;
+  guardando: boolean = false;
 
-  // Datos mock iniciales para pruebas del centro de incidencias
-  listaIncidencias: Incidencia[] = [
-    {
-      id: 'INC-1001',
-      usuarioReporta: { nombre: 'Carla R.', email: 'carla@love.es' },
-      usuarioReportado: { nombre: 'Santi M.', email: 'santi@trans.org' },
-      tipo: 'Conducta',
-      asunto: 'Usuario no se presentó en el punto de encuentro',
-      descripcion: 'El conductor esperó 20 minutos en el punto acordado pero el pasajero no respondió a las llamadas ni apareció.',
-      fecha: '29/10/2026 18:30',
-      estado: 'pendiente',
-      prioridad: 'alta'
-    },
-    {
-      id: 'INC-1002',
-      usuarioReporta: { nombre: 'Alex G.', email: 'alex@pride.com' },
-      tipo: 'Pagos/Monedero',
-      asunto: 'Error en la recarga mediante PayPal',
-      descripcion: 'Se descontó el saldo de mi cuenta de PayPal pero no se ha reflejado en el Monedero de GoGuay.',
-      fecha: '28/10/2026 12:15',
-      estado: 'en_revision',
-      prioridad: 'media'
-    },
-    {
-      id: 'INC-1003',
-      usuarioReporta: { nombre: 'Lucía B.', email: 'lucia@app.es' },
-      tipo: 'Fallo Técnico',
-      asunto: 'No se genera el código QR de verificación',
-      descripcion: 'Al pulsar el botón flotante en mi viaje activo la pantalla se queda en blanco sin cargar el QR.',
-      fecha: '25/10/2026 09:40',
-      estado: 'resuelta',
-      prioridad: 'baja',
-      respuestaAdmin: 'Se ha corregido la caché de la aplicación en la versión 2.4.1.'
-    }
-  ];
+  listaIncidencias: IncidenciaAdmin[] = [];
+  incidenciasFiltradas: IncidenciaAdmin[] = [];
 
-  incidenciasFiltradas: Incidencia[] = [];
-
-  constructor(public navCtrl: NavController) {
+  constructor(
+    public navCtrl: NavController,
+    private incidenciasService: IncidenciasService
+  ) {
     addIcons({
       warningOutline,
       searchOutline,
@@ -97,26 +75,43 @@ export class IncidenciasAdminPage implements OnInit {
   }
 
   ngOnInit() {
-    this.aplicarFiltros();
+    this.cargarTodasLasIncidencias();
+  }
+
+  cargarTodasLasIncidencias() {
+    this.cargando = true;
+    this.incidenciasService.obtenerTodasIncidenciasAdmin().subscribe({
+      next: (data: IncidenciaAdmin[]) => {
+        this.listaIncidencias = data || [];
+        this.aplicarFiltros();
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener incidencias globales:', err);
+        this.cargando = false;
+      }
+    });
   }
 
   aplicarFiltros() {
     this.incidenciasFiltradas = this.listaIncidencias.filter(item => {
-      const coincideEstado = this.filtroEstado === 'todas' || item.estado === this.filtroEstado;
+      const coincideEstado = this.filtroEstado === 'todas' || item.estado.toLowerCase() === this.filtroEstado.toLowerCase();
       const q = this.busquedaQuery.toLowerCase().trim();
+      
       const coincideBusqueda = !q || 
-        item.id.toLowerCase().includes(q) ||
-        item.asunto.toLowerCase().includes(q) ||
-        item.usuarioReporta.nombre.toLowerCase().includes(q) ||
-        item.usuarioReporta.email.toLowerCase().includes(q);
+        item.id.toString().includes(q) ||
+        item.resumen.toLowerCase().includes(q) ||
+        item.descripcion.toLowerCase().includes(q) ||
+        (item.usuario_remitente?.nombre && item.usuario_remitente.nombre.toLowerCase().includes(q)) ||
+        (item.usuario_remitente?.email && item.usuario_remitente.email.toLowerCase().includes(q));
 
       return coincideEstado && coincideBusqueda;
     });
   }
 
-  verDetalleIncidencia(item: Incidencia) {
+  verDetalleIncidencia(item: IncidenciaAdmin) {
     this.incidenciaSeleccionada = item;
-    this.respuestaTexto = item.respuestaAdmin || '';
+    this.respuestaTexto = item.resolucion_notas || '';
   }
 
   cerrarDetalle() {
@@ -124,22 +119,63 @@ export class IncidenciasAdminPage implements OnInit {
     this.respuestaTexto = '';
   }
 
-  cambiarEstado(nuevoEstado: 'pendiente' | 'en_revision' | 'resuelta' | 'desestimada') {
+  cambiarEstado(nuevoEstado: EstadoIncidencia) {
     if (!this.incidenciaSeleccionada) return;
-    this.incidenciaSeleccionada.estado = nuevoEstado;
-    if (this.respuestaTexto.trim()) {
-      this.incidenciaSeleccionada.respuestaAdmin = this.respuestaTexto.trim();
-    }
-    this.aplicarFiltros();
+
+    this.guardando = true;
+    this.incidenciasService.cambiarEstadoIncidencia(
+      this.incidenciaSeleccionada.id,
+      nuevoEstado,
+      undefined,
+      this.respuestaTexto.trim() || undefined
+    ).subscribe({
+      next: (res) => {
+        if (this.incidenciaSeleccionada) {
+          this.incidenciaSeleccionada.estado = nuevoEstado;
+        }
+        this.guardando = false;
+        this.aplicarFiltros();
+      },
+      error: (err) => {
+        console.error('Error cambiando el estado:', err);
+        this.guardando = false;
+      }
+    });
   }
 
   guardarRespuesta() {
-    if (!this.incidenciaSeleccionada || !this.respuestaTexto.trim()) return;
-    this.incidenciaSeleccionada.respuestaAdmin = this.respuestaTexto.trim();
-    if (this.incidenciaSeleccionada.estado === 'pendiente') {
-      this.incidenciaSeleccionada.estado = 'en_revision';
-    }
-    this.aplicarFiltros();
+    if (!this.incidenciaSeleccionada) return;
+
+    this.guardando = true;
+    const estadoActual = this.incidenciaSeleccionada.estado;
+    // Si estaba en INICIADA y se escribe una respuesta, pasa automáticamente a EN_REVISION
+    const nuevoEstado: EstadoIncidencia = estadoActual === 'INICIADA' ? 'EN_REVISION' : estadoActual;
+
+    this.incidenciasService.cambiarEstadoIncidencia(
+      this.incidenciaSeleccionada.id,
+      nuevoEstado,
+      undefined,
+      this.respuestaTexto.trim()
+    ).subscribe({
+      next: (res) => {
+        if (this.incidenciaSeleccionada) {
+          this.incidenciaSeleccionada.resolucion_notas = this.respuestaTexto.trim();
+          this.incidenciaSeleccionada.estado = nuevoEstado;
+        }
+        this.guardando = false;
+        this.aplicarFiltros();
+      },
+      error: (err) => {
+        console.error('Error guardando la respuesta:', err);
+        this.guardando = false;
+      }
+    });
+  }
+
+  formatearMotivo(motivo?: string): string {
+    if (!motivo) return '';
+    if (motivo === 'POR_USUARIO') return 'Por el usuario';
+    return motivo.replace('_', ' ');
   }
 
   volverDashboard() {

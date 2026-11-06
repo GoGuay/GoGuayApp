@@ -43,6 +43,14 @@ export class IncidenciasService {
   }
 
   /**
+ * Obtiene el listado global de incidencias para el panel de administración
+ * GET /api/incidencias/admin/todas
+ */
+  obtenerTodasIncidenciasAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/incidencias/admin/todas`);
+  }
+
+  /**
    * Registra una nueva incidencia en el sistema
    * POST /api/incidencias/crear
    */
