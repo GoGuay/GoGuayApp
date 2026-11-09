@@ -1,8 +1,11 @@
+.contenedor_login {
+  overflow: auto;
+}
+
 .box_login {
   display: flex;
   justify-content: center;
   align-items: center;
-  //   height: 100vh;
   flex-direction: column;
 }
 
@@ -20,6 +23,8 @@
   padding: 15px;
   box-sizing: border-box;
 }
+
+
 
 .form-control {
   width: 100%;
@@ -45,9 +50,7 @@
   margin-top: 5px;
 }
 
-.form-control.ng-invalid.ng-touched {
-  border-color: red;
-}
+
 
 /**
 * CONFIGURACIÓN PARA EL ENLACE DE REGISTRO
@@ -58,7 +61,7 @@
   padding: 1%;
 }
 
-a{
+a {
   text-decoration: none;
   color: #9b59b6;
 }

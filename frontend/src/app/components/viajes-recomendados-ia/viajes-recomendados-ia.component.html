@@ -6,9 +6,25 @@
       <i class="fi fi-rr-magic-wand text-primary"></i>
       Inspírate y crea tu próximo viaje
     </h3>
-    <span class="badge-ia">
-      <i class="fi fi-rr-sparkles me-1"></i> Smart Match
-    </span>
+    <div class="d-flex align-items-center gap-2">
+      <!-- BOTÓN RECARGAR SUGERENCIAS -->
+      <button class="btn-reload-ia d-flex align-items-center justify-content-center" (click)="recargarRecomendaciones()"
+        [disabled]="cargando" title="Generar nuevas recomendaciones">
+        <i class="fi fi-rr-refresh" [class.spinning]="cargando"></i>
+      </button>
+
+      <!-- BOTÓN ACCESO DIRECTO A AJUSTES -->
+      <button 
+        class="btn-action-ia d-flex align-items-center justify-content-center" 
+        (click)="irAAjustes()" 
+        title="Desactivar recomendaciones de IA">
+        <i class="fi fi-rr-settings"></i>
+      </button>
+
+      <span class="badge-ia">
+        <i class="fi fi-rr-sparkles me-1"></i> Smart Match
+      </span>
+    </div>
   </div>
 
   <!-- Texto informativo -->
@@ -18,9 +34,9 @@
     destino y crea un viaje para compartir coche!
   </p>
 
-
+  <!-- Spinner de carga -->
   <div *ngIf="cargando" class="text-center py-3">
-    <app-spinner></app-spinner>
+    <app-spinner [tamano_completo]="false"></app-spinner>
     <p class="small text-muted mt-2">Buscando destinos ideales para ti...</p>
   </div>
 
@@ -28,10 +44,10 @@
   <div class="row g-3" *ngIf="!cargando && recomendaciones.length > 0">
     <div class="col-12 col-md-4" *ngFor="let rec of recomendaciones">
 
-      <!-- Usamos un div con flex-column para gestionar las alturas -->
+      <!-- Tarjeta principal -->
       <div class="card ia-card shadow-sm h-100 p-3 d-flex flex-column">
 
-        <!-- Afinidad -->
+        <!-- Afinidad y Icono -->
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="badge bg-light text-dark border">Afinidad: {{ rec.puntuacion_afinidad }}%</span>
           <div class="ia-icon-wrapper">
@@ -50,12 +66,14 @@
           {{ rec.motivo }}
         </p>
 
-        <!-- Contenedor de botones con mt-auto para fijarlo siempre abajo -->
+        <!-- Contenedor de acciones inferior fijo con mt-auto -->
         <div class="mt-auto pt-3 d-flex justify-content-center align-items-center gap-4 action-container">
-          <span class="small fw-bold action-link" (click)="buscarViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button"
+            (click)="buscarViajeDesde(rec.nombre_destino)">
             Buscar viaje aquí <i class="fi fi-rr-search"></i>
           </span>
-          <span class="small fw-bold action-link" (click)="crearViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button"
+            (click)="crearViajeDesde(rec.nombre_destino)">
             Crear viaje aquí <i class="fi fi-rr-plus"></i>
           </span>
         </div>

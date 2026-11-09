@@ -65,7 +65,7 @@
   margin-right: 10%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .logo {
@@ -82,13 +82,6 @@
 
 .perfil .nav-link {
   cursor: pointer !important;
-}
-
-.idiomas {
-  width: 40px;
-  height: 40px;
-  border-radius: 35%;
-  mix-blend-mode: multiply;
 }
 
 .caja-icono {
@@ -191,23 +184,31 @@ ul {
 }
 
 .idiomas-container {
-  min-width: 30px;
-}
-
-.icon-idioma {
-  width: 20px !important;
-  height: auto;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative !important; 
+  top: auto !important;
+  right: auto !important;
+  min-width: 24px;
   cursor: pointer;
-  transition: filter 0.3s;
-}
 
-.icon-idioma:hover {
-  transform: scale(1.05);
-}
+  .icon-idioma {
+    width: 20px;
+    height: auto;
+    border-radius: 2px;
+    transition: opacity 0.2s ease, filter 0.2s ease;
 
-.grayscale-filter {
-  filter: grayscale(100%);
-  opacity: 0.7;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .grayscale-filter {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
 }
 
 .btnNotificaciones,
@@ -266,21 +267,27 @@ ul {
   0% {
     transform: rotate(0deg);
   }
+
   15% {
     transform: rotate(14deg);
   }
+
   30% {
     transform: rotate(-12deg);
   }
+
   45% {
     transform: rotate(10deg);
   }
+
   60% {
     transform: rotate(-8deg);
   }
+
   75% {
     transform: rotate(4deg);
   }
+
   100% {
     transform: rotate(0deg);
   }

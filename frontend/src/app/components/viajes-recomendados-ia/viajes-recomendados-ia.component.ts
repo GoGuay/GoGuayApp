@@ -4,14 +4,14 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SpinnerComponent } from "../spinner/spinner.component";
-import { NavigationExtras, RouterLink } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-viajes-recomendados-ia',
   templateUrl: './viajes-recomendados-ia.component.html',
   styleUrls: ['./viajes-recomendados-ia.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, SpinnerComponent, RouterLink],
+  imports: [CommonModule, IonicModule, TranslateModule, SpinnerComponent],
 })
 export class ViajesRecomendadosIaComponent implements OnInit {
   recomendaciones: any[] = [];
@@ -20,13 +20,13 @@ export class ViajesRecomendadosIaComponent implements OnInit {
   constructor(
     private travelService: TravelService,
     private navCtrl: NavController,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.cargarRecomendaciones();
   }
 
-  cargarRecomendaciones() {
+  cargarRecomendaciones(forzarRecarga: boolean = false) {
     const userDataString = localStorage.getItem('userData');
     if (!userDataString) {
       this.cargando = false;
@@ -41,7 +41,9 @@ export class ViajesRecomendadosIaComponent implements OnInit {
       return;
     }
 
-    this.travelService.getViajesRecomendadosIA(userId).subscribe({
+    this.cargando = true;
+
+    this.travelService.getViajesRecomendadosIA(userId, forzarRecarga).subscribe({
       next: (res: any) => {
         if (res && res.recomendaciones) {
           this.recomendaciones = res.recomendaciones;
@@ -54,6 +56,10 @@ export class ViajesRecomendadosIaComponent implements OnInit {
       },
     });
   }
+  recargarRecomendaciones() {
+    if (this.cargando) return;
+    this.cargarRecomendaciones(true);
+  }
 
   crearViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
@@ -61,7 +67,11 @@ export class ViajesRecomendadosIaComponent implements OnInit {
     };
     this.navCtrl.navigateForward(['/nuevo-viaje'], navigationExtras);
   }
-  
+
+  irAAjustes() {
+    this.navCtrl.navigateForward(['/ajustes-aplicacion']); 
+  }
+
   buscarViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
       queryParams: { destino: nombreDestino }

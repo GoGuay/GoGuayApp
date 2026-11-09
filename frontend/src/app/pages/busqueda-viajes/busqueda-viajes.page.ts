@@ -8,9 +8,11 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Viaje } from 'src/app/models/travel/viaje.model';
+import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-busqueda-viajes',
@@ -44,7 +46,13 @@ export class BusquedaViajesPage implements OnInit {
   isLoading: boolean = false;
   listado_viajes: Viaje[] = [];
 
-  constructor(private route: ActivatedRoute, private funcionesComunes: FuncionesComunes, private location: Location, private navCtrl: NavController) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private funcionesComunes: FuncionesComunes, 
+    private location: Location, 
+    private navCtrl: NavController,
+    private modalController: ModalController, 
+    public messageService: MessageService) { }
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -106,5 +114,29 @@ export class BusquedaViajesPage implements OnInit {
   tieneParametros(): boolean {
     // Comprueba si el objeto tiene alguna clave (propiedad)
     return Object.keys(this.busquedaParams).length > 0;
+  }
+
+  async abrirIncidenciaBusqueda() {
+    const modal = await this.modalController.create({
+      component: AbrirIncidenciaModalComponent,
+      componentProps: {
+        categoria: 'VIAJE',
+        subcategoriaPredeterminada: 'OTRO',
+        tituloContexto: 'Incidencia en búsqueda de viajes'
+      },
+      cssClass: 'modal-incidencia-custom'
+    });
+
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Incidencia enviada',
+        detail: 'Gracias por informarnos. Revisaremos el problema con el buscador a la brevedad.',
+        life: 4000
+      });
+    }
   }
 }

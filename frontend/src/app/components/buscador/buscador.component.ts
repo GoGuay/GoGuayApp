@@ -19,8 +19,6 @@ import { eye, lockClosed } from 'ionicons/icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-
-import { of, Subject } from 'rxjs';
 import { ControlLocalidad } from 'src/app/models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from 'src/app/core/buscador-localidades/buscador-localidades.service';
 import { ActivatedRoute } from '@angular/router';

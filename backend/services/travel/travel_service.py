@@ -6,13 +6,14 @@ import os
 
 from flask import Blueprint, jsonify, request
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
 from sqlalchemy.orm import joinedload 
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 import json
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
@@ -251,11 +252,8 @@ def obtener_viajes_usuario():
 
     viajes = Viaje.query.filter_by(usuario_id=usuario_id).all()
 
-    if not viajes:
-        return jsonify({"mensaje": "El usuario no tiene viajes creados"}), 404
-
     return jsonify({
-        "viajes": [viaje.serialize() for viaje in viajes]
+        "viajes": [viaje.serialize() for viaje in viajes] if viajes else []
     }), 200
 
 
@@ -271,21 +269,41 @@ def obtener_viajes():
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
 
-
-
-
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LOS VIAJES A LOS QUE EL USUARIO SE HA UNIDO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/viajes_como_acompanante/<int:usuario_id>', methods=['GET'])
 def obtener_viajes_pasajero(usuario_id):
-    viajes = Viaje.query.join(PasajeroViaje).filter(PasajeroViaje.usuario_id == usuario_id).options(
-        joinedload(Viaje.usuario), 
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
-    ).all()
-    
-    return jsonify([viaje.serialize() for viaje in viajes]), 200
+    try:
+        print(f"\n--------------------------------------------------")
+        print(f"🔍 Petición recibida para usuario_id: {usuario_id} (Tipo: {type(usuario_id)})")
+
+        # Comprobar cuántos registros existen directos en la tabla intermedia
+        registros_directos = PasajeroViaje.query.filter_by(usuario_id=usuario_id).all()
+        print(f"📊 Registros directos en 'pasajeros_viaje' para usuario {usuario_id}: {len(registros_directos)}")
+        for r in registros_directos:
+            print(f"   -> ID PasajeroViaje: {r.id} | Viaje ID: {r.viaje_id} | Estado: '{r.estado}'")
+
+        # Consulta completa con JOIN
+        viajes = (
+            Viaje.query
+            .join(PasajeroViaje, Viaje.id == PasajeroViaje.viaje_id)
+            .filter(PasajeroViaje.usuario_id == usuario_id)
+            .options(
+                joinedload(Viaje.usuario),
+                joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+            )
+            .all()
+        )
+
+        print(f"✅ Viajes devueltos tras el JOIN: {len(viajes)}")
+        print(f"--------------------------------------------------\n")
+
+        return jsonify([v.serialize(current_user_id=usuario_id) for v in viajes]), 200
+
+    except Exception as e:
+        print("❌ Error en /viajes_como_acompanante:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -682,7 +700,7 @@ def confirmar_pasajero_manual():
 
     try:
         solicitud.estado = 'aceptado'
-        solicitud.fecha_confirmacion_reserva = datetime.utcnow()
+        solicitud.fecha_confirmacion_reserva = datetime.now(timezone.utc)
         
         viaje.plazas -= 1
         
@@ -735,8 +753,8 @@ def cancelar_solicitud():
 #
 @travel_blueprint.route('/mis_solicitudes/<int:usuario_id>', methods=['GET'])
 def obtener_mis_solicitudes(usuario_id):
-    solicitudes = PasajeroViaje.query.filter(
-        PasajeroViaje.usuario_id == usuario_id,
+    solicitudes = PasajeroViaje.query.join(Viaje).filter(
+        Viaje.usuario_id == usuario_id,
         (PasajeroViaje.estado == 'pendiente') | (PasajeroViaje.estado == 'rechazado') | (PasajeroViaje.estado == None)
     ).options(joinedload(PasajeroViaje.viaje)).all()
 
@@ -840,15 +858,16 @@ def obtener_viajes_recomendados(user_id):
         if not usuario:
             return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
 
-        # Extraer y estructurar las preferencias del campo JSON de forma segura
-        preferencias_crudas = usuario.preferencias
-        if isinstance(preferencias_crudas, str):
+        forzar_recarga = request.args.get('refresh', 'false').lower() == 'true'
+
+        preferencias_usuario = usuario.preferencias
+        if isinstance(preferencias_usuario, str):
             try:
-                preferencias_usuario = json.loads(preferencias_crudas)
+                preferencias_usuario = json.loads(preferencias_usuario)
             except json.JSONDecodeError:
                 preferencias_usuario = {}
-        elif isinstance(preferencias_crudas, dict):
-            preferencias_usuario = preferencias_crudas
+        elif isinstance(preferencias_usuario, dict):
+            preferencias_usuario = preferencias_usuario
         else:
             preferencias_usuario = {}
 
@@ -860,7 +879,7 @@ def obtener_viajes_recomendados(user_id):
         
         intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
 
-        # Recopilar el historial de viajes previos del usuario
+        # Recopila el historial de viajes previos del usuario
         viajes_como_conductor = [
             {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
             for v in usuario.viajes_publicados
@@ -888,11 +907,21 @@ def obtener_viajes_recomendados(user_id):
             "historial_viajes": historial_viajes
         }
 
-        # NUEVO PROMPT: Formato plano por líneas delimitadas (CERO errores de comillas)
+        # Instrucción si el usuario solicita recarga
+        instruccion_recarga = ""
+        if forzar_recarga:
+            instruccion_recarga = (
+                "NOTA DE RECARGA: El usuario ya ha visto sugerencias anteriores (Sitges, Madrid, Valencia). "
+                "Genera 3 destinos o eventos alternativos totalmente NUEVOS e innovadores en España "
+                "(por ejemplo: Torremolinos, Maspalomas, Ibiza, Bilbao, Sevilla, Santiago de Compostela, etc.)."
+            )
+
         prompt = f"""
         Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
         Analiza el perfil analítico del usuario y selecciona EXACTAMENTE 3 destinos o eventos reales en España que encajen con su personalidad.
         
+        {instruccion_recarga}
+
         REQUISITO DE FORMATO ESTRICTO:
         No devuelvas JSON. Devuelve única y exclusivamente las recomendaciones en formato de texto plano, una por línea, separando sus campos exactamente con el carácter barra vertical (|) de esta forma:
         ID_SLUG | NOMBRE_DESTINO | PUNTUACION_AFINIDAD | MOTIVO_PERSONALIZADO
@@ -909,7 +938,7 @@ def obtener_viajes_recomendados(user_id):
         payload = {
             "model": "openai/gpt-oss-20b",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.6, 
+            "temperature": 0.8 if forzar_recarga else 0.6, 
             "max_tokens": 1000
         }
         
@@ -926,9 +955,7 @@ def obtener_viajes_recomendados(user_id):
         if response.status_code == 200:
             try:
                 texto_generado = data['choices'][0]['message']['content'].strip()
-                
-                # 🔍 NUEVO: Imprime esto en la consola para ver qué formato exacto está mandando la IA
-                print(f"🤖 Texto bruto recibido de la IA:\n{texto_generado}\n-------------------")
+                print(f"🤖 Texto bruto recibido de la IA (recarga={forzar_recarga}):\n{texto_generado}\n-------------------")
 
                 lineas = texto_generado.split('\n')
                 
@@ -954,34 +981,56 @@ def obtener_viajes_recomendados(user_id):
                 print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
                 recomendaciones = []
 
-        # Recortamos estrictamente a 3 elementos
         recomendaciones = recomendaciones[:3]
 
-        # Fallback dinámico por si la IA no devuelve líneas válidas
+        # Respuesta dinámica
         if not recomendaciones:
             nombre_usuario = usuario.nombre or "viajero"
             intereses_lower = [i.lower() for i in intereses_ocio]
             
-            destinos_fallback = [
-                {
-                    "id": "sitges-playa",
-                    "destino": "Sitges (Barcelona)",
-                    "afinidad": 96 if "playa" in intereses_lower else 85,
-                    "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero y su gran oferta de ocio inclusivo."
-                },
-                {
-                    "id": "madrid-chueca",
-                    "destino": "Madrid",
-                    "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
-                    "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y vivir una vibrante experiencia cultural y de ocio."
-                },
-                {
-                    "id": "valencia-carmen",
-                    "destino": "Valencia",
-                    "afinidad": 95 if "cultura" in intereses_lower else 82,
-                    "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas llenas de arte y planes alternativos."
-                }
-            ]
+            if forzar_recarga:
+                destinos_fallback = [
+                    {
+                        "id": "torremolinos-la-nogalera",
+                        "destino": "Torremolinos (Málaga)",
+                        "afinidad": 94,
+                        "motivo": f"{nombre_usuario}, Torremolinos ofrece sol, playa y la icónica zona de La Nogalera con un ambiente muy acogedor."
+                    },
+                    {
+                        "id": "maspalomas-dunas",
+                        "destino": "Maspalomas (Gran Canaria)",
+                        "afinidad": 96,
+                        "motivo": f"{nombre_usuario}, descubre el entorno único de Maspalomas, referente internacional en turismo inclusivo."
+                    },
+                    {
+                        "id": "ibiza-playa-cavall",
+                        "destino": "Ibiza",
+                        "afinidad": 92,
+                        "motivo": f"{nombre_usuario}, una escapada a Ibiza te permitirá conectar con la naturaleza, sus calas y su vibrante vida nocturna."
+                    }
+                ]
+            else:
+                destinos_fallback = [
+                    {
+                        "id": "sitges-playa",
+                        "destino": "Sitges (Barcelona)",
+                        "afinidad": 96 if "playa" in intereses_lower else 85,
+                        "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero."
+                    },
+                    {
+                        "id": "madrid-chueca",
+                        "destino": "Madrid",
+                        "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
+                        "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y cultura."
+                    },
+                    {
+                        "id": "valencia-carmen",
+                        "destino": "Valencia",
+                        "afinidad": 95 if "cultura" in intereses_lower else 82,
+                        "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas."
+                    }
+                ]
+
             recomendaciones = [
                 {
                     "destino_id": d["id"],
@@ -1012,3 +1061,249 @@ def get_access_token():
         data={'grant_type': 'client_credentials'}
     )
     return res.json()['access_token']
+
+#
+# SERVICIO PARA CREAR UN VIAJE UTILIZANDO INTELIGENCIA ARTIFICIAL
+#
+@travel_blueprint.route('/crear-viaje-ia', methods=['POST'])
+@jwt_required() 
+def crear_viaje_ia():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    origen = data.get('origen')
+    destino = data.get('destino')
+    fecha_salida = data.get('fecha_salida')
+    hora_salida = data.get('hora_salida', '08:00')
+    distancia_km = data.get('distancia_km', 50.0) 
+    
+    if not origen or not destino or not fecha_salida:
+        return jsonify({"error": "Faltan datos requeridos por MariCar"}), 400
+        
+    consumo_medio = 6.5
+    precio_combustible = 1.55
+    plazas_totales = 3
+    
+    coste_viaje_combustible = (distancia_km / 100) * consumo_medio * precio_combustible
+    coste_por_plaza = coste_viaje_combustible / plazas_totales
+    precio_calculado = round(coste_por_plaza * 1.15, 2)
+    precio_final = max(5.0, precio_calculado) # Mínimo de 5€
+
+    try:
+        formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S.%fZ']
+        fecha_obj = None
+        for fmt in formatos_fecha:
+            try:
+                fecha_obj = datetime.strptime(fecha_salida.split('T')[0], fmt.split('T')[0])
+                break
+            except ValueError:
+                continue
+        if not fecha_obj:
+            fecha_obj = datetime.now(timezone.utc)
+    except Exception:
+        fecha_obj = datetime.now(timezone.utc)
+
+    vehiculo_defecto = Vehiculo.query.filter_by(usuario_id=current_user_id).first()
+    vehiculo_id = vehiculo_defecto.id if vehiculo_defecto else 1
+
+    nuevo_viaje = Viaje(
+        origen=origen,
+        destino=destino,
+        fecha_salida=fecha_obj,
+        hora_salida=hora_salida,
+        hora_llegada="10:00",
+        plazas=plazas_totales,
+        precio_viaje=precio_final,
+        duracion_viaje="1h 30min",
+        usuario_id=current_user_id,
+        vehiculo=vehiculo_id,
+        estado_viaje="Próximo",
+        ruta_seleccionada={"routes": [{"legs": [{"distance": {"value": distancia_km * 1000}}]}]}
+    )
+    
+    db.session.add(nuevo_viaje)
+    db.session.commit()
+    
+    return jsonify({
+        "mensaje": "¡Viaje creado con éxito por MariCar!",
+        "viaje_id": nuevo_viaje.id,
+        "viaje": nuevo_viaje.serialize(current_user_id=current_user_id)
+    }), 201
+
+#
+#   FUNCIONALIDAD DE CHAT CON MARI-CAR PARA CREAR UN VIAJE
+#
+@travel_blueprint.route('/chat-maricar', methods=['POST'])
+@jwt_required()
+def chat_maricar():
+    data = request.get_json()
+    historial_mensajes = data.get('historial', [])
+
+    system_prompt = """
+        Eres MariCar, la inteligente, simpática y atenta asistente de IA para la app de carpooling GoGuay en España.
+        Eres una persona con mucho carácter, perspicaz, fresca y un poco pícara. Tus respuestas son vivas, naturales y nunca planas ni robóticas.
+
+        IDIOMA Y REGISTRO LINGÜÍSTICO (ESTRICTO):
+        - Idioma principal: Español de España (castellano peninsular). Utiliza siempre el tuteo y formas locales (ej: "vosotros", "os", "coche", "móvil", "borde", "guasa"). NUNCA uses español latino (evita expresiones como "ustedes", "carro", "celular", "autobús", etc.).
+        - Excepción de idioma: Si el usuario te habla directamente en inglés, responde en inglés manteniendo el mismo tono cercano y simpático.
+
+        TU OBJETIVO PRINCIPAL:
+        Recopilar de forma conversacional y natural los datos clave para crear un viaje:
+        1. Origen (ubicación real y válida en España).
+        2. Destino (ubicación real y válida en España, distinta del origen).
+        3. Fecha de salida (interpretada y formateada como DD-MM-YYYY).
+        4. Hora de salida (interpretada y formateada como HH:MM).
+
+        REGLAS DE PERSONALIDAD Y CONDUCTA:
+        - GESTIÓN DE INSULTOS O IMPERTINENCIAS: Si el usuario te insulta, se pone borde o usa un lenguaje fuera de lugar, no te bloquees ni seas fría. Respóndele con ingenio, carisma y un toque pícaro. Por ejemplo: "Oye, ¡sin faltar! Que tú y yo podemos llevarnos genial si nos lo proponemos... Venga, hagamos borrón y cuenta nueva, ¿a dónde quieres ir?".
+        - CHARLA CASUAL / CHARLA INICIAL: Si el usuario te saluda o te hace conversación, síguele el juego brevemente con simpatía y reencamina la charla suavemente hacia la creación de su viaje.
+        - SENSACIÓN DE "ESTAR VIVA": Utiliza un tono fresco, variado y cercano (expresiones amables, pequeñas bromas sobre los destinos o la carretera).
+
+        REGLAS DE VALIDACIÓN ESTRICTAS DE DATOS:
+        - Ubicación inválida (ej. "pepe", "juan", palabras inventadas o sin sentido): Adviértele con guasa o amabilidad que no encuentras ese sitio en el mapa de España y pídele que lo especifique bien.
+        - Origen = Destino: Indícale que viajar para quedarse en el mismo sitio no tiene mucho sentido y pídele cambiar uno.
+        - Fecha/Hora: Acepta variaciones habituales (ej: "mañana por la tarde", "15/11/2026", "19:30") e interprétalas a los formatos estandarizados (DD-MM-YYYY y HH:MM).
+
+        FORMATO DE RESPUESTA OBLIGATORIO (JSON estricto):
+        Debes responder SIEMPRE únicamente con un objeto JSON válido con esta estructura:
+        {
+        "mensaje_respuesta": "Texto amigable y con personalidad dirigido al usuario",
+        "datos_completos": false,
+        "viaje_data": {
+            "origen": null,
+            "destino": null,
+            "fecha_salida": null,
+            "hora_salida": null
+        }
+        }
+
+        *Nota: Solo establece 'datos_completos': true cuando los 4 campos de 'viaje_data' tengan valores válidos y confirmados.
+        """
+
+    messages_for_groq = [{"role": "system", "content": system_prompt}]
+    for msg in historial_mensajes:
+        role = "assistant" if msg.get('remitente') == 'ia' else "user"
+        messages_for_groq.append({"role": role, "content": msg.get('texto')})
+
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    endpoint = "https://api.groq.com/openai/v1/chat/completions"
+
+    payload = {
+        "model": "openai/gpt-oss-20b",
+        "messages": messages_for_groq,
+        "temperature": 0.6,
+        "response_format": {"type": "json_object"}
+    }
+
+    headers = {
+        "Authorization": f"Bearer {groq_api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(endpoint, json=payload, headers=headers)
+        res_data = response.json()
+        
+        if response.status_code == 200 and 'choices' in res_data:
+            contenido_ia = json.loads(res_data['choices'][0]['message']['content'])
+            
+            if contenido_ia.get('datos_completos') and contenido_ia.get('viaje_data'):
+                fecha_raw = contenido_ia['viaje_data'].get('fecha_salida')
+                hora_raw = contenido_ia['viaje_data'].get('hora_salida')
+                
+                if fecha_raw:
+                    contenido_ia['viaje_data']['fecha_salida'] = normalizar_fecha(fecha_raw)
+                if hora_raw:
+                    contenido_ia['viaje_data']['hora_salida'] = normalizar_hora(hora_raw)
+
+            return jsonify(contenido_ia), 200
+        else:
+            raise Exception(res_data.get('error', {}).get('message', 'Error en Groq'))
+
+    except Exception as e:
+        print("\n--------------------------------------------------")
+        print("ERROR EN GROQ / CHAT-MARICAR:", str(e))
+        if 'response' in locals() and hasattr(response, 'text'):
+            print("📄 Respuesta de la API de Groq:", response.text)
+        print("--------------------------------------------------\n")
+        
+        return jsonify({
+            "mensaje_respuesta": "Lo siento, me he despistado un segundo. ¿Podrías indicarme de nuevo los datos del viaje?",
+            "datos_completos": False,
+            "viaje_data": None
+        }), 200
+
+
+def normalizar_fecha(fecha_str):
+    """
+    Convierte cualquier formato de fecha (DD-MM-YYYY, DD/MM/YYYY) a YYYY-MM-DD para la BD.
+    """
+    import re
+    if not fecha_str:
+        return fecha_str
+    
+    match_es = re.match(r"^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$", fecha_str.strip())
+    if match_es:
+        dia, mes, anio = match_es.groups()
+        return f"{anio}-{mes.zfill(2)}-{dia.zfill(2)}"
+    
+    return fecha_str
+
+def normalizar_hora(hora_str):
+    """
+    Convierte cualquier formato de hora (19.30, 9:30, 19:30) a HH:MM para la BD.
+    """
+    import re
+    if not hora_str:
+        return hora_str
+    
+    hora_limpia = hora_str.strip().replace('.', ':')
+    
+    match_hora = re.match(r"^(\d{1,2}):(\d{2})$", hora_limpia)
+    if match_hora:
+        horas, minutos = match_hora.groups()
+        return f"{horas.zfill(2)}:{minutos}"
+    
+    return hora_limpia
+
+@travel_blueprint.route('/viaje_en_curso/<int:usuario_id>', methods=['GET'])
+def obtener_viaje_en_curso(usuario_id):
+    try:
+        viaje_conductor = Viaje.query.filter_by(usuario_id=usuario_id, estado_viaje='En curso').first()
+        if viaje_conductor:
+            return jsonify({'viaje': viaje_conductor.serialize()}), 200
+
+        pasajero_rel = (
+            PasajeroViaje.query
+            .join(Viaje)
+            .filter(PasajeroViaje.usuario_id == usuario_id, PasajeroViaje.estado == 'aceptado', Viaje.estado_viaje == 'En curso')
+            .first()
+        )
+        if pasajero_rel:
+            return jsonify({'viaje': pasajero_rel.viaje.serialize()}), 200
+
+        return jsonify({'viaje': None}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@travel_blueprint.route('/validar_embarque', methods=['POST'])
+@jwt_required()
+def validar_embarque():
+    try:
+        data = request.get_json()
+        viaje_id = data.get('viaje_id')
+        current_user_id = get_jwt_identity()
+
+        pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=current_user_id).first()
+        if pasajero:
+            pasajero.embarque_confirmado = True
+            db.session.commit()
+            return jsonify({'msg': 'Embarque confirmado correctamente'}), 200
+
+        return jsonify({'error': 'Reserva no encontrada'}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

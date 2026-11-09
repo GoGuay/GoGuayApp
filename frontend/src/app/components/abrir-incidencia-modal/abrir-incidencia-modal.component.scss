@@ -1,0 +1,115 @@
+.modal-toolbar {
+  --background: #ffffff;
+}
+
+.modal-incidencia-content {
+  --background: #E9EDD5 !important;
+}
+
+.icon-warning-bubble {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #F8E196;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 20px;
+    color: #2c2c2c;
+  }
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  color: #2c2c2c;
+}
+
+.context-pill {
+  background: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+
+  .badge-cat {
+    font-weight: 700;
+    color: #2c2c2c;
+    background: #F0D7B4;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+  }
+
+  .badge-viaje {
+    font-weight: 700;
+    color: #ffffff;
+    background: #b3b5e6;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+  }
+}
+
+.form-label-custom {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #444;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.custom-select-goguay,
+.custom-input-goguay,
+.custom-textarea-goguay {
+  border-radius: 20px !important;
+  border: 1.5px solid #e2e8f0;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  background: #ffffff;
+
+  &:focus {
+    border-color: #b3b5e6;
+    box-shadow: 0 0 0 3px rgba(179, 181, 230, 0.25);
+    outline: none;
+  }
+}
+
+.custom-textarea-goguay {
+  border-radius: 20px !important;
+}
+
+.upload-zone {
+  background: #ffffff;
+  border: 2px dashed #b3b5e6;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8f9ff;
+  }
+}
+
+.btn-submit-incidencia {
+  background: #b3b5e6;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 35px;
+  border: none;
+  box-shadow: 0 6px 18px rgba(179, 181, 230, 0.4);
+  transition: all 0.25s ease;
+
+  &:hover:not([disabled]) {
+    background: #9d9fe0;
+    transform: translateY(-2px);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+.xsmall {
+  font-size: 0.72rem;
+}

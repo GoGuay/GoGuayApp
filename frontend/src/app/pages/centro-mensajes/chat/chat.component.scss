@@ -333,6 +333,25 @@ span {
   }
 }
 
+.banner-incidencia-fijo {
+  position: relative;
+  z-index: 10;
+  background-color: transparent;
+
+  button {
+    background-color: #ffffff;
+    border: 1px solid #f0d7b4;
+    color: #856404;
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(4px);
+
+    &:hover {
+      background-color: #f0d7b4;
+      color: #2c2c2c;
+      transform: translateY(-1px);
+    }
+  }
+}
 
 @media (max-width: 576px) {
   .input-wrapper {

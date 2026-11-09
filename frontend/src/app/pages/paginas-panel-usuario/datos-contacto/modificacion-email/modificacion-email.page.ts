@@ -7,19 +7,19 @@ import { HttpClient } from '@angular/common/http';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
-  selector: 'app-verificar-email',
-  templateUrl: './verificar-email.page.html',
-  styleUrls: ['./verificar-email.page.scss'],
+  selector: 'app-modificacion-email',
+  templateUrl: './modificacion-email.page.html',
+  styleUrls: ['./modificacion-email.page.scss'],
   standalone: true,
   imports: [IonContent, CommonModule, FormsModule],
 })
-export class VerificarEmailPage implements OnInit {
+export class ModificacionEmailPage implements OnInit {
   verified = false;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserServicesService,
-    private navCtrl: NavController,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {

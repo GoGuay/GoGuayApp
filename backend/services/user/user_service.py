@@ -3,81 +3,126 @@
 #  SERVICIO DEDICADO PARA LA INFORMACIÓN DEL USUARIO  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import random
-import requests
-from flask import Blueprint, jsonify, render_template,  request, current_app
-from itsdangerous import SignatureExpired, BadSignature
-import nexmo
-import jwt
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-from flask_jwt_extended import create_access_token, create_refresh_token
-from models.tokensusados import TokenUsado
-from extensions import db
-from sqlalchemy.orm import joinedload 
-from models import Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero
-from cloudinary import uploader, utils
 import re
-from PIL import Image
 from io import BytesIO
-from flask_cors import CORS
-from flask_mail import Mail, Message
-from prelude_python_sdk import Prelude
 import os
-from twilio.rest import Client
-from sqlalchemy import func
-from datetime import datetime, timezone
-from flask_jwt_extended import jwt_required, get_jwt_identity
+
+
+from flask import Blueprint, jsonify, render_template,  request
+from itsdangerous import SignatureExpired, BadSignature
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from sqlalchemy.orm import joinedload 
+import requests
+from PIL import Image
+from cloudinary import uploader
+from flask_mail import Message
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
-from jwt import PyJWKClient
+from twilio.rest import Client
 
+# Importaciones de Modelos y Enums
+from extensions import db
+from models.tokensusados import TokenUsado
+from models import (Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum, EstadoViajeEnum)
 
 GOOGLE_CERTS_URL = 'https://www.googleapis.com/oauth2/v3/certs'
 
 
-# Nombre único para evitar conflictos
+# Ininicialización del BluePrint
 user_blueprint = Blueprint('user', __name__)
 
+# Variables globales para correo y serializador
 mail = None
 serializer = None
 
+# Configuraciones externas
+WHATSAPP_TOKEN = "EAAPpcmD3hPgBSiuS8GVIjfJxi7YXXAhYHDZAiZBffXi9R8p0gFTZA8RouuSx8nW3qykA6qbVijF6Fj4zK3JqJd3JkxliPUdJACDjm0eGvBQNj5f3LrEFk5HGpFBI59wQP9S0MrJhqpZCerp5fQbQeKqq3L3GCasxhuuOJOGvCT9mEYwssZBtqomQ3dTcYdo0mqpOZCDcjsFv9I35hKgKbadmUPQc14UH6jtgZDZD"
+WHATSAPP_PHONE_NUMBER_ID = "1353039247897514"
 
-
-##Configuración Twilio
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
-
-client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
-otp_store = {}
-
-##Configuración Paypal
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
 PAYPAL_API = os.getenv('PAYPAL_API')
 
-##Configuración Token Google
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
+CODIGOS_SIMULADOS = {}
 
-## --- RUTAS DE USUARIO --- ##
+##Configuración Twilio
+# TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+# TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+# SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
+# client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+
+# =====================================================================
+# 1. FUNCIONES DE APOYO Y UTILIDADES
+# =====================================================================
+
+def reenviar_correo_finreg(usuario):
+    try:
+        salt = 'email-verify'
+        token = serializer.dumps(usuario.email, salt=salt)
+        link_verificacion = f"http://localhost:4200/home?token={token}"
+        msg = Message("Bienvenidx a GoGuay", recipients=[usuario.email])
+        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
+        mail.send(msg)
+        
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
+
+
+## CLOUDINARY: EXTRAE EL PUBLIC_ID DE UNA URL ##
+def obtener_public_id(url):
+    match = re.search(r'/([^/]+)\.[a-zA-Z]+$', url)
+    if match:
+        return match.group(1)
+    return None
+
+## REDUCIR EL TAMAÑO Y PESO FINAL DE UNA IMAGEN ##
+def reducir_imagen(imagen, max_size=10485760):
+    img = Image.open(imagen)
+    output = BytesIO()
+    calidad = 85
+
+    max_resolution = (1920, 1080)
+    img.thumbnail(max_resolution)
+
+    formato = img.format.lower()
+
+    while True:
+        output.seek(0)        
+        if formato in ['jpeg', 'jpg']:
+            img.save(output, format="JPEG", quality=calidad, optimize=True)
+        elif formato in ['png']:
+            img.save(output, format="PNG", quality=calidad, optimize=True)
+        elif formato == 'gif':
+            img.save(output, format="GIF", optimize=True)
+        else:
+            img.save(output, format=formato, quality=calidad, optimize=True)
+
+        if output.tell() <= max_size or calidad <= 10:
+            break
+
+        if calidad > 50:
+            calidad -= 10
+        else:
+            calidad -= 5
+
+    output.seek(0)
+    return output
+
+
+
+# =====================================================================
+# 1. AUTENTICACIÓN, REGISTRO Y LOGIN
+# =====================================================================
 
 ## CREAR NUEVO USUARIO - REGISTRO MANUAL ##
 @user_blueprint.route('/registro', methods=['POST'])
 def crear_usuario():
-    """
-    1. Recibe los datos del json y los guarda en data. Verificar que tenga 4 datos esenciales: nombre, apellidos, email y password.
-    un usuario con ese correo lanza error.
-    2. Convierte el correo a minúsculas (lower) para evitar que se registren dos correos y con el ilike realiza una busqueda en bd ignorando mayúsculas/minúsculas. Si encuentra
-    3. Se hashea la contraseña para que la contraseña sea segura.
-    4. Se mapea los campos del json, pasando cada dato que llega del json al modelo creado para el usuario. Con el get nos aseguramos que el registro siga aunque no tenga dato en ese campo.
-    5. add y commit --> guarda al usuario para que el sistema le asigne un ID. Se le crea un monedero a ese usuario creado y se guarda de nuevo.
-    6. Genera token de acceso: el servidor crea el usuario y genera el token con su ID, se envia ese token al frontend. Cada vez que el usuario pida algo al servidor, envia ese token.
-    7. El servidor recibe el token, lo codifica y comprueba la identity, sabe quien está haciendo la petición sin preguntar la contraseña.
-    """
     data = request.json
 
     campos_obligatorios = ['nombre', 'apellidos', 'email', 'fecha_nacimiento', 'telefono']
@@ -113,7 +158,8 @@ def crear_usuario():
         genero=data.get('genero'),
         biografia=data.get('biografia'),
         rolPerfil=data.get('rolPerfil', RolUsuarioEnum.usuario.value),
-        fecha_nacimiento=fecha_nac
+        fecha_nacimiento=fecha_nac,
+        registroPrevio = True
     )
     try:
         db.session.add(nuevo_usuario)
@@ -126,36 +172,20 @@ def crear_usuario():
     db.session.add(monedero)
     db.session.commit()
 
-    access_token = create_access_token(identity=str(nuevo_usuario.id))
-
     try:
-        salt = 'email-verify'
-        token = serializer.dumps(nuevo_usuario.email, salt=salt)
-        link_verificacion = f"http://localhost:4200/verificar-email/{token}"
-        msg = Message("Bienvenidx a GoGuay", recipients=[nuevo_usuario.email])
-        msg.html = render_template('correo_bienvenida.html', link=link_verificacion)
-        mail.send(msg)
+        reenviar_correo_finreg(nuevo_usuario)
+        
     except Exception as e:
         print(f"Error al enviar correo: {e}")
 
     return jsonify({
-        "mensaje": "Nuevo usuario creado correctamente",
-        "access_token": access_token,
-        "usuario": nuevo_usuario.serialize()
+        "mensaje": "Usuario registrado correctamente. Por favor, verifica tu correo electrónico."
     }), 201
 
 
 ## CREAR NUEVO USUARIO - REGISTRO POR BOTÓN DE GOOGLE ##
 @user_blueprint.route('/google-login', methods=['POST'])
 def login_google():
-    """
-    1.Recibe el idTolen enviado desde el frontend tras pulsar el botón de Google
-    2. Valida el token usando la librería de google.
-    3. Extrae la información del perfil (email, nombre, apellidos)
-    4. Comprueba si el correo ya está registrado en la base de datos:
-        - Si existe inicia sesión directamente y devuelve el token de acceso JWT
-        - Si no existe: Devuelve los datos para que el frontend redirija el flujo de registro. 
-    """
     data = request.json or {}
     id_token_google = data.get('idToken') or data.get('token')
     if not id_token_google:
@@ -197,6 +227,44 @@ def login_google():
     except Exception as e:
             return jsonify({"error": f"Error en la verificación de Google: {str(e)}"}),500
 
+## LOGIN DEL USUARIO AL SISTEMA ##
+@user_blueprint.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    usuario = Usuario.query.filter_by(email=email).first()  
+
+    if usuario is None:
+        return jsonify({'Error': "No se ha encontrado el correo"}), 404
+
+    if not check_password_hash(usuario.password, password):
+        return jsonify({'Error': 'Contraseña incorrecta'}), 401
+
+    access_token = create_access_token(identity=str(usuario.id))
+    refresh_token = create_refresh_token(identity=str(usuario.id))
+
+    return jsonify({
+        'usuario': usuario.serialize(),
+        'access_token': access_token,
+        "refresh_token": refresh_token,
+    }), 200
+
+# Para generar un token de refresco -- para que la sesión no se bloquee a los 15 minutos que es la duración del token "normal"
+@user_blueprint.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    usuario_id = get_jwt_identity()
+    nuevo_access_token = create_access_token(identity=str(usuario_id))
+
+    return jsonify({"access_token": nuevo_access_token}), 200
+
+
+
+
+
+
 
 ## COMPOBAR SI YA EXISTE UN MAIL DURANTE EL REGISTRO ##
 @user_blueprint.route('/verificar-email-existente', methods=['GET'])
@@ -228,45 +296,6 @@ def verificar_telefono_existente():
     return jsonify({"existe": existe}), 200
 
 
-## LOGIN DEL USUARIO AL SISTEMA ##
-@user_blueprint.route('/login', methods=['POST'])
-def login():
-    """
-    1. Obtiene lo datos del json y los guarda en data. De esta data extrae el email y el password.
-    2. Busca al usuario en la tabla Usuarios de la base de datos. Hace la consulta con query. Filtra el email de la izquierda (bd) con el de la derecha (lo que escribió el usuario). First nos devuelve el primer resultado que encuentre.
-    3. Si el usuario no existe se detiene el proceso.
-    4. check_password_hash: Toma la contrasñe que el usuario escribió y la compara matemáticamente con el código cifrado que hay guardados. Si no coinciden, devuelve error 401.
-    5. Si la contraseña coincide, crea el token. identity=usuario.id--> guarda el id unico del usuario dentro del token.
-    """
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-
-    usuario = Usuario.query.filter_by(email=email).first()  
-
-    if usuario is None:
-        return jsonify({'Error': "No se ha encontrado el correo"}), 404
-
-    if not check_password_hash(usuario.password, password):
-        return jsonify({'Error': 'Contraseña incorrecta'}), 401
-
-    access_token = create_access_token(identity=str(usuario.id))
-    refresh_token = create_refresh_token(identity=str(usuario.id))
-
-    return jsonify({
-        'usuario': usuario.serialize(),
-        'access_token': access_token,
-        "refresh_token": refresh_token,
-    }), 200
-
-# Para generar un token de refresco -- para que la sesión no se bloquee a los 15 minutos que es la duración del token "normal"
-@user_blueprint.route('/refresh', methods=['POST'])
-@jwt_required(refresh=True)
-def refresh():
-    usuario_id = get_jwt_identity()
-    nuevo_access_token = create_access_token(identity=str(usuario_id))
-
-    return jsonify({"access_token": nuevo_access_token}), 200
 
 
 
@@ -314,6 +343,7 @@ def obtener_usuario_por_id_busqueda_viajes(id):
     
     return jsonify(usuario.serialize_public()), 200
 
+
 ## EDITAR INFORMACIÓN DE UN USUARIO ##
 @user_blueprint.route('/editarusuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
@@ -339,6 +369,16 @@ def actualizar_usuario(usuario_id):
     usuario = Usuario.query.get_or_404(usuario_id)
     data = request.json
 
+    if 'email' in data and data ['email'] and data ['email'] != usuario.email:
+        email_existente = Usuario.query.filter_by(email=data['email']).first()
+        if email_existente:
+            return jsonify({"error": "el correo electrónico ya está registrado en base de datos"})
+        
+    if 'telefono' in data and data ['telefono'] and data ['telefono'] != usuario.telefono:
+        telefono_existente = Usuario.query.filter_by(telefono=data['telefono']).first()
+        if telefono_existente:
+            return jsonify({"error": "el teléfono ya está registrado en base de datos"})     
+
     for key in ['nombre', 'apellidos', 'pronombre', 'genero', 'orientacion', 'biografia', 'fecha_nacimiento', 'preferencias', 'email', 'telefono', 'comunic_comerciales', 'comunic_terceros', 'paypal_email', 'tarjeta_info', 'metodo_cobro_preferido', 'cobro_paypal_email', 'cobro_iban',  'cobro_titular' ]:
         if key in data and data[key] is not None:  
             if key == 'fecha_nacimiento' and data[key]:
@@ -349,94 +389,103 @@ def actualizar_usuario(usuario_id):
     db.session.commit()  
     return jsonify(usuario.serialize()), 200 
 
+
+def procesar_eliminacion_usuario(usuario):
+    """
+    1. Se valida el monedero del usuario: que no tenga saldo positivo ni retiradas en las últimas 72h.
+    2. Se validan los viajes: que no haya viajes en curso, recientes con - 72h o futuros como conductor y/o pasajero.
+    3. Si pasa las validaciones: se aplica el borrado lógico y se establecen fechas límites del ciclo de vida
+    4. Se limpiand datos sensibles de pago/cobro y se guardan cambios
+    """
+    ahora = datetime.now(timezone.utc)
+    hace_72h = ahora -timedelta(hours=72)
+    #Control de saldo y retirada reciente de saldo
+    if usuario.monedero:
+        if usuario.monedero.saldo > 0:
+            return jsonify({
+                "error": "No se puede eliminar la cuenta",
+                "motivo": "Tienes saldo a favor en tu monedero. Debes solicitar la transferencia antes de proceder."
+            }), 400
+        
+        fecha_ultima_retirada = usuario.monedero.obtener_ultima_retirada()
+        if fecha_ultima_retirada:
+            if fecha_ultima_retirada.tzinfo is None:
+                fecha_ultima_retirada = fecha_ultima_retirada.replace(tzinfo=timezone.utc)
+            if fecha_ultima_retirada >= hace_72h:
+                return jsonify({
+                    "error": "No se puede eliminar tu cuenta",
+                    "motivo": "Has realizado una retirada de fondos hace menos de 72h. Debes esperar a que transcurra este plazo por seguridad"
+                }), 400
+    #Control de viajes (futuros, en curso y pasados < 72h)
+    viajes_como_conductor = usuario.viajes_publicados or []
+    viajes_como_pasajero = [reserva.viaje for reserva in usuario.reservas_realizadas if reserva.viaje]
+    todos_los_viajes = list(set(viajes_como_conductor+viajes_como_pasajero))
+    for v in todos_los_viajes:
+        if not v or not v.fecha_salida:
+            continue
+        fecha_salida = v.fecha_salida
+        if fecha_salida.tzinfo is None:
+            fecha_salida = fecha_salida.replace(tzinfo=timezone.utc)
+        if hace_72h <= fecha_salida <= ahora:
+            return jsonify({
+                "error": "No puedes eliminar tu cuenta",
+                "motivo": "Tienes un viaje en curso en este momento."
+            }), 400
+        if fecha_salida > ahora or v.estado_viaje == EstadoViajeEnum.PROXIMO.value:
+            if v.estado_viaje != EstadoViajeEnum.CANCELADO.value:
+                return jsonify({
+                    "error": "No puedes eliminar tu cuenta",
+                    "motivo": "Tienes viajes futuros programados o reservas activas. Debes cancelarlos antes de proceder."
+                }), 400
+    #Borrado lógico y limpieza de datos sensibles
+    usuario.perfil_eliminado_por_usuario = True
+    usuario.fecha_eliminacion_por_usuario = ahora
+    usuario.fecha_limite_reactivacion = ahora + timedelta(days=30)
+    usuario.fecha_prevista_borrado_definitivo = ahora + timedelta(days=180)
+    #Limpieza métodos de cobro/pago
+    usuario.metodo_pago_preferido = None
+    usuario.paypal_email = None
+    usuario.tarjeta_numero = None
+    usuario.tarjeta_caducidad = None
+    usuario.tarjeta_titular = None
+    usuario.cobro_paypal_email = None
+    usuario.cobro_iban = None
+    usuario.cobro_titular = None
+    
+    db.session.commit()
+
+    return jsonify({
+        "mensaje": "Perfil eliminado correctamente. Tienes 30 días para reactivarlo simplemente iniciando sesion"
+    }), 200
+
 ## ELIMINAR USUARIO POR ID ##
 @user_blueprint.route('/eliminar_usuario/<int:id>', methods=['DELETE'])
 @jwt_required()
 def eliminar_usuario(id):
     """
-    1. Con el metodo DELETE permite borrar.
-    2. A través de la url le pasamos de manera dinámica el usuario y realizamos una consulta a la BD. Si el usuario no se encuentra, devuelve error y se detiene.
-    3. Si encuentra al usuario hacemos el db.session.delete para borrarlo y guardamos los cambios con el commit.
-    4. Devolvemos un mensaje en formato Json con la confirmación de eliminación.
+    1. Verifica que el uuario autenticado es el dueño del perfil.
+    2. BUsca al usuario en la BD
+    3. Delega la lógica de borrado en la función 'procesar_eliminacion_usuario'.
     """
     current_user_id = get_jwt_identity()
 
-    if current_user_id != id:
+    if int(current_user_id) != int(id):
         return jsonify({"error": "No tienes permiso para editar este perfil"}), 403
     
     usuario = Usuario.query.get(id)
     
     if usuario is None:
         return jsonify({"error": "No se ha encontrado al usuario"}), 404
-
-    # Realiza el borrado físico y guarda cambios
-    db.session.delete(usuario)
-    db.session.commit()
     
-    return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
+    return procesar_eliminacion_usuario(usuario)
 
 
 ## --- FUNCIONES DE APOYO (UTILIDADES) --- ##
 
-## CLOUDINARY: EXTRAE EL PUBLIC_ID DE UNA URL ##
-def obtener_public_id(url):
-    """
-    Limpia una url de Cloudinary y se queda solo con el nombre del archivo.
-    1. re.search --> busca dentro de un texto un patrón específico
-    2. (r'/(...)) --> Guarda todo lo que encuentres hasta que encuentres otra barra o punto.
-    3. if --> si el patrón tiene éxito match.group(1) extrae unicamente lo que estaba dentro de los paréntesis ([^/]+)
-    Ejemplo: url: https://res.cloudinary.com/demo/image/upload/sample_image.jpg // Lo que detecta: /sample_image.jpg // Lo que devuelve group1: sample_image
-    """
-    match = re.search(r'/([^/]+)\.[a-zA-Z]+$', url)
-    if match:
-        return match.group(1)
-    return None
 
 
-## REDUCIR EL TAMAÑO Y PESO FINAL DE UNA IMAGEN ##
-def reducir_imagen(imagen, max_size=10485760):
-    """
-    1. Image.open --> abre la imagen usando la librería PIL
-    2. BytesIO() --> crea un archivo virtual en la RAM en lugar de guardar la imagen en el disco duro mientras se procesa.
-    3. img.thumbnail(max_resolution) --> Reduce las dimensiones (ancho x alto) sin deformar la imagen
-    4. img.format.lower() --> detecta el formato de la imagen (jpg, png...)
-    5. Bucle while:    
-        -output.seek(0) --> Limpia el archivo virtual para intentar un nuevo guardado
-        - img.save(...) --> guarda la imagen en el buffer con la calidad actual
-        - output.tell() --> mide cuanto bytes pesa el archivo resultante en ese momento. EL blucle se detiene si el peso es menor o igual a X mb o la calidad ya bajó a X.
-        - if calidad > 50 ... --> reduce gradualmente la calidad
-    6. Finalmente hace un ultimo output.seek(0) para colocar el puntero del archivo al principio, es decir, quien recibe el objeto del output puede abrirlo desde el inicio, como si fuese un archivo recien abierto.
-    """
-    img = Image.open(imagen)
-    output = BytesIO()
-    calidad = 85
 
-    max_resolution = (1920, 1080)
-    img.thumbnail(max_resolution)
 
-    formato = img.format.lower()
-
-    while True:
-        output.seek(0)        
-        if formato in ['jpeg', 'jpg']:
-            img.save(output, format="JPEG", quality=calidad, optimize=True)
-        elif formato in ['png']:
-            img.save(output, format="PNG", quality=calidad, optimize=True)
-        elif formato == 'gif':
-            img.save(output, format="GIF", optimize=True)
-        else:
-            img.save(output, format=formato, quality=calidad, optimize=True)
-
-        if output.tell() <= max_size or calidad <= 10:
-            break
-
-        if calidad > 50:
-            calidad -= 10
-        else:
-            calidad -= 5
-
-    output.seek(0)
-    return output
 
 
 ## ACTUALIZAR IMAGEN DE PERFIL ##
@@ -477,14 +526,14 @@ def actualizar_imagen_perfil(usuario_id):
 
 ## ELIMINAR IMAGEN DE PERFIL ##
 @user_blueprint.route('/eliminar_imagen_perfil/<int:usuario_id>', methods=['DELETE'])
-def eliminar_imagen_perfil(user_id):
+def eliminar_imagen_perfil(usuario_id):
     """
     1. A través del ID dinámico del usuario, realiza una búsqueda de dicho usuario y detiene el proceso si no lo encuentra.
     2. Si el usuario no tiene foto de perfil, detiene el proceso.
     3. uploader.destroy --> método para destruir la imagen del perfil que tenga el usuario. A continuación pone los valores fotoPerfil y fotoPublicId a en nulos y guarda los cambios con el commit.
     4. Devuelve un mensaje de éxito en la función. Si el intento de eliminarla tiene algun fallo devuelve otro mensaje de error.
     """
-    user = Usuario.query.get_or_404(user_id)
+    user = Usuario.query.get_or_404(usuario_id)
 
     if not user.fotoPublicId:
         return jsonify({"error": "El usuario no tiene una imagen de perfil."}), 404
@@ -541,79 +590,213 @@ def actualizar_imagen_cabecera(user_id):
 
 
 ## ENVÍO DE SMS AL TFNO DEL USUARIO PARA VERIFICAR PERFIL ##
+# @user_blueprint.route('/enviar_sms', methods=['POST'])
+# def enviar_sms():
+#     """
+#     1. Obtiene el json desde el front y accede al campo 'teléfono' y le pasa el dato a 'telefonoAVerificar'.
+#     2. Si no hay teléfonoAVerificar, lanza un error y detiene la función.
+#     3. try: Se llama al servicio de Twilio para enviar el mensaje. Se le pasa a 'to' el numero y se elige 'sms' como canal. 
+#     4. Devolvemos un json con la respuesta y con el verification_sid (sólo es un id para identificar si el mensaje se ha enviado correctamente.)
+#     5. Si lo anterior da algun error, lo mostramos con el except. 
+#     """
+#     data = request.get_json()
+#     telefonoAVerificar = data.get('telefono')
+
+#     if not telefonoAVerificar:
+#         return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+
+#     # MODO DESARROLLO / SIMULACIÓN PARA ESPAÑA (+34)#########################################
+#     if str(telefonoAVerificar).startswith('+34') or str(telefonoAVerificar).startswith('34') or len(str(telefonoAVerificar)) == 9:
+#         # Aseguramos formato limpio para la clave
+#         num_limpio = str(telefonoAVerificar).replace('+34', '')
+        
+#         # Generamos un código aleatorio de 6 dígitos
+#         codigo_simulado = str(random.randint(100000, 999999))
+#         CODIGOS_SIMULADOS[num_limpio] = codigo_simulado
+        
+#         # 🖨️ IMPRIME EL CÓDIGO EN TU TERMINAL DE PYTHON
+#         print(f"\n==================================================")
+#         print(f" [DEV MODE] Código SMS para {telefonoAVerificar}: {codigo_simulado}")
+#         print(f"==================================================\n")
+        
+#         return jsonify({
+#             "success": True,
+#             "message": "Código de verificación enviado correctamente (Simulado)",
+#             "verification_sid": "mock_sid_123"
+#         })
+#     ####################################################################################
+
+#     try:
+#         verification = client.verify.v2.services(SERVICE_SID).verifications.create(
+#             to=telefonoAVerificar,
+#             channel="sms"
+#         )
+
+#         # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
+#         return jsonify({
+#             "success": True,
+#             "message": "Código de verificación enviado correctamente",
+#             "verification_sid": verification.sid
+#         })
+
+#     except Exception as e:
+#         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+## COMPROBACIÓN DEL CÓDIGO ENVIADO POR SMS ##
+# @user_blueprint.route('/verificar_codigo', methods=['POST'])
+# def verificar_codigo():
+#     """
+#     1. Se accede al json enviado desde el front, se extrae el dato 'telefono' y el dato 'codigo'.
+#     2. Si no hay telefono devuelve error y detiene la función.
+#     3. Añade al número de teléfono el prefijo de España y lo convertimos a string por petición de la API, llama al servicio de Twilio (verification_checks_create) y le pasa el teléfono ya con el prefijo y el codigo. La respuesta de ese servicio se guarda en la variable 'result'.
+#     4. Si la respuesta es 'approved', busca en la BD de la tabla Usuarios por número de tfno, coge el primer resultado y si ademas si hay usuario pasa el atributo telefonoVerificado a True, guarda los cambios y con el refresh actualiza todo para obtener todos los datos del usuario actualizados. Si todo está correcto devuelve un json con un mensaje de OK, sino devuelve un mensaje de error. 
+#     5. Except: devuelve un mensaje si el proceso ha fallado. 
+#     """
+#     data = request.get_json()
+#     phone_number = data.get('telefono')
+#     codigo = data.get('codigo')
+
+#     if not phone_number  or not codigo:
+#         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+    
+#     # MODO DESARROLLO / VALIDACIÓN SIMULADA#######################################
+#     num_limpio = str(phone_number).replace('+34', '')
+#     if num_limpio in CODIGOS_SIMULADOS:
+#         codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
+        
+#         if str(codigo) == str(codigo_correcto):
+#             # Limpiamos el código usado
+#             del CODIGOS_SIMULADOS[num_limpio]
+            
+#             # Actualizamos la base de datos igual que en el flujo real
+#             usuario = Usuario.query.filter_by(telefono=num_limpio).first()
+#             if usuario:
+#                 usuario.telefonoVerificado = True
+#                 db.session.commit()
+#                 db.session.refresh(usuario)
+            
+#             return jsonify({"success": True, "message": "Teléfono verificado ✅ (Simulado)"}), 200
+#         else:
+#             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+#     #############################################################################
+
+#     try:
+#         telefono_formateado = "+34" + str(phone_number)
+#         result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
+#             to=telefono_formateado,
+#             code=codigo
+#         )
+        
+#         if result.status == "approved":
+#             usuario = Usuario.query.filter_by(telefono=phone_number).first()
+#             if usuario:
+#                 usuario.telefonoVerificado = True
+#                 db.session.commit()
+#                 db.session.refresh(usuario)
+            
+#             return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
+#         else:
+#             return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
+
+#     except Exception as e:
+#         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# NUEVA FUNCIÓN DE ENVIO DE CODIGO ALEATORIO POR WHATSAPP
 @user_blueprint.route('/enviar_sms', methods=['POST'])
 def enviar_sms():
-    """
-    1. Obtiene el json desde el front y accede al campo 'teléfono' y le pasa el dato a 'telefonoAVerificar'.
-    2. Si no hay teléfonoAVerificar, lanza un error y detiene la función.
-    3. try: Se llama al servicio de Twilio para enviar el mensaje. Se le pasa a 'to' el numero y se elige 'sms' como canal. 
-    4. Devolvemos un json con la respuesta y con el verification_sid (sólo es un id para identificar si el mensaje se ha enviado correctamente.)
-    5. Si lo anterior da algun error, lo mostramos con el except. 
-    """
     data = request.get_json()
+    idioma = data.get('idioma_app')
     telefonoAVerificar = data.get('telefono')
 
     if not telefonoAVerificar:
-        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'}), 400
+        return jsonify({'success': False, 'message': 'Teléfono no proporcionado'})
+    
+    num_limpio = str(telefonoAVerificar).replace('+','').strip()
+    if not num_limpio.startswith('34') and len (num_limpio) == 9:
+            num_limpio = '34' + num_limpio
+    
+    codigo_verificacion = str(random.randint(100000, 999999))
+    CODIGOS_SIMULADOS[num_limpio] = codigo_verificacion
+    cuerpo_mensaje_ingles = f"Your code verification of GoGuay is: {codigo_verificacion}"
+    cuerpo_mensaje_espanol = f"Tu código de verificación de GoGuay es: {codigo_verificacion}"
+
+    if idioma == 'es':
+        cuerpo_mensaje = cuerpo_mensaje_espanol
+    else:
+        cuerpo_mensaje = cuerpo_mensaje_ingles
+
+
+
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
+
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": num_limpio,
+        "type": "text",
+        "text": {
+            "body": cuerpo_mensaje
+        }
+    }
 
     try:
-        verification = client.verify.v2.services(SERVICE_SID).verifications.create(
-            to=telefonoAVerificar,
-            channel="sms"
-        )
+        response = requests.post(url, json=payload, headers=headers)
+        res_data = response.json()
 
-        # 2. Devolver el ID de la verificación (hay que guardarlo en BD/session)
-        return jsonify({
-            "success": True,
-            "message": "Código de verificación enviado correctamente",
-            "verification_sid": verification.sid
-        })
-
+        if response.status_code == 200 and 'messages' in res_data:
+            return jsonify ({
+                "success": True,
+                "message": "Código de verificación enviado por WhatsApp correctamente",
+                "verification_sid": res_data['messages'][0]['id']
+            })
+        else:
+            print("Error devuelto por Meta:", res_data)
+            return jsonify({
+                'success': False, 
+                'message': res_data.get('error', {}).get('message', 'Error al enviar WhatsApp')
+            }), 400
+    
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-## COMPROBACIÓN DEL CÓDIGO ENVIADO POR SMS ##
 @user_blueprint.route('/verificar_codigo', methods=['POST'])
 def verificar_codigo():
-    """
-    1. Se accede al json enviado desde el front, se extrae el dato 'telefono' y el dato 'codigo'.
-    2. Si no hay telefono devuelve error y detiene la función.
-    3. Añade al número de teléfono el prefijo de España y lo convertimos a string por petición de la API, llama al servicio de Twilio (verification_checks_create) y le pasa el teléfono ya con el prefijo y el codigo. La respuesta de ese servicio se guarda en la variable 'result'.
-    4. Si la respuesta es 'approved', busca en la BD de la tabla Usuarios por número de tfno, coge el primer resultado y si ademas si hay usuario pasa el atributo telefonoVerificado a True, guarda los cambios y con el refresh actualiza todo para obtener todos los datos del usuario actualizados. Si todo está correcto devuelve un json con un mensaje de OK, sino devuelve un mensaje de error. 
-    5. Except: devuelve un mensaje si el proceso ha fallado. 
-    """
     data = request.get_json()
-    phone_number = data.get('telefono')
+    telefono_usuario = data.get('telefono')
     codigo = data.get('codigo')
 
-    if not phone_number  or not codigo:
+    if not telefono_usuario or not codigo:
         return jsonify({'success': False, 'message': 'Datos incompletos'}), 400
+    
+    num_limpio = str(telefono_usuario).replace('+', '').strip()
+    if not num_limpio.startswith('34') and len(num_limpio) == 9:
+        num_limpio = '34' + num_limpio
 
-    try:
-        telefono_formateado = "+34" + str(phone_number)
-        result = client.verify.v2.services(SERVICE_SID).verification_checks.create(
-            to=telefono_formateado,
-            code=codigo
-        )
-        
-        if result.status == "approved":
-            usuario = Usuario.query.filter_by(telefono=phone_number).first()
+    if num_limpio in CODIGOS_SIMULADOS:
+        codigo_correcto = CODIGOS_SIMULADOS.get(num_limpio)
+
+        if str(codigo) == str(codigo_correcto):
+            del CODIGOS_SIMULADOS[num_limpio]
+
+            usuario = Usuario.query.filter_by(telefono=telefono_usuario).first()
             if usuario:
                 usuario.telefonoVerificado = True
                 db.session.commit()
                 db.session.refresh(usuario)
-            
-            return jsonify({"success": True, "message": "Teléfono verificado ✅"}), 200
+            return jsonify({"success": True, "message": "Teléfono verificado"}), 200
         else:
-            return jsonify({"success": False, "message": "Código incorrecto ❌"}), 400
-
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-
-
+            return jsonify({"success": False, "message": "Código incorrecto"}), 400
+    else:
+        return jsonify({"success": False, "message": "No hay ningún código pendiente para este número o ha expirado"}), 400
     
+
+
 ## ENVIAR CORREO DE VERIFICACIÓN DE EMAIL AL USUARIO ##
 @user_blueprint.route('/enviar_email', methods=['POST'])
 def enviar_email():
@@ -631,38 +814,78 @@ def enviar_email():
     token = serializer.dumps(email, salt=salt)
 
     print('Token generado: ', token)
-    link= f"http://localhost:4200/verificar-email/{token}"
+    link= f"http://localhost:4200/finalizar-registro/{token}"
     msg = Message("Verifica tu correo", recipients=[email])
-    msg.body = f"Por favor haz click en el siguiente en lace para verificar tu correo: {link}"
+    msg.body = f"Por favor haz click en el siguiente enlace para verificar tu correo: {link}"
     
     mail.send(msg)
 
     return jsonify({'message': 'Correo enviado'}), 200
 
 
-## PONER COMO VERIFICADO EL CAMPO 'EMAIL' CUANDO EL USUARIO CLICA EN EL ENLACE RECIBIDO ##
-@user_blueprint.route('/verificar_email', methods=['POST'])
-def verificar_email():
+## ENVIAR CORREO DE PARA MODIFICAR EL CORREO ELECTRÓNICO DE UN USUARIO ##
+@user_blueprint.route('/mail_modificacion_correo', methods=['POST'])
+def mail_modificacion_correo():
     """
-    Esta función recoge información que le llega desde el front con el token
-    1. Recoge el 'token' desde el json y lo pasa a 'token'.
-    2. Guarda en 'email' la configuración para verificar el token, comprueba que el salt sea de email-verify y comprueba cuando se ha enviado el email (comprueba la hora de envío y la resta de la hora actual.)
-    3. Busca al usuario en la bd por email y obtiene el primero. Si encuentra usuario, pone su atributo emailVerificado en True y guarda los datos. Devuelve un mensaje de exito o error.
-    4. except: Si el proceso ha fallado devuelve un mensaje de error. 
+    """
+    email_nuevo = request.json['email']
+
+    salt = 'email-verify'
+    token = serializer.dumps(email_nuevo, salt=salt)
+
+    link = f"http://localhost:4200/modificacion-correo/{token}"
+    msg = Message("Modifica tu correo de GoGuay", recipients=[email_nuevo])
+    msg.body = f"Por favor haz click en el siguiente enlace para modificar tu correo: {link}"
+    mail.send(msg)
+
+    return jsonify({'message': 'Correo enviado'}), 200
+
+
+
+
+## Pone al usuario como RegistroFinalizado en True y verifica el email del usuario a la vez ##
+@user_blueprint.route('/email_finalizar_registro', methods=['POST'])
+def email_finalizar_registro():
+    """
     """
     token = request.json['token']
     salt = 'email-verify'
     try:
 
-        email = serializer.loads(token, salt=salt, max_age=1800)
+        email = serializer.loads(token, salt=salt)
         print(f"Email extraído del token: {email}") 
         usuario = Usuario.query.filter_by(email=email).first()
-        if usuario:
-            usuario.emailVerificado = True
-            db.session.commit()
-            return jsonify({'message': 'Correo verificado correctamente'}), 200
-        else:
+        if not usuario:
             return jsonify({'error': 'Usuario no encontrado'}), 404
+        if usuario.emailVerificado or usuario.registroFinalizado:
+            return jsonify({'error': 'Este enlace de verificación ya ha sido utilizado'}), 400
+        
+        usuario.emailVerificado = True
+        usuario.registroFinalizado = True
+        db.session.commit()
+        access_token = create_access_token(identity=str(usuario.id))
+        refresh_token = create_refresh_token(identity=str(usuario.id))
+        print('usuario:', usuario)
+        usuario_data = {
+            "id": usuario.id,
+            "nombre": usuario.nombre,
+            "apellidos": usuario.apellidos,
+            "fecha_nacimiento": usuario.fecha_nacimiento,
+            "genero": usuario.genero,
+            "orientacion": usuario.orientacion,
+            "telefono": usuario.telefono,
+            "email": usuario.email,
+            "fotoPerfil": usuario.fotoPerfil,
+            "rolPerfil": usuario.rolPerfil
+        }
+
+        return jsonify({
+            'message': 'Correo verificado correctamente',
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'usuario': usuario_data
+        }), 200
+        
 
     except Exception as e:
         print(f"Error al verificar token: {e}")
@@ -838,18 +1061,23 @@ def cambiopassword(id):
 
 #Obtener el access_token de paypal
 def get_access_token():
-    """
-    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
-    2. Se le pasan otros permisos aparte del id y la clave secreta
-    3. Devuelve un json el access_token
-    """
-    res = requests.post(
-        f"{PAYPAL_API}/v1/oauth2/token",
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
-        data={'grant_type': 'client_credentials'}
-    )
-    return res.json()['access_token']
-
+    try:
+        response=requests.post(
+            f"{PAYPAL_API}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+            data={'grant_type': 'client_credentials'},
+            headers={'Accept': 'application/json', 'Accept-Language': 'en_US'}
+        )
+        if response.status_code != 200:
+            print("Error al obtener el token de Paypal:", response.json())
+            return None
+        
+        data=response.json()
+        return data.get('access_token')
+    
+    except Exception as e:
+        print ("Excepción al conectar con Paypal para el token:", str(e))
+        return None
 
 
 # Recibe los datos del viaje con el precio de este. 
@@ -963,148 +1191,4 @@ def capture_order(order_id: str):
     
     
 
-## --- RUTAS DE RECARGA DE MONEDERO CON PAYPAL --- ##
 
-@user_blueprint.route("/create-wallet-order", methods=['POST'])
-@jwt_required()
-def create_wallet_order():
-    """
-    1. Recibe el monto (cantidad) que el usuario desea añadir a su monedero desde el frontend.
-    2. Valida que el usuario esté autenticado mediante JWT y tenga un monedero activo.
-    3. Crea una orden en PayPal configurada para capturar fondos destinados a la cuenta de la empresa.
-    """
-    current_user_id = get_jwt_identity()
-    data = request.get_json() or {}
-    
-    cantidad = data.get('cantidad')
-
-    if not cantidad or float(cantidad) <= 0:
-        return jsonify({"error": "La cantidad de recarga no es válida"}), 400
-
-    usuario = Usuario.query.get(current_user_id)
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    # Formatear el precio a dos decimales requerido por PayPal
-    precio_formateado = f"{float(cantidad):.2f}"
-    
-    token = get_access_token()
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    
-    # El dinero de la recarga va directamente a la cuenta business de la empresa
-    email_empresa = "goguay_empresa@business.example.com"
-    
-    payload = {
-        "intent": "CAPTURE",
-        "purchase_units": [{
-            "reference_id": f"wallet_recharge_{current_user_id}",
-            "amount": {
-                "currency_code": "EUR", 
-                "value": precio_formateado
-            },
-            "payee": {
-                "email_address": email_empresa
-            },
-            "description": f"Recarga de saldo en monedero GoGuay - Usuario {usuario.email}"
-        }],
-        "application_context": { 
-            "shipping_preference": "NO_SHIPPING", 
-            "user_action": "PAY_NOW",
-            "return_url": "http://localhost:4200/saldo-transferencias?success=true",
-            "cancel_url": "http://localhost:4200/saldo-transferencias?cancel=true"
-        }
-    }
-
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
-    order = response.json()
-
-    if response.status_code not in [200, 201]:
-        print("❌ DETALLE DE ERROR EN PAYPAL API (Monedero):", order)
-        return jsonify({"error": "Error al comunicarse con la pasarela de PayPal", "detalle": order}), response.status_code
-
-    try:
-        approve_link = next(
-            link["href"] for link in order["links"] if link["rel"] == "approve"
-        )
-        return jsonify({
-            "order_id": order["id"],
-            "approve_url": approve_link
-        }), 200
-    except KeyError:
-        return jsonify({"error": "No se pudo generar el enlace de aprobación de PayPal", "detalle": order}), 500
-
-
-@user_blueprint.route("/capture-wallet-order/<order_id>", methods=['POST'])
-@jwt_required()
-def capture_wallet_order(order_id: str):
-    """
-    1. Captura la orden de PayPal una vez el usuario aprueba el pago.
-    2. Si el pago es exitoso ('COMPLETED'), busca el monedero del usuario autenticado.
-    3. Incrementa el saldo actual y registra un nuevo movimiento en el historial.
-    4. Guarda los cambios en la base de datos de forma segura.
-    """
-    current_user_id = get_jwt_identity()
-    
-    token = get_access_token()
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
-    
-    capture_data = response.json()
-    
-    if response.status_code not in [200, 201] or capture_data.get("status") != "COMPLETED":
-        print(f"❌ Error al capturar la orden de recarga {order_id}:", capture_data)
-        return jsonify({"error": "El pago no pudo ser completado o capturado", "detalle": capture_data}), 400
-        
-    try:
-        # Extraer la cantidad pagada desde la respuesta de PayPal
-        unidad_compra = capture_data["purchase_units"][0]
-        captura = unidad_compra["payments"]["captures"][0]
-        monto_recargado = float(captura["amount"]["value"])
-        
-        # Buscar o inicializar el monedero del usuario
-        usuario = Usuario.query.get(current_user_id)
-        if not usuario:
-            return jsonify({"error": "Usuario asociado no encontrado"}), 404
-            
-        monedero = Monedero.query.filter_by(usuario_id=usuario.id).first()
-        if not monedero:
-            monedero = Monedero(usuario_id=usuario.id, saldo=0.0)
-            db.session.add(monedero)
-            db.session.flush() # Para obtener el ID del monedero antes del commit final
-
-        # Actualizar saldo
-        monedero.saldo += monto_recargado
-        
-        # Registrar el movimiento en el historial
-        nuevo_movimiento = MovimientoMonedero(
-            monedero_id=monedero.id,
-            concepto="Recarga de saldo vía PayPal",
-            cantidad=monto_recargado,
-            saldo_final=monedero.saldo
-        )
-        db.session.add(nuevo_movimiento)
-        db.session.commit()
-
-        return jsonify({
-            "mensaje": "Saldo añadido correctamente al monedero",
-            "nuevo_saldo": monedero.saldo,
-            "detalles_pago": capture_data
-        }), 200
-
-    except Exception as e:
-        db.session.rollback()
-        print(f"❌ Error interno al actualizar el monedero: {str(e)}")
-        return jsonify({"error": f"Error interno al procesar la recarga: {str(e)}"}), 500
-    
-
-@user_blueprint.route("/saldo-actual", methods=['GET'])
-@jwt_required()
-def get_wallet_balance():
-    current_user_id = get_jwt_identity()
-    
-    monedero = Monedero.query.filter_by(usuario_id=current_user_id).first()
-    if not monedero:
-        # Si aún no tiene monedero creado, devolvemos saldo 0
-        return jsonify({"saldo": 0.0}), 200
-        
-    return jsonify({"saldo": monedero.saldo}), 200

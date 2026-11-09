@@ -1,10 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TerminosComponent } from '../../components/terminos/terminos.component';
 import { CookiesComponent } from '../../components/cookies/cookies.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { OnboardingModalComponent } from 'src/app/components/onboarding/onboarding-modal.component';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -12,16 +14,32 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [IonicModule, MatIconModule, TranslateModule],
+  imports: [CommonModule, IonicModule, MatIconModule, TranslateModule],
 })
 export class FooterComponent implements OnInit {
 
   dialog = inject(MatDialog);
+  isAdmin: boolean = false;
 
-  constructor(private navCtrl: NavController) { }
+  constructor(private navCtrl: NavController, private modalController: ModalController) { }
 
   ngOnInit() {
+    this.comprobarRolAdmin();
+  }
 
+  comprobarRolAdmin() {
+    try {
+      const userDataString = localStorage.getItem('userData');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        const rol = userData?.rolPerfil || userData?.usuario?.rolPerfil;
+        this.isAdmin = (rol === 'admin');
+      } else {
+        this.isAdmin = false;
+      }
+    } catch (e) {
+      this.isAdmin = false;
+    }
   }
 
   openTerms() {
@@ -50,5 +68,15 @@ export class FooterComponent implements OnInit {
 
   openQuienesSomos() {
     this.navCtrl.navigateRoot('/sobre-nosotros', {});
+  }
+
+  async abrirOnboarding() {
+    const modal = await this.modalController.create({
+      component: OnboardingModalComponent,
+      cssClass: 'modal-qr-verificacion',
+      breakpoints: [0, 0.7],
+      initialBreakpoint: 0.7
+    });
+    await modal.present();
   }
 }

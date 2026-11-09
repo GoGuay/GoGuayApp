@@ -110,7 +110,7 @@ export class PrimerPasoComponent implements OnInit {
     this.checkScreenSize();
   }
 
-  ngOnInit() {
+ngOnInit() {
     const datosUsuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
     if (datosUsuarioLocal) {
       this.userData = datosUsuarioLocal;
@@ -125,6 +125,7 @@ export class PrimerPasoComponent implements OnInit {
       this.fecha_seleccionada = viajeData.fecha_salida;
     } else {
       this.fecha_seleccionada = new Date().toISOString();
+      this.guardaDatosDelViajeEnServicio('fecha_salida', this.fecha_seleccionada);
     }
 
     this.calcularHoraMinima();
@@ -138,20 +139,27 @@ export class PrimerPasoComponent implements OnInit {
       const horaBase = new Date();
       horaBase.setTime(horaBase.getTime() + 60 * 60 * 1000);
       this.hora_seleccionada = horaBase;
+      
+      const horasStr = String(horaBase.getHours()).padStart(2, '0');
+      const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
+      this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
     }
 
-    this.plazas = viajeData.plazas || '';
+    if (viajeData.plazas) {
+      this.plazas = viajeData.plazas;
+    }
+
     this.reservaAutomatica = viajeData.reserva_automatica ?? false;
     this.cocheSeleccionado = viajeData.coche || null;
 
-    this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
-      if (viajeData) {
-        if (viajeData.plazas && viajeData.plazas !== this.plazas) {
-          this.plazas = viajeData.plazas;
+    this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeActualizado) => {
+      if (viajeActualizado) {
+        if (viajeActualizado.plazas !== undefined && viajeActualizado.plazas !== this.plazas) {
+          this.plazas = viajeActualizado.plazas;
         }
 
-        if (viajeData.fecha_salida && viajeData.fecha_salida !== this.fecha_seleccionada) {
-          this.fecha_seleccionada = viajeData.fecha_salida;
+        if (viajeActualizado.fecha_salida && viajeActualizado.fecha_salida !== this.fecha_seleccionada) {
+          this.fecha_seleccionada = viajeActualizado.fecha_salida;
           this.calcularHoraMinima();
         }
 
@@ -464,13 +472,25 @@ export class PrimerPasoComponent implements OnInit {
    * Captura la selección de plazas del selector general.
    */
   seleccionarPlazas(opcion: any) {
-    const nuevaPlaza = typeof opcion === 'object' && opcion !== null
-      ? (opcion.descripcion || opcion.valor || '')
-      : String(opcion);
+    let nuevaPlaza = '';
 
-    if (this.plazas !== nuevaPlaza) {
-      this.plazas = nuevaPlaza;
-      this.guardaDatosDelViajeEnServicio('plazas', this.plazas);
+    if (opcion !== null && opcion !== undefined) {
+      if (typeof opcion === 'object') {
+        nuevaPlaza = opcion.valor || opcion.descripcion || opcion.id || String(opcion);
+      } else {
+        nuevaPlaza = String(opcion);
+      }
     }
+
+    this.plazas = nuevaPlaza;
+
+    const currentViajeData = this.travelService.getViajeData() || {};
+    const viajeData = {
+      ...currentViajeData,
+      plazas: nuevaPlaza
+    };
+
+    this.travelService.setViajeData(viajeData);
+    this.cdr.detectChanges();
   }
 }

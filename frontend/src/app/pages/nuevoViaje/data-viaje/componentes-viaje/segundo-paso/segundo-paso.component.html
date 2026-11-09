@@ -13,11 +13,23 @@
     (seleccionCambiada)="seleccionarLocalidadOrigen($event)"
   ></app-selector-general>
 
-  <button type="button" mat-raised-button class="btn_bg mt-2" (click)="getUserLocationWithLeaflet()">
-    <img src="../../../../../../assets/sistema/marcador.png" class="_icon me-3">Usar mi ubicación
+  <button
+    type="button"
+    mat-raised-button
+    class="btn_bg mt-2"
+    (click)="getUserLocationWithLeaflet()"
+  >
+    <img
+      src="../../../../../../assets/sistema/marcador.png"
+      class="_icon me-3"
+    />
+    Usar mi ubicación
   </button>
 
-  <div *ngIf="cargandoOrigen" class="spinner-container">
+  <div
+    *ngIf="cargandoOrigen"
+    class="spinner-container"
+  >
     <app-spinner></app-spinner>
   </div>
 </div>
@@ -37,7 +49,10 @@
     (seleccionCambiada)="seleccionarLocalidadDestino($event)"
   ></app-selector-general>
 
-  <div *ngIf="cargandoDestino" class="spinner-container">
+  <div
+    *ngIf="cargandoDestino"
+    class="spinner-container"
+  >
     <app-spinner></app-spinner>
   </div>
 </div>

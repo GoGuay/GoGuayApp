@@ -57,13 +57,12 @@
               type="button"
               class="btn-goguay-mini"
               (click)="irARegistrarVehiculo.emit()"
-              [attr.aria-label]="'TABLA_VEHICULOS.ANADIR_NUEVO_AYUDA' | translate"
             >
               <i
                 class="fi fi-rr-plus me-1"
                 aria-hidden="true"
               ></i>
-              {{ 'TABLA_VEHICULOS.BTN_ANADIR_VEHICULO' | translate }}
+              {{ 'BOTONES.TABLAVEHICULOS.ANADIR_VEHICULO' | translate }}
             </button>
           </div>
         </ng-container>
@@ -98,7 +97,7 @@
                   mat-icon-button
                   class="botones_tabla btn_bg"
                   [attr.aria-label]="
-                    'TABLA_VEHICULOS.BOTON_EDITAR_HELP'
+                    'BOTONES.TABLAVEHICULOS.EDITAR_ARIALABEL'
                       | translate
                         : {
                             marca: coche.marca,
@@ -113,7 +112,7 @@
                 <button
                   mat-icon-button
                   [attr.aria-label]="
-                    'TABLA_VEHICULOS.ELIMINAR.AYUDA_BOTON'
+                    'BOTONES.TABLAVEHICULOS.ELIMINAR_ARIALABEL'
                       | translate
                         : {
                             marca: coche.marca,
@@ -195,8 +194,10 @@
                     class="botones_tabla btn_bg"
                     (click)="coche.editandoVehiculo ? guardarVehiculoEditado(coche) : editarFilaVehiculo(coche)"
                     [attr.aria-label]="
-                      (coche.editandoVehiculo ? 'TABLA_VEHICULOS.BOTON_GUARDAR_HELP' : 'TABLA_VEHICULOS.BOTON_EDITAR_HELP')
-                        | translate: { marca: coche.marca, modelo: coche.modelo, color: coche.color }
+                      (coche.editandoVehiculo
+                        ? 'BOTONES.TABLAVEHICULOS.GUARDAR_TRAS_EDITAR_ARIALABEL'
+                        : 'BOTONES.TABLAVEHICULOS.EDITAR_ARIALABEL'
+                      ) | translate: { marca: coche.marca, modelo: coche.modelo, color: coche.color }
                     "
                   >
                     <mat-icon aria-hidden="true">
@@ -207,6 +208,15 @@
                     mat-icon-button
                     class="botones_tabla btn_bg"
                     (click)="eliminarVehiculo.emit(coche); $event.stopPropagation()"
+                    [attr.aria-label]="
+                      'BOTONES.TABLAVEHICULOS.ELIMINAR_ARIALABEL'
+                        | translate
+                          : {
+                              marca: coche.marca,
+                              modelo: coche.modelo,
+                              color: coche.color,
+                            }
+                    "
                   >
                     <mat-icon aria-hidden="true">delete</mat-icon>
                   </button>
@@ -229,7 +239,7 @@
                 class="fi fi-rr-plus me-1"
                 aria-hidden="true"
               ></i>
-              {{ 'TABLA_VEHICULOS.BTN_ANADIR_VEHICULO' | translate }}
+              {{ 'BOTONES.TABLAVEHICULOS.ANADIR_VEHICULO' | translate }}
             </button>
           </div>
         </ng-template>
@@ -254,7 +264,7 @@
                 class="fi fi-rr-plus me-1"
                 aria-hidden="true"
               ></i>
-              {{ 'TABLA_VEHICULOS.BTN_ANADIR_VEHICULO' | translate }}
+              {{ 'BOTONES.TABLAVEHICULOS.ANADIR_VEHICULO' | translate }}
             </button>
           </div>
         </div>
@@ -325,7 +335,7 @@
                 mat-raised-button
                 (click)="guardarVehiculo()"
               >
-                {{ 'TABLA_VEHICULOS.GUARDAR_VEHICULO' | translate }}
+                {{ 'BOTONES.TABLAVEHICULOS.GUARDAR_VEHICULO' | translate }}
               </button>
               <!-- Boton para cancelar el guardado de un vehículo nuevo -->
               <button
@@ -334,7 +344,7 @@
                 mat-raised-button
                 (click)="cancelarCoche()"
               >
-                {{ 'TABLA_VEHICULOS.CANCELAR' | translate }}
+                {{ 'BOTONES.TABLAVEHICULOS.CANCELAR' | translate }}
               </button>
             </div>
             <div
@@ -350,7 +360,7 @@
                   mat-raised-button
                   (click)="guardarVehiculoEditado(cocheEnEdicion)"
                 >
-                  {{ 'TABLA_VEHICULOS.GUARDAR_CAMBIOS' | translate }}
+                  {{ 'BOTONES.TABLAVEHICULOS.GUARDAR_VEHICULO' | translate }}
                 </button>
                 <!-- Botón para cancelar un nuevo coche o coche editando -->
                 <button
@@ -359,7 +369,7 @@
                   mat-raised-button
                   (click)="cancelarCoche()"
                 >
-                  Cancelar
+                  {{ 'BOTONES.TABLAVEHICULOS.CANCELAR' | translate }}
                 </button>
               </div>
             </div>

@@ -1,7 +1,6 @@
-$primary-color: #B3B5E6;
-$success-color: #B7E0B4;
+$primary-color: #b3b5e6;
+$success-color: #b7e0b4;
 $bg-light: #f4f5f8;
-
 
 .box-section {
   margin-top: 20px;
@@ -30,8 +29,6 @@ $bg-light: #f4f5f8;
 .boton_guardar {
   margin-top: 2rem;
 }
-
-
 
 .btn-primary {
   background-color: #007bff;
@@ -79,7 +76,7 @@ $bg-light: #f4f5f8;
 }
 
 a {
-  color: #B3B5E6 !important;
+  color: #b3b5e6 !important;
 }
 
 .box-section {
@@ -157,11 +154,11 @@ a {
 
 .btn-outline-danger {
   border-radius: 35px;
-  border: 1px solid #E0B6B6;
+  border: 1px solid #e0b6b6;
 }
 
 .btn-outline-danger:hover {
-  background: #E0B6B6 !important;
+  background: #e0b6b6 !important;
   color: black;
 }
 
@@ -174,7 +171,7 @@ a {
 }
 
 .btn-logout:hover {
-  background: #E0B6B6 !important;
+  background: #e0b6b6 !important;
   color: black !important;
 }
 
@@ -203,7 +200,7 @@ a {
   padding: 4px;
 
   ion-segment-button {
-    --indicator-color: #B3B5E6;
+    --indicator-color: #b3b5e6;
     --color: #666;
     --color-checked: #000;
     font-weight: 600;
@@ -224,7 +221,6 @@ a {
   flex-direction: column;
 }
 
-
 .payment-option-card {
   border: 1px solid #eeeeee00;
   border-radius: 35px;
@@ -244,10 +240,10 @@ a {
     --border-radius: 35px;
 
     ion-icon {
-      display: block !important; // Fuerza el renderizado
+      display: block !important;
       min-width: 24px;
       min-height: 24px;
-      font-size: 24px; // Tamaño estándar
+      font-size: 24px;
       visibility: visible !important;
       opacity: 1 !important;
 
@@ -267,8 +263,12 @@ a {
   }
 }
 
-
 .list-help {
+  .warning-icon {
+    color: #F8E196 !important; /* Amarillo pastel */
+    font-size: 1.2rem;
+  }
+
   .help-item {
     display: flex;
     justify-content: space-between;
@@ -311,6 +311,61 @@ a {
       background: rgba($success-color, 0.2);
     }
   }
+
+  .warning-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+
+    &:hover {
+      background-color: #fffde8; /* Fondo sutil al pasar el ratón */
+    }
+
+    span {
+      font-weight: 500;
+      color: #444;
+    }
+
+    .fi-rr-angle-small-right {
+      color: #ccc;
+    }
+  }
+}
+
+h3 .warning-icon {
+  color: #F8E196 !important;
+}
+
+.maricar-chat-avatar {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  background: #fdfbf7;
+  border: 1.5px solid #90caf9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .chat-car {
+    font-size: 1.2rem;
+    color: #34495e;
+  }
+
+  .chat-sparkle {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 0.75rem;
+    color: #1565c0;
+    animation: brilloMovimiento 4s ease infinite;
+  }
 }
 
 @media (max-width: 768px) {
@@ -341,7 +396,6 @@ a {
       bottom: 0;
       width: 6px;
       background: linear-gradient(to bottom, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
-
       border-radius: 35px 0 0 35px;
       z-index: 1;
     }

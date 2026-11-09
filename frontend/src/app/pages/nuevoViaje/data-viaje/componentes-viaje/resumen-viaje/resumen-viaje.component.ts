@@ -242,6 +242,9 @@ export class ResumenViajeComponent implements OnInit {
         peticion.subscribe({
           next: (response) => {
             this.cargando_viaje = false;
+
+            localStorage.setItem('creacion_viaje_completado', 'true');
+
             const modalExito = this.openHelp(title, message, true, false, !esEdicion);
             
             modalExito.afterClosed().subscribe(() => {

@@ -24,7 +24,9 @@ from services.vehicles.vehicle_service import vehicle_blueprint
 from services.apigoogle.apigoogle_service import apigoogle_blueprint
 from services.messaging.messaging_service import chat_blueprint
 from services.events.events_service import evento_blueprint
+from services.monedero.monedero_service import monedero_blueprint
 from services.notifications.notifications_utils import notifications_blueprint
+from services.incidencias_service.incidenicas_service import incidencias_bp
 from services.encuesta_satisfaccion.encuesta_satisfaccion import encuesta_bp
 from services.user import user_service
 
@@ -64,7 +66,7 @@ def create_app():
 
     # --- FIREBASE ---
     if not firebase_admin._apps:
-        cred = credentials.Certificate("prideride_firebase.json")
+        cred = credentials.Certificate("google_service_account.json")
         firebase_admin.initialize_app(cred)
 
 
@@ -109,6 +111,9 @@ def create_app():
     # --> apigoogle_blueprint: Servicio relacionado con los servicios de Google API
     # --> evento_blueprint: Servicio relacionado con los eventos
     # --> notifications_blueprint: Servicio relacionado con las notificaciones
+    # --> encuesta_bp: Servicio relacionado con las encuestas de satisfacción
+    # --> incidencias_bp: Servicio relacionado con las incidencias
+    # --> monedero_blueprint: Servicio relacionado con el monedero electrónico
     #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     app.register_blueprint(user_blueprint, url_prefix="/api/user")
@@ -119,6 +124,8 @@ def create_app():
     app.register_blueprint(evento_blueprint, url_prefix="/api/evento")
     app.register_blueprint(notifications_blueprint, url_prefix="/api/notifications")
     app.register_blueprint(encuesta_bp, url_prefix="/api/encuesta")
+    app.register_blueprint(monedero_blueprint, url_prefix="/api/monedero")
+    app.register_blueprint(incidencias_bp, url_prefix="/api/incidencias")
 
  
     user_service.mail = mail

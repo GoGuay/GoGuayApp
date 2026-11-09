@@ -1,702 +1,690 @@
-<div style="overflow: auto">
-  <div class="d-flex justify-content-center mt-4">
-    <img
-      src="../../../assets/logo/PRIDECAR.png"
-      alt="Logo"
-      class="logo"
-      (click)="volverAlHome()"
-    />
-  </div>
-
-  <!-- ================= PASO 1 ================= -->
-  <div *ngIf="pasoActual === 1">
-    <div class="d-flex flex-column justify-content-center text-md-start text-center align-items-center">
-      <h1>
-        <strong>{{ 'REGISTRO.FORM1.BIENVENIDE' | translate }}</strong>
-      </h1>
-      <h2>{{ 'REGISTRO.FORM1.SUBTITULO' | translate }}</h2>
+<div class="contenedor_registro">
+  <div class="container">
+    <div class="idiomas-container d-flex flex-row align-items-end justify-content-end mt-3 gap-3">
+      <img
+        src="../../../assets/sistema/bandera_es.svg"
+        class="icon-idioma"
+        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'es' }"
+        (click)="changeLanguage('es')"
+      />
+      <img
+        src="../../../assets/sistema/bandera_uk.svg"
+        class="icon-idioma mt-1"
+        [ngClass]="{ 'grayscale-filter': selectedLanguage !== 'en' }"
+        (click)="changeLanguage('en')"
+      />
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <img
+        src="../../../assets/logo/PRIDECAR.png"
+        alt="Logo"
+        class="logo"
+        (click)="volverAlHome()"
+      />
     </div>
 
-    <!-- Mensaje de advertencia -->
-    <div
-      class="alert alert-warning mt-3 text-center container"
-      role="alert"
-    >
-      {{ 'REGISTRO.FORM1.AVISO_CAMPOSOBLIGATORIOS' | translate }}
-    </div>
+    <!-- ================= PASO 1 ================= -->
+    <div *ngIf="pasoActual === 1 && !esGoogle">
+      <div class="d-flex flex-column justify-content-center text-md-start text-center align-items-center">
+        <h1>
+          <strong>{{ 'REGISTRO.FORM1.BIENVENIDE' | translate }}</strong>
+        </h1>
+        <h2>{{ 'REGISTRO.FORM1.SUBTITULO' | translate }}</h2>
+      </div>
 
-    <div class="container d-flex justify-content-center">
-      <form
-        [formGroup]="formulario1"
-        class="formulario"
+      <!-- Mensaje de advertencia -->
+      <div
+        class="alert alert-warning mt-3 text-center container"
+        role="alert"
       >
-        <!-- Campo Email -->
-        <div class="mb-3">
-          <label
-            for="email"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM1.CORREO.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <input
-            type="email"
-            class="form-control form-input"
-            id="email"
-            inputmode="email"
-            required
-            formControlName="email"
-            name="email"
-            placeholder="{{ 'REGISTRO.FORM1.CORREO.PLACEHOLDER' | translate }}"
-            aria-describedby="emailHelp"
-            autocomplete="email"
-            (blur)="validarCampo('email', formulario1)"
-            (input)="onEmailInput()"
-          />
-          <!-- Mensaje de ayuda accesible -->
-          <span
-            id="emailHelp"
-            class="visually-hidden"
-          >
-            {{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}
-          </span>
-          <!-- Mensajes de Error Email -->
-          <div
-            *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched"
-            class="text-danger"
-          >
-            <span *ngIf="formulario1.get('email')?.errors?.['required']">
-              {{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}
-            </span>
-            <span *ngIf="formulario1.get('email')?.errors?.['pattern']">
-              {{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}
-            </span>
-            <span *ngIf="formulario1.get('email')?.errors?.['emailRepetido']">
-              {{ 'REGISTRO.FORM1.CORREO.YAEXISTE' | translate }}
-            </span>
-          </div>
-        </div>
+        {{ 'REGISTRO.FORM1.AVISO_CAMPOSOBLIGATORIOS' | translate }}
+      </div>
 
-        <!-- Botón Siguiente Paso 1 -->
-        <div class="d-flex justify-content-center mt-4">
-          <button
-            type="button"
-            id="btnSiguientePaso1"
-            class="btn btn_bg w-100"
-            [disabled]="!formulario1.valid && !emailValido"
-            (click)="siguientePaso()"
-          >
-            {{ 'REGISTRO.BOTONES2.SIGUIENTE' | translate }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Opción Registro por Google (Exclusiva del Paso 1) -->
-  <div
-    class="my-3 text-center"
-    [hidden]="pasoActual !== 1"
-  >
-    <hr class="my-4" />
-    <p class="text-muted small">
-      {{ 'REGISTRO.FORM1.SILOPREFIERES' | translate }}
-    </p>
-
-    <!-- AQUÍ COLOCAS EL CONTENEDOR DONDE GOOGLE DIBUJARÁ SU BOTÓN OFICIAL -->
-    <div
-      id="btnGoogleContainer"
-      class="d-flex justify-content-center"
-    ></div>
-    <!-- Botón de Google personalizado -->
-    <!-- <button
-      type="button"
-      class="btn btn-outline-dark rounded-pill d-flex align-items-center justify-content-center gap-2 mx-auto w-100"
-      style="max-width: 320px"
-    >
-      <svg
-        width="18"
-        height="18"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 48 48"
-      >
-        <path
-          fill="#EA4335"
-          d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-        />
-        <path
-          fill="#4285F4"
-          d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-        />
-        <path
-          fill="#FBBC05"
-          d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-        />
-        <path
-          fill="#34A853"
-          d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-        />
-      </svg>
-      Continuar con Google
-    </button> -->
-  </div>
-
-  <!-- ================= PASO 2 ================= -->
-  <div *ngIf="pasoActual === 2">
-    <div class="d-flex justify-content-center text-md-start text-center">
-      <h1>{{ 'REGISTRO.FORM2.TITULO' | translate }}</h1>
-    </div>
-
-    <div
-      class="alert alert-warning mt-3 text-center container"
-      role="alert"
-    >
-      {{ 'REGISTRO.FORM2.AVISO_CAMPOSOBLIGATORIOS' | translate }}
-    </div>
-    <div class="container d-flex justify-content-center">
-      <form
-        [formGroup]="formulario2"
-        class="formulario"
-      >
-        <!-- Fecha Nacimiento -->
-        <div class="mb-3">
-          <label
-            for="fnacimiento"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.FNACIMIENTO.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
+      <div class="container d-flex justify-content-center">
+        <form
+          [formGroup]="formulario1"
+          class="formulario"
+        >
+          <!-- Campo Email -->
+          <div class="mb-3">
+            <label
+              for="email"
+              class="form-label"
             >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <input
-            type="date"
-            class="form-control"
-            id="fnacimiento"
-            min="1930-01-01"
-            [max]="fechaMaxima"
-            autocomplete="bday"
-            aria-describedby="fnacimientoHelp"
-            [attr.aria-invalid]="
-              formulario2.get('fecha_nacimiento')?.invalid &&
-              (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
-            "
-            required
-            formControlName="fecha_nacimiento"
-            (change)="onFechaChange()"
-            (blur)="validarFechaCompleta()"
-          />
-          <!-- Mensaje de ayuda accesible -->
-          <span
-            id="fnacimientoHelp"
-            class="visually-hidden"
-          >
-            {{ 'REGISTRO.FORM2.FNACIMIENTO.AYUDA' | translate }}
-          </span>
-          <!-- Mensajes de Error Fecha Nacimiento -->
-          <div
-            id="fnacimientoError"
-            class="text-danger mt-1 small"
-            aria-live="polite"
-            *ngIf="
-              formulario2.get('fecha_nacimiento')?.invalid &&
-              (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
-            "
-          >
-            <span
-              class="dato-obligatorio"
-              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechalimite']"
-            >
-              {{ 'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA' | translate }}
-            </span>
-            <span
-              class="dato-obligatorio"
-              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['required']"
-            >
-              {{ 'REGISTRO.FORM2.FNACIMIENTO.OBLIGATORIA' | translate }}
-            </span>
-            <span
-              class="dato-obligatorio"
-              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['menorDeEdad']"
-            >
-              {{ 'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD' | translate }}
-            </span>
-            <span
-              class="dato-obligatorio"
-              *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechaFutura']"
-            >
-              {{ 'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL' | translate }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Nombre -->
-        <div class="mb-3">
-          <label
-            for="nombre"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.LABEL_NOMBRE' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <input
-            type="text"
-            class="form-control form-input"
-            id="nombre"
-            required
-            formControlName="nombre"
-            autocomplete="given-name"
-            [attr.aria-invalid]="formulario2.get('nombre')?.invalid && formulario2.get('nombre')?.touched"
-            (input)="escucharCambiosFormulario2('nombre')"
-          />
-        </div>
-        <!-- Apellidos -->
-        <div class="mb-3">
-          <label
-            for="apellidos"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.LABEL_APELLIDOS' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <input
-            type="text"
-            class="form-control form-input"
-            id="apellidos"
-            required
-            formControlName="apellidos"
-            autocomplete="family-name"
-            [attr.aria-invalid]="formulario2.get('apellidos')?.invalid && formulario2.get('apellidos')?.touched"
-            (input)="escucharCambiosFormulario2('apellidos')"
-          />
-        </div>
-        <!-- Teléfono -->
-        <div class="mb-3">
-          <label
-            for="telefono"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.TELEFONO.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <input
-            type="text"
-            class="form-control form-input"
-            id="telefono"
-            required
-            formControlName="telefono"
-            autocomplete="tel"
-            [attr.aria-invalid]="formulario2.get('telefono')?.invalid && formulario2.get('telefono')?.touched"
-            (input)="validarCampo('telefono', formulario2)"
-          />
-          <!-- Mensajes de Error Teléfono -->
-          <div
-            id="telefonoError"
-            class="text-danger"
-            aria-live="polite"
-          >
-            <span
-              class="text-danger"
-              *ngIf="formulario2.get('telefono')?.errors?.['pattern']"
-            >
-              {{ 'REGISTRO.FORM2.TELEFONO.FORMATO' | translate }}
-            </span>
-            <span
-              class="text-danger"
-              *ngIf="formulario2.get('telefono')?.errors?.['required']"
-            >
-              {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
-            </span>
-            <span
-              class="text-danger"
-              *ngIf="formulario2.get('telefono')?.errors?.['telefonoRepetido']"
-            >
-              {{ 'REGISTRO.FORM2.TELEFONO.YAEXISTE' | translate }}
-            </span>
-          </div>
-        </div>
-        <!-- Género -->
-        <div class="mb-3">
-          <label
-            for="genero"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.GÉNERO.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-
-          <button
-            type="button"
-            class="btn btn-link p-0 ms-2 text-primary align-baseline"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            [title]="'SELECTOR_GENERO.LABEL' | translate"
-            [attr.aria-label]="'SELECTOR_GENERO.INFO' | translate"
-          >
-            <i
-              class="bi-question-circle"
-              aria-hidden="true"
-            ></i>
-          </button>
-          <select
-            class="form-select"
-            id="genero"
-            required
-            formControlName="genero"
-            aria-describedby="info_genero"
-            [attr.aria-invalid]="formulario2.get('genero')?.invalid && formulario2.get('genero')?.touched"
-            (change)="escucharCambiosFormulario2('genero')"
-          >
-            <option
-              value=""
-              selected
-              disabled
-              hidden
-            >
-              {{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}
-            </option>
-            <option value="H_CIS">
-              {{ 'SELECTOR_GENERO.H_CIS' | translate }}
-            </option>
-            <option value="M_CIS">
-              {{ 'SELECTOR_GENERO.M_CIS' | translate }}
-            </option>
-            <option value="TRANS">
-              {{ 'SELECTOR_GENERO.TRANS' | translate }}
-            </option>
-            <option value="NO_BINARIO">
-              {{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}
-            </option>
-            <option value="INTERGENERO">
-              {{ 'SELECTOR_GENERO.INTER' | translate }}
-            </option>
-            <option value="NO_FLUIDO">
-              {{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}
-            </option>
-            <option value="OTRO">
-              {{ 'SELECTOR_GENERO.OTRO' | translate }}
-            </option>
-            <option value="NO_RESPONDE">
-              {{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}
-            </option>
-          </select>
-          <span
-            id="info_genero"
-            class="visually-hidden"
-          >
-            {{ 'REGISTRO.FORM2.GÉNERO.INFO' | translate }}
-          </span>
-        </div>
-        <!-- Orientación -->
-        <div class="mb-3">
-          <label
-            for="orientacion"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM2.ORIENTACION.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <button
-            type="button"
-            class="btn btn-link p-0 ms-2 text-primary align-baseline"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            [title]="'SELECTOR_ORIENTACION.LABEL' | translate"
-            [attr.aria-label]="'SELECTOR_ORIENTACION.INFO' | translate"
-          >
-            <i
-              class="bi-question-circle"
-              aria-hidden="true"
-            ></i>
-          </button>
-
-          <select
-            class="form-select"
-            id="orientacion"
-            required
-            formControlName="orientacion"
-            aria-describedby="info_orientacion"
-            [attr.aria-invalid]="formulario2.get('orientacion')?.invalid && formulario2.get('orientacion')?.touched"
-            (input)="escucharCambiosFormulario2('orientacion')"
-          >
-            <option
-              value=""
-              selected
-              disabled
-              hidden
-            >
-              {{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
-            </option>
-            <option value="GAY">
-              {{ 'SELECTOR_ORIENTACION.GAY' | translate }}
-            </option>
-            <option value="LESBIANA">
-              {{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}
-            </option>
-            <option value="BISEXUAL">
-              {{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}
-            </option>
-            <option value="PANSEXUAL">
-              {{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}
-            </option>
-            <option value="ASEXUAL">
-              {{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}
-            </option>
-            <option value="DEMISEXUAL">
-              {{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}
-            </option>
-            <option value="QUEER">
-              {{ 'SELECTOR_ORIENTACION.QUEER' | translate }}
-            </option>
-            <option value="HETEROSEXUAL">
-              {{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}
-            </option>
-            <option value="OTRO">
-              {{ 'SELECTOR_ORIENTACION.OTRO' | translate }}
-            </option>
-            <option value="NO_RESPONDE">
-              {{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}
-            </option>
-          </select>
-          <span
-            id="info_orientacion"
-            class="visually-hidden"
-          >
-            {{ 'REGISTRO.FORM2.ORIENTACION.INFO' | translate }}
-          </span>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= PASO 3 ================= -->
-  <div *ngIf="pasoActual === 3">
-    <div class="d-flex justify-content-center text-md-start text-center px-4 px-md-0">
-      <h1>
-        {{ 'REGISTRO.FORM3.TITULO' | translate }}
-      </h1>
-    </div>
-    <div class="text-center">
-      <h3>{{ 'REGISTRO.FORM3.REQUISITOS.TITULO' | translate }}</h3>
-    </div>
-    <div class="d-flex justify-content-center px-4 px-md-0">
-      <ul>
-        <li>{{ 'REGISTRO.FORM3.REQUISITOS.MIN_CARACTERES' | translate }}</li>
-        <li>
-          {{ 'REGISTRO.FORM3.REQUISITOS.NUMERO_MAYÚSCULA_SIMBOLO' | translate }}
-        </li>
-      </ul>
-    </div>
-
-    <!-- Contraseña -->
-    <div class="container d-flex justify-content-center">
-      <form
-        [formGroup]="formulario3"
-        class="formulario"
-      >
-        <div class="mb-3">
-          <label
-            for="password"
-            class="form-label"
-          >
-            {{ 'REGISTRO.FORM3.CONTRASEÑA.LABEL' | translate }}
-            <span
-              class="dato-obligatorio"
-              aria-hidden="true"
-            >
-              *
-            </span>
-            <span class="visually-hidden">
-              {{ 'REGISTRO.OBLIGATORIO' | translate }}
-            </span>
-          </label>
-          <div class="position-relative">
+              {{ 'REGISTRO.FORM1.CORREO.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
             <input
-              [type]="mostrarPassword1 ? 'text' : 'password'"
-              formControlName="password"
+              type="email"
               class="form-control form-input"
-              id="password"
-              [attr.aria-invalid]="formulario3.get('password')?.invalid && formulario3.get('password')?.touched"
-              aria-describedby="passwordError"
-              (keydown)="manejarTabPassword($event)"
+              id="email"
+              inputmode="email"
+              required
+              formControlName="email"
+              name="email"
+              placeholder="{{ 'REGISTRO.FORM1.CORREO.PLACEHOLDER' | translate }}"
+              aria-describedby="emailHelp"
+              autocomplete="email"
+              (blur)="validarCampo('email', formulario1)"
+              (input)="onEmailInput()"
             />
+            <!-- Mensaje de ayuda accesible -->
+            <span
+              id="emailHelp"
+              class="visually-hidden"
+            >
+              {{ 'REGISTRO.FORM1.CORREO.AYUDA' | translate }}
+            </span>
+            <!-- Mensajes de Error Email -->
+            <div
+              *ngIf="formulario1.get('email')?.invalid && formulario1.get('email')?.touched"
+              class="text-danger"
+            >
+              <span *ngIf="formulario1.get('email')?.errors?.['required']">
+                {{ 'REGISTRO.FORM1.CORREO.OBLIGATORIO' | translate }}
+              </span>
+              <span *ngIf="formulario1.get('email')?.errors?.['pattern']">
+                {{ 'REGISTRO.FORM1.CORREO.FORMATO' | translate }}
+              </span>
+              <span *ngIf="formulario1.get('email')?.errors?.['emailRepetido']">
+                {{ 'REGISTRO.FORM1.CORREO.YAEXISTE' | translate }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Botón Siguiente Paso 1 -->
+          <div class="d-flex justify-content-center mt-4">
             <button
               type="button"
-              (click)="botonMostrarPassword_1()"
-              class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2 border-0 bg-transparent shadow-none"
-              style="--bs-btn-hover-bg: transparent; --bs-btn-hover-border-color: transparent"
-              [attr.aria-label]="(mostrarPassword1 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate"
+              id="btnSiguientePaso1"
+              class="btn btn_bg w-100"
+              [disabled]="!formulario1.valid && !emailValido"
+              (click)="siguientePaso()"
+            >
+              {{ 'REGISTRO.BOTONES2.SIGUIENTE' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Opción Registro por Google (Exclusiva del Paso 1) -->
+    <div
+      class="my-3 text-center"
+      [hidden]="pasoActual !== 1"
+    >
+      <hr class="my-4" />
+      <p class="text-muted small">
+        {{ 'REGISTRO.FORM1.SILOPREFIERES' | translate }}
+      </p>
+
+      <!-- AQUÍ COLOCAS EL CONTENEDOR DONDE GOOGLE DIBUJARÁ SU BOTÓN OFICIAL -->
+      <div
+        id="btnGoogleContainer"
+        class="d-flex justify-content-center"
+      ></div>
+
+    </div>
+
+    <!-- ================= PASO 2 ================= -->
+    <div *ngIf="pasoActual === 2">
+      <div class="d-flex justify-content-center text-md-start text-center">
+        <h1>{{ 'REGISTRO.FORM2.TITULO' | translate }}</h1>
+      </div>
+
+      <div
+        class="alert alert-warning mt-3 text-center container"
+        role="alert"
+      >
+        {{ 'REGISTRO.FORM2.AVISO_CAMPOSOBLIGATORIOS' | translate }}
+      </div>
+      <div class="container d-flex justify-content-center">
+        <form
+          [formGroup]="formulario2"
+          class="formulario"
+        >
+          <!-- Fecha Nacimiento -->
+          <div class="mb-3">
+            <label
+              for="fnacimiento"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM2.FNACIMIENTO.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+            <input
+              type="date"
+              class="form-control"
+              id="fnacimiento"
+              min="1930-01-01"
+              [max]="fechaMaxima"
+              autocomplete="bday"
+              aria-describedby="fnacimientoHelp"
+              [attr.aria-invalid]="
+                formulario2.get('fecha_nacimiento')?.invalid &&
+                (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
+              "
+              required
+              formControlName="fecha_nacimiento"
+              (change)="onFechaChange()"
+              (blur)="validarFechaCompleta()"
+            />
+            <!-- Mensaje de ayuda accesible -->
+            <span
+              id="fnacimientoHelp"
+              class="visually-hidden"
+            >
+              {{ 'REGISTRO.FORM2.FNACIMIENTO.AYUDA' | translate }}
+            </span>
+            <!-- Mensajes de Error Fecha Nacimiento -->
+            <div
+              id="fnacimientoError"
+              class="text-danger mt-1 small"
+              aria-live="polite"
+              *ngIf="
+                formulario2.get('fecha_nacimiento')?.invalid &&
+                (formulario2.get('fecha_nacimiento')?.touched || formulario2.get('fecha_nacimiento')?.dirty)
+              "
+            >
+              <span
+                class="dato-obligatorio"
+                *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechalimite']"
+              >
+                {{ 'REGISTRO.FORM2.FNACIMIENTO.INCORRECTA' | translate }}
+              </span>
+              <span
+                class="dato-obligatorio"
+                *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['required']"
+              >
+                {{ 'REGISTRO.FORM2.FNACIMIENTO.OBLIGATORIA' | translate }}
+              </span>
+              <span
+                class="dato-obligatorio"
+                *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['menorDeEdad']"
+              >
+                {{ 'REGISTRO.FORM2.FNACIMIENTO.MENOR_EDAD' | translate }}
+              </span>
+              <span
+                class="dato-obligatorio"
+                *ngIf="formulario2.get('fecha_nacimiento')?.errors?.['fechaFutura']"
+              >
+                {{ 'REGISTRO.FORM2.FNACIMIENTO.SUPERIORACTUAL' | translate }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label
+              for="nombre"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM2.LABEL_NOMBRE' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+            <input
+              type="text"
+              class="form-control form-input"
+              id="nombre"
+              required
+              formControlName="nombre"
+              autocomplete="given-name"
+              [attr.aria-invalid]="formulario2.get('nombre')?.invalid && formulario2.get('nombre')?.touched"
+              (input)="escucharCambiosFormulario2('nombre')"
+            />
+          </div>
+          <!-- Apellidos -->
+          <div class="mb-3">
+            <label
+              for="apellidos"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM2.LABEL_APELLIDOS' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+            <input
+              type="text"
+              class="form-control form-input"
+              id="apellidos"
+              required
+              formControlName="apellidos"
+              autocomplete="family-name"
+              [attr.aria-invalid]="formulario2.get('apellidos')?.invalid && formulario2.get('apellidos')?.touched"
+              (input)="escucharCambiosFormulario2('apellidos')"
+            />
+          </div>
+          <!-- Teléfono -->
+          <div class="mb-3">
+            <label
+              for="telefono"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM2.TELEFONO.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+            <input
+              type="text"
+              class="form-control form-input"
+              id="telefono"
+              required
+              formControlName="telefono"
+              autocomplete="tel"
+              [attr.aria-invalid]="formulario2.get('telefono')?.invalid && formulario2.get('telefono')?.touched"
+              (input)="validarCampo('telefono', formulario2)"
+            />
+            <!-- Mensajes de Error Teléfono -->
+            <div
+              id="telefonoError"
+              class="text-danger"
+              aria-live="polite"
+            >
+              <span
+                class="text-danger"
+                *ngIf="formulario2.get('telefono')?.errors?.['pattern']"
+              >
+                {{ 'REGISTRO.FORM2.TELEFONO.FORMATO' | translate }}
+              </span>
+              <span
+                class="text-danger"
+                *ngIf="formulario2.get('telefono')?.errors?.['required']"
+              >
+                {{ 'REGISTRO.FORM2.TELEFONO.OBLIGATORIO' | translate }}
+              </span>
+              <span
+                class="text-danger"
+                *ngIf="formulario2.get('telefono')?.errors?.['telefonoRepetido']"
+              >
+                {{ 'REGISTRO.FORM2.TELEFONO.YAEXISTE' | translate }}
+              </span>
+            </div>
+          </div>
+          <!-- Género -->
+          <div class="mb-3">
+            <label
+              for="genero"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM2.GÉNERO.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+
+            <button
+              type="button"
+              class="btn btn-link p-0 ms-2 text-primary align-baseline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              [title]="'SELECTOR_GENERO.LABEL' | translate"
+              [attr.aria-label]="'SELECTOR_GENERO.INFO' | translate"
             >
               <i
-                class="bi"
-                [ngClass]="mostrarPassword1 ? 'bi-eye-slash' : 'bi-eye'"
+                class="bi-question-circle"
                 aria-hidden="true"
               ></i>
             </button>
-          </div>
-          <div
-            id="passwordError"
-            aria-live="polite"
-          >
-            <span
-              class="text-danger"
-              *ngIf="formulario3.get('password')?.errors?.['pattern'] && formulario3.get('password')?.touched"
+            <select
+              class="form-select"
+              id="genero"
+              required
+              formControlName="genero"
+              aria-describedby="info_genero"
+              [attr.aria-invalid]="formulario2.get('genero')?.invalid && formulario2.get('genero')?.touched"
+              (change)="escucharCambiosFormulario2('genero')"
             >
-              {{ 'REGISTRO.FORM3.CONTRASEÑA.FORMATO' | translate }}
+              <option
+                value=""
+                selected
+                disabled
+                hidden
+              >
+                {{ 'REGISTRO.FORM2.GÉNERO.SELECCIONA' | translate }}
+              </option>
+              <option value="H_CIS">
+                {{ 'SELECTOR_GENERO.H_CIS' | translate }}
+              </option>
+              <option value="M_CIS">
+                {{ 'SELECTOR_GENERO.M_CIS' | translate }}
+              </option>
+              <option value="TRANS">
+                {{ 'SELECTOR_GENERO.TRANS' | translate }}
+              </option>
+              <option value="NO_BINARIO">
+                {{ 'SELECTOR_GENERO.NO_BINARIO' | translate }}
+              </option>
+              <option value="INTERGENERO">
+                {{ 'SELECTOR_GENERO.INTER' | translate }}
+              </option>
+              <option value="NO_FLUIDO">
+                {{ 'SELECTOR_GENERO.NO_FLUIDO' | translate }}
+              </option>
+              <option value="OTRO">
+                {{ 'SELECTOR_GENERO.OTRO' | translate }}
+              </option>
+              <option value="NO_RESPONDE">
+                {{ 'SELECTOR_GENERO.NO_RESPONDE' | translate }}
+              </option>
+            </select>
+            <span
+              id="info_genero"
+              class="visually-hidden"
+            >
+              {{ 'REGISTRO.FORM2.GÉNERO.INFO' | translate }}
             </span>
           </div>
-          <!-- Confirmar Contraseña -->
-          <div class="mt-4">
+          <!-- Orientación -->
+          <div class="mb-3">
             <label
-              for="confirmarPassword"
-              class="form-label mb-1"
+              for="orientacion"
+              class="form-label"
             >
-              {{ 'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate }}
+              {{ 'REGISTRO.FORM2.ORIENTACION.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
+            </label>
+            <button
+              type="button"
+              class="btn btn-link p-0 ms-2 text-primary align-baseline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              [title]="'SELECTOR_ORIENTACION.LABEL' | translate"
+              [attr.aria-label]="'SELECTOR_ORIENTACION.INFO' | translate"
+            >
+              <i
+                class="bi-question-circle"
+                aria-hidden="true"
+              ></i>
+            </button>
+
+            <select
+              class="form-select"
+              id="orientacion"
+              required
+              formControlName="orientacion"
+              aria-describedby="info_orientacion"
+              [attr.aria-invalid]="formulario2.get('orientacion')?.invalid && formulario2.get('orientacion')?.touched"
+              (input)="escucharCambiosFormulario2('orientacion')"
+            >
+              <option
+                value=""
+                selected
+                disabled
+                hidden
+              >
+                {{ 'REGISTRO.FORM2.ORIENTACION.SELECCIONA' | translate }}
+              </option>
+              <option value="GAY">
+                {{ 'SELECTOR_ORIENTACION.GAY' | translate }}
+              </option>
+              <option value="LESBIANA">
+                {{ 'SELECTOR_ORIENTACION.LESBIANA' | translate }}
+              </option>
+              <option value="BISEXUAL">
+                {{ 'SELECTOR_ORIENTACION.BISEXUAL' | translate }}
+              </option>
+              <option value="PANSEXUAL">
+                {{ 'SELECTOR_ORIENTACION.PANSEXUAL' | translate }}
+              </option>
+              <option value="ASEXUAL">
+                {{ 'SELECTOR_ORIENTACION.ASEXUAL' | translate }}
+              </option>
+              <option value="DEMISEXUAL">
+                {{ 'SELECTOR_ORIENTACION.DEMISEXUAL' | translate }}
+              </option>
+              <option value="QUEER">
+                {{ 'SELECTOR_ORIENTACION.QUEER' | translate }}
+              </option>
+              <option value="HETEROSEXUAL">
+                {{ 'SELECTOR_ORIENTACION.HETEROSEXUAL' | translate }}
+              </option>
+              <option value="OTRO">
+                {{ 'SELECTOR_ORIENTACION.OTRO' | translate }}
+              </option>
+              <option value="NO_RESPONDE">
+                {{ 'SELECTOR_ORIENTACION.NO_RESPONDE' | translate }}
+              </option>
+            </select>
+            <span
+              id="info_orientacion"
+              class="visually-hidden"
+            >
+              {{ 'REGISTRO.FORM2.ORIENTACION.INFO' | translate }}
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= PASO 3 ================= -->
+    <div *ngIf="pasoActual === 3">
+      <div class="d-flex justify-content-center text-md-start text-center px-4 px-md-0">
+        <h1>
+          {{ 'REGISTRO.FORM3.TITULO' | translate }}
+        </h1>
+      </div>
+      <div class="text-center">
+        <h3>{{ 'REGISTRO.FORM3.REQUISITOS.TITULO' | translate }}</h3>
+      </div>
+      <div class="d-flex justify-content-center px-4 px-md-0">
+        <ul>
+          <li>{{ 'REGISTRO.FORM3.REQUISITOS.MIN_CARACTERES' | translate }}</li>
+          <li>
+            {{ 'REGISTRO.FORM3.REQUISITOS.NUMERO_MAYÚSCULA_SIMBOLO' | translate }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="container d-flex justify-content-center">
+        <form
+          [formGroup]="formulario3"
+          class="formulario"
+        >
+          <div class="mb-3">
+            <label
+              for="password"
+              class="form-label"
+            >
+              {{ 'REGISTRO.FORM3.CONTRASEÑA.LABEL' | translate }}
+              <span
+                class="dato-obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+              <span class="visually-hidden">
+                {{ 'REGISTRO.OBLIGATORIO' | translate }}
+              </span>
             </label>
             <div class="position-relative">
               <input
-                [type]="mostrarPassword2 ? 'text' : 'password'"
+                [type]="mostrarPassword1 ? 'text' : 'password'"
+                formControlName="password"
                 class="form-control form-input"
-                id="confirmarPassword"
-                formControlName="confirmarPassword"
-                [readonly]="formulario3.get('password')?.invalid"
-                [attr.aria-disabled]="formulario3.get('password')?.invalid"
-                [class.input-deshabilitado]="formulario3.get('password')?.invalid"
-                [attr.aria-invalid]="formulario3.get('confirmarPassword')?.invalid && formulario3.get('confirmarPassword')?.touched"
-                aria-describedby="confirmarPasswordError"
+                id="password"
+                [attr.aria-invalid]="formulario3.get('password')?.invalid && formulario3.get('password')?.touched"
+                aria-describedby="passwordError"
+                (keydown)="manejarTabPassword($event)"
               />
-
               <button
                 type="button"
-                (click)="botonMostrarPassword_2()"
-                class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                (click)="botonMostrarPassword_1()"
+                class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2 border-0 bg-transparent shadow-none"
+                style="--bs-btn-hover-bg: transparent; --bs-btn-hover-border-color: transparent"
                 [attr.aria-label]="
-                  (mostrarPassword2 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate
+                  (mostrarPassword1 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate
                 "
               >
                 <i
                   class="bi"
-                  [ngClass]="mostrarPassword2 ? 'bi-eye-slash' : 'bi-eye'"
+                  [ngClass]="mostrarPassword1 ? 'bi-eye-slash' : 'bi-eye'"
                   aria-hidden="true"
                 ></i>
               </button>
             </div>
+            <div
+              id="passwordError"
+              aria-live="polite"
+            >
+              <span
+                class="text-danger"
+                *ngIf="formulario3.get('password')?.errors?.['pattern'] && formulario3.get('password')?.touched"
+              >
+                {{ 'REGISTRO.FORM3.CONTRASEÑA.FORMATO' | translate }}
+              </span>
+            </div>
+            <!-- Confirmar Contraseña -->
+            <div class="mt-4">
+              <label
+                for="confirmarPassword"
+                class="form-label mb-1"
+              >
+                {{ 'AJUSTESAPP.PASSWORD.CONF_NUEVA_CONTRAS' | translate }}
+              </label>
+              <div class="position-relative">
+                <input
+                  [type]="mostrarPassword2 ? 'text' : 'password'"
+                  class="form-control form-input"
+                  id="confirmarPassword"
+                  formControlName="confirmarPassword"
+                  [readonly]="formulario3.get('password')?.invalid"
+                  [attr.aria-disabled]="formulario3.get('password')?.invalid"
+                  [class.input-deshabilitado]="formulario3.get('password')?.invalid"
+                  [attr.aria-invalid]="formulario3.get('confirmarPassword')?.invalid && formulario3.get('confirmarPassword')?.touched"
+                  aria-describedby="confirmarPasswordError"
+                />
+
+                <button
+                  type="button"
+                  (click)="botonMostrarPassword_2()"
+                  class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                  [attr.aria-label]="
+                    (mostrarPassword2 ? 'REGISTRO.FORM3.OCULTAR_CONTRASENA' : 'REGISTRO.FORM3.MOSTRAR_CONTRASENA') | translate
+                  "
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="mostrarPassword2 ? 'bi-eye-slash' : 'bi-eye'"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="confirmarPasswordError"
+              aria-live="polite"
+              *ngIf="formulario3.get('confirmarPassword')?.hasError('noCoincide') && formulario3.get('confirmarPassword')?.touched"
+            >
+              <small class="text-danger">
+                {{ 'AJUSTESAPP.PASSWORD.NO_COINCIDEN' | translate }}
+              </small>
+            </div>
           </div>
-
-          <div
-            id="confirmarPasswordError"
-            aria-live="polite"
-            *ngIf="formulario3.get('confirmarPassword')?.hasError('noCoincide') && formulario3.get('confirmarPassword')?.touched"
-          >
-            <small class="text-danger">
-              {{ 'AJUSTESAPP.PASSWORD.NO_COINCIDEN' | translate }}
-            </small>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- ================= NAVEGACIÓN INFERIOR (Pasos 2 y 3) ================= -->
-  <nav
-    aria-label="Navegación de pasos"
-    *ngIf="pasoActual > 1"
-  >
-    <div class="d-flex justify-content-center mb-3">
-      <!-- Botón Atrás -->
-      <button
-        *ngIf="!esGoogle"
-        id="btnAtras"
-        type="button"
-        class="btn btn_bg_secondary"
-        (click)="pasoAnterior()"
-        [attr.aria-label]="'REGISTRO.BOTONES.ATRAS_PASO' | translate: { paso: pasoActual - 1 }"
-      >
-        {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
-      </button>
-
-      <!-- Botón Siguiente (solo Paso 2) -->
-      <button
-        type="button"
-        id="btnSiguiente"
-        class="btn btn_bg ms-3"
-        *ngIf="pasoActual === 2 && !esGoogle"
-        [disabled]="!isPaso2Valido"
-        (click)="siguientePaso()"
-        [attr.aria-disabled]="!isPaso2Valido"
-      >
-        {{ 'REGISTRO.BOTONES2.SIGUIENTE' | translate }}
-      </button>
-    </div>
-  </nav>
-
-  <!-- Botón Finalizar Registro (solo Paso 3) -->
-  <div
-    *ngIf="(pasoActual === 3 && formulario1.valid && formulario2.valid && formulario3.valid) || (pasoActual === 2 && esGoogle)"
-    class="d-flex justify-content-center"
-  >
-    <button
-      type="button"
-      class="btn_bg btn mt-3 mb-3"
-      [class.disabled]="esGoogle ? !isPaso2Valido : !formulario3.valid"
-      [attr.aria-disabled]="esGoogle ? !isPaso2Valido : !formulario3.valid"
-      (click)="siguientePaso()"
+    <!-- ================= NAVEGACIÓN INFERIOR (Pasos 2 y 3) ================= -->
+    <nav
+      aria-label="Navegación de pasos"
+      *ngIf="pasoActual > 1"
     >
-      {{ 'REGISTRO.BOTONES2.FINALIZAR_REGISTRO' | translate }}
-    </button>
+      <div class="d-flex justify-content-center mb-3">
+        <!-- Botón Atrás -->
+        <button
+          *ngIf="!esGoogle"
+          id="btnAtras"
+          type="button"
+          class="btn btn_bg_secondary"
+          (click)="pasoAnterior()"
+          [attr.aria-label]="'REGISTRO.BOTONES.ATRAS_PASO' | translate: { paso: pasoActual - 1 }"
+        >
+          {{ 'REGISTRO.BOTONES.ATRAS' | translate }}
+        </button>
+
+        <!-- Botón Siguiente (solo Paso 2) -->
+        <button
+          type="button"
+          id="btnSiguiente"
+          class="btn btn_bg ms-3"
+          *ngIf="pasoActual === 2 && !esGoogle"
+          [disabled]="!isPaso2Valido"
+          (click)="siguientePaso()"
+          [attr.aria-disabled]="!isPaso2Valido"
+        >
+          {{ 'REGISTRO.BOTONES2.SIGUIENTE' | translate }}
+        </button>
+      </div>
+    </nav>
+
+    <!-- Botón Finalizar Registro (solo Paso 3) -->
+    <div
+      *ngIf="(pasoActual === 3 && formulario1.valid && formulario2.valid && formulario3.valid) || (pasoActual === 2 && esGoogle)"
+      class="d-flex justify-content-center"
+    >
+      <button
+        type="button"
+        class="btn_bg btn mt-3 mb-3"
+        [class.disabled]="esGoogle ? !isPaso2Valido : !formulario3.valid"
+        [attr.aria-disabled]="esGoogle ? !isPaso2Valido : !formulario3.valid"
+        (click)="siguientePaso()"
+      >
+        {{ 'REGISTRO.BOTONES2.FINALIZAR_REGISTRO' | translate }}
+      </button>
+    </div>
   </div>
 </div>

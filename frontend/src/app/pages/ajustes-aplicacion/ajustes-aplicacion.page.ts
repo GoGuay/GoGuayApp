@@ -12,11 +12,13 @@ import { UserServicesService } from '../../core/user-services/user-services.serv
 import { Usuario } from '../../models/user/usuario.model';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
-import { logoPaypal, cardOutline, businessOutline } from 'ionicons/icons';
+import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline } from 'ionicons/icons';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { log } from 'console';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -24,7 +26,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -76,11 +78,14 @@ export class AjustesAplicacionPage implements OnInit {
   cvvTarjeta: string = '';
 
   metodoCobroPredeterminado: string = 'transferencia';
-  cobroEmailPaypal: string = '';
-  cobroIBAN: string = '';
-  cobroTitular: string = '';
+  cobroEmailPaypal: undefined | string;
+  numero_cuenta_bancaria: undefined | string;
+  titular_cuenta_bancaria: undefined | string;
 
   iaActiva: boolean = true;
+  asistenteActiva: boolean = true;
+
+  cargandoEliminacion: boolean = false;
 
   @ViewChild(IonContent) content!: IonContent;
 
@@ -92,10 +97,11 @@ export class AjustesAplicacionPage implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private route: ActivatedRoute,
+    private router: Router,
     private funcionesComunes: FuncionesComunes,
     private _bottomSheet: MatBottomSheet
   ) {
-    addIcons({ logoPaypal, cardOutline, businessOutline });
+    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline });
   }
 
   ngOnInit() {
@@ -108,16 +114,23 @@ export class AjustesAplicacionPage implements OnInit {
     this.notifEmail = localStorage.getItem('notifEmail') !== 'false';
     this.notifSMS = localStorage.getItem('notifSMS') === 'true';
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['tab'] === 'cuenta') {
         this.segmentoSeleccionado = 'cuenta';
       }
     });
-    
+
     const savedIASetting = localStorage.getItem('iaActiva');
+    const savedAsistenteSetting = localStorage.getItem('asistenteActiva');
     this.iaActiva = savedIASetting === null ? true : savedIASetting === 'true';
+    this.asistenteActiva = savedAsistenteSetting === null ? true : savedAsistenteSetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (this.userData) {
+      this.cobroEmailPaypal = this.userData.usuario?.cobro_paypal_email
+      this.titular_cuenta_bancaria = this.userData.usuario?.cobro_titular
+      this.numero_cuenta_bancaria = this.userData.usuario?.cobro_iban
+    }
     this.obtenerUsuario();
   }
 
@@ -186,34 +199,57 @@ export class AjustesAplicacionPage implements OnInit {
    * Modal que se muestra cuando se pulsa el botón de eliminar usuario.
    */
   modalEliminarUsuario() {
-    this.translate.get(['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO', 'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE']).subscribe((translations) => {
-      const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
-      const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+    this.translate
+      .get(['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO', 'AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE', 'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'])
+      .subscribe((translations) => {
+        const titulo = translations['AJUSTESAPP.ELIMINARCTA.MODAL_TITULO'];
+        const mensaje = translations['AJUSTESAPP.ELIMINARCTA.MODAL_MENSAJE'];
+        const descripcion = translations['AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'];
 
-      const dialogRef = this.dialog.open(HelpModalComponent, {
-        data: { title: titulo, message: mensaje, showAcceptButton: true },
-        disableClose: true,
+        const dialogRef = this.dialog.open(HelpModalComponent, {
+          data: { title: titulo, message: mensaje, descripcion: descripcion, showAcceptButton: true, eliminacion_cuenta: true },
+          disableClose: true,
+        });
+        dialogRef.afterClosed().subscribe((confirmar) => {
+          if (confirmar) {
+            this.eliminar_usuario();
+          }
+        });
       });
-      dialogRef.afterClosed().subscribe((confirmar) => {
-        if (confirmar) {
-          this.eliminar_usuario();
-        }
-      });
-    });
   }
 
   /**
    * Funcion para eliminar el usuario. Se llama en el botón de confirmación de la modal
    */
   eliminar_usuario() {
-    console.log('Elminando al usuario con id: ', this.userData.usuario.id);
+    if (!this.userData?.usuario?.id) return;
 
-    this.userService.eliminarUsuario(this.userData.usuario.id).subscribe(
-      (res) => console.log('Respuesta del backend: ', res),
-      (err) => console.error('Error del backedn: ', err)
-    );
-    localStorage.removeItem('userData');
-    this.navCtrl.navigateRoot(['/'], {});
+    this.cargandoEliminacion = true;
+
+    this.userService.eliminarUsuario(this.userData.usuario.id).subscribe({
+      next: (res) => {
+        console.log('Respuesta backend eliminar usuario: ', res);
+        localStorage.clear();
+        this.userService.setUsuarioData(null);
+        this.router.navigate(['/home'], {
+          queryParams: { cuentaEliminada: 'true' },
+          replaceUrl: true,
+        });
+      },
+      error: (err) => {
+        this.cargandoEliminacion = false;
+        const tituloError = err.error?.error || 'No se pudo eliminar';
+        const detalleError = err.error?.motivo || err.error?.message || 'Revisa los requisitos para poder eliminar la cuenta.';
+
+        this.messageService.add({
+          severity: 'error',
+          summary: tituloError,
+          detail: detalleError,
+          life: 5000,
+        });
+
+      },
+    });
   }
 
   /**
@@ -401,8 +437,8 @@ export class AjustesAplicacionPage implements OnInit {
     const datosCobro = {
       metodo_cobro_preferido: this.metodoCobroPredeterminado,
       cobro_paypal_email: this.cobroEmailPaypal,
-      cobro_iban: this.cobroIBAN,
-      cobro_titular: this.cobroTitular,
+      cobro_iban: this.numero_cuenta_bancaria,
+      cobro_titular: this.titular_cuenta_bancaria,
     };
 
     this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
@@ -424,6 +460,14 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   /**
+   * Función para abrir el centro de incidencias al hacer click en la opción del menú. Redirige a la página de mis incidencias.
+   */
+  irACentroDeIncidencias() {
+    this.navCtrl.navigateForward('/mis-incidencias');
+  }
+
+
+  /**
    * Función para abrir la página de términos y condiciones al hacer click en la opción del menú. Redirige a la página de términos y condiciones.
    */
   irATerminos() {
@@ -443,6 +487,16 @@ export class AjustesAplicacionPage implements OnInit {
       severity: 'success',
       summary: 'Ajuste actualizado',
       detail: this.iaActiva ? 'Recomendaciones de IA activadas.' : 'Recomendaciones de IA desactivadas.',
+      life: 2000,
+    });
+  }
+
+  guardarAjustesAsistente() {
+    localStorage.setItem('asistenteActiva', this.asistenteActiva.toString());
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Ajuste actualizado',
+      detail: this.asistenteActiva ? 'Asistente MariCar activado.' : 'Asistente MariCar desactivado.',
       life: 2000,
     });
   }

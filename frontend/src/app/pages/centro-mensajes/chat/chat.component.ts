@@ -6,7 +6,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { NavbarComponent } from "../../../shared/navbar/navbar.component";
-import { IonContent, IonicModule, NavController } from "@ionic/angular";
+import { IonContent, IonicModule, ModalController, NavController } from "@ionic/angular";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessagingService } from '../../../core/menssaging-service/messaging.service';
 import { Mensaje } from '../../../models/mensajes/mensaje.model';
@@ -22,6 +22,8 @@ import { addIcons } from 'ionicons';
 import { LISTA_EMOJIS } from '../../../models/emojis/emojis.const';
 import { send } from 'ionicons/icons';
 import { timer } from 'rxjs';
+import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-chat',
@@ -76,7 +78,10 @@ export class ChatPage implements OnInit {
         private notificacionesService: NotificacionesService,
         private travelService: TravelService,
         private navCtrl: NavController,
-        private cdr: ChangeDetectorRef) {
+        private cdr: ChangeDetectorRef,
+        private modalController: ModalController,
+        public messageService: MessageService
+    ) {
         addIcons({ send });
     }
 
@@ -434,6 +439,30 @@ export class ChatPage implements OnInit {
             this.cargandoPreferenciaTelefono = false;
             this.scrollToBottom();
         });
+    }
+
+    async abrirIncidenciaBusqueda() {
+        const modal = await this.modalController.create({
+            component: AbrirIncidenciaModalComponent,
+            componentProps: {
+                categoria: 'APP',
+                subcategoriaPredeterminada: 'OTRO',
+                tituloContexto: 'Incidencia con el chat'
+            },
+            cssClass: 'modal-incidencia-custom'
+        });
+
+        await modal.present();
+        const { role } = await modal.onWillDismiss();
+
+        if (role === 'confirm') {
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Incidencia enviada',
+                detail: 'Gracias por informarnos. Revisaremos el problema con el chat.',
+                life: 4000
+            });
+        }
     }
 
     /**

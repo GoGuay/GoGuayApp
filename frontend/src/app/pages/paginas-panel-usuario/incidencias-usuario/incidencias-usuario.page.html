@@ -1,0 +1,150 @@
+<ion-header class="ion-no-border">
+  <app-navbar [isLoggedIn]="true"></app-navbar>
+</ion-header>
+
+<ion-content class="incidencias-content ion-padding">
+  <div class="incidencias-container">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn-back-circle" (click)="volver()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div>
+          <h2 class="fw-bold m-0 title-page">Mis Incidencias</h2>
+          <p class="text-muted small m-0">Estado de tus consultas, reportes y reclamaciones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTRO -->
+    <div class="tabs-filter-wrapper mb-4">
+      <button class="tab-btn" [class.active]="filtroEstado === 'todas'"
+        (click)="filtroEstado = 'todas'; aplicarFiltro()">
+        Todas
+      </button>
+      <button class="tab-btn" [class.active]="filtroEstado === 'iniciada'"
+        (click)="filtroEstado = 'iniciada'; aplicarFiltro()">
+        Abiertas
+      </button>
+      <button class="tab-btn" [class.active]="filtroEstado === 'finalizada'"
+        (click)="filtroEstado = 'finalizada'; aplicarFiltro()">
+        Resueltas
+      </button>
+    </div>
+
+    <!-- SPINNER -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p class="text-muted small mt-2">Cargando tus incidencias...</p>
+    </div>
+
+    <!-- SIN INCIDENCIAS -->
+    <div *ngIf="!cargando && incidenciasFiltradas.length === 0"
+      class="empty-card text-center p-4 rounded-4 bg-white shadow-sm">
+      <ion-icon name="checkmark-circle-outline" class="empty-icon text-success mb-2"></ion-icon>
+      <h5 class="fw-bold text-dark">No tienes incidencias registradas</h5>
+      <p class="text-muted small m-0">Si surge algún imprevisto durante un viaje, podrás reportarlo desde aquí o el
+        Centro de Ayuda.</p>
+    </div>
+
+    <!-- LISTA DE INCIDENCIAS -->
+    <div *ngIf="!cargando && incidenciasFiltradas.length > 0" class="incidencias-list">
+
+      <div *ngFor="let item of incidenciasFiltradas" class="incidencia-card p-3 mb-3 bg-white shadow-sm rounded-4">
+
+        <div class="d-flex align-items-center justify-content-between cursor-pointer" (click)="toggleDesplegar(item)">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="badge-id">#{{ item.id }}</span>
+              <span class="badge-categoria">{{ item.subcategoria }}</span>
+            </div>
+            <h4 class="fw-bold fs-6 m-0 text-dark">{{ item.resumen }}</h4>
+            <span class="text-muted xsmall">{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge-estado" [ngClass]="{
+              'estado-iniciada': item.estado === 'INICIADA',
+              'estado-revision': item.estado === 'EN_REVISION',
+              'estado-finalizada': item.estado === 'FINALIZADA',
+              'estado-cancelada': item.estado === 'CANCELADA'
+            }">
+              {{ item.estado.replace('_', ' ') }}
+            </span>
+            <ion-icon [name]="item.desplegado ? 'chevron-up-outline' : 'chevron-down-outline'"
+              class="text-muted fs-5"></ion-icon>
+          </div>
+        </div>
+
+        <div *ngIf="item.desplegado" class="incidencia-detail mt-3 pt-3 border-top">
+
+          <div class="mb-3">
+            <strong class="xsmall text-muted d-block uppercase fw-bold">Descripción inicial:</strong>
+            <p class="small text-dark m-0 bg-light p-2 rounded-3 mt-1">{{ item.descripcion }}</p>
+          </div>
+
+          <div *ngIf="item.resolucion_notas" class="mb-3 p-3 rounded-3 bg-success-subtle border border-success">
+            <strong class="small text-success d-block fw-bold mb-1">
+              <ion-icon name="checkmark-circle-outline" class="me-1"></ion-icon> Resolución de Soporte:
+            </strong>
+            <p class="small text-dark m-0">{{ item.resolucion_notas }}</p>
+          </div>
+
+          <div *ngIf="item.motivo_cancelacion" class="mb-3 p-3 rounded-3 bg-secondary-subtle border border-secondary">
+            <strong class="small text-secondary d-block fw-bold mb-1">
+              <ion-icon name="close-circle-outline" class="me-1"></ion-icon> Motivo de cancelación:
+            </strong>
+            <p class="small text-dark m-0">{{ formatearMotivoCancelacion(item.motivo_cancelacion) }}</p>
+          </div>
+
+          <div *ngIf="item.adjuntos && item.adjuntos.length > 0" class="mb-3">
+            <strong class="xsmall text-muted d-block uppercase fw-bold mb-1">Adjuntos:</strong>
+            <div class="d-flex gap-2 flex-wrap">
+              <a *ngFor="let adj of item.adjuntos" [href]="adj.url_archivo" target="_blank" class="adjunto-pill">
+                <ion-icon name="paperclip-outline"></ion-icon> Ver archivo
+              </a>
+            </div>
+          </div>
+
+          <!-- MENSAJES -->
+          <div class="mensajes-section mt-3">
+            <strong class="xsmall text-muted d-block uppercase fw-bold mb-2">Mensajes de seguimiento:</strong>
+
+            <div *ngFor="let msg of item.mensajes" class="msg-bubble mb-2 p-2 rounded-3"
+              [class.msg-propio]="msg.emisor_id === userId" [class.msg-soporte]="msg.emisor_id !== userId">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="fw-bold xsmall">{{ msg.emisor_id === userId ? 'Tú' : 'Soporte GoGuay' }}</span>
+                <span class="xsmall text-muted">{{ msg.created_at | date:'dd/MM HH:mm' }}</span>
+              </div>
+              <p class="small m-0">{{ msg.mensaje }}</p>
+            </div>
+
+            <!-- ENVIAR RESPUESTA -->
+            <div *ngIf="item.estado !== 'FINALIZADA' && item.estado !== 'CANCELADA'" class="d-flex gap-2 mt-3">
+              <input type="text" [(ngModel)]="item.nuevoMensaje" placeholder="Escribe un mensaje de respuesta..."
+                class="form-control custom-input-msg" (keyup.enter)="enviarRespuesta(item)">
+              <button class="btn-send-msg" (click)="enviarRespuesta(item)" [disabled]="item.enviandoMensaje">
+                <ion-icon name="send-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOTÓN CANCELAR -->
+          <div *ngIf="item.estado !== 'FINALIZADA' && item.estado !== 'CANCELADA'"
+            class="mt-4 pt-3 border-top d-flex justify-content-end">
+            <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 btn-cancelar-incidencia"
+              (click)="confirmarCancelacion(item)">
+              <ion-icon name="close-circle-outline"></ion-icon>
+              <span>Cancelar incidencia</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

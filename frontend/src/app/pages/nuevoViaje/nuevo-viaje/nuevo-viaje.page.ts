@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -17,12 +17,15 @@ import { Location } from '@angular/common';
 import { ControlLocalidad } from '../../../models/control-localidad/control-localidad.model';
 import { BuscadorLocalidadesService } from '../../../core/buscador-localidades/buscador-localidades.service';
 import { SelectorGeneralComponent } from 'src/app/components/selector-general/selector-general.component';
+import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-nuevo-viaje',
   templateUrl: './nuevo-viaje.page.html',
   styleUrls: ['./nuevo-viaje.page.scss'],
   standalone: true,
+  providers: [MessageService], 
   imports: [
     CommonModule,
     FormsModule,
@@ -40,9 +43,6 @@ import { SelectorGeneralComponent } from 'src/app/components/selector-general/se
   ],
 })
 export class NuevoViajePage implements OnInit {
-  // ==========================================
-  // PROPIEDADES PÚBLICAS Y DE ESTADO
-  // ==========================================
   userLoggedIn: boolean = false;
   origenCtrl: ControlLocalidad;
   destinoCtrl: ControlLocalidad;
@@ -55,7 +55,6 @@ export class NuevoViajePage implements OnInit {
   texto_spinner: string = 'Buscando ubicación...';
 
   spinnerActivo: boolean = false;
-
   irAtrasImg: string = '../../../assets/sistema/atras.png';
 
   opcionesPlazas = [
@@ -65,13 +64,9 @@ export class NuevoViajePage implements OnInit {
     { id: '4', descripcion: '4' },
   ];
 
-  // Opcional: Cerrar si el usuario hace click fuera
   @HostListener('document:click', ['$event'])
-  closeDropdown(event: Event) {}
+  closeDropdown(event: Event) { }
 
-  // ==========================================
-  // CONSTRUCTOR (Inyección y traducciones)
-  // ==========================================
   constructor(
     private navCtrl: NavController,
     private viajesService: TravelService,
@@ -81,9 +76,10 @@ export class NuevoViajePage implements OnInit {
     private location: Location,
     private travelService: TravelService,
     public buscadorLocalidadesService: BuscadorLocalidadesService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalController: ModalController,
+    public messageService: MessageService
   ) {
-    // Inicialización de controles de origen y destino
     this.origenCtrl = this.buscadorLocalidadesService.crearEstadoControl();
     this.destinoCtrl = this.buscadorLocalidadesService.crearEstadoControl();
 
@@ -100,16 +96,13 @@ export class NuevoViajePage implements OnInit {
       this.message_help_auth = traduccion;
     });
   }
-  // ==========================================
-  // CICLOS DE VIDA DEL COMPONENTE
-  // ==========================================
+
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
 
     this.route.queryParams.subscribe((params) => {
       if (params['destino']) {
         const destinoSugerido = params['destino'];
-
         this.destinoCtrl.valorTexto = destinoSugerido;
 
         const viajeActual = this.travelService.getViajeData() || {};
@@ -123,9 +116,6 @@ export class NuevoViajePage implements OnInit {
     });
   }
 
-  // ==========================================
-  // GETTERS Y SETTERS
-  // ==========================================
   get origen(): string {
     return this.origenCtrl.valorTexto;
   }
@@ -140,13 +130,6 @@ export class NuevoViajePage implements OnInit {
     this.destinoCtrl.valorTexto = val;
   }
 
-  // ==========================================
-  // 5. MÉTODOS PÚBLICOS (Lógica de Negocio)
-  // ==========================================
-
-  /**
-   * Función para navegar hasta la página "data-viaje"
-   */
   goTo() {
     const viajeData = {
       origen: this.origen,
@@ -163,17 +146,10 @@ export class NuevoViajePage implements OnInit {
     }
   }
 
-  /**
-   * Vuelve a la pantalla anterior en el historial de navegación.
-   */
   goBack() {
     this.location.back();
   }
 
-  /**
-   * Función para obtener la ubicación actual del usuario y buscar la ciudad correspondiente usando Nominatim.
-   * Se actualiza el campo de origen con la ciudad obtenida.
-   */
   buscarUbicacion() {
     this.spinnerActivo = true;
     if (navigator.geolocation) {
@@ -181,8 +157,6 @@ export class NuevoViajePage implements OnInit {
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-
-          // Llamada a Nominatim para obtener la dirección inversa
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
 
           fetch(url)
@@ -199,26 +173,46 @@ export class NuevoViajePage implements OnInit {
                   this.travelService.setViajeData(viajeData);
                   this.cdr.detectChanges();
                   this.spinnerActivo = false;
-                } else {
-                  console.log('No se pudo obtener la ciudad.');
                 }
               }
             })
-            .catch((error) => console.error('Error al obtener la ubicación con Leaflet:', error));
+            .catch((error) => console.error('Error al obtener la ubicación:', error));
         },
         (error) => {
           console.error('Error de geolocalización:', error.message);
         }
       );
-    } else {
-      console.error('La geolocalización no está soportada por este navegador.');
     }
   }
 
-  /**
-   * Captura la selección de plazas del selector general.
-   */
   seleccionarPlazas(opcion: any) {
     this.plazas = typeof opcion === 'object' ? opcion.descripcion || opcion.valor : opcion;
+  }
+
+  /**
+   * Abre el modal para reportar incidencias asociadas a la creación de un viaje.
+   */
+  async abrirIncidenciaCreacionViaje() {
+    const modal = await this.modalController.create({
+      component: AbrirIncidenciaModalComponent,
+      componentProps: {
+        categoria: 'APP',
+        subcategoriaPredeterminada: 'CREACION_VIAJE',
+        tituloContexto: 'Problema al crear el viaje'
+      },
+      cssClass: 'modal-incidencia-custom'
+    });
+
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Incidencia enviada',
+        detail: 'Hemos recibido tu consulta. Podrás ver el seguimiento en "Mis Incidencias".',
+        life: 4000
+      });
+    }
   }
 }

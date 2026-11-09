@@ -70,11 +70,11 @@ export class MiPerfilPage implements OnInit {
   emailEditado: string = '';
   telefonoEditado: string = '';
   isOpen = false;
-  edad: number = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
+  edad: number = 0;
   marcaSeleccionada: string = '';
   modeloSeleccionado: string = '';
   colorSeleccionado: string = '';
-  lang: string = this.languageService.getLanguage() || 'es';
+  lang: string = 'es';
   imagenPerfilSrc: string = '../../../assets/user/logOn.gif';
   imagenPerfilUsuario: string | null = null;
   cargando = false;
@@ -147,6 +147,7 @@ export class MiPerfilPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
+    this.lang = this.languageService.getLanguage() || 'es';
     this.loadUserData();
     const usr = this.userData?.usuario || (this.userData?.id ? this.userData : null);
     if (!usr) {
@@ -159,8 +160,8 @@ export class MiPerfilPage implements OnInit {
     }
 
     const usuarioValido = this.userData.usuario;
-    this.fechaNacimientoEditada = usuarioValido?.fecha_nacimiento || '';
-    this.lang = this.translate.currentLang;
+    this.fechaNacimientoEditada = this.formatearFechaInput(usuarioValido?.fecha_nacimiento);
+    this.edad = this.funcionesUsuario.calcularEdad(this.fechaNacimientoEditada);
     this.emailEditado = usuarioValido?.email || '';
     this.telefonoEditado = usuarioValido?.telefono || '';
     this.comunComerciales = usuarioValido?.comunic_comerciales || false;
@@ -188,12 +189,11 @@ export class MiPerfilPage implements OnInit {
         this.generoEditado = usuario.genero || '';
         this.orientacionEditada = usuario.orientacion || '';
 
-        this.orientacionEditada = usuario.orientacion || '';
         this.orientacionCtrl.valorTexto = usuario.orientacion || '';
         this.orientacionCtrl.sugerencias = [...this.listaOrientacionesOriginales];
         this.cdr.detectChanges();
 
-        this.fechaNacimientoEditada = usuario.fecha_nacimiento || '';
+        this.fechaNacimientoEditada = this.formatearFechaInput(usuario.fecha_nacimiento);
         this.bioEditada = usuario.biografia || '';
 
         const prefsUsuario = usuario.preferencias as any;
@@ -295,12 +295,19 @@ export class MiPerfilPage implements OnInit {
       return;
     }
 
+    const nombreVacio = !this.nombreEditado || this.nombreEditado.trim() === '';
+    const apellidosVacios = !this.apellidosEditados || this.apellidosEditados.trim() === '';
+
+    if (nombreVacio || apellidosVacios) {
+      this.botonHabilitado = false;
+      return;
+    }
+
     const preferenciasActualesEstructuradas = {
       convivencia_viaje: this.preferenciasSeleccionadas,
       intereses_ocio: this.interesesOcioSeleccionados,
     };
 
-    // Comparar los valores editados con los valores originales
     const nombreChanged = this.nombreEditado !== this.userData.usuario.nombre;
     const apellidosChanged = this.apellidosEditados !== this.userData.usuario?.apellidos;
     const pronombreChanged = this.pronombreEditado !== this.userData.usuario?.pronombre;
@@ -310,7 +317,6 @@ export class MiPerfilPage implements OnInit {
     const bioChanged = this.bioEditada !== this.userData.usuario.biografia;
     const preferenciasChanged = JSON.stringify(preferenciasActualesEstructuradas) !== JSON.stringify(this.userData.usuario.preferencias);
 
-    //Se habilita el botón sólo si hay cambios
     this.botonHabilitado =
       nombreChanged ||
       apellidosChanged ||
@@ -350,6 +356,26 @@ export class MiPerfilPage implements OnInit {
     this.cdr.detectChanges();
   }
 
+  private formatearFechaInput(fechaStr: string | undefined): string {
+    if (!fechaStr) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+      return fechaStr;
+    }
+
+    if (fechaStr.includes('T') && !fechaStr.includes(',')) {
+      return fechaStr.split('T')[0];
+    }
+    const fecha = new Date(fechaStr);
+    if (!isNaN(fecha.getTime())) {
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+    return '';
+  }
+
   /**
    * Función para actualizar la edad según la fecha de nacimiento
    */
@@ -387,8 +413,10 @@ export class MiPerfilPage implements OnInit {
     console.log('userData:', this.userData);
 
     if (
-      !this.userData.usuario.nombre ||
-      !this.userData.usuario.apellidos ||
+      !this.nombreEditado ||
+      this.nombreEditado.trim() === '' ||
+      !this.apellidosEditados ||
+      this.apellidosEditados.trim() === '' ||
       !this.userData.usuario.genero ||
       !this.userData.usuario.orientacion ||
       !this.userData.usuario.fecha_nacimiento
@@ -398,8 +426,8 @@ export class MiPerfilPage implements OnInit {
     }
 
     const nuevoUsuario = {
-      nombre: this.nombreEditado,
-      apellidos: this.apellidosEditados,
+      nombre: this.nombreEditado.trim(),
+      apellidos: this.apellidosEditados.trim(),
       pronombre: this.pronombreEditado,
       genero: this.generoEditado,
       orientacion: this.orientacionEditada,

@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { IonMenuButton, IonHeader } from '@ionic/angular/standalone';
 
@@ -23,8 +17,6 @@ import { ChangeDetectorRef } from '@angular/core';
 import { MessagingService } from '../../core/menssaging-service/messaging.service';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-
-
 
 @Component({
   selector: 'app-navbar',
@@ -94,13 +86,24 @@ export class NavbarComponent implements OnInit {
   async ngOnInit() {
     this.loadUserData();
     this.setupPlatformConfig();
+    const isUserDataEmpty = !this.userData || Object.keys(this.userData).length === 0;
+    if (!isUserDataEmpty) {
+      this.usuario = this.userData.usuario;
+      this.isLoggedIn = true;
 
-    this.usuarioSub = this.userService.usuario$.subscribe(
-      (usuarioActualizado) => {
-        if (usuarioActualizado) {
+      const id = this.userData.usuario.id;
+      this.obtenerNotificaciones(id);
+      this.obtenerNotificacionesMensajes(id);
+      this.iniciarPolling();
+      this.cdr.detectChanges();
+    } else {
+      this.usuarioSub = this.userService.usuario$.subscribe((usuarioActualizado) => {
+        if (usuarioActualizado && Object.keys(usuarioActualizado).length > 0) {
           this.usuario = usuarioActualizado;
+          console.log('usuario: ', this.usuario);
+
           this.isLoggedIn = true;
-          
+
           const id = usuarioActualizado.id;
           this.obtenerNotificaciones(id);
           this.obtenerNotificacionesMensajes(id);
@@ -109,8 +112,8 @@ export class NavbarComponent implements OnInit {
           this.resetUserStatus();
         }
         this.cdr.detectChanges();
-      }
-    );
+      });
+    }
   }
 
   /**
@@ -126,7 +129,6 @@ export class NavbarComponent implements OnInit {
     }, 10000);
   }
 
-
   /**
    * Función para cargar los datos del usuario desde el servicio de usuario.
    * Si el usuario tiene notificaciones no leídas, se actualiza el mensaje de la notificación pendiente.
@@ -139,13 +141,12 @@ export class NavbarComponent implements OnInit {
     if (this.pollingSub) clearInterval(this.pollingSub);
   }
 
-
   /**
    * Función para obtener todas las notificaciones del usuario que ha iniciadio sesión.
    * 1º Actualiza el número de notificaciones no leídas.
    * 2º Si hay notificaciones no leídas, actualiza el mensaje de la notificación pendiente.
    */
-  setupPlatformConfig(){
+  setupPlatformConfig() {
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
@@ -162,8 +163,8 @@ export class NavbarComponent implements OnInit {
     this.validacionHomePage = this.searchRoute === '/home';
 
     /**
-    * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
-    */
+     * Comprobación para saber si la aplicación está ejecutándose en navegador(PC) o móvil.
+     */
     this.isMobileWeb = this.platform.is('mobileweb');
     this.isDesktop = this.platform.is('desktop');
 
@@ -210,10 +211,9 @@ export class NavbarComponent implements OnInit {
       error: (err) => {
         console.warn('No se pudieron obtener notificaciones:', err);
         this.numNotificaciones = 0;
-      }
+      },
     });
   }
-
 
   // Desuscribirse al destruir el componente (para evitar fugas de memoria):
   ngOnDestroy() {
@@ -270,9 +270,7 @@ export class NavbarComponent implements OnInit {
    */
   async obtenerDatosUsuario(id_usuario: number) {
     if (id_usuario) {
-      this.usuario = await lastValueFrom(
-        this.userService.obtenerUsuarioPorID(id_usuario)
-      );
+      this.usuario = await lastValueFrom(this.userService.obtenerUsuarioPorID(id_usuario));
     }
   }
 
@@ -284,20 +282,14 @@ export class NavbarComponent implements OnInit {
    * @param lang Recibe el idioma seleccionado en el selector de idiomas.
    */
   changeLanguage(selectedLanguage: string) {
-    // Recibe el idioma directamente
-    // Comprobar si ya es el idioma seleccionado para evitar recargas innecesarias
     if (this.selectedLanguage === selectedLanguage) {
       return;
     }
-
-    // Ya no necesitas (event.target as HTMLSelectElement).value;
     console.log(selectedLanguage);
 
     this.languageService.setLanguage(selectedLanguage);
     this.selectedLanguage = selectedLanguage;
     this.translate.use(selectedLanguage);
-
-    //Lanza la notificación
     this.translate.get(['AJUSTESAPP.OPCION_IDIOMA.ALERT_TITULO', 'AJUSTESAPP.OPCION_IDIOMA.ALERT_MENSAJE']).subscribe((translations) => {
       this.messageService.add({
         severity: 'success',
@@ -386,7 +378,7 @@ export class NavbarComponent implements OnInit {
 
     this.navCtrl.navigateRoot(['/mis-viajes'], {
       queryParams: usuario,
-      animated: false
+      animated: false,
     });
   }
 
@@ -399,16 +391,13 @@ export class NavbarComponent implements OnInit {
 
     this.messagingService.getConversaciones(usuarioId).subscribe({
       next: (conversaciones) => {
-
-        this.numNotificacionesMensajes = conversaciones.reduce(
-          (total, conv) => total + (conv.no_leidos || 0), 0
-        );
+        this.numNotificacionesMensajes = conversaciones.reduce((total, conv) => total + (conv.no_leidos || 0), 0);
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.warn('Error al obtener notificaciones de mensajes:', err);
         this.numNotificacionesMensajes = 0;
-      }
+      },
     });
   }
 }

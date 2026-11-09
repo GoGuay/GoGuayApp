@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from extensions import db
 
 class EncuestaSatisfaccion(db.Model):
@@ -15,7 +15,7 @@ class EncuestaSatisfaccion(db.Model):
     normas = db.Column(db.String(20))
     
     sugerencias = db.Column(db.Text)
-    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_creacion = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def serialize(self):
         return {

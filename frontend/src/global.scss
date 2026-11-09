@@ -1,14 +1,11 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
-@use "./animations.scss" as *;
-@use "./animations.scss";
+@use '@angular/material' as mat;
+@use './animations.scss' as *;
+@use './animations.scss';
 @use '@angular/cdk/a11y-prebuilt.css';
-@use "@ionic/angular/css/core.css";
-@use "@ionic/angular/css/normalize.css";
-
-
-
+@use '@ionic/angular/css/core.css';
+@use '@ionic/angular/css/normalize.css';
 
 /*
  * App Global CSS
@@ -21,18 +18,16 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-
-
-@use "@ionic/angular/css/structure.css";
-@use "@ionic/angular/css/typography.css";
-@use "@ionic/angular/css/display.css";
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+@use '@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@use "@ionic/angular/css/padding.css";
-@use "@ionic/angular/css/float-elements.css";
-@use "@ionic/angular/css/text-alignment.css";
-@use "@ionic/angular/css/text-transformation.css";
-@use "@ionic/angular/css/flex-utils.css";
+@use '@ionic/angular/css/padding.css';
+@use '@ionic/angular/css/float-elements.css';
+@use '@ionic/angular/css/text-alignment.css';
+@use '@ionic/angular/css/text-transformation.css';
+@use '@ionic/angular/css/flex-utils.css';
 
 /**
  * Ionic Dark Mode
@@ -43,22 +38,26 @@
 
 /* @use "@ionic/angular/css/palettes/dark.always.css"; */
 /* @use "@ionic/angular/css/palettes/dark.class.css"; */
-@use "@ionic/angular/css/palettes/dark.system.css";
-@import url("https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css");
+@use '@ionic/angular/css/palettes/dark.system.css';
+@import url('https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css');
 
 html {
-  @include mat.theme((color: (theme-type: light,
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
-    ));
+    )
+  );
 }
 
 @font-face {
-  font-family: "Offside";
-  src: url("./assets/fonts/Offside-Regular.ttf") format("truetype");
+  font-family: 'Offside';
+  src: url('./assets/fonts/Offside-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -67,13 +66,13 @@ html,
 body {
   height: 100%;
   background-color: #e9edd5;
- // overflow: hidden !important;
+  // overflow: hidden !important;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background-color: #e9edd5;
   //overflow: hidden !important;
   scroll-behavior: smooth;
@@ -98,13 +97,14 @@ textarea,
 label,
 small,
 span,
-ul {
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+ul,
+legend {
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #000 !important;
 }
 
 ::ng-deep mat-raised-button {
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 
 ion-content {
@@ -126,7 +126,7 @@ ion-content {
 .btn_bg {
   background-color: #b3b5e6 !important;
   color: black !important;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   border-radius: 35px;
 }
 
@@ -137,12 +137,19 @@ ion-content {
 
 .btn_bg_secondary {
   color: black;
-  font-family: "Offside", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Offside', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .btn_bg_secondary:focus-visible {
   outline: 2px solid #000;
   outline-offset: 2px;
+}
+
+.btn_bg:disabled {
+  background-color: #cccccc !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .logo {
@@ -218,26 +225,14 @@ html.cdk-global-scrollblock {
 
 /* Parte que puedes arrastrar */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #b3e6b3,
-      #99ccff,
-      #d1b3ff,
-      #ffb3d1);
+  background: linear-gradient(180deg, #ffb3b3, #ffcc99, #b3e6b3, #99ccff, #d1b3ff, #ffb3d1);
   border-radius: 10px;
   border: 2px solid #f5f5f5;
 }
 
 /* Cuando la barra de desplazamiento se encuentra en hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #99d699,
-      #66b2ff,
-      #c299ff,
-      #ff99c2);
+  background: linear-gradient(180deg, #ff9999, #ffb366, #99d699, #66b2ff, #c299ff, #ff99c2);
 }
 
 /*
@@ -265,37 +260,19 @@ ion-content::-webkit-scrollbar-track,
 
 ion-content::-webkit-scrollbar-thumb,
 ::part(scroll)::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,
-      #ffb3b3,
-      #ffcc99,
-      #99e699,
-      #99ccff,
-      #c299ff,
-      #ff99cc);
+  background: linear-gradient(180deg, #ffb3b3, #ffcc99, #99e699, #99ccff, #c299ff, #ff99cc);
   border-radius: 10px;
   border: 2px solid #f0f0f0;
 }
 
 ion-content::-webkit-scrollbar-thumb:hover,
 ::part(scroll)::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg,
-      #ff9999,
-      #ffb366,
-      #85d685,
-      #66b3ff,
-      #b366ff,
-      #ff66b3);
+  background: linear-gradient(180deg, #ff9999, #ffb366, #85d685, #66b3ff, #b366ff, #ff66b3);
 }
 
 /* AJUSTES PARA EL TOOLTIP */
 .custom-tooltip {
-  background: linear-gradient(45deg,
-      #ffb3ba,
-      #ffdfba,
-      #ffffba,
-      #baffc9,
-      #bae1ff,
-      #e0baff) !important;
+  background: linear-gradient(45deg, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff) !important;
   color: #333 !important;
   font-size: 14px !important;
   padding: 8px 12px !important;
@@ -309,7 +286,6 @@ ion-content::-webkit-scrollbar-thumb:hover,
   border-top-color: #ffb3ba !important;
 }
 
-
 .icon {
   width: 20px;
   height: 20px;
@@ -317,7 +293,6 @@ ion-content::-webkit-scrollbar-thumb:hover,
 
 // Mensajes emergentes centrados
 p-toast {
-
   .ui-toast-message-content,
   .p-toast-message-content {
     text-align: center;
@@ -460,7 +435,7 @@ ion-fab-button {
         }
       }
 
-      &[aria-checked="true"] {
+      &[aria-checked='true'] {
         background-color: rgba(224, 166, 103, 0.12) !important;
 
         .alert-radio-label {
@@ -578,9 +553,7 @@ ion-fab-button {
       color: #666666 !important;
     }
   }
-
 }
-
 
 // Solo se activa cuando se navega por teclado (TAB)
 button:focus-visible,
@@ -655,8 +628,6 @@ span:focus {
   font-weight: bold;
 }
 
-
-
 /********************************************
   FIN CONFIGURACIÓN PARA EL SELECTOR DE HORA
 *********************************************/
@@ -666,7 +637,6 @@ span:focus {
   color: black;
   font-weight: bold;
   background-color: #f0d7b4;
-
 }
 
 /* Estilo para el contenedor y el select */
@@ -723,7 +693,7 @@ span:focus {
       }
 
       &.selected {
-        background-color: #F0D7B4;
+        background-color: #f0d7b4;
         color: black;
         font-weight: bold;
       }
@@ -758,7 +728,9 @@ span:focus {
   border-radius: 35px !important;
   padding: 8px 24px !important;
   font-weight: 600 !important;
-  transition: transform 0.2s ease, background-color 0.2s ease !important;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease !important;
 
   &:hover {
     transform: translateY(-1px);
@@ -814,4 +786,217 @@ span:focus {
   overflow-y: auto !important;
   background-color: #ffffff !important;
   border-radius: 20px !important;
+}
+
+/**
+  * CONFIGURACIÓN PARA EL MENSAJE DE RECORDATORIO DE ALERTA en EL PANEL DE USUARIO
+  */
+.recordatorio-alerta a {
+  color: #b3b5e6 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: #0056b3 !important;
+  }
+}
+
+.idiomas {
+  width: 40px;
+  height: 40px;
+  border-radius: 35%;
+  mix-blend-mode: multiply;
+}
+
+.idiomas-container {
+  min-width: 30px;
+  top: 10px !important;
+  position: fixed;
+  right: 15%;
+}
+
+.icon-idioma {
+  width: 20px !important;
+  height: auto;
+  cursor: pointer;
+  transition: filter 0.3s;
+}
+
+.icon-idioma:hover {
+  transform: scale(1.05);
+}
+
+.grayscale-filter {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
+.home-toast-home.p-toast-bottom-center {
+  bottom: 80px !important;
+}
+
+.home-toast-home.p-toast-bottom-center {
+  bottom: 80px !important;
+}
+
+.maricar-custom-modal {
+  --border-radius: 35px;
+  overflow: hidden;
+}
+
+/* Estilos globales para la ventana desplegable del QR */
+ion-modal.modal-qr-verificacion {
+  --background: #e9edd5 !important;
+  --ion-background-color: #e9edd5 !important;
+  --border-radius: 35px 35px 0 0;
+
+  &::part(content) {
+    background: #e9edd5 !important;
+    border-radius: 35px 35px 0 0 !important;
+  }
+
+  ion-header,
+  ion-toolbar {
+    --background: #f0d7b4 !important;
+    --ion-toolbar-background: #f0d7b4 !important;
+    background-color: #f0d7b4 !important;
+  }
+
+  /* BOTONES DE CABECERA */
+  ion-button {
+    --color: #666666;
+    --background: transparent;
+    --box-shadow: none;
+
+    &:has(i.fi-rr-cross),
+    &[icon-only] {
+      --border-radius: 50% !important;
+      --background-hover: rgba(0, 0, 0, 0.08) !important;
+      --color-hover: #1a1a1a;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+    }
+
+    &:has(span),
+    &.btn-saltar {
+      --border-radius: 35px !important;
+      --background-hover: rgba(0, 0, 0, 0.08) !important;
+      --color-hover: #1a1a1a;
+      --padding-start: 14px;
+      --padding-end: 14px;
+      margin: 0;
+
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+
+      span {
+        position: relative;
+        z-index: 2;
+      }
+    }
+  }
+
+  ion-content {
+    --background: #e9edd5 !important;
+    --ion-background-color: #e9edd5 !important;
+    background-color: #e9edd5 !important;
+  }
+
+  /**
+   * CONFIGURACIÓN PARA EL MODAL DE ABRIR INCIDENCIA
+   */
+  .modal-incidencia-custom {
+    --width: 90%;
+    --max-width: 520px;
+    --height: auto;
+    --max-height: 90vh;
+    --border-radius: 35px !important;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    align-items: center;
+
+    &::part(content) {
+      border-radius: 35px;
+      overflow: hidden;
+    }
+  }
+}
+
+/* ==========================================================================
+   VENTANA DE CANCELACIÓN DE INCIDENCIA
+   ========================================================================== */
+
+.goguay-alert-custom {
+  --background: #ffffff;
+  --border-radius: 24px;
+
+  .alert-wrapper {
+    border-radius: 24px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px 8px;
+    background: #ffffff;
+    border: 2px solid #f8f9fa;
+  }
+
+  .alert-head {
+    padding-bottom: 8px;
+    text-align: center;
+  }
+
+  .alert-title {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #2d3436 !important;
+    letter-spacing: -0.3px;
+    text-align: center;
+  }
+
+  .alert-message {
+    font-size: 0.9rem !important;
+    color: #636e72 !important;
+    line-height: 1.45;
+    text-align: center;
+    padding: 0 16px 16px 16px;
+  }
+
+  .alert-button-group {
+    padding: 8px 12px 4px 12px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .alert-button {
+    border-radius: 35px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    text-transform: none !important;
+    padding: 10px 18px !important;
+    margin: 0 !important;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-alert-cancel {
+    background-color: #f1f2f6 !important;
+    color: #636e72 !important;
+    border: 1px solid #dfe4ea !important;
+
+    &:hover {
+      background-color: #e4e7eb !important;
+    }
+  }
+
+  .btn-alert-confirm-danger {
+    background: linear-gradient(135deg, #ffb3ba, #ff8080) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(255, 128, 128, 0.3) !important;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
 }

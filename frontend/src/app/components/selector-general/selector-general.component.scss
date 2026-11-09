@@ -5,7 +5,7 @@
   outline: none !important;
 }
 
-input{
+input {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28) !important;
 }
 
@@ -18,12 +18,12 @@ input{
   max-width: 100% !important;
   max-height: 220px;
   overflow-y: auto;
-  overflow-x: hidden; 
-  margin: 0 !important; 
+  overflow-x: hidden;
+  margin: 0 !important;
   padding: 6px !important;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 20px !important; 
+  border-radius: 20px !important;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
   z-index: 1000;
@@ -32,7 +32,7 @@ input{
     cursor: pointer;
     border: none !important;
     border-radius: 12px !important;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     padding: 10px 14px;
     background-color: transparent;
     transition: background-color 0.2s ease;

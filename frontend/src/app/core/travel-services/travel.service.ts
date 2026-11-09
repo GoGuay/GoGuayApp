@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
 import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { Viaje } from '../../models/travel/viaje.model';
@@ -20,7 +20,7 @@ export class TravelService {
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService
-  ) {}
+  ) { }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -112,10 +112,12 @@ export class TravelService {
    * @param usuarioId Recibe el id del usuario a consultar.
    * @returns Devuelve la lista de viajes de ese usuario.
    */
-  getViajesUsuario(usuarioId: number): Observable<any> {
-    return this.http.get(this.apiUrl + '/travel/obtener_viajes_usuario', {
-      params: { usuario_id: usuarioId.toString() },
-    });
+  getViajesUsuario(id_usuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/travel/obtener_viajes_usuario`, {
+      params: { usuario_id: id_usuario }
+    }).pipe(
+      catchError(() => of({ viajes: [] }))
+    );
   }
 
   /**
@@ -398,14 +400,62 @@ export class TravelService {
   /**
    * Función para obtener los viajes recomendados por IA para un usuario específico.
    * @param userId ID del usuario.
+   * @param forzarRecarga (opcional) Si se establece en true, 
+   *        se forzará la recarga de las recomendaciones desde el backend, ignorando cualquier caché o almacenamiento previo.
    * @returns Observable con la lista de recomendaciones y sus motivos de afinidad.
    */
-  getViajesRecomendadosIA(userId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/travel/recomendados/${userId}`).pipe(
+  getViajesRecomendadosIA(userId: number, forzarRecarga: boolean = false): Observable<any> {
+    let params = new HttpParams();
+    if (forzarRecarga) {
+      params = params.set('refresh', 'true');
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/travel/recomendados/${userId}`, { params }).pipe(
       catchError((error) => {
         console.error('Error al obtener los viajes recomendados por IA:', error);
         return throwError(() => error);
       })
     );
   }
+
+  /**
+   * Función para crear un viaje automáticamente mediante la asistente de IA MariCar.
+   * @param datosIA Objeto con los parámetros devueltos por MariCar (origen, destino, fecha_salida, hora_salida, distancia_km)
+   * @returns Observable con la respuesta del backend y los datos del viaje creado.
+   */
+  crearViajeIA(datosIA: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/crear-viaje-ia`, datosIA).pipe(
+      catchError((error) => {
+        console.error('Error al crear el viaje con MariCar:', error);
+        return throwError(() => error);
+      }),
+      switchMap((response: any) => {
+        return this.obtenerTodosLosViajes().pipe(
+          tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
+          switchMap(() => of(response))
+        );
+      })
+    );
+  }
+
+  /**
+   * Envía el historial de la conversación a MariCar para ser procesado por Groq
+   */
+  conversarConMariCar(historial: any[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/chat-maricar`, { historial }).pipe(
+      catchError((error) => {
+        console.error('Error conversando con MariCar:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getViajeEnCursoUsuario(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/travel/viaje_en_curso/${userId}`);
+  }
+
+  validarEmbarquePasajero(viajeId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/travel/validar_embarque`, { viaje_id: viajeId });
+  }
+
 }

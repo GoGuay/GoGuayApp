@@ -30,8 +30,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
-import { IonicModule } from '@ionic/angular';
-import { radio } from 'ionicons/icons';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -68,7 +66,15 @@ const cookieConfig: NgcCookieConsentConfig = {
     `,
   },
 };
-
+if (typeof window !== 'undefined') {
+  const originalWarn = console.warn;
+  console.warn = (...args: any[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('NG0912')) {
+      return; // Ignora los avisos de colisión de ID de componentes de Ionic
+    }
+    originalWarn.apply(console, args);
+  };
+}
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -87,7 +93,6 @@ bootstrapApplication(AppComponent, {
     }),
     provideAnimations(),
     importProvidersFrom(
-      IonicModule.forRoot({ mode: 'md' }),
       NgcCookieConsentModule.forRoot(cookieConfig),
       TranslateModule.forRoot({
         loader: {

@@ -35,8 +35,7 @@ PrideRide es un proyecto desarrollado con pasión y compromiso por dos personas 
 
 - **Daniel G.D.** → Full Stack Developer.
 
-- **[Juan Tomás P.H.]** → Full Stack Developer.  
-
+- **[Juan Tomás P.H.]** → Full Stack Developer.
 
 ---
 
@@ -78,7 +77,7 @@ cada vez que quieras actualizar las migraciones, solo es necesario la primera ve
 
 python app.py
 
-Recovery Code Twilio: Q8FCGG71FFFUQ7H17DPJFCGD
+
 
 # Comando para construir build para DOCKER DESKTOP
 
@@ -92,6 +91,3 @@ docker build -t prideride .
 
 1. cd docs
 2. npm start
-
-
-GROQ_API_KEY=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

@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 class Conversacion(db.Model):
     __tablename__ = 'conversaciones'
@@ -8,7 +8,7 @@ class Conversacion(db.Model):
    
     usuario1_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     usuario2_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
  
 
     mensajes = db.relationship('Mensaje', backref='conversacion', cascade='all, delete-orphan', lazy=True)
@@ -46,7 +46,7 @@ class Mensaje(db.Model):
     receptor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     texto = db.Column(db.Text, nullable=False)
     leido = db.Column(db.Boolean, default=False)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     emisor = db.relationship('Usuario', foreign_keys=[emisor_id])
     receptor = db.relationship('Usuario', foreign_keys=[receptor_id])

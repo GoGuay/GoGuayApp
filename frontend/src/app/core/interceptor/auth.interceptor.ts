@@ -1,9 +1,4 @@
-import {
-  HttpInterceptorFn,
-  HttpClient,
-  HttpErrorResponse,
-  HttpBackend,
-} from '@angular/common/http';
+import { HttpInterceptorFn, HttpClient, HttpErrorResponse, HttpBackend } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -16,6 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const httpBackend = inject(HttpBackend);
   const token = localStorage.getItem('access_token');
+  const pendienteConfirmacionRegistro = localStorage.getItem('pending_verification');
   let authReq = req;
 
   /**
@@ -27,6 +23,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: `Bearer ${token}`,
       },
     });
+  } else if (pendienteConfirmacionRegistro === 'true') {
+    return next(req);
   }
 
   /**
@@ -34,15 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
    */
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (
-        error.status === 401 &&
-        req.headers.get('X-Skip-Interceptor') === 'true'
-      ) {
-        /**
-         * Si la respuesta es 401 y la solicitud tiene el encabezado 'X-Skip-Interceptor', se lanza un error sin intentar refrescar el token.
-         * Esta condición se ha añadido para evitar errores en la comprobación de la contraseña actual del usuario,
-         * ya que esta solicitud no requiere autenticación y no debería ser interceptada por el interceptor de autenticación.
-         */
+      if (error.status === 401 && req.headers.get('X-Skip-Interceptor') === 'true') {
         return throwError(() => error);
       }
 
@@ -62,11 +52,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return anonymousHttp
           .post<{
             access_token: string;
-          }>(
-            URL_REFRESH,
-            {},
-            { headers: { Authorization: `Bearer ${refreshToken}` } },
-          )
+          }>(URL_REFRESH, {}, { headers: { Authorization: `Bearer ${refreshToken}` } })
           .pipe(
             switchMap((res) => {
               localStorage.setItem('access_token', res.access_token);
@@ -82,17 +68,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               limpiarSesionSegura(rememberMe);
               router.navigate(['/login']);
               return throwError(() => refreshErr);
-            }),
+            })
           );
       }
       return throwError(() => error);
-    }),
+    })
   );
 };
 
 /**
- * Limpia los datos de la sesión actual (tokens e info del viaje)
- * respetando estrictamente las preferencias de "Recordar usuario"
+ * Limpia los datos de la sesión actual (tokens e info del viaje) respetando estrictamente las preferencias de "Recordar usuario"
  *
  */
 function limpiarSesionSegura(rememberMe: boolean) {

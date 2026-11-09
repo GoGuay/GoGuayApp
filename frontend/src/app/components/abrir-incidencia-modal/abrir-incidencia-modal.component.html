@@ -1,0 +1,93 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2">
+      <div class="d-flex align-items-center gap-2">
+        <div class="icon-warning-bubble">
+          <ion-icon name="warning-outline"></ion-icon>
+        </div>
+        <div>
+          <h3 class="fw-bold m-0 modal-title">{{ tituloContexto }}</h3>
+          <p class="text-muted xsmall m-0">GoGuay Soporte</p>
+        </div>
+      </div>
+      <ion-button fill="clear" color="dark" (click)="cerrarModal()" class="btn-close-modal">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-incidencia-content ion-padding">
+  <form [formGroup]="incidenciaForm" (ngSubmit)="enviarIncidencia()">
+    
+    <!-- Categoría -->
+    <div class="context-pill mb-3">
+      <span class="text-muted small">Categoría:</span>
+      <span class="badge-cat ms-1">{{ categoria }}</span>
+      <span *ngIf="viajeId" class="badge-viaje ms-1">Viaje #{{ viajeId }}</span>
+    </div>
+
+    <!-- Motivo -->
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Motivo o tipo de problema</label>
+      <select formControlName="subcategoria" class="form-select custom-select-goguay">
+        <option *ngFor="let opt of subcategoriasDisponibles" [value]="opt.valor">
+          {{ opt.etiqueta }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Resumen -->
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Título o resumen breve</label>
+      <input 
+        type="text" 
+        formControlName="resumen" 
+        class="form-control custom-input-goguay" 
+        placeholder="Ej: Error al pulsar el botón de crear viaje" 
+        maxlength="100">
+      <div *ngIf="incidenciaForm.get('resumen')?.touched && incidenciaForm.get('resumen')?.invalid" class="text-danger xsmall mt-1">
+        Escribe un título corto explicativo.
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Detalla lo que ha ocurrido</label>
+      <textarea 
+        formControlName="descripcion" 
+        rows="4" 
+        class="form-control custom-textarea-goguay" 
+        placeholder="Explica detalladamente la situación para que podamos ayudarte lo antes posible...">
+      </textarea>
+      <div *ngIf="incidenciaForm.get('descripcion')?.touched && incidenciaForm.get('descripcion')?.invalid" class="text-danger xsmall mt-1">
+        Describe lo sucedido con al menos 15 caracteres.
+      </div>
+    </div>
+
+    <!-- Adjuntos -->
+    <div class="form-group mb-4">
+      <label class="form-label-custom">Capturas o comprobantes (opcional)</label>
+      <div class="upload-zone text-center p-3 rounded-4 cursor-pointer" (click)="fileInput.click()">
+        <ion-icon name="cloud-upload-outline" class="fs-3 text-muted mb-1"></ion-icon>
+        <p class="small m-0 text-muted">Haz clic para adjuntar imágenes (Máx 3)</p>
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="d-none" multiple>
+      </div>
+
+      <!-- Lista de archivos seleccionados -->
+      <div *ngIf="archivosAdjuntos.length > 0" class="mt-2 d-flex flex-wrap gap-2">
+        <div *ngFor="let file of archivosAdjuntos; let idx = index" class="attachment-chip px-2 py-1 rounded-pill bg-white border d-flex align-items-center gap-1 small">
+          <span class="text-truncate" style="max-width: 140px;">{{ file.name }}</span>
+          <ion-icon name="close-outline" class="cursor-pointer text-danger" (click)="eliminarAdjunto(idx)"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Envío -->
+    <button type="submit" class="btn-submit-incidencia w-100" [disabled]="enviando || incidenciaForm.invalid">
+      <span *ngIf="!enviando">Enviar Incidencia</span>
+      <app-spinner *ngIf="enviando"></app-spinner>
+    </button>
+
+  </form>
+</ion-content>

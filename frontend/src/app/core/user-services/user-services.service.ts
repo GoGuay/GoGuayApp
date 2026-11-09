@@ -233,7 +233,7 @@ export class UserServicesService {
       map((resultado: any) => {
         // Actualiza el BehaviorSubject con la nueva foto
         const usuarioActualizado: Partial<Usuario['usuario']> = {
-          ...this.userData.usuario, // solo el objeto interno
+          ...this.userData.usuario,
           fotoPerfil: resultado.url,
           fotoPublicId: resultado.publicId,
         };
@@ -310,15 +310,31 @@ export class UserServicesService {
    * @param token
    * @returns
    */
-  verificar_email(token: any): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/user/verificar_email`, { token }).pipe(
-      map(() => true),
-      catchError(() => of(false))
-    );
+  verificar_email(token: any): Observable<any> {
+   return this.http.post<any>(`${this.apiUrl}/user/email_finalizar_registro`, { token }).pipe(
+    tap((response) => {
+      if (response && response.access_token) {
+        localStorage.setItem('access_token', response.access_token);
+
+        if (response.refresh_token) {
+          localStorage.setItem('refresh_token', response.refresh_token);
+        }
+
+        if (response.usuario) {
+          this.setUsuarioData({ usuario: response.usuario });
+        }
+      }
+    }),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Error al verificar el email:', error);
+      return throwError(() => error);
+    })
+  );
   }
 
   enviar_sms(telefono: string) {
-    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono });
+    const idioma_app = localStorage.getItem('language');
+    return this.http.post(`${this.apiUrl}/user/enviar_sms`, { telefono, idioma_app });
   }
 
   verificar_codigo_sms(codigo: string, telefono: string) {
@@ -420,65 +436,5 @@ export class UserServicesService {
       );
   }
 
-  /**
-   * Función para crear una orden de PayPal para la recarga del monedero.
-   * @param cantidad Cantidad en euros que el usuario desea recargar.
-   * @returns Observable con los datos de la orden de PayPal (incluyendo approve_url).
-   */
-  crearOrdenMonedero(cantidad: number): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
 
-    return this.http.post<any>(`${this.apiUrl}/user/create-wallet-order`, { cantidad }, { headers }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al crear la orden de recarga del monedero:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Función para capturar y confirmar el pago de la recarga del monedero en PayPal.
-   * @param orderId ID de la orden de PayPal devuelto tras la aprobación.
-   * @returns Observable con la confirmación de la recarga y el nuevo saldo.
-   */
-  capturarOrdenMonedero(orderId: string): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
-
-    return this.http.post<any>(`${this.apiUrl}/user/capture-wallet-order/${orderId}`, {}, { headers }).pipe(
-      map((response) => {
-        // Opcional: si quieres actualizar el estado del usuario o emitir algo si es necesario
-        return response;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al capturar la orden de recarga del monedero:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Obtiene el saldo actual del monedero del usuario autenticado.
-   */
-  obtenerSaldoMonedero(): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
-
-    return this.http.get<any>(`${this.apiUrl}/user/saldo-actual`, { headers }).pipe(
-      catchError((error) => {
-        console.error('Error al obtener el saldo del monedero:', error);
-        return throwError(() => error);
-      })
-    );
-  }
 }

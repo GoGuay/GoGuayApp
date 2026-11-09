@@ -237,39 +237,7 @@ ion-segment-button {
   }
 }
 
-.btn-puntuar {
-  background-color: #E0B6B6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
 
-  &:hover::after {
-    content: attr(data-name);
-    position: absolute;
-    top: 46px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    /* Diseño del texto */
-    background-color: #333333;
-    color: #ffffff;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    opacity: 1;
-    pointer-events: none;
-    animation: fadeInTooltip 0.15s ease-out forwards;
-  }
-}
 
 .btn_bg i {
   font-size: 20px;
@@ -798,93 +766,53 @@ ion-segment-button {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  width: 100%;
 
   .btn-gestion {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 4px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 16px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    min-height: 60px;
+    min-height: 65px;
 
-
-    i,
-    mat-icon {
-      font-size: 1.25rem;
-      width: auto;
-      height: auto;
-    }
-
-    &.btn-report {
-      background: #fff3e0;
-      color: #ff9800;
+    i, mat-icon {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
     }
 
     .btn-text {
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-top: 4px;
-      text-align: center;
-      line-height: 1.1;
+      font-size: 0.8rem;
     }
+  }
 
-    &.btn-detalle {
-      background: #e8eaf6;
-      color: #3f51b5;
-    }
-
-    &.btn-editar {
-      background: #e1f5fe;
-      color: #03a9f4;
-    }
-
-    &.btn-eliminar {
-      background: #ffebee;
-      color: #f44336;
-    }
-
-    &.btn-aceptar {
-      background: #e8f5e9;
-      color: #4caf50;
-    }
+  /* Estilos específicos para Puntuar (tono amarillo/dorado suave) */
+  .btn-puntuar {
+    background-color: #fef5e7;
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.2);
 
     &:hover {
+      background-color: #fdebd0;
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+  }
 
-    @media (min-width: 769px) {
-      &::after {
-        content: attr(data-name);
-        position: absolute;
-        top: 44px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333333;
-        color: #ffffff;
-        font-size: 0.68rem;
-        font-weight: 600;
-        padding: 3px 8px;
-        border-radius: 6px;
-        white-space: nowrap;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-      }
+  /* Botón Reportar (crema/naranja) */
+  .btn-report {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
 
-      &:hover::after {
-        opacity: 1;
-        transform: translate(-50%, 2px);
-      }
-    }
-
+  /* Botón Detalles (lavanda/púrpura) */
+  .btn-detalle {
+    background-color: #e8eaf6;
+    color: #283593;
   }
 }
 

@@ -44,7 +44,7 @@ export class TrayectosPopularesComponent implements OnInit {
   ciudadSeleccionadaLabel: string = '';
   spinnerActivo: boolean = false;
   texto_spinner: string = 'Traduciendo...';
-  lang: string = this.languageService.getLanguage() || 'es';
+  lang: string = 'es';
 
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) {
@@ -75,6 +75,7 @@ export class TrayectosPopularesComponent implements OnInit {
 
   //Lo que se usa nada más iniciar el componente.
   ngOnInit() {
+    this.lang = this.languageService.getLanguage() || 'es';
     this.usuarioNoLogueado = this.funcionesComunes.isUserLoggedIn();
     this.obtenerEventos();
     this.translate.onLangChange.subscribe((idiomaCambiado) => {

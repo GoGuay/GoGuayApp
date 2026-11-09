@@ -57,7 +57,7 @@ export class MisViajesPage implements OnInit {
   usuarioParams: any = {};
   preferenciasViaje: string[] = [];
 
-  // Universo de Datos de Viajes
+  // Datos de Viajes
   misViajes: Viaje[] = [];
   misViajesAcompanante: Viaje[] = [];
   misViajesCreados: Viaje[] = [];
@@ -77,7 +77,7 @@ export class MisViajesPage implements OnInit {
     finalizados_anulados: false,
   };
 
-  // Banderas de control de interfaz
+  // Control de interfaz
   mostrarAyuda: boolean = false;
   cargandoViajes: boolean = true;
   mostrarJumbotron = true;
@@ -90,7 +90,7 @@ export class MisViajesPage implements OnInit {
     private route: ActivatedRoute,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -128,12 +128,6 @@ export class MisViajesPage implements OnInit {
       }
     });
   }
-
-  /**
-   * ==========================================
-   * COMUNICACIÓN CON EL SERVIDOR (API)
-   * ==========================================
-   */
 
   /**
    * Función para recuperar los datos del usuario desde el servidor,
@@ -263,12 +257,6 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * ==========================================
-   * LOGICA DE NEGOCIO, FILTROS Y EVALUACIÓN
-   * ==========================================
-   */
-
-  /**
    * Comprueba si hay un viaje en curso en el día actual, entre la hora de salida y llegada del viaje.
    * @param viaje
    * @returns
@@ -331,14 +319,10 @@ export class MisViajesPage implements OnInit {
   /**
    * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
    */
-  /**
-   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
-   */
   onFiltroChange(event: any, valorFiltro: string) {
     const checked = event.detail.checked;
     const hayEnCurso = this.HayAlgunViajeEnCursoReal();
 
-    // --- REGLA 1: VIAJE EN CURSO (BLOQUEADO SI NO HAY VIAJES EN CURSO) ---
     if (valorFiltro === 'en_curso') {
       if (!hayEnCurso && checked) {
         // Si NO hay viaje en curso y el usuario intenta activarlo:
@@ -364,7 +348,6 @@ export class MisViajesPage implements OnInit {
       return;
     }
 
-    // --- REGLA 2: EXCLUSIVIDAD ENTRE PRÓXIMOS Y FINALIZADOS ---
     if (valorFiltro === 'proximos_viajes') {
       if (checked) {
         this.filtrosEstados['proximos_viajes'] = true;
@@ -386,7 +369,6 @@ export class MisViajesPage implements OnInit {
       }
     }
 
-    // Clonamos el objeto para forzar la detección de cambios de Angular
     this.filtrosEstados = { ...this.filtrosEstados };
     this.aplicarFiltrosCombinados();
   }
@@ -397,10 +379,18 @@ export class MisViajesPage implements OnInit {
     const filtroSolicitudesPendientes = this.misSolicitudesPendientes || [];
     let viajesBase: Viaje[] = [];
 
+    if (this.filtroViajes === 'solicitudes') {
+      this.conductor = false;
+      this.pasajero = false;
+      this.solicitudesPendientes = true;
+      this.misViajes = [...filtroSolicitudesPendientes];
+      this.cdr.detectChanges();
+      return;
+    }
+
     const poolTotalViajes = [...filtroPasajero, ...filtroConductor];
     poolTotalViajes.forEach((v) => ((v as any).enCursoReal = false));
 
-    // 1. Filtrar por tipo (Todos, Pasajero, Conductor, Solicitudes)
     switch (this.filtroViajes) {
       case 'todos':
         viajesBase = [...filtroPasajero, ...filtroConductor];
@@ -423,19 +413,11 @@ export class MisViajesPage implements OnInit {
         this.pasajero = false;
         break;
 
-      case 'solicitudes':
-        viajesBase = [...filtroSolicitudesPendientes];
-        this.conductor = false;
-        this.pasajero = false;
-        this.solicitudesPendientes = true;
-        break;
-
       default:
         viajesBase = [];
         break;
     }
 
-    // 2. Filtrar por estado (En Curso, Próximos, Finalizados/Anulados)
     const { en_curso, proximos_viajes, finalizados_anulados } =
       this.filtrosEstados;
 
@@ -464,7 +446,6 @@ export class MisViajesPage implements OnInit {
       });
     }
 
-    // 3. Anclar viajes en curso al principio
     const viajesParaAnclar = poolTotalViajes.filter((v) =>
       this.esViajeEnCurso(v),
     );
@@ -481,12 +462,6 @@ export class MisViajesPage implements OnInit {
     this.misViajes = viajesBase;
     this.cdr.detectChanges();
   }
-
-  /**
-   * ==========================================
-   * NAVEGACIÓN Y AJUSTES VISUALES
-   * ==========================================
-   */
 
   /**
    * Función para mostrar/ocultar la ayuda

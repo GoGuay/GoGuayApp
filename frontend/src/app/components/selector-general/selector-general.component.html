@@ -34,7 +34,7 @@
       [id]="'input-' + idUnico"
       type="text"
       style="cursor: pointer"
-      class="form-control text-start pe-5"
+      class="form-control text-start"
       [value]="valorTexto"
       (input)="filtrarOpciones($event)"
       (blur)="onInputBlur()"
@@ -48,6 +48,8 @@
       aria-autocomplete="list"
       [attr.aria-expanded]="sugerencias.length > 0 && estaActivo"
       [attr.aria-label]="ariaLabel || (placeholderKey | translate)"
+      [attr.aria-controls]="'lista-sugerencias-' + idUnico"
+      [attr.aria-activedescendant]="indiceActivo >= 0 ? 'opcion-' + idUnico + '-' + indiceActivo : null"
       [readonly]="soloLectura"
     />
 
@@ -60,14 +62,16 @@
 
   <!-- Lista desplegable con scroll integrado -->
   <ul
+    [id]="'lista-sugerencias-' + idUnico"
     *ngIf="sugerencias.length > 0 && estaActivo"
-    class="list-group lista_sugerencias position-absolute w-100 shadow-sm"
+    class="list-group lista_sugerencias position-absolute w-100"
     role="listbox"
     style="z-index: 1000"
   >
     <li
       *ngFor="let opcion of sugerencias; let i = index"
-      class="list-group-item"
+      [id]="'opcion-' + idUnico + '-' + i"
+      class=""
       (mousedown)="$event.preventDefault(); seleccionarOpcion(opcion)"
       [class.active]="i === indiceActivo"
       role="option"
