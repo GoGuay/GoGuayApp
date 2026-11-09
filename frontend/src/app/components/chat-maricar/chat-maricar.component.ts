@@ -6,6 +6,8 @@ import { TravelService } from '../../core/travel-services/travel.service';
 import { Router } from '@angular/router';
 import { send, closeOutline, sparkles, carSportOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { AbrirIncidenciaModalComponent } from '../abrir-incidencia-modal/abrir-incidencia-modal.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-chat-maricar',
@@ -31,7 +33,9 @@ export class MaricarChatComponent {
     constructor(
         private modalCtrl: ModalController,
         private travelService: TravelService,
-        private router: Router
+        private router: Router,
+        private modalController: ModalController,
+        public messageService: MessageService
     ) {
         addIcons({ send, closeOutline, sparkles, carSportOutline, checkmarkCircleOutline });
     }
@@ -124,5 +128,29 @@ export class MaricarChatComponent {
 
     cerrarModal() {
         this.modalCtrl.dismiss();
+    }
+
+    async abrirIncidenciaBusqueda() {
+        const modal = await this.modalController.create({
+            component: AbrirIncidenciaModalComponent,
+            componentProps: {
+                categoria: 'APP',
+                subcategoriaPredeterminada: 'OTRO',
+                tituloContexto: 'Incidencia en MariCar'
+            },
+            cssClass: 'modal-incidencia-custom'
+        });
+
+        await modal.present();
+        const { role } = await modal.onWillDismiss();
+
+        if (role === 'confirm') {
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Incidencia enviada',
+                detail: 'Gracias por informarnos. Revisaremos el problema con MariCar.',
+                life: 4000
+            });
+        }
     }
 }

@@ -23,6 +23,15 @@
         </div>
       </div>
 
+      <div class="banner-incidencia-fijo d-flex justify-content-center px-3 py-1 bg-transparent">
+        <button type="button"
+          class="btn btn-sm btn-outline-warning d-flex align-items-center justify-content-center gap-1 shadow-sm rounded-pill px-3 py-1 w-auto"
+          (click)="abrirIncidenciaBusqueda()">
+          <i class="fi fi-rr-info me-1"></i>
+          <span style="font-size: 0.78rem; font-weight: 600;">¿Hay un problema? Reportar incidencia</span>
+        </button>
+      </div>
+
       <!-- <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
         <div class="card shadow-sm border-0 text-center p-3">
           <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>
@@ -131,6 +140,8 @@
     </div>
   </div>
 </ion-content>
+
+
 
 <ion-footer class="ion-no-border">
   <div class="footer-limiter">
