@@ -6,6 +6,7 @@ import { TerminosComponent } from '../../components/terminos/terminos.component'
 import { CookiesComponent } from '../../components/cookies/cookies.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { OnboardingModalComponent } from 'src/app/components/onboarding/onboarding-modal.component';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -13,15 +14,33 @@ import { OnboardingModalComponent } from 'src/app/components/onboarding/onboardi
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [IonicModule, MatIconModule, TranslateModule],
+  imports: [CommonModule, IonicModule, MatIconModule, TranslateModule],
 })
 export class FooterComponent implements OnInit {
 
   dialog = inject(MatDialog);
+  isAdmin: boolean = false;
 
   constructor(private navCtrl: NavController, private modalController: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.comprobarRolAdmin();
+  }
+
+  comprobarRolAdmin() {
+    try {
+      const userDataString = localStorage.getItem('userData');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        const rol = userData?.rolPerfil || userData?.usuario?.rolPerfil;
+        this.isAdmin = (rol === 'admin');
+      } else {
+        this.isAdmin = false;
+      }
+    } catch (e) {
+      this.isAdmin = false;
+    }
+  }
 
   openTerms() {
     this.dialog.open(TerminosComponent, {});

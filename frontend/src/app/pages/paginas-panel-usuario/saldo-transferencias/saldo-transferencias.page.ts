@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonRow, IonGrid, IonCol } from '@ionic/angular/standalone';
+import { IonContent, IonRow, IonGrid, IonCol, ModalController } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MonederoService } from 'src/app/core/monedero-service/monedero.service';
 import { MessageService } from 'primeng/api';
+import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
 declare var paypal: any;
 @Component({
   selector: 'app-saldo-transferencias',
@@ -63,8 +64,9 @@ export class SaldoTransferenciasPage implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private dialog: MatDialog,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private modalController: ModalController
+  ) { }
 
   ngOnInit() {
     console.log('Opciones de transferencia disponibles:', this.listaOpcionesTransferencias);
@@ -312,5 +314,30 @@ export class SaldoTransferenciasPage implements OnInit {
     });
   }
 
-  obtener_movimientos_monedero() {}
+  
+  async abrirIncidenciaPago() {
+    const modal = await this.modalController.create({
+      component: AbrirIncidenciaModalComponent,
+      componentProps: {
+        categoria: 'APP',
+        subcategoriaPredeterminada: 'PAGO',
+        tituloContexto: 'Problema con saldo o pagos'
+      },
+      cssClass: 'modal-incidencia-custom'
+    });
+
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Incidencia enviada',
+        detail: 'Hemos recibido tu consulta sobre el monedero. Podrás ver el seguimiento en "Mis Incidencias".',
+        life: 4000
+      });
+    }
+  }
+
+  obtener_movimientos_monedero() { }
 }

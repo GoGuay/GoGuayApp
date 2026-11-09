@@ -1,13 +1,6 @@
-<app-navbar
-  [backRoute]="'/home'"
-  [searchRoute]="'search'"
-  [isLoggedIn]="userLoggedIn"
-></app-navbar>
+<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
 
-<ion-content
-  [fullscreen]="true"
-  class="saldo-content"
->
+<ion-content [fullscreen]="true" class="saldo-content">
   <div class="container py-1">
     <!-- Cabecera de la sección -->
     <div class="d-flex justify-content-center text-center mb-3">
@@ -22,18 +15,12 @@
         <ion-row class="card-saldo-box">
           <ion-col size="4">
             <h3>TU SALDO</h3>
-            <span
-              *ngIf="monedero; else sinSaldo"
-              class="d-flex justify-content-center text-primary"
-              style="font-size: 32px; font-weight: bold"
-            >
+            <span *ngIf="monedero; else sinSaldo" class="d-flex justify-content-center text-primary"
+              style="font-size: 32px; font-weight: bold">
               {{ monedero.saldo | number:'1.2-2' }} €
             </span>
             <ng-template #sinSaldo>
-              <span
-                class="d-flex justify-content-center text-muted"
-                style="font-size: 24px; font-weight: bold"
-              >
+              <span class="d-flex justify-content-center text-muted" style="font-size: 24px; font-weight: bold">
                 {{ 0 | currency: 'EUR' }}
               </span>
             </ng-template>
@@ -42,16 +29,9 @@
             <div class="d-flex flex-column align-items-center w-100 mb-3">
               <p class="text-center">Recarga tu monedero:</p>
               <div class="d-flex justify-content-center mb-3 w-100">
-                <input
-                  type="number"
-                  class="form-control form-input text-center fw-bold text-primary"
-                  [(ngModel)]="cantidadRecarga"
-                  (blur)="onCantidadChange()"
-                  min="5"
-                  step="5"
-                  placeholder="Cantidad a recargar (€)"
-                  style="max-width: 220px; font-size: 1.1rem"
-                />
+                <input type="number" class="form-control form-input text-center fw-bold text-primary"
+                  [(ngModel)]="cantidadRecarga" (blur)="onCantidadChange()" min="5" step="5"
+                  placeholder="Cantidad a recargar (€)" style="max-width: 220px; font-size: 1.1rem" />
               </div>
               <div id="paypal-button-container"></div>
             </div>
@@ -59,48 +39,26 @@
             <div class="d-flex flex-column align-items-center w-100">
               <p class="text-center">Retira tu saldo</p>
               <div class="d-flex justify-content-center mb-3 w-100">
-                <input
-                  type="number"
-                  class="form-control form-input text-center fw-bold text-primary"
-                  [(ngModel)]="cantidadRecarga"
-                  min="1"
-                  step="5"
-                  placeholder="Cantidad a retirar (€)"
-                  style="max-width: 220px; font-size: 1.1rem"
-                />
+                <input type="number" class="form-control form-input text-center fw-bold text-primary"
+                  [(ngModel)]="cantidadRecarga" min="1" step="5" placeholder="Cantidad a retirar (€)"
+                  style="max-width: 220px; font-size: 1.1rem" />
               </div>
 
               <!-- Botón PayPal -->
-              <button
-                *ngIf="tiene_cuenta_paypal"
-                type="button"
-                class="btn btn_bg mb-3 mt-2"
-              >
+              <button *ngIf="tiene_cuenta_paypal" type="button" class="btn btn_bg mb-3 mt-2">
                 Retirar a Paypal
               </button>
 
               <!-- Botón Banco -->
-              <button
-                *ngIf="tiene_cuenta_bancaria"
-                type="button"
-                class="btn btn_bg mb-3 mt-2"
-              >
+              <button *ngIf="tiene_cuenta_bancaria" type="button" class="btn btn_bg mb-3 mt-2">
                 Transferir a cuenta
               </button>
 
               <!-- Selector General si tiene ambas -->
-              <app-selector-general
-                *ngIf="tiene_ambas"
-                idUnico="opcion_retirada_elegida"
-                labelKey="Selecciona una opción"
-                placeholderKey="Selecciona"
-                tooltipKey=""
-                popoverKey=""
-                [valor]="opcion_retirada_elegida"
-                [opciones]="listaOpcionesTransferencias"
-                (seleccionCambiada)="onInputChange($event)"
-                [soloLectura]="true"
-              ></app-selector-general>
+              <app-selector-general *ngIf="tiene_ambas" idUnico="opcion_retirada_elegida"
+                labelKey="Selecciona una opción" placeholderKey="Selecciona" tooltipKey="" popoverKey=""
+                [valor]="opcion_retirada_elegida" [opciones]="listaOpcionesTransferencias"
+                (seleccionCambiada)="onInputChange($event)" [soloLectura]="true"></app-selector-general>
             </div>
           </ion-col>
         </ion-row>
@@ -137,10 +95,7 @@
                   <td>{{ mov.saldo_anterior | number:'1.2-2' }} €</td>
 
                   <!-- Saldo Actual (con color verde si aumentó, rojo si disminuyó, o neutro) -->
-                  <td
-                    class="fw-bold"
-                    [ngClass]="mov.saldo_actual >= mov.saldo_anterior ? 'text-success' : 'text-dark'"
-                  >
+                  <td class="fw-bold" [ngClass]="mov.saldo_actual >= mov.saldo_anterior ? 'text-success' : 'text-dark'">
                     {{ mov.saldo_actual | number:'1.2-2'}} €
                   </td>
                 </tr>
@@ -148,10 +103,7 @@
             </tbody>
             <ng-template #noMovimientos>
               <tr>
-                <td
-                  colspan="5"
-                  class="text-center py-3 text-muted"
-                >
+                <td colspan="5" class="text-center py-3 text-muted">
                   {{ 'SALDO.NO_HAY_MOVIMIENTOS' | translate }}
                 </td>
               </tr>
@@ -163,4 +115,15 @@
       <!-- Columna Derecha: Recarga de Saldo con PayPal (Usando método de pago preferido) -->
     </ion-grid>
   </div>
+
+  <!-- BANNER / BOTÓN PARA REPORTAR PROBLEMAS CON PAGOS -->
+  <div class="d-flex justify-content-start mb-2 ms-2">
+    <button type="button"
+      class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm rounded-pill px-3"
+      (click)="abrirIncidenciaPago()">
+      <i class="fi fi-rr-info me-1"></i>
+      <span>¿Problemas con tu recarga o saldo? Reportar incidencia</span>
+    </button>
+  </div>
+
 </ion-content>

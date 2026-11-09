@@ -57,11 +57,14 @@
       </ion-row>
     </ion-grid>
   </div>
-  <ion-button fill="clear" size="small" class="btn-incidencia-search" (click)="abrirIncidenciaBusqueda()"
-    title="Reportar problema en la búsqueda">
-    <i class="fi fi-rr-triangle-warning text-warning-pastel me-1"></i>
-    <span class="small text-muted">¿Fallo en la búsqueda?</span>
-  </ion-button>
+  <div class="d-flex justify-content-start mb-2 ms-2">
+    <button type="button"
+      class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm rounded-pill px-3"
+      (click)="abrirIncidenciaBusqueda()">
+      <i class="fi fi-rr-info me-1"></i>
+      <span>¿Problemas buscando un viaje? Reportar incidencia</span>
+    </button>
+  </div>
 </ion-content>
 
 <!-- FAB: NUEVO VIAJE -->

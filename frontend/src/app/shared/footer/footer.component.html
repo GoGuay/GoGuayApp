@@ -28,9 +28,11 @@
           <!-- Enlaces (ampliado a size-md="8") -->
           <ion-col class="footer-item col-links" size="12" size-md="8">
             <div class="links-scroll-wrapper">
-              <a href="javascript:void(0)" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate }}</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openCookies()">{{ "FOOTER.COOKIES" | translate
+                }}</a>
               <span class="separator">|</span>
-              <a href="javascript:void(0)" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate }}</a>
+              <a href="javascript:void(0)" class="footer-link" (click)="openTerms()">{{ "FOOTER.TERMS" | translate
+                }}</a>
               <span class="separator">|</span>
               <a href="javascript:void(0)" class="footer-link" (click)="openCondiciones()">Condiciones</a>
               <span class="separator">|</span>
@@ -41,10 +43,12 @@
               <a href="javascript:void(0)" class="footer-link" (click)="openQuienesSomos()">Quienes somos</a>
               <span class="separator">|</span>
               <a href="javascript:void(0)" class="footer-link" (click)="abrirOnboarding()">
-                Guía de uso / Onboarding
+                Guía de uso
               </a>
-              <span class="separator">|</span>
-              <a href="javascript:void(0)" class="footer-link" (click)="openAdmin()">Admin</a>
+              <ng-container *ngIf="isAdmin">
+                <span class="separator">|</span>
+                <a href="javascript:void(0)" class="footer-link" (click)="openAdmin()">Portal Administración</a>
+              </ng-container>
             </div>
           </ion-col>
 

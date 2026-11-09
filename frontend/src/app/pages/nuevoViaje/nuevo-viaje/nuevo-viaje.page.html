@@ -79,7 +79,7 @@
       <h2>{{ 'CENTRODEAYUDA.TITULO' | translate }}</h2>
       <p>{{ 'CENTRODEAYUDA.SUBTITULO' | translate }}</p>
       <div class="d-flex justify-content-center">
-        <button type="button"  class="btn btn_bg consulta" routerLink="/centro-ayuda">
+        <button type="button" class="btn btn_bg consulta" routerLink="/centro-ayuda">
           <img src="../../../../assets/sistema/interrogatorio.png" class="marcador-icon input-icon" alt=""
             aria-hidden="true" />
           {{ 'BOTON.CENTROAYUDA' | translate }}
@@ -88,20 +88,12 @@
     </div>
   </ion-row>
 
-  <ion-row class="segunda-seccion">
-    <div class="centro-incidencias p-4 w-100 text-center">
-      <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-        <i class="fi fi-rr-triangle-warning text-warning-pastel fs-4"></i>
-        <h3 class="fw-bold m-0 fs-5 text-dark">¿Tienes problemas al crear tu viaje?</h3>
-      </div>
-      <p class="text-muted small mb-3">Si experimentas fallos o dudas durante la publicación, puedes abrir un reporte
-        directo con nuestro soporte.</p>
-
-      <div class="d-flex justify-content-center gap-2 flex-wrap">
-        <button type="button" class="btn btn_bg px-4 py-2" (click)="abrirIncidenciaCreacionViaje()">
-          <i class="fi fi-rr-headset me-2"></i> Reportar una incidencia
-        </button>
-      </div>
-    </div>
-  </ion-row>
+  <div class="d-flex justify-content-start mb-2 ms-2">
+    <button type="button"
+      class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm rounded-pill px-3"
+      (click)="abrirIncidenciaCreacionViaje()">
+      <i class="fi fi-rr-info me-1"></i>
+      <span>¿Problemas creando un viaje? Reportar incidencia</span>
+    </button>
+  </div>
 </ion-content>
