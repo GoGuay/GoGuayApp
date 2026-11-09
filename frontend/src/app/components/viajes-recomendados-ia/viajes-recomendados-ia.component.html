@@ -13,6 +13,14 @@
         <i class="fi fi-rr-refresh" [class.spinning]="cargando"></i>
       </button>
 
+      <!-- BOTÓN ACCESO DIRECTO A AJUSTES -->
+      <button 
+        class="btn-action-ia d-flex align-items-center justify-content-center" 
+        (click)="irAAjustes()" 
+        title="Desactivar recomendaciones de IA">
+        <i class="fi fi-rr-settings"></i>
+      </button>
+
       <span class="badge-ia">
         <i class="fi fi-rr-sparkles me-1"></i> Smart Match
       </span>

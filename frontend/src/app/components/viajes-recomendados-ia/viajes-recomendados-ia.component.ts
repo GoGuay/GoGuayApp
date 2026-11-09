@@ -68,6 +68,10 @@ export class ViajesRecomendadosIaComponent implements OnInit {
     this.navCtrl.navigateForward(['/nuevo-viaje'], navigationExtras);
   }
 
+  irAAjustes() {
+    this.navCtrl.navigateForward(['/ajustes-aplicacion']); 
+  }
+
   buscarViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
       queryParams: { destino: nombreDestino }
