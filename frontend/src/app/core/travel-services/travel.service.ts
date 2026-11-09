@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
@@ -400,10 +400,17 @@ export class TravelService {
   /**
    * Función para obtener los viajes recomendados por IA para un usuario específico.
    * @param userId ID del usuario.
+   * @param forzarRecarga (opcional) Si se establece en true, 
+   *        se forzará la recarga de las recomendaciones desde el backend, ignorando cualquier caché o almacenamiento previo.
    * @returns Observable con la lista de recomendaciones y sus motivos de afinidad.
    */
-  getViajesRecomendadosIA(userId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/travel/recomendados/${userId}`).pipe(
+  getViajesRecomendadosIA(userId: number, forzarRecarga: boolean = false): Observable<any> {
+    let params = new HttpParams();
+    if (forzarRecarga) {
+      params = params.set('refresh', 'true');
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/travel/recomendados/${userId}`, { params }).pipe(
       catchError((error) => {
         console.error('Error al obtener los viajes recomendados por IA:', error);
         return throwError(() => error);

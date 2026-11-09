@@ -20,13 +20,13 @@ export class ViajesRecomendadosIaComponent implements OnInit {
   constructor(
     private travelService: TravelService,
     private navCtrl: NavController,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.cargarRecomendaciones();
   }
 
-  cargarRecomendaciones() {
+  cargarRecomendaciones(forzarRecarga: boolean = false) {
     const userDataString = localStorage.getItem('userData');
     if (!userDataString) {
       this.cargando = false;
@@ -41,7 +41,9 @@ export class ViajesRecomendadosIaComponent implements OnInit {
       return;
     }
 
-    this.travelService.getViajesRecomendadosIA(userId).subscribe({
+    this.cargando = true;
+
+    this.travelService.getViajesRecomendadosIA(userId, forzarRecarga).subscribe({
       next: (res: any) => {
         if (res && res.recomendaciones) {
           this.recomendaciones = res.recomendaciones;
@@ -54,6 +56,10 @@ export class ViajesRecomendadosIaComponent implements OnInit {
       },
     });
   }
+  recargarRecomendaciones() {
+    if (this.cargando) return;
+    this.cargarRecomendaciones(true);
+  }
 
   crearViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
@@ -61,7 +67,7 @@ export class ViajesRecomendadosIaComponent implements OnInit {
     };
     this.navCtrl.navigateForward(['/nuevo-viaje'], navigationExtras);
   }
-  
+
   buscarViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
       queryParams: { destino: nombreDestino }

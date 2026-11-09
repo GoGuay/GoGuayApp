@@ -858,15 +858,16 @@ def obtener_viajes_recomendados(user_id):
         if not usuario:
             return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
 
-        # Extraer y estructurar las preferencias del campo JSON de forma segura
-        preferencias_crudas = usuario.preferencias
-        if isinstance(preferencias_crudas, str):
+        forzar_recarga = request.args.get('refresh', 'false').lower() == 'true'
+
+        preferencias_usuario = usuario.preferencias
+        if isinstance(preferencias_usuario, str):
             try:
-                preferencias_usuario = json.loads(preferencias_crudas)
+                preferencias_usuario = json.loads(preferencias_usuario)
             except json.JSONDecodeError:
                 preferencias_usuario = {}
-        elif isinstance(preferencias_crudas, dict):
-            preferencias_usuario = preferencias_crudas
+        elif isinstance(preferencias_usuario, dict):
+            preferencias_usuario = preferencias_usuario
         else:
             preferencias_usuario = {}
 
@@ -878,7 +879,7 @@ def obtener_viajes_recomendados(user_id):
         
         intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
 
-        # Recopilar el historial de viajes previos del usuario
+        # Recopila el historial de viajes previos del usuario
         viajes_como_conductor = [
             {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
             for v in usuario.viajes_publicados
@@ -906,11 +907,21 @@ def obtener_viajes_recomendados(user_id):
             "historial_viajes": historial_viajes
         }
 
-        # NUEVO PROMPT: Formato plano por líneas delimitadas (CERO errores de comillas)
+        # Instrucción si el usuario solicita recarga
+        instruccion_recarga = ""
+        if forzar_recarga:
+            instruccion_recarga = (
+                "NOTA DE RECARGA: El usuario ya ha visto sugerencias anteriores (Sitges, Madrid, Valencia). "
+                "Genera 3 destinos o eventos alternativos totalmente NUEVOS e innovadores en España "
+                "(por ejemplo: Torremolinos, Maspalomas, Ibiza, Bilbao, Sevilla, Santiago de Compostela, etc.)."
+            )
+
         prompt = f"""
         Eres un recomendador experto de destinos, rutas y eventos LGTBI en España para una app de carpooling.
         Analiza el perfil analítico del usuario y selecciona EXACTAMENTE 3 destinos o eventos reales en España que encajen con su personalidad.
         
+        {instruccion_recarga}
+
         REQUISITO DE FORMATO ESTRICTO:
         No devuelvas JSON. Devuelve única y exclusivamente las recomendaciones en formato de texto plano, una por línea, separando sus campos exactamente con el carácter barra vertical (|) de esta forma:
         ID_SLUG | NOMBRE_DESTINO | PUNTUACION_AFINIDAD | MOTIVO_PERSONALIZADO
@@ -927,7 +938,7 @@ def obtener_viajes_recomendados(user_id):
         payload = {
             "model": "openai/gpt-oss-20b",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.6, 
+            "temperature": 0.8 if forzar_recarga else 0.6, 
             "max_tokens": 1000
         }
         
@@ -944,9 +955,7 @@ def obtener_viajes_recomendados(user_id):
         if response.status_code == 200:
             try:
                 texto_generado = data['choices'][0]['message']['content'].strip()
-                
-                # 🔍 NUEVO: Imprime esto en la consola para ver qué formato exacto está mandando la IA
-                print(f"🤖 Texto bruto recibido de la IA:\n{texto_generado}\n-------------------")
+                print(f"🤖 Texto bruto recibido de la IA (recarga={forzar_recarga}):\n{texto_generado}\n-------------------")
 
                 lineas = texto_generado.split('\n')
                 
@@ -972,34 +981,56 @@ def obtener_viajes_recomendados(user_id):
                 print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
                 recomendaciones = []
 
-        # Recortamos estrictamente a 3 elementos
         recomendaciones = recomendaciones[:3]
 
-        # Fallback dinámico por si la IA no devuelve líneas válidas
+        # Respuesta dinámica
         if not recomendaciones:
             nombre_usuario = usuario.nombre or "viajero"
             intereses_lower = [i.lower() for i in intereses_ocio]
             
-            destinos_fallback = [
-                {
-                    "id": "sitges-playa",
-                    "destino": "Sitges (Barcelona)",
-                    "afinidad": 96 if "playa" in intereses_lower else 85,
-                    "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero y su gran oferta de ocio inclusivo."
-                },
-                {
-                    "id": "madrid-chueca",
-                    "destino": "Madrid",
-                    "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
-                    "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y vivir una vibrante experiencia cultural y de ocio."
-                },
-                {
-                    "id": "valencia-carmen",
-                    "destino": "Valencia",
-                    "afinidad": 95 if "cultura" in intereses_lower else 82,
-                    "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas llenas de arte y planes alternativos."
-                }
-            ]
+            if forzar_recarga:
+                destinos_fallback = [
+                    {
+                        "id": "torremolinos-la-nogalera",
+                        "destino": "Torremolinos (Málaga)",
+                        "afinidad": 94,
+                        "motivo": f"{nombre_usuario}, Torremolinos ofrece sol, playa y la icónica zona de La Nogalera con un ambiente muy acogedor."
+                    },
+                    {
+                        "id": "maspalomas-dunas",
+                        "destino": "Maspalomas (Gran Canaria)",
+                        "afinidad": 96,
+                        "motivo": f"{nombre_usuario}, descubre el entorno único de Maspalomas, referente internacional en turismo inclusivo."
+                    },
+                    {
+                        "id": "ibiza-playa-cavall",
+                        "destino": "Ibiza",
+                        "afinidad": 92,
+                        "motivo": f"{nombre_usuario}, una escapada a Ibiza te permitirá conectar con la naturaleza, sus calas y su vibrante vida nocturna."
+                    }
+                ]
+            else:
+                destinos_fallback = [
+                    {
+                        "id": "sitges-playa",
+                        "destino": "Sitges (Barcelona)",
+                        "afinidad": 96 if "playa" in intereses_lower else 85,
+                        "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero."
+                    },
+                    {
+                        "id": "madrid-chueca",
+                        "destino": "Madrid",
+                        "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
+                        "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y cultura."
+                    },
+                    {
+                        "id": "valencia-carmen",
+                        "destino": "Valencia",
+                        "afinidad": 95 if "cultura" in intereses_lower else 82,
+                        "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas."
+                    }
+                ]
+
             recomendaciones = [
                 {
                     "destino_id": d["id"],

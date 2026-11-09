@@ -6,15 +6,24 @@
       <i class="fi fi-rr-magic-wand text-primary"></i>
       Inspírate y crea tu próximo viaje
     </h3>
-    <span class="badge-ia">
-      <i class="fi fi-rr-sparkles me-1"></i> Smart Match
-    </span>
+    <div class="d-flex align-items-center gap-2">
+      <!-- BOTÓN RECARGAR SUGERENCIAS -->
+      <button class="btn-reload-ia d-flex align-items-center justify-content-center" (click)="recargarRecomendaciones()"
+        [disabled]="cargando" title="Generar nuevas recomendaciones">
+        <i class="fi fi-rr-refresh" [class.spinning]="cargando"></i>
+      </button>
+
+      <span class="badge-ia">
+        <i class="fi fi-rr-sparkles me-1"></i> Smart Match
+      </span>
+    </div>
   </div>
 
   <!-- Texto informativo -->
   <p class="text-muted small mb-3">
     <i class="fi fi-rr-info me-1"></i>
-    Sugerencias de eventos y destinos LGTBI en España elegidas por inteligencia artificial según tus gustos. ¡Elige un destino y crea un viaje para compartir coche!
+    Sugerencias de eventos y destinos LGTBI en España elegidas por inteligencia artificial según tus gustos. ¡Elige un
+    destino y crea un viaje para compartir coche!
   </p>
 
   <!-- Spinner de carga -->
@@ -51,10 +60,12 @@
 
         <!-- Contenedor de acciones inferior fijo con mt-auto -->
         <div class="mt-auto pt-3 d-flex justify-content-center align-items-center gap-4 action-container">
-          <span class="small fw-bold action-link text-primary" role="button" (click)="buscarViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button"
+            (click)="buscarViajeDesde(rec.nombre_destino)">
             Buscar viaje aquí <i class="fi fi-rr-search"></i>
           </span>
-          <span class="small fw-bold action-link text-primary" role="button" (click)="crearViajeDesde(rec.nombre_destino)">
+          <span class="small fw-bold action-link text-primary" role="button"
+            (click)="crearViajeDesde(rec.nombre_destino)">
             Crear viaje aquí <i class="fi fi-rr-plus"></i>
           </span>
         </div>
