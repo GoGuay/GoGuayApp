@@ -261,34 +261,43 @@ export class SaldoTransferenciasPage implements OnInit {
   }
 
   onInputChange(valorSeleccionado?: any) {
+    console.log('Valor oninputchange: ', valorSeleccionado);
+
+    const nuevoValor = (typeof valorSeleccionado === 'object' && valorSeleccionado !== null)
+      ? valorSeleccionado.valor
+      : valorSeleccionado;
+
+    if (this.opcion_retirada_elegida === nuevoValor) {
+      return;
+    }
+    this.opcion_retirada_elegida = nuevoValor;
     if (typeof valorSeleccionado === 'object' && valorSeleccionado !== null) {
-      this.opcion_retirada_elegida = valorSeleccionado.valor;
-      this.modalConfirmarTransferencia(valorSeleccionado.desripcion);
-    } else {
-      this.opcion_retirada_elegida = valorSeleccionado;
+      this.modalConfirmarTransferencia(valorSeleccionado.descripcion);
     }
   }
 
   // TODO¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!
   modalConfirmarTransferencia(valorSeleccionado?: string) {
+    console.log ('Valor seleccionado: ', valorSeleccionado)
     this.translate
       .get([
         'Transferencia a tu favor',
-        `Vas a hacer una transferencia a través de........${valorSeleccionado}`,
-        'AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION',
+        `Vas a hacer una transferencia a través de ${valorSeleccionado}`,
+
       ])
       .subscribe((translations) => {
         const titulo = translations['Transferencia a tu favor'];
-        const mensaje = translations[`Vas a hacer una transferencia a través de........${valorSeleccionado}`];
-        const descripcion = translations['AJUSTESAPP.ELIMINARCTA.MODAL_DESCRIPCION'];
+        const mensaje = translations[`Vas a hacer una transferencia a través de ${valorSeleccionado}`];
 
         const dialogRef = this.dialog.open(HelpModalComponent, {
-          data: { title: titulo, message: mensaje, descripcion: descripcion, showAcceptButton: true, eliminacion_cuenta: true },
+          data: { title: titulo, message: mensaje,  showAcceptButton: true, eliminacion_cuenta: false },
           disableClose: true,
         });
         dialogRef.afterClosed().subscribe((confirmar) => {
-          if (confirmar) {
+          if (confirmar === 'registro') {
             //
+          }else{
+            this.opcion_retirada_elegida = ''
           }
         });
       });
@@ -314,7 +323,7 @@ export class SaldoTransferenciasPage implements OnInit {
     });
   }
 
-  
+
   async abrirIncidenciaPago() {
     const modal = await this.modalController.create({
       component: AbrirIncidenciaModalComponent,
