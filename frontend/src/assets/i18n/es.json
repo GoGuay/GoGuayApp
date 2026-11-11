@@ -269,7 +269,7 @@
 
   "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
   "BUSCADOR": {
-    "TITULO": "¿Estás buscando un viaje?",
+    "TITULO": "Introduce origen, destino y fecha.",
     "BUSCAR_VIAJE_DESDE": "Desde...",
     "BUSCAR_VIAJE_HASTA": "Hasta...",
 
@@ -619,7 +619,7 @@
   },
   "_Búsqueda de viaje": "/busqueda-viajes",
   "BUSQUEDA": {
-    "FILTRAR_POR": "Filtrar por...",
+    "ORDENAR_POR": "Ordenar por...",
     "HORA_SALIDA": "Hora de salida",
     "PRECIO": "Precio",
     "NUEVO": "Más reciente",

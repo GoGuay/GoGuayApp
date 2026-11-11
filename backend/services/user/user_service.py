@@ -1114,7 +1114,7 @@ def create_order():
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
     payload = {
-        "intent": "AUTHORIZE",
+        "intent": "CAPTURE",
         "purchase_units": [{
             "reference_id": str(viaje_id),
             "amount": {
@@ -1158,7 +1158,7 @@ def create_order():
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/authorize", headers=headers)
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
     
     capture_data = response.json()
     

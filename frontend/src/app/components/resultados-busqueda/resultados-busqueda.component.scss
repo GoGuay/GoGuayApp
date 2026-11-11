@@ -122,7 +122,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 .position-relative {
@@ -135,6 +135,74 @@
   border-radius: 50%;
   overflow: hidden;
 }
+
+ion-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estilo del Popover */
+/* Estilo del Popover de Filtros */
+ion-popover {
+  --width: 280px;
+  --border-radius: 15px;
+  --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  ion-content {
+    --background: #ffffff;
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+
+  /* Ajustes para el Radio Group */
+  ion-radio-group {
+    display: block;
+    background: #fff;
+    border-radius: 15px !important;
+    overflow: hidden;
+  }
+
+  ion-item {
+    --padding-start: 12px;
+    --inner-padding-end: 12px;
+    --min-height: 48px;
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+
+    &:hover {
+      --background: #f5f5f5;
+      border-radius: 15px !important;
+      cursor: pointer;
+    }
+
+    ion-radio {
+      --color: #666;
+      --color-checked: #E0A667;
+      color: black !important;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Botón que abre el filtro */
+.btn-filtro-principal {
+  --border-radius: 25px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --color: #000;
+  --border-color: #ccc;
+  height: 45px;
+  font-weight: 600;
+  text-transform: none;
+  margin-bottom: 10px;
+}
+
+
 
 @keyframes shimmer {
   0% {
@@ -246,7 +314,7 @@
   }
 
   .btn-viaje {
-    flex: 1 1 auto; 
+    flex: 1 1 auto;
     justify-content: center;
     font-size: 0.75rem;
     padding: 8px 10px;
@@ -283,7 +351,7 @@
   border-radius: 16px;
   background-color: #fff;
   transition: transform 0.2s;
-  overflow: hidden; 
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-right: 6px !important;
 
@@ -293,21 +361,21 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 6px; 
-    
+    width: 6px;
+
     background: linear-gradient(
-      to bottom, 
-      #ffb3ba, 
-      #ffdfba, 
-      #ffffba, 
-      #baffc9, 
-      #bae1ff, 
+      to bottom,
+      #ffb3ba,
+      #ffdfba,
+      #ffffba,
+      #baffc9,
+      #bae1ff,
       #e0baff
     );
 
     border-radius: 16px 0 0 16px;
   }
-  
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
@@ -360,7 +428,7 @@
   position: relative;
   display: inline-block;
   cursor: pointer;
-  
+
   .img-conductor {
     width: 60px;
     height: 60px;
@@ -405,7 +473,7 @@
   align-items: center;
   gap: 5px;
   transition: all 0.2s;
-  
+
   &.btn-info-pride { background: #e2e2e2; color: #444; }
   &.btn-join { background: #f3ffaf; color: #444; border: 1px solid #d4e08c; }
   &.btn-chat { background: #539494; color: #fff; }
