@@ -114,14 +114,14 @@ export class MonederoService {
    * @param code Código de autorización OAuth recibido en la URL.
    * @param redirectUri URL de retorno utilizada en la petición inicial.
    */
-  vincularCuentaPaypal(usuarioId: number, code: string, redirectUri: string): Observable<any> {
+  vincularCuentaPaypal(usuarioId: number, payerId: string, emailPaypal: string): Observable<any> {
     return this.http
       .post<any>(
         `${this.apiUrl}/monedero/vincular-paypal`,
         {
           usuario_id: usuarioId,
-          code,
-          redirect_uri: redirectUri,
+          payer_id: payerId,
+          email_paypal: emailPaypal,
         },
         { headers: this.getAuthHeaders() }
       )

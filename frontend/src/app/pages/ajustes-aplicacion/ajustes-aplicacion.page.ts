@@ -20,7 +20,8 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { log } from 'console';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { MonederoService } from 'src/app/core/monedero-service/monedero.service';
-import { PAYPAL_REDIRECT_URI } from 'src/app/models/constantes/constantes.model';
+import { PAYPAL_CLIENT_ID, PAYPAL_REDIRECT_URI } from 'src/app/models/constantes/constantes.model';
+import { loadScript } from '@paypal/paypal-js';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -29,14 +30,14 @@ import { PAYPAL_REDIRECT_URI } from 'src/app/models/constantes/constantes.model'
   standalone: true,
   providers: [MessageService],
   imports: [
-    CommonModule, 
-    FormsModule, 
-    NavbarComponent, 
-    IonicModule, 
-    ToastModule, 
-    MatDividerModule, 
-    TranslateModule, 
-    FormsModule, 
+    CommonModule,
+    FormsModule,
+    NavbarComponent,
+    IonicModule,
+    ToastModule,
+    MatDividerModule,
+    TranslateModule,
+    FormsModule,
     SpinnerComponent
 
   ],
@@ -134,6 +135,7 @@ export class AjustesAplicacionPage implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params['tab'] === 'cuenta') {
         this.segmentoSeleccionado = 'cuenta';
+        this.intentarRenderizarPaypal();
       }
 
       // Captura el callback OAuth de PayPal cuando redirige de vuelta
@@ -174,12 +176,39 @@ export class AjustesAplicacionPage implements OnInit {
     });
   }
 
+  onSegmentoChange() {
+    if (this.segmentoSeleccionado === 'cuenta') {
+      this.intentarRenderizarPaypal();
+    }
+  }
+
+  onMetodoCobroChange() {
+    if (this.metodoCobroPredeterminado === 'paypal') {
+      this.intentarRenderizarPaypal();
+    }
+  }
+
+  private intentarRenderizarPaypal() {
+    if (
+      this.segmentoSeleccionado === 'cuenta' &&
+      this.metodoCobroPredeterminado === 'paypal' &&
+      !this.paypalVinculado
+    ) {
+      setTimeout(() => {
+        this.renderizarBotonPaypal();
+      }, 100);
+    }
+  }
+
   obtenerUsuario() {
     this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((respuesta) => {
       this.usuarioBD = respuesta;
       console.log(this.usuarioBD);
       this.emailPaypal = this.usuarioBD.paypal_email;
       this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
+      if (!this.paypalVinculado) {
+        this.intentarRenderizarPaypal();
+      }
     });
   }
 
@@ -530,6 +559,77 @@ export class AjustesAplicacionPage implements OnInit {
   conectarConPaypal() {
     this.vinculandoPaypal = true;
     window.location.href = this.monederoService.obtenerUrlAutorizacionPaypal();
+  }
+
+  async renderizarBotonPaypal() {
+    if (this.paypalVinculado) return;
+
+    try {
+      const paypal = await loadScript({
+        clientId: PAYPAL_CLIENT_ID,
+        currency: 'EUR',
+        intent: 'authorize',
+        disableFunding: 'card,credit,sepa',
+      });
+
+      if (!paypal?.Buttons) return;
+
+      const contenedor = document.getElementById('paypal-button-container');
+      if (contenedor) {
+        contenedor.innerHTML = '';
+      }
+
+      await paypal.Buttons({
+        style: {
+          layout: 'horizontal',
+          color: 'blue',
+          shape: 'pill',
+          label: 'paypal',
+          tagline: false,
+        },
+        createOrder: (_data, actions) => {
+          return actions.order.create({
+            intent: 'AUTHORIZE',
+            purchase_units: [
+              {
+                description: 'Verificación de cuenta PayPal - GoGuay',
+                amount: { currency_code: 'EUR', value: '0.01' },
+              },
+            ],
+          });
+        },
+        onApprove: async (_data, actions) => {
+          if (!actions.order || !this.userData?.usuario?.id) return;
+          this.vinculandoPaypal = true;
+
+          const detalles = await actions.order.get();
+          const payerId = detalles.payer?.payer_id;
+          const emailPaypal = detalles.payer?.email_address;
+
+          if (payerId && emailPaypal) {
+            this.monederoService
+              .vincularCuentaPaypal(this.userData.usuario.id, payerId, emailPaypal)
+              .subscribe({
+                next: (res) => {
+                  this.paypalVinculado = true;
+                  this.emailPaypal = emailPaypal;
+                  this.vinculandoPaypal = false;
+                },
+                error: (err) => {
+                  console.error('Error guardando vinculación:', err);
+                  this.vinculandoPaypal = false;
+                },
+              });
+          }
+        },
+        onError: (err) => {
+          console.error('Error en popup de PayPal:', err);
+          this.vinculandoPaypal = false;
+        },
+      }).render('#paypal-button-container');
+    } catch (error) {
+      console.error('No se pudo cargar el SDK de PayPal:', error);
+    }
   }
 
   private procesarCallbackPaypal(code: string) {

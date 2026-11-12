@@ -9,7 +9,7 @@
 
     <!-- Selector de Pestañas -->
     <div class="segment-wrapper mb-4">
-      <ion-segment [(ngModel)]="segmentoSeleccionado" mode="ios" class="custom-segment">
+      <ion-segment [(ngModel)]="segmentoSeleccionado" (ionChange)="onSegmentoChange()" mode="ios" class="custom-segment">
         <ion-segment-button value="app">
           <ion-label>Ajustes de App</ion-label>
         </ion-segment-button>
@@ -135,8 +135,8 @@
               <div class="mt-3">
                 <p class="small text-muted mb-3">¿Dónde quieres recibir el dinero de tus viajes compartidos?</p>
 
-                <ion-radio-group [(ngModel)]="metodoCobroPredeterminado">
-                  <!-- COBRO PAYPAL -->
+                <ion-radio-group [(ngModel)]="metodoCobroPredeterminado" (ionChange)="onMetodoCobroChange()">
+                  <!-- CUENTA PAYPAL -->
                   <div class="payment-option-card">
                     <ion-item lines="none" class="rounded-pill-item">
                       <ion-icon name="logo-paypal" slot="start" class="paypal-icon"></ion-icon>
@@ -147,12 +147,7 @@
                     <div *ngIf="metodoCobroPredeterminado === 'paypal'" class="p-3 animate__animated animate__fadeIn">
                       <!-- Estado 1: Cuenta aún NO vinculada -->
                       <div *ngIf="!paypalVinculado" class="text-center">
-                        <button type="button" class="btn btn-paypal-connect" [disabled]="vinculandoPaypal"
-                          (click)="conectarConPaypal()">
-                          <ion-icon name="logo-paypal" class="btn-paypal-icon"></ion-icon>
-                          <span>{{ vinculandoPaypal ? 'Conectando con PayPal...' : 'Iniciar sesión y enlazar PayPal'
-                            }}</span>
-                        </button>
+                        <div id="paypal-button-container" class="paypal-sdk-wrapper"></div>
                       </div>
 
                       <!-- Estado 2: Cuenta YA vinculada -->
