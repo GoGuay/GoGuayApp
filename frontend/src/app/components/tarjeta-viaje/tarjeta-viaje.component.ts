@@ -147,7 +147,7 @@ export class TarjetaViajeComponent implements OnInit {
     this.cargandoViajes = true;
 
     forkJoin({
-      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(
+      acompanante: this.travelService.getViajesComoAcompanante(userId).pipe(
         catchError(err => {
           console.error('❌ Error cargando viajes acompañante:', err);
           return of([]);
@@ -823,7 +823,7 @@ export class TarjetaViajeComponent implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
-    this.travelService.getViajesComoAcompañante(this.userData.usuario.id).subscribe((result) => {
+    this.travelService.getViajesComoAcompanante(this.userData.usuario.id).subscribe((result) => {
       this.misViajesAcompanante = result;
       this.cargandoViajes = false;
       this.filtrarViajes();

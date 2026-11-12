@@ -140,15 +140,35 @@
                   <div class="payment-option-card">
                     <ion-item lines="none" class="rounded-pill-item">
                       <ion-icon name="logo-paypal" slot="start" class="paypal-icon"></ion-icon>
-                      <ion-label>Recibir en PayPal</ion-label>
+                      <ion-label>PayPal</ion-label>
                       <ion-radio slot="end" value="paypal"></ion-radio>
                     </ion-item>
 
                     <div *ngIf="metodoCobroPredeterminado === 'paypal'" class="p-3 animate__animated animate__fadeIn">
-                      <div class="form-floating mb-2">
-                        <input type="email" class="form-control custom-input" id="cobroPaypalEmail"
-                          placeholder="correo@ejemplo.com" [(ngModel)]="cobroEmailPaypal" />
-                        <label for="cobroPaypalEmail">Email de cobros PayPal</label>
+                      <!-- Estado 1: Cuenta aún NO vinculada -->
+                      <div *ngIf="!paypalVinculado" class="text-center">
+                        <button type="button" class="btn btn-paypal-connect" [disabled]="vinculandoPaypal"
+                          (click)="conectarConPaypal()">
+                          <ion-icon name="logo-paypal" class="btn-paypal-icon"></ion-icon>
+                          <span>{{ vinculandoPaypal ? 'Conectando con PayPal...' : 'Iniciar sesión y enlazar PayPal'
+                            }}</span>
+                        </button>
+                      </div>
+
+                      <!-- Estado 2: Cuenta YA vinculada -->
+                      <div *ngIf="paypalVinculado" class="paypal-linked-card">
+                        <div class="d-flex align-items-center gap-2">
+                          <ion-icon name="checkmark-circle" class="text-success paypal-check-icon"></ion-icon>
+                          <div class="div_paypal_vinculado">
+                            <div class="fw-bold small text-dark">Cuenta PayPal vinculada</div>
+                            <div class="text-muted small">{{ emailPaypal }}</div>
+                          </div>
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                          [disabled]="vinculandoPaypal" (click)="desvincularPaypal()">
+                          Desvincular
+                        </button>
                       </div>
                     </div>
                   </div>

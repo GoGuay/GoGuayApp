@@ -15,6 +15,7 @@ class Usuario(db.Model):
     password = db.Column(db.String(250), nullable=True)
     emailVerificado = db.Column(db.Boolean, default=False)
     telefonoVerificado = db.Column(db.Boolean, default=False, nullable=True)
+
     # --- 2. DATOS PERSONALES ---
     nombre = db.Column(db.String(120), nullable=False)
     apellidos = db.Column(db.String(250), nullable=False)
@@ -36,16 +37,26 @@ class Usuario(db.Model):
     rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)    
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
+
     # --- 4. MÉTODOS DE PAGO Y COBRO ---
     metodo_pago_preferido = db.Column(db.String(50), nullable=True, default='paypal')
     metodo_cobro_preferido = db.Column(db.String(50), nullable=True, default='transferencia')
+    
+    # PayPal (Vinculación OAuth)
     paypal_email = db.Column(db.String(250), nullable=True)
+    paypal_payer_id = db.Column(db.String(100), unique=True, nullable=True)
+    paypal_vinculado = db.Column(db.Boolean, default=False, nullable=False)
+    paypal_fecha_vinculacion = db.Column(db.DateTime, nullable=True)
+    
+    # Tarjeta Bancaria (Pagos)
     tarjeta_numero = db.Column(db.String(20), nullable=True) 
     tarjeta_caducidad = db.Column(db.String(7), nullable=True) 
-    tarjeta_titular = db.Column(db.String(120), nullable=True)    
-    cobro_paypal_email = db.Column(db.String(250), nullable=True)
+    tarjeta_titular = db.Column(db.String(120), nullable=True)
+    
+    # Transferencia Bancaria (Cobros)
     cobro_iban = db.Column(db.String(34), nullable=True) 
     cobro_titular = db.Column(db.String(120), nullable=True)
+
     # --- 5. CONTROL, SANCIONES Y BORRADO LÓGICO ---
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
@@ -54,12 +65,14 @@ class Usuario(db.Model):
     bloqueado_hasta = db.Column(db.DateTime, nullable=True) 
     ya_ha_sido_suspendido = db.Column(db.Boolean, default=False)     
     motivo_bloqueo = db.Column(db.String(255), nullable=True) 
+
     # --- Eliminación del perfil ---
     perfil_eliminado_por_usuario = db.Column(db.Boolean, default=False, nullable=False)
     fecha_eliminacion_por_usuario = db.Column(db.DateTime, nullable=True)
     fecha_limite_reactivacion = db.Column(db.DateTime, nullable=True)
     fecha_prevista_borrado_definitivo = db.Column(db.DateTime, nullable=True)
     contador_reactivaciones_perfil = db.Column(db.Integer, default=0, nullable=False)
+
     # --- 6. ÍNDICES ÚNICOS PARCIALES ---
     #La regla para que el email/telefono sea único sólo se aplica a los usuarios activos (perfil_eliminado_por_usuario  = False)
     __table_args__ = (
@@ -236,13 +249,14 @@ class Usuario(db.Model):
             ],
             "metodo_pago_preferido": self.metodo_pago_preferido,
             "paypal_email": self.paypal_email,
+            "paypal_payer_id": self.paypal_payer_id,
+            "paypal_vinculado": self.paypal_vinculado,
             "tarjeta_info": {
                 "numero": tarjeta_enmascarada,
                 "caducidad": self.tarjeta_caducidad,
                 "titular": self.tarjeta_titular
             } if self.metodo_pago_preferido == 'tarjeta' else None,
             "metodo_cobro_preferido": self.metodo_cobro_preferido,
-            "cobro_paypal_email": self.cobro_paypal_email,
             "cobro_iban": self.cobro_iban,
             "cobro_titular": self.cobro_titular,
             "created_at": self.created_at.isoformat(),

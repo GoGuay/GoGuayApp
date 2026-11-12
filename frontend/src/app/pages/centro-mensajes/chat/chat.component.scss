@@ -64,15 +64,15 @@ ion-fab.fab-atras {
 
 .btn-revocar-simple {
   background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ff4d4d;
-  color: #ff4d4d;
+  border: 1px solid #E0B6B6;
+  color: #E0B6B6;
   padding: 6px 15px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   transition: all 0.2s;
   
-  &:hover { background: #ff4d4d; color: white; }
+  &:hover { background: #E0B6B6; color: white; }
 }
 
 .chat-container {
@@ -128,7 +128,7 @@ ion-fab.fab-atras {
 }
 
 .mensaje-burbuja {
-  max-width: 85%; // En PC se verá más como un chat real
+  max-width: 85%; 
   padding: 10px 14px;
   position: relative;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
@@ -142,7 +142,7 @@ ion-fab.fab-atras {
 ion-fab.fab-atras {
   @media (min-width: 800px) {
     position: absolute !important;
-    left: -80px !important; // Lo saca fuera del cuerpo del chat en PC
+    left: -80px !important; 
     bottom: 20px !important;
   }
   

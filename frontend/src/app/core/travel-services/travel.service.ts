@@ -174,7 +174,7 @@ export class TravelService {
    * @param id_usuario Recibe el ID del usuario
    * @returns Devuelve la lista de viajes.
    */
-  getViajesComoAcompañante(id_usuario: number): Observable<any> {
+  getViajesComoAcompanante(id_usuario: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/travel/viajes_como_acompanante/${id_usuario}`);
   }
 
