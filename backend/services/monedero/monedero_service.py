@@ -315,5 +315,7 @@ def transferencia_desde_monedero(usuario_id):
         print(f"Error al procesar la retirada de fondos: {str(e)}")
         return jsonify({"error": f"Error interno al procesar la transferencia: {str(e)}"}), 500
 
+
+
     
     

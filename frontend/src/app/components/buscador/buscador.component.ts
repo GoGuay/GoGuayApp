@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
@@ -87,8 +80,9 @@ export class BuscadorComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      if (params['destino']) {
+      if (params['origen'] && ['destino']) {
         this.destinoCtrl.valorTexto = params['destino'];
+        this.origenCtrl.valorTexto = params['origen'];
       }
     });
   }
@@ -161,33 +155,18 @@ export class BuscadorComponent implements OnInit {
    * @param localidad
    */
   seleccionarLocalidadOrigen(localidad: any) {
-    this.buscadorLocalidadesService.seleccionarLocalidad(
-      this.origenCtrl,
-      localidad,
-      this.inputOrigen,
-    );
+    this.buscadorLocalidadesService.seleccionarLocalidad(this.origenCtrl, localidad, this.inputOrigen);
   }
 
   seleccionarLocalidadDestino(localidad: any) {
-    this.buscadorLocalidadesService.seleccionarLocalidad(
-      this.destinoCtrl,
-      localidad,
-      this.inputDestino,
-    );
+    this.buscadorLocalidadesService.seleccionarLocalidad(this.destinoCtrl, localidad, this.inputDestino);
   }
 
-  limpiarSugerencias(
-    tipo: 'origen' | 'destino',
-    devolverFoco: boolean = false,
-  ) {
+  limpiarSugerencias(tipo: 'origen' | 'destino', devolverFoco: boolean = false) {
     const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
     const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
 
-    this.buscadorLocalidadesService.limpiarSugerencias(
-      control,
-      inputRef,
-      devolverFoco,
-    );
+    this.buscadorLocalidadesService.limpiarSugerencias(control, inputRef, devolverFoco);
   }
 
   buscar() {
@@ -228,30 +207,15 @@ export class BuscadorComponent implements OnInit {
 
   //NAVEGACIÓN DEL TECLADO
 
-  manejarNavegacionTeclado(
-    event: KeyboardEvent,
-    tipo: 'origen' | 'destino',
-    index: number = -1,
-  ) {
+  manejarNavegacionTeclado(event: KeyboardEvent, tipo: 'origen' | 'destino', index: number = -1) {
     const control = tipo === 'origen' ? this.origenCtrl : this.destinoCtrl;
-    const selector =
-      tipo === 'origen'
-        ? '.lista_sugerencias_origen'
-        : '.lista_sugerencias_destino';
+    const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
     const inputRef = tipo === 'origen' ? this.inputOrigen : this.inputDestino;
 
-    this.buscadorLocalidadesService.manejarNavegacionTeclado(
-      event,
-      control,
-      selector,
-      inputRef,
-    );
+    this.buscadorLocalidadesService.manejarNavegacionTeclado(event, control, selector, inputRef);
   }
 
-  private actualizarIndiceYFoco(
-    tipo: 'origen' | 'destino',
-    nuevoIndice: number,
-  ) {
+  private actualizarIndiceYFoco(tipo: 'origen' | 'destino', nuevoIndice: number) {
     if (tipo === 'origen') {
       this.indiceActivoOrigen = nuevoIndice;
     } else {
@@ -260,10 +224,7 @@ export class BuscadorComponent implements OnInit {
 
     if (nuevoIndice !== -1) {
       // Selector dinámico basado en el tipo
-      const selector =
-        tipo === 'origen'
-          ? '.lista_sugerencias_origen'
-          : '.lista_sugerencias_destino';
+      const selector = tipo === 'origen' ? '.lista_sugerencias_origen' : '.lista_sugerencias_destino';
       setTimeout(() => {
         const elementos = document.querySelectorAll(selector);
         (elementos[nuevoIndice] as HTMLElement)?.focus();
@@ -275,9 +236,7 @@ export class BuscadorComponent implements OnInit {
     setTimeout(() => {
       if (tipo === 'origen') {
         const textoActual = this.origen.trim();
-        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion
-          .split(',')[0]
-          .trim();
+        const textoValido = this.ultimaLocalidadValidaOrigen?.descripcion.split(',')[0].trim();
 
         if (textoActual === '') {
           this.ultimaLocalidadValidaOrigen = null;
@@ -298,9 +257,7 @@ export class BuscadorComponent implements OnInit {
           this.limpiarSugerencias('destino', false);
           return;
         }
-        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion
-          .split(',')[0]
-          .trim();
+        const textoValido = this.ultimaLocalidadValidaDestino?.descripcion.split(',')[0].trim();
 
         if (!this.ultimaLocalidadValidaDestino || textoActual !== textoValido) {
           this.destino = '';

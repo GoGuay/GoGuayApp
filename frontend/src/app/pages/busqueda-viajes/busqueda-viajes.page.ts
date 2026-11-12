@@ -47,11 +47,11 @@ export class BusquedaViajesPage implements OnInit {
   listado_viajes: Viaje[] = [];
 
   constructor(
-    private route: ActivatedRoute, 
-    private funcionesComunes: FuncionesComunes, 
-    private location: Location, 
+    private route: ActivatedRoute,
+    private funcionesComunes: FuncionesComunes,
+    private location: Location,
     private navCtrl: NavController,
-    private modalController: ModalController, 
+    private modalController: ModalController,
     public messageService: MessageService) { }
 
   ngOnInit() {
@@ -98,7 +98,7 @@ export class BusquedaViajesPage implements OnInit {
   }
 
   /**
-   * Función para actualizar los parámetros de búsqueda 
+   * Función para actualizar los parámetros de búsqueda
    * cuando el componente hijo emite un evento con los nuevos parámetros
    * @param event --> Objeto con los nuevos parámetros de búsqueda
    */
@@ -112,7 +112,6 @@ export class BusquedaViajesPage implements OnInit {
    * Esta función se utiliza para mostrar u ocultar el botón de filtro dependiendo de si hay parámetros de búsqueda o no.
    */
   tieneParametros(): boolean {
-    // Comprueba si el objeto tiene alguna clave (propiedad)
     return Object.keys(this.busquedaParams).length > 0;
   }
 

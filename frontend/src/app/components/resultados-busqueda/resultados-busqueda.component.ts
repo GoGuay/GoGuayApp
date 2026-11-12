@@ -16,17 +16,10 @@ import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { CancelarSolicitudModalComponent } from '../cancelar-solicitud/cancelar-solicitud-modal.compmonent';
 
-
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [
-    IonicModule,
-    TranslateModule,
-    CommonModule,
-    SpinnerComponent,
-    LoadTravelLineComponent
-],
+  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
   templateUrl: './resultados-busqueda.component.html',
   styleUrls: ['./resultados-busqueda.component.scss'],
 })
@@ -39,6 +32,8 @@ export class ResultadosBusquedaComponent implements OnInit {
   isLoading: boolean = false;
   imagenesCargadas: { [key: number]: boolean } = {};
   usuariosCache: Map<number, any> = new Map();
+  haBuscado: boolean = false;
+  public mostrarColumna: boolean = false;
 
   /**
    * Variables de entrada para el filtro
@@ -53,7 +48,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     private navCtrl: NavController,
     private dialog: MatDialog,
     public messagingService: MessagingService
-  ) { }
+  ) {}
 
   /**
    * Función que se ejecuta cuando hay cambios en las variables de entrada
@@ -62,11 +57,13 @@ export class ResultadosBusquedaComponent implements OnInit {
     if (changes['filtroOrden'] && !changes['filtroOrden'].firstChange) {
       this.filtroSeleccionado = changes['filtroOrden'].currentValue;
       this.aplicarFiltro();
+      this.verificarParametros()
     }
 
     // Si cambian los parámetros de búsqueda, decidimos qué cargar
     if (changes['paramsBusqueda']) {
       this.cargarDatos();
+      this.verificarParametros()
     }
   }
 
@@ -77,38 +74,59 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.funcionesComunes.getBaseUrl();
   }
 
+  tieneParametros(): boolean {
+    if (this.haBuscado && Object.keys(this.paramsBusqueda).length !== 0 && this.listado_viajes.length !== 0 && !this.isLoading) {
+      return true;
+    }
+    return false;
+  }
+
+  verificarParametros() {
+    this.mostrarColumna = this.tieneParametros();
+  }
+
+  onFiltroChange(event: any, popover: any) {
+    const valor = event.detail.value;
+    this.filtroSeleccionado = valor;
+    popover.dismiss();
+  }
+
   cargarDatos() {
     const tieneFiltros =
       this.paramsBusqueda &&
       Object.keys(this.paramsBusqueda).length > 0 &&
-      Object.values(this.paramsBusqueda).some(
-        (val) => val !== '' && val !== null && val !== undefined
-      );
+      Object.values(this.paramsBusqueda).some((val) => val !== '' && val !== null && val !== undefined);
 
-      if (!tieneFiltros) {
-        this.listado_viajes = [];
-        this.isLoading = false;
-        return;
-      }
+    if (!tieneFiltros) {
+      this.listado_viajes = [];
+      this.isLoading = false;
+      return;
+    }
 
-      this.isLoading = true;
+    this.isLoading = true;
 
-      this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
+    this.travelService.obtenerViajesFiltrados(this.paramsBusqueda).subscribe({
       next: (viajes) => {
         this.listado_viajes = viajes
-          .filter(viaje => viaje.estado_viaje !== 'Finalizado')
-          .map(viaje => {
+          .filter((viaje) => viaje.estado_viaje !== 'Finalizado' && viaje.estado_viaje !== 'Cancelado')
+          .map((viaje) => {
             return {
               ...viaje,
-              duracion_calculada: this.calcularDuracion(viaje.hora_salida, viaje.hora_llegada)
+              duracion_calculada: this.calcularDuracion(viaje.hora_salida, viaje.hora_llegada),
             };
           });
-        this.cargarUsuariosParaViajes(this.listado_viajes);
+        if (this.listado_viajes.length === 0) {
+          this.haBuscado = true;
+          this.isLoading = false;
+        } else {
+          this.cargarUsuariosParaViajes(this.listado_viajes);
+          this.haBuscado = false;
+        }
       },
       error: (err) => {
         this.isLoading = false;
         this.listado_viajes = [];
-      }
+      },
     });
   }
 
@@ -124,28 +142,26 @@ export class ResultadosBusquedaComponent implements OnInit {
       if (this.usuariosCache.has(id)) {
         return of(this.usuariosCache.get(id));
       }
-      return this.userService
-        .obtenerUsuarioPorID(id)
-        .pipe(
-          tap((user) => this.usuariosCache.set(id, user)),
-          catchError(err => {
-            console.error(`Error cargando usuario ${id}`, err);
-            return of(null);
-          })
-        );
-        });
+      return this.userService.obtenerUsuarioPorID(id).pipe(
+        tap((user) => this.usuariosCache.set(id, user)),
+        catchError((err) => {
+          console.error(`Error cargando usuario ${id}`, err);
+          return of(null);
+        })
+      );
+    });
 
-        forkJoin(solicitudesUsuarios).subscribe({
-          next: () => {
-            this.listado_viajes.forEach((viaje) => {
-              viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
-            });
-            this.aplicarFiltro();
-          },
-          complete: () => {
-            this.isLoading = false;
-          }
-      });
+    forkJoin(solicitudesUsuarios).subscribe({
+      next: () => {
+        this.listado_viajes.forEach((viaje) => {
+          viaje.usuario = this.usuariosCache.get(viaje.usuario_id);
+        });
+        this.aplicarFiltro();
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
 
   /**
@@ -183,7 +199,7 @@ export class ResultadosBusquedaComponent implements OnInit {
   obtenerListaViajes() {
     this.isLoading = true;
     this.travelService.obtenerTodosLosViajes().subscribe((viajes) => {
-      this.listado_viajes = viajes.filter(v => v.estado_viaje !== 'Finalizado');
+      this.listado_viajes = viajes.filter((v) => v.estado_viaje !== 'Finalizado' && v.estado_viaje !== 'Cancelado');
 
       const idsUnicos = [...new Set(viajes.map((v) => v.usuario_id))];
 
@@ -191,9 +207,7 @@ export class ResultadosBusquedaComponent implements OnInit {
         if (this.usuariosCache.has(id)) {
           return of(this.usuariosCache.get(id));
         }
-        return this.userService
-          .obtenerUsuarioPorID(id)
-          .pipe(tap((user) => this.usuariosCache.set(id, user)));
+        return this.userService.obtenerUsuarioPorID(id).pipe(tap((user) => this.usuariosCache.set(id, user)));
       });
 
       forkJoin(solicitudesUsuarios).subscribe(() => {
@@ -244,13 +258,9 @@ export class ResultadosBusquedaComponent implements OnInit {
    */
   aplicarFiltro() {
     if (this.filtroSeleccionado === 'precioAsc') {
-      this.listado_viajes.sort(
-        (a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0),
-      );
+      this.listado_viajes.sort((a, b) => (a.precio_viaje || 0) - (b.precio_viaje || 0));
     } else if (this.filtroSeleccionado === 'precioDesc') {
-      this.listado_viajes.sort(
-        (a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0),
-      );
+      this.listado_viajes.sort((a, b) => (b.precio_viaje || 0) - (a.precio_viaje || 0));
     } else if (this.filtroSeleccionado === 'horaSalida') {
       const horaActual = new Date();
       const horaActualMilisegundos = horaActual.getTime();
@@ -277,29 +287,28 @@ export class ResultadosBusquedaComponent implements OnInit {
   }
 
   /**
-   * Función para marcar que la imagen de un viaje ha sido cargada, evitando mostrar 
+   * Función para marcar que la imagen de un viaje ha sido cargada, evitando mostrar
    * el spinner en viajes que ya han cargado su imagen previamente.
-   * 
+   *
    * @param viajeId ID del viaje cuya imagen ha sido cargada
    */
   marcarImagenComoCargada(viajeId: number) {
     this.imagenesCargadas[viajeId] = true;
   }
 
-
   /**
    * Función para calcular la duración de un trayecto entre dos horas.
-   * 
+   *
    * @param horaSalida --> Hora de salida del viaje en formato "HH:mm"
    * @param horaLlegada --> Hora de llegada del viaje en formato "HH:mm"
-   * @returns --> Duración del viaje en formato "Xh Ymin", "Xh" o "Ymin". Si las horas son iguales, 
+   * @returns --> Duración del viaje en formato "Xh Ymin", "Xh" o "Ymin". Si las horas son iguales,
    * devuelve un mensaje indicando que la duración no está disponible.
    */
   calcularDuracion(horaSalida: string, horaLlegada: string): string {
     if (!horaSalida || !horaLlegada) return '---';
 
     if (horaSalida === horaLlegada) {
-      return 'Duración estimada no disponible'; 
+      return 'Duración estimada no disponible';
     }
 
     const [h1, m1] = horaSalida.split(':').map(Number);
@@ -309,7 +318,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     let minutosFin = h2 * 60 + m2;
 
     if (minutosFin < minutosInicio) {
-      minutosFin += 24 * 60; 
+      minutosFin += 24 * 60;
     }
 
     const diferenciaTotal = minutosFin - minutosInicio;
@@ -321,16 +330,14 @@ export class ResultadosBusquedaComponent implements OnInit {
     return `${horas}h ${minutos}min`;
   }
 
-
   unirseAViaje(viaje: Viaje) {
     if (!this.userLoggedIn) {
-        this.redirigirAlLogin();
-        return;
-      }
-      
-      this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
-  }
+      this.redirigirAlLogin();
+      return;
+    }
 
+    this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
+  }
 
   estaUnido(viaje: Viaje): boolean {
     if (!this.userData?.usuario?.id) return false;
@@ -350,7 +357,7 @@ export class ResultadosBusquedaComponent implements OnInit {
     this.travelService.unirseAViaje(viaje.id).subscribe({
       next: (viajesActualizados: Viaje[]) => {
         // Buscamos el viaje actualizado en la respuesta para refrescar la UI local
-        const actualizado = viajesActualizados.find(v => v.id === viaje.id);
+        const actualizado = viajesActualizados.find((v) => v.id === viaje.id);
         if (actualizado) {
           // Actualizamos la referencia en el listado para que cambie el botón
           Object.assign(viaje, actualizado);
@@ -359,7 +366,7 @@ export class ResultadosBusquedaComponent implements OnInit {
       },
       error: () => {
         this.funcionesComunes.openErrorModal(title_error, 'No se pudo procesar la reserva.');
-      }
+      },
     });
   }
 
@@ -381,10 +388,7 @@ export class ResultadosBusquedaComponent implements OnInit {
         };
 
         this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
-          this.funcionesComunes.openConfirmModal(
-            'Solicitud enviada',
-            'El conductor debe aceptar tu solicitud para unirte.'
-          );
+          this.funcionesComunes.openConfirmModal('Solicitud enviada', 'El conductor debe aceptar tu solicitud para unirte.');
           this.navCtrl.navigateForward(['/chat', convId]);
         });
       },
@@ -408,7 +412,7 @@ export class ResultadosBusquedaComponent implements OnInit {
    * Función para contactar con el conductor a través del chat, recibiendo el viaje seleccionado.
    * Si el usuario no está logueado, se redirige al login.
    * Si el usuario está logueado, se inicia una conversación con el conductor y se redirige al chat.
-   * 
+   *
    * @param viaje --> Viaje seleccionado para contactar con el conductor
    */
   contactarConConductor(viaje: Viaje) {
@@ -421,7 +425,7 @@ export class ResultadosBusquedaComponent implements OnInit {
         next: (res) => {
           this.navCtrl.navigateForward(['/chat', res.conversacion_id]);
         },
-        error: (err) => console.error('Error al iniciar chat:', err)
+        error: (err) => console.error('Error al iniciar chat:', err),
       });
     } else {
       // Si no hay emisorId, es que no está logueado
@@ -430,19 +434,19 @@ export class ResultadosBusquedaComponent implements OnInit {
   }
 
   /**
-   * Función para abrir el modal de cancelación de solicitud, 
+   * Función para abrir el modal de cancelación de solicitud,
    * recibiendo el viaje para el cual se quiere cancelar la solicitud.
-   * 
+   *
    * @param viaje --> Viaje para el cual se quiere cancelar la solicitud
    */
   abrirModalCancelacion(viaje: Viaje) {
     const dialogRef = this.dialog.open(CancelarSolicitudModalComponent, {
       width: '400px',
       data: { viaje: viaje },
-      panelClass: 'custom-modal-cancelacion' 
+      panelClass: 'custom-modal-cancelacion',
     });
 
-    dialogRef.afterClosed().subscribe(razon => {
+    dialogRef.afterClosed().subscribe((razon) => {
       if (razon) {
         this.ejecutarCancelacion(viaje.id, razon);
       }
@@ -450,20 +454,19 @@ export class ResultadosBusquedaComponent implements OnInit {
   }
 
   /**
-   * Función para ejecutar la cancelación de una solicitud de viaje, 
+   * Función para ejecutar la cancelación de una solicitud de viaje,
    * recibiendo el ID del viaje y la razón de cancelación proporcionada por el usuario.
-   * 
+   *
    * @param viajeId --> ID del viaje para el cual se quiere cancelar la solicitud
    * @param razon --> Razón de cancelación proporcionada por el usuario
    */
   private ejecutarCancelacion(viajeId: number, razon: string) {
     console.log(`Cancelando viaje ${viajeId} por la razón: ${razon}`);
-    
   }
 
   /**
    * Función para verificar si el usuario tiene una solicitud pendiente para un viaje específico.
-   * 
+   *
    * @param viaje --> Viaje para el cual se quiere verificar la existencia de una solicitud pendiente
    * @returns Devuelve true si el usuario tiene una solicitud pendiente para el viaje, false en caso contrario.
    */

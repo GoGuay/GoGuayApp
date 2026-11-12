@@ -5,107 +5,219 @@
 </ng-container>
 
 <ng-template #contenidoReal>
-  <div class="container">
-    <div *ngIf="!paramsBusqueda || listado_viajes.length === 0 && !isLoading" class="text-center p-5">
-      <ion-icon name="search-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
-      <p class="mt-3 text-muted">Introduce origen, destino y fecha para encontrar viajes disponibles.</p>
-    </div>
-    <div *ngIf="listado_viajes.length === 0 && isLoading" class="d-flex justify-content-center align-content-center buscando-container">
-      <app-spinner></app-spinner>
-    </div>
+  <!-- CASO 1: HAY BÚSQUEDA PERO 0 RESULTADOS (Ocupa todo el ancho: col-12) -->
+  <ion-grid *ngIf="haBuscado && paramsBusqueda && listado_viajes.length === 0; else conResultados">
+    <ion-row>
+      <ion-col
+        size="12"
+        class="text-center"
+      >
+        <ion-icon
+          name="search-outline"
+          style="font-size: 48px; color: #ccc"
+        ></ion-icon>
+        <p class="mt-3 text-muted">No hemos encontrado viajes con esos parámetros</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-    <div class="columna_scroll" *ngIf="listado_viajes.length > 0">
-      <p class="resultados-titulo">{{ 'BUSQUEDA.RESULTADOS' | translate }}:</p>
-      
-      <div *ngFor="let viaje of listado_viajes" class="card viaje-card mb-4 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-9 p-3 col-trayecto">
-            
-            <div class="fecha-viaje mb-2">
-              <i class="fi fi-rr-calendar"></i>
-              <span>{{ viaje.fecha_salida | date:'d-MM-yyyy' }}</span>
+  <!-- CASO 2: CON RESULTADOS O ESTADO INICIAL -->
+  <ng-template #conResultados>
+    <ion-grid>
+      <ion-row>
+        <!-- COLUMNA DEL FILTRO (Aparece si tieneParametros() es true) -->
+        <ion-col
+          size="12"
+          size-md="4"
+          size-lg="2"
+          class="ion-text-start"
+          *ngIf="mostrarColumna"
+        >
+          <ion-button
+            id="open-filter"
+            fill="outline"
+            class="btn-filtro-principal"
+          >
+            <i class="fi fi-rr-settings-sliders me-2"></i>
+            {{ 'BUSQUEDA.ORDENAR_POR' | translate }}
+          </ion-button>
+
+          <ion-popover
+            #filtroPopover
+            trigger="open-filter"
+            triggerAction="click"
+            mode="ios"
+          >
+            <ng-template>
+              <ion-content class="ion-padding">
+                <ion-list lines="none">
+                  <ion-radio-group
+                    [value]="filtroSeleccionado"
+                    (ionChange)="onFiltroChange($event, filtroPopover)"
+                  >
+                    <ion-item>
+                      <ion-label>{{ 'BUSQUEDA.HORA_SALIDA' | translate }}</ion-label>
+                      <ion-radio value="horaSalida"></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>{{ 'BUSQUEDA.NUEVO' | translate }}</ion-label>
+                      <ion-radio value="recientes"></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>{{ 'BUSQUEDA.PRECIO_ASC' | translate }}</ion-label>
+                      <ion-radio value="precioAsc"></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>{{ 'BUSQUEDA.PRECIO_DESC' | translate }}</ion-label>
+                      <ion-radio value="precioDesc"></ion-radio>
+                    </ion-item>
+                  </ion-radio-group>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-col>
+
+        <!-- COLUMNA PRINCIPAL DE VIAJES -->
+        <ion-col
+          size="12"
+          [sizeMd]="tieneParametros() ? 8 : 12"
+          [sizeLg]="tieneParametros() ? 10 : 12"
+        >
+          <div class="container">
+            <div
+              *ngIf="listado_viajes.length === 0 && isLoading"
+              class="d-flex justify-content-center align-content-center buscando-container"
+            >
+              <app-spinner></app-spinner>
             </div>
 
-            <div class="d-flex align-items-center justify-content-between trayecto-container">
-              <div class="punto-viaje">
-                <span class="hora">{{ viaje.hora_salida }}</span>
-                <span class="ciudad">{{ viaje.origen }}</span>
-              </div>
+            <div
+              class="columna_scroll"
+              *ngIf="listado_viajes.length > 0"
+            >
+              <p class="resultados-titulo">{{ 'BUSQUEDA.RESULTADOS' | translate }}:</p>
 
-              <div class="timeline flex-grow-1 mx-3 text-center">
-                <div class="duracion-badge">{{ calcularDuracion(viaje.hora_salida, viaje.hora_llegada) }}</div>
-                <div class="linea-estilizada">
-                  <app-load-travel-line></app-load-travel-line>
+              <div
+                *ngFor="let viaje of listado_viajes"
+                class="card viaje-card mb-4 shadow-sm"
+              >
+                <div class="row g-0">
+                  <div class="col-md-9 p-3 col-trayecto">
+                    <div class="fecha-viaje mb-2">
+                      <i class="fi fi-rr-calendar"></i>
+                      <span>{{ viaje.fecha_salida | date: 'd-MM-yyyy' }}</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between trayecto-container">
+                      <div class="punto-viaje">
+                        <span class="hora">{{ viaje.hora_salida }}</span>
+                        <span class="ciudad">{{ viaje.origen }}</span>
+                      </div>
+
+                      <div class="timeline flex-grow-1 mx-3 text-center">
+                        <div class="duracion-badge">{{ calcularDuracion(viaje.hora_salida, viaje.hora_llegada) }}</div>
+                        <div class="linea-estilizada">
+                          <app-load-travel-line></app-load-travel-line>
+                        </div>
+                      </div>
+
+                      <div class="punto-viaje text-end">
+                        <span class="hora">{{ viaje.hora_llegada }}</span>
+                        <span class="ciudad">{{ viaje.destino }}</span>
+                      </div>
+                    </div>
+
+                    <div class="acciones-footer mt-3 d-flex align-items-center gap-2">
+                      <!-- Botón Detalle -->
+                      <button
+                        (click)="openDetalleViaje(viaje)"
+                        class="btn-viaje btn-info-pride"
+                      >
+                        <i class="fi fi-rr-file-circle-info"></i>
+                        Detalle
+                      </button>
+
+                      <!-- Bloque para usuarios que NO son el conductor -->
+                      <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
+                        <!-- BOTÓN UNIRSE / RESERVAR -->
+                        <button
+                          *ngIf="!estaUnido(viaje) && !tieneSolicitudPendiente(viaje)"
+                          class="btn-viaje btn-join"
+                          (click)="unirseAViaje(viaje)"
+                          [disabled]="viaje.plazas === 0"
+                        >
+                          <i class="fi fi-rr-user-add"></i>
+                          {{ viaje.plazas === 0 ? 'Completo' : viaje.reserva_automatica ? 'Reservar' : 'Solicitar reserva' }}
+                        </button>
+
+                        <!-- INDICADOR YA UNIDO -->
+                        <button
+                          *ngIf="estaUnido(viaje)"
+                          class="btn-viaje btn-join"
+                          [disabled]="true"
+                        >
+                          <i class="fi fi-rr-check"></i>
+                          Ya unido
+                        </button>
+
+                        <!-- BOTÓN CANCELAR -->
+                        <button
+                          *ngIf="tieneSolicitudPendiente(viaje)"
+                          class="btn-viaje btn-cancelar"
+                          (click)="abrirModalCancelacion(viaje)"
+                        >
+                          <i class="fi fi-rr-cross-circle"></i>
+                          Cancelar solicitud
+                        </button>
+
+                        <!-- Botón Chat -->
+                        <button
+                          class="btn-viaje btn-chat"
+                          (click)="contactarConConductor(viaje)"
+                        >
+                          <i class="fi fi-rr-messages"></i>
+                          Consultar dudas
+                        </button>
+                      </ng-container>
+
+                      <!-- Icono de rayo para reserva automática -->
+                      <div
+                        *ngIf="viaje.reserva_automatica"
+                        class="ms-auto bolt-indicator"
+                        title="Reserva inmediata"
+                      >
+                        <i class="fi fi-rr-bolt"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 side-info p-3 d-flex flex-column justify-content-between">
+                    <div
+                      class="conductor-box text-center"
+                      (click)="openPerfilPublico(viaje.usuario?.id)"
+                    >
+                      <div class="avatar-wrapper mb-2">
+                        <img
+                          [src]="viaje.usuario?.fotoPerfil || '../../../assets/user/logOn.gif'"
+                          class="img-conductor"
+                        />
+                        <span class="rating-badge">★ {{ viaje.usuario_creador?.puntuacion_promedio || 0 }}</span>
+                      </div>
+                      <p class="nombre-conductor mb-0">{{ viaje.usuario?.nombre }}</p>
+                    </div>
+
+                    <div class="precio-box text-center mt-2">
+                      <span class="precio-label">Precio final</span>
+                      <p class="precio-valor">{{ viaje.precio_viaje ? viaje.precio_viaje + ' €' : 'Gratis' }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div class="punto-viaje text-end">
-                <span class="hora">{{ viaje.hora_llegada }}</span>
-                <span class="ciudad">{{ viaje.destino }}</span>
-              </div>
-            </div>
-
-            <div class="acciones-footer mt-3 d-flex align-items-center gap-2">
-              
-              <!-- Botón Detalle-->
-              <button (click)="openDetalleViaje(viaje)" class="btn-viaje btn-info-pride">
-                <i class="fi fi-rr-file-circle-info"></i> Detalle
-              </button>
-              
-              <!-- Bloque para usuarios que NO son el conductor -->
-              <ng-container *ngIf="viaje.usuario?.id !== userData?.usuario?.id">
-                
-                <!-- BOTÓN UNIRSE / RESERVAR -->
-                <button *ngIf="!estaUnido(viaje) && !tieneSolicitudPendiente(viaje)"
-                        class="btn-viaje btn-join" 
-                        (click)="unirseAViaje(viaje)"
-                        [disabled]="viaje.plazas === 0">
-                  <i class="fi fi-rr-user-add"></i>
-                  {{ viaje.plazas === 0 ? 'Completo' : (viaje.reserva_automatica ? 'Reservar' : 'Solicitar reserva') }}
-                </button>
-
-                <!-- INDICADOR YA UNIDO -->
-                <button *ngIf="estaUnido(viaje)" class="btn-viaje btn-join" [disabled]="true">
-                  <i class="fi fi-rr-check"></i> Ya unido
-                </button>
-
-                <!-- BOTÓN CANCELAR -->
-                <button *ngIf="tieneSolicitudPendiente(viaje)" 
-                        class="btn-viaje btn-cancelar" 
-                        (click)="abrirModalCancelacion(viaje)">
-                  <i class="fi fi-rr-cross-circle"></i> Cancelar solicitud
-                </button>
-
-                <!-- Botón Chat -->
-                <button class="btn-viaje btn-chat" (click)="contactarConConductor(viaje)">
-                  <i class="fi fi-rr-messages"></i> Consultar dudas
-                </button>
-
-              </ng-container>
-
-              <!-- Icono de rayo para reserva automática -->
-              <div *ngIf="viaje.reserva_automatica" class="ms-auto bolt-indicator" title="Reserva inmediata">
-                <i class="fi fi-rr-bolt"></i>
-              </div>
             </div>
           </div>
-
-          <div class="col-md-3 side-info p-3 d-flex flex-column justify-content-between">
-            <div class="conductor-box text-center" (click)="openPerfilPublico(viaje.usuario?.id)">
-              <div class="avatar-wrapper mb-2">
-                <img [src]="viaje.usuario?.fotoPerfil || '../../../assets/user/logOn.gif'" class="img-conductor">
-                <span class="rating-badge">★ {{ viaje.usuario_creador?.puntuacion_promedio || 0 }}</span>
-              </div>
-              <p class="nombre-conductor mb-0">{{ viaje.usuario?.nombre }}</p>
-            </div>
-
-            <div class="precio-box text-center mt-2">
-              <span class="precio-label">Precio final</span>
-              <p class="precio-valor">{{ viaje.precio_viaje ? (viaje.precio_viaje + ' €') : 'Gratis' }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
 </ng-template>
