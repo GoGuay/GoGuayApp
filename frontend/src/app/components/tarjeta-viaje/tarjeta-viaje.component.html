@@ -124,12 +124,15 @@
 
     <div class="col-md-3 side-management p-3 d-flex flex-column justify-content-center">
       <div class="acciones-grid d-grid gap-2">
+
+        <!-- BOTÓN PUNTUAR (Solo si eres acompañante aceptado y el viaje finalizó) -->
         <button *ngIf="
+          viaje.usuario_id !== userData?.usuario?.id &&
           (filtroViajes === 'pasajero' || viaje.estado_solicitud_propia === 'aceptado') &&
           (viaje.estado_viaje?.toLowerCase() === 'finalizado' || funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)) &&
           !viaje.ya_puntuado
-            " class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje"
-          data-name="Puntuar" aria-label="Puntuar viaje">
+        " class="btn-gestion btn-puntuar" (click)="puntuarViaje(viaje)" matTooltip="Puntuar viaje" data-name="Puntuar"
+          aria-label="Puntuar viaje">
           <i class="fi fi-rr-star"></i>
           <span class="btn-text">Puntuar</span>
         </button>
@@ -139,53 +142,67 @@
           <i class="fi fi-rs-badge-check text-success me-1"></i> Ya valorado
         </span>
 
-        <button class="btn-gestion btn-report" (click)="reportar($event, viaje)" matTooltip="Reportar"
-          data-name="Reportar" aria-label="Reportar viaje">
+        <!-- BOTÓN REPORTAR (Solo útil para el conductor si tiene pasajeros) -->
+        <button *ngIf="viaje.usuario_id === userData?.usuario?.id" class="btn-gestion btn-report"
+          (click)="reportar($event, viaje)" matTooltip="Reportar" data-name="Reportar" aria-label="Reportar viaje">
           <i class="fi fi-rr-triangle-warning"></i>
           <span class="btn-text">Reportar</span>
         </button>
 
+        <!-- BOTÓN DETALLES (Para todos) -->
         <button class="btn-gestion btn-detalle" (click)="openDetalleViaje(viaje)" matTooltip="Detalles"
           data-name="Detalles" aria-label="Ver detalles del viaje">
           <i class="fi fi-rr-attention-detail"></i>
           <span class="btn-text">Detalles</span>
         </button>
 
-        <button *ngIf="
-            !pasajero &&
-            viaje.estado_viaje != 'Finalizado' &&
-            viaje.estado_viaje != 'Cancelado'
-          " class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar"
-          aria-label="Editar viaje">
-          <mat-icon>edit</mat-icon>
-          <span class="btn-text">Editar</span>
-        </button>
-        <button *ngIf="
-            !pasajero &&
-            viaje.estado_viaje != 'Finalizado' &&
-            viaje.estado_viaje != 'Cancelado'
-          " class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar"
-          data-name="Eliminar" aria-label="Eliminar viaje">
-          <mat-icon>delete</mat-icon>
-          <span class="btn-text">Eliminar</span>
-        </button>
+        <!-- ========================================================= -->
+        <!-- ACCIONES EXCLUSIVAS DEL CONDUCTOR (CREADOR DEL VIAJE)     -->
+        <!-- ========================================================= -->
+        <ng-container *ngIf="
+          viaje.usuario_id === userData?.usuario?.id &&
+          viaje.estado_viaje !== 'Finalizado' &&
+          viaje.estado_viaje !== 'Cancelado'
+        ">
+          <button class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar" data-name="Editar"
+            aria-label="Editar viaje">
+            <mat-icon>edit</mat-icon>
+            <span class="btn-text">Editar</span>
+          </button>
 
-        <button *ngIf="!conductor && pasajero && viaje.estado_viaje !== 'Finalizado'" class="btn-gestion btn-eliminar"
-          (click)="cancelarSolicitud(viaje)" matTooltip="Cancelar solicitud" data-name="Cancelar solicitud"
-          aria-label="Cancelar solicitud de viaje">
-          <i class="fi fi-rr-exit"></i>
-          <span class="btn-text">Cancelar</span>
-        </button>
+          <button class="btn-gestion btn-eliminar" (click)="eliminarViaje(viaje.id)" matTooltip="Eliminar"
+            data-name="Eliminar" aria-label="Eliminar viaje">
+            <mat-icon>delete</mat-icon>
+            <span class="btn-text">Eliminar</span>
+          </button>
+        </ng-container>
 
-        <button *ngIf="
-            !conductor &&
-            pasajero &&
-            viaje.estado_solicitud_propia === 'aceptado'
-          " class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Salir del viaje"
-          data-name="Salir del viaje" aria-label="Salir del viaje">
-          <mat-icon>logout</mat-icon>
-          <span class="btn-text">Salir</span>
-        </button>
+        <!-- ========================================================= -->
+        <!-- ACCIONES EXCLUSIVAS DEL ACOMPAÑANTE (PASAJERO)            -->
+        <!-- ========================================================= -->
+        <ng-container *ngIf="
+          viaje.usuario_id !== userData?.usuario?.id &&
+          viaje.estado_viaje !== 'Finalizado' &&
+          viaje.estado_viaje !== 'Cancelado'
+        ">
+          <!-- Caso 1: Ya está aceptado en el viaje -> Cancelar reserva -->
+          <button *ngIf="viaje.estado_solicitud_propia === 'aceptado' || filtroViajes === 'pasajero'"
+            class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Cancelar reserva"
+            data-name="Cancelar reserva" aria-label="Cancelar reserva">
+            <mat-icon>event_busy</mat-icon>
+            <span class="btn-text">Cancelar reserva</span>
+          </button>
+
+          <!-- Caso 2: Aún tiene la solicitud pendiente -> Cancelar solicitud -->
+          <button
+            *ngIf="viaje.estado_solicitud_propia !== 'aceptado' && viaje.estado_solicitud_propia !== 'rechazado' && filtroViajes !== 'pasajero'"
+            class="btn-gestion btn-eliminar" (click)="cancelarSolicitud(viaje)" matTooltip="Cancelar solicitud"
+            data-name="Cancelar solicitud" aria-label="Cancelar solicitud de viaje">
+            <i class="fi fi-rr-exit"></i>
+            <span class="btn-text">Cancelar solicitud</span>
+          </button>
+        </ng-container>
+
       </div>
     </div>
   </div>

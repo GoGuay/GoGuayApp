@@ -734,19 +734,78 @@ def confirmar_pasajero_manual():
 #
 # SERVICIO PARA  QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR
 #
-@travel_blueprint.route('/api/travel/cancelar_solicitud_manual', methods=['POST'])
+#
+# SERVICIO PARA QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR
+#
+@travel_blueprint.route('/cancelar_solicitud_manual', methods=['POST', 'OPTIONS'])
 def cancelar_solicitud():
-    data = request.json
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
+
+    data = request.get_json(silent=True) or {}
+    viaje_id = data.get('viaje_id')
+    usuario_id = data.get('usuario_id')
+
+    if not viaje_id or not usuario_id:
+        return jsonify({"error": "Faltan parámetros viaje_id o usuario_id"}), 400
+
     solicitud = PasajeroViaje.query.filter_by(
-        viaje_id=data['viaje_id'], 
-        usuario_id=data['usuario_id'],
-        estado='pendiente' 
+        viaje_id=viaje_id,
+        usuario_id=usuario_id,
+        estado='pendiente'
     ).first()
-    if solicitud:
+
+    if not solicitud:
+        return jsonify({"error": "No existe la solicitud pendiente"}), 404
+
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+
+    if solicitud.paypal_auth_id:
+        try:
+            token = get_access_token()
+            headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+            requests.post(
+                f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/void",
+                headers=headers
+            )
+        except Exception as e:
+            print(f"⚠️ Aviso al liberar autorización de PayPal: {str(e)}")
+
+    pasajero = Usuario.query.get(usuario_id)
+    nombre_completo = f"{pasajero.nombre} {pasajero.apellidos}" if pasajero else "Un pasajero"
+    creador_id = viaje.usuario_id
+
+    try:
         db.session.delete(solicitud)
+
+        if creador_id != usuario_id:
+            mensaje_cancelacion = (
+                f"{nombre_completo} ha cancelado su solicitud de plaza en tu viaje "
+                f"de {viaje.origen} a {viaje.destino}."
+            )
+
+            nueva_notif = Notificacion(
+                usuario_id=creador_id,
+                viaje_id=viaje_id,
+                mensaje=mensaje_cancelacion
+            )
+            db.session.add(nueva_notif)
+
+            enviar_notificacion_push(
+                usuario_id=creador_id,
+                titulo="Solicitud de plaza cancelada",
+                cuerpo=mensaje_cancelacion,
+                data={"viaje_id": str(viaje_id), "tipo": "solicitud_cancelada"}
+            )
+
         db.session.commit()
-        return jsonify({"mensaje": "Solicitud cancelada"}), 200
-    return jsonify({"error": "No existe la solicitud"}), 404
+        return jsonify({"mensaje": "Solicitud cancelada y conductor notificado"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al cancelar la solicitud", "detalle": str(e)}), 500
 
 #
 # SERVICIO PARA OBTENER LAS SOLICITUDES PENDIENTES DE UN USUARIO

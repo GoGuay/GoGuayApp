@@ -791,7 +791,6 @@ ion-segment-button {
     }
   }
 
-  /* Estilos específicos para Puntuar (tono amarillo/dorado suave) */
   .btn-puntuar {
     background-color: #fef5e7;
     color: #f39c12;
@@ -803,16 +802,34 @@ ion-segment-button {
     }
   }
 
-  /* Botón Reportar (crema/naranja) */
   .btn-report {
     background-color: #fff3e0;
     color: #e65100;
   }
 
-  /* Botón Detalles (lavanda/púrpura) */
   .btn-detalle {
     background-color: #e8eaf6;
     color: #283593;
+  }
+
+  .btn-editar {
+    background-color: #e0f2f1;
+    color: #00695c;
+
+    &:hover {
+      background-color: #b2dfdb;
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-eliminar {
+    background-color: #ffebee;
+    color: #c62828;
+
+    &:hover {
+      background-color: #ffcdd2;
+      transform: translateY(-2px);
+    }
   }
 }
 

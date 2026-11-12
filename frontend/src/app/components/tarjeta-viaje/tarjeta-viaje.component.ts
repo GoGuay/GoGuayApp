@@ -177,6 +177,12 @@ export class TarjetaViajeComponent implements OnInit {
           if (!v.usuario && v.usuario_creador) {
             v.usuario = v.usuario_creador;
           }
+          if (!v.usuario_id && v.usuario?.id) {
+            v.usuario_id = v.usuario.id;
+          }
+          if (!v.estado_solicitud_propia) {
+            v.estado_solicitud_propia = 'aceptado';
+          }
         });
 
         this.filtrarViajes();
@@ -649,8 +655,8 @@ export class TarjetaViajeComponent implements OnInit {
    */
   async salirDeViaje(viajeId: number) {
     const alertMotivosAcompanante = await this.alertCtrl.create({
-      header: 'Darse de baja',
-      subHeader: '¿Por qué necesitas cancelar tu plaza?',
+      header: 'Cancelar reserva',
+      subHeader: '¿Por qué necesitas cancelar tu plaza en este viaje?',
       cssClass: 'custom-alert-chat',
       inputs: [
         {
