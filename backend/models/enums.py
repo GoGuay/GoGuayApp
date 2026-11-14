@@ -50,12 +50,15 @@ class EstadoViajeEnum(str, Enum):
     PROXIMO = "Próximo"
     EN_CURSO = "En curso"
     FINALIZADO = "Finalizado"
-    CANCELADO = "Cancelado"  
+    CANCELADO = "Cancelado"  #Tiene pasajeros con reserva confirmada
+    ELIMINADO = "Eliminado" #Cuando un viaje no tiene pasajeros con reserva confirmada
     
 class EstadoSolicitudEnum(str, Enum):
     PENDIENTE = "Pendiente"
-    CANCELADA = "Cancelada"
-    FINALIZADA = "Finalizada"
+    RECHAZADA = "Rechazada" #No ha llegado a ser aceptado
+    ACEPTADA = "Aceptada"
+    FINALIZADA = "Finalizada" #Cuando el viaje ya ha terminado
+    CANCELADA = "Cancelada" #Cuando la reserva ha sido previamente aceptada y luego es rechazada esa reserva en concreto
 
 class MotivosCancelacionConductor(str, Enum):
     NO_SE_CANCELA = ""

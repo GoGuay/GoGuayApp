@@ -765,7 +765,7 @@ export class TarjetaViajeComponent implements OnInit {
    */
   private ejecutarCancelacionConductor(viajeId: number, motivo: string) {
     this.cargandoViajes = true;
-    this.travelService.eliminarViajeConMotivo(viajeId, motivo).subscribe({
+    this.travelService.cancelarViajeConMotivo(viajeId, motivo).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',

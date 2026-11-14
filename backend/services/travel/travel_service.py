@@ -7,7 +7,8 @@ import os
 from flask import Blueprint, jsonify, request
 import requests
 from datetime import datetime, timezone, timedelta
-from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
+from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor, EstadoSolicitudEnum
+from services.cancelaciones import calcular_y_registrar_cancelacion, calcular_peso_cancelacion
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
 from sqlalchemy.orm import joinedload 
@@ -322,57 +323,85 @@ def obtener_viaje_por_id(viaje_id):
     return jsonify(viaje.serialize()), 200
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA ELIMINAR UN VIAJE
+#   SERVICIO PARA CANCELAR  UN VIAJE POR PARTE DEL CONDUCTOR
+#    El viaje ha sido creado por un conductor y es cancelado por el mismo conductor cuando tiene reservas ya confirmadas
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-@travel_blueprint.route('/eliminar_viaje/<int:viaje_id>', methods=['DELETE'])
-def eliminar_viaje(viaje_id):
-    viaje = db.session.query(Viaje).options(
+@travel_blueprint.route('/cancelar_viaje/<int:viaje_id>', methods=['DELETE'])
+@jwt_required()
+def cancelar_viaje(viaje_id):
+    usuario_actual_id=get_jwt_identity()
+
+    viaje= db.session.query(Viaje).options(
         joinedload(Viaje.pasajeros)
     ).filter(Viaje.id == viaje_id).first()
 
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
+    
+    if viaje.usuario_id != usuario_actual_id: 
+        return jsonify({"error": "No tienes permiso para eliminar este viaje"}), 404
+    
+    ahora=datetime.now(timezone.utc)
 
+    if viaje.fecha_salida <= ahora or viaje.estado_viaje in ['En curso','Finalizado','Cancelado']:
+        return jsonify({"error": "No se puede cancelar un viaje que ya ha comenzado, finalizado, o ya se encuentra cancelado."}), 400
+    
+    reservas_confirmadas = [p for p in viaje.pasajeros if p.estado == EstadoSolicitudEnum.ACEPTADA.value]
+    if not reservas_confirmadas:
+        return jsonify({"error": "El viaje no cuenta con reservas confirmadas activas para poder cancelarlo con penalización."}), 400
+    
     data = request.get_json() if request.is_json else {}
     motivo = data.get('motivo_cancelacion', 'No especificado')
+    usuario_conductor = Usuario.query.get(usuario_actual_id)
 
+    tipo_aceptacion = getattr(viaje, 'tipo_aceptacion', 'AUTOMATICA')
+
+    peso_falta = calcular_peso_cancelacion(
+        viaje=viaje,
+        fecha_cancelacion=ahora,
+        rol='CONDUCTOR',
+        tipo_aceptacion=tipo_aceptacion
+    )
+
+    puntos_aplicados = calcular_y_registrar_cancelacion(
+        usuario=usuario_conductor,
+        viaje=viaje,
+        rol='CONDUCTOR',
+        peso_falta=peso_falta,
+        motivo=motivo
+    )
     ids_pasajeros_afectados = []
-    
     for pasajero in viaje.pasajeros:
-        if pasajero.estado in ['aceptado', 'accepted', 'pendiente']:
+        if pasajero.estado == EstadoSolicitudEnum.ACEPTADA.value:
             ids_pasajeros_afectados.append(pasajero.usuario_id)
-            
             mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
-            
+
             notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
             db.session.add(notif_db)
-            
+
             enviar_notificacion_push(
                 usuario_id=pasajero.usuario_id,
                 titulo="Viaje cancelado por el conductor",
                 cuerpo=mensaje_cancelacion,
                 data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
             )
-            
-            pasajero.estado = 'cancelado'
+
+            pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
+        elif pasajero.estado == EstadoSolicitudEnum.pendiente.value:
+            pasajero.estado = EstadoSolicitudEnum.RECHAZADA.value
 
     viaje.estado_viaje = 'Cancelado'
 
-    nueva_cancelacion = Cancelacion(
-        viaje_id=viaje.id,
-        cancelado_por_id=viaje.usuario_id,
-        pasajeros_afectados=ids_pasajeros_afectados,
-        motivo_cancelacion_cond=motivo,
-        motivo_cancelacion_pasaj=MotivosCancelacionPasajero.NO_SE_CANCELA.value 
-    )
-    db.session.add(nueva_cancelacion)
-
     try:
         db.session.commit()
-        return jsonify({"mensaje": "Viaje cancelado correctamente, motivos registrados y pasajeros notificados"}), 200
+        return jsonify({
+            "mensaje": "Viaje cancelado correctamente, penalización aplicada y pasajeros notificados.",
+            "puntos_penalizacion_aplicados": puntos_aplicados
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al procesar la cancelación", "detalle": str(e)}), 500
+
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -731,8 +760,6 @@ def confirmar_pasajero_manual():
         return jsonify({"error": "Error al procesar la confirmación", "detalle": str(e)}), 500
     
 
-#
-# SERVICIO PARA  QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR
 #
 #
 # SERVICIO PARA QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR

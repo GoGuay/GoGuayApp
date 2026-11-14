@@ -34,7 +34,7 @@ class Usuario(db.Model):
     fotoPublicId = db.Column(db.String(255), nullable=True) 
     fotoCabecera = db.Column(db.String(250), nullable=True)
     preferencias = db.Column(JSON, nullable=True)     
-    rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)    
+    rolPerfil = db.Column(db.String(50), nullable=True, default=RolUsuarioEnum.usuario.value)  #usuario o administrador  
     comunic_comerciales = db.Column(db.Boolean, default=False, nullable=True)
     comunic_terceros = db.Column(db.Boolean, default=False, nullable=True)
 
@@ -149,69 +149,26 @@ class Usuario(db.Model):
 
 
 
-
-
-    # @property
-    # def ich_conductor(self):
-    #     total_viajes = len(self.viajes_publicados)
-    #     if total_viajes < 3:
-    #         return 0.0
-        
-    #     puntos = 0
-    #     cancelaciones = [cancelacion for cancelacion in self.cancelaciones_provocadas if cancelacion.viaje.usuario_id == self.id]
-        
-    #     for cancelacion_guardada in cancelaciones:
-    #         antelacion = cancelacion_guardada.viaje.fecha_salida - cancelacion_guardada.fecha_cancelacion
-    #         horas = antelacion.total_seconds() / 3600
-    #         if horas < 24: puntos += 10
-    #         elif 24 <= horas <= 72: puntos += 5
-    #         else: puntos += 1
-            
-    #     return round(puntos / total_viajes, 2)
     
     @property
-    def ich_pasajero(self):
-        total_reservas = len(self.reservas_realizadas)
-        if total_reservas == 0:
-            return 0.0
-        
-        puntos = 0
-        cancelaciones = [cancelacion for cancelacion in self.cancelaciones_provocadas if cancelacion.viaje.usuario_id != self.id]
-        
-        for cancelacion in cancelaciones:
-            antelacion_salida = cancelacion.viaje.fecha_salida - cancelacion.fecha_cancelacion
-            horas_restantes = antelacion_salida.total_seconds() / 3600
-            
-            reserva = next((r for r in self.reservas_realizadas if r.viaje_id == cancelacion.viaje_id), None)
-            minutos_desde_reserva = 999
-            
-            if reserva:
-                delta_reserva = cancelacion.fecha_cancelacion - reserva.fecha_confirmacion_reserva
-                minutos_desde_reserva = delta_reserva.total_seconds() / 60
-            
-            if horas_restantes <= 0:
-                puntos += 10  
-            elif horas_restantes < 24:
-                if minutos_desde_reserva <= 30:
-                    puntos += 3  
-                else:
-                    puntos += 5 
-            else:
-                puntos += 1  
-            
-        return round(puntos / total_reservas, 2)
-    
+    def acumulado_notas_conductor(self):
+        if self.puntos_conductor_ultimos_6_meses >= 20:
+            return "Suspendido para publicar viajes"
+        elif self.puntos_conductor_ultimos_6_meses >= 14:
+            return "Crítico (Nivel 1)"
+        elif self.puntos_conductor_ultimos_6_meses >= 6:
+            return "Bajo Advertencia"
+        return "Óptimo"
+
     @property
-    def estado_perfil(self):
-        if self.bloqueado_hasta and self.bloqueado_hasta > datetime.now(timezone.utc):
-            return "Sancionado (Suspensión temporal)"
-        
-        peor_ich = max(self.ich_conductor, self.ich_pasajero)
-        
-        if peor_ich <= 1.5: return "Óptimo"
-        if 1.6 <= peor_ich <= 3.5: return "Bajo Advertencia"
-        if 3.6 <= peor_ich <= 5.0: return "Crítico (Nivel 1)"
-        return "Crítico (Nivel 2)"
+    def acumulado_notas_pasajero(self):
+        if self.puntos_pasajero_ultimos_6_meses >= 20:
+            return "Suspendido para hacer reservas"
+        elif self.puntos_pasajero_ultimos_6_meses >= 14:
+            return "Crítico (Nivel 1)"
+        elif self.puntos_pasajero_ultimos_6_meses >= 6:
+            return "Bajo Advertencia"
+        return "Óptimo"
 
     # --- MÉTODOS DE UTILIDAD ---
     def serialize(self):
@@ -251,7 +208,6 @@ class Usuario(db.Model):
             "vehiculos": [v.serialize() for v in self.vehiculos],
             "comunic_comerciales": self.comunic_comerciales,
             "comunic_terceros": self.comunic_terceros,
-            "estado_perfil": self.estado_perfil,
             "puntuaciones": self.estrellas_por_opiniones,
             "opiniones": [
                 {

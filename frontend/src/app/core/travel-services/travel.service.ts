@@ -391,8 +391,8 @@ export class TravelService {
     );
   }
 
-  eliminarViajeConMotivo(viajeId: number, motivo: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/travel/eliminar_viaje/${viajeId}`, {
+  cancelarViajeConMotivo(viajeId: number, motivo: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/travel/cancelar_viaje/${viajeId}`, {
       body: { motivo_cancelacion: motivo },
     });
   }
@@ -406,7 +406,7 @@ export class TravelService {
   /**
    * Función para obtener los viajes recomendados por IA para un usuario específico.
    * @param userId ID del usuario.
-   * @param forzarRecarga (opcional) Si se establece en true, 
+   * @param forzarRecarga (opcional) Si se establece en true,
    *        se forzará la recarga de las recomendaciones desde el backend, ignorando cualquier caché o almacenamiento previo.
    * @returns Observable con la lista de recomendaciones y sus motivos de afinidad.
    */
