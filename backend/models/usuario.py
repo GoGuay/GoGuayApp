@@ -113,22 +113,48 @@ class Usuario(db.Model):
 
     # --- LÓGICA DE CANCELACIONES (ICH Índice de Criticidad Histórico) ---
     @property
-    def ich_conductor(self):
-        total_viajes = len(self.viajes_publicados)
-        if total_viajes < 3:
-            return 0.0
+    def puntos_conductor_ultimos_6_meses(self):
+        hace_seis_meses = datetime.now(timezone.utc) - timedelta(days=180)
         
-        puntos = 0
-        cancelaciones = [cancelacion for cancelacion in self.cancelaciones_provocadas if cancelacion.viaje.usuario_id == self.id]
+        cancelaciones_conductor = self.cancelaciones_provocadas.filter(
+            Cancelacion.rol_involucrado == 'CONDUCTOR',
+            Cancelacion.fecha_cancelacion >= hace_seis_meses
+        ).all()
+        return sum(c.puntos_penalizacion_aplicados for c in cancelaciones_conductor)
+    
+
+    @property
+    def puntos_pasajero_ultimos_6_meses(self):
+        hace_seis_meses = datetime.now(timezone.utc) - timedelta(days=180)
         
-        for cancelacion_guardada in cancelaciones:
-            antelacion = cancelacion_guardada.viaje.fecha_salida - cancelacion_guardada.fecha_cancelacion
-            horas = antelacion.total_seconds() / 3600
-            if horas < 24: puntos += 10
-            elif 24 <= horas <= 72: puntos += 5
-            else: puntos += 1
+        cancelaciones_pasajero = self.cancelaciones_provocadas.filter(
+            Cancelacion.rol_involucrado == 'PASAJERO',
+            Cancelacion.fecha_cancelacion >= hace_seis_meses
+        ).all()
+        
+        return sum(c.puntos_penalizacion_aplicados for c in cancelaciones_pasajero)
+
+
+
+
+
+    # @property
+    # def ich_conductor(self):
+    #     total_viajes = len(self.viajes_publicados)
+    #     if total_viajes < 3:
+    #         return 0.0
+        
+    #     puntos = 0
+    #     cancelaciones = [cancelacion for cancelacion in self.cancelaciones_provocadas if cancelacion.viaje.usuario_id == self.id]
+        
+    #     for cancelacion_guardada in cancelaciones:
+    #         antelacion = cancelacion_guardada.viaje.fecha_salida - cancelacion_guardada.fecha_cancelacion
+    #         horas = antelacion.total_seconds() / 3600
+    #         if horas < 24: puntos += 10
+    #         elif 24 <= horas <= 72: puntos += 5
+    #         else: puntos += 1
             
-        return round(puntos / total_viajes, 2)
+    #     return round(puntos / total_viajes, 2)
     
     @property
     def ich_pasajero(self):
