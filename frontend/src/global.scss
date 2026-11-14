@@ -1000,3 +1000,91 @@ ion-modal.modal-qr-verificacion {
     }
   }
 }
+
+/* Estilo unificado de GoGuay para todos los ion-alert (Modo claro forzado y estética pastel) */
+ion-alert {
+  --background: #ffffff !important;
+  --backdrop-opacity: 0.45 !important;
+
+  .alert-wrapper {
+    background: #ffffff !important;
+    border-radius: 35px !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22) !important;
+    padding: 8px 6px !important;
+    border: 1px solid #f0f0f0 !important;
+  }
+
+  .alert-head {
+    padding-bottom: 8px !important;
+  }
+
+  .alert-title {
+    color: #222222 !important;
+    font-weight: 700 !important;
+    font-size: 1.15rem !important;
+  }
+
+  .alert-sub-title,
+  .alert-message {
+    color: #555555 !important;
+    font-size: 0.92rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Contenedor de botones con separación entre píldoras */
+  .alert-button-group {
+    padding: 8px 16px 14px 16px !important;
+    gap: 10px !important;
+    justify-content: flex-end !important;
+  }
+
+  .alert-button {
+    border-radius: 35px !important;
+    background-color: #b3b5e6 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 10px 20px !important;
+    height: auto !important;
+    text-transform: none !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12) !important;
+    transition: transform 0.15s ease, background-color 0.2s ease !important;
+
+    &:hover {
+      background-color: #9ea0db !important;
+      transform: translateY(-1px);
+    }
+
+    &.alert-button-role-cancel {
+      background-color: #f0d7b4 !important;
+      color: #222222 !important;
+
+      &:hover {
+        background-color: #e5c69b !important;
+      }
+    }
+
+    &.alert-button-role-destructive {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+
+      &:hover {
+        background-color: #ffcdd2 !important;
+      }
+    }
+  }
+
+  .alert-radio-label,
+  .alert-checkbox-label {
+    color: #333333 !important;
+    font-size: 0.9rem !important;
+  }
+
+  .alert-input {
+    border-radius: 20px !important;
+    background-color: #f8f9fa !important;
+    color: #222222 !important;
+    padding: 10px 14px !important;
+    border: 1px solid #e0e0e0 !important;
+  }
+}

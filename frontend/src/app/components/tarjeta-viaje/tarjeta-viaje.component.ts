@@ -147,7 +147,7 @@ export class TarjetaViajeComponent implements OnInit {
     this.cargandoViajes = true;
 
     forkJoin({
-      acompanante: this.travelService.getViajesComoAcompañante(userId).pipe(
+      acompanante: this.travelService.getViajesComoAcompanante(userId).pipe(
         catchError(err => {
           console.error('❌ Error cargando viajes acompañante:', err);
           return of([]);
@@ -176,6 +176,12 @@ export class TarjetaViajeComponent implements OnInit {
         this.misViajesAcompanante.forEach((v: any) => {
           if (!v.usuario && v.usuario_creador) {
             v.usuario = v.usuario_creador;
+          }
+          if (!v.usuario_id && v.usuario?.id) {
+            v.usuario_id = v.usuario.id;
+          }
+          if (!v.estado_solicitud_propia) {
+            v.estado_solicitud_propia = 'aceptado';
           }
         });
 
@@ -649,8 +655,8 @@ export class TarjetaViajeComponent implements OnInit {
    */
   async salirDeViaje(viajeId: number) {
     const alertMotivosAcompanante = await this.alertCtrl.create({
-      header: 'Darse de baja',
-      subHeader: '¿Por qué necesitas cancelar tu plaza?',
+      header: 'Cancelar reserva',
+      subHeader: '¿Por qué necesitas cancelar tu plaza en este viaje?',
       cssClass: 'custom-alert-chat',
       inputs: [
         {
@@ -817,7 +823,7 @@ export class TarjetaViajeComponent implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
-    this.travelService.getViajesComoAcompañante(this.userData.usuario.id).subscribe((result) => {
+    this.travelService.getViajesComoAcompanante(this.userData.usuario.id).subscribe((result) => {
       this.misViajesAcompanante = result;
       this.cargandoViajes = false;
       this.filtrarViajes();

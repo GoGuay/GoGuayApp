@@ -14,6 +14,7 @@ import { SelectorGeneralComponent } from '../selector-general/selector-general.c
 import { GoogleServices } from 'src/app/core/google-services/google-services.service';
 import { LanguageService } from 'src/app/core/lenguajes/languaje.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
+import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-trayectos-populares',
@@ -45,6 +46,11 @@ export class TrayectosPopularesComponent implements OnInit {
   spinnerActivo: boolean = false;
   texto_spinner: string = 'Traduciendo...';
   lang: string = 'es';
+
+  // Caché en memoria: Map<idEvento_idioma, textoTraducido>
+  private cacheTraducciones = new Map<string, string>();
+  private descripcionesOriginales = new Map<any, string>();
+  private langSub?: Subscription;
 
   @HostListener('document:click', ['$event'])
   closeDropdown(event: Event) {
@@ -78,12 +84,14 @@ export class TrayectosPopularesComponent implements OnInit {
     this.lang = this.languageService.getLanguage() || 'es';
     this.usuarioNoLogueado = this.funcionesComunes.isUserLoggedIn();
     this.obtenerEventos();
-    this.translate.onLangChange.subscribe((idiomaCambiado) => {
+
+    this.langSub = this.translate.onLangChange.subscribe((idiomaCambiado) => {
       this.lang = idiomaCambiado.lang;
-      console.log('El idioma ha cambiado a:', this.lang);
-      this.traducirDescripcionesEventos(this.lista_eventos);
+      // Solo traduce si ya hay eventos visibles filtrados por ciudad
+      if (this.filtradosPorCiudad.length > 0) {
+        this.traducirDescripcionesEventos(this.filtradosPorCiudad);
+      }
     });
-    this.cdr.detectChanges();
   }
 
   selectOption(ciudad: string) {
@@ -100,8 +108,13 @@ export class TrayectosPopularesComponent implements OnInit {
   obtenerEventos() {
     this.eventosService.obtenerTodosLosEventos().subscribe((resultado) => {
       this.lista_eventos = resultado;
+      this.lista_eventos.forEach((ev, idx) => {
+        const key = (ev as any).id ?? idx;
+        if (ev.descripcion) {
+          this.descripcionesOriginales.set(key, ev.descripcion);
+        }
+      });
       this.obtener_ciudades_eventos();
-      this.traducirDescripcionesEventos(this.lista_eventos);
     });
   }
 
@@ -185,40 +198,57 @@ export class TrayectosPopularesComponent implements OnInit {
 
   traducirDescripcionesEventos(eventos: Evento[]) {
     if (!eventos || eventos.length === 0) return;
+
     this.spinnerActivo = true;
     this.cdr.detectChanges();
-    let completados = 0;
-    const total = eventos.length;
-    eventos.forEach((evento) => {
-      if (!evento.descripcion) {
-        this.verificarFin(total, ++completados);
-        return;
+
+    const peticiones = eventos.map((evento, idx) => {
+      const idEvento = (evento as any).id ?? `${evento.ciudad}_${idx}`;
+      const textoBase = this.descripcionesOriginales.get(idEvento) || evento.descripcion;
+
+      if (!textoBase) return of(null);
+
+      const cacheKey = `${idEvento}_${this.lang}`;
+      if (this.cacheTraducciones.has(cacheKey)) {
+        evento.descripcion = this.cacheTraducciones.get(cacheKey)!;
+        return of(null);
       }
 
-      this.googleService.detectarIdiomaTexto(evento.descripcion).subscribe({
-        next: (resultado: any) => {
+      return this.googleService.detectarIdiomaTexto(textoBase).pipe(
+        switchMap((resultado: any) => {
           if (this.lang && resultado && this.lang !== resultado.idioma) {
-            this.googleService.traducirIdiomaTexto(evento.descripcion, this.lang, resultado.idioma).subscribe({
-              next: (resultadoTraduccion: any) => {
-                if (resultadoTraduccion && resultadoTraduccion.texto_traducido) {
-                  evento.descripcion = resultadoTraduccion.texto_traducido;
+            return this.googleService.traducirIdiomaTexto(textoBase, this.lang, resultado.idioma).pipe(
+              map((resTrad: any) => {
+                if (resTrad?.texto_traducido) {
+                  evento.descripcion = resTrad.texto_traducido;
+                  this.cacheTraducciones.set(cacheKey, resTrad.texto_traducido);
                 }
-                this.verificarFin(total, ++completados);
-              },
-              error: () => {
-                this.verificarFin(total, ++completados);
-              },
-            });
+                return null;
+              })
+            );
           } else {
-            this.verificarFin(total, ++completados);
+            // Ya está en el idioma del usuario: restauramos el original y cacheamos
+            evento.descripcion = textoBase;
+            this.cacheTraducciones.set(cacheKey, textoBase);
+            return of(null);
           }
-        },
-        error: () => {
-          this.verificarFin(total, ++completados);
-        },
-      });
+        }),
+        catchError(() => of(null))
+      );
+    });
+
+    forkJoin(peticiones).subscribe({
+      next: () => {
+        this.spinnerActivo = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.spinnerActivo = false;
+        this.cdr.detectChanges();
+      },
     });
   }
+  
   // Método auxiliar para controlar cuándo acaban todas las traducciones
   private verificarFin(total: number, completados: number) {
     if (completados >= total) {

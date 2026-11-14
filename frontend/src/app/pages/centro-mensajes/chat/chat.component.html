@@ -3,7 +3,14 @@
 </ion-header>
 
 <ion-content>
-  <div class="chat-limiter">
+  <!-- SPINNER DE CARGA INICIAL -->
+  <div *ngIf="cargandoChat" class="d-flex flex-column justify-content-center align-items-center h-100">
+    <app-spinner></app-spinner>
+    <p class="text-muted small mt-2">Cargando conversación...</p>
+  </div>
+
+  <!-- CONTENIDO DEL CHAT -->
+  <div *ngIf="!cargandoChat" class="chat-limiter">
 
     <ion-fab vertical="bottom" horizontal="start" slot="fixed" class="fab-atras" title="Volver atrás">
       <ion-fab-button (click)="goBack()">
@@ -23,7 +30,7 @@
         </div>
       </div>
 
-      <div class="banner-incidencia-fijo d-flex justify-content-center px-3 py-1 bg-transparent">
+      <div class="banner-incidencia-fijo d-flex justify-content-center px-3 py-1 bg-transparent mb-2">
         <button type="button"
           class="btn btn-sm btn-outline-warning d-flex align-items-center justify-content-center gap-1 shadow-sm rounded-pill px-3 py-1 w-auto"
           (click)="abrirIncidenciaBusqueda()">
@@ -31,16 +38,6 @@
           <span style="font-size: 0.78rem; font-weight: 600;">¿Hay un problema? Reportar incidencia</span>
         </button>
       </div>
-
-      <!-- <div class="phone-share-box mb-4" *ngIf="!cargandoPreferenciaTelefono && mostrarPreguntaTelefono">
-        <div class="card shadow-sm border-0 text-center p-3">
-          <p class="mb-2"><strong>¿Deseas compartir tu número de teléfono con este usuario?</strong></p>
-          <div class="d-flex justify-content-center gap-2">
-            <ion-button size="small" color="success" (click)="decidirCompartirTelefono(true)">Sí, compartir</ion-button>
-            <ion-button size="small" color="light" (click)="decidirCompartirTelefono(false)">Ahora no</ion-button>
-          </div>
-        </div>
-      </div> -->
 
       <div class="phone-info-banner mb-1 text-center" *ngIf="telefonoRecibido">
         <ion-badge color="secondary" class="p-2">
@@ -60,21 +57,23 @@
 
           <div class="mensaje-burbuja" [ngClass]="{
                  'burbuja-sistema': m.texto.includes('TELEFONO USUARIO:'),
-                 'burbuja-solicitud': m.texto.includes('Solicitud para unirse al viaje:')
+                 'burbuja-solicitud': esMensajeSolicitud(m)
                }">
 
-            <ng-container *ngIf="m.texto.includes('Solicitud para unirse al viaje:'); else checkTelefono">
+            <ng-container *ngIf="esMensajeSolicitud(m); else checkTelefono">
               <div class="solicitud-container p-2">
                 <p><strong><i class="fi fi-rr-messages"></i> Solicitud de viaje</strong></p>
+                <p class="small text-muted mb-2">
+                  {{ m.texto.includes(':') ? 'Hola, me gustaría unirme a tu viaje.' : m.texto }}
+                </p>
 
                 <div *ngIf="cargandoSolicitud[m.id]" class="text-center p-2">
                   <app-spinner></app-spinner>
                   <p class="small">Procesando solicitud...</p>
                 </div>
 
-                <!-- 1. Mostrar botones de acción SOLO si está pendiente y el usuario logueado NO es el que mandó la solicitud -->
+                <!-- 1. Pendiente de aceptar o rechazar -->
                 <ng-container *ngIf="!cargandoSolicitud[m.id] && !solicitudesGestionadas[m.id]">
-                  <p>Hola, me gustaría unirme a tu viaje.</p>
                   <div class="d-flex gap-2 mt-2" *ngIf="m.emisor_id !== usuarioLogueadoId">
                     <ion-button size="small" color="success"
                       (click)="gestionarSolicitud(m, 'aceptar')">Aceptar</ion-button>
@@ -86,23 +85,23 @@
                   </div>
                 </ng-container>
 
-                <!-- 2. Si ya está gestionada (Aceptada o Rechazada), ocultamos los botones y mostramos el estado con mensajes personalizados -->
+                <!-- 2. Ya gestionada (Aceptada, Rechazada o Cancelada) -->
                 <div *ngIf="!cargandoSolicitud[m.id] && solicitudesGestionadas[m.id]" class="mt-2">
                   <div class="info-gestion-box"
                     [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'aceptado' : 'rechazado'">
                     <i
                       [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'fi fi-rr-comment-alt-check' : 'fi fi-rr-cross-circle'"></i>
 
-                    <!-- Mensajes personalizados según el rol (Conductor vs Pasajero) -->
                     <small>
                       <ng-container [ngSwitch]="solicitudesGestionadas[m.id]">
                         <ng-container *ngSwitchCase="'aceptada'">
-                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido aceptada.' : 'Has aceptado a este
-                          pasajero.' }}
+                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido aceptada.' : 'Has aceptado a este pasajero.' }}
                         </ng-container>
                         <ng-container *ngSwitchCase="'rechazada'">
-                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido rechazada.' : 'Has rechazado esta
-                          solicitud.' }}
+                          {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido rechazada.' : 'Has rechazado esta solicitud.' }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'cancelada'">
+                          {{ m.emisor_id === usuarioLogueadoId ? 'Has cancelado esta solicitud.' : 'Esta solicitud ya no está activa.' }}
                         </ng-container>
                       </ng-container>
                     </small>
@@ -141,9 +140,7 @@
   </div>
 </ion-content>
 
-
-
-<ion-footer class="ion-no-border">
+<ion-footer class="ion-no-border" *ngIf="!cargandoChat">
   <div class="footer-limiter">
     <div class="input-wrapper d-flex align-items-end p-2 bg-light position-relative">
 

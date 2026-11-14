@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,21 +7,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { NavbarComponent } from "../../../shared/navbar/navbar.component";
 import { IonContent, IonicModule, ModalController, NavController } from "@ionic/angular";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MessagingService } from '../../../core/menssaging-service/messaging.service';
-import { Mensaje } from '../../../models/mensajes/mensaje.model';
 import { Usuario } from '../../../models/user/usuario.model';
 import { NotificacionesService } from '../../../core/notificaciones/notificaciones.service';
 import { TravelService } from '../../../core/travel-services/travel.service';
 import { SpinnerComponent } from "../../../components/spinner/spinner.component";
-import { Subject } from 'rxjs/internal/Subject';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { interval } from 'rxjs/internal/observable/interval';
+import { Subject, forkJoin, of, timer, Observable } from 'rxjs';
+import { exhaustMap, takeUntil, catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { addIcons } from 'ionicons';
 import { LISTA_EMOJIS } from '../../../models/emojis/emojis.const';
 import { send } from 'ionicons/icons';
-import { timer } from 'rxjs';
 import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
 import { MessageService } from 'primeng/api';
 
@@ -44,7 +40,7 @@ import { MessageService } from 'primeng/api';
     ],
     providers: []
 })
-export class ChatPage implements OnInit {
+export class ChatPage implements OnInit, OnDestroy {
 
     @ViewChild(IonContent, { static: false }) content!: IonContent;
 
@@ -54,6 +50,8 @@ export class ChatPage implements OnInit {
     telefonoRecibido: string | null = null;
     cargandoPreferenciaTelefono: boolean = true;
     compartiendoMiTelefono: boolean = false;
+
+    cargandoChat: boolean = true;
 
     userLoggedIn: boolean = false;
     irAtrasImg: string = '../../../assets/sistema/atras.png';
@@ -66,14 +64,18 @@ export class ChatPage implements OnInit {
     detallesConversacion: any;
 
     cargandoSolicitud: { [key: number]: boolean } = {};
-    solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' } = {};
+    solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' | 'cancelada' } = {};
 
     mostrarEmojiPicker: boolean = false;
     listaEmojis = LISTA_EMOJIS;
 
+    // Caché en memoria para no repetir consultas de viajes ya obtenidos
+    private viajesCache = new Map<number, any>();
+    private stopPolling$ = new Subject<void>();
     private destroy$ = new Subject<void>();
 
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private messagingService: MessagingService,
         private notificacionesService: NotificacionesService,
         private travelService: TravelService,
@@ -87,96 +89,259 @@ export class ChatPage implements OnInit {
 
     ngOnInit() {
         this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.usuarioLogueadoId = this.userData.usuario.id;
+        this.usuarioLogueadoId = this.userData?.usuario?.id;
         this.conversacionId = Number(this.route.snapshot.paramMap.get('id'));
-
-        /**
-         * Configuramos un timer que se ejecuta cada 4 segundos para obtener los mensajes de la conversación actualizada.
-         * Cada vez que obtenemos los mensajes, comprobamos si ha habido cambios en el número de mensajes para evitar recargas innecesarias.
-         * Si ha habido cambios, actualizamos la lista de mensajes, procesamos los mensajes especiales 
-         * (solicitudes de viaje y notificaciones de teléfono) y marcamos los mensajes como leídos.
-         * Si no ha habido cambios, simplemente dejamos la lista de mensajes como está y 
-         * seguimos esperando a la siguiente ejecución del timer.
-         * También gestionamos el estado de carga de la preferencia de compartir teléfono 
-         * para mostrar el indicador de carga mientras se obtiene la información y evitar mostrar opciones incorrectas al usuario.
-         * 
-         */
-        timer(0, 4000)
-            .pipe(
-                takeUntil(this.destroy$),
-                switchMap(() => this.messagingService.getMensajes(this.conversacionId))
-            )
-            .subscribe(data => {
-                if (data.length !== this.mensajes.length) {
-                    this.mensajes = data;
-                    this.procesarMensajesEspeciales(data);
-                    this.marcarComoLeidos();
-                    this.cdr.detectChanges();
-                }
-                this.cargandoPreferenciaTelefono = false;
-            });
-    }
-
-    ionViewWillEnter() {
-        this.cargarMensajes();
     }
 
     /**
-     * Función para cargar los mensajes de la conversación.
+     * Inicia una única fuente de datos al entrar en la vista (evita llamadas duplicadas entre ngOnInit e ionViewWillEnter).
      */
-    cargarMensajes() {
-        this.messagingService.getMensajes(this.conversacionId).subscribe(data => {
-            this.mensajes = data;
-            this.cdr.detectChanges();
-            this.telefonoRecibido = null;
-            this.compartiendoMiTelefono = false;
+    ionViewWillEnter() {
+        this.cargandoChat = true;
+        this.viajesCache.clear();
+        this.iniciarPollingMensajes();
+    }
 
-            data.forEach((m: Mensaje) => {
-                if (!m.id) return;
-                if (m.texto.includes('Solicitud para unirse al viaje:')) {
-                    const viajeId = m.texto.split(':')[1];
-                    const pasajeroId = m.emisor_id;
-                    const mensajeId = m.id as number;
+    /**
+     * Detiene el polling cuando el usuario sale de la pantalla de chat.
+     */
+    ionViewWillLeave() {
+        this.stopPolling$.next();
+    }
 
-                    this.travelService.getViaje(Number(viajeId)).subscribe(viaje => {
-                        const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === pasajeroId);
+    /**
+     * Polling controlado con exhaustMap: espera a que termine la petición actual antes de lanzar la siguiente.
+     */
+    private iniciarPollingMensajes() {
+        this.stopPolling$.next();
 
-                        if (estaAceptado) {
-                            this.solicitudesGestionadas[mensajeId] = 'aceptada';
-                        } else {
-                            // Si no está en acompañantes, verificamos si ya se envió un mensaje de rechazo previo 
-                            // o si podemos deducir que fue rechazada (o mantenemos un registro local/backend)
-                            // Por defecto, si el conductor ya respondió con un mensaje de rechazo, marcamos como rechazada:
-                            const respuestaRechazo = data.some(msg =>
-                                msg.emisor_id !== pasajeroId &&
-                                msg.texto.includes('Lo siento, no puedo aceptarte')
-                            );
-                            if (respuestaRechazo) {
-                                this.solicitudesGestionadas[mensajeId] = 'rechazada';
-                            }
-                        }
-                        this.cdr.detectChanges();
-                    });
-                }
+        timer(0, 5000)
+            .pipe(
+                takeUntil(this.stopPolling$),
+                takeUntil(this.destroy$),
+                exhaustMap(() =>
+                    this.messagingService.getMensajes(this.conversacionId).pipe(
+                        catchError((err) => {
+                            console.error('Error al obtener mensajes del chat:', err);
+                            this.cargandoChat = false;
+                            this.cdr.detectChanges();
+                            return of(null);
+                        })
+                    )
+                )
+            )
+            .subscribe((data) => {
+                if (!data) return;
 
-                if (m.texto.includes('TELEFONO USUARIO:')) {
-                    if (m.emisor_id === this.usuarioLogueadoId) {
-                        this.compartiendoMiTelefono = true;
-                    } else {
-                        this.telefonoRecibido = m.texto.split(':')[1].trim();
-                    }
+                const esPrimeraCarga = this.cargandoChat;
+                const ultimoIdAnterior = this.mensajes.length ? this.mensajes[this.mensajes.length - 1].id : null;
+                const ultimoIdNuevo = data.length ? data[data.length - 1].id : null;
+                const hayCambios = esPrimeraCarga || data.length !== this.mensajes.length || ultimoIdAnterior !== ultimoIdNuevo;
+
+                if (hayCambios) {
+                    this.mensajes = data;
+                    this.sincronizarEstadoCompleto(data, esPrimeraCarga || ultimoIdAnterior !== ultimoIdNuevo);
+                    this.marcarComoLeidos();
                 }
             });
+    }
 
-            this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
-            this.cargandoPreferenciaTelefono = false;
-            this.scrollToBottom();
+    cargarMensajes() {
+        this.messagingService.getMensajes(this.conversacionId).subscribe({
+            next: (data) => {
+                this.mensajes = data;
+                this.sincronizarEstadoCompleto(data, true);
+            },
+            error: (err) => {
+                console.error('Error al cargar mensajes:', err);
+                this.cargandoChat = false;
+                this.cdr.detectChanges();
+            }
         });
     }
 
+    esMensajeSolicitud(m: any): boolean {
+        return !!m?.texto && m.texto.includes('Solicitud para unirse al viaje');
+    }
+
+    extraerViajeId(m: any): number {
+        if (m.viaje_id) {
+            return Number(m.viaje_id);
+        }
+        if (m.texto && m.texto.includes(':')) {
+            return Number(m.texto.split(':')[1]);
+        }
+        return 0;
+    }
+
     /**
-     * Función para enviar un nuevo mensaje.
+     * Sincronización optimizada:
+     * 1. Deduplica IDs de viaje para consultar cada viaje como máximo 1 vez.
+     * 2. Reutiliza caché en memoria.
+     * 3. Si faltan viaje_id en mensajes antiguos, pide getViajesUsuario una sola vez para todos.
      */
+    private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false) {
+        this.telefonoRecibido = null;
+        this.compartiendoMiTelefono = false;
+
+        const mensajesSolicitudSinResolver: { mensaje: any; index: number }[] = [];
+        const idsViajesAConsultar = new Set<number>();
+        let requiereFallbackViajes = false;
+
+        mensajes.forEach((m: any, index: number) => {
+            if (!m.id) return;
+
+            if (m.texto.includes('TELEFONO USUARIO:')) {
+                if (m.emisor_id === this.usuarioLogueadoId) {
+                    this.compartiendoMiTelefono = true;
+                } else {
+                    this.telefonoRecibido = m.texto.split(':')[1]?.trim() || null;
+                }
+            }
+
+            if (this.esMensajeSolicitud(m)) {
+                const pasajeroId = m.emisor_id;
+
+                const mensajesPosteriores = mensajes.slice(index + 1);
+                const respuestaConductor = mensajesPosteriores.find(
+                    (msg) =>
+                        msg.emisor_id !== pasajeroId &&
+                        (msg.texto.includes('He aceptado tu solicitud') ||
+                            msg.texto.includes('Lo siento, no puedo aceptarte'))
+                );
+
+                if (respuestaConductor) {
+                    this.solicitudesGestionadas[m.id] = respuestaConductor.texto.includes('He aceptado tu solicitud')
+                        ? 'aceptada'
+                        : 'rechazada';
+                    return;
+                }
+
+                if (!this.solicitudesGestionadas[m.id]) {
+                    const viajeId = this.extraerViajeId(m);
+                    mensajesSolicitudSinResolver.push({ mensaje: m, index });
+
+                    if (viajeId > 0) {
+                        if (!this.viajesCache.has(viajeId)) {
+                            idsViajesAConsultar.add(viajeId);
+                        }
+                    } else {
+                        requiereFallbackViajes = true;
+                    }
+                }
+            }
+        });
+
+        this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
+        this.cargandoPreferenciaTelefono = false;
+
+        if (mensajesSolicitudSinResolver.length === 0) {
+            this.finalizarCargaChat(hacerScroll);
+            return;
+        }
+
+        const peticiones$: Observable<any>[] = [];
+
+        idsViajesAConsultar.forEach((viajeId) => {
+            peticiones$.push(
+                this.travelService.getViaje(viajeId).pipe(
+                    tap((viaje) => {
+                        if (viaje) this.viajesCache.set(viajeId, viaje);
+                    }),
+                    catchError(() => of(null))
+                )
+            );
+        });
+
+        if (requiereFallbackViajes) {
+            const viajesConductor$ = this.travelService.getViajesUsuario(this.usuarioLogueadoId).pipe(
+                map((res: any) => res?.viajes || []),
+                catchError(() => of([]))
+            );
+
+            const viajesAcompanante$ = this.travelService.getViajesComoAcompanante(this.usuarioLogueadoId).pipe(
+                map((res: any) => (Array.isArray(res) ? res : res?.viajes || [])),
+                catchError(() => of([]))
+            );
+
+            peticiones$.push(
+                forkJoin([viajesConductor$, viajesAcompanante$]).pipe(
+                    tap(([comoConductor, comoAcompanante]) => {
+                        [...comoConductor, ...comoAcompanante].forEach((v: any) => {
+                            if (v?.id) this.viajesCache.set(v.id, v);
+                        });
+                    }),
+                    shareReplay(1)
+                )
+            );
+        }
+
+        const ejecutar$ = peticiones$.length > 0 ? forkJoin(peticiones$) : of([]);
+
+        ejecutar$.subscribe(() => {
+            const todosLosViajesCacheados = Array.from(this.viajesCache.values());
+
+            mensajesSolicitudSinResolver.forEach(({ mensaje: m }) => {
+                const mensajeId = m.id as number;
+                const pasajeroId = m.emisor_id;
+                const viajeId = this.extraerViajeId(m);
+                let viaje = viajeId > 0 ? this.viajesCache.get(viajeId) : null;
+
+                // Buscar coincidencia estricta por origen y destino (sin fallback ciego a [0])
+                if (!viaje && todosLosViajesCacheados.length > 0) {
+                    const coincidentes = todosLosViajesCacheados.filter(
+                        (v: any) => m.texto.includes(v.origen) && m.texto.includes(v.destino)
+                    );
+
+                    viaje =
+                        coincidentes.find((v: any) =>
+                            v.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId)
+                        ) ||
+                        coincidentes.find((v: any) =>
+                            v.acompanantes?.some((p: any) => p.id === pasajeroId)
+                        ) ||
+                        coincidentes[0] ||
+                        null;
+
+                    if (viaje) {
+                        m.viaje_id = viaje.id;
+                    }
+                }
+
+                if (!viaje) {
+                    this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                    return;
+                }
+
+                const estaAceptado =
+                    viaje.acompanantes?.some((p: any) => p.id === pasajeroId) ||
+                    viaje.estado_solicitud_propia === 'aceptado';
+
+                const estaPendiente =
+                    viaje.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId) ||
+                    viaje.estado_solicitud_propia === 'pendiente';
+
+                if (estaAceptado) {
+                    this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                } else if (estaPendiente) {
+                    delete this.solicitudesGestionadas[mensajeId];
+                } else {
+                    this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                }
+            });
+
+            this.finalizarCargaChat(hacerScroll);
+        });
+    }
+
+    private finalizarCargaChat(hacerScroll: boolean) {
+        this.cargandoChat = false;
+        this.cdr.detectChanges();
+        if (hacerScroll) {
+            this.scrollToBottom();
+        }
+    }
+
     enviar(viajeId?: any) {
         if (!this.texto.trim()) return;
 
@@ -206,9 +371,6 @@ export class ChatPage implements OnInit {
         });
     }
 
-    /**
-     * Función para volver atrás.
-     */
     goBack() {
         this.navCtrl.navigateBack('/messaging-center', {
             animated: false
@@ -223,16 +385,10 @@ export class ChatPage implements OnInit {
         this.texto += emoji;
     }
 
-    /**
-     * Función para marcar los mensajes como leídos.
-     */
     marcarComoLeidos() {
         this.messagingService.marcarComoLeido(this.conversacionId, this.usuarioLogueadoId).subscribe();
     }
 
-    /**
-     * Función para desplazar el contenido al final.
-     */
     scrollToBottom() {
         setTimeout(() => {
             if (this.content) {
@@ -241,10 +397,6 @@ export class ChatPage implements OnInit {
         }, 100);
     }
 
-    /**
-     * Función para decidir si compartir o no el teléfono con el otro usuario de la conversación.
-     * @param acepta --> Recibe un booleano indicando si el usuario acepta compartir su teléfono (true para aceptar, false para rechazar).
-     */
     decidirCompartirTelefono(acepta: boolean) {
         if (acepta) {
             this.enviarNotificacionTelefono();
@@ -253,29 +405,15 @@ export class ChatPage implements OnInit {
         }
     }
 
-    /**
-     * Función para enviar una notificación al otro usuario de la conversación 
-     * con el teléfono del usuario logueado (compartir teléfono).
-     * 
-     * @returns --> Devuelve un booleano indicando si se compartió el teléfono correctamente o no (true para compartido, false para error).
-     */
     enviarNotificacionTelefono() {
         const mensajeReferencia = this.mensajes[0];
-
-        if (!mensajeReferencia) {
-            console.error("No se pudo determinar el receptor_id porque no hay mensajes.");
-            return;
-        }
-
+        if (!mensajeReferencia) return;
 
         const receptorId = mensajeReferencia.emisor_id !== this.usuarioLogueadoId
             ? mensajeReferencia.emisor_id
             : mensajeReferencia.receptor_id;
 
-        if (!receptorId || receptorId === 0) {
-            console.error("Error: receptorId inválido.");
-            return;
-        }
+        if (!receptorId || receptorId === 0) return;
 
         const payload = {
             conversacion_id: this.conversacionId,
@@ -283,7 +421,7 @@ export class ChatPage implements OnInit {
         };
 
         this.notificacionesService.compartirTelefono(payload).subscribe({
-            next: (res) => {
+            next: () => {
                 this.mostrarPreguntaTelefono = false;
                 this.cargarMensajes();
             },
@@ -291,10 +429,6 @@ export class ChatPage implements OnInit {
         });
     }
 
-    /**
-     * Función para dejar de compartir el teléfono (revocar acceso al teléfono). 
-     * Solo se muestra si el usuario ha compartido su teléfono previamente.
-     */
     dejarDeCompartir() {
         const payload = {
             conversacion_id: this.conversacionId,
@@ -302,13 +436,12 @@ export class ChatPage implements OnInit {
         };
 
         this.notificacionesService.dejarDeCompartirTelefono(payload).subscribe({
-            next: (res) => {
-                console.log("Teléfono compartido con éxito.");
+            next: () => {
                 this.mostrarPreguntaTelefono = false;
                 this.cargarMensajes();
             },
             error: (err) => {
-                console.error('Error al compartir teléfono', err);
+                console.error('Error al dejar de compartir teléfono', err);
                 this.mostrarPreguntaTelefono = true;
                 this.notificacionesService.mostrarToast({
                     id: Date.now(),
@@ -320,11 +453,6 @@ export class ChatPage implements OnInit {
         });
     }
 
-    /**
-     * Función para mostrar la fecha en el chat solo cuando cambia el día entre mensajes.
-     * @param index --> Recibe el índice del mensaje actual en el array de mensajes.
-     * @returns --> Devuelve un booleano indicando si se debe mostrar la fecha o no (true para mostrar, false para ocultar).
-     */
     mostrarFecha(index: number): boolean {
         if (index === 0) return true;
 
@@ -334,15 +462,15 @@ export class ChatPage implements OnInit {
         return fechaActual !== fechaAnterior;
     }
 
-    /**
-     * Función para gestionar una solicitud de unirse a un viaje (aceptar o rechazar).
-     * @param mensaje --> Recibe el mensaje que contiene la solicitud de unirse a un viaje.
-     * @param accion  --> Recibe la acción que se quiere realizar con la solicitud (aceptar o rechazar).
-     */
     gestionarSolicitud(mensaje: any, accion: 'aceptar' | 'rechazar') {
-        const viajeId = mensaje.texto.split(':')[1];
+        const viajeId = this.extraerViajeId(mensaje);
         const pasajeroId = mensaje.emisor_id;
         const mensajeId = mensaje.id;
+
+        if (!viajeId) {
+            console.error('No se encontró el ID del viaje para gestionar la solicitud:', mensaje);
+            return;
+        }
 
         this.cargandoSolicitud[mensajeId] = true;
 
@@ -350,6 +478,7 @@ export class ChatPage implements OnInit {
             this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
                 next: () => {
                     this.solicitudesGestionadas[mensajeId] = 'aceptada';
+                    this.viajesCache.delete(viajeId);
                     this.cargandoSolicitud[mensajeId] = false;
                     this.enviarMensajeSistema("He aceptado tu solicitud. ¡Nos vemos en el viaje!", viajeId);
                 },
@@ -359,22 +488,21 @@ export class ChatPage implements OnInit {
                 }
             });
         } else {
-            // Si tienes un método en travelService para rechazar, úsalo aquí. 
-            // Simulamos el almacenamiento del estado y el envío del mensaje de rechazo:
-            setTimeout(() => {
-                this.solicitudesGestionadas[mensajeId] = 'rechazada';
-                this.cargandoSolicitud[mensajeId] = false;
-                this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.", viajeId);
-            }, 500);
+            this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
+                next: () => {
+                    this.solicitudesGestionadas[mensajeId] = 'rechazada';
+                    this.viajesCache.delete(viajeId);
+                    this.cargandoSolicitud[mensajeId] = false;
+                    this.enviarMensajeSistema("Lo siento, no puedo aceptarte en este viaje en este momento.", viajeId);
+                },
+                error: (err) => {
+                    console.error("Error al rechazar pasajero:", err);
+                    this.cargandoSolicitud[mensajeId] = false;
+                }
+            });
         }
     }
 
-
-    /**
-     * Función para poder enviar el texto pulsando la tecla ENTER
-     * 
-     * @param event -> Recibe la información del evento en el textArea del HTML
-     */
     handleEnter(event: any) {
         if (event.keyCode === 13 && !event.shiftKey) {
             event.preventDefault();
@@ -382,63 +510,9 @@ export class ChatPage implements OnInit {
         }
     }
 
-    /**
-     * Función para enviar un mensaje del sistema (respuestas a solicitudes de viaje).
-     * 
-     * @param texto --> Recibe el texto que se quiere enviar como mensaje del sistema (aceptación o rechazo de solicitud de viaje).
-     */
     enviarMensajeSistema(texto: string, viajeId?: any) {
         this.texto = texto;
         this.enviar(viajeId);
-    }
-
-    /**
-     * Función para procesar mensajes especiales que contienen solicitudes de unirse a un viaje o notificaciones de compartir teléfono.
-     * Para las solicitudes de unirse a un viaje, se verifica si el pasajero 
-     * ya ha sido aceptado en el viaje para mostrar el estado correcto en la interfaz.
-     * Para las notificaciones de compartir teléfono, se actualiza la interfaz 
-     * para mostrar el número de teléfono recibido o la opción de dejar de compartir si el usuario es el emisor.
-     * 
-     * @param mensajes --> Recibe el array de mensajes que se han obtenido de la 
-     * conversación para procesar los mensajes especiales y actualizar la interfaz en consecuencia.
-     * 
-     */
-    private procesarMensajesEspeciales(mensajes: Mensaje[]) {
-        mensajes.forEach((m) => {
-            if (m.texto.includes('Solicitud para unirse al viaje:')) {
-                const viajeId = Number(m.texto.split(':')[1]);
-                const mensajeId = m.id as number;
-
-                if (this.solicitudesGestionadas[mensajeId]) return;
-
-                this.travelService.getViaje(viajeId).subscribe(viaje => {
-                    const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === m.emisor_id);
-                    if (estaAceptado) {
-                        this.solicitudesGestionadas[mensajeId] = 'aceptada';
-                        this.cdr.detectChanges();
-                    } else {
-                        const respuestaRechazo = mensajes.some(msg =>
-                            msg.emisor_id !== m.emisor_id &&
-                            msg.texto.includes('Lo siento, no puedo aceptarte')
-                        );
-                        if (respuestaRechazo) {
-                            this.solicitudesGestionadas[mensajeId] = 'rechazada';
-                            this.cdr.detectChanges();
-                        }
-                    }
-                });
-            }
-            if (m.texto.includes('TELEFONO USUARIO:')) {
-                if (m.emisor_id === this.usuarioLogueadoId) {
-                    this.compartiendoMiTelefono = true;
-                } else {
-                    this.telefonoRecibido = m.texto.split(':')[1].trim();
-                }
-            }
-            this.mostrarPreguntaTelefono = !this.compartiendoMiTelefono;
-            this.cargandoPreferenciaTelefono = false;
-            this.scrollToBottom();
-        });
     }
 
     async abrirIncidenciaBusqueda() {
@@ -465,15 +539,9 @@ export class ChatPage implements OnInit {
         }
     }
 
-    /**
-     * Función que se ejecuta al destruir el componente para limpiar los recursos y evitar fugas de memoria.
-     * En este caso, se completa el Subject destroy$ para finalizar el timer que obtiene 
-     * los mensajes periódicamente y evitar que siga ejecutándose después de salir del chat.
-     * 
-     * Esto es importante para optimizar el rendimiento de la aplicación y 
-     * evitar comportamientos inesperados al seguir intentando actualizar un componente que ya no está activo.
-     */
     ngOnDestroy() {
+        this.stopPolling$.next();
+        this.stopPolling$.complete();
         this.destroy$.next();
         this.destroy$.complete();
     }

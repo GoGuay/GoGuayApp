@@ -15,10 +15,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
-import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline } from 'ionicons/icons';
+import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle } from 'ionicons/icons';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { log } from 'console';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { MonederoService } from 'src/app/core/monedero-service/monedero.service';
+import { PAYPAL_CLIENT_ID, PAYPAL_REDIRECT_URI } from 'src/app/models/constantes/constantes.model';
+import { loadScript } from '@paypal/paypal-js';
 
 @Component({
   selector: 'app-ajustes-aplicacion',
@@ -26,7 +29,18 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NavbarComponent,
+    IonicModule,
+    ToastModule,
+    MatDividerModule,
+    TranslateModule,
+    FormsModule,
+    SpinnerComponent
+
+  ],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -77,6 +91,10 @@ export class AjustesAplicacionPage implements OnInit {
   fechaCaducidad: string = '';
   cvvTarjeta: string = '';
 
+  paypalVinculado: boolean = false;
+  vinculandoPaypal: boolean = false;
+  paypalPayerId: string | null = null;
+
   metodoCobroPredeterminado: string = 'transferencia';
   cobroEmailPaypal: undefined | string;
   numero_cuenta_bancaria: undefined | string;
@@ -99,9 +117,9 @@ export class AjustesAplicacionPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private funcionesComunes: FuncionesComunes,
-    private _bottomSheet: MatBottomSheet
+    private monederoService: MonederoService
   ) {
-    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline });
+    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle });
   }
 
   ngOnInit() {
@@ -117,6 +135,14 @@ export class AjustesAplicacionPage implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params['tab'] === 'cuenta') {
         this.segmentoSeleccionado = 'cuenta';
+        this.intentarRenderizarPaypal();
+      }
+
+      // Captura el callback OAuth de PayPal cuando redirige de vuelta
+      if (params['code'] && params['state'] === 'paypal_link') {
+        this.segmentoSeleccionado = 'cuenta';
+        this.metodoCobroPredeterminado = 'paypal';
+        this.procesarCallbackPaypal(params['code']);
       }
     });
 
@@ -126,10 +152,12 @@ export class AjustesAplicacionPage implements OnInit {
     this.asistenteActiva = savedAsistenteSetting === null ? true : savedAsistenteSetting === 'true';
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (this.userData) {
-      this.cobroEmailPaypal = this.userData.usuario?.cobro_paypal_email
-      this.titular_cuenta_bancaria = this.userData.usuario?.cobro_titular
-      this.numero_cuenta_bancaria = this.userData.usuario?.cobro_iban
+    if (this.userData?.usuario) {
+      this.cobroEmailPaypal = this.userData.usuario.cobro_paypal_email;
+      this.titular_cuenta_bancaria = this.userData.usuario.cobro_titular;
+      this.numero_cuenta_bancaria = this.userData.usuario.cobro_iban;
+      this.metodoCobroPredeterminado = this.userData.usuario.metodo_cobro_preferido || 'transferencia';
+      this.paypalVinculado = !!this.cobroEmailPaypal;
     }
     this.obtenerUsuario();
   }
@@ -148,12 +176,39 @@ export class AjustesAplicacionPage implements OnInit {
     });
   }
 
+  onSegmentoChange() {
+    if (this.segmentoSeleccionado === 'cuenta') {
+      this.intentarRenderizarPaypal();
+    }
+  }
+
+  onMetodoCobroChange() {
+    if (this.metodoCobroPredeterminado === 'paypal') {
+      this.intentarRenderizarPaypal();
+    }
+  }
+
+  private intentarRenderizarPaypal() {
+    if (
+      this.segmentoSeleccionado === 'cuenta' &&
+      this.metodoCobroPredeterminado === 'paypal' &&
+      !this.paypalVinculado
+    ) {
+      setTimeout(() => {
+        this.renderizarBotonPaypal();
+      }, 100);
+    }
+  }
+
   obtenerUsuario() {
     this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((respuesta) => {
       this.usuarioBD = respuesta;
       console.log(this.usuarioBD);
       this.emailPaypal = this.usuarioBD.paypal_email;
       this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
+      if (!this.paypalVinculado) {
+        this.intentarRenderizarPaypal();
+      }
     });
   }
 
@@ -498,6 +553,166 @@ export class AjustesAplicacionPage implements OnInit {
       summary: 'Ajuste actualizado',
       detail: this.asistenteActiva ? 'Asistente MariCar activado.' : 'Asistente MariCar desactivado.',
       life: 2000,
+    });
+  }
+
+  conectarConPaypal() {
+    this.vinculandoPaypal = true;
+    window.location.href = this.monederoService.obtenerUrlAutorizacionPaypal();
+  }
+
+  async renderizarBotonPaypal() {
+    if (this.paypalVinculado) return;
+
+    try {
+      const paypal = await loadScript({
+        clientId: PAYPAL_CLIENT_ID,
+        currency: 'EUR',
+        intent: 'authorize',
+        disableFunding: 'card,credit,sepa',
+      });
+
+      if (!paypal?.Buttons) return;
+
+      const contenedor = document.getElementById('paypal-button-container');
+      if (contenedor) {
+        contenedor.innerHTML = '';
+      }
+
+      await paypal.Buttons({
+        style: {
+          layout: 'horizontal',
+          color: 'blue',
+          shape: 'pill',
+          label: 'paypal',
+          tagline: false,
+        },
+        createOrder: (_data, actions) => {
+          return actions.order.create({
+            intent: 'AUTHORIZE',
+            purchase_units: [
+              {
+                description: 'Verificación de cuenta PayPal - GoGuay',
+                amount: { currency_code: 'EUR', value: '0.01' },
+              },
+            ],
+          });
+        },
+        onApprove: async (_data, actions) => {
+          if (!actions.order || !this.userData?.usuario?.id) return;
+          this.vinculandoPaypal = true;
+
+          const detalles = await actions.order.get();
+          const payerId = detalles.payer?.payer_id;
+          const emailPaypal = detalles.payer?.email_address;
+
+          if (payerId && emailPaypal) {
+            this.monederoService
+              .vincularCuentaPaypal(this.userData.usuario.id, payerId, emailPaypal)
+              .subscribe({
+                next: (res) => {
+                  this.paypalVinculado = true;
+                  this.emailPaypal = emailPaypal;
+                  this.vinculandoPaypal = false;
+                },
+                error: (err) => {
+                  console.error('Error guardando vinculación:', err);
+                  this.vinculandoPaypal = false;
+                },
+              });
+          }
+        },
+        onError: (err) => {
+          console.error('Error en popup de PayPal:', err);
+          this.vinculandoPaypal = false;
+        },
+      }).render('#paypal-button-container');
+    } catch (error) {
+      console.error('No se pudo cargar el SDK de PayPal:', error);
+    }
+  }
+
+  private procesarCallbackPaypal(code: string) {
+    if (!this.userData?.usuario?.id) return;
+    this.vinculandoPaypal = true;
+
+    this.monederoService.vincularCuentaPaypal(this.userData.usuario.id, code, PAYPAL_REDIRECT_URI).subscribe({
+      next: (res) => {
+        this.vinculandoPaypal = false;
+        this.paypalVinculado = true;
+        this.cobroEmailPaypal = res.paypal_email;
+        this.emailPaypal = res.paypal_email;
+        this.paypalPayerId = res.paypal_payer_id;
+        this.metodoCobroPredeterminado = 'paypal';
+
+        if (this.userData?.usuario) {
+          this.userData.usuario.cobro_paypal_email = res.paypal_email;
+          this.userData.usuario.paypal_email = res.paypal_email;
+          this.userData.usuario.paypal_payer_id = res.paypal_payer_id;
+          this.userData.usuario.metodo_cobro_preferido = 'paypal';
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+        }
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { tab: 'cuenta' },
+          replaceUrl: true,
+        });
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'PayPal vinculado',
+          detail: `Cuenta ${res.paypal_email} enlazada correctamente.`,
+          life: 3500,
+        });
+      },
+      error: (err) => {
+        this.vinculandoPaypal = false;
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { tab: 'cuenta' },
+          replaceUrl: true,
+        });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error de vinculación',
+          detail: err.error?.message || 'No se pudo enlazar tu cuenta de PayPal.',
+          life: 4000,
+        });
+      },
+    });
+  }
+  desvincularPaypal() {
+    if (!this.userData?.usuario?.id) return;
+    this.vinculandoPaypal = true;
+
+    this.monederoService.desvincularCuentaPaypal(this.userData.usuario.id).subscribe({
+      next: () => {
+        this.vinculandoPaypal = false;
+        this.paypalVinculado = false;
+        this.cobroEmailPaypal = undefined;
+        this.emailPaypal = '';
+        this.paypalPayerId = null;
+        this.metodoCobroPredeterminado = 'transferencia';
+
+        if (this.userData?.usuario) {
+          this.userData.usuario.cobro_paypal_email = undefined;
+          this.userData.usuario.paypal_email = undefined;
+          this.userData.usuario.paypal_payer_id = undefined;
+          this.userData.usuario.metodo_cobro_preferido = 'transferencia';
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+        }
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'PayPal desvinculado',
+          detail: 'Tu cuenta de PayPal ha sido desenlazada.',
+          life: 3000,
+        });
+      },
+      error: () => {
+        this.vinculandoPaypal = false;
+      },
     });
   }
 }

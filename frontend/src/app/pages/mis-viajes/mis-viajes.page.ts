@@ -167,7 +167,7 @@ export class MisViajesPage implements OnInit {
 
     forkJoin({
       pasajero: this.travelService
-        .getViajesComoAcompañante(userId)
+        .getViajesComoAcompanante(userId)
         .pipe(catchError(() => of([]))),
       conductor: this.travelService
         .getViajesUsuario(userId)
@@ -248,7 +248,7 @@ export class MisViajesPage implements OnInit {
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
     this.travelService
-      .getViajesComoAcompañante(this.userData.usuario.id)
+      .getViajesComoAcompanante(this.userData.usuario.id)
       .subscribe((result) => {
         this.misViajesAcompanante = result;
         this.cargandoViajes = false;

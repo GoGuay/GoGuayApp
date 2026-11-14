@@ -174,7 +174,7 @@ export class TravelService {
    * @param id_usuario Recibe el ID del usuario
    * @returns Devuelve la lista de viajes.
    */
-  getViajesComoAcompañante(id_usuario: number): Observable<any> {
+  getViajesComoAcompanante(id_usuario: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/travel/viajes_como_acompanante/${id_usuario}`);
   }
 
@@ -326,20 +326,26 @@ export class TravelService {
     }
 
     const userData = JSON.parse(userDataString);
-    const usuarioId = userData.usuario.id;
+    const usuarioId = userData.usuario?.id || userData.id;
 
     return this.http
-      .post(`${this.apiUrl}/travel/cancelar_solicitud_manual`, {
-        viaje_id: viajeId,
-        usuario_id: usuarioId,
-      })
+      .post(
+        `${this.apiUrl}/travel/cancelar_solicitud_manual`,
+        {
+          viaje_id: viajeId,
+          usuario_id: usuarioId,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
       .pipe(
+        switchMap(() => this.obtenerTodosLosViajes()),
+        tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados)),
         catchError((error) => {
           console.error('Error al cancelar solicitud manualmente:', error);
           return throwError(() => error);
-        }),
-        switchMap(() => this.obtenerTodosLosViajes()),
-        tap((viajesActualizados) => this.viajeDataSubject.next(viajesActualizados))
+        })
       );
   }
 

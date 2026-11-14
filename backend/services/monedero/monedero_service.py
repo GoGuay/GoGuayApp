@@ -315,6 +315,34 @@ def transferencia_desde_monedero(usuario_id):
         print(f"Error al procesar la retirada de fondos: {str(e)}")
         return jsonify({"error": f"Error interno al procesar la transferencia: {str(e)}"}), 500
 
+@monedero_blueprint.route('/vincular-paypal', methods=['POST'])
+@jwt_required()
+def vincular_paypal():
+    data = request.get_json()
+    usuario_id = data.get('usuario_id')
+    payer_id = data.get('payer_id')
+    email_paypal = data.get('email_paypal')
+
+    if not usuario_id or not payer_id:
+        return jsonify({'error': 'Faltan datos de verificación de PayPal'}), 400
+
+    usuario = Usuario.query.get(usuario_id)
+    if not usuario:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+
+    usuario.paypal_payer_id = payer_id
+    usuario.paypal_vinculado = True
+    usuario.paypal_email = email_paypal 
+    usuario.paypal_fecha_vinculacion = datetime.utcnow()
+    db.session.commit()
+
+    return jsonify({
+        'mensaje': 'Cuenta de PayPal vinculada correctamente',
+        'paypal_vinculado': True,
+        'paypal_payer_id': payer_id,
+        'email_paypal': email_paypal
+    }), 200
+
 
 
     

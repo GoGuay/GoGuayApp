@@ -11,11 +11,6 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 
-
-
-
-
-
 # Nombre único para evitar conflictos
 apigoogle_blueprint = Blueprint('apigoogle', __name__)
 
@@ -25,6 +20,22 @@ load_dotenv()
 # Acceder a la variable de entorno 'GOOGLE_API_KEY'
 googleapykey=os.getenv('GOOGLE_API_KEY')
 
+# --- CONFIGURACIÓN SEGURA DE CREDENCIALES GOOGLE CLOUD ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BACKEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', '..'))
+RUTA_CREDENCIALES = os.path.join(BACKEND_DIR, 'google_service_account.json')
+
+if os.path.exists(RUTA_CREDENCIALES):
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = RUTA_CREDENCIALES
+else:
+    print(f"⚠️ ADVERTENCIA: No se encontró google_service_account.json en {RUTA_CREDENCIALES}")
+
+PROJECT_ID = "prideride"
+LOCATION = "global"
+PARENT = f"projects/{PROJECT_ID}/locations/{LOCATION}"
+
+# Instanciamos el cliente una única vez al arrancar
+translate_client = translate.TranslationServiceClient()
 
 #Busca una localidad según los caracteres que introduzca el usuario
 @apigoogle_blueprint.route('/buscar_localidad', methods=['GET'])
@@ -163,33 +174,27 @@ def obtener_detalle_localidad(item, api_key):
 # lenguage_code y confidence son atributos propios de la API
 # devolvemos el resultado que es el objeto que hemos creado (resultado)
 @apigoogle_blueprint.route('/detectar_idioma', methods=['POST'])
-def detectar_idioma():    
+def detectar_idioma():
     try:
         datos = request.get_json()
         idioma_del_texto = datos.get('texto')
 
         if not idioma_del_texto:
-            return jsonify ({"Error": "No se proporcionó texto"}), 400
-        
-        project_id = "prideride"
-        client = translate.TranslationServiceClient()
-        location = "global"
-        parent = f"projects/{project_id}/locations/{location}"
+            return jsonify({"Error": "No se proporcionó texto"}), 400
 
-        response = client.detect_language(
-            content= idioma_del_texto,
-            parent=parent,
-            mime_type="text/plain",  
+        response = translate_client.detect_language(
+            content=idioma_del_texto,
+            parent=PARENT,
+            mime_type="text/plain",
         )
-        print("respuesta backend: ", response)
         resultado = {
             "idioma": response.languages[0].language_code,
             "confianza": response.languages[0].confidence
         }
-        return resultado
-    
+        return jsonify(resultado), 200
+
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error en detectar_idioma: {e}")
         return jsonify({"error": str(e)}), 500
     
 
@@ -210,26 +215,29 @@ def translate_text():
         objetoRecibido = request.get_json()
         textoATraducir = objetoRecibido.get('texto')
         idioma_destino = objetoRecibido.get('idioma_destino')
-        idioma_origen = objetoRecibido.get('idioma_origen')        
+        idioma_origen = objetoRecibido.get('idioma_origen')  # Opcional
 
-        client = translate.TranslationServiceClient()
-        location = "global"
-        project_id="prideride"
-        parent = f"projects/{project_id}/locations/{location}"
-        response = client.translate_text(
-            request={
-                "parent": parent,
-                "contents": [textoATraducir],
-                "mime_type": "text/plain",
-                "source_language_code": idioma_origen,
-                "target_language_code": idioma_destino,
-            }
-        )
-        print ('respuestaaaa: ', response)        
+        if not textoATraducir or not idioma_destino:
+            return jsonify({"error": "Faltan parámetros 'texto' o 'idioma_destino'"}), 400
+
+        if idioma_origen and idioma_origen == idioma_destino:
+            return jsonify({'texto_traducido': textoATraducir}), 200
+
+        peticion_google = {
+            "parent": PARENT,
+            "contents": [textoATraducir],
+            "mime_type": "text/plain",
+            "target_language_code": idioma_destino,
+        }
+
+        if idioma_origen:
+            peticion_google["source_language_code"] = idioma_origen
+
+        response = translate_client.translate_text(request=peticion_google)
         texto_final = response.translations[0].translated_text
-        return  jsonify({'texto_traducido':texto_final})
-        
+
+        return jsonify({'texto_traducido': texto_final}), 200
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error en traducir_texto: {e}")
         return jsonify({"error": str(e)}), 500

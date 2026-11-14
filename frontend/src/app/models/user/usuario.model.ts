@@ -44,10 +44,10 @@ export interface Usuario {
     tarjeta_numero?: string;
     tarjeta_exp?: string;
     metodo_cobro_preferido?: string;
-    cobro_paypal_email?: string;
+    cobro_paypal_email?: undefined | string;
     cobro_iban?: string;
     cobro_titular?: string;
-
+    paypal_payer_id?: string;
     perfil_eliminado_por_usuario?: boolean;
     fecha_eliminacion_por_usuario?: string;
     fecha_limite_reactivacion?: string;
