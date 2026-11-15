@@ -261,18 +261,25 @@ def solicitar_unirse():
 
     existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
     if existente:
-        return jsonify({"error": "Ya has solicitado unirse a este viaje anteriormente"}), 400
+        if existente.estado == 'pendiente_pago':
+            existente.estado = 'pendiente'
+        else:
+            return jsonify({"error": "Ya has solicitado unirse a este viaje anteriormente"}), 400
+    else:
+        if viaje.plazas <= 0:
+            return jsonify({"error": "No hay plazas disponibles"}), 400
+        
+        viaje.plazas -= 1
+        nueva_solicitud = PasajeroViaje(
+            usuario_id=emisor_id,
+            viaje_id=viaje_id,
+            estado='pendiente' 
+        )
+        db.session.add(nueva_solicitud)
 
     viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
-
-    nueva_solicitud = PasajeroViaje(
-        usuario_id=emisor_id,
-        viaje_id=viaje_id,
-        estado='pendiente' 
-    )
-    db.session.add(nueva_solicitud)
 
     texto_solicitud = f"Solicitud para unirse al viaje de {viaje.origen} a {viaje.destino}."
     nuevo_msj = Mensaje(

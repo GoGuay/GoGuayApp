@@ -3,14 +3,22 @@
   margin: 0 auto;
 }
 
-.title-main { font-weight: 900; color: #333; font-size: 1.8rem; }
-.subtitle-main { color: #999; margin-top: -5px; }
+.title-main {
+  font-weight: 900;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+.subtitle-main {
+  color: #999;
+  margin-top: -5px;
+}
 
 .glass-card {
   background: white;
   border-radius: 35px;
   padding: 30px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(179, 181, 230, 0.2);
   height: 100%;
 }
@@ -54,14 +62,34 @@
       color: #666;
       z-index: 2;
 
-      &.origin { background: #e3f2fd; color: #2196f3; }
-      &.destination { background: #b3b5e6; color: black; }
+      &.origin {
+        background: #e3f2fd;
+        color: #2196f3;
+      }
+
+      &.destination {
+        background: #b3b5e6;
+        color: black;
+      }
     }
 
     .timeline-content {
       flex: 1;
-      label { display: block; font-size: 0.7rem; font-weight: 700; color: #aaa; text-transform: uppercase; }
-      h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #333; }
+
+      label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #aaa;
+        text-transform: uppercase;
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+      }
     }
   }
 }
@@ -96,8 +124,32 @@
 
     .setting-info {
       flex: 1;
-      label { display: block; font-size: 0.7rem; font-weight: 700; color: #999; }
-      span { font-weight: 700; color: #444; }
+
+      label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #999;
+      }
+
+      span {
+        font-weight: 700;
+        color: #444;
+        display: flex;
+        align-items: center;
+
+        .icon-box {
+          width: 45px;
+          height: 45px;
+          background: #f8f9ff;
+          border-radius: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #b3b5e6;
+          font-size: 1.2rem;
+        }
+      }
     }
   }
 }
@@ -111,11 +163,20 @@
   align-items: center;
   color: black;
 
-  .price-label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; }
+  .price-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
   .price-value {
     font-size: 2rem;
     font-weight: 900;
-    span { font-size: 1rem; margin-left: 4px; }
+
+    span {
+      font-size: 1rem;
+      margin-left: 4px;
+    }
   }
 }
 
@@ -124,7 +185,12 @@
   color: #b3b5e6;
   border: none;
   margin-left: 10px;
-  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .btn-primary-custom {
@@ -147,8 +213,9 @@
   overflow: hidden;
   height: 250px;
   border: 4px solid #f8f9ff;
-  
-  .map-canvas, .map-placeholder {
+
+  .map-canvas,
+  .map-placeholder {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -164,13 +231,25 @@
   background: #f8f9ff;
   border: 1px solid #e0e4ff;
 
-  i { font-size: 1.5rem; color: #b3b5e6; }
-  p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.4; }
+  i {
+    font-size: 1.5rem;
+    color: #b3b5e6;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+  }
 
   &.edit-note {
     background: #fffdf0;
     border-color: #f0d7b4;
-    i { color: #d4a373; }
+
+    i {
+      color: #d4a373;
+    }
   }
 }
 
@@ -178,12 +257,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  
-  i { font-size: 1.2rem; }
+
+  i {
+    font-size: 1.2rem;
+  }
 }
 
-.custom-input, 
-.form-select.custom-select-pride, 
+.custom-input,
+.form-select.custom-select-pride,
 .form-control-sm,
 .input-viaje,
 select.form-select {
@@ -222,14 +303,14 @@ select.form-select {
   width: 100%;
   border-radius: 35px;
   overflow: hidden;
-  display: block !important; 
+  display: block !important;
 }
 
 /* Estilo global de botones redondeados */
-button, 
-.btn-primary-custom, 
-.btn-secondary-custom, 
-.btn-edit-sm, 
+button,
+.btn-primary-custom,
+.btn-secondary-custom,
+.btn-edit-sm,
 .btn-edit,
 .btn-edit-price {
   border-radius: 35px !important;
@@ -251,14 +332,15 @@ button,
 }
 
 /* Ajuste para los botones de edición pequeños */
-.btn-edit-sm, .btn-edit {
+.btn-edit-sm,
+.btn-edit {
   width: 35px;
   height: 35px;
   min-width: 35px;
   background: #f0f0ff;
   color: #7B61FF;
   border: none;
-  
+
   &:hover {
     background: #b3b5e6;
     color: black;
@@ -274,7 +356,7 @@ button,
   background-color: white;
   cursor: pointer;
   outline: none;
-  
+
   &:focus {
     border-color: #b3b5e6;
     box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1);
@@ -282,24 +364,24 @@ button,
 }
 
 .input-price-edit {
-  border-radius: 35px !important; 
+  border-radius: 35px !important;
   border: 2px solid #fff !important;
   padding: 5px 15px !important;
   width: 100px !important;
   font-size: 1.2rem !important;
   font-weight: 700 !important;
   text-align: center !important;
-  
-  color: #333 !important;          
-  background-color: white !important; 
-  
+
+  color: #333 !important;
+  background-color: white !important;
+
   outline: none !important;
   margin-top: 5px;
 
-  &::-webkit-inner-spin-button, 
-  &::-webkit-outer-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
 
@@ -326,6 +408,12 @@ button,
 }
 
 @media (max-width: 768px) {
-  .glass-card { padding: 20px; border-radius: 25px; }
-  .price-value { font-size: 1.5rem; }
+  .glass-card {
+    padding: 20px;
+    border-radius: 25px;
+  }
+
+  .price-value {
+    font-size: 1.5rem;
+  }
 }

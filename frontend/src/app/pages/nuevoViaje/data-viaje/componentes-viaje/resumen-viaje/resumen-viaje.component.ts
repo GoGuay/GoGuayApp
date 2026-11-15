@@ -104,7 +104,7 @@ export class ResumenViajeComponent implements OnInit {
     });
 
     console.log('CURRENT DATA: ', this.currentViajeData);
-    
+
   }
 
   /**
@@ -130,8 +130,8 @@ export class ResumenViajeComponent implements OnInit {
   /**
    * Función para inicializar el mapa en el resumen del viaje
    * @param mapOptions --> Contiene la configuración del mapa
-   * 
-   * 
+   *
+   *
    */
   inicializarMapaResumen() {
     if (!this.mapElement) return;
@@ -140,7 +140,7 @@ export class ResumenViajeComponent implements OnInit {
       disableDefaultUI: true,
       zoomControl: false,
       scrollwheel: false,
-      gestureHandling: 'none' 
+      gestureHandling: 'none'
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
@@ -157,13 +157,13 @@ export class ResumenViajeComponent implements OnInit {
 
         const bounds = new google.maps.LatLngBounds();
         const route = this.currentViajeData.ruta_seleccionada.routes[0];
-        
+
         if (route && route.overview_path) {
           route.overview_path.forEach((point: any) => bounds.extend(point));
           this.map.fitBounds(bounds);
         }
       }
-    }, 500); 
+    }, 500);
   }
 
   obtenerViaje(viaje_id: number) {
@@ -180,13 +180,13 @@ export class ResumenViajeComponent implements OnInit {
   setInitialCoche() {
     if (!this.currentViajeData || this.vehiculosUsuario.length === 0) return;
 
-    const idBuscado = this.currentViajeData.vehiculo || 
-                      this.currentViajeData.vehiculo_id || 
+    const idBuscado = this.currentViajeData.vehiculo ||
+                      this.currentViajeData.vehiculo_id ||
                       (this.currentViajeData.coche?.id);
 
     if (idBuscado) {
       const cocheEncontrado = this.vehiculosUsuario.find(v => v.id === idBuscado);
-      
+
       if (cocheEncontrado) {
         this.editableFields.coche = cocheEncontrado;
         this.nombreVehiculo = `${cocheEncontrado.marca} ${cocheEncontrado.modelo}`;
@@ -205,8 +205,8 @@ export class ResumenViajeComponent implements OnInit {
   confirmarViaje() {
     const esEdicion = this.ruta_navegacion_origen === 'mis-viajes';
     const title = esEdicion ? 'Actualizar Viaje' : 'Confirmación de Viaje';
-    const message = esEdicion 
-      ? '<p>Los cambios se han guardado correctamente y se ha notificado a tus acompañantes.</p>' 
+    const message = esEdicion
+      ? '<p>Los cambios se han guardado correctamente y se ha notificado a tus acompañantes.</p>'
       : '<p>El viaje ha sido confirmado con éxito.</p><p>Si quieres, puedes crear un viaje de vuelta también.</p>';
 
     this.currentViajeData.usuario_id = this.userData.usuario.id;
@@ -225,17 +225,16 @@ export class ResumenViajeComponent implements OnInit {
       return;
     }
 
-    const fechaSalidaRaw = new Date(this.currentViajeData.fecha_salida);
-    this.currentViajeData.fecha_salida = fechaSalidaRaw.toISOString().split('T')[0];
+    this.currentViajeData.fecha_salida = this.formatearFechaLocal(this.currentViajeData.fecha_salida);
 
     const pregunta = esEdicion ? '¿Deseas guardar los cambios realizados?' : '¿Deseas confirmar el viaje?';
     const mensajeConfirmación = this.openHelp(title, pregunta, true, false, false);
-    
+
     mensajeConfirmación.afterClosed().subscribe((res) => {
       if (res) {
         this.cargando_viaje = true;
 
-        const peticion = esEdicion 
+        const peticion = esEdicion
           ? this.travelService.editarViaje(this.currentViajeData.id, this.currentViajeData)
           : this.travelService.guardarViaje(this.currentViajeData);
 
@@ -246,7 +245,7 @@ export class ResumenViajeComponent implements OnInit {
             localStorage.setItem('creacion_viaje_completado', 'true');
 
             const modalExito = this.openHelp(title, message, true, false, !esEdicion);
-            
+
             modalExito.afterClosed().subscribe(() => {
               this.navCtrl.navigateRoot(`/mis-viajes?id=${this.userData.usuario.id}`);
             });
@@ -259,6 +258,22 @@ export class ResumenViajeComponent implements OnInit {
         });
       }
     });
+  }
+
+formatearFechaLocal(fecha: any): string {
+    if (!fecha) return '';
+    if (typeof fecha === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(fecha)) {
+      const [dia, mes, anio] = fecha.split('-');
+      return `${anio}-${mes}-${dia}`;
+    }
+    if (typeof fecha === 'string' && /^\d{4}-\d{2}-\d{2}/.test(fecha)) {
+      return fecha.substring(0, 10);
+    }
+    const dateObj = new Date(fecha);
+    const anio = dateObj.getFullYear();
+    const mes = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(dateObj.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
   }
 
 
@@ -420,7 +435,7 @@ export class ResumenViajeComponent implements OnInit {
       });
 
       this.currentViajeData.hora_llegada = resultado;
-      this.currentViajeData.duracion_viaje = duracion_viaje; 
+      this.currentViajeData.duracion_viaje = duracion_viaje;
 
       return resultado;
     } catch (error) {
@@ -446,12 +461,12 @@ export class ResumenViajeComponent implements OnInit {
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK && result) {
           const duracionTexto = result.routes[0]?.legs[0]?.duration?.text || 'No especificado';
-          
+
           this.currentViajeData.ruta_seleccionada = {
             ...result,
-            tiempoTotal: duracionTexto 
+            tiempoTotal: duracionTexto
           };
-          
+
           if (this.directionsRenderer) {
             this.directionsRenderer.setDirections(result);
           }
@@ -501,9 +516,9 @@ export class ResumenViajeComponent implements OnInit {
           this.currentViajeData = { ...viajeData };
           this.origen = this.currentViajeData?.origen || '';
           this.destino = this.currentViajeData?.destino || '';
-          
+
           this.editableFields.precio_viaje = this.currentViajeData?.precio_viaje || 0;
-          
+
           if (this.currentViajeData?.coche && this.vehiculosUsuario.length > 0) {
             this.setInitialCoche();
           }

@@ -116,14 +116,17 @@ def editar_viaje(viaje_id):
 
     try:
         data = request.get_json()
+        print('Información viaje a editar: ', data['fecha_salida'])
     except Exception as e:
         return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
 
     cambios_detectados = {}
 
     
-    if 'fecha_salida' in data:
+    if 'fecha_salida' in data and data['fecha_salida']:
         fecha_salida_str = data['fecha_salida']
+        if 'T' in fecha_salida_str:
+            fecha_salida_str = fecha_salida_str.split('T')[0]
         formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d']
         fecha_salida = None
         for formato in formatos_fecha:
@@ -341,16 +344,17 @@ def cancelar_viaje(viaje_id):
 
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
-    
-    if viaje.usuario_id != usuario_actual_id: 
+    print ('usuarioId :', usuario_actual_id)
+    print ('usuarioCreadorViaje: ', viaje.usuario_id)
+    if int(viaje.usuario_id) != int(usuario_actual_id): 
         return jsonify({"error": "No tienes permiso para eliminar este viaje"}), 404
     
-    ahora=datetime.now(timezone.utc)
+    ahora = datetime.now()
 
-    if viaje.fecha_salida <= ahora or viaje.estado_viaje in ['En curso','Finalizado','Cancelado']:
+    if viaje.fecha_salida <= ahora or viaje.estado_viaje in ['En curso', 'Finalizado', 'Cancelado']:
         return jsonify({"error": "No se puede cancelar un viaje que ya ha comenzado, finalizado, o ya se encuentra cancelado."}), 400
     
-    reservas_confirmadas = [p for p in viaje.pasajeros if p.estado == EstadoSolicitudEnum.ACEPTADA.value]
+    reservas_confirmadas = [p for p in viaje.pasajeros if p.estado in ['aceptado', 'aceptada', 'accepted', EstadoSolicitudEnum.ACEPTADA.value]]
     if not reservas_confirmadas:
         return jsonify({"error": "El viaje no cuenta con reservas confirmadas activas para poder cancelarlo con penalización."}), 400
     
@@ -711,10 +715,7 @@ def confirmar_pasajero_manual():
     ).first()
 
     if not solicitud:
-        return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404
-
-    if viaje.plazas <= 0:
-        return jsonify({"error": "No quedan plazas disponibles"}), 400
+        return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404    
     
     if solicitud.paypal_auth_id:
         token = get_access_token()

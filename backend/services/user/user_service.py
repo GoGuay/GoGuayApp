@@ -1106,7 +1106,7 @@ def create_order():
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
         
-    email_conductor = viaje.creador.paypal_email or "goguay_empresa@business.example.com"
+    email_empresa = "goguay_empresa@business.example.com"
     
     precio_formateado = f"{viaje.precio_viaje:.2f}"
     
@@ -1114,16 +1114,14 @@ def create_order():
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
     payload = {
-        "intent": "CAPTURE",
+        "intent": "AUTHORIZE",
         "purchase_units": [{
             "reference_id": str(viaje_id),
             "amount": {
                 "currency_code": "EUR", 
                 "value": precio_formateado
             },
-            "payee": {
-                "email_address": email_conductor  
-            },
+            
             "description": f"Reserva de plaza en GoGuay - Destino {viaje.destino}"
         }],
         "application_context": { 
@@ -1158,7 +1156,7 @@ def create_order():
 def capture_order(order_id: str):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/capture", headers=headers)
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/authorize", headers=headers)
     
     capture_data = response.json()
     
