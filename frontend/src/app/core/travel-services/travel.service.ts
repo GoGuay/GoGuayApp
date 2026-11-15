@@ -134,6 +134,20 @@ export class TravelService {
     );
   }
 
+
+  bloquearPlaza(viajeId:number, usuarioId:any): Observable<any>{
+    const params = {
+      viaje_id:viajeId,
+      usuario_id:usuarioId
+    }
+    return this.http.post(`${this.apiUrl}/travel/bloquear_plaza`, params).pipe(
+      catchError((error) => {
+        console.error('Error al bloquear la plaza:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   /**
    * Función para que un usuario se una a un viaje.
    *

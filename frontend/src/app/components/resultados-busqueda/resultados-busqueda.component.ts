@@ -335,8 +335,17 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.redirigirAlLogin();
       return;
     }
+    this.travelService.bloquearPlaza(viaje.id,this.userData?.usuario?.id ).subscribe({
+      next:(response: any)=>{
+        const pasajeroId = response.pasajero_id
+        this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
+      },
+      error: (err) => {
+        const mensaje = err.error?.error ||'Lo sentimos, el viaje acaba de completarse'
+        console.warn(mensaje)
+      }
+    })
 
-    this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
   }
 
   estaUnido(viaje: Viaje): boolean {
@@ -344,56 +353,6 @@ export class ResultadosBusquedaComponent implements OnInit {
     return viaje.acompanantes?.some((a: any) => a.id === this.userData?.usuario.id) || false;
   }
 
-  private solicitudAutomatica(viaje: Viaje) {
-    const title_error = '¡Algo anda mal!';
-    const title_viaje_confirmado = '¡Confirmado!';
-    const message_viaje_confirmado = 'Te has unido al viaje correctamente.';
-
-    if (this.estaUnido(viaje)) {
-      this.funcionesComunes.openConfirmModal(title_error, 'Ya estás unido a este viaje.');
-      return;
-    }
-
-    this.travelService.unirseAViaje(viaje.id).subscribe({
-      next: (viajesActualizados: Viaje[]) => {
-        // Buscamos el viaje actualizado en la respuesta para refrescar la UI local
-        const actualizado = viajesActualizados.find((v) => v.id === viaje.id);
-        if (actualizado) {
-          // Actualizamos la referencia en el listado para que cambie el botón
-          Object.assign(viaje, actualizado);
-          this.funcionesComunes.openConfirmModal(title_viaje_confirmado, message_viaje_confirmado);
-        }
-      },
-      error: () => {
-        this.funcionesComunes.openErrorModal(title_error, 'No se pudo procesar la reserva.');
-      },
-    });
-  }
-
-  /**
-   * Solicitud que requiere aprobación (vía Chat)
-   */
-  private enviarSolicitudManual(viaje: Viaje) {
-    const emisorId = this.userData?.usuario.id || 0;
-    const receptorId = viaje.usuario_id;
-
-    this.messagingService.iniciarChat(emisorId, receptorId).subscribe({
-      next: (res) => {
-        const convId = res.conversacion_id;
-        const payload = {
-          viaje_id: viaje.id,
-          emisor_id: emisorId,
-          receptor_id: receptorId,
-          conversacion_id: convId,
-        };
-
-        this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
-          this.funcionesComunes.openConfirmModal('Solicitud enviada', 'El conductor debe aceptar tu solicitud para unirte.');
-          this.navCtrl.navigateForward(['/chat', convId]);
-        });
-      },
-    });
-  }
 
   /**
    * Función para redirigir al usuario al login, mostrando un modal de confirmación.

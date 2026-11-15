@@ -241,6 +241,10 @@ def editar_viaje(viaje_id):
         return jsonify({"error": "Error en la actualización", "detalle": str(e)}), 500
     
 
+
+@travel_blueprint.route('/<int:viaje_id>/')
+    
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LA LISTA DE VIAJES DE UN USUARIO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -570,6 +574,29 @@ def registrar_token():
     return jsonify({"mensaje": "El token ya estaba registrado"}), 200
 
 
+@travel_blueprint.route('/bloquear_plaza', methods=['POST'])
+def bloquear_plaza():
+    data=request.get_json()
+    usuario_id = data.get('usuario_id')
+    viaje_id = data.get('viaje_id')
+
+    viaje = Viaje.query.get(viaje_id)
+    if not viaje or viaje.plazas <= 0:
+        return jsonify({"error": "No hay plazas disponibles"}), 400
+    
+    viaje.plazas -=1
+
+    nuevo_pasajero = PasajeroViaje(
+        usuario_id=usuario_id,
+        viaje_id=viaje_id,
+        estado='pendiente_pago'
+    )
+    db.session.add(nuevo_pasajero)
+    db.session.commit()
+
+    return jsonify({"mensaje": "Plaza bloqueada temporalmente", "pasajero_id": nuevo_pasajero.id}), 200
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #           SERVICIO PARA UNIRSE A UN VIAJE - ACEPTACIÓN AUTOMÁTICA
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -606,23 +633,17 @@ def unirse_viaje():
 
     auth_id = None
 
-    if viaje.reserva_automatica:
-        # CASO A: Automática -> Cobro inmediato (CAPTURE)
-        response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/capture", headers=headers)
-        res_data = response.json()
-        if response.status_code not in [200, 201]:
-            return jsonify({"error": "Error al procesar el pago automático en PayPal", "detalle": res_data}), response.status_code
-    else:
-        # CASO B: Manual -> Solo congelamos el dinero (AUTHORIZE)
-        response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize", headers=headers)
-        res_data = response.json()
-        if response.status_code not in [200, 201]:
-            return jsonify({"error": "Error al congelar el pago en PayPal", "detalle": res_data}), response.status_code
-        
-        try:
-            auth_id = res_data['purchase_units'][0]['payments']['authorizations'][0]['id']
-        except (KeyError, IndexError):
-            return jsonify({"error": "No se pudo obtener la autorización de PayPal", "detalle": res_data}), 500
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize", headers=headers)
+    res_data = response.json()
+    if response.status_code not in [200, 201]:
+        db.session.rollback()
+        return jsonify({"error": "Error al congelar el pago en PayPal", "detalle": res_data}), response.status_code
+    
+    try:
+        auth_id = res_data['purchase_units'][0]['payments']['authorizations'][0]['id']
+    except (KeyError, IndexError):
+        return jsonify({"error": "No se pudo obtener la autorización de PayPal", "detalle": res_data}), 500
+       
 
     estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
 
@@ -633,10 +654,6 @@ def unirse_viaje():
         paypal_auth_id=auth_id
     )
     db.session.add(nuevo_pasajero)
-
-    if viaje.reserva_automatica:
-        viaje.plazas -= 1
-    
     db.session.commit()
 
     pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
