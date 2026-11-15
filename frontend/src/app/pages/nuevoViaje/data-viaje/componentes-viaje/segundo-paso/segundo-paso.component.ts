@@ -113,6 +113,8 @@ export class SegundoPasoComponent implements OnInit {
     this.destino = currentViajeData.destino || '';
     this.plazas = currentViajeData.plazas || '';
     this.hora_seleccionada = currentViajeData.hora_salida || '';
+
+    this.cdr.detectChanges();
   }
 
   buscarSugerenciasOrigen(texto: string) {
@@ -138,7 +140,7 @@ export class SegundoPasoComponent implements OnInit {
   seleccionarLocalidadOrigen(localidad: any) {
     const nombreOrigen = typeof localidad === 'string' ? localidad : (localidad?.descripcion?.split(',')[0]?.trim() || '');
     this.origen = nombreOrigen;
-    
+
     const viajeData = {
       ...this.travelService.getViajeData(),
       origen: this.origen,

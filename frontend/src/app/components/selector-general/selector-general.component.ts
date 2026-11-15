@@ -65,6 +65,9 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   isDesktop: boolean = window.innerWidth >= 992;
 
   ngOnInit() {
+    if (this.valor !== undefined && this.valor !== null && this.valor !== '') {
+      this.writeValue(this.valor);
+    }
     this.translate.onLangChange.subscribe(() => {
       this.actualizarTextoVisual();
     });
