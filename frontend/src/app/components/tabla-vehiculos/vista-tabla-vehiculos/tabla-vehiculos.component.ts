@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
@@ -19,7 +18,7 @@ import { SelectorGeneralComponent } from '../../selector-general/selector-genera
   templateUrl: './tabla-vehiculos.component.html',
   styleUrls: ['./tabla-vehiculos.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
+  imports: [IonicModule, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
 })
 export class TablaVehiculosComponent implements OnInit {
   @Input() vehiculos: any[] = [];

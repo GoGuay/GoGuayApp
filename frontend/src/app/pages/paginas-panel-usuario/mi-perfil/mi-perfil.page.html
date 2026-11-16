@@ -55,19 +55,16 @@
                   referrerpolicy="no-referrer"
                   [attr.alt]="'MIPERFIL.INFO_PERSONAL.ALT_IMG_PERFIL' | translate"
                 />
-                <div
-                  class="overlay"
-                  *ngIf="cargando"
-                >
+                @if (cargando) {
+                <div class="overlay">
                   <app-spinner></app-spinner>
                 </div>
+                }
               </div>
             </div>
             <!-- Botón eliminar foto -->
-            <div
-              class="col-auto"
-              *ngIf="!perfilSinFoto"
-            >
+            @if (!perfilSinFoto) {
+            <div class="col-auto">
               <button
                 type="button"
                 class="btn btn_bg boton btn_delete"
@@ -83,6 +80,7 @@
                 />
               </button>
             </div>
+            }
           </div>
 
           <!-- === Fila 2: botón "Así me ven los demás" === -->
@@ -119,12 +117,9 @@
                 required
                 (ngModelChange)="onInputChange()"
               />
-              <div
-                *ngIf="nombreInput.invalid && (nombreInput.dirty || nombreInput.touched)"
-                class="text-danger mt-1 small"
-              >
-                {{'MIPERFIL.INFO_PERSONAL.NOMBRE_OBLIGATORIO' | translate}}
-              </div>
+              @if (nombreInput.invalid && (nombreInput.dirty || nombreInput.touched)) {
+              <div class="text-danger mt-1 small">{{'MIPERFIL.INFO_PERSONAL.NOMBRE_OBLIGATORIO' | translate}}</div>
+              }
             </div>
             <div class="mb-3">
               <label
@@ -143,12 +138,9 @@
                 required
                 (ngModelChange)="onInputChange()"
               />
-              <div
-                *ngIf="apellidosInput.invalid && (apellidosInput.dirty || apellidosInput.touched)"
-                class="text-danger mt-1 small"
-              >
-                {{'MIPERFIL.INFO_PERSONAL.APELLIDOS_OBLIGATORIO' | translate}}
-              </div>
+              @if (apellidosInput.invalid && (apellidosInput.dirty || apellidosInput.touched)) {
+              <div class="text-danger mt-1 small">{{'MIPERFIL.INFO_PERSONAL.APELLIDOS_OBLIGATORIO' | translate}}</div>
+              }
             </div>
           </ion-col>
         </ion-row>
@@ -271,11 +263,12 @@
                   aria-describedby="bioHelp"
                   (ngModelChange)="onInputChange()"
                 ></textarea>
+                @if (spinnerActivo) {
                 <app-spinner
-                  *ngIf="spinnerActivo"
                   [texto_spinner]="texto_spinner | translate"
                   [tamano_completo]="false"
                 ></app-spinner>
+                }
               </div>
 
               <div
@@ -435,7 +428,6 @@
                 {{'MIPERFIL.PREF_VIAJE.FUMAR' | translate }}
               </label>
             </div>
-
           </fieldset>
         </ion-row>
       </ion-col>

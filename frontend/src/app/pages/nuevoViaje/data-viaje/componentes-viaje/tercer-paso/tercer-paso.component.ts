@@ -1,12 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  OnDestroy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +23,6 @@ interface RutaExtendida {
   standalone: true,
   imports: [
     IonicModule,
-    CommonModule,
     FormsModule,
     RouterModule,
     MatCardModule,
@@ -83,7 +75,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private travelService: TravelService,
-    private spinner: NgxSpinnerService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
@@ -107,22 +99,16 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private escucharCambiosViaje() {
-    this.travelService.viajeData$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((viajeData) => {
-        const nuevoOrigen = viajeData?.origen || '';
-        const nuevoDestino = viajeData?.destino || '';
+    this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
+      const nuevoOrigen = viajeData?.origen || '';
+      const nuevoDestino = viajeData?.destino || '';
 
-        if (
-          nuevoOrigen &&
-          nuevoDestino &&
-          (nuevoOrigen !== this.origen || nuevoDestino !== this.destino)
-        ) {
-          this.origen = nuevoOrigen;
-          this.destino = nuevoDestino;
-          this.buscarRutasCombinadas();
-        }
-      });
+      if (nuevoOrigen && nuevoDestino && (nuevoOrigen !== this.origen || nuevoDestino !== this.destino)) {
+        this.origen = nuevoOrigen;
+        this.destino = nuevoDestino;
+        this.buscarRutasCombinadas();
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -135,9 +121,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private inicializarServiciosMapas() {
     this.directionsService = new google.maps.DirectionsService();
-    this.directionsRenderer = new google.maps.DirectionsRenderer(
-      this.directionsOptions,
-    );
+    this.directionsRenderer = new google.maps.DirectionsRenderer(this.directionsOptions);
   }
 
   buscarRutasCombinadas(): void {
@@ -155,7 +139,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         provideRouteAlternatives: true,
         avoidTolls: false,
         region: 'ES',
-      }),
+      })
     );
 
     const reqSinPeajes = from(
@@ -166,7 +150,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         provideRouteAlternatives: true,
         avoidTolls: true,
         region: 'ES',
-      }),
+      })
     );
 
     forkJoin([reqConPeajes, reqSinPeajes]).subscribe({
@@ -176,20 +160,13 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const listaTemporal: RutaExtendida[] = [];
 
-        const evaluarPeaje = (
-          route: google.maps.DirectionsRoute,
-          solicitadoSinPeaje: boolean,
-        ): boolean => {
+        const evaluarPeaje = (route: google.maps.DirectionsRoute, solicitadoSinPeaje: boolean): boolean => {
           if (solicitadoSinPeaje) return false;
           if ((route as any).hasTolls != undefined) {
             return (route as any).hasTolls;
           }
           return route.legs.some((leg) =>
-            leg.steps.some(
-              (step) =>
-                step.instructions.toLowerCase().includes('peaje') ||
-                step.instructions.toLowerCase().includes('toll'),
-            ),
+            leg.steps.some((step) => step.instructions.toLowerCase().includes('peaje') || step.instructions.toLowerCase().includes('toll'))
           );
         };
 
@@ -206,11 +183,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
         if (resSin && resSin.routes) {
           resSin.routes.forEach((routeSin) => {
             const esDuplicada = listaTemporal.some((r) => {
-              const mismaDistancia =
-                Math.abs(
-                  (r.route.legs[0].distance?.value || 0) -
-                    (routeSin.legs[0].distance?.value || 0),
-                ) < 100;
+              const mismaDistancia = Math.abs((r.route.legs[0].distance?.value || 0) - (routeSin.legs[0].distance?.value || 0)) < 100;
               const mismoResumen = r.route.summary === routeSin.summary;
               return mismaDistancia && mismoResumen;
             });
@@ -255,10 +228,7 @@ export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.procesarMetricasRuta(rutaElegida.route, singleRouteResult);
   }
 
-  private procesarMetricasRuta(
-    route: google.maps.DirectionsRoute,
-    resultCompleto: google.maps.DirectionsResult,
-  ) {
+  private procesarMetricasRuta(route: google.maps.DirectionsRoute, resultCompleto: google.maps.DirectionsResult) {
     let dist = 0,
       seg = 0;
     route.legs.forEach((l) => {

@@ -5,8 +5,8 @@
 ></app-navbar>
 
 <ion-content [fullscreen]="true">
+  @if (cargando) {
   <div
-    *ngIf="cargando"
     class="d-flex justify-content-center align-items-center"
     style="height: 80vh"
     role="status"
@@ -14,22 +14,17 @@
   >
     <app-spinner [texto_spinner]="'VERIFICACION.SPINNER_CARGANDO' | translate"></app-spinner>
   </div>
-
-  <div
-    class="container"
-    *ngIf="!cargando"
-  >
+  } @if (!cargando) {
+  <div class="container">
     <div class="d-flex justify-content-center">
       <h1 class="text-center mb-5">{{'VERIFICACION.TITULO' | translate}}</h1>
     </div>
-
     <div class="text-center">
       <p class="mb-2">{{'VERIFICACION.SUBT_VERIF_BASICA' | translate}}</p>
     </div>
-
+    @if (usuario?.emailVerificado && usuario?.telefonoVerificado) {
     <div
       class="text-center"
-      *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"
       role="region"
       [attr.aria-label]="'VERIFICACION.TABLA.REGION_ESTADO_ARIALABEL' | translate"
     >
@@ -41,7 +36,7 @@
         {{'VERIFICACION.INFO_PERFIL_SI_VERIFICADO' | translate}}
       </p>
     </div>
-
+    }
     <!-- Tabla -->
     <div class="container mt-5 mb-5">
       <div class="d-flex justify-content-center align-items-start gap-4 flex-wrap text-center verifications-wrapper">
@@ -54,39 +49,41 @@
             <tr>
               <td>{{'VERIFICACION.TABLA.LABEL_CORREO' | translate}}</td>
               <td>
+                @if (usuario.emailVerificado) {
                 <span
-                  *ngIf="usuario.emailVerificado"
                   class="check"
                   [attr.aria-label]="'VERIFICACION.TABLA.CORREO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ✔️
                 </span>
+                } @if (!usuario.emailVerificado) {
                 <span
-                  *ngIf="!usuario.emailVerificado"
                   class="cross"
                   [attr.aria-label]="'VERIFICACION.TABLA.CORREO_NO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ❌
                 </span>
+                }
               </td>
             </tr>
             <tr>
               <td>{{'VERIFICACION.TABLA.LABEL_TELÉFONO' | translate}}</td>
               <td>
+                @if (usuario.telefonoVerificado) {
                 <span
-                  *ngIf="usuario.telefonoVerificado"
                   class="check"
                   [attr.aria-label]="'VERIFICACION.TABLA.TELEFONO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ✔️
                 </span>
+                } @if (!usuario.telefonoVerificado) {
                 <span
-                  *ngIf="!usuario.telefonoVerificado"
                   class="cross"
                   [attr.aria-label]="'VERIFICACION.TABLA.TELEFONO_NO_VERIFICADO_ARIALABEL' | translate"
                 >
                   ❌
                 </span>
+                }
               </td>
             </tr>
           </table>
@@ -97,7 +94,6 @@
       class="text-center recordatorio-alerta"
       [innerHTML]="'VERIFICACION.RECORDATORIO' | translate"
     ></div>
-
     <div class="container-fluid d-flex justify-content-center">
       <ion-row class="ion-justify-content-center fila_superior">
         <!-- Verificación de correo -->
@@ -106,11 +102,12 @@
           size-md="5"
           class="ion-padding d-flex justify-content-center position-relative"
         >
+          @if (cargandoEnvioEmail) {
           <app-spinner
-            *ngIf="cargandoEnvioEmail"
             [tamano_completo]="false"
             [texto_spinner]="'VERIFICACION.SPINNER_ENVIANDO_MAIL' | translate"
           ></app-spinner>
+          }
           <div class="mt-2 text-center">
             <p class="mb-4">
               <strong>{{'VERIFICACION.VERIFICA_CORREO' | translate}}</strong>
@@ -135,29 +132,30 @@
                   (click)="envio_mail_verificar_correo(emailUsuario)"
                   [disabled]="usuario.emailVerificado || botonCorreoVerificado || cargandoEnvioEmail"
                 >
-                  <span *ngIf="!cargandoEnvioEmail">{{emailUsuario}}</span>
+                  @if (!cargandoEnvioEmail) {
+                  <span>{{emailUsuario}}</span>
+                  }
                 </button>
                 <p-toast position="bottom-center"></p-toast>
               </div>
             </ion-col>
           </div>
         </ion-col>
-
         <div class="divider-container d-none d-md-block">
           <mat-divider vertical></mat-divider>
         </div>
-
         <!-- Verificación de teléfono -->
         <ion-col
           size="12"
           size-md="5"
           class="ion-padding d-flex justify-content-center"
         >
+          @if (cargandoEnvioSms) {
           <app-spinner
-            *ngIf="cargandoEnvioSms"
             [tamano_completo]="false"
             [texto_spinner]="'VERIFICACION.SPINNER_ENVIANDO_SMS' | translate"
           ></app-spinner>
+          }
           <div class="mt-2 text-center">
             <p>
               <strong>{{'VERIFICACION.VERIFICA_TELEFONO' | translate}}</strong>
@@ -184,9 +182,9 @@
               </button>
             </ion-col>
             <ion-row class="mt-4"></ion-row>
+            @if (!usuario.telefonoVerificado) {
             <div
               class="input-container d-flex justify-content-center mb-3"
-              *ngIf="!usuario.telefonoVerificado"
               role="group"
               aria-label="Código de verificación de 6 dígitos"
             >
@@ -264,17 +262,16 @@
                 [disabled]="!inputsHabilitados"
               />
             </div>
+            } @if (codigo_erroneo) {
             <span
-              *ngIf="codigo_erroneo"
               class="text-danger d-block mt-2"
               role="alert"
             >
               {{'VERIFICACION.ERROR_CODIGO_INCORRECTO' | translate}}
             </span>
-
+            } @if (!usuario.telefonoVerificado) {
             <button
               (click)="verificar_codigo_sms(codigo)"
-              *ngIf="!usuario.telefonoVerificado"
               type="button"
               class="btn mt-2 btn_bg"
               mat-raised-button
@@ -282,11 +279,12 @@
             >
               {{'VERIFICACION.BOTON_VERIFICAR_TELEFONO' | translate}}
             </button>
+            }
           </div>
         </ion-col>
-
         <div class="divider-container hide-on-mobile"></div>
       </ion-row>
     </div>
   </div>
+  }
 </ion-content>

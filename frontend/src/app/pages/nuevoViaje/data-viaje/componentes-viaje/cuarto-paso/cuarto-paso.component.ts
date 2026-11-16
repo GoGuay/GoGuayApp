@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NavController } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
+
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
@@ -11,7 +11,7 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
 @Component({
   selector: 'app-cuarto-paso',
   standalone: true,
-  imports: [MatButtonModule, FormsModule, MatTooltipModule, CommonModule, ToastModule],
+  imports: [MatButtonModule, FormsModule, MatTooltipModule, ToastModule],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
@@ -19,18 +19,17 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
         showDelay: 400,
         hideDelay: 200,
         touchGestures: 'auto',
-        position: 'below'
-      }
-    }
+        position: 'below',
+      },
+    },
   ],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './cuarto-paso.component.html',
   styleUrls: ['./cuarto-paso.component.scss'],
 })
 export class CuartoPasoComponent implements OnInit {
-
   precio = 5;
-  
+
   min: number = 0;
   max: number = 0;
 
@@ -38,10 +37,10 @@ export class CuartoPasoComponent implements OnInit {
   precioMaxRecomendado = 0;
 
   constructor(
-    private travelService: TravelService, 
-    private messageService: MessageService, 
+    private travelService: TravelService,
+    private messageService: MessageService,
     private navCtrl: NavController
-  ) { }
+  ) {}
 
   ngOnInit() {
     const viajeData = this.travelService.getViajeData();
@@ -56,8 +55,8 @@ export class CuartoPasoComponent implements OnInit {
     const numPlazas = Number(viajeData.plazas) || 3;
 
     // Estimación justa basada en datos reales de combustible en España (aprox. 1.55€/L y consumo de 6.5L/100km)
-    const consumoMedio = 6.5; 
-    const precioCombustible = 1.55; 
+    const consumoMedio = 6.5;
+    const precioCombustible = 1.55;
 
     this.calcularLimites(distanciaKm, consumoMedio, precioCombustible, numPlazas);
     this.precio = this.calcularPrecioRecomendado(distanciaKm, consumoMedio, precioCombustible, numPlazas);
@@ -72,14 +71,14 @@ export class CuartoPasoComponent implements OnInit {
   calcularPrecioRecomendado(distanciaKm: number, consumo: number, precioCombustible: number, plazas: number): number {
     // Coste total del combustible del viaje
     const costeViajeCombustible = (distanciaKm / 100) * consumo * precioCombustible;
-    
+
     // Se divide el coste entre el número de plazas + el conductor (o ajuste equitativo) y se añade un factor de desgaste base
     const plazasTotales = plazas > 0 ? plazas : 3;
     const costePorPlaza = costeViajeCombustible / plazasTotales;
 
     // Añadimos un pequeño margen justo (15%) para mantenimiento y peajes/desgaste general
     let precioSugerido = costePorPlaza * 1.15;
-    
+
     precioSugerido = Math.max(this.min, Math.min(this.max, precioSugerido));
     return Math.round(precioSugerido) || 5;
   }
@@ -101,7 +100,7 @@ export class CuartoPasoComponent implements OnInit {
    * Suma una unidad al precio
    */
   sumarCantidad() {
-    if (this.precio < 99) { 
+    if (this.precio < 99) {
       this.precio++;
       this.comprobarUmbralesPrecio();
     }
@@ -111,7 +110,7 @@ export class CuartoPasoComponent implements OnInit {
    * Resta una unidad al precio
    */
   restarCantidad() {
-    if (this.precio > 1) { 
+    if (this.precio > 1) {
       this.precio--;
       this.comprobarUmbralesPrecio();
     }
@@ -127,7 +126,7 @@ export class CuartoPasoComponent implements OnInit {
         severity: 'warn',
         summary: 'Precio elevado',
         detail: `Has superado el precio recomendado (${this.max}€). Podría costarte encontrar pasajeros.`,
-        life: 2500
+        life: 2500,
       });
     } else if (this.precio < this.min) {
       this.messageService.add({
@@ -135,7 +134,7 @@ export class CuartoPasoComponent implements OnInit {
         severity: 'info',
         summary: 'Precio económico',
         detail: `Estás por debajo del mínimo recomendado (${this.min}€). ¡Un viaje muy económico para los pasajeros!`,
-        life: 2500
+        life: 2500,
       });
     }
   }
@@ -145,11 +144,11 @@ export class CuartoPasoComponent implements OnInit {
    */
   getprecioColor(): string {
     if (this.precio < this.min) {
-      return '#3498db'; 
+      return '#3498db';
     } else if (this.precio <= this.max) {
-      return '#e0a667'; 
+      return '#e0a667';
     } else {
-      return '#eb445a'; 
+      return '#eb445a';
     }
   }
 
@@ -166,7 +165,7 @@ export class CuartoPasoComponent implements OnInit {
         severity: 'error',
         summary: 'Error de sincronización',
         detail: 'Faltan parámetros del itinerario. Regresa al paso anterior.',
-        life: 3000
+        life: 3000,
       });
       return false;
     }
@@ -176,11 +175,11 @@ export class CuartoPasoComponent implements OnInit {
     const viajeDataFinal = {
       ...viajeData,
       precio_viaje: this.precio,
-      hora_llegada
+      hora_llegada,
     };
 
     this.travelService.setViajeData(viajeDataFinal);
-    return true; 
+    return true;
   }
 
   /**
@@ -220,8 +219,9 @@ export class CuartoPasoComponent implements OnInit {
       key: 'precioToast',
       severity: 'info',
       summary: '¿Cómo calculamos el precio?',
-      detail: 'Se calcula estimando el consumo medio de combustible en función de los kilómetros de la ruta y dividiéndolo equitativamente entre las plazas disponibles, añadiendo un pequeño margen justo para el mantenimiento.',
-      life: 6000
+      detail:
+        'Se calcula estimando el consumo medio de combustible en función de los kilómetros de la ruta y dividiéndolo equitativamente entre las plazas disponibles, añadiendo un pequeño margen justo para el mantenimiento.',
+      life: 6000,
     });
   }
 }

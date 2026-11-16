@@ -1,19 +1,9 @@
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  Output,
-  EventEmitter,
-  AfterViewInit,
-  OnDestroy,
-  ChangeDetectorRef,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, ViewChild, Output, EventEmitter, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-contrato-registro',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './contrato-registro.component.html',
   styleUrls: ['./contrato-registro.component.scss'],
 })
@@ -52,7 +42,7 @@ export class ContratoRegistroComponent implements AfterViewInit, OnDestroy {
       {
         // Detección flexible cuando el centinela entra en vista
         threshold: 0.1,
-      },
+      }
     );
 
     this.observer.observe(this.elementoFinal.nativeElement);

@@ -1,5 +1,5 @@
 import { Component, OnInit, model, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -26,7 +26,6 @@ import { TranslateService } from '@ngx-translate/core';
   standalone: true,
   imports: [
     IonicModule,
-    CommonModule,
     FormsModule,
     RouterModule,
     MatButtonModule,

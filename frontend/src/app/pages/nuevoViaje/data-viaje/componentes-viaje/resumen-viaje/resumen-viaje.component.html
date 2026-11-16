@@ -31,26 +31,27 @@
                 <div class="timeline-content">
                   <label>Punto de Salida</label>
                   <div class="data-row">
-                    <h3 *ngIf="!editMode.origen">{{ currentViajeData?.origen }}</h3>
-                    <input
-                      *ngIf="editMode.origen"
-                      [(ngModel)]="origen"
-                      (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
-                      class="form-control custom-input"
-                    />
+                    @if (!editMode.origen) {
+                      <h3>{{ currentViajeData?.origen }}</h3>
+                    }
+                    @if (editMode.origen) {
+                      <input
+                        [(ngModel)]="origen"
+                        (input)="funcionesComunes.obtenerSugerenciasOrigen($event)"
+                        class="form-control custom-input"
+                      />
+                    }
                   </div>
                   <!-- Sugerencias Origen -->
-                  <ul
-                    *ngIf="funcionesComunes.sugerenciasOrigen.length > 0"
-                    class="suggestions-list"
-                  >
-                    <li
-                      *ngFor="let sug of funcionesComunes.sugerenciasOrigen"
-                      (click)="seleccionarLocalidadOrigen(sug)"
-                    >
-                      {{ sug.display_name }}
-                    </li>
-                  </ul>
+                  @if (funcionesComunes.sugerenciasOrigen.length > 0) {
+                    <ul class="suggestions-list">
+                      @for (sug of funcionesComunes.sugerenciasOrigen; track sug) {
+                        <li (click)="seleccionarLocalidadOrigen(sug)">
+                          {{ sug.display_name }}
+                        </li>
+                      }
+                    </ul>
+                  }
                 </div>
               </div>
 
@@ -60,26 +61,27 @@
                 <div class="timeline-content">
                   <label>Destino Final</label>
                   <div class="data-row">
-                    <h3 *ngIf="!editMode.destino">{{ currentViajeData?.destino }}</h3>
-                    <input
-                      *ngIf="editMode.destino"
-                      [(ngModel)]="destino"
-                      (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
-                      class="form-control custom-input"
-                    />
+                    @if (!editMode.destino) {
+                      <h3>{{ currentViajeData?.destino }}</h3>
+                    }
+                    @if (editMode.destino) {
+                      <input
+                        [(ngModel)]="destino"
+                        (input)="funcionesComunes.obtenerSugerenciasDestino($event)"
+                        class="form-control custom-input"
+                      />
+                    }
                   </div>
                   <!-- Sugerencias Destino -->
-                  <ul
-                    *ngIf="funcionesComunes.sugerenciasDestino.length > 0"
-                    class="suggestions-list"
-                  >
-                    <li
-                      *ngFor="let sug of funcionesComunes.sugerenciasDestino"
-                      (click)="seleccionarLocalidadDestino(sug)"
-                    >
-                      {{ sug.display_name }}
-                    </li>
-                  </ul>
+                  @if (funcionesComunes.sugerenciasDestino.length > 0) {
+                    <ul class="suggestions-list">
+                      @for (sug of funcionesComunes.sugerenciasDestino; track sug) {
+                        <li (click)="seleccionarLocalidadDestino(sug)">
+                          {{ sug.display_name }}
+                        </li>
+                      }
+                    </ul>
+                  }
                 </div>
               </div>
             </div>
@@ -92,11 +94,12 @@
                 class="map-canvas"
                 [hidden]="!currentViajeData?.ruta_seleccionada"
               ></div>
-              <img
-                *ngIf="!currentViajeData?.ruta_seleccionada"
-                class="map-placeholder"
-                src="assets/imgs/travel_1.jpg"
-              />
+              @if (!currentViajeData?.ruta_seleccionada) {
+                <img
+                  class="map-placeholder"
+                  src="assets/imgs/travel_1.jpg"
+                />
+              }
             </div>
           </div>
         </div>
@@ -113,26 +116,26 @@
                 <div class="setting-info">
                   <label>Vehículo</label>
                   <div class="d-flex align-items-center">
-                    <span *ngIf="!editMode.coche">{{ nombreVehiculo || 'No seleccionado' }}</span>
-                    <select
-                      *ngIf="editMode.coche"
-                      class="form-select custom-select-pride"
-                      [(ngModel)]="editableFields.coche"
-                      [compareWith]="compareVehiculos"
-                    >
-                      <option
-                        [ngValue]="null"
-                        disabled
+                    @if (!editMode.coche) {
+                      <span>{{ nombreVehiculo || 'No seleccionado' }}</span>
+                    }
+                    @if (editMode.coche) {
+                      <select
+                        class="form-select custom-select-pride"
+                        [(ngModel)]="editableFields.coche"
+                        [compareWith]="compareVehiculos"
                       >
-                        Selecciona un vehículo
-                      </option>
-                      <option
-                        *ngFor="let coche of vehiculosUsuario"
-                        [ngValue]="coche"
-                      >
-                        {{ coche.marca }} {{ coche.modelo }} ({{ coche.matricula }})
-                      </option>
-                    </select>
+                        <option
+                          [ngValue]="null"
+                          disabled
+                        >
+                          Selecciona un vehículo
+                        </option>
+                        @for (coche of vehiculosUsuario; track coche) {
+                          <option [ngValue]="coche">{{ coche.marca }} {{ coche.modelo }} ({{ coche.matricula }})</option>
+                        }
+                      </select>
+                    }
                     <button
                       class="btn-edit-sm"
                       (click)="edicionInformacion('coche')"
@@ -149,7 +152,7 @@
                   <label>Fecha salida</label>
                   <div class="d-flex align-items-center">
                     <div>
-                      <span>{{ formatearFechaLocal(currentViajeData?.fecha_salida) | date:'dd/MM/yyyy'}}</span>
+                      <span>{{ formatearFechaLocal(currentViajeData?.fecha_salida) | date: 'dd/MM/yyyy' }}</span>
                     </div>
                     <button
                       class="btn-edit-sm"
@@ -158,12 +161,13 @@
                       <mat-icon>{{ editMode.fecha_salida ? 'done' : 'edit' }}</mat-icon>
                     </button>
                   </div>
-                  <input
-                    type="date"
-                    [(ngModel)]="editableFields.fecha_salida"
-                    *ngIf="editMode.fecha_salida"
-                    class="mt-2 form-control-sm"
-                  />
+                  @if (editMode.fecha_salida) {
+                    <input
+                      type="date"
+                      [(ngModel)]="editableFields.fecha_salida"
+                      class="mt-2 form-control-sm"
+                    />
+                  }
                 </div>
               </div>
 
@@ -183,23 +187,22 @@
                       <mat-icon>{{ editMode.hora_salida ? 'done' : 'edit' }}</mat-icon>
                     </button>
                   </div>
-                  <input
-                    type="time"
-                    [(ngModel)]="editableFields.hora_salida"
-                    *ngIf="editMode.hora_salida"
-                    class="mt-2 form-control-sm"
-                  />
+                  @if (editMode.hora_salida) {
+                    <input
+                      type="time"
+                      [(ngModel)]="editableFields.hora_salida"
+                      class="mt-2 form-control-sm"
+                    />
+                  }
                 </div>
                 <span>
                   <div class="icon-box"><i class="fi fi-rr-clock"></i></div>
                   Llegada:
-                  <ng-container *ngIf="currentViajeData?.ruta_seleccionada?.routes?.[0] as mainRoute; else horaEstatica">
+                  @if (currentViajeData?.ruta_seleccionada?.routes?.[0]; as mainRoute) {
                     {{ calcularHoraLlegada(currentViajeData.hora_salida, mainRoute.legs[0].duration.text) }}
-                  </ng-container>
-
-                  <ng-template #horaEstatica>
+                  } @else {
                     {{ currentViajeData?.hora_llegada || '--:--' }}
-                  </ng-template>
+                  }
                 </span>
               </div>
 
@@ -209,23 +212,21 @@
                 <div class="setting-info">
                   <label>Plazas Disponibles</label>
                   <div class="d-flex align-items-center">
-                    <span
-                      class="data-val"
-                      *ngIf="!editMode.plazas"
-                    >
-                      {{ currentViajeData?.plazas }} asientos
-                    </span>
+                    @if (!editMode.plazas) {
+                      <span class="data-val">{{ currentViajeData?.plazas }} asientos</span>
+                    }
 
-                    <select
-                      *ngIf="editMode.plazas"
-                      [(ngModel)]="editableFields.plazas"
-                      class="form-select custom-select-pride"
-                    >
-                      <option [ngValue]="1">1 plaza</option>
-                      <option [ngValue]="2">2 plazas</option>
-                      <option [ngValue]="3">3 plazas</option>
-                      <option [ngValue]="4">4 plazas</option>
-                    </select>
+                    @if (editMode.plazas) {
+                      <select
+                        [(ngModel)]="editableFields.plazas"
+                        class="form-select custom-select-pride"
+                      >
+                        <option [ngValue]="1">1 plaza</option>
+                        <option [ngValue]="2">2 plazas</option>
+                        <option [ngValue]="3">3 plazas</option>
+                        <option [ngValue]="4">4 plazas</option>
+                      </select>
+                    }
 
                     <button
                       class="btn-edit-sm"
@@ -243,22 +244,24 @@
                 <div class="setting-info">
                   <label>Modo de Reserva</label>
                   <div class="d-flex align-items-center">
-                    <span
-                      class="badge-reserva"
-                      *ngIf="!editMode.reserva_automatica"
-                      [class.auto]="currentViajeData?.reserva_automatica"
-                    >
-                      {{ currentViajeData?.reserva_automatica ? 'Automática' : 'Manual' }}
-                    </span>
+                    @if (!editMode.reserva_automatica) {
+                      <span
+                        class="badge-reserva"
+                        [class.auto]="currentViajeData?.reserva_automatica"
+                      >
+                        {{ currentViajeData?.reserva_automatica ? 'Automática' : 'Manual' }}
+                      </span>
+                    }
 
-                    <select
-                      *ngIf="editMode.reserva_automatica"
-                      class="form-select custom-select-pride"
-                      [(ngModel)]="editableFields.reserva_automatica"
-                    >
-                      <option [ngValue]="true">Automática</option>
-                      <option [ngValue]="false">Manual</option>
-                    </select>
+                    @if (editMode.reserva_automatica) {
+                      <select
+                        class="form-select custom-select-pride"
+                        [(ngModel)]="editableFields.reserva_automatica"
+                      >
+                        <option [ngValue]="true">Automática</option>
+                        <option [ngValue]="false">Manual</option>
+                      </select>
+                    }
 
                     <button
                       class="btn-edit-sm"
@@ -276,21 +279,21 @@
               <div class="price-content">
                 <div class="price-label">Aportación por pasajero</div>
 
-                <div
-                  class="price-value"
-                  *ngIf="!editMode.precio_viaje"
-                >
-                  {{ currentViajeData?.precio_viaje }}
-                  <span>€</span>
-                </div>
+                @if (!editMode.precio_viaje) {
+                  <div class="price-value">
+                    {{ currentViajeData?.precio_viaje }}
+                    <span>€</span>
+                  </div>
+                }
 
-                <input
-                  *ngIf="editMode.precio_viaje"
-                  type="number"
-                  [(ngModel)]="editableFields.precio_viaje"
-                  class="input-price-edit"
-                  placeholder="0"
-                />
+                @if (editMode.precio_viaje) {
+                  <input
+                    type="number"
+                    [(ngModel)]="editableFields.precio_viaje"
+                    class="input-price-edit"
+                    placeholder="0"
+                  />
+                }
               </div>
 
               <button
@@ -317,16 +320,20 @@
           ></i>
 
           <!-- Mensaje para EDICIÓN -->
-          <p *ngIf="ruta_navegacion_origen === 'mis-viajes'">
-            Estás editando un viaje existente. Revisa que los nuevos datos sean correctos. Al confirmar, se actualizará la información para
-            todos los pasajeros.
-          </p>
+          @if (ruta_navegacion_origen === 'mis-viajes') {
+            <p>
+              Estás editando un viaje existente. Revisa que los nuevos datos sean correctos. Al confirmar, se actualizará la información
+              para todos los pasajeros.
+            </p>
+          }
 
           <!-- Mensaje para CREACIÓN -->
-          <p *ngIf="ruta_navegacion_origen !== 'mis-viajes'">
-            Si estás de acuerdo con el viaje que vas a realizar, confírmalo. En caso contrario, puedes volver atrás para modificar los
-            parámetros.
-          </p>
+          @if (ruta_navegacion_origen !== 'mis-viajes') {
+            <p>
+              Si estás de acuerdo con el viaje que vas a realizar, confírmalo. En caso contrario, puedes volver atrás para modificar los
+              parámetros.
+            </p>
+          }
         </div>
 
         <!-- Botonera -->
@@ -360,5 +367,7 @@
     </div>
   </div>
 
-  <app-spinner *ngIf="cargando_viaje"></app-spinner>
+  @if (cargando_viaje) {
+    <app-spinner></app-spinner>
+  }
 </ion-content>

@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { 
-  peopleOutline, 
-  searchOutline, 
-  filterOutline, 
-  starOutline, 
+import {
+  peopleOutline,
+  searchOutline,
+  filterOutline,
+  starOutline,
   starHalfOutline,
-  warningOutline, 
-  chatbubbleEllipsesOutline, 
-  lockClosedOutline, 
-  lockOpenOutline, 
+  warningOutline,
+  chatbubbleEllipsesOutline,
+  lockClosedOutline,
+  lockOpenOutline,
   arrowBackOutline,
   closeCircleOutline,
   shieldOutline,
   checkmarkCircleOutline,
   mailOutline,
-  callOutline
+  callOutline,
 } from 'ionicons/icons';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
 import { UserServicesService } from '../../../core/user-services/user-services.service';
@@ -44,7 +44,7 @@ export interface UsuarioAdminDetalle {
   templateUrl: './gestion-usuarios-admin.page.html',
   styleUrls: ['./gestion-usuarios-admin.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin]
+  imports: [FormsModule, IonicModule, NavbarAdmin],
 })
 export class GestionUsuariosAdminPage implements OnInit {
   listaUsuarios: UsuarioAdminDetalle[] = [];
@@ -74,7 +74,7 @@ export class GestionUsuariosAdminPage implements OnInit {
       shieldOutline,
       checkmarkCircleOutline,
       mailOutline,
-      callOutline
+      callOutline,
     });
   }
 
@@ -95,25 +95,25 @@ export class GestionUsuariosAdminPage implements OnInit {
           fotoPerfil: u.fotoPerfil || null,
           ya_ha_sido_suspendido: !!u.ya_ha_sido_suspendido || !!u.restringido,
           rolPerfil: u.rolPerfil || 'usuario',
-          promedioValoraciones: u.promedioValoraciones ?? (4.2 - (idx % 2)),
-          totalOpiniones: u.totalOpiniones ?? (5 + idx * 2),
+          promedioValoraciones: u.promedioValoraciones ?? 4.2 - (idx % 2),
+          totalOpiniones: u.totalOpiniones ?? 5 + idx * 2,
           malasOpinionesCount: u.malasOpinionesCount ?? (idx % 3 === 0 ? 2 : 0),
           incidenciasAbiertasCount: u.incidenciasAbiertasCount ?? (idx % 4 === 0 ? 1 : 0),
-          fechaRegistro: u.fechaRegistro || '15/05/2026'
+          fechaRegistro: u.fechaRegistro || '15/05/2026',
         }));
 
         this.aplicarFiltros();
       },
       error: (err) => {
         console.error('Error al cargar la lista de usuarios:', err);
-      }
+      },
     });
   }
 
   aplicarFiltros() {
     const q = this.busquedaQuery.toLowerCase().trim();
 
-    this.usuariosFiltrados = this.listaUsuarios.filter(u => {
+    this.usuariosFiltrados = this.listaUsuarios.filter((u) => {
       const coincideNombre = (u.nombre + ' ' + (u.apellidos || '')).toLowerCase().includes(q);
       const coincideEmail = u.email.toLowerCase().includes(q);
       const coincideBusqueda = !q || coincideNombre || coincideEmail || u.id.toString().includes(q);

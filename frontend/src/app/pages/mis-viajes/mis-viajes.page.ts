@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, catchError, of } from 'rxjs';
@@ -36,7 +36,6 @@ import { TravelService } from '../../core/travel-services/travel.service';
   standalone: true,
   imports: [
     IonicModule,
-    CommonModule,
     FormsModule,
     NavbarComponent,
     JumbotronComponent,
@@ -89,8 +88,8 @@ export class MisViajesPage implements OnInit {
     private travelService: TravelService,
     private route: ActivatedRoute,
     public translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) { }
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -102,9 +101,7 @@ export class MisViajesPage implements OnInit {
         this.userData = JSON.parse(cache);
         this.userLoggedIn = true;
 
-        const cachedId =
-          this.userData.id ||
-          (this.userData.usuario ? this.userData.usuario.id : null);
+        const cachedId = this.userData.id || (this.userData.usuario ? this.userData.usuario.id : null);
         if (cachedId) {
           finalUserId = Number(cachedId);
         }
@@ -121,9 +118,7 @@ export class MisViajesPage implements OnInit {
         this.cargarTodosLosViajes(finalUserId);
         this.recuperarUsuarioServidor(finalUserId, !!cache);
       } else {
-        console.warn(
-          'No se detectó un ID de usuario válido en la inicialización.',
-        );
+        console.warn('No se detectó un ID de usuario válido en la inicialización.');
         this.cargandoViajes = false;
       }
     });
@@ -166,15 +161,9 @@ export class MisViajesPage implements OnInit {
     this.cargandoViajes = true;
 
     forkJoin({
-      pasajero: this.travelService
-        .getViajesComoAcompanante(userId)
-        .pipe(catchError(() => of([]))),
-      conductor: this.travelService
-        .getViajesUsuario(userId)
-        .pipe(catchError(() => of({ viajes: [] }))),
-      solicitudesPendientes: this.travelService
-        .getMisSolicitudesPendientes(userId)
-        .pipe(catchError(() => of([]))),
+      pasajero: this.travelService.getViajesComoAcompanante(userId).pipe(catchError(() => of([]))),
+      conductor: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
+      solicitudesPendientes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
     }).subscribe({
       next: ({ pasajero, conductor, solicitudesPendientes }) => {
         this.misViajesAcompanante = pasajero;
@@ -206,14 +195,10 @@ export class MisViajesPage implements OnInit {
    * @param id_usuario Recibe el ID del usuario que está logado
    */
   obtenerUsuarioPorID(id_usuario: number) {
-    this.userService
-      .obtenerUsuarioPorID(id_usuario)
-      .subscribe((resultadoUsuario) => {
-        this.userData = resultadoUsuario;
-        this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(
-          this.userData,
-        );
-      });
+    this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
+      this.userData = resultadoUsuario;
+      this.preferenciasViaje = this.funcionesComunes.validacionPreferencias(this.userData);
+    });
   }
 
   /**
@@ -231,15 +216,13 @@ export class MisViajesPage implements OnInit {
    * Función para obtener la lista de viajes que ha creado el usuario
    */
   obtenerViajesCreados() {
-    this.travelService
-      .getViajesUsuario(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesCreados = result.viajes;
-        this.misViajesCreados.forEach((viaje) => {
-          viaje.usuario = this.userData;
-        });
-        this.aplicarFiltrosCombinados();
+    this.travelService.getViajesUsuario(this.userData.usuario.id).subscribe((result) => {
+      this.misViajesCreados = result.viajes;
+      this.misViajesCreados.forEach((viaje) => {
+        viaje.usuario = this.userData;
       });
+      this.aplicarFiltrosCombinados();
+    });
   }
 
   /**
@@ -247,13 +230,11 @@ export class MisViajesPage implements OnInit {
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
-    this.travelService
-      .getViajesComoAcompanante(this.userData.usuario.id)
-      .subscribe((result) => {
-        this.misViajesAcompanante = result;
-        this.cargandoViajes = false;
-        this.aplicarFiltrosCombinados();
-      });
+    this.travelService.getViajesComoAcompanante(this.userData.usuario.id).subscribe((result) => {
+      this.misViajesAcompanante = result;
+      this.cargandoViajes = false;
+      this.aplicarFiltrosCombinados();
+    });
   }
 
   /**
@@ -275,12 +256,8 @@ export class MisViajesPage implements OnInit {
 
     if (!esHoy) return false;
 
-    const [horaDeSalida, minutosDeSalida] = viaje.hora_salida
-      .split(':')
-      .map(Number);
-    const [horaDeLlegada, minutosDeLlegada] = viaje.hora_llegada
-      .split(':')
-      .map(Number);
+    const [horaDeSalida, minutosDeSalida] = viaje.hora_salida.split(':').map(Number);
+    const [horaDeLlegada, minutosDeLlegada] = viaje.hora_llegada.split(':').map(Number);
     const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
     const minutosSalida = horaDeSalida * 60 + minutosDeSalida;
     const minutosLlegada = horaDeLlegada * 60 + minutosDeLlegada;
@@ -292,10 +269,7 @@ export class MisViajesPage implements OnInit {
    * Comprueba si en el universo total de viajes hay uno ocurriendo hoy y ahora
    */
   HayAlgunViajeEnCursoReal(): boolean {
-    const pool = [
-      ...(this.misViajesAcompanante || []),
-      ...(this.misViajesCreados || []),
-    ];
+    const pool = [...(this.misViajesAcompanante || []), ...(this.misViajesCreados || [])];
     return pool.some((v) => this.esViajeEnCurso(v));
   }
 
@@ -305,10 +279,7 @@ export class MisViajesPage implements OnInit {
    * @param viaje
    */
   puedePuntuar(viaje: Viaje): boolean {
-    const esFinalizado = this.funcionesComunes.esViajeFinalizado(
-      viaje.fecha_salida,
-      viaje.hora_salida,
-    );
+    const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
     const esPasajero = this.misViajesAcompanante.some((v) => v.id === viaje.id);
     const esCreador = viaje.usuario_id === this.userData.id;
 
@@ -418,13 +389,11 @@ export class MisViajesPage implements OnInit {
         break;
     }
 
-    const { en_curso, proximos_viajes, finalizados_anulados } =
-      this.filtrosEstados;
+    const { en_curso, proximos_viajes, finalizados_anulados } = this.filtrosEstados;
 
     if (en_curso || proximos_viajes || finalizados_anulados) {
       viajesBase = viajesBase.filter((v) => {
-        const esEnCurso =
-          this.esViajeEnCurso(v) || v.estado_viaje === 'En Curso';
+        const esEnCurso = this.esViajeEnCurso(v) || v.estado_viaje === 'En Curso';
 
         if (en_curso && esEnCurso) {
           return true;
@@ -434,11 +403,7 @@ export class MisViajesPage implements OnInit {
           return true;
         }
 
-        if (
-          finalizados_anulados &&
-          !esEnCurso &&
-          (v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado')
-        ) {
+        if (finalizados_anulados && !esEnCurso && (v.estado_viaje === 'Finalizado' || v.estado_viaje === 'Cancelado')) {
           return true;
         }
 
@@ -446,9 +411,7 @@ export class MisViajesPage implements OnInit {
       });
     }
 
-    const viajesParaAnclar = poolTotalViajes.filter((v) =>
-      this.esViajeEnCurso(v),
-    );
+    const viajesParaAnclar = poolTotalViajes.filter((v) => this.esViajeEnCurso(v));
 
     if (viajesParaAnclar.length > 0) {
       viajesParaAnclar.forEach((v) => ((v as any).enCursoReal = true));

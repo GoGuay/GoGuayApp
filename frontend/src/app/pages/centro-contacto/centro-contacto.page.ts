@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NavbarComponent } from "../../shared/navbar/navbar.component";
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -15,20 +15,10 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './centro-contacto.page.html',
   styleUrls: ['./centro-contacto.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule, 
-    CommonModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    NavbarComponent, 
-    MatDividerModule, 
-    MatButtonModule,
-    ToastModule
-  ],
-  providers: [MessageService]
+  imports: [IonicModule, FormsModule, ReactiveFormsModule, NavbarComponent, MatDividerModule, MatButtonModule, ToastModule],
+  providers: [MessageService],
 })
 export class CentroContactoPage implements OnInit {
-
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   contactoForm: FormGroup;
@@ -44,7 +34,7 @@ export class CentroContactoPage implements OnInit {
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       asunto: ['', [Validators.required]],
-      mensaje: ['', [Validators.required, Validators.minLength(10)]]
+      mensaje: ['', [Validators.required, Validators.minLength(10)]],
     });
   }
 
@@ -55,7 +45,7 @@ export class CentroContactoPage implements OnInit {
     if (this.userLoggedIn && this.userData.usuario) {
       this.contactoForm.patchValue({
         nombre: `${this.userData.usuario.nombre} ${this.userData.usuario.apellidos}`,
-        email: this.userData.usuario.email
+        email: this.userData.usuario.email,
       });
     }
   }
@@ -63,15 +53,15 @@ export class CentroContactoPage implements OnInit {
   enviarFormulario() {
     if (this.contactoForm.invalid) {
       this.messageService.add({
-        severity: 'error', 
-        summary: 'Formulario incompleto', 
-        detail: 'Por favor, rellena todos los campos correctamente.'
+        severity: 'error',
+        summary: 'Formulario incompleto',
+        detail: 'Por favor, rellena todos los campos correctamente.',
       });
       return;
     }
 
     this.cargando = true;
-    
+
     console.log('Enviando datos a gestion.gogay@gmail.com:', this.contactoForm.value);
 
     setTimeout(() => {
@@ -80,7 +70,7 @@ export class CentroContactoPage implements OnInit {
         severity: 'success',
         summary: 'Mensaje enviado',
         detail: 'Hemos recibido tu consulta. Te responderemos muy pronto.',
-        life: 3000
+        life: 3000,
       });
 
       setTimeout(() => this.navCtrl.back(), 2000);

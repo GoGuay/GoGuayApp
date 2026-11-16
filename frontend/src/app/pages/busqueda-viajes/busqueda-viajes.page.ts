@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BuscadorComponent } from '../../components/buscador/buscador.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,18 +21,16 @@ import { MessageService } from 'primeng/api';
   standalone: true,
   imports: [
     IonicModule,
-    CommonModule,
     FormsModule,
     BuscadorComponent,
     MatIconModule,
     ResultadosBusquedaComponent,
     JumbotronComponent,
     NavbarComponent,
-    TranslateModule
+    TranslateModule,
   ],
 })
 export class BusquedaViajesPage implements OnInit {
-
   userLoggedIn: boolean = false;
 
   mostrarJumbotron = true;
@@ -52,7 +50,8 @@ export class BusquedaViajesPage implements OnInit {
     private location: Location,
     private navCtrl: NavController,
     private modalController: ModalController,
-    public messageService: MessageService) { }
+    public messageService: MessageService
+  ) {}
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -121,9 +120,9 @@ export class BusquedaViajesPage implements OnInit {
       componentProps: {
         categoria: 'VIAJE',
         subcategoriaPredeterminada: 'OTRO',
-        tituloContexto: 'Incidencia en búsqueda de viajes'
+        tituloContexto: 'Incidencia en búsqueda de viajes',
       },
-      cssClass: 'modal-incidencia-custom'
+      cssClass: 'modal-incidencia-custom',
     });
 
     await modal.present();
@@ -134,7 +133,7 @@ export class BusquedaViajesPage implements OnInit {
         severity: 'success',
         summary: 'Incidencia enviada',
         detail: 'Gracias por informarnos. Revisaremos el problema con el buscador a la brevedad.',
-        life: 4000
+        life: 4000,
       });
     }
   }

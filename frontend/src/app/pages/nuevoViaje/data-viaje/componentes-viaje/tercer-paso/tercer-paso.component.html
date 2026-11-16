@@ -7,66 +7,100 @@
   <div class="container">
     <ion-grid class="p-0">
       <ion-row>
-        <ion-col size="12" size-md="12" size-xl="6">
-
-          <div *ngIf="isLoadingRoutes" class="text-center py-5">
-            <mat-spinner class="mx-auto" diameter="40"></mat-spinner>
-            <p class="mt-3 text-secondary">Analizando carreteras y peajes de GoGuay...</p>
-          </div>
-
-          <div *ngIf="!isLoadingRoutes && rutasCombinadas.length > 0" class="animate__animated animate__fadeIn">
-            <div class="route-list-container">
-
-              <ion-radio-group [(ngModel)]="indiceRutaSeleccionada">
-
-                <div *ngFor="let item of rutasCombinadas; let i = index" (click)="selectRoute(i)"
-                  class="route-option-card d-flex align-items-center justify-content-between mb-3 p-3"
-                  [class.active-route]="indiceRutaSeleccionada === i">
-
-                  <div class="route-info-side flex-grow-1 pe-3">
-                    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
-                      <h3 class="route-title m-0">
-                        {{ origen.split(',')[0] }}
-                        <img class="arrow-icon mx-1" src="../../../../../../assets/sistema/flecha-pequena-derecha.png"
-                          alt="flecha">
-                        {{ destino.split(',')[0] }}
-                      </h3>
-
-                      <ion-badge [color]="item.tienePeajes ? 'danger' : 'success'" mode="ios" class="toll-badge">
-                        {{ item.tienePeajes ? 'Con Peajes' : 'Sin Peajes' }}
-                      </ion-badge>
-                    </div>
-
-                    <div class="route-meta-data text-secondary small">
-                      <span class="me-3"><i class="fi fi-rr-road me-1 text-primary"></i>{{
-                        item.route.legs[0].distance?.text }}</span>
-                      <span><i class="fi fi-rr-clock me-1 text-warning"></i>{{ item.route.legs[0].duration?.text
-                        }}</span>
-                    </div>
-                  </div>
-
-                  <div class="route-radio-side d-flex align-items-center justify-content-center ps-2">
-                    <ion-radio slot="end" mode="ios" [value]="i"> </ion-radio>
-                  </div>
-
-                </div>
-
-              </ion-radio-group>
-
+        <ion-col
+          size="12"
+          size-md="12"
+          size-xl="6"
+        >
+          @if (isLoadingRoutes) {
+            <div class="text-center py-5">
+              <mat-spinner
+                class="mx-auto"
+                diameter="40"
+              ></mat-spinner>
+              <p class="mt-3 text-secondary">Analizando carreteras y peajes de GoGuay...</p>
             </div>
-          </div>
+          }
 
-          <div *ngIf="!isLoadingRoutes && rutasCombinadas.length === 0" class="text-center py-4 card p-3 border-dashed">
-            <p class="text-muted mb-0">Introduce un origen y destino válidos en el paso anterior para trazar las rutas.
-            </p>
-          </div>
+          @if (!isLoadingRoutes && rutasCombinadas.length > 0) {
+            <div class="animate__animated animate__fadeIn">
+              <div class="route-list-container">
+                <ion-radio-group [(ngModel)]="indiceRutaSeleccionada">
+                  @for (item of rutasCombinadas; track item; let i = $index) {
+                    <div
+                      (click)="selectRoute(i)"
+                      class="route-option-card d-flex align-items-center justify-content-between mb-3 p-3"
+                      [class.active-route]="indiceRutaSeleccionada === i"
+                    >
+                      <div class="route-info-side flex-grow-1 pe-3">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                          <h3 class="route-title m-0">
+                            {{ origen.split(',')[0] }}
+                            <img
+                              class="arrow-icon mx-1"
+                              src="../../../../../../assets/sistema/flecha-pequena-derecha.png"
+                              alt="flecha"
+                            />
+                            {{ destino.split(',')[0] }}
+                          </h3>
+                          <ion-badge
+                            [color]="item.tienePeajes ? 'danger' : 'success'"
+                            mode="ios"
+                            class="toll-badge"
+                          >
+                            {{ item.tienePeajes ? 'Con Peajes' : 'Sin Peajes' }}
+                          </ion-badge>
+                        </div>
+                        <div class="route-meta-data text-secondary small">
+                          <span class="me-3">
+                            <i class="fi fi-rr-road me-1 text-primary"></i>
+                            {{ item.route.legs[0].distance?.text }}
+                          </span>
+                          <span>
+                            <i class="fi fi-rr-clock me-1 text-warning"></i>
+                            {{ item.route.legs[0].duration?.text }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="route-radio-side d-flex align-items-center justify-content-center ps-2">
+                        <ion-radio
+                          slot="end"
+                          mode="ios"
+                          [value]="i"
+                        ></ion-radio>
+                      </div>
+                    </div>
+                  }
+                </ion-radio-group>
+              </div>
+            </div>
+          }
 
+          @if (!isLoadingRoutes && rutasCombinadas.length === 0) {
+            <div class="text-center py-4 card p-3 border-dashed">
+              <p class="text-muted mb-0">Introduce un origen y destino válidos en el paso anterior para trazar las rutas.</p>
+            </div>
+          }
         </ion-col>
 
-        <ion-col #mapContainer id="mapContainer" size="12" size-md="12" size-xl="6">
+        <ion-col
+          #mapContainer
+          id="mapContainer"
+          size="12"
+          size-md="12"
+          size-xl="6"
+        >
           <div class="contenedor_mapa shadow-lg rounded-4 overflow-hidden">
-            <google-map [center]="mapCenter" [zoom]="zoom" [options]="mapOptions" height="480px" width="100%">
-              <map-marker *ngIf="markerOrigin" [position]="markerOrigin"></map-marker>
+            <google-map
+              [center]="mapCenter"
+              [zoom]="zoom"
+              [options]="mapOptions"
+              height="480px"
+              width="100%"
+            >
+              @if (markerOrigin) {
+                <map-marker [position]="markerOrigin"></map-marker>
+              }
             </google-map>
           </div>
         </ion-col>

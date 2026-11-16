@@ -1,4 +1,8 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 <ion-content [fullscreen]="true">
   <div class="container d-flex flex-column align-items-center">
     <div class="d-flex justify-content-center">
@@ -7,44 +11,76 @@
 
     <ion-row class="d-flex justify-content-center mb-4 position-relative">
       <div class="boton-foto">
-        <button type="button" class="btn btn_bg boton" (click)="fileInputPerfil.click()">
+        <button
+          type="button"
+          class="btn btn_bg boton"
+          (click)="fileInputPerfil.click()"
+        >
           {{ "PANELUSUARIO.ANADIR_EDITAR_FOTO" | translate }}
         </button>
 
-        <input type="file" #fileInputPerfil accept="image/*" (change)="onImageChangePerfil($event)"
-          style="display: none;" />
+        <input
+          type="file"
+          #fileInputPerfil
+          accept="image/*"
+          (change)="onImageChangePerfil($event)"
+          style="display: none"
+        />
       </div>
       <div class="boton-x">
-        <button type="button" matTooltip="Elimina tu foto"
-          class="btn text-boton d-flex justify-content-center align-items-center btn_bg">
-          <img class="delete-icon" src="../../../assets/sistema/cruz.png">
+        <button
+          type="button"
+          matTooltip="Elimina tu foto"
+          class="btn text-boton d-flex justify-content-center align-items-center btn_bg"
+        >
+          <img
+            class="delete-icon"
+            src="../../../assets/sistema/cruz.png"
+          />
         </button>
       </div>
 
       <ion-col>
         <div class="img-container">
-          <img class="img_profile" [src]="imagenPerfilSrc" alt="Perfil" *ngIf="!usuario?.usuario?.fotoPerfil">
+          @if (!usuario?.usuario?.fotoPerfil) {
+          <img
+            class="img_profile"
+            [src]="imagenPerfilSrc"
+            alt="Perfil"
+          />
+          }
         </div>
         <ion-row class="d-flex justify-content-center">
           <div class="nombre-container">
-            <h5>
-              {{ userData.usuario.nombre }} {{ userData.usuario.apellidos }}
-            </h5>
+            <h5>{{ userData.usuario.nombre }} {{ userData.usuario.apellidos }}</h5>
             <ion-col>
-              <button type="button" class="btn btn_bg ver_perfil_publico"
-                (click)="openPerfilPublico(userData.usuario.id)" matTooltip="Acceso al perfil público"
-                matTooltipClass="custom-tooltip">
-                <img class="icons" src="../../../assets/sistema/equipo-de-usuario.png">
+              <button
+                type="button"
+                class="btn btn_bg ver_perfil_publico"
+                (click)="openPerfilPublico(userData.usuario.id)"
+                matTooltip="Acceso al perfil público"
+                matTooltipClass="custom-tooltip"
+              >
+                <img
+                  class="icons"
+                  src="../../../assets/sistema/equipo-de-usuario.png"
+                />
               </button>
             </ion-col>
             <ion-col>
-              <button type="button" class="btn btn_bg ver_perfil_publico"
-                (click)="openAjustes()" matTooltip="Ajustes de la aplicación"
-                matTooltipClass="custom-tooltip">
-                <img class="icons" src="../../../assets/sistema/ajustes.png">
+              <button
+                type="button"
+                class="btn btn_bg ver_perfil_publico"
+                (click)="openAjustes()"
+                matTooltip="Ajustes de la aplicación"
+                matTooltipClass="custom-tooltip"
+              >
+                <img
+                  class="icons"
+                  src="../../../assets/sistema/ajustes.png"
+                />
               </button>
             </ion-col>
-
           </div>
         </ion-row>
       </ion-col>
@@ -52,59 +88,103 @@
 
     <ion-row class="botonera">
       <ion-col size="auto">
-        <button type="button" mat-raised-button class="btn btn_bg btn_opciones" (click)="openMiPerfil()">
+        <button
+          type="button"
+          mat-raised-button
+          class="btn btn_bg btn_opciones"
+          (click)="openMiPerfil()"
+        >
           {{ "PANELUSUARIO.MIPERFIL" | translate }}
         </button>
-        <div class="alert" *ngIf="userLoggedIn">
+        @if (userLoggedIn) {
+        <div class="alert">
           <div class="d-flex justify-content-center">
-            <button type="button" class="help_btn d-flex justify-content-center"
-              title="Contenido de la sección Mi perfil" (click)="openHelpMiPerfil()">
+            <button
+              type="button"
+              class="help_btn d-flex justify-content-center"
+              title="Contenido de la sección Mi perfil"
+              (click)="openHelpMiPerfil()"
+            >
               <mat-icon>help</mat-icon>
             </button>
           </div>
         </div>
+        }
       </ion-col>
 
       <ion-col size="auto">
-        <button type="button" mat-raised-button class="btn btn_bg btn_opciones" (click)="openDatosContacto()">
+        <button
+          type="button"
+          mat-raised-button
+          class="btn btn_bg btn_opciones"
+          (click)="openDatosContacto()"
+        >
           {{ "PANELUSUARIO.DATOSCONTACTO" | translate }}
         </button>
-        <div class="alert" *ngIf="userLoggedIn">
+        @if (userLoggedIn) {
+        <div class="alert">
           <div class="d-flex justify-content-center">
-            <button type="button" class="help_btn d-flex justify-content-center"
-              title="Contenido de la sección Mi perfil" (click)="openHelpDatosContacto()">
+            <button
+              type="button"
+              class="help_btn d-flex justify-content-center"
+              title="Contenido de la sección Mi perfil"
+              (click)="openHelpDatosContacto()"
+            >
               <mat-icon>help</mat-icon>
             </button>
           </div>
         </div>
+        }
       </ion-col>
 
       <ion-col size="auto">
-        <button type="button" mat-raised-button class="btn btn_bg btn_opciones" (click)="openVerificarPerfil()">
+        <button
+          type="button"
+          mat-raised-button
+          class="btn btn_bg btn_opciones"
+          (click)="openVerificarPerfil()"
+        >
           {{ "PANELUSUARIO.VERIFPERFIL" | translate }}
         </button>
-        <div class="alert" *ngIf="userLoggedIn">
+        @if (userLoggedIn) {
+        <div class="alert">
           <div class="d-flex justify-content-center">
-            <button type="button" class="help_btn d-flex justify-content-center"
-              title="Contenido de la sección Mi perfil" (click)="OpenHelpVerificaciones()">
+            <button
+              type="button"
+              class="help_btn d-flex justify-content-center"
+              title="Contenido de la sección Mi perfil"
+              (click)="OpenHelpVerificaciones()"
+            >
               <mat-icon>help</mat-icon>
             </button>
           </div>
         </div>
+        }
       </ion-col>
 
       <ion-col size="auto">
-        <button type="button" mat-raised-button class="btn btn_bg btn_opciones" (click)="openSaldoTransferencias()">
+        <button
+          type="button"
+          mat-raised-button
+          class="btn btn_bg btn_opciones"
+          (click)="openSaldoTransferencias()"
+        >
           {{ "PANELUSUARIO.SALDO_TRANSF" | translate }}
         </button>
-        <div class="alert" *ngIf="userLoggedIn">
+        @if (userLoggedIn) {
+        <div class="alert">
           <div class="d-flex justify-content-center">
-            <button type="button" class="help_btn d-flex justify-content-center"
-              title="Contenido de la sección Mi perfil" (click)="OpenHelpSaldo()">
+            <button
+              type="button"
+              class="help_btn d-flex justify-content-center"
+              title="Contenido de la sección Mi perfil"
+              (click)="OpenHelpSaldo()"
+            >
               <mat-icon>help</mat-icon>
             </button>
           </div>
         </div>
+        }
       </ion-col>
     </ion-row>
   </div>

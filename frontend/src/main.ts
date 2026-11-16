@@ -1,29 +1,14 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import {
-  RouteReuseStrategy,
-  provideRouter,
-  withPreloading,
-  PreloadAllModules,
-} from '@angular/router';
-import {
-  IonicRouteStrategy,
-  provideIonicAngular,
-} from '@ionic/angular/standalone';
+import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 
 import { routes } from './app/app.routes';
 import { AppComponent, HttpLoaderFactory } from './app/app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-import {
-  NgcCookieConsentModule,
-  NgcCookieConsentConfig,
-} from 'ngx-cookieconsent';
-import { importProvidersFrom } from '@angular/core';
-import {
-  HttpClient,
-  provideHttpClient,
-  withInterceptors,
-} from '@angular/common/http';
+import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
+import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './app/core/interceptor/auth.interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -44,13 +29,12 @@ const cookieConfig: NgcCookieConsentConfig = {
     },
     button: {
       background: '#b3b5e6',
-      text: '#000'
+      text: '#000',
     },
   },
   type: 'opt-in',
   content: {
-    message:
-      'GoGuay utiliza cookies propias con el objetivo de optimizar su visita.',
+    message: 'GoGuay utiliza cookies propias con el objetivo de optimizar su visita.',
     allow: 'Aceptar',
     deny: 'Rechazar',
     link: 'Cookies.',
@@ -77,6 +61,7 @@ if (typeof window !== 'undefined') {
 }
 bootstrapApplication(AppComponent, {
   providers: [
+    provideZoneChangeDetection(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
       mode: 'md',
@@ -100,7 +85,7 @@ bootstrapApplication(AppComponent, {
           useFactory: HttpLoaderFactory,
           deps: [HttpClient],
         },
-      }),
+      })
     ),
   ],
 });

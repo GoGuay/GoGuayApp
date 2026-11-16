@@ -3,14 +3,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+
 import { trigger, style, transition, animate } from '@angular/animations';
 import { NavController } from 'node_modules/@ionic/angular';
 
 @Component({
   selector: 'app-modal-error',
   standalone: true,
-  imports: [MatButtonModule, MatIcon, MatDivider, CommonModule],
+  imports: [MatButtonModule, MatIcon, MatDivider],
   templateUrl: './modal-error.component.html',
   styleUrls: ['./modal-error.component.scss'],
   animations: [
@@ -25,7 +25,8 @@ import { NavController } from 'node_modules/@ionic/angular';
 })
 export class ModalErrorComponent implements OnInit {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; mostrarBotonRegistro?: boolean; mostrarBotonReenvioEmail?:boolean },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { title: string; message: string; mostrarBotonRegistro?: boolean; mostrarBotonReenvioEmail?: boolean },
     private dialogRef: MatDialogRef<ModalErrorComponent>,
     private navCtrl: NavController
   ) {}

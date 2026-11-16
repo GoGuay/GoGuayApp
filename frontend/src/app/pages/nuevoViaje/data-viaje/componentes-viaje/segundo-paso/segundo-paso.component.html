@@ -26,12 +26,11 @@
     Usar mi ubicación
   </button>
 
-  <div
-    *ngIf="cargandoOrigen"
-    class="spinner-container"
-  >
-    <app-spinner></app-spinner>
-  </div>
+  @if (cargandoOrigen) {
+    <div class="spinner-container">
+      <app-spinner></app-spinner>
+    </div>
+  }
 </div>
 
 <div class="container mt-4">
@@ -49,10 +48,9 @@
     (seleccionCambiada)="seleccionarLocalidadDestino($event)"
   ></app-selector-general>
 
-  <div
-    *ngIf="cargandoDestino"
-    class="spinner-container"
-  >
-    <app-spinner></app-spinner>
-  </div>
+  @if (cargandoDestino) {
+    <div class="spinner-container">
+      <app-spinner></app-spinner>
+    </div>
+  }
 </div>

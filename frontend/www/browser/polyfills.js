@@ -2,6 +2,11 @@
 window.__Zone_disable_customElements = true;
 
 // node_modules/zone.js/fesm2015/zone.js
+/**
+ * @license Angular v<unknown>
+ * (c) 2010-2025 Google LLC. https://angular.io/
+ * License: MIT
+ */
 var global = globalThis;
 function __symbol__(name) {
   const symbolPrefix = global["__Zone_symbol_prefix"] || "__zone_symbol__";
@@ -2382,13 +2387,4 @@ function patchCommon(Zone2) {
 var Zone$1 = loadZone();
 patchCommon(Zone$1);
 patchBrowser(Zone$1);
-/*! Bundled license information:
-
-zone.js/fesm2015/zone.js:
-  (**
-   * @license Angular v<unknown>
-   * (c) 2010-2025 Google LLC. https://angular.io/
-   * License: MIT
-   *)
-*/
 //# sourceMappingURL=polyfills.js.map

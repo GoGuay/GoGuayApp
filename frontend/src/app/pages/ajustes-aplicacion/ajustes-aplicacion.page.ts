@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { IonContent, IonicModule, NavController } from '@ionic/angular';
@@ -29,18 +29,7 @@ import { loadScript } from '@paypal/paypal-js';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
-  imports: [
-    CommonModule,
-    FormsModule,
-    NavbarComponent,
-    IonicModule,
-    ToastModule,
-    MatDividerModule,
-    TranslateModule,
-    FormsModule,
-    SpinnerComponent
-
-  ],
+  imports: [FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -189,11 +178,7 @@ export class AjustesAplicacionPage implements OnInit {
   }
 
   private intentarRenderizarPaypal() {
-    if (
-      this.segmentoSeleccionado === 'cuenta' &&
-      this.metodoCobroPredeterminado === 'paypal' &&
-      !this.paypalVinculado
-    ) {
+    if (this.segmentoSeleccionado === 'cuenta' && this.metodoCobroPredeterminado === 'paypal' && !this.paypalVinculado) {
       setTimeout(() => {
         this.renderizarBotonPaypal();
       }, 100);
@@ -302,7 +287,6 @@ export class AjustesAplicacionPage implements OnInit {
           detail: detalleError,
           life: 5000,
         });
-
       },
     });
   }
@@ -521,7 +505,6 @@ export class AjustesAplicacionPage implements OnInit {
     this.navCtrl.navigateForward('/mis-incidencias');
   }
 
-
   /**
    * Función para abrir la página de términos y condiciones al hacer click en la opción del menú. Redirige a la página de términos y condiciones.
    */
@@ -579,37 +562,36 @@ export class AjustesAplicacionPage implements OnInit {
         contenedor.innerHTML = '';
       }
 
-      await paypal.Buttons({
-        style: {
-          layout: 'horizontal',
-          color: 'blue',
-          shape: 'pill',
-          label: 'paypal',
-          tagline: false,
-        },
-        createOrder: (_data, actions) => {
-          return actions.order.create({
-            intent: 'AUTHORIZE',
-            purchase_units: [
-              {
-                description: 'Verificación de cuenta PayPal - GoGuay',
-                amount: { currency_code: 'EUR', value: '0.01' },
-              },
-            ],
-          });
-        },
-        onApprove: async (_data, actions) => {
-          if (!actions.order || !this.userData?.usuario?.id) return;
-          this.vinculandoPaypal = true;
+      await paypal
+        .Buttons({
+          style: {
+            layout: 'horizontal',
+            color: 'blue',
+            shape: 'pill',
+            label: 'paypal',
+            tagline: false,
+          },
+          createOrder: (_data, actions) => {
+            return actions.order.create({
+              intent: 'AUTHORIZE',
+              purchase_units: [
+                {
+                  description: 'Verificación de cuenta PayPal - GoGuay',
+                  amount: { currency_code: 'EUR', value: '0.01' },
+                },
+              ],
+            });
+          },
+          onApprove: async (_data, actions) => {
+            if (!actions.order || !this.userData?.usuario?.id) return;
+            this.vinculandoPaypal = true;
 
-          const detalles = await actions.order.get();
-          const payerId = detalles.payer?.payer_id;
-          const emailPaypal = detalles.payer?.email_address;
+            const detalles = await actions.order.get();
+            const payerId = detalles.payer?.payer_id;
+            const emailPaypal = detalles.payer?.email_address;
 
-          if (payerId && emailPaypal) {
-            this.monederoService
-              .vincularCuentaPaypal(this.userData.usuario.id, payerId, emailPaypal)
-              .subscribe({
+            if (payerId && emailPaypal) {
+              this.monederoService.vincularCuentaPaypal(this.userData.usuario.id, payerId, emailPaypal).subscribe({
                 next: (res) => {
                   this.paypalVinculado = true;
                   this.emailPaypal = emailPaypal;
@@ -620,13 +602,14 @@ export class AjustesAplicacionPage implements OnInit {
                   this.vinculandoPaypal = false;
                 },
               });
-          }
-        },
-        onError: (err) => {
-          console.error('Error en popup de PayPal:', err);
-          this.vinculandoPaypal = false;
-        },
-      }).render('#paypal-button-container');
+            }
+          },
+          onError: (err) => {
+            console.error('Error en popup de PayPal:', err);
+            this.vinculandoPaypal = false;
+          },
+        })
+        .render('#paypal-button-container');
     } catch (error) {
       console.error('No se pudo cargar el SDK de PayPal:', error);
     }

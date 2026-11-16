@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDividerModule } from '@angular/material/divider';
@@ -20,7 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [
     IonicModule,
-    CommonModule,
     FormsModule,
     RouterModule,
     MatDividerModule,
@@ -28,15 +27,15 @@ import { TranslateModule } from '@ngx-translate/core';
     MatCardModule,
     JumbotronComponent,
     NavbarComponent,
-    TranslateModule
-  ]
+    TranslateModule,
+  ],
 })
 export class SobreNosotrosPage implements OnInit {
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   mostrarJumbotron = true;
 
-  constructor(private funcionesComunes: FuncionesComunes) { }
+  constructor(private funcionesComunes: FuncionesComunes) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -46,7 +45,7 @@ export class SobreNosotrosPage implements OnInit {
 
   /**
    * Función para abrir los perfiles de Linkedin de cada uno.
-   * 
+   *
    * @param perfil Recibe el nombre del perfil que se va a abrir.
    */
   openLinkedin(perfil: string) {
@@ -58,10 +57,10 @@ export class SobreNosotrosPage implements OnInit {
   }
 
   /**
- * Función para abrir los perfiles de GitHub de cada uno.
- * 
- * @param perfil Recibe el nombre del perfil que se va a abrir.
- */
+   * Función para abrir los perfiles de GitHub de cada uno.
+   *
+   * @param perfil Recibe el nombre del perfil que se va a abrir.
+   */
   openGitHub(perfil: string) {
     if (perfil === 'Dani') {
       window.open('https://github.com/Daniel160490', '_blank');
@@ -69,7 +68,6 @@ export class SobreNosotrosPage implements OnInit {
       window.open('https://github.com/JTomas88', '_blank');
     }
   }
-
 
   loadJumbotronSetting() {
     const jumbotronSetting = localStorage.getItem('mostrarJumbotron');

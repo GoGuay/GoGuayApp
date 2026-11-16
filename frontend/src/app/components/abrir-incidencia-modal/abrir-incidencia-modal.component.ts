@@ -1,16 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { warningOutline, closeOutline, cloudUploadOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
-import { 
-  IncidenciasService, 
-  CategoriaIncidencia, 
+import {
+  IncidenciasService,
+  CategoriaIncidencia,
   SubCategoriasIncidencias,
-  IncidenciaPayload 
+  IncidenciaPayload,
 } from 'src/app/core/incidencias-service/incidencias-service.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
@@ -19,7 +19,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
   templateUrl: './abrir-incidencia-modal.component.html',
   styleUrls: ['./abrir-incidencia-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, TranslateModule, SpinnerComponent]
+  imports: [ReactiveFormsModule, IonicModule, TranslateModule, SpinnerComponent],
 })
 export class AbrirIncidenciaModalComponent implements OnInit {
   @Input() categoria: CategoriaIncidencia = 'APP';
@@ -47,7 +47,7 @@ export class AbrirIncidenciaModalComponent implements OnInit {
     this.incidenciaForm = new FormGroup({
       subcategoria: new FormControl(this.subcategoriaPredeterminada, [Validators.required]),
       resumen: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      descripcion: new FormControl('', [Validators.required, Validators.minLength(15)])
+      descripcion: new FormControl('', [Validators.required, Validators.minLength(15)]),
     });
   }
 
@@ -56,14 +56,14 @@ export class AbrirIncidenciaModalComponent implements OnInit {
       this.subcategoriasDisponibles = [
         { valor: 'COMPORTAMIENTO', etiqueta: 'Comportamiento inapropiado' },
         { valor: 'VIAJE_PRESENCIA_UBICACION', etiqueta: 'No presentado / Punto de encuentro' },
-        { valor: 'OTRO', etiqueta: 'Otro motivo sobre usuario' }
+        { valor: 'OTRO', etiqueta: 'Otro motivo sobre usuario' },
       ];
     } else {
       this.subcategoriasDisponibles = [
         { valor: 'CREACION_VIAJE', etiqueta: 'Error al crear/publicar viaje' },
         { valor: 'PAGO', etiqueta: 'Problemas con pagos o monedero' },
         { valor: 'ERROR_TECNICO_GENERAL', etiqueta: 'Fallo técnico general' },
-        { valor: 'OTRO', etiqueta: 'Otras consultas' }
+        { valor: 'OTRO', etiqueta: 'Otras consultas' },
       ];
     }
   }
@@ -108,7 +108,7 @@ export class AbrirIncidenciaModalComponent implements OnInit {
       usuario_reportado_id: this.usuarioReportadoId || null,
       viaje_id: this.viajeId || null,
       resumen: this.incidenciaForm.value.resumen,
-      descripcion: this.incidenciaForm.value.descripcion
+      descripcion: this.incidenciaForm.value.descripcion,
     };
 
     this.incidenciasService.crearIncidencia(payload).subscribe({
@@ -123,15 +123,13 @@ export class AbrirIncidenciaModalComponent implements OnInit {
       error: (err) => {
         console.error('Error guardando incidencia:', err);
         this.enviando = false;
-      }
+      },
     });
   }
 
   private async subirAdjuntosPendientes(incidenciaId: number) {
     try {
-      const uploads = this.archivosAdjuntos.map(file => 
-        firstValueFrom(this.incidenciasService.subirAdjunto(incidenciaId, file))
-      );
+      const uploads = this.archivosAdjuntos.map((file) => firstValueFrom(this.incidenciasService.subirAdjunto(incidenciaId, file)));
       await Promise.all(uploads);
     } catch (error) {
       console.error('Error al subir adjuntos:', error);

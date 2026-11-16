@@ -1,10 +1,19 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'newTravel'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="mostrarJumbotron">
-    <app-jumbotron [title]="'Un espacio seguro para compartir cada kilómetro.'"
-      [imageSrc]="'../../assets/folder/jumbo3.jpg'" [helpText]="'JUMBOTRON.HELP'"></app-jumbotron>
+  @if (mostrarJumbotron) {
+  <div>
+    <app-jumbotron
+      [title]="'Un espacio seguro para compartir cada kilómetro.'"
+      [imageSrc]="'../../assets/folder/jumbo3.jpg'"
+      [helpText]="'JUMBOTRON.HELP'"
+    ></app-jumbotron>
   </div>
+  }
 
   <div class="container mt-4">
     <div class="text-center mb-4">
@@ -13,108 +22,168 @@
     </div>
 
     <ion-accordion-group class="mb-3">
-
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>1. Respeto Radical y No Discriminación</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          En GoGuay, el respeto es la base. No toleramos ninguna forma de discriminación por identidad de género,
-          orientación sexual, expresión, raza, religión o diversidad funcional. El lenguaje de odio o agresivo conlleva
-          la expulsión inmediata.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          En GoGuay, el respeto es la base. No toleramos ninguna forma de discriminación por identidad de género, orientación sexual,
+          expresión, raza, religión o diversidad funcional. El lenguaje de odio o agresivo conlleva la expulsión inmediata.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>2. Privacidad y Confidencialidad</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          El trayecto es un espacio privado. Está estrictamente prohibido compartir información, fotos o "sacar del
-          armario" (outing) a cualquier usuario fuera de la aplicación sin su consentimiento explícito.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          El trayecto es un espacio privado. Está estrictamente prohibido compartir información, fotos o "sacar del armario" (outing) a
+          cualquier usuario fuera de la aplicación sin su consentimiento explícito.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>3. Compromiso con el Espacio Seguro</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Cada vehículo es un refugio. Los usuarios se comprometen a mantener un ambiente libre de juicios, prejuicios y
-          microagresiones, permitiendo que todos viajen con total libertad de ser quienes son.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Cada vehículo es un refugio. Los usuarios se comprometen a mantener un ambiente libre de juicios, prejuicios y microagresiones,
+          permitiendo que todos viajen con total libertad de ser quienes son.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>4. Confianza mediante la Verificación</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          La seguridad se construye entre todos. Para formar parte de GoGuay, es obligatorio completar el proceso de
-          verificación de identidad para asegurar que nuestra comunidad sea real, transparente y fiable.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          La seguridad se construye entre todos. Para formar parte de GoGuay, es obligatorio completar el proceso de verificación de
+          identidad para asegurar que nuestra comunidad sea real, transparente y fiable.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>5. Compromiso y Puntualidad</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Respetamos el tiempo ajeno. Las cancelaciones deben ser excepcionales, realizadas con antelación y debidamente
-          justificadas para no romper la logística y confianza de los demás miembros.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Respetamos el tiempo ajeno. Las cancelaciones deben ser excepcionales, realizadas con antelación y debidamente justificadas para
+          no romper la logística y confianza de los demás miembros.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>6. Ambiente Saludable y Libre de Sustancias</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Para garantizar una convivencia óptima, no se permite el consumo de alcohol o drogas durante el viaje.
-          Asimismo, cualquier conducta de índole sexual está prohibida en los trayectos compartidos.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Para garantizar una convivencia óptima, no se permite el consumo de alcohol o drogas durante el viaje. Asimismo, cualquier
+          conducta de índole sexual está prohibida en los trayectos compartidos.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>7. Reseñas Constructivas y Honestas</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Usa el sistema de valoraciones para ayudar a la comunidad. Los comentarios deben ser respetuosos y veraces,
-          enfocados en mejorar la experiencia y reconocer el buen comportamiento de otros usuarios.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Usa el sistema de valoraciones para ayudar a la comunidad. Los comentarios deben ser respetuosos y veraces, enfocados en mejorar
+          la experiencia y reconocer el buen comportamiento de otros usuarios.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>8. Validación de todas las Identidades</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Somos un espectro diverso. El uso del <strong>nombre sentido</strong> y el respeto absoluto a los
-          <strong>pronombres</strong> es obligatorio. En GoGuay, no se cuestiona la identidad de nadie.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Somos un espectro diverso. El uso del
+          <strong>nombre sentido</strong>
+          y el respeto absoluto a los
+          <strong>pronombres</strong>
+          es obligatorio. En GoGuay, no se cuestiona la identidad de nadie.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>9. Seguridad en Ruta</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Conductores y pasajeros deben cumplir con todas las normativas de tráfico. Los vehículos deben estar en
-          perfecto estado técnico y con el seguro en vigor para garantizar la integridad física de todos.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Conductores y pasajeros deben cumplir con todas las normativas de tráfico. Los vehículos deben estar en perfecto estado técnico y
+          con el seguro en vigor para garantizar la integridad física de todos.
         </div>
       </ion-accordion>
 
       <ion-accordion class="mb-3 shadow-sm">
-        <ion-item slot="header" class="white-header">
+        <ion-item
+          slot="header"
+          class="white-header"
+        >
           <ion-label>10. Vigilancia Comunitaria y Soporte</ion-label>
         </ion-item>
-        <div slot="content" class="p-3">
-          Si algo no va bien, no estás solo/a. GoGuay ofrece canales directos para reportar incidencias. Nuestro
-          equipo actúa con rapidez y confidencialidad para resolver conflictos y proteger a la comunidad.
+        <div
+          slot="content"
+          class="p-3"
+        >
+          Si algo no va bien, no estás solo/a. GoGuay ofrece canales directos para reportar incidencias. Nuestro equipo actúa con rapidez y
+          confidencialidad para resolver conflictos y proteger a la comunidad.
         </div>
       </ion-accordion>
-
     </ion-accordion-group>
   </div>
 </ion-content>

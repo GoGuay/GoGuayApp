@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonRow, IonCol, IonGrid } from '@ionic/angular/standalone';
 import { MatIcon } from '@angular/material/icon';
@@ -22,7 +22,6 @@ import { ToastModule } from 'primeng/toast';
     IonCol,
     IonRow,
     IonContent,
-    CommonModule,
     FormsModule,
     TranslateModule,
     NavbarComponent,

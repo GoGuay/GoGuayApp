@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { SpinnerComponent } from "../../components/spinner/spinner.component";
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { Subject, takeUntil } from 'rxjs';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { Usuario } from '../../models/user/usuario.model';
@@ -18,17 +18,16 @@ import { UserServicesService } from '../../core/user-services/user-services.serv
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatTooltipModule, SpinnerComponent],
+  imports: [IonicModule, FormsModule, NavbarComponent, MatTooltipModule, SpinnerComponent],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-      useValue: { showDelay: 500, hideDelay: 200, touchGestures: 'auto', position: 'below' }
-    }
+      useValue: { showDelay: 500, hideDelay: 200, touchGestures: 'auto', position: 'below' },
+    },
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class PerfilPublicoPage implements OnInit, OnDestroy {
-
   userLoggedIn: boolean = false;
   usuarioParams: any = {};
   usuario: any;
@@ -58,7 +57,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
     private userService: UserServicesService,
     private dialog: MatDialog,
     private navCtrl: NavController
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.userLoggedIn = this.funcionesComunes.isUserLoggedIn();
@@ -81,7 +80,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
 
   /**
    * Función para cargar los datos necesarios del usuario
-   * 
+   *
    * @param userId --> Recibe el ID del usuario que va a mostrar sus datos
    */
   private cargarDatosPerfil(userId: number) {
@@ -112,7 +111,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
             fechaComentario = new Date(fechaComentario).toLocaleDateString('es-ES', {
               day: 'numeric',
               month: 'short',
-              year: 'numeric'
+              year: 'numeric',
             });
           }
 
@@ -121,7 +120,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
             fechaViaje = new Date(fechaViaje).toLocaleDateString('es-ES', {
               day: 'numeric',
               month: 'short',
-              year: 'numeric'
+              year: 'numeric',
             });
           }
 
@@ -134,7 +133,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
             autorFoto: op.evaluador?.fotoPerfil || '../../../assets/user/logOn.gif',
             origen: op.viaje?.origen || op.origen || null,
             destino: op.viaje?.destino || op.destino || null,
-            fechaViaje: fechaViaje || null
+            fechaViaje: fechaViaje || null,
           };
         });
 
@@ -147,13 +146,13 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error al cargar perfil:', error);
         this.cargando = false;
-      }
+      },
     });
   }
 
   /**
    * Función para obtener los datos de un usuario.
-   * 
+   *
    * @param id_usuario --> Recibe el id del usuario que se quiere buscar.
    */
   obtenerUsuarioPorID(id_usuario: number) {
@@ -166,7 +165,7 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
 
   /**
    * Función para poder cambiar la imagen de cabecera o de perfil.
-   * 
+   *
    * @param event --> Recibe la información del evento del input seleccionado.
    * @param tipo --> Recibe un String con el tipo de información para saber a donde pertenece la imagen que se quiere cambiar.
    */
@@ -182,13 +181,13 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
       formData.append('imagenCabecera', input.files[0]);
       this.userService.actualizarImagenCabecera(usuarioId, formData).subscribe({
         next: (res) => this.finalizarCargaImagen(res.url, 'cabecera'),
-        error: () => this.cargando = false
+        error: () => (this.cargando = false),
       });
     } else {
       formData.append('imagenPerfil', input.files[0]);
       this.userService.actualizarImagenPerfil(usuarioId, formData).subscribe({
         next: (res) => this.finalizarCargaImagen(res.nuevaUrl, 'perfil'),
-        error: () => this.cargando = false
+        error: () => (this.cargando = false),
       });
     }
   }
@@ -208,17 +207,17 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
    * Esto se utiliza para saber si es el propio usuario logado el que está visualizando
    * la ventana.
    * Si es así, le aparecen las opciones de edición de la información.
-   * 
+   *
    * @param id_usuario_perfil --> Recibe el ID del usuario.
    */
   validacionPerilLogeado(id_usuario_perfil: number) {
-    this.editar_perfil = (id_usuario_perfil === this.userData.usuario.id);
+    this.editar_perfil = id_usuario_perfil === this.userData.usuario.id;
   }
 
   /**
    * Función para comprobar la url desde la que se accede a esta ventana.
    * Esto se utiliza para poder regresar al mismo punto desde el que se accedió a esta ventana.
-   *  
+   *
    * @param urlAnterior --> Recibe la url desde la que se ha accedido a esta ventana.
    */
   comprobarUrls(urlAnterior: string): string {
@@ -226,14 +225,12 @@ export class PerfilPublicoPage implements OnInit, OnDestroy {
     return rutasValidas.includes(urlAnterior) ? urlAnterior : '/panel-usuario';
   }
 
-
   /**
    * Función para redirigir a la ventana "mi-perfil"
    * para editar los datos del usuario que se van a mostrar aquí.
-   * 
+   *
    */
   irAEditarPerfil() {
     this.navCtrl.navigateForward('/mi-perfil');
   }
-
 }

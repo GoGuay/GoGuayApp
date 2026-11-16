@@ -4,28 +4,30 @@
     class="form-label d-flex align-items-center gap-2"
   >
     <span>{{ labelKey | translate }}</span>
-    <span
-      *ngIf="tooltipKey"
-      tabindex="0"
-      class="text-primary"
-      role="button"
-      [matTooltip]="tooltipKey | translate"
-    >
-      <i
-        class="bi-question-circle"
-        aria-hidden="true"
-      ></i>
-    </span>
-    <ion-popover
-      *ngIf="!isDesktop && popoverKey"
-      #popover
-      [isOpen]="isOpen"
-      (didDismiss)="isOpen = false"
-    >
-      <ng-template>
-        <ion-content class="ion-padding">{{ popoverKey | translate }}</ion-content>
-      </ng-template>
-    </ion-popover>
+    @if (tooltipKey) {
+      <span
+        tabindex="0"
+        class="text-primary"
+        role="button"
+        [matTooltip]="tooltipKey | translate"
+      >
+        <i
+          class="bi-question-circle"
+          aria-hidden="true"
+        ></i>
+      </span>
+    }
+    @if (!isDesktop && popoverKey) {
+      <ion-popover
+        #popover
+        [isOpen]="isOpen"
+        (didDismiss)="isOpen = false"
+      >
+        <ng-template>
+          <ion-content class="ion-padding">{{ popoverKey | translate }}</ion-content>
+        </ng-template>
+      </ion-popover>
+    }
   </label>
 
   <div class="position-relative w-100">
@@ -53,31 +55,34 @@
       [readonly]="soloLectura"
     />
 
-    <i
-      *ngIf="mostrarFlechaSelector"
-      class="bi bi-chevron-down position-absolute text-muted flecha_selector"
-      aria-hidden="true"
-    ></i>
+    @if (mostrarFlechaSelector) {
+      <i
+        class="bi bi-chevron-down position-absolute text-muted flecha_selector"
+        aria-hidden="true"
+      ></i>
+    }
   </div>
 
   <!-- Lista desplegable con scroll integrado -->
-  <ul
-    [id]="'lista-sugerencias-' + idUnico"
-    *ngIf="sugerencias.length > 0 && estaActivo"
-    class="list-group lista_sugerencias position-absolute w-100"
-    role="listbox"
-    style="z-index: 1000"
-  >
-    <li
-      *ngFor="let opcion of sugerencias; let i = index"
-      [id]="'opcion-' + idUnico + '-' + i"
-      class=""
-      (mousedown)="$event.preventDefault(); seleccionarOpcion(opcion)"
-      [class.active]="i === indiceActivo"
-      role="option"
-      tabindex="-1"
+  @if (sugerencias.length > 0 && estaActivo) {
+    <ul
+      [id]="'lista-sugerencias-' + idUnico"
+      class="list-group lista_sugerencias position-absolute w-100"
+      role="listbox"
+      style="z-index: 1000"
     >
-      {{ obtenerTextoOpcion(opcion) }}
-    </li>
-  </ul>
+      @for (opcion of sugerencias; track opcion; let i = $index) {
+        <li
+          [id]="'opcion-' + idUnico + '-' + i"
+          class=""
+          (mousedown)="$event.preventDefault(); seleccionarOpcion(opcion)"
+          [class.active]="i === indiceActivo"
+          role="option"
+          tabindex="-1"
+        >
+          {{ obtenerTextoOpcion(opcion) }}
+        </li>
+      }
+    </ul>
+  }
 </div>

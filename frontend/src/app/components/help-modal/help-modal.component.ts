@@ -6,14 +6,14 @@ import { MatIcon } from '@angular/material/icon';
 
 import { trigger, style, transition, animate } from '@angular/animations';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+
 import { NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-help-modal',
   standalone: true,
-  imports: [MatButtonModule, MatIcon, MatDivider, CommonModule, TranslateModule],
+  imports: [MatButtonModule, MatIcon, MatDivider, TranslateModule],
   templateUrl: './help-modal.component.html',
   styleUrls: ['./help-modal.component.scss'],
   animations: [
@@ -44,7 +44,7 @@ export class HelpModalComponent implements OnInit {
       showAcceptButton: boolean;
       showMoreInfoButton: boolean;
       showReturnTripButton?: boolean;
-      eliminacion_cuenta?:boolean;
+      eliminacion_cuenta?: boolean;
     },
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<HelpModalComponent>,

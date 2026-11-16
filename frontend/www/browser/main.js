@@ -6,19 +6,19 @@ import {
   NoopAnimationDriver,
   WebAnimationsDriver,
   WebAnimationsStyleNormalizer
-} from "./chunk-PYW4IWFL.js";
+} from "./chunk-A2ZTIJEI.js";
 import {
   CookieService
-} from "./chunk-ZCRZRLJ2.js";
+} from "./chunk-OZLV26YT.js";
 import {
   providePrimeNG
-} from "./chunk-NAZ7DCPP.js";
+} from "./chunk-HCR355QR.js";
 import {
   FuncionesComunes
-} from "./chunk-JVMVG56Z.js";
+} from "./chunk-TMB2KEQX.js";
 import {
   NotificacionesService
-} from "./chunk-FPL4PN3H.js";
+} from "./chunk-TGPQDEZS.js";
 import {
   IonApp,
   IonContent,
@@ -32,39 +32,40 @@ import {
   IonTitle,
   IonToolbar,
   provideIonicAngular
-} from "./chunk-WO2ZSM4X.js";
-import "./chunk-GYAYVE5N.js";
-import "./chunk-ZTUWPCV2.js";
+} from "./chunk-BLKEDZE4.js";
+import "./chunk-N7S2XU3X.js";
+import "./chunk-CIEE2FXQ.js";
 import {
   LanguageService
-} from "./chunk-7NH46FL3.js";
+} from "./chunk-G5UZDB7B.js";
 import {
   MessageService
-} from "./chunk-AF4L5EWO.js";
+} from "./chunk-WDE6N5F6.js";
 import {
   UserServicesService
-} from "./chunk-YZOGC4HD.js";
-import "./chunk-ZYMQAXGI.js";
-import "./chunk-UIKNRIU5.js";
-import "./chunk-FCE3VLZJ.js";
-import "./chunk-CGCOLBWN.js";
-import "./chunk-H72L7N4J.js";
+} from "./chunk-34RASOLQ.js";
+import "./chunk-ULIFZXTE.js";
+import "./chunk-WBBLYEAR.js";
+import "./chunk-LLKVXR72.js";
+import "./chunk-Z2EGICVD.js";
 import {
   MenuController
-} from "./chunk-6IWXE3BU.js";
+} from "./chunk-XTRPVKSN.js";
 import {
   TranslateLoader,
   TranslateModule,
   TranslatePipe
-} from "./chunk-XHXT42RH.js";
+} from "./chunk-PWPN4F54.js";
 import {
   BrowserModule,
+  CommonModule,
   DomRendererFactory2,
   HttpBackend,
   HttpClient,
   IonicRouteStrategy,
   NavigationEnd,
   NavigationStart,
+  NgClass,
   PreloadAllModules,
   RouteReuseStrategy,
   Router,
@@ -75,13 +76,7 @@ import {
   provideRouter,
   withInterceptors,
   withPreloading
-} from "./chunk-TU2LK3TM.js";
-import {
-  CommonModule,
-  NgClass,
-  NgForOf,
-  NgIf
-} from "./chunk-7PPOBOFB.js";
+} from "./chunk-DD4MNYDA.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionScheduler,
@@ -107,12 +102,15 @@ import {
   map,
   of,
   performanceMarkFeature,
+  provideZoneChangeDetection,
   setClassMetadata,
   switchMap,
   throwError,
   ɵsetClassDebugInfo,
   ɵɵProvidersFeature,
   ɵɵadvance,
+  ɵɵconditional,
+  ɵɵconditionalCreate,
   ɵɵdefineComponent,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
@@ -132,43 +130,45 @@ import {
   ɵɵproperty,
   ɵɵpureFunction5,
   ɵɵqueryRefresh,
+  ɵɵrepeater,
+  ɵɵrepeaterCreate,
+  ɵɵrepeaterTrackByIdentity,
   ɵɵresetView,
   ɵɵrestoreView,
-  ɵɵtemplate,
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵviewQuery
-} from "./chunk-HLETIGG3.js";
-import "./chunk-7556B6PN.js";
-import "./chunk-W7NNY2EY.js";
-import "./chunk-5UBTS3LV.js";
-import "./chunk-5U7ILDTA.js";
-import "./chunk-DBFJ6K2U.js";
-import "./chunk-46CSAHEN.js";
-import "./chunk-ZANXXOCD.js";
-import "./chunk-TTTMSMQM.js";
-import "./chunk-IWHG45GR.js";
-import "./chunk-QRXYEVCI.js";
-import "./chunk-D5V6R5MP.js";
-import "./chunk-5D42N2GT.js";
-import "./chunk-QOQL43QQ.js";
-import "./chunk-YMESYUMT.js";
-import "./chunk-IVBL4Y7V.js";
-import "./chunk-OQ6XJYX6.js";
-import "./chunk-N5FWEBJU.js";
-import "./chunk-KJR5G6CW.js";
-import "./chunk-KD7SVZKO.js";
-import "./chunk-BPLG4SRC.js";
-import "./chunk-26XTF7OY.js";
-import "./chunk-APG7YNI3.js";
-import "./chunk-EJAR5KKY.js";
-import "./chunk-CDWCOH3U.js";
-import "./chunk-T6B53M7P.js";
-import "./chunk-FZZSIR43.js";
-import "./chunk-X4NBNE3H.js";
-import "./chunk-Z325AMW6.js";
-import "./chunk-GEKSWYBB.js";
-import "./chunk-YAS4LRVC.js";
+} from "./chunk-YUKRBYLH.js";
+import "./chunk-NEFVXLXQ.js";
+import "./chunk-UGUZQALC.js";
+import "./chunk-4JA4ETJA.js";
+import "./chunk-RI33YQSB.js";
+import "./chunk-7NBG2LBA.js";
+import "./chunk-MOKADOCG.js";
+import "./chunk-4UX5YYJM.js";
+import "./chunk-7WJRAT5Y.js";
+import "./chunk-XSENUJ4A.js";
+import "./chunk-K6BOSGGR.js";
+import "./chunk-HM6RSKJQ.js";
+import "./chunk-QU22HLHJ.js";
+import "./chunk-HMGJJ2JN.js";
+import "./chunk-GV4SC633.js";
+import "./chunk-XEOOW4LE.js";
+import "./chunk-TNIKZTJG.js";
+import "./chunk-QD6KASZP.js";
+import "./chunk-ZO2Q2TV5.js";
+import "./chunk-NZ2QYBMG.js";
+import "./chunk-5MFCCRYD.js";
+import "./chunk-LYPF3I3J.js";
+import "./chunk-PHWUJLET.js";
+import "./chunk-ZBCCTIRL.js";
+import "./chunk-KLZ5YPL6.js";
+import "./chunk-SWNU2J3M.js";
+import "./chunk-FUL4CNB6.js";
+import "./chunk-AIOHWISL.js";
+import "./chunk-FPPEK4XH.js";
+import "./chunk-MEOWV5C6.js";
+import "./chunk-DI3VEDFV.js";
 import {
   __spreadProps,
   __spreadValues
@@ -246,7 +246,7 @@ var AuthGuard = (route, state) => {
 var routes = [
   {
     path: "home",
-    loadComponent: () => import("./home.page-JT2PMYCB.js").then((m) => m.HomePage)
+    loadComponent: () => import("./home.page-SWSCHB5W.js").then((m) => m.HomePage)
   },
   {
     path: "",
@@ -255,190 +255,190 @@ var routes = [
   },
   {
     path: "registro",
-    loadComponent: () => import("./registro.component-J5IETQ47.js").then((m) => m.RegistroComponent),
+    loadComponent: () => import("./registro.component-A6EB77JB.js").then((m) => m.RegistroComponent),
     canActivate: [googleCancelGuard]
   },
   {
     path: "sobre-nosotros",
-    loadComponent: () => import("./sobre-nosotros.page-IYOTKWZ2.js").then((m) => m.SobreNosotrosPage)
+    loadComponent: () => import("./sobre-nosotros.page-55RYYDKL.js").then((m) => m.SobreNosotrosPage)
   },
   {
     path: "cookies",
-    loadComponent: () => import("./cookies.page-2M4C3P2X.js").then((m) => m.CookiesPage)
+    loadComponent: () => import("./cookies.page-RQA27FJM.js").then((m) => m.CookiesPage)
   },
   {
     path: "busqueda-viajes",
-    loadComponent: () => import("./busqueda-viajes.page-QJPBTLYD.js").then((m) => m.BusquedaViajesPage)
+    loadComponent: () => import("./busqueda-viajes.page-72PILEAS.js").then((m) => m.BusquedaViajesPage)
   },
   {
     path: "login",
-    loadComponent: () => import("./login.page-WVM2XSAI.js").then((m) => m.LoginPage)
+    loadComponent: () => import("./login.page-YNY6H3X4.js").then((m) => m.LoginPage)
   },
   {
     path: "panel-usuario",
-    loadComponent: () => import("./panel-usuario.page-3NRJKDRS.js").then((m) => m.PanelUsuarioPage),
+    loadComponent: () => import("./panel-usuario.page-53BPP5JZ.js").then((m) => m.PanelUsuarioPage),
     canActivate: [AuthGuard]
   },
   {
     path: "nuevo-viaje",
-    loadComponent: () => import("./nuevo-viaje.page-AOAYDG3U.js").then((m) => m.NuevoViajePage),
+    loadComponent: () => import("./nuevo-viaje.page-BXHJ3EKO.js").then((m) => m.NuevoViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "data-viaje",
-    loadComponent: () => import("./data-viaje.page-IFYHMXNW.js").then((m) => m.DataViajePage),
+    loadComponent: () => import("./data-viaje.page-QJYIRGWT.js").then((m) => m.DataViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "resumen-viaje",
-    loadComponent: () => import("./resumen-viaje.component-UOBFZ7FC.js").then((m) => m.ResumenViajeComponent),
+    loadComponent: () => import("./resumen-viaje.component-2ESTRPSF.js").then((m) => m.ResumenViajeComponent),
     canActivate: [AuthGuard]
   },
   {
     path: "centro-ayuda",
-    loadComponent: () => import("./centro-ayuda.page-WGUMHBNJ.js").then((m) => m.CentroAyudaPage)
+    loadComponent: () => import("./centro-ayuda.page-BONGGW3W.js").then((m) => m.CentroAyudaPage)
   },
   {
     path: "faqs",
-    loadComponent: () => import("./faqs.page-75UI2GBW.js").then((m) => m.FaqsPage)
+    loadComponent: () => import("./faqs.page-45PHYYHD.js").then((m) => m.FaqsPage)
   },
   {
     path: "mi-perfil",
-    loadComponent: () => import("./mi-perfil.page-Z54YHLXG.js").then((m) => m.MiPerfilPage),
+    loadComponent: () => import("./mi-perfil.page-23DONBAU.js").then((m) => m.MiPerfilPage),
     canActivate: [AuthGuard]
   },
   {
     path: "datos-contacto",
-    loadComponent: () => import("./datos-contacto.page-OHRYE5EU.js").then((m) => m.DatosContactoPage)
+    loadComponent: () => import("./datos-contacto.page-EWXGDBBU.js").then((m) => m.DatosContactoPage)
   },
   {
     path: "mis-incidencias",
-    loadComponent: () => import("./incidencias-usuario.page-J2QMCYYK.js").then((m) => m.IncidenciasUsuarioPage),
+    loadComponent: () => import("./incidencias-usuario.page-AHWHWEFA.js").then((m) => m.IncidenciasUsuarioPage),
     canActivate: [AuthGuard]
   },
   {
     path: "terminos",
-    loadComponent: () => import("./terminos.page-ZWFBTP6N.js").then((m) => m.TerminosPage)
+    loadComponent: () => import("./terminos.page-7FTD5SWQ.js").then((m) => m.TerminosPage)
   },
   {
     path: "saldo-transferencias",
-    loadComponent: () => import("./saldo-transferencias.page-XFSD5AOZ.js").then((m) => m.SaldoTransferenciasPage),
+    loadComponent: () => import("./saldo-transferencias.page-2WQBHUZN.js").then((m) => m.SaldoTransferenciasPage),
     canActivate: [AuthGuard]
   },
   {
     path: "decalogo",
-    loadComponent: () => import("./decalogo.page-AZLYJSMO.js").then((m) => m.DecalogoPage)
+    loadComponent: () => import("./decalogo.page-EUV2ZYFR.js").then((m) => m.DecalogoPage)
   },
   {
     path: "perfil-publico",
-    loadComponent: () => import("./perfil-publico.page-R3MZ7YF4.js").then((m) => m.PerfilPublicoPage)
+    loadComponent: () => import("./perfil-publico.page-XPLY3N7T.js").then((m) => m.PerfilPublicoPage)
   },
   {
     path: "verificaciones-perfil",
-    loadComponent: () => import("./verificaciones-perfil.page-4JXXZKEZ.js").then((m) => m.VerificacionesPerfilPage),
+    loadComponent: () => import("./verificaciones-perfil.page-SWNC5T46.js").then((m) => m.VerificacionesPerfilPage),
     canActivate: [AuthGuard]
   },
   {
     path: "encuesta-satisfaccion",
-    loadComponent: () => import("./encuesta-satisfaccion.page-4P6H73Y4.js").then((m) => m.EncuestaSatisfaccionPage)
+    loadComponent: () => import("./encuesta-satisfaccion.page-HJAHNDHF.js").then((m) => m.EncuestaSatisfaccionPage)
   },
   {
     path: "centro-contacto",
-    loadComponent: () => import("./centro-contacto.page-KZZPXOYM.js").then((m) => m.CentroContactoPage)
+    loadComponent: () => import("./centro-contacto.page-URWY5J3Z.js").then((m) => m.CentroContactoPage)
   },
   {
     path: "ajustes-aplicacion",
-    loadComponent: () => import("./ajustes-aplicacion.page-OHXBXY5K.js").then((m) => m.AjustesAplicacionPage)
+    loadComponent: () => import("./ajustes-aplicacion.page-KNNNCJW3.js").then((m) => m.AjustesAplicacionPage)
   },
   {
     path: "forgot-password",
-    loadComponent: () => import("./forgot-password.page-FCPWKH4W.js").then((m) => m.ForgotPasswordPage)
+    loadComponent: () => import("./forgot-password.page-SVG236LY.js").then((m) => m.ForgotPasswordPage)
   },
   {
     path: "nueva-contrasena/:token",
-    loadComponent: () => import("./nueva-contrasena.page-GNQ5BAI2.js").then((m) => m.NuevaContrasenaPage),
+    loadComponent: () => import("./nueva-contrasena.page-W5HL3I7X.js").then((m) => m.NuevaContrasenaPage),
     canActivate: [TokenValidGuard]
   },
   {
     path: "token-expirado",
-    loadComponent: () => import("./token-expirado.page-T4UIRB3M.js").then((m) => m.TokenExpiradoPage)
+    loadComponent: () => import("./token-expirado.page-OKXT4WN6.js").then((m) => m.TokenExpiradoPage)
   },
   {
     path: "token-ya-usado",
-    loadComponent: () => import("./token-ya-usado.page-KQMXAXNX.js").then((m) => m.TokenYaUsadoPage)
+    loadComponent: () => import("./token-ya-usado.page-KYATZP22.js").then((m) => m.TokenYaUsadoPage)
   },
   {
     path: "notificaciones",
-    loadComponent: () => import("./centro-notificaciones.page-VHXWXELO.js").then((m) => m.CentroNotificacionesPage),
+    loadComponent: () => import("./centro-notificaciones.page-AAJFOJHY.js").then((m) => m.CentroNotificacionesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "registro/resumen-registro",
-    loadComponent: () => import("./resumen-registro.component-XUYV7XLJ.js").then((m) => m.ResumenRegistroComponent)
+    loadComponent: () => import("./resumen-registro.component-HX32QPB5.js").then((m) => m.ResumenRegistroComponent)
   },
   {
     path: "mis-viajes",
-    loadComponent: () => import("./mis-viajes.page-IE6SD53S.js").then((m) => m.MisViajesPage),
+    loadComponent: () => import("./mis-viajes.page-G5BR6IHU.js").then((m) => m.MisViajesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "detalles-viaje/:id",
-    loadComponent: () => import("./detalles-viaje.page-F4YX5SBN.js").then((m) => m.DetallesViajePage),
+    loadComponent: () => import("./detalles-viaje.page-CAPZTTCM.js").then((m) => m.DetallesViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "messaging-center",
-    loadComponent: () => import("./centro-mensajes.component-CHI62HB6.js").then((m) => m.CentroMensajesPage),
+    loadComponent: () => import("./centro-mensajes.component-AIVZDXMN.js").then((m) => m.CentroMensajesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "chat/:id",
-    loadComponent: () => import("./chat.component-NQR4IEJL.js").then((m) => m.ChatPage),
+    loadComponent: () => import("./chat.component-2PISVF5D.js").then((m) => m.ChatPage),
     canActivate: [AuthGuard]
   },
   {
     path: "condiciones-generales",
-    loadComponent: () => import("./condiciones-generales.page-PEZNYUQJ.js").then((m) => m.CondicionesUsoComponent)
+    loadComponent: () => import("./condiciones-generales.page-LLYYXUO7.js").then((m) => m.CondicionesUsoComponent)
   },
   {
     path: "contrato-registro",
-    loadComponent: () => import("./contrato-registro.component-BLAP3T5G.js").then((m) => m.ContratoRegistroComponent)
+    loadComponent: () => import("./contrato-registro.component-MMHO2OPZ.js").then((m) => m.ContratoRegistroComponent)
   },
   {
     path: "admin-app",
-    loadComponent: () => import("./admin-app.page-AQTSPEN2.js").then((m) => m.AdminApp)
+    loadComponent: () => import("./admin-app.page-6ARRC2Q7.js").then((m) => m.AdminApp)
   },
   {
     path: "login-admin",
-    loadComponent: () => import("./login-admin.page-C33WT7FN.js").then((m) => m.AdminLoginPage)
+    loadComponent: () => import("./login-admin.page-GXLLLKHX.js").then((m) => m.AdminLoginPage)
   },
   {
     path: "events-admin",
-    loadComponent: () => import("./eventos-admin.page-JMZRY4HO.js").then((m) => m.EventosAdmin),
+    loadComponent: () => import("./eventos-admin.page-C4SE75QS.js").then((m) => m.EventosAdmin),
     canActivate: [AuthGuard]
   },
   {
     path: "incidencias-admin",
-    loadComponent: () => import("./incidencias-admin.page-VLPZ2W2W.js").then((m) => m.IncidenciasAdminPage),
+    loadComponent: () => import("./incidencias-admin.page-L3AI4OCC.js").then((m) => m.IncidenciasAdminPage),
     canActivate: [AuthGuard]
   },
   {
     path: "gestion-usuarios-admin",
-    loadComponent: () => import("./gestion-usuarios-admin.page-FWHZ4T75.js").then((m) => m.GestionUsuariosAdminPage),
+    loadComponent: () => import("./gestion-usuarios-admin.page-K5PTKGYA.js").then((m) => m.GestionUsuariosAdminPage),
     canActivate: [AuthGuard]
   },
   {
     path: "pago-reserva/:id",
-    loadComponent: () => import("./pago-reserva.page-BZQJ7IGA.js").then((m) => m.PagoReservaPage),
+    loadComponent: () => import("./pago-reserva.page-CBZWCO6I.js").then((m) => m.PagoReservaPage),
     canActivate: [AuthGuard]
   },
   {
     path: "gestion-encuestas",
-    loadComponent: () => import("./gestion-encuestas.page-6N2ZQV4X.js").then((m) => m.GestionEncuestasPage)
+    loadComponent: () => import("./gestion-encuestas.page-4YXKOORZ.js").then((m) => m.GestionEncuestasPage)
   },
   {
     path: "modificacion-email/:token",
-    loadComponent: () => import("./modificacion-email.page-4J3CA6LX.js").then((m) => m.ModificacionEmailPage)
+    loadComponent: () => import("./modificacion-email.page-2U2GKDQZ.js").then((m) => m.ModificacionEmailPage)
   }
 ];
 
@@ -488,49 +488,49 @@ var TranslateHttpLoader = class _TranslateHttpLoader {
 
 // src/app/components/notification-toast/notification-toast.component.ts
 var _c0 = (a0, a1, a2, a3, a4) => ({ "toast-success": a0, "toast-error": a1, "toast-warning": a2, "toast-info": a3, "toast-slide-out": a4 });
-function NotificationToastComponent_div_0_Template(rf, ctx) {
+function NotificationToastComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 4)(1, "button", 5);
-    \u0275\u0275listener("click", function NotificationToastComponent_div_0_Template_button_click_1_listener() {
+    \u0275\u0275elementStart(0, "div", 0)(1, "button", 4);
+    \u0275\u0275listener("click", function NotificationToastComponent_Conditional_0_Template_button_click_1_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.cerrarTodosLosToasts());
     });
-    \u0275\u0275element(2, "img", 6);
+    \u0275\u0275element(2, "img", 5);
     \u0275\u0275text(3, " Cerrar todo ");
     \u0275\u0275elementEnd()();
   }
 }
-function NotificationToastComponent_div_2_Template(rf, ctx) {
+function NotificationToastComponent_For_3_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 7);
-    \u0275\u0275listener("click", function NotificationToastComponent_div_2_Template_div_click_0_listener() {
+    \u0275\u0275elementStart(0, "div", 6);
+    \u0275\u0275listener("click", function NotificationToastComponent_For_3_Template_div_click_0_listener() {
       const n_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.redirigirANotificacion(n_r4));
-    })("mouseenter", function NotificationToastComponent_div_2_Template_div_mouseenter_0_listener() {
+    })("mouseenter", function NotificationToastComponent_For_3_Template_div_mouseenter_0_listener() {
       const n_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.limpiarTemporizador(n_r4.id));
-    })("mouseleave", function NotificationToastComponent_div_2_Template_div_mouseleave_0_listener() {
+    })("mouseleave", function NotificationToastComponent_For_3_Template_div_mouseleave_0_listener() {
       const n_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.iniciarTemporizador(n_r4));
     });
-    \u0275\u0275elementStart(1, "div", 8)(2, "button", 9);
-    \u0275\u0275listener("click", function NotificationToastComponent_div_2_Template_button_click_2_listener($event) {
+    \u0275\u0275elementStart(1, "div", 7)(2, "button", 8);
+    \u0275\u0275listener("click", function NotificationToastComponent_For_3_Template_button_click_2_listener($event) {
       const n_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onCerrarClick($event, n_r4));
     });
-    \u0275\u0275element(3, "img", 10);
+    \u0275\u0275element(3, "img", 9);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(4, "strong", 11);
+    \u0275\u0275elementStart(4, "strong", 10);
     \u0275\u0275text(5, "Notificaci\xF3n");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "p", 12);
+    \u0275\u0275elementStart(6, "p", 11);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()();
   }
@@ -542,9 +542,9 @@ function NotificationToastComponent_div_2_Template(rf, ctx) {
     \u0275\u0275textInterpolate(n_r4.mensaje);
   }
 }
-function NotificationToastComponent_div_3_Template(rf, ctx) {
+function NotificationToastComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 13)(1, "span", 14);
+    \u0275\u0275elementStart(0, "div", 3)(1, "span", 12);
     \u0275\u0275text(2, "Pulsa sobre la notificaci\xF3n para ver m\xE1s detalles.");
     \u0275\u0275elementEnd()();
   }
@@ -701,59 +701,82 @@ var NotificationToastComponent = class _NotificationToastComponent {
   static \u0275fac = function NotificationToastComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _NotificationToastComponent)(\u0275\u0275directiveInject(NotificacionesService), \u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(UserServicesService), \u0275\u0275directiveInject(Router));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NotificationToastComponent, selectors: [["app-notification-toast"]], inputs: { usuario: "usuario" }, decls: 4, vars: 3, consts: [["class", "d-flex justify-content-end mb-2 animate-fade-in", 4, "ngIf"], [1, "toasts-container"], ["class", "relative bg p-4 mensaje mb-2 toast-card", 3, "ngClass", "click", "mouseenter", "mouseleave", 4, "ngFor", "ngForOf"], ["class", "animate-fade-in", 4, "ngIf"], [1, "d-flex", "justify-content-end", "mb-2", "animate-fade-in"], [1, "btn", "btn-danger", "btn-sm", "d-flex", "align-items-center", "gap-1", 3, "click"], ["src", "../../../assets/sistema/limpio.png", "alt", "Cerrar todos los mensajes", 1, "icono-cerrar"], [1, "relative", "bg", "p-4", "mensaje", "mb-2", "toast-card", 3, "click", "mouseenter", "mouseleave", "ngClass"], [1, "d-flex", "justify-content-end"], ["aria-label", "Cerrar notificaci\xF3n", 1, "btn_notificaciones", 3, "click"], ["src", "../../../assets/sistema/cruz.png", "alt", "Cerrar notificaci\xF3n", 1, "icono-cerrar"], [1, "block", "capitalize", "title"], [1, "text-sm", "mb-0"], [1, "animate-fade-in"], [1, "d-flex", "justify-content-end", "nota"]], template: function NotificationToastComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NotificationToastComponent, selectors: [["app-notification-toast"]], inputs: { usuario: "usuario" }, decls: 5, vars: 2, consts: [[1, "d-flex", "justify-content-end", "mb-2", "animate-fade-in"], [1, "toasts-container"], [1, "relative", "bg", "p-4", "mensaje", "mb-2", "toast-card", 3, "ngClass"], [1, "animate-fade-in"], [1, "btn", "btn-danger", "btn-sm", "d-flex", "align-items-center", "gap-1", 3, "click"], ["src", "../../../assets/sistema/limpio.png", "alt", "Cerrar todos los mensajes", 1, "icono-cerrar"], [1, "relative", "bg", "p-4", "mensaje", "mb-2", "toast-card", 3, "click", "mouseenter", "mouseleave", "ngClass"], [1, "d-flex", "justify-content-end"], ["aria-label", "Cerrar notificaci\xF3n", 1, "btn_notificaciones", 3, "click"], ["src", "../../../assets/sistema/cruz.png", "alt", "Cerrar notificaci\xF3n", 1, "icono-cerrar"], [1, "block", "capitalize", "title"], [1, "text-sm", "mb-0"], [1, "d-flex", "justify-content-end", "nota"]], template: function NotificationToastComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275template(0, NotificationToastComponent_div_0_Template, 4, 0, "div", 0);
+      \u0275\u0275conditionalCreate(0, NotificationToastComponent_Conditional_0_Template, 4, 0, "div", 0);
       \u0275\u0275elementStart(1, "div", 1);
-      \u0275\u0275template(2, NotificationToastComponent_div_2_Template, 8, 8, "div", 2)(3, NotificationToastComponent_div_3_Template, 3, 0, "div", 3);
+      \u0275\u0275repeaterCreate(2, NotificationToastComponent_For_3_Template, 8, 8, "div", 2, \u0275\u0275repeaterTrackByIdentity);
+      \u0275\u0275conditionalCreate(4, NotificationToastComponent_Conditional_4_Template, 3, 0, "div", 3);
       \u0275\u0275elementEnd();
     }
     if (rf & 2) {
-      \u0275\u0275property("ngIf", ctx.toasts.length > 0);
+      \u0275\u0275conditional(ctx.toasts.length > 0 ? 0 : -1);
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngForOf", ctx.toasts);
-      \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.toasts.length > 0);
+      \u0275\u0275repeater(ctx.toasts);
+      \u0275\u0275advance(2);
+      \u0275\u0275conditional(ctx.toasts.length > 0 ? 4 : -1);
     }
-  }, dependencies: [CommonModule, NgClass, NgForOf, NgIf], styles: ['@charset "UTF-8";\n\n\n\n[_nghost-%COMP%] {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container[_ngcontent-%COMP%] {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title[_ngcontent-%COMP%] {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg[_ngcontent-%COMP%] {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success[_ngcontent-%COMP%] {\n  border-left-color: #4caf50;\n}\n.toast-error[_ngcontent-%COMP%] {\n  border-left-color: #f44336;\n}\n.toast-warning[_ngcontent-%COMP%] {\n  border-left-color: #ff9800;\n}\n.toast-info[_ngcontent-%COMP%] {\n  border-left-color: #2196f3;\n}\n.icono-cerrar[_ngcontent-%COMP%] {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones[_ngcontent-%COMP%]:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger[_ngcontent-%COMP%] {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger[_ngcontent-%COMP%]:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n.nota[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_fadeIn 0.2s ease forwards;\n}\n@keyframes _ngcontent-%COMP%_slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  [_nghost-%COMP%] {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */'] });
+  }, dependencies: [CommonModule, NgClass], styles: ['@charset "UTF-8";\n\n\n[_nghost-%COMP%] {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container[_ngcontent-%COMP%] {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title[_ngcontent-%COMP%] {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg[_ngcontent-%COMP%] {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success[_ngcontent-%COMP%] {\n  border-left-color: #4caf50;\n}\n.toast-error[_ngcontent-%COMP%] {\n  border-left-color: #f44336;\n}\n.toast-warning[_ngcontent-%COMP%] {\n  border-left-color: #ff9800;\n}\n.toast-info[_ngcontent-%COMP%] {\n  border-left-color: #2196f3;\n}\n.icono-cerrar[_ngcontent-%COMP%] {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones[_ngcontent-%COMP%]:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger[_ngcontent-%COMP%] {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger[_ngcontent-%COMP%]:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n.nota[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_fadeIn 0.2s ease forwards;\n}\n@keyframes _ngcontent-%COMP%_slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  [_nghost-%COMP%] {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NotificationToastComponent, [{
     type: Component,
-    args: [{ selector: "app-notification-toast", standalone: true, imports: [CommonModule], template: `<div *ngIf="toasts.length > 0" class="d-flex justify-content-end mb-2 animate-fade-in">
-  <button class="btn btn-danger btn-sm d-flex align-items-center gap-1" (click)="cerrarTodosLosToasts()">
-    <img src="../../../assets/sistema/limpio.png" alt="Cerrar todos los mensajes" class="icono-cerrar"> Cerrar todo
-  </button>
-</div>
+    args: [{ selector: "app-notification-toast", standalone: true, imports: [CommonModule], template: `@if (toasts.length > 0) {
+  <div class="d-flex justify-content-end mb-2 animate-fade-in">
+    <button
+      class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+      (click)="cerrarTodosLosToasts()"
+    >
+      <img
+        src="../../../assets/sistema/limpio.png"
+        alt="Cerrar todos los mensajes"
+        class="icono-cerrar"
+      />
+      Cerrar todo
+    </button>
+  </div>
+}
 
 <div class="toasts-container">
-  <div *ngFor="let n of toasts" 
-       class="relative bg p-4 mensaje mb-2 toast-card" 
-       (click)="redirigirANotificacion(n)"
-       (mouseenter)="limpiarTemporizador(n.id)"
-       (mouseleave)="iniciarTemporizador(n)"
-       [ngClass]="{
-         'toast-success': n.type === 'success',
-         'toast-error': n.type === 'error',
-         'toast-warning': n.type === 'warning',
-         'toast-info': n.type === 'info',
-         'toast-slide-out': cerrandoToasts.has(n)
-       }">
-
-    <div class="d-flex justify-content-end">
-      <button class="btn_notificaciones" (click)="onCerrarClick($event, n)" aria-label="Cerrar notificaci\xF3n">
-        <img src="../../../assets/sistema/cruz.png" alt="Cerrar notificaci\xF3n" class="icono-cerrar">
-      </button>
+  @for (n of toasts; track n) {
+    <div
+      class="relative bg p-4 mensaje mb-2 toast-card"
+      (click)="redirigirANotificacion(n)"
+      (mouseenter)="limpiarTemporizador(n.id)"
+      (mouseleave)="iniciarTemporizador(n)"
+      [ngClass]="{
+        'toast-success': n.type === 'success',
+        'toast-error': n.type === 'error',
+        'toast-warning': n.type === 'warning',
+        'toast-info': n.type === 'info',
+        'toast-slide-out': cerrandoToasts.has(n),
+      }"
+    >
+      <div class="d-flex justify-content-end">
+        <button
+          class="btn_notificaciones"
+          (click)="onCerrarClick($event, n)"
+          aria-label="Cerrar notificaci\xF3n"
+        >
+          <img
+            src="../../../assets/sistema/cruz.png"
+            alt="Cerrar notificaci\xF3n"
+            class="icono-cerrar"
+          />
+        </button>
+      </div>
+      <strong class="block capitalize title">Notificaci\xF3n</strong>
+      <p class="text-sm mb-0">{{ n.mensaje }}</p>
     </div>
+  }
 
-    <strong class="block capitalize title">Notificaci\xF3n</strong>
-    <p class="text-sm mb-0">{{ n.mensaje }}</p>
-  </div>
-  
-  <div *ngIf="toasts.length > 0" class="animate-fade-in">
-    <span class="d-flex justify-content-end nota">Pulsa sobre la notificaci\xF3n para ver m\xE1s detalles.</span>
-  </div>
-</div>`, styles: ['@charset "UTF-8";\n\n/* src/app/components/notification-toast/notification-toast.component.scss */\n:host {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card {\n  animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success {\n  border-left-color: #4caf50;\n}\n.toast-error {\n  border-left-color: #f44336;\n}\n.toast-warning {\n  border-left-color: #ff9800;\n}\n.toast-info {\n  border-left-color: #2196f3;\n}\n.icono-cerrar {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out {\n  animation: collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje {\n  cursor: pointer;\n}\n.nota {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in {\n  animation: fadeIn 0.2s ease forwards;\n}\n@keyframes slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  :host {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */\n'] }]
+  @if (toasts.length > 0) {
+    <div class="animate-fade-in">
+      <span class="d-flex justify-content-end nota">Pulsa sobre la notificaci\xF3n para ver m\xE1s detalles.</span>
+    </div>
+  }
+</div>
+`, styles: ['@charset "UTF-8";\n\n/* src/app/components/notification-toast/notification-toast.component.scss */\n:host {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card {\n  animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success {\n  border-left-color: #4caf50;\n}\n.toast-error {\n  border-left-color: #f44336;\n}\n.toast-warning {\n  border-left-color: #ff9800;\n}\n.toast-info {\n  border-left-color: #2196f3;\n}\n.icono-cerrar {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out {\n  animation: collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje {\n  cursor: pointer;\n}\n.nota {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in {\n  animation: fadeIn 0.2s ease forwards;\n}\n@keyframes slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  :host {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */\n'] }]
   }], () => [{ type: NotificacionesService }, { type: ChangeDetectorRef }, { type: UserServicesService }, { type: Router }], { usuario: [{
     type: Input
   }] });
@@ -1218,7 +1241,12 @@ var AppComponent = class _AppComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 55 });
 })();
 
-// node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
+// node_modules/@angular/platform-browser/fesm2022/animations-async.mjs
+/**
+ * @license Angular v21.2.26
+ * (c) 2010-2026 Google LLC. https://angular.dev/
+ * License: MIT
+ */
 var ANIMATION_PREFIX = "@";
 var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
   doc;
@@ -1233,10 +1261,6 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
     optional: true
   });
   _engine;
-  /**
-   *
-   * @param moduleImpl allows to provide a mock implmentation (or will load the animation module)
-   */
   constructor(doc, delegate, zone, animationType, moduleImpl) {
     this.doc = doc;
     this.delegate = delegate;
@@ -1244,16 +1268,12 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
     this.animationType = animationType;
     this.moduleImpl = moduleImpl;
   }
-  /** @docs-private */
   ngOnDestroy() {
     var _a;
     (_a = this._engine) == null ? void 0 : _a.flush();
   }
-  /**
-   * @internal
-   */
   loadImpl() {
-    const loadFn = () => this.moduleImpl ?? import("./browser-M6CPUHB5.js").then((m) => m);
+    const loadFn = () => this.moduleImpl ?? import("./browser-QBBRFSXS.js").then((m) => m);
     let moduleImplPromise;
     if (this.loadingSchedulerFn) {
       moduleImplPromise = this.loadingSchedulerFn(loadFn);
@@ -1272,14 +1292,6 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
       return rendererFactory;
     });
   }
-  /**
-   * This method is delegating the renderer creation to the factories.
-   * It uses default factory while the animation factory isn't loaded
-   * and will rely on the animation factory once it is loaded.
-   *
-   * Calling this method will trigger as side effect the loading of the animation module
-   * if the renderered component uses animations.
-   */
   createRenderer(hostElement, rendererType) {
     var _a, _b;
     const renderer = this.delegate.createRenderer(hostElement, rendererType);
@@ -1318,10 +1330,6 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
     var _a, _b;
     return ((_b = (_a = this.delegate).whenRenderingDone) == null ? void 0 : _b.call(_a)) ?? Promise.resolve();
   }
-  /**
-   * Used during HMR to clear any cached data about a component.
-   * @param componentId ID of the component that is being replaced.
-   */
   componentReplaced(componentId) {
     var _a, _b, _c;
     (_a = this._engine) == null ? void 0 : _a.flush();
@@ -1352,7 +1360,6 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
 })();
 var DynamicDelegationRenderer = class {
   delegate;
-  // List of callbacks that need to be replayed on the animation renderer once its loaded
   replay = [];
   \u0275type = 1;
   constructor(delegate) {
@@ -1441,7 +1448,7 @@ var DynamicDelegationRenderer = class {
     return this.replay !== null && propOrEventName.startsWith(ANIMATION_PREFIX);
   }
 };
-var \u0275ASYNC_ANIMATION_LOADING_SCHEDULER_FN = new InjectionToken(ngDevMode ? "async_animation_loading_scheduler_fn" : "");
+var \u0275ASYNC_ANIMATION_LOADING_SCHEDULER_FN = new InjectionToken(typeof ngDevMode !== "undefined" && ngDevMode ? "async_animation_loading_scheduler_fn" : "");
 function provideAnimationsAsync(type = "animations") {
   performanceMarkFeature("NgAsyncAnimations");
   if (false) {
@@ -1449,10 +1456,9 @@ function provideAnimationsAsync(type = "animations") {
   }
   return makeEnvironmentProviders([{
     provide: RendererFactory2,
-    useFactory: (doc, renderer, zone) => {
-      return new AsyncAnimationRendererFactory(doc, renderer, zone, type);
-    },
-    deps: [DOCUMENT, DomRendererFactory2, NgZone]
+    useFactory: () => {
+      return new AsyncAnimationRendererFactory(inject(DOCUMENT), inject(DomRendererFactory2), inject(NgZone), type);
+    }
   }, {
     provide: ANIMATION_MODULE_TYPE,
     useValue: type === "noop" ? "NoopAnimations" : "BrowserAnimations"
@@ -1519,10 +1525,12 @@ function limpiarSesionSegura(rememberMe) {
 }
 
 // node_modules/@angular/platform-browser/fesm2022/animations.mjs
+/**
+ * @license Angular v21.2.26
+ * (c) 2010-2026 Google LLC. https://angular.dev/
+ * License: MIT
+ */
 var InjectableAnimationEngine = class _InjectableAnimationEngine extends AnimationEngine {
-  // The `ApplicationRef` is injected here explicitly to force the dependency ordering.
-  // Since the `ApplicationRef` should be created earlier before the `AnimationEngine`, they
-  // both have `ngOnDestroy` hooks and `flush()` must be called after all views are destroyed.
   constructor(doc, driver, normalizer) {
     super(doc, driver, normalizer);
   }
@@ -1555,8 +1563,8 @@ var InjectableAnimationEngine = class _InjectableAnimationEngine extends Animati
 function instantiateDefaultStyleNormalizer() {
   return new WebAnimationsStyleNormalizer();
 }
-function instantiateRendererFactory(renderer, engine, zone) {
-  return new AnimationRendererFactory(renderer, engine, zone);
+function instantiateRendererFactory() {
+  return new AnimationRendererFactory(inject(DomRendererFactory2), inject(AnimationEngine), inject(NgZone));
 }
 var SHARED_ANIMATION_PROVIDERS = [{
   provide: AnimationStyleNormalizer,
@@ -1566,8 +1574,7 @@ var SHARED_ANIMATION_PROVIDERS = [{
   useClass: InjectableAnimationEngine
 }, {
   provide: RendererFactory2,
-  useFactory: instantiateRendererFactory,
-  deps: [DomRendererFactory2, AnimationEngine, NgZone]
+  useFactory: instantiateRendererFactory
 }];
 var BROWSER_NOOP_ANIMATIONS_PROVIDERS = [{
   provide: AnimationDriver,
@@ -1576,35 +1583,14 @@ var BROWSER_NOOP_ANIMATIONS_PROVIDERS = [{
   provide: ANIMATION_MODULE_TYPE,
   useValue: "NoopAnimations"
 }, ...SHARED_ANIMATION_PROVIDERS];
-var BROWSER_ANIMATIONS_PROVIDERS = [
-  // Note: the `ngServerMode` happen inside factories to give the variable time to initialize.
-  {
-    provide: AnimationDriver,
-    useFactory: () => false ? new NoopAnimationDriver() : new WebAnimationsDriver()
-  },
-  {
-    provide: ANIMATION_MODULE_TYPE,
-    useFactory: () => false ? "NoopAnimations" : "BrowserAnimations"
-  },
-  ...SHARED_ANIMATION_PROVIDERS
-];
+var BROWSER_ANIMATIONS_PROVIDERS = [{
+  provide: AnimationDriver,
+  useFactory: () => false ? new NoopAnimationDriver() : new WebAnimationsDriver()
+}, {
+  provide: ANIMATION_MODULE_TYPE,
+  useFactory: () => false ? "NoopAnimations" : "BrowserAnimations"
+}, ...SHARED_ANIMATION_PROVIDERS];
 var BrowserAnimationsModule = class _BrowserAnimationsModule {
-  /**
-   * Configures the module based on the specified object.
-   *
-   * @param config Object used to configure the behavior of the `BrowserAnimationsModule`.
-   * @see {@link BrowserAnimationsModuleConfig}
-   *
-   * @usageNotes
-   * When registering the `BrowserAnimationsModule`, you can use the `withConfig`
-   * function as follows:
-   * ```ts
-   * @NgModule({
-   *   imports: [BrowserAnimationsModule.withConfig(config)]
-   * })
-   * class MyNgModule {}
-   * ```
-   */
   static withConfig(config) {
     return {
       ngModule: _BrowserAnimationsModule,
@@ -7246,6 +7232,7 @@ if (typeof window !== "undefined") {
 }
 bootstrapApplication(AppComponent, {
   providers: [
+    provideZoneChangeDetection(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
       mode: "md",
@@ -7270,14 +7257,4 @@ bootstrapApplication(AppComponent, {
     }))
   ]
 });
-/*! Bundled license information:
-
-@angular/platform-browser/fesm2022/animations/async.mjs:
-@angular/platform-browser/fesm2022/animations.mjs:
-  (**
-   * @license Angular v20.3.35
-   * (c) 2010-2025 Google LLC. https://angular.dev/
-   * License: MIT
-   *)
-*/
 //# sourceMappingURL=main.js.map

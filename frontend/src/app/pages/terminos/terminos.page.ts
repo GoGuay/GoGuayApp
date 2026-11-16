@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -11,17 +11,15 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
   templateUrl: './terminos.page.html',
   styleUrls: ['./terminos.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, NavbarComponent, MatDivider]
+  imports: [IonContent, FormsModule, NavbarComponent, MatDivider],
 })
 export class TerminosPage implements OnInit {
-
-
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   fechaActual: string = '';
   email: string = 'gestion.prideride@gmail.com';
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -31,8 +29,7 @@ export class TerminosPage implements OnInit {
     this.fechaActual = hoy.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   }
-
 }

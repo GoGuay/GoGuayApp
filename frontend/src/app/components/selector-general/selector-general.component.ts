@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   Input,
@@ -22,7 +21,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   selector: 'app-selector-general',
   templateUrl: './selector-general.component.html',
   styleUrls: ['./selector-general.component.scss'],
-  imports: [TranslateModule, MatTooltipModule, CommonModule, IonicModule],
+  imports: [TranslateModule, MatTooltipModule, IonicModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -59,8 +58,8 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
   private seleccionandoOpcionEnProceso: boolean = false;
   private _valorValidoPrevio: string = '';
 
-  onChange = (val: any) => { };
-  onTouched = () => { };
+  onChange = (val: any) => {};
+  onTouched = () => {};
   isOpen: boolean = false;
   isDesktop: boolean = window.innerWidth >= 992;
 
@@ -132,7 +131,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     this.valorTexto = textoSeleccionado;
     this._valorValidoPrevio = textoSeleccionado;
 
-    const valorParaGuardar = typeof opcion === 'string' ? opcion : (opcion.valor !== undefined ? opcion.valor : textoSeleccionado);
+    const valorParaGuardar = typeof opcion === 'string' ? opcion : opcion.valor !== undefined ? opcion.valor : textoSeleccionado;
 
     this.valorGuardadoActual = valorParaGuardar;
     this.onChange(valorParaGuardar);
@@ -225,7 +224,7 @@ export class SelectorGeneralComponent implements ControlValueAccessor, OnChanges
     }
   }
 
-onInputBlur() {
+  onInputBlur() {
     if (this.seleccionandoOpcionEnProceso) {
       return;
     }
@@ -245,9 +244,7 @@ onInputBlur() {
         this.seleccionCambiada.emit(null);
         this.textoCambiado.emit('');
       } else {
-        const opcionEnSugerencias = this.opciones.find(
-          (op) => this.obtenerTextoOpcion(op).toLowerCase() === textoEscrito.toLowerCase()
-        );
+        const opcionEnSugerencias = this.opciones.find((op) => this.obtenerTextoOpcion(op).toLowerCase() === textoEscrito.toLowerCase());
 
         if (opcionEnSugerencias) {
           this.seleccionarOpcion(opcionEnSugerencias);
@@ -327,7 +324,7 @@ onInputBlur() {
     }
 
     const opcionEncontrada = this.opciones.find(
-      (op) => (typeof op === 'string' ? op : (op.valor || op.descripcion || op.nombre)) === this.valorGuardadoActual
+      (op) => (typeof op === 'string' ? op : op.valor || op.descripcion || op.nombre) === this.valorGuardadoActual
     );
 
     if (opcionEncontrada) {

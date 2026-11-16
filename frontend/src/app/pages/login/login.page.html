@@ -60,20 +60,24 @@
               [attr.aria-invalid]="isFieldInvalid('emailFormControl')"
               placeholder="{{ 'PLACEHOLDER.ESCRIBE_TU_MAIL' | translate }}"
             />
+            @if (isFieldInvalid('emailFormControl')) {
             <div
               id="emailError"
-              *ngIf="isFieldInvalid('emailFormControl')"
               class="error-message"
               aria-live="polite"
             >
-              <small *ngIf="loginForm.get('emailFormControl')?.hasError('required')">
+              @if (loginForm.get('emailFormControl')?.hasError('required')) {
+              <small>
                 <strong>{{ 'LOGIN.ERROR_EMAIL_OGLIGATORIO' | translate }}</strong>
                 .
               </small>
-              <small *ngIf="loginForm.get('emailFormControl')?.hasError('email')">
+              } @if (loginForm.get('emailFormControl')?.hasError('email')) {
+              <small>
                 <strong>{{ 'LOGIN.ERROR_EMAIL_NOVALIDO' | translate }}</strong>
               </small>
+              }
             </div>
+            }
           </div>
 
           <!-- Password -->
@@ -93,17 +97,20 @@
               [attr.aria-invalid]="isFieldInvalid('passwordFormControl')"
               placeholder="{{ 'PLACEHOLDER.ESCRIBE_PASSWORD' | translate }}"
             />
+            @if (isFieldInvalid('passwordFormControl')) {
             <div
               id="passwordError"
-              *ngIf="isFieldInvalid('passwordFormControl')"
               class="error-message"
               aria-live="polite"
             >
-              <small *ngIf="loginForm.get('passwordFormControl')?.hasError('required')">
+              @if (loginForm.get('passwordFormControl')?.hasError('required')) {
+              <small>
                 <strong>{{ 'LOGIN.ERROR_PASSWORD_OGLIGATORIO' | translate }}</strong>
                 .
               </small>
+              }
             </div>
+            }
           </div>
 
           <!-- Check para recordar datos -->
@@ -157,7 +164,9 @@
         </form>
       </div>
       <div>
-        <app-spinner *ngIf="spinner_de_carga"></app-spinner>
+        @if (spinner_de_carga) {
+        <app-spinner></app-spinner>
+        }
       </div>
     </div>
   </div>

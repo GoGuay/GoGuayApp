@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { SpinnerComponent } from "../spinner/spinner.component";
+import { SpinnerComponent } from '../spinner/spinner.component';
 import { NavigationExtras } from '@angular/router';
 
 @Component({
@@ -11,7 +11,7 @@ import { NavigationExtras } from '@angular/router';
   templateUrl: './viajes-recomendados-ia.component.html',
   styleUrls: ['./viajes-recomendados-ia.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, SpinnerComponent],
+  imports: [IonicModule, TranslateModule, SpinnerComponent],
 })
 export class ViajesRecomendadosIaComponent implements OnInit {
   recomendaciones: any[] = [];
@@ -19,8 +19,8 @@ export class ViajesRecomendadosIaComponent implements OnInit {
 
   constructor(
     private travelService: TravelService,
-    private navCtrl: NavController,
-  ) { }
+    private navCtrl: NavController
+  ) {}
 
   ngOnInit() {
     this.cargarRecomendaciones();
@@ -63,18 +63,18 @@ export class ViajesRecomendadosIaComponent implements OnInit {
 
   crearViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
-      queryParams: { destino: nombreDestino }
+      queryParams: { destino: nombreDestino },
     };
     this.navCtrl.navigateForward(['/nuevo-viaje'], navigationExtras);
   }
 
   irAAjustes() {
-    this.navCtrl.navigateForward(['/ajustes-aplicacion']); 
+    this.navCtrl.navigateForward(['/ajustes-aplicacion']);
   }
 
   buscarViajeDesde(nombreDestino: string) {
     const navigationExtras: NavigationExtras = {
-      queryParams: { destino: nombreDestino }
+      queryParams: { destino: nombreDestino },
     };
     this.navCtrl.navigateForward(['/busqueda-viajes'], navigationExtras);
   }

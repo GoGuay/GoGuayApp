@@ -1,98 +1,143 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
   <div class="container-fluid">
     <div class="d-flex text center justify-content-center">
       <h1>{{ 'NOTIFICACIONES.TITULO' | translate }}</h1>
     </div>
-    
-    <div class="d-flex justify-content-end align-items-center mt-3 px-3"> 
-      <div class="d-flex gap-2" *ngIf="notificaciones.length > 0">
-        <button *ngIf="haySinLeer" 
-          class="btn btn-outline-secondary d-flex align-items-center" 
-          (click)="marcarTodasComoLeidas()">
-          <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">done_all</mat-icon>
+
+    <div class="d-flex justify-content-end align-items-center mt-3 px-3">
+      @if (notificaciones.length > 0) {
+      <div class="d-flex gap-2">
+        @if (haySinLeer) {
+        <button
+          class="btn btn-outline-secondary d-flex align-items-center"
+          (click)="marcarTodasComoLeidas()"
+        >
+          <mat-icon
+            class="me-1"
+            style="font-size: 18px; width: 18px; height: 18px"
+          >
+            done_all
+          </mat-icon>
           <span class="d-none d-sm-inline">{{ 'NOTIFICACIONES.ACCIONES.MARCAR_TODAS_LEIDAS' | translate }}</span>
         </button>
-
-        <button class="btn btn_bg d-flex align-items-center" 
-          (click)="borrarTodas()">
-          <mat-icon class="me-1" style="font-size: 18px; width: 18px; height: 18px;">delete_sweep</mat-icon>
+        }
+        <button
+          class="btn btn_bg d-flex align-items-center"
+          (click)="borrarTodas()"
+        >
+          <mat-icon
+            class="me-1"
+            style="font-size: 18px; width: 18px; height: 18px"
+          >
+            delete_sweep
+          </mat-icon>
           <span class="d-none d-sm-inline">{{ 'NOTIFICACIONES.LIMPIAR_TODO' | translate }}</span>
         </button>
       </div>
+      }
     </div>
 
     <div class="lista_notificaciones px-2">
-      <div *ngIf="mostrarSpinner" class="text-center p-3">
+      @if (mostrarSpinner) {
+      <div class="text-center p-3">
         <app-spinner></app-spinner>
       </div>
-
-      <div *ngIf="notificaciones.length === 0 && !mostrarSpinner" class="text-center mt-4">
-        {{ 'NOTIFICACIONES.SIN_NOTIFICACIONES' | translate }}
-      </div>
-
-      <div *ngFor="let n of notificaciones" 
-           class="notificacion_container notificacion-item p-3 mb-2 mt-3"
-           [class.resaltado]="n.id === idResaltado" 
-           [class.notificacion-no-leida]="!n.leida" 
-           [class.notificacion-mensaje]="n.tipo === 'mensaje'">
-
+      } @if (notificaciones.length === 0 && !mostrarSpinner) {
+      <div class="text-center mt-4">{{ 'NOTIFICACIONES.SIN_NOTIFICACIONES' | translate }}</div>
+      } @for (n of notificaciones; track n) {
+      <div
+        class="notificacion_container notificacion-item p-3 mb-2 mt-3"
+        [class.resaltado]="n.id === idResaltado"
+        [class.notificacion-no-leida]="!n.leida"
+        [class.notificacion-mensaje]="n.tipo === 'mensaje'"
+      >
         <div class="d-flex align-items-start">
-          <i class="fi fi-rr-messages me-3 mt-1" *ngIf="n.tipo === 'mensaje'"></i>
-          <i class="fi fi-rr-bell-notification-social-media me-3 mt-1" *ngIf="n.tipo !== 'mensaje'"></i>
-
+          @if (n.tipo === 'mensaje') {
+          <i class="fi fi-rr-messages me-3 mt-1"></i>
+          } @if (n.tipo !== 'mensaje') {
+          <i class="fi fi-rr-bell-notification-social-media me-3 mt-1"></i>
+          }
           <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-center">
-              <span class="tipo-texto small fw-bold text-uppercase">{{ (n.tipo ? 'NOTIFICACIONES.TIPO.' + n.tipo.toUpperCase() : 'NOTIFICACIONES.TIPO.SISTEMA') | translate }}</span>
-              
+              <span class="tipo-texto small fw-bold text-uppercase">
+                {{ (n.tipo ? 'NOTIFICACIONES.TIPO.' + n.tipo.toUpperCase() : 'NOTIFICACIONES.TIPO.SISTEMA') | translate }}
+              </span>
               <div class="d-flex align-items-center gap-2">
-                <div *ngIf="!n.leida" class="badge bg-danger">{{ 'NOTIFICACIONES.ESTADO.NO_LEIDA' | translate }}</div>
-                
-                <button class="btn btn-link text-muted p-0 d-flex align-items-center justify-content-center" 
-                        (click)="borrarUna(n.id)" 
-                        title="Eliminar"
-                        style="width: 24px; height: 24px; text-decoration: none;">
-                  <mat-icon style="font-size: 20px; width: 20px; height: 20px;">delete_outline</mat-icon>
+                @if (!n.leida) {
+                <div class="badge bg-danger">{{ 'NOTIFICACIONES.ESTADO.NO_LEIDA' | translate }}</div>
+                }
+                <button
+                  class="btn btn-link text-muted p-0 d-flex align-items-center justify-content-center"
+                  (click)="borrarUna(n.id)"
+                  title="Eliminar"
+                  style="width: 24px; height: 24px; text-decoration: none"
+                >
+                  <mat-icon style="font-size: 20px; width: 20px; height: 20px">delete_outline</mat-icon>
                 </button>
               </div>
             </div>
-            
-            <p class="mb-1 mt-1 text-dark cuerpo-mensaje" [class.expandido]="n.expandido">
+            <p
+              class="mb-1 mt-1 text-dark cuerpo-mensaje"
+              [class.expandido]="n.expandido"
+            >
               {{ n.mensaje }}
             </p>
-
-            <div class="d-md-none" *ngIf="n.mensaje.length > 90">
-              <button class="btn btn-link btn-sm p-0 text-decoration-none fw-bold text-primary" 
-                      (click)="n.expandido = !n.expandido">
+            @if (n.mensaje.length > 90) {
+            <div class="d-md-none">
+              <button
+                class="btn btn-link btn-sm p-0 text-decoration-none fw-bold text-primary"
+                (click)="n.expandido = !n.expandido"
+              >
                 {{ (n.expandido ? 'NOTIFICACIONES.ACCIONES.LEER_MENOS' : 'NOTIFICACIONES.ACCIONES.LEER_MAS') | translate }}
               </button>
             </div>
-
-            <div class="text-muted extra-small">
-              {{ n.fecha | date:'dd/MM/yyyy HH:mm' }}
-            </div>
-
+            }
+            <div class="text-muted extra-small">{{ n.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
             <div class="d-flex gap-2 mt-2">
-              <button class="btn btn-sm btn-outline-secondary" (click)="toggleLeida(n)">
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                (click)="toggleLeida(n)"
+              >
                 {{ (n.leida ? 'NOTIFICACIONES.ACCIONES.MARCAR_NO_LEIDA' : 'NOTIFICACIONES.ACCIONES.MARCAR_LEIDA') | translate }}
               </button>
-
-              <button *ngIf="n.tipo === 'mensaje' && n.conversacion_id" 
-                      class="btn btn-sm btn_bg" 
-                      (click)="irAlChat(n)">
-                <i class="fi fi-rr-messages me-1"></i> {{ 'NOTIFICACIONES.ACCIONES.RESPONDER' | translate }}
+              @if (n.tipo === 'mensaje' && n.conversacion_id) {
+              <button
+                class="btn btn-sm btn_bg"
+                (click)="irAlChat(n)"
+              >
+                <i class="fi fi-rr-messages me-1"></i>
+                {{ 'NOTIFICACIONES.ACCIONES.RESPONDER' | translate }}
               </button>
+              }
             </div>
           </div>
         </div>
       </div>
+      }
     </div>
   </div>
 </ion-content>
 
-<ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustes">
-  <ion-fab-button (click)="goToSettings()" aria-label="Ajustes">
-    <img [src]="iconoAjustes" alt="Ajustes" style="width: 24px; height: 24px;">
+<ion-fab
+  vertical="bottom"
+  horizontal="end"
+  slot="fixed"
+  class="fab-ajustes"
+>
+  <ion-fab-button
+    (click)="goToSettings()"
+    aria-label="Ajustes"
+  >
+    <img
+      [src]="iconoAjustes"
+      alt="Ajustes"
+      style="width: 24px; height: 24px"
+    />
   </ion-fab-button>
 </ion-fab>

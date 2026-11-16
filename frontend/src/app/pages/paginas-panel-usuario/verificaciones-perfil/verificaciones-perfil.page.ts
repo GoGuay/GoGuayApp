@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -18,7 +18,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './verificaciones-perfil.page.html',
   styleUrls: ['./verificaciones-perfil.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
+  imports: [IonicModule, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
   providers: [MessageService],
 })
 export class VerificacionesPerfilPage implements OnInit {

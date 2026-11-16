@@ -1,15 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonCol,
-  IonRow,
-  NavController,
-} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, NavController } from '@ionic/angular/standalone';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -22,16 +14,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
-  imports: [
-    IonRow,
-    IonCol,
-    IonContent,
-    CommonModule,
-    FormsModule,
-    NavbarComponent,
-    TranslateModule,
-    ToastModule,
-  ],
+  imports: [IonRow, IonCol, IonContent, FormsModule, NavbarComponent, TranslateModule, ToastModule],
   providers: [MessageService],
 })
 export class ForgotPasswordPage implements OnInit {
@@ -43,7 +26,7 @@ export class ForgotPasswordPage implements OnInit {
     private navCtrl: NavController,
     private userService: UserServicesService,
     private messageService: MessageService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -55,24 +38,20 @@ export class ForgotPasswordPage implements OnInit {
   }
 
   envio_email_reset_password(email: string) {
-    this.userService
-      .enviar_email_resetpassword(email)
-      .subscribe((respuesta) => {
-        this.translate
-          .get(['FORGOT_PW.TOAST_TITULO', 'FORGOT_PW.TOAST_CUERPO'])
-          .subscribe((translations) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: translations['FORGOT_PW.TOAST_TITULO'],
-              detail: translations['FORGOT_PW.TOAST_CUERPO'],
-              life: 3000,
-            });
-          });
-        setTimeout(() => {
-          this.navCtrl.navigateRoot(['/login'], {
-            animated: false,
-          });
-        }, 4000);
+    this.userService.enviar_email_resetpassword(email).subscribe((respuesta) => {
+      this.translate.get(['FORGOT_PW.TOAST_TITULO', 'FORGOT_PW.TOAST_CUERPO']).subscribe((translations) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: translations['FORGOT_PW.TOAST_TITULO'],
+          detail: translations['FORGOT_PW.TOAST_CUERPO'],
+          life: 3000,
+        });
       });
+      setTimeout(() => {
+        this.navCtrl.navigateRoot(['/login'], {
+          animated: false,
+        });
+      }, 4000);
+    });
   }
 }

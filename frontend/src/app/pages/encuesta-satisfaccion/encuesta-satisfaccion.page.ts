@@ -1,5 +1,5 @@
-import { Component, forwardRef, OnInit, } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, forwardRef, OnInit } from '@angular/core';
+
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,60 +9,32 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { HelpModalComponent } from '../../components/help-modal/help-modal.component';
 import { EncuestaService } from '../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service';
-import {
-  Chart,
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-  Title
-} from 'chart.js';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title } from 'chart.js';
 
-
-Chart.register(
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-  Title
-);
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
 @Component({
   selector: 'app-encuesta-satisfaccion',
   templateUrl: './encuesta-satisfaccion.page.html',
   styleUrls: ['./encuesta-satisfaccion.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    MatSliderModule,
-  ],
+  imports: [IonicModule, FormsModule, MatButtonModule, MatRadioModule, MatCheckboxModule, ReactiveFormsModule, MatSliderModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => EncuestaSatisfaccionPage),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class EncuestaSatisfaccionPage implements OnInit {
-
   encuestaForm: FormGroup;
   aspectos = [
     { nombre: 'Diseño y apariencia', icono: 'fi-rr-palette' },
     { nombre: 'Facilidad para buscar viajes', icono: 'fi-rr-search' },
     { nombre: 'Uso del Centro de Mensajes', icono: 'fi-rr-comments' },
     { nombre: 'Sensación de seguridad y respeto', icono: 'fi-rr-shield-check' },
-    { nombre: 'Comprensión de las normas', icono: 'fi-rr-interrogation' }
+    { nombre: 'Comprensión de las normas', icono: 'fi-rr-interrogation' },
   ];
 
   calificacionSeleccionada: number = 0;
@@ -72,12 +44,11 @@ export class EncuestaSatisfaccionPage implements OnInit {
     private dialog: MatDialog,
     private navCtrl: NavController,
     private fb: FormBuilder,
-    private encuestaService: EncuestaService)
-
-  {
+    private encuestaService: EncuestaService
+  ) {
     this.encuestaForm = this.fb.group({
       recomendacion: [0, Validators.required],
-      sugerencias: ['']
+      sugerencias: [''],
     });
     this.aspectos.forEach((_, index) => {
       this.encuestaForm.addControl(`positivo${index}`, this.fb.control(false));
@@ -85,7 +56,7 @@ export class EncuestaSatisfaccionPage implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   toggleCheckbox(i: number, tipo: string) {
     if (tipo === 'positivo') {
@@ -118,9 +89,9 @@ export class EncuestaSatisfaccionPage implements OnInit {
           data: {
             title: '¡Gracias!',
             message: 'Tu opinión nos ayuda a hacer de GoGuay un lugar más seguro.',
-            showAcceptButton: true
+            showAcceptButton: true,
           },
-          disableClose: true
+          disableClose: true,
         });
 
         dialogRef.afterClosed().subscribe(() => {
@@ -129,9 +100,8 @@ export class EncuestaSatisfaccionPage implements OnInit {
       },
       error: (err) => {
         console.error('Error al enviar la encuesta', err);
-      }
+      },
     });
-
   }
 
   getLabelRating(valor: number): string {

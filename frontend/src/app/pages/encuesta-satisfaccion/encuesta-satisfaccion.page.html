@@ -1,7 +1,9 @@
 <ion-content [fullscreen]="true">
   <div class="main-wrapper">
-    <form [formGroup]="encuestaForm" (ngSubmit)="verificarEncuesta()">
-      
+    <form
+      [formGroup]="encuestaForm"
+      (ngSubmit)="verificarEncuesta()"
+    >
       <div class="welcome-section text-center animate__animated animate__fadeIn">
         <div class="icon-circle">
           <i class="fi fi-rr-heart"></i>
@@ -11,7 +13,6 @@
       </div>
 
       <div class="container main_container">
-        
         <div class="survey-card mt-4">
           <div class="card-header">
             <span class="step-number">1</span>
@@ -19,13 +20,21 @@
           </div>
           <div class="stars-wrapper">
             <div class="stars-container">
-              <div *ngFor="let estrella of estrellas; let i = index" class="star-item" 
-                   (click)="seleccionarCalificacion(i + 1)"
-                   [class.active]="i < calificacionSeleccionada">
-                <img [src]="i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif'" 
-                     class="star-img">
-                <span class="star-label" *ngIf="i < calificacionSeleccionada">{{ getLabelRating(i+1) }}</span>
+              @for (estrella of estrellas; track estrella; let i = $index) {
+              <div
+                class="star-item"
+                (click)="seleccionarCalificacion(i + 1)"
+                [class.active]="i < calificacionSeleccionada"
+              >
+                <img
+                  [src]="i < calificacionSeleccionada ? '../../../assets/rating/como.gif' : '../../../assets/rating/favorito.gif'"
+                  class="star-img"
+                />
+                @if (i < calificacionSeleccionada) {
+                <span class="star-label">{{ getLabelRating(i+1) }}</span>
+                }
               </div>
+              }
             </div>
           </div>
         </div>
@@ -35,23 +44,31 @@
             <span class="step-number">2</span>
             <h3>¿Qué es lo que más te gusta y qué debemos mejorar?</h3>
           </div>
-          
+
           <div class="aspects-grid">
-            <div *ngFor="let aspecto of aspectos; let i = index" class="aspect-item">
+            @for (aspecto of aspectos; track aspecto; let i = $index) {
+            <div class="aspect-item">
               <p class="aspect-name">{{ aspecto.nombre }}</p>
               <div class="toggle-buttons">
-                <button type="button" class="btn-toggle pos" 
-                        [class.active]="encuestaForm.get('positivo'+i)?.value"
-                        (click)="toggleAspect(i, 'positivo')">
+                <button
+                  type="button"
+                  class="btn-toggle pos"
+                  [class.active]="encuestaForm.get('positivo'+i)?.value"
+                  (click)="toggleAspect(i, 'positivo')"
+                >
                   <i class="fi fi-rr-smile"></i>
                 </button>
-                <button type="button" class="btn-toggle neg" 
-                        [class.active]="encuestaForm.get('negativo'+i)?.value"
-                        (click)="toggleAspect(i, 'negativo')">
+                <button
+                  type="button"
+                  class="btn-toggle neg"
+                  [class.active]="encuestaForm.get('negativo'+i)?.value"
+                  (click)="toggleAspect(i, 'negativo')"
+                >
                   <i class="fi fi-rr-frown"></i>
                 </button>
               </div>
             </div>
+            }
           </div>
         </div>
 
@@ -61,28 +78,35 @@
             <h3>¿Alguna sugerencia extra para nosotros?</h3>
           </div>
           <div class="textarea-wrapper">
-            <textarea class="textArea form-control" 
-                      placeholder="Cuéntanos lo que quieras..."
-                      maxlength="500" 
-                      formControlName="sugerencias"></textarea>
+            <textarea
+              class="textArea form-control"
+              placeholder="Cuéntanos lo que quieras..."
+              maxlength="500"
+              formControlName="sugerencias"
+            ></textarea>
             <div class="char-count mt-2">{{ encuestaForm.get('sugerencias')?.value?.length || 0 }}/500</div>
           </div>
         </div>
 
-<div class="actions-wrapper d-flex justify-content-center align-items-center gap-3 pb-5 mt-4">
-  
-  <button type="button" class="btn-back" (click)="goBack()">
-    <i class="fi fi-rr-arrow-small-left me-2"></i>
-    <span>Atrás</span>
-  </button>
+        <div class="actions-wrapper d-flex justify-content-center align-items-center gap-3 pb-5 mt-4">
+          <button
+            type="button"
+            class="btn-back"
+            (click)="goBack()"
+          >
+            <i class="fi fi-rr-arrow-small-left me-2"></i>
+            <span>Atrás</span>
+          </button>
 
-  <button type="submit" class="btn-send" [disabled]="calificacionSeleccionada === 0">
-    <span>Enviar valoración</span>
-    <i class="fi fi-rr-paper-plane ms-2"></i>
-  </button>
-  
-</div>
-
+          <button
+            type="submit"
+            class="btn-send"
+            [disabled]="calificacionSeleccionada === 0"
+          >
+            <span>Enviar valoración</span>
+            <i class="fi fi-rr-paper-plane ms-2"></i>
+          </button>
+        </div>
       </div>
     </form>
   </div>

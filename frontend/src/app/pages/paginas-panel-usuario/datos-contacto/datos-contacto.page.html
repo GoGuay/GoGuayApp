@@ -45,27 +45,32 @@
                   (ngModelChange)="onInputChange()"
                 />
                 <button (click)="enviar_email_modificacion(userData.usuario.email)">Enviar</button>
+                @if (formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched) {
                 <div
-                  *ngIf="formEmailTfno.get('emailControl')?.invalid && formEmailTfno.get('emailControl')?.touched"
                   id="emailError"
                   role="alert"
                   class="error-mensaje"
                 >
                   <!-- Error de campo requerido -->
-                  <div *ngIf="formEmailTfno.get('emailControl')?.hasError('required')">
+                  @if (formEmailTfno.get('emailControl')?.hasError('required')) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.CORREO_OBLIGATORIO_ERROR' | translate}}</span>
                   </div>
+                  }
                   <!-- Error de formato inválido -->
-                  <div
-                    *ngIf="formEmailTfno.get('emailControl')?.hasError('pattern') || formEmailTfno.get('emailControl')?.hasError('email')"
-                  >
+                  @if (formEmailTfno.get('emailControl')?.hasError('pattern') || formEmailTfno.get('emailControl')?.hasError('email')) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.CORREO_INVALIDO_ERROR' | translate}}</span>
                   </div>
+                  }
                   <!-- Error de correo ya registrado -->
-                  <div *ngIf="formEmailTfno.get('emailControl')?.errors?.['emailRepetido']">
+                  @if (formEmailTfno.get('emailControl')?.errors?.['emailRepetido']) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.CORREO_REPETIDO_ERROR' | translate}}</span>
                   </div>
+                  }
                 </div>
+                }
               </div>
 
               <!-- Input teléfono  -->
@@ -88,25 +93,32 @@
                   formControlName="telefonoControl"
                   (ngModelChange)="onInputChange()"
                 />
+                @if (formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched) {
                 <div
-                  *ngIf="formEmailTfno.get('telefonoControl')?.invalid && formEmailTfno.get('telefonoControl')?.touched"
                   id="telefonoError"
                   role="alert"
                   class="error-mensaje"
                 >
                   <!-- Error de campo requerido -->
-                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['required']">
+                  @if (formEmailTfno.get('telefonoControl')?.errors?.['required']) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_OBLIGATORIO_ERROR' | translate}}</span>
                   </div>
+                  }
                   <!-- Error de formato inválido -->
-                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['pattern']">
+                  @if (formEmailTfno.get('telefonoControl')?.errors?.['pattern']) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_INVALIDO_ERROR' | translate}}</span>
                   </div>
+                  }
                   <!-- Error de teléfono ya registrado -->
-                  <div *ngIf="formEmailTfno.get('telefonoControl')?.errors?.['telefonoRepetido']">
+                  @if (formEmailTfno.get('telefonoControl')?.errors?.['telefonoRepetido']) {
+                  <div>
                     <span class="texto-error">{{'DATOS_CONTACTO.TELEFONO_REPETIDO_ERROR' | translate}}</span>
                   </div>
+                  }
                 </div>
+                }
               </div>
             </form>
           </div>

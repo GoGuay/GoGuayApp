@@ -4,7 +4,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { IonicModule, Platform } from '@ionic/angular';
 import { FormControl, FormsModule } from '@angular/forms';
 import { LOCALE_ID } from '@angular/core';
-import { CommonModule, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTimepickerModule } from '@angular/material/timepicker';
@@ -32,7 +32,6 @@ registerLocaleData(localeEs);
     MatTimepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    CommonModule,
     MatButtonModule,
     TranslateModule,
     TablaVehiculosComponent,
@@ -110,7 +109,7 @@ export class PrimerPasoComponent implements OnInit {
     this.checkScreenSize();
   }
 
-ngOnInit() {
+  ngOnInit() {
     const datosUsuarioLocal = JSON.parse(localStorage.getItem('userData') || '{}');
     if (datosUsuarioLocal) {
       this.userData = datosUsuarioLocal;
@@ -139,7 +138,7 @@ ngOnInit() {
       const horaBase = new Date();
       horaBase.setTime(horaBase.getTime() + 60 * 60 * 1000);
       this.hora_seleccionada = horaBase;
-      
+
       const horasStr = String(horaBase.getHours()).padStart(2, '0');
       const minutosStr = String(horaBase.getMinutes()).padStart(2, '0');
       this.guardaDatosDelViajeEnServicio('hora_salida', `${horasStr}:${minutosStr}`);
@@ -487,7 +486,7 @@ ngOnInit() {
     const currentViajeData = this.travelService.getViajeData() || {};
     const viajeData = {
       ...currentViajeData,
-      plazas: nuevaPlaza
+      plazas: nuevaPlaza,
     };
 
     this.travelService.setViajeData(viajeData);

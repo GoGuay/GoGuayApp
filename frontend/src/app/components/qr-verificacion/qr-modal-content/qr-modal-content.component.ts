@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, Input, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, ModalController } from '@ionic/angular';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ToastModule } from 'primeng/toast';
@@ -13,13 +13,8 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
   templateUrl: './qr-modal-content.component.html',
   styleUrls: ['./qr-modal-content.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    IonicModule,
-    ZXingScannerModule,
-    ToastModule
-  ],
-  providers: [MessageService]
+  imports: [IonicModule, ZXingScannerModule, ToastModule],
+  providers: [MessageService],
 })
 export class QrModalContentComponent implements AfterViewInit {
   @Input() viaje: any;
@@ -42,7 +37,7 @@ export class QrModalContentComponent implements AfterViewInit {
       const payload = {
         viaje_id: this.viaje.id,
         conductor_id: this.viaje.usuario_id,
-        timestamp: new Date().getTime()
+        timestamp: new Date().getTime(),
       };
       this.qrDataString = JSON.stringify(payload);
     }
@@ -55,12 +50,17 @@ export class QrModalContentComponent implements AfterViewInit {
   }
 
   generarCodigoQR() {
-    QRCode.toCanvas(this.qrCanvas.nativeElement, this.qrDataString, {
-      width: 240,
-      margin: 2
-    }, (error: any) => {
-      if (error) console.error('Error al generar el QR:', error);
-    });
+    QRCode.toCanvas(
+      this.qrCanvas.nativeElement,
+      this.qrDataString,
+      {
+        width: 240,
+        margin: 2,
+      },
+      (error: any) => {
+        if (error) console.error('Error al generar el QR:', error);
+      }
+    );
   }
 
   cerrarModal() {
@@ -73,25 +73,25 @@ export class QrModalContentComponent implements AfterViewInit {
 
       if (dataScanned.viaje_id === this.viaje.id) {
         this.escaneando = false;
-        
+
         this.travelService.validarEmbarquePasajero(this.viaje.id).subscribe({
           next: () => {
             this.verificacionCompletada = true;
             this.messageService.add({
               severity: 'success',
               summary: '¡Abordo confirmado!',
-              detail: 'Has verificado tu plaza en el vehículo correctamente.'
+              detail: 'Has verificado tu plaza en el vehículo correctamente.',
             });
           },
           error: (err) => {
             console.error('Error al validar embarque:', err);
-          }
+          },
         });
       } else {
         this.messageService.add({
           severity: 'error',
           summary: 'QR No Válido',
-          detail: 'Este código QR no corresponde a tu viaje en curso.'
+          detail: 'Este código QR no corresponde a tu viaje en curso.',
         });
       }
     } catch (e) {

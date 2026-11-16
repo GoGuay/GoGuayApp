@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,28 +9,16 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-condiciones-generales',
-    templateUrl: './condiciones-generales.page.html',
-    styleUrls: ['./condiciones-generales.page.scss'],
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatIconModule,
-        IonicModule,
-        MatButtonModule,
-        RouterModule,
-        JumbotronComponent,
-        NavbarComponent,
-        TranslateModule
-    ],
+  selector: 'app-condiciones-generales',
+  templateUrl: './condiciones-generales.page.html',
+  styleUrls: ['./condiciones-generales.page.scss'],
+  imports: [FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, JumbotronComponent, NavbarComponent, TranslateModule],
 })
 export class CondicionesUsoComponent implements OnInit {
+  userLoggedIn: boolean = true;
+  mostrarJumbotron: boolean = true;
 
-    userLoggedIn: boolean = true;
-    mostrarJumbotron: boolean = true;
+  constructor() {}
 
-    constructor() { }
-
-    ngOnInit() { }
-
+  ngOnInit() {}
 }

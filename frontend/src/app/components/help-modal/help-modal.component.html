@@ -6,14 +6,17 @@
   @dialogAnimation
 >
   <div class="modal-header d-flex align-items-center justify-content-between">
-    <mat-icon
-      class="icon-red"
-      aria-hidden="true"
-      *ngIf="!data.eliminacion_cuenta"
-    >
-      question_mark
-    </mat-icon>
-    <mat-icon class="icon-red" *ngIf="data.eliminacion_cuenta">warning</mat-icon>
+    @if (!data.eliminacion_cuenta) {
+      <mat-icon
+        class="icon-red"
+        aria-hidden="true"
+      >
+        question_mark
+      </mat-icon>
+    }
+    @if (data.eliminacion_cuenta) {
+      <mat-icon class="icon-red">warning</mat-icon>
+    }
 
     <h2
       id="modal-title"
@@ -33,58 +36,63 @@
   <mat-divider></mat-divider>
   <div class="modal-body">
     <p [innerHTML]="message"></p>
-    <p [innerHTML]="descripcion" *ngIf="data.eliminacion_cuenta && descripcion !== undefined"></p>
-    <div
-      class="button-container"
-      *ngIf="data.showMoreInfoButton"
-    >
-      <button
-        mat-raised-button
-        class="btn_bg"
-        (click)="abrirMasDetalles()"
-        [attr.aria-label]="'MODAL_HELP.ARIA_VER_MAS_DETALLES' | translate"
-      >
-        {{ 'MODAL_HELP.VER_MAS_DETALLES' | translate }}
-        <mat-icon>info</mat-icon>
-      </button>
-    </div>
+    @if (data.eliminacion_cuenta && descripcion !== undefined) {
+      <p [innerHTML]="descripcion"></p>
+    }
+    @if (data.showMoreInfoButton) {
+      <div class="button-container">
+        <button
+          mat-raised-button
+          class="btn_bg"
+          (click)="abrirMasDetalles()"
+          [attr.aria-label]="'MODAL_HELP.ARIA_VER_MAS_DETALLES' | translate"
+        >
+          {{ 'MODAL_HELP.VER_MAS_DETALLES' | translate }}
+          <mat-icon>info</mat-icon>
+        </button>
+      </div>
+    }
   </div>
   <div class="modal-footer d-flex justify-content-center">
-    <button
-      mat-button
-      (click)="close()"
-      class="me-2"
-      *ngIf="!data.showMoreInfoButton"
-      [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
-    >
-      {{ 'MODAL_HELP.CERRAR' | translate }}
-    </button>
-    <button
-      mat-raised-button
-      color="primary"
-      class="me-2"
-      (click)="crearVuelta()"
-      *ngIf="data.showReturnTripButton"
-      [attr.aria-label]="'MODAL_HELP.ARIA_CREAR_VIAJE_VUELTA' | translate"
-    >
-      {{ 'MODAL_HELP.CREAR_VIAJE_VUELTA' | translate }}
-    </button>
-    <button
-      mat-button
-      class="btn_bg"
-      (click)="aceptarCondiciones('registro')"
-      *ngIf="data.showAcceptButton"
-      cdkFocusInitial
-      [attr.aria-label]="'MODAL_HELP.ARIA_ACEPTAR_CONDICIONES' | translate"
-    >
-      {{ 'MODAL_HELP.ACEPTAR' | translate }}
-    </button>
-    <button
-      mat-button
-      (click)="cerrarParaMasInfo('home')"
-      *ngIf="data.showMoreInfoButton"
-    >
-      {{ 'MODAL_HELP.NO_ACEPTAR' | translate }}
-    </button>
+    @if (!data.showMoreInfoButton) {
+      <button
+        mat-button
+        (click)="close()"
+        class="me-2"
+        [attr.aria-label]="'MODAL_HELP.ARIA_CERRAR' | translate"
+      >
+        {{ 'MODAL_HELP.CERRAR' | translate }}
+      </button>
+    }
+    @if (data.showReturnTripButton) {
+      <button
+        mat-raised-button
+        color="primary"
+        class="me-2"
+        (click)="crearVuelta()"
+        [attr.aria-label]="'MODAL_HELP.ARIA_CREAR_VIAJE_VUELTA' | translate"
+      >
+        {{ 'MODAL_HELP.CREAR_VIAJE_VUELTA' | translate }}
+      </button>
+    }
+    @if (data.showAcceptButton) {
+      <button
+        mat-button
+        class="btn_bg"
+        (click)="aceptarCondiciones('registro')"
+        cdkFocusInitial
+        [attr.aria-label]="'MODAL_HELP.ARIA_ACEPTAR_CONDICIONES' | translate"
+      >
+        {{ 'MODAL_HELP.ACEPTAR' | translate }}
+      </button>
+    }
+    @if (data.showMoreInfoButton) {
+      <button
+        mat-button
+        (click)="cerrarParaMasInfo('home')"
+      >
+        {{ 'MODAL_HELP.NO_ACEPTAR' | translate }}
+      </button>
+    }
   </div>
 </div>

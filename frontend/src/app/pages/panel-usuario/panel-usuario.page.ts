@@ -1,11 +1,6 @@
 import { Usuario } from './../../models/user/usuario.model';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,10 +9,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
-import {
-  MAT_TOOLTIP_DEFAULT_OPTIONS,
-  MatTooltipModule,
-} from '@angular/material/tooltip';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
@@ -26,15 +18,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './panel-usuario.page.html',
   styleUrls: ['./panel-usuario.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NavbarComponent,
-    TranslateModule,
-    IonicModule,
-    MatIcon,
-    MatTooltipModule,
-  ],
+  imports: [FormsModule, NavbarComponent, TranslateModule, IonicModule, MatIcon, MatTooltipModule],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
@@ -49,7 +33,6 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   encapsulation: ViewEncapsulation.None,
 })
 export class PanelUsuarioPage implements OnInit {
-
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
   cargando = false;
@@ -63,7 +46,7 @@ export class PanelUsuarioPage implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private cdr: ChangeDetectorRef,
     private userService: UserServicesService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -92,11 +75,9 @@ export class PanelUsuarioPage implements OnInit {
    *
    */
   obtenerViajes() {
-    this.travelService
-      .getViajesUsuario(this.userData.usuario.id)
-      .subscribe((result) => {
-        console.log('Viajes del usuario: ', result);
-      });
+    this.travelService.getViajesUsuario(this.userData.usuario.id).subscribe((result) => {
+      console.log('Viajes del usuario: ', result);
+    });
   }
 
   openHelpMiPerfil() {
@@ -112,8 +93,7 @@ export class PanelUsuarioPage implements OnInit {
   }
   openHelpDatosContacto() {
     const titulo: string = 'Contenido Datos de contacto';
-    const mensaje: string =
-      'Podrás modificar tu teléfono y correo electrónico, así como las preferencias para comunicarnos contigo.';
+    const mensaje: string = 'Podrás modificar tu teléfono y correo electrónico, así como las preferencias para comunicarnos contigo.';
     this.dialog.open(HelpModalComponent, {
       data: { title: titulo, message: mensaje },
       disableClose: true,
@@ -121,8 +101,7 @@ export class PanelUsuarioPage implements OnInit {
   }
 
   OpenHelpVerificaciones() {
-    const titulo: string =
-      'Contenido sobre la verificación de perfil y cambio de contraseña';
+    const titulo: string = 'Contenido sobre la verificación de perfil y cambio de contraseña';
     const mensaje: string =
       'Puedes convertirte en un usuario verificado, subir foto de tu carnet de conducir para publicar viajes y cambiar tu contraseña de acceso.';
     this.dialog.open(HelpModalComponent, {
@@ -173,19 +152,18 @@ export class PanelUsuarioPage implements OnInit {
         },
         error: (error) => {
           console.error('Error al actualizar la imagen del perfil:', error);
-        }
+        },
       });
     }
   }
 
   /**
- * Función para obtener los datos de un usuario
- * @param id_usuario Recibe el ID del usuario que está logado
- */
+   * Función para obtener los datos de un usuario
+   * @param id_usuario Recibe el ID del usuario que está logado
+   */
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
       this.usuario = resultadoUsuario;
     });
   }
-
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, ModalController, NavController } from '@ionic/angular';
@@ -25,9 +25,8 @@ import { MessageService } from 'primeng/api';
   templateUrl: './nuevo-viaje.page.html',
   styleUrls: ['./nuevo-viaje.page.scss'],
   standalone: true,
-  providers: [MessageService], 
+  providers: [MessageService],
   imports: [
-    CommonModule,
     FormsModule,
     MatIconModule,
     IonicModule,
@@ -65,7 +64,7 @@ export class NuevoViajePage implements OnInit {
   ];
 
   @HostListener('document:click', ['$event'])
-  closeDropdown(event: Event) { }
+  closeDropdown(event: Event) {}
 
   constructor(
     private navCtrl: NavController,
@@ -198,9 +197,9 @@ export class NuevoViajePage implements OnInit {
       componentProps: {
         categoria: 'APP',
         subcategoriaPredeterminada: 'CREACION_VIAJE',
-        tituloContexto: 'Problema al crear el viaje'
+        tituloContexto: 'Problema al crear el viaje',
       },
-      cssClass: 'modal-incidencia-custom'
+      cssClass: 'modal-incidencia-custom',
     });
 
     await modal.present();
@@ -211,7 +210,7 @@ export class NuevoViajePage implements OnInit {
         severity: 'success',
         summary: 'Incidencia enviada',
         detail: 'Hemos recibido tu consulta. Podrás ver el seguimiento en "Mis Incidencias".',
-        life: 4000
+        life: 4000,
       });
     }
   }

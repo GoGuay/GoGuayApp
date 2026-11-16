@@ -21,23 +21,25 @@
     <p>{{ data.message }}</p>
   </div>
   <div class="modal-footer">
-    <button
-      *ngIf="data?.mostrarBotonRegistro"
-      mat-button
-      class="btn_bg btn"
-      (click)="toRegistro('registro')"
-    >
-      Registrarme
-    </button>
+    @if (data?.mostrarBotonRegistro) {
+      <button
+        mat-button
+        class="btn_bg btn"
+        (click)="toRegistro('registro')"
+      >
+        Registrarme
+      </button>
+    }
 
-    <button
-      *ngIf="data?.mostrarBotonReenvioEmail"
-      mat-button
-      class="btn_bg btn"
-      (click)="reenviarCorreoFinalizarReg('reenviarCorreo')"
-    >
-      Reenviar email
-    </button>
+    @if (data?.mostrarBotonReenvioEmail) {
+      <button
+        mat-button
+        class="btn_bg btn"
+        (click)="reenviarCorreoFinalizarReg('reenviarCorreo')"
+      >
+        Reenviar email
+      </button>
+    }
     <button
       mat-button
       (click)="close()"

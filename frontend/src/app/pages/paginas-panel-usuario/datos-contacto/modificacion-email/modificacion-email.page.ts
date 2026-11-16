@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonContent, NavController } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
@@ -11,7 +11,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './modificacion-email.page.html',
   styleUrls: ['./modificacion-email.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule],
+  imports: [IonContent, FormsModule],
 })
 export class ModificacionEmailPage implements OnInit {
   verified = false;

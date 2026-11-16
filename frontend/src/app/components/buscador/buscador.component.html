@@ -51,20 +51,9 @@
                 type="text"
                 class="form-control text-start"
                 [(ngModel)]="origenCtrl.valorTexto"
-                (blur)="
-                  origenCtrl.estaActivo = false;
-                  buscadorLocalidadesService.validarSeleccion(
-                    origenCtrl,
-                    inputOrigen
-                  )
-                "
+                (blur)="origenCtrl.estaActivo = false; buscadorLocalidadesService.validarSeleccion(origenCtrl, inputOrigen)"
                 (focus)="origenCtrl.estaActivo = true"
-                (input)="
-                  buscadorLocalidadesService.obtenerSugerencias(
-                    origenCtrl,
-                    $event
-                  )
-                "
+                (input)="buscadorLocalidadesService.obtenerSugerencias(origenCtrl, $event)"
                 (keydown)="manejarNavegacionTeclado($event, 'origen')"
                 autocomplete="off"
                 spellcheck="false"
@@ -74,45 +63,33 @@
                 aria-haspopup="listbox"
                 aria-describedby="instrucciones-busqueda"
                 [attr.aria-expanded]="origenCtrl.sugerencias.length > 0"
-                [attr.aria-controls]="
-                  origenCtrl.sugerencias.length > 0
-                    ? 'lista-origen-resultados'
-                    : null
-                "
-                [attr.aria-activedescendant]="
-                  origenCtrl.indiceActivo >= 0
-                    ? 'opt-orig-' + origenCtrl.indiceActivo
-                    : null
-                "
+                [attr.aria-controls]="origenCtrl.sugerencias.length > 0 ? 'lista-origen-resultados' : null"
+                [attr.aria-activedescendant]="origenCtrl.indiceActivo >= 0 ? 'opt-orig-' + origenCtrl.indiceActivo : null"
               />
 
-              <ul
-                id="lista-origen-resultados"
-                *ngIf="origenCtrl.sugerencias.length > 0"
-                class="list-group lista_sugerencias"
-                role="listbox"
-                aria-live="polite"
-              >
-                <li
-                  [id]="'opt-orig-' + i"
-                  *ngFor="
-                    let localidad of origenCtrl.sugerencias;
-                    let i = index
-                  "
-                  class="list-group-item"
-                  (mousedown)="
-                    $event.preventDefault();
-                    seleccionarLocalidadOrigen(localidad)
-                  "
-                  [class.active]="i === origenCtrl.indiceActivo"
-                  role="option"
-                  tabindex="-1"
-                  (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
-                  (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
+              @if (origenCtrl.sugerencias.length > 0) {
+                <ul
+                  id="lista-origen-resultados"
+                  class="list-group lista_sugerencias"
+                  role="listbox"
+                  aria-live="polite"
                 >
-                  {{ localidad.descripcion }}
-                </li>
-              </ul>
+                  @for (localidad of origenCtrl.sugerencias; track localidad; let i = $index) {
+                    <li
+                      [id]="'opt-orig-' + i"
+                      class="list-group-item"
+                      (mousedown)="$event.preventDefault(); seleccionarLocalidadOrigen(localidad)"
+                      [class.active]="i === origenCtrl.indiceActivo"
+                      role="option"
+                      tabindex="-1"
+                      (keyup.enter)="seleccionarLocalidadOrigen(localidad)"
+                      (keydown)="manejarNavegacionTeclado($event, 'origen', i)"
+                    >
+                      {{ localidad.descripcion }}
+                    </li>
+                  }
+                </ul>
+              }
             </div>
           </ion-col>
 
@@ -137,20 +114,9 @@
                 type="text"
                 class="form-control text-start"
                 [(ngModel)]="destinoCtrl.valorTexto"
-                (blur)="
-                  destinoCtrl.estaActivo = false;
-                  buscadorLocalidadesService.validarSeleccion(
-                    destinoCtrl,
-                    inputDestino
-                  )
-                "
+                (blur)="destinoCtrl.estaActivo = false; buscadorLocalidadesService.validarSeleccion(destinoCtrl, inputDestino)"
                 (focus)="destinoCtrl.estaActivo = true"
-                (input)="
-                  buscadorLocalidadesService.obtenerSugerencias(
-                    destinoCtrl,
-                    $event
-                  )
-                "
+                (input)="buscadorLocalidadesService.obtenerSugerencias(destinoCtrl, $event)"
                 (keydown)="manejarNavegacionTeclado($event, 'destino')"
                 autocomplete="off"
                 spellcheck="false"
@@ -160,45 +126,33 @@
                 aria-haspopup="listbox"
                 aria-describedby="instrucciones-busqueda"
                 [attr.aria-expanded]="destinoCtrl.sugerencias.length > 0"
-                [attr.aria-controls]="
-                  destinoCtrl.sugerencias.length > 0
-                    ? 'lista-destino-resultados'
-                    : null
-                "
-                [attr.aria-activedescendant]="
-                  indiceActivoDestino >= 0
-                    ? 'opt-dest-' + indiceActivoDestino
-                    : null
-                "
+                [attr.aria-controls]="destinoCtrl.sugerencias.length > 0 ? 'lista-destino-resultados' : null"
+                [attr.aria-activedescendant]="indiceActivoDestino >= 0 ? 'opt-dest-' + indiceActivoDestino : null"
               />
 
-              <ul
-                *ngIf="destinoCtrl.sugerencias.length > 0"
-                class="list-group lista_sugerencias"
-                id="lista-destino-resultados"
-                role="listbox"
-                aria-live="polite"
-              >
-                <li
-                  [id]="'opt-dest-' + i"
-                  *ngFor="
-                    let localidad of destinoCtrl.sugerencias;
-                    let i = index
-                  "
-                  class="list-group-item"
-                  [class.active]="i === indiceActivoDestino"
-                  (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
-                  (mousedown)="
-                    $event.preventDefault();
-                    seleccionarLocalidadDestino(localidad)
-                  "
-                  role="option"
-                  tabindex="-1"
-                  (keyup.enter)="seleccionarLocalidadDestino(localidad)"
+              @if (destinoCtrl.sugerencias.length > 0) {
+                <ul
+                  class="list-group lista_sugerencias"
+                  id="lista-destino-resultados"
+                  role="listbox"
+                  aria-live="polite"
                 >
-                  {{ localidad.descripcion }}
-                </li>
-              </ul>
+                  @for (localidad of destinoCtrl.sugerencias; track localidad; let i = $index) {
+                    <li
+                      [id]="'opt-dest-' + i"
+                      class="list-group-item"
+                      [class.active]="i === indiceActivoDestino"
+                      (keydown)="manejarNavegacionTeclado($event, 'destino', i)"
+                      (mousedown)="$event.preventDefault(); seleccionarLocalidadDestino(localidad)"
+                      role="option"
+                      tabindex="-1"
+                      (keyup.enter)="seleccionarLocalidadDestino(localidad)"
+                    >
+                      {{ localidad.descripcion }}
+                    </li>
+                  }
+                </ul>
+              }
             </div>
           </ion-col>
 
@@ -239,22 +193,20 @@
                   [attr.aria-label]="
                     ('BUSCADOR.BUSCAR_VIAJE_IDA' | translate) +
                     ': ' +
-                    (textoBotonFechaIda
-                      ? (textoBotonFechaIda | translate)
-                      : (fecha_ida | date: 'fullDate'))
+                    (textoBotonFechaIda ? (textoBotonFechaIda | translate) : (fecha_ida | date: 'fullDate'))
                   "
                 >
-                  <span *ngIf="textoBotonFechaIda">
-                    {{ textoBotonFechaIda | translate }}
-                  </span>
+                  @if (textoBotonFechaIda) {
+                    <span>
+                      {{ textoBotonFechaIda | translate }}
+                    </span>
+                  }
 
-                  <span *ngIf="!textoBotonFechaIda">
-                    {{
-                      fecha_ida
-                        | date: 'EEE, d MMMM' : '' : translate.currentLang
-                        | titlecase
-                    }}
-                  </span>
+                  @if (!textoBotonFechaIda) {
+                    <span>
+                      {{ fecha_ida | date: 'EEE, d MMMM' : '' : translate.currentLang | titlecase }}
+                    </span>
+                  }
                 </button>
               </div>
               <mat-datepicker
@@ -297,28 +249,20 @@
                 [attr.aria-label]="
                   ('BUSCADOR.BUSCAR_VIAJE_VUELTA' | translate) +
                   ': ' +
-                  (textoBotonFechaVuelta
-                    ? (textoBotonFechaVuelta | translate)
-                    : (fecha_vuelta | date: 'fullDate'))
+                  (textoBotonFechaVuelta ? (textoBotonFechaVuelta | translate) : (fecha_vuelta | date: 'fullDate'))
                 "
               >
-                <span
-                  *ngIf="textoBotonFechaVuelta"
-                  aria-hidden="true"
-                >
-                  {{ textoBotonFechaVuelta | translate }}
-                </span>
+                @if (textoBotonFechaVuelta) {
+                  <span aria-hidden="true">
+                    {{ textoBotonFechaVuelta | translate }}
+                  </span>
+                }
 
-                <span
-                  *ngIf="!textoBotonFechaVuelta"
-                  aria-hidden="true"
-                >
-                  {{
-                    fecha_vuelta
-                      | date: 'EEE, d MMMM' : '' : translate.currentLang
-                      | titlecase
-                  }}
-                </span>
+                @if (!textoBotonFechaVuelta) {
+                  <span aria-hidden="true">
+                    {{ fecha_vuelta | date: 'EEE, d MMMM' : '' : translate.currentLang | titlecase }}
+                  </span>
+                }
               </button>
             </div>
             <mat-datepicker
@@ -345,11 +289,7 @@
                 mat-raised-button
                 class="btn_config btn btn_bg"
                 (click)="buscar()"
-                [attr.aria-label]="
-                  ('BUSCADOR.BOTON_BUSCAR' | translate) +
-                  '. ' +
-                  ('BUSCADOR.BOTON_BUSCAR_ACCES' | translate)
-                "
+                [attr.aria-label]="('BUSCADOR.BOTON_BUSCAR' | translate) + '. ' + ('BUSCADOR.BOTON_BUSCAR_ACCES' | translate)"
               >
                 <mat-icon aria-hidden="true">search</mat-icon>
                 {{ 'BUSCADOR.BOTON_BUSCAR' | translate }}
@@ -364,11 +304,7 @@
                 mat-raised-button
                 class="btn_limpiar btn btn_bg"
                 (click)="limpiarBusqueda()"
-                [attr.aria-label]="
-                  ('BUSCADOR.BOTON_LIMPIAR' | translate) +
-                  '. ' +
-                  ('BUSCADOR.BOTON_LIMPIAR_ACCES' | translate)
-                "
+                [attr.aria-label]="('BUSCADOR.BOTON_LIMPIAR' | translate) + '. ' + ('BUSCADOR.BOTON_LIMPIAR_ACCES' | translate)"
               >
                 <i
                   class="fi fi-rs-clean"

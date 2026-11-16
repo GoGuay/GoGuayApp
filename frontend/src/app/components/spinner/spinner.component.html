@@ -59,5 +59,7 @@
       />
     </ellipse>
   </svg>
-  <p *ngIf="texto_spinner">{{ texto_spinner }}</p>
+  @if (texto_spinner) {
+    <p>{{ texto_spinner }}</p>
+  }
 </div>

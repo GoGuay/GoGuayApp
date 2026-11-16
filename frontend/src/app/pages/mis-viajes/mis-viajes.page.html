@@ -7,8 +7,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  @if (mostrarJumbotron) {
   <div
-    *ngIf="mostrarJumbotron"
     role="region"
     aria-label="Información principal"
   >
@@ -18,6 +18,7 @@
       [helpText]="'JUMBOTRON.HELP'"
     ></app-jumbotron>
   </div>
+  }
 
   <main
     class="container-fluid"
@@ -103,8 +104,8 @@
       </div>
     </fieldset>
 
+    @if (cargandoViajes) {
     <div
-      *ngIf="cargandoViajes"
       class="text-center py-5"
       aria-live="polite"
       aria-busy="true"
@@ -112,9 +113,8 @@
       <app-spinner></app-spinner>
       <span class="visually-hidden">Cargando la lista de viajes...</span>
     </div>
-
+    } @if (!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes') {
     <div
-      *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes !== 'solicitudes'"
       class="sin-viajes-container text-center"
       role="status"
       aria-live="polite"
@@ -126,9 +126,8 @@
         class="iconSinViajes"
       />
     </div>
-
+    } @if (!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes') {
     <div
-      *ngIf="!cargandoViajes && misViajes.length === 0 && filtroViajes === 'solicitudes'"
       class="sin-viajes-container text-center"
       role="status"
       aria-live="polite"
@@ -140,15 +139,15 @@
         alt="Ilustración que indica que no hay solicitudes pendientes"
       />
     </div>
-
+    } @if (!cargandoViajes && misViajes.length > 0) {
     <div
       class="columna_scroll"
-      *ngIf="!cargandoViajes && misViajes.length > 0"
       aria-label="Resultados de viajes"
     >
       <!--Contenedor del viaje con los detalles-->
       <tarjeta-viaje [viajesFiltrados]="misViajes"></tarjeta-viaje>
     </div>
+    }
 
     <p-toast position="bottom-center"></p-toast>
   </div>

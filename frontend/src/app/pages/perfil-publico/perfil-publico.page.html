@@ -1,150 +1,204 @@
-<app-navbar [origin]="urlParaVolver" [searchRoute]="'newTravel'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [origin]="urlParaVolver"
+  [searchRoute]="'newTravel'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
 <ion-content [fullscreen]="true">
-  <div class="container-fluid p-0 pb-5 animate__animated animate__fadeIn" *ngIf="!cargando && usuario">
-
+  @if (!cargando && usuario) {
+  <div class="container-fluid p-0 pb-5 animate__animated animate__fadeIn">
     <div class="profile-hero">
-      <div class="header-image-container" (click)="editar_perfil ? fileInputCabecera.click() : null">
-        <img [src]="usuario?.fotoCabecera || imagenCabeceraSrc" alt="Cabecera" class="img-cabecera" />
-        <div class="overlay-edit" *ngIf="editar_perfil">
+      <div
+        class="header-image-container"
+        (click)="editar_perfil ? fileInputCabecera.click() : null"
+      >
+        <img
+          [src]="usuario?.fotoCabecera || imagenCabeceraSrc"
+          alt="Cabecera"
+          class="img-cabecera"
+        />
+        @if (editar_perfil) {
+        <div class="overlay-edit">
           <i class="fi fi-rr-camera"></i>
         </div>
-        <input type="file" #fileInputCabecera accept="image/*" (change)="onImageChange($event, 'cabecera')"
-          style="display: none" />
+        }
+        <input
+          type="file"
+          #fileInputCabecera
+          accept="image/*"
+          (change)="onImageChange($event, 'cabecera')"
+          style="display: none"
+        />
       </div>
-
       <div class="profile-photo-container">
-        <div class="profile-img-wrapper" (click)="editar_perfil ? fileInputPerfil.click() : null">
-          <img [src]="usuario?.fotoPerfil || imagenPerfilSrc" alt="Perfil" class="perfil-img" />
-          <div class="overlay-edit-profile" *ngIf="editar_perfil">
+        <div
+          class="profile-img-wrapper"
+          (click)="editar_perfil ? fileInputPerfil.click() : null"
+        >
+          <img
+            [src]="usuario?.fotoPerfil || imagenPerfilSrc"
+            alt="Perfil"
+            class="perfil-img"
+          />
+          @if (editar_perfil) {
+          <div class="overlay-edit-profile">
             <i class="fi fi-rr-edit"></i>
           </div>
+          }
         </div>
-        <input type="file" #fileInputPerfil accept="image/*" (change)="onImageChange($event, 'perfil')"
-          style="display: none" />
+        <input
+          type="file"
+          #fileInputPerfil
+          accept="image/*"
+          (change)="onImageChange($event, 'perfil')"
+          style="display: none"
+        />
       </div>
     </div>
-
     <div class="container main-content-perfil">
       <div class="profile-card">
-        <div class="edit-button-container" *ngIf="editar_perfil">
-          <button class="btn-edit-profile" (click)="irAEditarPerfil()">
+        @if (editar_perfil) {
+        <div class="edit-button-container">
+          <button
+            class="btn-edit-profile"
+            (click)="irAEditarPerfil()"
+          >
             <i class="fi fi-rr-edit me-2"></i>
             Editar perfil
           </button>
         </div>
-
+        }
         <div class="text-center user-main-info">
           <h2 class="user-name">
-            {{usuario?.nombre}} {{usuario?.apellidos}}
-            <i class="fi fi-rr-badge-check verified-icon"
-              *ngIf="usuario?.emailVerificado && usuario?.telefonoVerificado"></i>
+            {{usuario?.nombre}} {{usuario?.apellidos}} @if (usuario?.emailVerificado && usuario?.telefonoVerificado) {
+            <i class="fi fi-rr-badge-check verified-icon"></i>
+            }
           </h2>
           <p class="user-score">
-            <i class="fi fi-rr-star star-icon"></i> {{usuario?.puntuaciones || 'Sin puntuaciones'}}
+            <i class="fi fi-rr-star star-icon"></i>
+            {{usuario?.puntuaciones || 'Sin puntuaciones'}}
           </p>
         </div>
-
         <div class="info-stats-grid">
           <div class="stat-item">
             <i class="fi fi-rr-shield-check"></i>
             <div class="stat-text">
               <small>Estado de cuenta</small>
-              <span [class.text-success]="usuario?.emailVerificado">
-                {{ usuario?.emailVerificado ? 'Verificado' : 'Pendiente' }}
-              </span>
+              <span [class.text-success]="usuario?.emailVerificado">{{ usuario?.emailVerificado ? 'Verificado' : 'Pendiente' }}</span>
             </div>
           </div>
-
           <div class="stat-item preferences-full-width">
             <i class="fi fi-rr-settings-sliders"></i>
             <div class="stat-text">
               <small>Preferencias de viaje</small>
-              <div class="chips-container" *ngIf="preferenciasViaje.length > 0">
-                <span class="custom-chip" *ngFor="let pref of preferenciasViaje">
-                  {{ pref }}
-                </span>
+              @if (preferenciasViaje.length > 0) {
+              <div class="chips-container">
+                @for (pref of preferenciasViaje; track pref) {
+                <span class="custom-chip">{{ pref }}</span>
+                }
               </div>
-              <span class="no-data" *ngIf="preferenciasViaje.length === 0">No definidas</span>
+              } @if (preferenciasViaje.length === 0) {
+              <span class="no-data">No definidas</span>
+              }
             </div>
           </div>
         </div>
-
         <hr class="separator" />
-
         <div class="bio-section">
-          <h3><i class="fi fi-rr-info me-2"></i>Sobre mí</h3>
+          <h3>
+            <i class="fi fi-rr-info me-2"></i>
+            Sobre mí
+          </h3>
           <div class="bio-content">
-            <p *ngIf="usuario?.biografia">{{usuario?.biografia}}</p>
-            <p *ngIf="!usuario?.biografia" class="text-muted italic">Este usuario prefiere mantener el misterio... aún
-              no hay biografía.</p>
+            @if (usuario?.biografia) {
+            <p>{{usuario?.biografia}}</p>
+            } @if (!usuario?.biografia) {
+            <p class="text-muted italic">Este usuario prefiere mantener el misterio... aún no hay biografía.</p>
+            }
           </div>
         </div>
-
         <hr class="separator" />
-
         <!-- SECCIÓN DE VALORACIONES Y COMENTARIOS -->
         <div class="reviews-section">
           <div class="d-flex align-items-center justify-content-between mb-3">
-            <h3><i class="fi fi-rr-comment-alt me-2"></i>Opiniones de viajeros</h3>
-            <span class="badge bg-purple rounded-pill px-3 py-2" *ngIf="valoraciones.length > 0">
+            <h3>
+              <i class="fi fi-rr-comment-alt me-2"></i>
+              Opiniones de viajeros
+            </h3>
+            @if (valoraciones.length > 0) {
+            <span class="badge bg-purple rounded-pill px-3 py-2">
               {{ valoraciones.length }} {{ valoraciones.length === 1 ? 'opinión' : 'opiniones' }}
             </span>
+            }
           </div>
-
           <!-- Lista de Opiniones en 2 columnas -->
-          <div class="reviews-grid" *ngIf="valoraciones.length > 0">
-            <div class="review-card p-3" *ngFor="let item of valoraciones">
+          @if (valoraciones.length > 0) {
+          <div class="reviews-grid">
+            @for (item of valoraciones; track item) {
+            <div class="review-card p-3">
               <!-- Cabecera de la reseña: Foto, Nombre, Fecha y Estrellas -->
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <div class="d-flex align-items-center gap-2">
-                  <img [src]="item.autorFoto" class="review-avatar" [alt]="item.autorNombre" />
+                  <img
+                    [src]="item.autorFoto"
+                    class="review-avatar"
+                    [alt]="item.autorNombre"
+                  />
                   <div>
                     <h6 class="mb-0 fw-bold">{{ item.autorNombre }}</h6>
                     <small class="text-muted">{{ item.fecha }}</small>
                   </div>
                 </div>
-
                 <!-- Estrellas -->
                 <div class="stars-rating text-warning">
-                  <i class="fi fi-sr-star" *ngFor="let star of [1,2,3,4,5]"
-                    [class.text-muted]="star > item.puntuacion"></i>
+                  @for (star of [1,2,3,4,5]; track star) {
+                  <i
+                    class="fi fi-sr-star"
+                    [class.text-muted]="star > item.puntuacion"
+                  ></i>
+                  }
                 </div>
               </div>
-
               <!-- Detalles del Viaje (Origen, Destino y Fecha) -->
-              <div class="trip-info-pill mb-2" *ngIf="item.origen && item.destino">
+              @if (item.origen && item.destino) {
+              <div class="trip-info-pill mb-2">
                 <div class="d-flex align-items-center gap-1">
                   <i class="fi fi-rr-marker text-primary pill-icon"></i>
                   <strong class="city-name">{{ item.origen }}</strong>
                   <i class="fi fi-rr-arrow-right pill-arrow"></i>
                   <strong class="city-name">{{ item.destino }}</strong>
                 </div>
-                <span class="ms-auto text-muted small trip-date" *ngIf="item.fechaViaje">({{ item.fechaViaje }})</span>
+                @if (item.fechaViaje) {
+                <span class="ms-auto text-muted small trip-date">({{ item.fechaViaje }})</span>
+                }
               </div>
-
+              }
               <!-- Texto del Comentario -->
-              <p class="review-text mb-0" *ngIf="item.comentario">{{ item.comentario }}</p>
-              <p class="review-text mb-0 text-muted italic small" *ngIf="!item.comentario">Sin comentario escrito.</p>
+              @if (item.comentario) {
+              <p class="review-text mb-0">{{ item.comentario }}</p>
+              } @if (!item.comentario) {
+              <p class="review-text mb-0 text-muted italic small">Sin comentario escrito.</p>
+              }
             </div>
+            }
           </div>
-
+          }
           <!-- Estado vacío -->
-          <div class="bio-content text-center py-4" *ngIf="valoraciones.length === 0">
+          @if (valoraciones.length === 0) {
+          <div class="bio-content text-center py-4">
             <p class="text-muted italic mb-0">Este usuario aún no ha recibido opiniones de otros viajeros.</p>
           </div>
+          }
         </div>
-
       </div>
     </div>
-
   </div>
-
-  <div class="overlay-loading" *ngIf="cargando">
+  } @if (cargando) {
+  <div class="overlay-loading">
     <div class="spinner-wrapper">
       <app-spinner></app-spinner>
       <p class="loading-text">Cargando perfil de GoGuay...</p>
     </div>
   </div>
-
+  }
 </ion-content>

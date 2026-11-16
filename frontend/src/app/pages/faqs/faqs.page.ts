@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { VentanaDudasComponent } from "../../components/ventana-dudas/ventana-dudas.component";
+import { VentanaDudasComponent } from '../../components/ventana-dudas/ventana-dudas.component';
 
 @Component({
   selector: 'app-faqs',
@@ -16,7 +16,6 @@ import { VentanaDudasComponent } from "../../components/ventana-dudas/ventana-du
   styleUrls: ['./faqs.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatIconModule,
     IonicModule,
@@ -24,7 +23,7 @@ import { VentanaDudasComponent } from "../../components/ventana-dudas/ventana-du
     RouterModule,
     JumbotronComponent,
     NavbarComponent,
-    VentanaDudasComponent
+    VentanaDudasComponent,
   ],
 })
 export class FaqsPage implements OnInit {
@@ -32,16 +31,12 @@ export class FaqsPage implements OnInit {
   userData: Usuario = {} as Usuario;
   mostrarJumbotron = true;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.loadJumbotronSetting();
-    if (
-      this.userData &&
-      Object.keys(this.userData).length > 0 &&
-      this.userData.usuario.email
-    ) {
+    if (this.userData && Object.keys(this.userData).length > 0 && this.userData.usuario.email) {
       this.userLoggedIn = true;
     } else {
       this.userLoggedIn = false;

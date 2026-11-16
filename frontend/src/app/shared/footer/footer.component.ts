@@ -6,22 +6,22 @@ import { TerminosComponent } from '../../components/terminos/terminos.component'
 import { CookiesComponent } from '../../components/cookies/cookies.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { OnboardingModalComponent } from 'src/app/components/onboarding/onboarding-modal.component';
-import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-footer',
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [CommonModule, IonicModule, MatIconModule, TranslateModule],
+  imports: [IonicModule, MatIconModule, TranslateModule],
 })
 export class FooterComponent implements OnInit {
-
   dialog = inject(MatDialog);
   isAdmin: boolean = false;
 
-  constructor(private navCtrl: NavController, private modalController: ModalController) { }
+  constructor(
+    private navCtrl: NavController,
+    private modalController: ModalController
+  ) {}
 
   ngOnInit() {
     this.comprobarRolAdmin();
@@ -33,7 +33,7 @@ export class FooterComponent implements OnInit {
       if (userDataString) {
         const userData = JSON.parse(userDataString);
         const rol = userData?.rolPerfil || userData?.usuario?.rolPerfil;
-        this.isAdmin = (rol === 'admin');
+        this.isAdmin = rol === 'admin';
       } else {
         this.isAdmin = false;
       }
@@ -75,7 +75,7 @@ export class FooterComponent implements OnInit {
       component: OnboardingModalComponent,
       cssClass: 'modal-qr-verificacion',
       breakpoints: [0, 0.7],
-      initialBreakpoint: 0.7
+      initialBreakpoint: 0.7,
     });
     await modal.present();
   }

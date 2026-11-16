@@ -11,7 +11,7 @@ import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
 import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { BuscadorViajeHomeComponent } from '../components/buscador_viaje_home/buscador_viaje_home.component';
-import { CommonModule } from '@angular/common';
+
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
 import { UserServicesService } from '../core/user-services/user-services.service';
 import { Usuario } from '../models/user/usuario.model';
@@ -43,7 +43,6 @@ import { OnboardingModalComponent } from '../components/onboarding/onboarding-mo
     AnimateOnScrollModule,
     NavbarComponent,
     BuscadorViajeHomeComponent,
-    CommonModule,
     ViajesRecomendadosIaComponent,
     ToastModule,
     QrVerificacionComponent,
@@ -101,7 +100,7 @@ export class HomePage implements OnInit {
             summary: 'Cuenta eliminada',
             detail: 'Tu cuenta se ha eliminado correctamente',
           });
-        },50);
+        }, 50);
 
         this.router.navigate([], {
           queryParams: { cuentaEliminada: null },

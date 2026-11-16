@@ -1,8 +1,14 @@
-<app-navbar [backRoute]="'/home'" [searchRoute]="'search'" [isLoggedIn]="userLoggedIn"></app-navbar>
+<app-navbar
+  [backRoute]="'/home'"
+  [searchRoute]="'search'"
+  [isLoggedIn]="userLoggedIn"
+></app-navbar>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content
+  [fullscreen]="true"
+  class="ion-padding"
+>
   <div class="main-wrapper">
-    
     <div class="container contact-container">
       <div class="text-center mb-4">
         <h1 class="title-page">CENTRO DE CONTACTO</h1>
@@ -15,21 +21,29 @@
           <div>
             <p class="m-0">Rellena los campos para contactar con el equipo de GoGuay.</p>
             <p class="security-text">
-              <strong>Aviso de seguridad:</strong> Por favor, no incluyas contraseñas, datos bancarios o información sensible que pueda comprometerte.
+              <strong>Aviso de seguridad:</strong>
+              Por favor, no incluyas contraseñas, datos bancarios o información sensible que pueda comprometerte.
             </p>
           </div>
         </div>
       </div>
 
       <div class="form-card mt-4">
-        <form [formGroup]="contactoForm" (ngSubmit)="enviarFormulario()">
-          
+        <form
+          [formGroup]="contactoForm"
+          (ngSubmit)="enviarFormulario()"
+        >
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Nombre completo</label>
               <div class="input-wrapper">
                 <i class="fi fi-rr-user input-icon"></i>
-                <input type="text" formControlName="nombre" class="form-control" placeholder="Tu nombre...">
+                <input
+                  type="text"
+                  formControlName="nombre"
+                  class="form-control"
+                  placeholder="Tu nombre..."
+                />
               </div>
             </div>
 
@@ -37,36 +51,66 @@
               <label class="form-label">Email de respuesta</label>
               <div class="input-wrapper">
                 <i class="fi fi-rr-envelope input-icon"></i>
-                <input type="email" formControlName="email" class="form-control" placeholder="name@example.com">
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="form-control"
+                  placeholder="name@example.com"
+                />
               </div>
             </div>
           </div>
 
           <div class="mb-3">
-            <label for="asunto-contacto" class="form-label">¿En qué podemos ayudarte?</label>
+            <label
+              for="asunto-contacto"
+              class="form-label"
+            >
+              ¿En qué podemos ayudarte?
+            </label>
             <div class="input-wrapper">
-              <i class="fi fi-rr-interrogation input-icon" aria-hidden="true"></i>
-              <input id="asunto-contacto" 
-                    type="text" 
-                    formControlName="asunto" 
-                    class="form-control" 
-                    placeholder="Asunto del mensaje">
+              <i
+                class="fi fi-rr-interrogation input-icon"
+                aria-hidden="true"
+              ></i>
+              <input
+                id="asunto-contacto"
+                type="text"
+                formControlName="asunto"
+                class="form-control"
+                placeholder="Asunto del mensaje"
+              />
             </div>
           </div>
 
           <div class="mb-3">
-            <label for="mensaje-contacto" class="form-label">Tu mensaje</label>
-            <textarea id="mensaje-contacto" 
-                      class="form-control" 
-                      formControlName="mensaje" 
-                      rows="5" 
-                      placeholder="Escribe aquí tu mensaje. Por favor, cuida tu lenguaje. 🤗"></textarea>
+            <label
+              for="mensaje-contacto"
+              class="form-label"
+            >
+              Tu mensaje
+            </label>
+            <textarea
+              id="mensaje-contacto"
+              class="form-control"
+              formControlName="mensaje"
+              rows="5"
+              placeholder="Escribe aquí tu mensaje. Por favor, cuida tu lenguaje. 🤗"
+            ></textarea>
           </div>
 
           <div class="d-flex justify-content-end mt-4">
-            <button type="submit" mat-raised-button class="btn-send" [disabled]="cargando">
-              <span *ngIf="!cargando">Enviar mensaje</span>
-              <ion-spinner name="crescent" *ngIf="cargando"></ion-spinner>
+            <button
+              type="submit"
+              mat-raised-button
+              class="btn-send"
+              [disabled]="cargando"
+            >
+              @if (!cargando) {
+              <span>Enviar mensaje</span>
+              } @if (cargando) {
+              <ion-spinner name="crescent"></ion-spinner>
+              }
             </button>
           </div>
         </form>

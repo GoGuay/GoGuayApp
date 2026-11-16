@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,14 +14,7 @@ import { SelectorGeneralComponent } from 'src/app/components/selector-general/se
 @Component({
   selector: 'app-segundo-paso',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    MatButtonModule,
-    SpinnerComponent,
-    SelectorGeneralComponent,
-  ],
+  imports: [FormsModule, TranslateModule, MatButtonModule, SpinnerComponent, SelectorGeneralComponent],
   templateUrl: './segundo-paso.component.html',
   styleUrls: ['./segundo-paso.component.scss'],
 })
@@ -65,11 +57,7 @@ export class SegundoPasoComponent implements OnInit {
             return of(this.cacheConsultas[termino]);
           }
           if (texto.length >= 3) {
-            return this.googleService
-              .obtenerLocalidad(texto)
-              .pipe(
-                tap((resultados) => (this.cacheConsultas[termino] = resultados))
-              );
+            return this.googleService.obtenerLocalidad(texto).pipe(tap((resultados) => (this.cacheConsultas[termino] = resultados)));
           } else {
             this.sugerenciasOrigen = [];
             return of([]);
@@ -138,7 +126,7 @@ export class SegundoPasoComponent implements OnInit {
   }
 
   seleccionarLocalidadOrigen(localidad: any) {
-    const nombreOrigen = typeof localidad === 'string' ? localidad : (localidad?.descripcion?.split(',')[0]?.trim() || '');
+    const nombreOrigen = typeof localidad === 'string' ? localidad : localidad?.descripcion?.split(',')[0]?.trim() || '';
     this.origen = nombreOrigen;
 
     const viajeData = {
@@ -149,7 +137,7 @@ export class SegundoPasoComponent implements OnInit {
   }
 
   seleccionarLocalidadDestino(localidad: any) {
-    const nombreDestino = typeof localidad === 'string' ? localidad : (localidad?.descripcion?.split(',')[0]?.trim() || '');
+    const nombreDestino = typeof localidad === 'string' ? localidad : localidad?.descripcion?.split(',')[0]?.trim() || '';
     this.destino = nombreDestino;
 
     const viajeData = {
@@ -173,11 +161,7 @@ export class SegundoPasoComponent implements OnInit {
             .then((response) => response.json())
             .then((data) => {
               if (data && data.address) {
-                let city =
-                  data.address.city ||
-                  data.address.town ||
-                  data.address.village ||
-                  '';
+                let city = data.address.city || data.address.town || data.address.village || '';
                 if (city) {
                   this.origen = city;
                   const viajeData = {
@@ -189,9 +173,7 @@ export class SegundoPasoComponent implements OnInit {
                 }
               }
             })
-            .catch((error) =>
-              console.error('Error al obtener la ubicación con Leaflet:', error)
-            );
+            .catch((error) => console.error('Error al obtener la ubicación con Leaflet:', error));
         },
         (error) => {
           console.error('Error de geolocalización:', error.message);

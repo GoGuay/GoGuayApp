@@ -1,19 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  OnDestroy,
-  OnInit,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -34,17 +21,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-viaje-seleccionado',
   standalone: true,
-  imports: [
-    MatDivider,
-    MatIcon,
-    MatDialogContent,
-    MatDialogActions,
-    MatButtonModule,
-    CommonModule,
-    MatAccordion,
-    MatExpansionModule,
-    MatFormFieldModule,
-  ],
+  imports: [MatDivider, MatIcon, MatDialogContent, MatDialogActions, MatButtonModule, MatAccordion, MatExpansionModule, MatFormFieldModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
   templateUrl: './viaje-seleccionado.component.html',
@@ -71,11 +48,9 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private cdRef: ChangeDetectorRef,
     private messagingService: MessagingService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
-    this.preferencias = this.funcionesComunes.validacionPreferencias(
-      this.data.viaje.preferencias ?? [],
-    );
+    this.preferencias = this.funcionesComunes.validacionPreferencias(this.data.viaje.preferencias ?? []);
     this.viaje = {
       ...this.data.viaje,
       acompanantes: this.data.viaje.acompanantes || [],
@@ -118,23 +93,20 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    *
    */
   obtenerUsuarioActual() {
-    this.usersService
-      .obtenerUsuarioPorID_busqueda_viajes(this.data.viaje.usuario_id)
-      .subscribe({
-        next: (usuario) => {
-          this.viaje = { ...this.viaje, usuario: usuario };
-          this.userID = usuario.id;
+    this.usersService.obtenerUsuarioPorID_busqueda_viajes(this.data.viaje.usuario_id).subscribe({
+      next: (usuario) => {
+        this.viaje = { ...this.viaje, usuario: usuario };
+        this.userID = usuario.id;
 
-          if (this.userData && this.userData.usuario) {
-            this.verificarSiEstaUnido();
-          }
+        if (this.userData && this.userData.usuario) {
+          this.verificarSiEstaUnido();
+        }
 
-          this.cdRef.markForCheck();
-          this.cdRef.detectChanges();
-        },
-        error: (error) =>
-          console.error('Error al obtener el conductor:', error),
-      });
+        this.cdRef.markForCheck();
+        this.cdRef.detectChanges();
+      },
+      error: (error) => console.error('Error al obtener el conductor:', error),
+    });
   }
 
   /**
@@ -142,20 +114,16 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    *
    */
   obtenerViajesActualizados() {
-    this.viajesSubscription = this.travelService.viajeData$.subscribe(
-      (viajes) => {
-        if (viajes && Array.isArray(viajes)) {
-          const viajeActualizado = viajes.find(
-            (v: Viaje) => v.id === this.viaje.id,
-          );
-          if (viajeActualizado) {
-            // ASIGNACIÓN DE NUEVA REFERENCIA (CRÍTICO PARA OnPush)
-            this.viaje = { ...viajeActualizado };
-            this.cdRef.markForCheck();
-          }
+    this.viajesSubscription = this.travelService.viajeData$.subscribe((viajes) => {
+      if (viajes && Array.isArray(viajes)) {
+        const viajeActualizado = viajes.find((v: Viaje) => v.id === this.viaje.id);
+        if (viajeActualizado) {
+          // ASIGNACIÓN DE NUEVA REFERENCIA (CRÍTICO PARA OnPush)
+          this.viaje = { ...viajeActualizado };
+          this.cdRef.markForCheck();
         }
-      },
-    );
+      }
+    });
   }
 
   /**
@@ -175,15 +143,11 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
         this.viaje = { ...viajeServer };
         if (!this.viaje.usuario) this.viaje.usuario = usuarioTemporal;
 
-        this.yaUnido =
-          this.viaje.acompanantes?.some((a: any) => a.id === usuarioId) ||
-          false;
+        this.yaUnido = this.viaje.acompanantes?.some((a: any) => a.id === usuarioId) || false;
         this.cdRef.markForCheck();
       },
     });
   }
-
-
 
   /**
    * Función para enviar una solicitud manual al conductor del viaje.
@@ -206,10 +170,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
 
         this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
           this.closeDialog();
-          this.funcionesComunes.openConfirmModal(
-            'Solicitud enviada',
-            'El conductor debe aceptar tu solicitud para unirte.',
-          );
+          this.funcionesComunes.openConfirmModal('Solicitud enviada', 'El conductor debe aceptar tu solicitud para unirte.');
           this.navCtrl.navigateForward(['/chat', convId]);
         });
       },
@@ -255,7 +216,6 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     return date.split('T')[0].trim();
   }
 
-  
   /**
    * Función para comprobar si el pasajero ya ha avisado de su llegada al punto de encuentro.
    * Esto se hace para mostrar u ocultar el botón de "Avisar llegada" en función de si el pasajero ya ha avisado o no.
@@ -264,9 +224,7 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
    */
   checkSiYaAvisoLlegada() {
     if (this.yaUnido && this.userData?.usuario) {
-      const yo = this.viaje.acompanantes?.find(
-        (a: any) => a.id === this.userData?.usuario.id,
-      );
+      const yo = this.viaje.acompanantes?.find((a: any) => a.id === this.userData?.usuario.id);
       this.pasajeroYaAvisoLlegada = yo?.ha_llegado || false;
     }
   }
@@ -283,22 +241,20 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
     const viajeId = this.viaje.id;
     const usuarioId = this.userData.usuario.id;
 
-    this.travelService
-      .notificarLlegadaPuntoPartida(viajeId, usuarioId)
-      .subscribe({
-        next: () => {
-          this.pasajeroYaAvisoLlegada = true;
-          this.cdRef.detectChanges();
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, usuarioId).subscribe({
+      next: () => {
+        this.pasajeroYaAvisoLlegada = true;
+        this.cdRef.detectChanges();
 
-          this.funcionesComunes.openConfirmModal(
-            '¡Aviso enviado!',
-            'El conductor ha sido notificado de que ya estás en el punto de encuentro.',
-          );
+        this.funcionesComunes.openConfirmModal(
+          '¡Aviso enviado!',
+          'El conductor ha sido notificado de que ya estás en el punto de encuentro.'
+        );
 
-          this.verificarSiEstaUnido();
-        },
-        error: (err) => console.error('Error al notificar llegada:', err),
-      });
+        this.verificarSiEstaUnido();
+      },
+      error: (err) => console.error('Error al notificar llegada:', err),
+    });
   }
 
   /**
@@ -311,29 +267,25 @@ export class ViajeSeleccionadoComponent implements OnInit, OnDestroy {
   confirmarLlegadaDesdeConductor(acompId: number) {
     const viajeId = this.viaje.id;
 
-    this.travelService
-      .notificarLlegadaPuntoPartida(viajeId, acompId)
-      .subscribe({
-        next: () => {
-          const acompanante = this.viaje.acompanantes?.find(
-            (acompanante: any) => acompanante.id === acompId,
-          );
-          if (acompanante) {
-            acompanante.ha_llegado = true;
-          }
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, acompId).subscribe({
+      next: () => {
+        const acompanante = this.viaje.acompanantes?.find((acompanante: any) => acompanante.id === acompId);
+        if (acompanante) {
+          acompanante.ha_llegado = true;
+        }
 
-          this.cdRef.detectChanges();
+        this.cdRef.detectChanges();
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Llegada confirmada',
-            detail: `Has marcado que el acompañante ha llegado correctamente.`,
-            life: 2000,
-          });
-        },
-        error: (err) => {
-          console.error('Error al confirmar llegada desde conductor:', err);
-        },
-      });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Llegada confirmada',
+          detail: `Has marcado que el acompañante ha llegado correctamente.`,
+          life: 2000,
+        });
+      },
+      error: (err) => {
+        console.error('Error al confirmar llegada desde conductor:', err);
+      },
+    });
   }
 }

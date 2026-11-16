@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
@@ -15,19 +15,15 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './centro-ayuda.page.html',
   styleUrls: ['./centro-ayuda.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, TranslateModule]
+  imports: [FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, TranslateModule],
 })
 export class CentroAyudaPage implements OnInit {
-
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
 
-  constructor() {
-
-  }
+  constructor() {}
 
   ngOnInit() {
-
     /**
      * Se recoge la información del usuario de la caché si la hay,
      * en caso de no haber información, userData sería un objeto vacío {}.
@@ -36,7 +32,7 @@ export class CentroAyudaPage implements OnInit {
     /**
      * Se comprueba el contenido de "userData", si contiene información y adeás hay datos
      * en el atributo "email" de "userData" entonces "userLoggedIn" pasaría a tener el valor "true".
-     * 
+     *
      * Si "userLoggedIn" tiene el valor "true" esto significa que el usuario está logado correctamente.
      * En el caso contrario, su valor sería "false".
      */
