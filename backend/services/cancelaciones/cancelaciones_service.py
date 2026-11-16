@@ -55,9 +55,9 @@ def calcular_peso_cancelacion(viaje, fecha_cancelacion, rol, reserva=None, tipo_
 
 def calcular_y_registrar_cancelacion(usuario, viaje, rol, peso_falta, motivo):
     if rol == 'CONDUCTOR':
-        operaciones_previas = sum(1 for v in usuario.viajes_publicados if v.reservas_confirmadas)
+        operaciones_previas = sum(1 for v in usuario.viajes_publicados if v.acompanantes)
     else:
-        operaciones_previas = len(usuario.reservas_realizadas)
+        operaciones_previas = len(usuario.acompanantes)
     
     puntos_a_sumar = peso_falta
     es_periodo_gracia = operaciones_previas < 4
@@ -76,7 +76,7 @@ def calcular_y_registrar_cancelacion(usuario, viaje, rol, peso_falta, motivo):
     
     datos_afectado = None
     if rol == 'CONDUCTOR':
-        datos_afectado = [{"id": r.pasajero_id} for r in viaje.reservas_confirmadas]
+        datos_afectado = [{"id": r.usuario_id} for r in viaje.acompanantes]
     elif rol == 'PASAJERO':
         datos_afectado = {
             "conductor_id": viaje.usuario_id,

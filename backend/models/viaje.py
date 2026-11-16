@@ -35,7 +35,10 @@ class Viaje(db.Model):
         if not user_id: return None
         relacion = next((p for p in self.pasajeros if p.usuario_id == user_id), None)
         return relacion.estado if relacion else None
-
+    @property
+    def acompanantes(self):
+        return [p for p in self.pasajeros if p.estado == 'aceptado']
+    
     def serialize(self, current_user_id=None):
         ya_puntuado = False
         if current_user_id:

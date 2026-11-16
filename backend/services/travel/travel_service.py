@@ -9,6 +9,7 @@ import requests
 from datetime import datetime, timezone, timedelta
 from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor, EstadoSolicitudEnum
 from services.cancelaciones import calcular_y_registrar_cancelacion, calcular_peso_cancelacion
+from services.gestion_pagos import reembolsar_pago_al_pasajero
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
 from sqlalchemy.orm import joinedload 
@@ -329,6 +330,30 @@ def obtener_viaje_por_id(viaje_id):
 
     return jsonify(viaje.serialize()), 200
 
+
+
+def procesar_reembolso_al_pasajero(viaje):
+    resultados_devoluciones = []
+
+    for reserva in viaje.acompanantes:
+        resultado = reembolsar_pago_al_pasajero(
+            pasajero_viaje=reserva,
+            importe=viaje.precio_viaje,
+            motivo=f"Viaje {viaje.origen} - {viaje.destino} cancelado por el conductor"
+        )
+        if not resultado["exito"]:
+            raise Exception(f"Fallo al reembolsar al usuario {reserva.usuario_id}: {resultado['error']}")
+        
+        reserva.estado = EstadoSolicitudEnum.CANCELADA.value
+        resultados_devoluciones.append({
+            "usuario_id": reserva.usuario_id,
+            "tipo_operacion": resultado["tipo"],
+            "referencia_devolucion": resultado["referencia"],
+            "importe_devuelto": viaje.precio_viaje
+        })
+        return resultados_devoluciones
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA CANCELAR  UN VIAJE POR PARTE DEL CONDUCTOR
 #    El viaje ha sido creado por un conductor y es cancelado por el mismo conductor cuando tiene reservas ya confirmadas
@@ -363,48 +388,57 @@ def cancelar_viaje(viaje_id):
     usuario_conductor = Usuario.query.get(usuario_actual_id)
 
     tipo_aceptacion = getattr(viaje, 'tipo_aceptacion', 'AUTOMATICA')
+    try:    
+        peso_falta = calcular_peso_cancelacion(
+            viaje=viaje,
+            fecha_cancelacion=ahora,
+            rol='CONDUCTOR',
+            tipo_aceptacion=tipo_aceptacion
+        )
 
-    peso_falta = calcular_peso_cancelacion(
-        viaje=viaje,
-        fecha_cancelacion=ahora,
-        rol='CONDUCTOR',
-        tipo_aceptacion=tipo_aceptacion
-    )
+        puntos_aplicados = calcular_y_registrar_cancelacion(
+            usuario=usuario_conductor,
+            viaje=viaje,
+            rol='CONDUCTOR',
+            peso_falta=peso_falta,
+            motivo=motivo
+        )
+        devoluciones = procesar_reembolso_al_pasajero(viaje)
 
-    puntos_aplicados = calcular_y_registrar_cancelacion(
-        usuario=usuario_conductor,
-        viaje=viaje,
-        rol='CONDUCTOR',
-        peso_falta=peso_falta,
-        motivo=motivo
-    )
-    ids_pasajeros_afectados = []
-    for pasajero in viaje.pasajeros:
-        if pasajero.estado == EstadoSolicitudEnum.ACEPTADA.value:
-            ids_pasajeros_afectados.append(pasajero.usuario_id)
-            mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
+        ids_pasajeros_afectados = []
+        for pasajero in viaje.pasajeros:
+            if pasajero.estado == EstadoSolicitudEnum.ACEPTADA.value:
+                ids_pasajeros_afectados.append(pasajero.usuario_id)
+                mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
 
-            notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
-            db.session.add(notif_db)
+                notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
+                db.session.add(notif_db)
 
-            enviar_notificacion_push(
-                usuario_id=pasajero.usuario_id,
-                titulo="Viaje cancelado por el conductor",
-                cuerpo=mensaje_cancelacion,
-                data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
-            )
+                enviar_notificacion_push(
+                    usuario_id=pasajero.usuario_id,
+                    titulo="Viaje cancelado por el conductor",
+                    cuerpo=mensaje_cancelacion,
+                    data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
+                )
 
-            pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
-        elif pasajero.estado == EstadoSolicitudEnum.pendiente.value:
-            pasajero.estado = EstadoSolicitudEnum.RECHAZADA.value
+                pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
+            elif pasajero.estado == EstadoSolicitudEnum.PENDIENTE.value:
+                pasajero.estado = EstadoSolicitudEnum.RECHAZADA.value
 
-    viaje.estado_viaje = 'Cancelado'
+        viaje.estado_viaje = 'Cancelado'
+        nombre_completo = f"{usuario_conductor.nombre} {usuario_conductor.apellidos}"
+        mensaje_salida = f"El conductor {nombre_completo} ha cancelado el viaje a {viaje.destino}. Motivo: {motivo}"
+        
+        notificacion = Notificacion(usuario_id=usuario_conductor.id, viaje_id=viaje_id, mensaje=mensaje_salida)
+        db.session.add(notificacion)
 
-    try:
+    
         db.session.commit()
+
         return jsonify({
             "mensaje": "Viaje cancelado correctamente, penalización aplicada y pasajeros notificados.",
-            "puntos_penalizacion_aplicados": puntos_aplicados
+            "puntos_penalizacion_aplicados": puntos_aplicados, 
+            "devoluciones": devoluciones
         }), 200
     except Exception as e:
         db.session.rollback()
