@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -11,6 +11,7 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
   templateUrl: './decalogo.page.html',
   styleUrls: ['./decalogo.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonicModule, FormsModule, NavbarComponent, JumbotronComponent],
 })
 export class DecalogoPage implements OnInit {

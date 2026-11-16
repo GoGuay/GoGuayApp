@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonRow, IonCol, IonGrid } from '@ionic/angular/standalone';
@@ -29,6 +29,7 @@ import { ToastModule } from 'primeng/toast';
     ReactiveFormsModule,
     ToastModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class DatosContactoPage implements OnInit {

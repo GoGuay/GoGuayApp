@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './token-ya-usado.page.html',
   styleUrls: ['./token-ya-usado.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, FormsModule, NavbarComponent, TranslateModule],
 })
 export class TokenYaUsadoPage implements OnInit {

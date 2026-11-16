@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NavController } from '@ionic/angular';
@@ -25,6 +25,7 @@ import { TravelService } from '../../../../../core/travel-services/travel.servic
   ],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './cuarto-paso.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./cuarto-paso.component.scss'],
 })
 export class CuartoPasoComponent implements OnInit {

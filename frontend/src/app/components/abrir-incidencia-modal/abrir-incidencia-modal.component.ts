@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -19,6 +19,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
   templateUrl: './abrir-incidencia-modal.component.html',
   styleUrls: ['./abrir-incidencia-modal.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, IonicModule, TranslateModule, SpinnerComponent],
 })
 export class AbrirIncidenciaModalComponent implements OnInit {

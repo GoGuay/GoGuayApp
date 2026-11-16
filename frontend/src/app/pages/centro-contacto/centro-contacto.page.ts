@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
   styleUrls: ['./centro-contacto.page.scss'],
   standalone: true,
   imports: [IonicModule, FormsModule, ReactiveFormsModule, NavbarComponent, MatDividerModule, MatButtonModule, ToastModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class CentroContactoPage implements OnInit {

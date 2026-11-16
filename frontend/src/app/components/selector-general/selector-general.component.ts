@@ -11,6 +11,7 @@ import {
   HostListener,
   SimpleChanges,
   OnChanges,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -22,6 +23,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   templateUrl: './selector-general.component.html',
   styleUrls: ['./selector-general.component.scss'],
   imports: [TranslateModule, MatTooltipModule, IonicModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

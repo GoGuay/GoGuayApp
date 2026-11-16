@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ const EMAIL_REGEX =
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, MatIconModule, TranslateModule, ContratoRegistroComponent],
   templateUrl: './resumen-registro.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './resumen-registro.component.scss',
 })
 export class ResumenRegistroComponent implements OnInit {

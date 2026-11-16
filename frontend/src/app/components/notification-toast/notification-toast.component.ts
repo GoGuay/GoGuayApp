@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  ChangeDetectorRef,
-  Input,
-} from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ChangeDetectorRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificacionesService } from '../../core/notificaciones/notificaciones.service';
@@ -19,6 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './notification-toast.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./notification-toast.component.scss'],
 })
 export class NotificationToastComponent implements OnInit, OnDestroy {
@@ -36,7 +30,7 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
     private notificationService: NotificacionesService,
     private cdr: ChangeDetectorRef,
     private userService: UserServicesService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -51,11 +45,7 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
     const datosDelUsuario = localStorage.getItem('userData');
 
     // 1. Validar que exista y que no sea la cadena "undefined" ni "null"
-    if (
-      !datosDelUsuario ||
-      datosDelUsuario === 'undefined' ||
-      datosDelUsuario === 'null'
-    ) {
+    if (!datosDelUsuario || datosDelUsuario === 'undefined' || datosDelUsuario === 'null') {
       return;
     }
 
@@ -76,30 +66,23 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
   }
 
   private suscribirANuevasNotificaciones() {
-    this.toastSub = this.notificationService.toast$.subscribe(
-      (nuevasToasts) => {
-        const cerradas = this.obtenerNotificacionesCerradas();
-        nuevasToasts.forEach((toast) => {
-          if (
-            !cerradas.includes(toast.id) &&
-            !this.toasts.find((t) => t.id === toast.id)
-          ) {
-            this.toasts.push(toast);
-            this.iniciarTemporizador(toast);
-          }
-        });
-        this.cdr.detectChanges();
-      },
-    );
+    this.toastSub = this.notificationService.toast$.subscribe((nuevasToasts) => {
+      const cerradas = this.obtenerNotificacionesCerradas();
+      nuevasToasts.forEach((toast) => {
+        if (!cerradas.includes(toast.id) && !this.toasts.find((t) => t.id === toast.id)) {
+          this.toasts.push(toast);
+          this.iniciarTemporizador(toast);
+        }
+      });
+      this.cdr.detectChanges();
+    });
   }
 
   private cargarNotificacionesIniciales(userId: number) {
     this.notificationService.obtenerNotificaciones(userId).subscribe({
       next: (notificaciones) => {
         const cerradas = this.obtenerNotificacionesCerradas();
-        const noLeidas = notificaciones.filter(
-          (n: any) => !n.leida && !cerradas.includes(n.id),
-        );
+        const noLeidas = notificaciones.filter((n: any) => !n.leida && !cerradas.includes(n.id));
 
         noLeidas.forEach((n: any) =>
           this.notificationService.mostrarToast({
@@ -107,11 +90,10 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
             type: 'info',
             mensaje: n.mensaje,
             leida: false,
-          }),
+          })
         );
       },
-      error: (err) =>
-        console.error('Error al cargar notificaciones iniciales:', err),
+      error: (err) => console.error('Error al cargar notificaciones iniciales:', err),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
@@ -33,6 +33,7 @@ interface RutaExtendida {
     MatProgressSpinnerModule,
   ],
   templateUrl: './tercer-paso.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tercer-paso.component.scss'],
 })
 export class TercerPasoComponent implements OnInit, AfterViewInit, OnDestroy {

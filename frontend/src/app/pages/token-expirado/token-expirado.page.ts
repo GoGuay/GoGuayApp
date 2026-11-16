@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonGrid, IonRow } from '@ionic/angular/standalone';
@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './token-expirado.page.html',
   styleUrls: ['./token-expirado.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, FormsModule, NavbarComponent, TranslateModule],
 })
 export class TokenExpiradoPage implements OnInit {

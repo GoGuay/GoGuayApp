@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { 
-  warningOutline, 
-  searchOutline, 
-  filterOutline, 
-  chatbubbleEllipsesOutline, 
-  checkmarkCircleOutline, 
-  closeCircleOutline, 
-  timeOutline, 
-  personOutline, 
+import {
+  warningOutline,
+  searchOutline,
+  filterOutline,
+  chatbubbleEllipsesOutline,
+  checkmarkCircleOutline,
+  closeCircleOutline,
+  timeOutline,
+  personOutline,
   arrowBackOutline,
-  alertCircleOutline
+  alertCircleOutline,
 } from 'ionicons/icons';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
 import { IncidenciasService, EstadoIncidencia } from 'src/app/core/incidencias-service/incidencias-service.service';
@@ -43,7 +43,8 @@ export interface IncidenciaAdmin {
   templateUrl: './incidencias-admin.page.html',
   styleUrls: ['./incidencias-admin.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
 })
 export class IncidenciasAdminPage implements OnInit {
   filtroEstado: string = 'todas';
@@ -70,7 +71,7 @@ export class IncidenciasAdminPage implements OnInit {
       timeOutline,
       personOutline,
       arrowBackOutline,
-      alertCircleOutline
+      alertCircleOutline,
     });
   }
 
@@ -89,16 +90,17 @@ export class IncidenciasAdminPage implements OnInit {
       error: (err) => {
         console.error('Error al obtener incidencias globales:', err);
         this.cargando = false;
-      }
+      },
     });
   }
 
   aplicarFiltros() {
-    this.incidenciasFiltradas = this.listaIncidencias.filter(item => {
+    this.incidenciasFiltradas = this.listaIncidencias.filter((item) => {
       const coincideEstado = this.filtroEstado === 'todas' || item.estado.toLowerCase() === this.filtroEstado.toLowerCase();
       const q = this.busquedaQuery.toLowerCase().trim();
-      
-      const coincideBusqueda = !q || 
+
+      const coincideBusqueda =
+        !q ||
         item.id.toString().includes(q) ||
         item.resumen.toLowerCase().includes(q) ||
         item.descripcion.toLowerCase().includes(q) ||
@@ -123,24 +125,21 @@ export class IncidenciasAdminPage implements OnInit {
     if (!this.incidenciaSeleccionada) return;
 
     this.guardando = true;
-    this.incidenciasService.cambiarEstadoIncidencia(
-      this.incidenciaSeleccionada.id,
-      nuevoEstado,
-      undefined,
-      this.respuestaTexto.trim() || undefined
-    ).subscribe({
-      next: (res) => {
-        if (this.incidenciaSeleccionada) {
-          this.incidenciaSeleccionada.estado = nuevoEstado;
-        }
-        this.guardando = false;
-        this.aplicarFiltros();
-      },
-      error: (err) => {
-        console.error('Error cambiando el estado:', err);
-        this.guardando = false;
-      }
-    });
+    this.incidenciasService
+      .cambiarEstadoIncidencia(this.incidenciaSeleccionada.id, nuevoEstado, undefined, this.respuestaTexto.trim() || undefined)
+      .subscribe({
+        next: (res) => {
+          if (this.incidenciaSeleccionada) {
+            this.incidenciaSeleccionada.estado = nuevoEstado;
+          }
+          this.guardando = false;
+          this.aplicarFiltros();
+        },
+        error: (err) => {
+          console.error('Error cambiando el estado:', err);
+          this.guardando = false;
+        },
+      });
   }
 
   guardarRespuesta() {
@@ -151,25 +150,22 @@ export class IncidenciasAdminPage implements OnInit {
     // Si estaba en INICIADA y se escribe una respuesta, pasa automáticamente a EN_REVISION
     const nuevoEstado: EstadoIncidencia = estadoActual === 'INICIADA' ? 'EN_REVISION' : estadoActual;
 
-    this.incidenciasService.cambiarEstadoIncidencia(
-      this.incidenciaSeleccionada.id,
-      nuevoEstado,
-      undefined,
-      this.respuestaTexto.trim()
-    ).subscribe({
-      next: (res) => {
-        if (this.incidenciaSeleccionada) {
-          this.incidenciaSeleccionada.resolucion_notas = this.respuestaTexto.trim();
-          this.incidenciaSeleccionada.estado = nuevoEstado;
-        }
-        this.guardando = false;
-        this.aplicarFiltros();
-      },
-      error: (err) => {
-        console.error('Error guardando la respuesta:', err);
-        this.guardando = false;
-      }
-    });
+    this.incidenciasService
+      .cambiarEstadoIncidencia(this.incidenciaSeleccionada.id, nuevoEstado, undefined, this.respuestaTexto.trim())
+      .subscribe({
+        next: (res) => {
+          if (this.incidenciaSeleccionada) {
+            this.incidenciaSeleccionada.resolucion_notas = this.respuestaTexto.trim();
+            this.incidenciaSeleccionada.estado = nuevoEstado;
+          }
+          this.guardando = false;
+          this.aplicarFiltros();
+        },
+        error: (err) => {
+          console.error('Error guardando la respuesta:', err);
+          this.guardando = false;
+        },
+      });
   }
 
   formatearMotivo(motivo?: string): string {

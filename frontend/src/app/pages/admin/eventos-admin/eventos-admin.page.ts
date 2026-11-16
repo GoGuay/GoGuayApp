@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './eventos-admin.page.html',
   styleUrls: ['./eventos-admin.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, MatDialogModule, NavbarAdmin, ToastModule],
 })
 export class EventosAdmin implements OnInit {

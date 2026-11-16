@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule, NavController } from '@ionic/angular';
@@ -13,7 +13,7 @@ import {
   chevronDownOutline,
   chevronUpOutline,
   arrowBackOutline,
-  sendOutline
+  sendOutline,
 } from 'ionicons/icons';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
@@ -43,7 +43,8 @@ export interface IncidenciaItem {
   templateUrl: './incidencias-usuario.page.html',
   styleUrls: ['./incidencias-usuario.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarComponent]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [CommonModule, FormsModule, IonicModule, NavbarComponent],
 })
 export class IncidenciasUsuarioPage implements OnInit {
   incidencias: IncidenciaItem[] = [];
@@ -91,7 +92,7 @@ export class IncidenciasUsuarioPage implements OnInit {
         this.incidencias = (data || []).map((item) => ({
           ...item,
           desplegado: false,
-          nuevoMensaje: ''
+          nuevoMensaje: '',
         }));
         this.aplicarFiltro();
         this.cargando = false;
@@ -99,7 +100,7 @@ export class IncidenciasUsuarioPage implements OnInit {
       error: (err) => {
         console.error('Error cargando incidencias:', err);
         this.cargando = false;
-      }
+      },
     });
   }
 
@@ -107,13 +108,9 @@ export class IncidenciasUsuarioPage implements OnInit {
     if (this.filtroEstado === 'todas') {
       this.incidenciasFiltradas = [...this.incidencias];
     } else if (this.filtroEstado === 'iniciada') {
-      this.incidenciasFiltradas = this.incidencias.filter(
-        (i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION'
-      );
+      this.incidenciasFiltradas = this.incidencias.filter((i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION');
     } else if (this.filtroEstado === 'finalizada') {
-      this.incidenciasFiltradas = this.incidencias.filter(
-        (i) => i.estado === 'FINALIZADA' || i.estado === 'CANCELADA'
-      );
+      this.incidenciasFiltradas = this.incidencias.filter((i) => i.estado === 'FINALIZADA' || i.estado === 'CANCELADA');
     }
   }
 
@@ -136,7 +133,7 @@ export class IncidenciasUsuarioPage implements OnInit {
       error: (err) => {
         console.error('Error al enviar mensaje de incidencia:', err);
         item.enviandoMensaje = false;
-      }
+      },
     });
   }
 
@@ -152,7 +149,7 @@ export class IncidenciasUsuarioPage implements OnInit {
         {
           text: 'No, mantener',
           role: 'cancel',
-          cssClass: 'btn-alert-cancel'
+          cssClass: 'btn-alert-cancel',
         },
         {
           text: 'Sí, cancelar',
@@ -160,9 +157,9 @@ export class IncidenciasUsuarioPage implements OnInit {
           cssClass: 'btn-alert-confirm-danger',
           handler: () => {
             this.cancelarIncidencia(item);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
 
     await alert.present();
@@ -180,7 +177,7 @@ export class IncidenciasUsuarioPage implements OnInit {
       },
       error: (err) => {
         console.error('Error al cancelar la incidencia:', err);
-      }
+      },
     });
   }
 

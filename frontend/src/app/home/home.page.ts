@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { FooterComponent } from '../shared/footer/footer.component';
@@ -47,6 +47,7 @@ import { OnboardingModalComponent } from '../components/onboarding/onboarding-mo
     ToastModule,
     QrVerificacionComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     trigger('popoverAnimation', [
       transition(':enter', [

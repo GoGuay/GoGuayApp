@@ -16,4 +16,5 @@ var getCapacitor = () => {
 export {
   getCapacitor
 };
+//# debugId=0470c026-da2b-5fbd-a1d7-74b200c6c04d
 //# sourceMappingURL=chunk-IUYZTNCZ.js.map

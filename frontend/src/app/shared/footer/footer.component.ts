@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { OnboardingModalComponent } from 'src/app/components/onboarding/onboardi
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonicModule, MatIconModule, TranslateModule],
 })
 export class FooterComponent implements OnInit {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, NgZone, OnInit, AfterViewInit, ChangeDetectorRef, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,6 +19,7 @@ declare const google: any;
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, MatButtonModule, TranslateModule, FormsModule],
   templateUrl: './registro.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./registro.component.scss'],
 })
 export class RegistroComponent implements OnInit, AfterViewInit {

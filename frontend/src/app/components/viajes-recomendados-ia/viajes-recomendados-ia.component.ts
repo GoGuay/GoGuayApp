@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, NavController } from '@ionic/angular';
 import { TravelService } from '../../core/travel-services/travel.service';
@@ -11,6 +11,7 @@ import { NavigationExtras } from '@angular/router';
   templateUrl: './viajes-recomendados-ia.component.html',
   styleUrls: ['./viajes-recomendados-ia.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonicModule, TranslateModule, SpinnerComponent],
 })
 export class ViajesRecomendadosIaComponent implements OnInit {

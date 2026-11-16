@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [IonicModule, MatButtonModule, TranslateModule],
   templateUrl: './nuevo-viaje-general.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./nuevo-viaje-general.component.scss'],
 })
 export class NuevoViajeGeneralComponent implements OnInit {

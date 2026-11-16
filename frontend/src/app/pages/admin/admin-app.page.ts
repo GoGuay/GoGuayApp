@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -29,6 +29,7 @@ Chart.register(...registerables);
   standalone: true,
   templateUrl: './admin-app.page.html',
   styleUrls: ['./admin-app.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonicModule, NavbarAdmin],
 })
 export class AdminApp implements OnInit, AfterViewInit {

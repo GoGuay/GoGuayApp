@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, ModalController } from '@ionic/angular';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -9,6 +9,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   imports: [IonicModule],
   templateUrl: './onboarding-modal.component.html',
   styleUrls: ['./onboarding-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     trigger('fadeSlide', [
       transition(':enter', [

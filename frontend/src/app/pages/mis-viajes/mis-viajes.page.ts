@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,6 +44,7 @@ import { TravelService } from '../../core/travel-services/travel.service';
     TranslateModule,
     TarjetaViajeComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class MisViajesPage implements OnInit {

@@ -1,10 +1,21 @@
-import { Component, ElementRef, ViewChild, Output, EventEmitter, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-contrato-registro',
   standalone: true,
   imports: [],
   templateUrl: './contrato-registro.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./contrato-registro.component.scss'],
 })
 export class ContratoRegistroComponent implements AfterViewInit, OnDestroy {

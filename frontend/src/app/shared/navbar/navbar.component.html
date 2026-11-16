@@ -119,7 +119,7 @@
                     @if (usuario?.fotoPerfil) {
                       <div class="caja_imagen_perfil">
                         <img
-                          [src]="usuario?.fotoPerfil"
+                          [src]="$safeNavigationMigration(usuario?.fotoPerfil)"
                           alt="Foto de perfil"
                           referrerpolicy="no-referrer"
                         />
@@ -361,7 +361,7 @@
                   @if (usuario?.fotoPerfil) {
                     <div class="caja_imagen_perfil_mobile">
                       <img
-                        [src]="usuario?.fotoPerfil"
+                        [src]="$safeNavigationMigration(usuario?.fotoPerfil)"
                         alt="Perfil"
                         referrerpolicy="no-referrer"
                       />

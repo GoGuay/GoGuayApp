@@ -152,7 +152,7 @@
                   <label>Fecha salida</label>
                   <div class="d-flex align-items-center">
                     <div>
-                      <span>{{ formatearFechaLocal(currentViajeData?.fecha_salida) | date: 'dd/MM/yyyy' }}</span>
+                      <span>{{ formatearFechaLocal($safeNavigationMigration(currentViajeData?.fecha_salida)) | date: 'dd/MM/yyyy' }}</span>
                     </div>
                     <button
                       class="btn-edit-sm"

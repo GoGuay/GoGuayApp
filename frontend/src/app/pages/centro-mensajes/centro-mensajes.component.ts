@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavController } from '@ionic/angular/standalone';
@@ -30,6 +30,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     SpinnerComponent,
     TranslateModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [],
 })
 export class CentroMensajesPage implements OnInit {

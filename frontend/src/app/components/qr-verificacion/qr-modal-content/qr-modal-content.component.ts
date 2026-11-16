@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, Input, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, Input, Inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, ModalController } from '@ionic/angular';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -14,6 +14,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
   styleUrls: ['./qr-modal-content.component.scss'],
   standalone: true,
   imports: [IonicModule, ZXingScannerModule, ToastModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class QrModalContentComponent implements AfterViewInit {

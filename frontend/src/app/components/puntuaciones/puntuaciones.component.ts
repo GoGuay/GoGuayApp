@@ -1,4 +1,4 @@
-import { Component, Inject, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatBottomSheetModule, MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { TravelService } from '../../core/travel-services/travel.service';
   standalone: true,
   imports: [MatButtonModule, MatBottomSheetModule, MatListModule, FormsModule, ReactiveFormsModule],
   templateUrl: './puntuaciones.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./puntuaciones.component.scss'],
 })
 export class PuntuacionesComponent implements OnInit {

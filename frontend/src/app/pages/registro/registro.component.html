@@ -594,7 +594,7 @@
                     class="form-control form-input"
                     id="confirmarPassword"
                     formControlName="confirmarPassword"
-                    [readonly]="formulario3.get('password')?.invalid"
+                    [readonly]="$safeNavigationMigration(formulario3.get('password')?.invalid)"
                     [attr.aria-disabled]="formulario3.get('password')?.invalid"
                     [class.input-deshabilitado]="formulario3.get('password')?.invalid"
                     [attr.aria-invalid]="formulario3.get('confirmarPassword')?.invalid && formulario3.get('confirmarPassword')?.touched"

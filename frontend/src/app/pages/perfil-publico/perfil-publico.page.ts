@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -25,6 +25,7 @@ import { UserServicesService } from '../../core/user-services/user-services.serv
       useValue: { showDelay: 500, hideDelay: 200, touchGestures: 'auto', position: 'below' },
     },
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class PerfilPublicoPage implements OnInit, OnDestroy {

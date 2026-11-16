@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -43,6 +43,7 @@ import { SelectorGeneralComponent } from '../../../components/selector-general/s
     SelectorGeneralComponent,
   ],
 
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class MiPerfilPage implements OnInit {

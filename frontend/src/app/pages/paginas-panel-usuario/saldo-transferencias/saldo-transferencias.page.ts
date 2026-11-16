@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonRow, IonGrid, IonCol, ModalController } from '@ionic/angular/standalone';
@@ -23,6 +23,7 @@ declare var paypal: any;
   templateUrl: './saldo-transferencias.page.html',
   styleUrls: ['./saldo-transferencias.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonCol,
     IonGrid,
@@ -66,7 +67,7 @@ export class SaldoTransferenciasPage implements OnInit {
     private dialog: MatDialog,
     private messageService: MessageService,
     private modalController: ModalController
-  ) { }
+  ) {}
 
   ngOnInit() {
     console.log('Opciones de transferencia disponibles:', this.listaOpcionesTransferencias);
@@ -263,9 +264,7 @@ export class SaldoTransferenciasPage implements OnInit {
   onInputChange(valorSeleccionado?: any) {
     console.log('Valor oninputchange: ', valorSeleccionado);
 
-    const nuevoValor = (typeof valorSeleccionado === 'object' && valorSeleccionado !== null)
-      ? valorSeleccionado.valor
-      : valorSeleccionado;
+    const nuevoValor = typeof valorSeleccionado === 'object' && valorSeleccionado !== null ? valorSeleccionado.valor : valorSeleccionado;
 
     if (this.opcion_retirada_elegida === nuevoValor) {
       return;
@@ -278,26 +277,22 @@ export class SaldoTransferenciasPage implements OnInit {
 
   // TODO¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!  // ¡¡¡¡¡¡PENDIENTE MENSAJES !!!!!!!
   modalConfirmarTransferencia(valorSeleccionado?: string) {
-    console.log ('Valor seleccionado: ', valorSeleccionado)
+    console.log('Valor seleccionado: ', valorSeleccionado);
     this.translate
-      .get([
-        'Transferencia a tu favor',
-        `Vas a hacer una transferencia a través de ${valorSeleccionado}`,
-
-      ])
+      .get(['Transferencia a tu favor', `Vas a hacer una transferencia a través de ${valorSeleccionado}`])
       .subscribe((translations) => {
         const titulo = translations['Transferencia a tu favor'];
         const mensaje = translations[`Vas a hacer una transferencia a través de ${valorSeleccionado}`];
 
         const dialogRef = this.dialog.open(HelpModalComponent, {
-          data: { title: titulo, message: mensaje,  showAcceptButton: true, eliminacion_cuenta: false },
+          data: { title: titulo, message: mensaje, showAcceptButton: true, eliminacion_cuenta: false },
           disableClose: true,
         });
         dialogRef.afterClosed().subscribe((confirmar) => {
           if (confirmar === 'registro') {
             //
-          }else{
-            this.opcion_retirada_elegida = ''
+          } else {
+            this.opcion_retirada_elegida = '';
           }
         });
       });
@@ -323,16 +318,15 @@ export class SaldoTransferenciasPage implements OnInit {
     });
   }
 
-
   async abrirIncidenciaPago() {
     const modal = await this.modalController.create({
       component: AbrirIncidenciaModalComponent,
       componentProps: {
         categoria: 'APP',
         subcategoriaPredeterminada: 'PAGO',
-        tituloContexto: 'Problema con saldo o pagos'
+        tituloContexto: 'Problema con saldo o pagos',
       },
-      cssClass: 'modal-incidencia-custom'
+      cssClass: 'modal-incidencia-custom',
     });
 
     await modal.present();
@@ -343,10 +337,10 @@ export class SaldoTransferenciasPage implements OnInit {
         severity: 'success',
         summary: 'Incidencia enviada',
         detail: 'Hemos recibido tu consulta sobre el monedero. Podrás ver el seguimiento en "Mis Incidencias".',
-        life: 4000
+        life: 4000,
       });
     }
   }
 
-  obtener_movimientos_monedero() { }
+  obtener_movimientos_monedero() {}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./verificaciones-perfil.page.scss'],
   standalone: true,
   imports: [IonicModule, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class VerificacionesPerfilPage implements OnInit {

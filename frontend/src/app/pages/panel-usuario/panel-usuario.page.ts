@@ -1,5 +1,5 @@
 import { Usuario } from './../../models/user/usuario.model';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
@@ -30,6 +30,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
       },
     },
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class PanelUsuarioPage implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, NavController } from '@ionic/angular/standalone';
@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
   imports: [IonRow, IonCol, IonContent, FormsModule, NavbarComponent, TranslateModule, ToastModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class ForgotPasswordPage implements OnInit {

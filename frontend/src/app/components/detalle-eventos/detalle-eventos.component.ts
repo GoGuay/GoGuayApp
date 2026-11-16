@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
@@ -7,10 +7,10 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
   standalone: true,
   imports: [MatDialogModule, MatButtonModule],
   templateUrl: './detalle-eventos.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./detalle-eventos.component.scss'],
 })
-export class DetalleEventosComponent  implements OnInit {
-
+export class DetalleEventosComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<DetalleEventosComponent>
@@ -18,7 +18,5 @@ export class DetalleEventosComponent  implements OnInit {
 
   ngOnInit() {
     console.log(this.data);
-    
   }
-
 }

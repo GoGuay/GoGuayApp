@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, NgZone, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -22,6 +22,7 @@ declare const google: any;
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, ReactiveFormsModule, SpinnerComponent, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class LoginPage implements OnInit, AfterViewInit {
@@ -259,7 +260,5 @@ export class LoginPage implements OnInit, AfterViewInit {
     });
   }
 
-  reenviarCorreoFinReg(){
-
-  }
+  reenviarCorreoFinReg() {}
 }

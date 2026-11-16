@@ -5,7 +5,7 @@ import { AlertController, IonicModule, NavController } from '@ionic/angular';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Viaje } from '../../models/travel/viaje.model';
 import { Usuario } from '../../models/user/usuario.model';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
@@ -23,6 +23,7 @@ import { PuntuacionesComponent } from '../puntuaciones/puntuaciones.component';
   styleUrls: ['./tarjeta-viaje.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, MatIcon, ToastModule, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class TarjetaViajeComponent implements OnInit {
@@ -56,7 +57,7 @@ export class TarjetaViajeComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -148,19 +149,19 @@ export class TarjetaViajeComponent implements OnInit {
 
     forkJoin({
       acompanante: this.travelService.getViajesComoAcompanante(userId).pipe(
-        catchError(err => {
+        catchError((err) => {
           console.error('❌ Error cargando viajes acompañante:', err);
           return of([]);
         })
       ),
       creados: this.travelService.getViajesUsuario(userId).pipe(
-        catchError(err => {
+        catchError((err) => {
           console.error('❌ Error cargando viajes creados:', err);
           return of({ viajes: [] });
         })
       ),
       solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(
-        catchError(err => {
+        catchError((err) => {
           console.error('❌ Error cargando solicitudes:', err);
           return of([]);
         })
@@ -192,7 +193,7 @@ export class TarjetaViajeComponent implements OnInit {
       error: (err) => {
         console.error('❌ Error general en forkJoin:', err);
         this.cargandoViajes = false;
-      }
+      },
     });
   }
 
@@ -247,7 +248,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.misViajes = [];
         break;
     }
-    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => { } });
+    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => {} });
   }
 
   /**
@@ -528,8 +529,8 @@ export class TarjetaViajeComponent implements OnInit {
    * Función para puntuar un viaje
    */
   puntuarViaje(viaje: Viaje) {
-    const esFinalizado = viaje.estado_viaje === 'Finalizado' ||
-      this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
+    const esFinalizado =
+      viaje.estado_viaje === 'Finalizado' || this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
 
     if (!esFinalizado) {
       this.messageService.add({
@@ -830,5 +831,5 @@ export class TarjetaViajeComponent implements OnInit {
     });
   }
 
-  abrirPerfil() { }
+  abrirPerfil() {}
 }

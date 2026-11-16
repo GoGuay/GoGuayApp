@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BuscadorComponent } from '../../components/buscador/buscador.component';
@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './busqueda-viajes.page.html',
   styleUrls: ['./busqueda-viajes.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonicModule,
     FormsModule,

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgcCookieConsentService, NgcStatusChangeEvent } from 'ngx-cookieconsent';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
@@ -50,6 +50,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     RouterModule,
     IonMenuToggle,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MenuController],
 })
 export class AppComponent implements OnInit {

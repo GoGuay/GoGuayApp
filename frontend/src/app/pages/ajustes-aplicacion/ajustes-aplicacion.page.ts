@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
@@ -29,6 +29,7 @@ import { loadScript } from '@paypal/paypal-js';
   styleUrls: ['./ajustes-aplicacion.page.scss'],
   standalone: true,
   providers: [MessageService],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
 })
 export class AjustesAplicacionPage implements OnInit {

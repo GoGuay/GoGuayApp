@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-condiciones-generales',
   templateUrl: './condiciones-generales.page.html',
   styleUrls: ['./condiciones-generales.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, JumbotronComponent, NavbarComponent, TranslateModule],
 })
 export class CondicionesUsoComponent implements OnInit {

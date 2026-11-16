@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [MatButtonModule, MatIcon, MatDivider, TranslateModule],
   templateUrl: './help-modal.component.html',
   styleUrls: ['./help-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     trigger('dialogAnimation', [
       transition(':enter', [

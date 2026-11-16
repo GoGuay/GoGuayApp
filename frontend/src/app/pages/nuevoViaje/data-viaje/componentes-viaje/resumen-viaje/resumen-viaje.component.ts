@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -19,7 +19,6 @@ import { FuncionesComunes } from '../../../../../core/funciones-comunes/funcione
 import { HelpModalComponent } from '../../../../../components/help-modal/help-modal.component';
 import { ModalErrorComponent } from '../../../../../components/modal-error/modal-error.component';
 
-
 @Component({
   selector: 'app-resumen-viaje',
   standalone: true,
@@ -33,13 +32,13 @@ import { ModalErrorComponent } from '../../../../../components/modal-error/modal
     MatButtonModule,
     CommonModule,
     TranslateModule,
-    SpinnerComponent
+    SpinnerComponent,
   ],
   templateUrl: './resumen-viaje.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./resumen-viaje.component.scss'],
 })
 export class ResumenViajeComponent implements OnInit {
-
   /**
    * Referencia al elemento del mapa en el resumen del viaje
    * @type {ElementRef}
@@ -47,7 +46,6 @@ export class ResumenViajeComponent implements OnInit {
   @ViewChild('mapResumen') mapElement!: ElementRef;
   map: any;
   directionsRenderer: any;
-
 
   userLoggedIn: boolean = false;
   userData: Usuario = {} as Usuario;
@@ -66,7 +64,6 @@ export class ResumenViajeComponent implements OnInit {
   ruta_navegacion_origen: string = '';
   cargando_viaje: boolean = false;
 
-
   constructor(
     private travelService: TravelService,
     private vehiculosService: VehiculosServicesService,
@@ -74,8 +71,7 @@ export class ResumenViajeComponent implements OnInit {
     private dialog: MatDialog,
     public funcionesComunes: FuncionesComunes,
     private route: ActivatedRoute
-  ) { }
-
+  ) {}
 
   ngOnInit() {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -89,7 +85,7 @@ export class ResumenViajeComponent implements OnInit {
 
     this.actualizarInformacion();
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const viajeId = params['id'];
       this.ruta_navegacion_origen = params['origin'];
 
@@ -104,7 +100,6 @@ export class ResumenViajeComponent implements OnInit {
     });
 
     console.log('CURRENT DATA: ', this.currentViajeData);
-
   }
 
   /**
@@ -140,13 +135,13 @@ export class ResumenViajeComponent implements OnInit {
       disableDefaultUI: true,
       zoomControl: false,
       scrollwheel: false,
-      gestureHandling: 'none'
+      gestureHandling: 'none',
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
     this.directionsRenderer = new google.maps.DirectionsRenderer({
       suppressMarkers: false,
-      map: this.map
+      map: this.map,
     });
 
     setTimeout(() => {
@@ -174,18 +169,16 @@ export class ResumenViajeComponent implements OnInit {
       if (this.currentViajeData?.ruta_seleccionada) {
         this.intentarInicializarMapa();
       }
-    })
+    });
   }
 
   setInitialCoche() {
     if (!this.currentViajeData || this.vehiculosUsuario.length === 0) return;
 
-    const idBuscado = this.currentViajeData.vehiculo ||
-                      this.currentViajeData.vehiculo_id ||
-                      (this.currentViajeData.coche?.id);
+    const idBuscado = this.currentViajeData.vehiculo || this.currentViajeData.vehiculo_id || this.currentViajeData.coche?.id;
 
     if (idBuscado) {
-      const cocheEncontrado = this.vehiculosUsuario.find(v => v.id === idBuscado);
+      const cocheEncontrado = this.vehiculosUsuario.find((v) => v.id === idBuscado);
 
       if (cocheEncontrado) {
         this.editableFields.coche = cocheEncontrado;
@@ -252,15 +245,15 @@ export class ResumenViajeComponent implements OnInit {
           },
           error: (error) => {
             this.cargando_viaje = false;
-            console.error("Error en la operación:", error);
+            console.error('Error en la operación:', error);
             this.openError('Error!', 'No se han podido procesar los datos del viaje.');
-          }
+          },
         });
       }
     });
   }
 
-formatearFechaLocal(fecha: any): string {
+  formatearFechaLocal(fecha: any): string {
     if (!fecha) return '';
     if (typeof fecha === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(fecha)) {
       const [dia, mes, anio] = fecha.split('-');
@@ -275,7 +268,6 @@ formatearFechaLocal(fecha: any): string {
     const dia = String(dateObj.getDate()).padStart(2, '0');
     return `${anio}-${mes}-${dia}`;
   }
-
 
   private sumarDuracion(horaInicio: string, sumarH: number, sumarM: number): string {
     let [h, m] = horaInicio.split(':').map(Number);
@@ -343,7 +335,6 @@ formatearFechaLocal(fecha: any): string {
     } else {
       this.navCtrl.navigateRoot('/data-viaje');
     }
-
   }
 
   /**
@@ -439,7 +430,7 @@ formatearFechaLocal(fecha: any): string {
 
       return resultado;
     } catch (error) {
-      console.error("Error calculando hora:", error);
+      console.error('Error calculando hora:', error);
       return this.currentViajeData?.hora_llegada || '--:--';
     }
   }
@@ -464,7 +455,7 @@ formatearFechaLocal(fecha: any): string {
 
           this.currentViajeData.ruta_seleccionada = {
             ...result,
-            tiempoTotal: duracionTexto
+            tiempoTotal: duracionTexto,
           };
 
           if (this.directionsRenderer) {
@@ -509,21 +500,19 @@ formatearFechaLocal(fecha: any): string {
    * Se suscribe a los cambios en los datos del viaje y actualiza las variables locales.
    */
   actualizarInformacion() {
-    this.travelService.viajeData$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((viajeData) => {
-        if (viajeData) {
-          this.currentViajeData = { ...viajeData };
-          this.origen = this.currentViajeData?.origen || '';
-          this.destino = this.currentViajeData?.destino || '';
+    this.travelService.viajeData$.pipe(takeUntil(this.destroy$)).subscribe((viajeData) => {
+      if (viajeData) {
+        this.currentViajeData = { ...viajeData };
+        this.origen = this.currentViajeData?.origen || '';
+        this.destino = this.currentViajeData?.destino || '';
 
-          this.editableFields.precio_viaje = this.currentViajeData?.precio_viaje || 0;
+        this.editableFields.precio_viaje = this.currentViajeData?.precio_viaje || 0;
 
-          if (this.currentViajeData?.coche && this.vehiculosUsuario.length > 0) {
-            this.setInitialCoche();
-          }
+        if (this.currentViajeData?.coche && this.vehiculosUsuario.length > 0) {
+          this.setInitialCoche();
         }
-      });
+      }
+    });
   }
 
   /**
@@ -535,8 +524,8 @@ formatearFechaLocal(fecha: any): string {
    */
   obtenerVehiculo(vehiculo_id: number): Observable<string> {
     return this.vehiculosService.obtenerVehiculoID(vehiculo_id).pipe(
-      map(vehiculo => `${vehiculo.marca} ${vehiculo.modelo}`),
-      catchError(err => {
+      map((vehiculo) => `${vehiculo.marca} ${vehiculo.modelo}`),
+      catchError((err) => {
         console.error('Error al obtener vehículo:', err);
         return of('Vehículo no encontrado');
       })
@@ -549,8 +538,8 @@ formatearFechaLocal(fecha: any): string {
    * @returns --> Devuelve la lista de vehículos del usuario
    */
   obtenerVehiculosUsuario(usuario_id: number) {
-    this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe(res => {
-      this.vehiculosUsuario = Array.isArray(res) ? res : (res.vehiculos || []);
+    this.vehiculosService.obtenerVehiculosUsuario(usuario_id).subscribe((res) => {
+      this.vehiculosUsuario = Array.isArray(res) ? res : res.vehiculos || [];
       this.setInitialCoche();
     });
   }
@@ -561,5 +550,4 @@ formatearFechaLocal(fecha: any): string {
   compareVehiculos(c1: any, c2: any): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
-
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
@@ -30,6 +30,7 @@ import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
     SpinnerComponent,
   ],
   templateUrl: './eventos.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./eventos.component.scss'],
 })
 export class TrayectosPopularesComponent implements OnInit {
@@ -248,7 +249,7 @@ export class TrayectosPopularesComponent implements OnInit {
       },
     });
   }
-  
+
   // Método auxiliar para controlar cuándo acaban todas las traducciones
   private verificarFin(total: number, completados: number) {
     if (completados >= total) {

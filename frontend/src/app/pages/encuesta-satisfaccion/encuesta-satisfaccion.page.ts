@@ -1,4 +1,4 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, forwardRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -19,6 +19,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   styleUrls: ['./encuesta-satisfaccion.page.scss'],
   standalone: true,
   imports: [IonicModule, FormsModule, MatButtonModule, MatRadioModule, MatCheckboxModule, ReactiveFormsModule, MatSliderModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

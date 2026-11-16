@@ -146,7 +146,7 @@
 
         <app-tabla-vehiculos
           [modoSeleccion]="true"
-          [vehiculos]="userData?.usuario?.vehiculos"
+          [vehiculos]="$safeNavigationMigration(userData?.usuario?.vehiculos)"
           [(cocheSeleccionado)]="cocheSeleccionado"
           [(mostrarSelectorVehiculo)]="mostrarSelectorVehiculo"
           (irARegistrarVehiculo)="botonAnadirVehiculo()"

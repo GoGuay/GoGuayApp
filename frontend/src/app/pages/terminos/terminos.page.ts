@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
@@ -11,6 +11,7 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
   templateUrl: './terminos.page.html',
   styleUrls: ['./terminos.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, FormsModule, NavbarComponent, MatDivider],
 })
 export class TerminosPage implements OnInit {

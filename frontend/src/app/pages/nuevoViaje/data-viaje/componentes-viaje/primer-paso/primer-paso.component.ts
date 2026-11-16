@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { IonicModule, Platform } from '@ionic/angular';
@@ -42,6 +42,7 @@ registerLocaleData(localeEs);
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
   ],
   templateUrl: './primer-paso.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./primer-paso.component.scss'],
 })
 export class PrimerPasoComponent implements OnInit {

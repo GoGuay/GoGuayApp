@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from '../../core/user-services/user-services.service';
@@ -21,6 +21,7 @@ import { CancelarSolicitudModalComponent } from '../cancelar-solicitud/cancelar-
   standalone: true,
   imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
   templateUrl: './resultados-busqueda.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./resultados-busqueda.component.scss'],
 })
 export class ResultadosBusquedaComponent implements OnInit {
@@ -57,13 +58,13 @@ export class ResultadosBusquedaComponent implements OnInit {
     if (changes['filtroOrden'] && !changes['filtroOrden'].firstChange) {
       this.filtroSeleccionado = changes['filtroOrden'].currentValue;
       this.aplicarFiltro();
-      this.verificarParametros()
+      this.verificarParametros();
     }
 
     // Si cambian los parámetros de búsqueda, decidimos qué cargar
     if (changes['paramsBusqueda']) {
       this.cargarDatos();
-      this.verificarParametros()
+      this.verificarParametros();
     }
   }
 
@@ -335,24 +336,22 @@ export class ResultadosBusquedaComponent implements OnInit {
       this.redirigirAlLogin();
       return;
     }
-    this.travelService.bloquearPlaza(viaje.id,this.userData?.usuario?.id ).subscribe({
-      next:(response: any)=>{
-        const pasajeroId = response.pasajero_id
+    this.travelService.bloquearPlaza(viaje.id, this.userData?.usuario?.id).subscribe({
+      next: (response: any) => {
+        const pasajeroId = response.pasajero_id;
         this.navCtrl.navigateForward(['/pago-reserva', viaje.id]);
       },
       error: (err) => {
-        const mensaje = err.error?.error ||'Lo sentimos, el viaje acaba de completarse'
-        console.warn(mensaje)
-      }
-    })
-
+        const mensaje = err.error?.error || 'Lo sentimos, el viaje acaba de completarse';
+        console.warn(mensaje);
+      },
+    });
   }
 
   estaUnido(viaje: Viaje): boolean {
     if (!this.userData?.usuario?.id) return false;
     return viaje.acompanantes?.some((a: any) => a.id === this.userData?.usuario.id) || false;
   }
-
 
   /**
    * Función para redirigir al usuario al login, mostrando un modal de confirmación.

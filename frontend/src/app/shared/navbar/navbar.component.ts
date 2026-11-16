@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { IonMenuButton, IonHeader } from '@ionic/angular/standalone';
 
@@ -24,6 +24,7 @@ import { MatDialog } from '@angular/material/dialog';
   imports: [MatIconModule, TranslateModule, CommonModule, MatDivider, FormsModule, IonMenuButton, IonHeader],
   providers: [MessageService],
   templateUrl: './navbar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {

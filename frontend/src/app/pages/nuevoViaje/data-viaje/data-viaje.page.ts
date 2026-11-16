@@ -1,4 +1,4 @@
-import { Component, OnInit, model, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, model, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -39,6 +39,7 @@ import { TranslateService } from '@ngx-translate/core';
     CuartoPasoComponent,
   ],
   providers: [provideNativeDateAdapter(), MessageService],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DataViajePage implements OnInit {

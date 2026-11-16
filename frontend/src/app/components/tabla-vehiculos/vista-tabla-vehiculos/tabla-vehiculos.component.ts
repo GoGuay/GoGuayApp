@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
@@ -18,6 +18,7 @@ import { SelectorGeneralComponent } from '../../selector-general/selector-genera
   templateUrl: './tabla-vehiculos.component.html',
   styleUrls: ['./tabla-vehiculos.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonicModule, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
 })
 export class TablaVehiculosComponent implements OnInit {

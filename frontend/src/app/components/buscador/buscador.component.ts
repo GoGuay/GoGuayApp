@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule, NavController } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +33,7 @@ import { ActivatedRoute } from '@angular/router';
   ],
   providers: [MessageService],
   templateUrl: './buscador.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./buscador.component.scss'],
 })
 export class BuscadorComponent implements OnInit {

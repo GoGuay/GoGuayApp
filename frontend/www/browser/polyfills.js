@@ -2387,4 +2387,5 @@ function patchCommon(Zone2) {
 var Zone$1 = loadZone();
 patchCommon(Zone$1);
 patchBrowser(Zone$1);
+//# debugId=7fc8dd18-58bd-5725-aabe-6855ed78651d
 //# sourceMappingURL=polyfills.js.map

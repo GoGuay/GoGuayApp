@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -9,20 +9,18 @@ import { MatIcon } from '@angular/material/icon';
   standalone: true,
   imports: [MatButtonModule, MatDivider, MatIcon],
   templateUrl: './notificaciones.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./notificaciones.component.scss'],
 })
 export class NotificacionesComponent implements OnInit {
-
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { titulo: string; notificacion: any }, 
+    @Inject(MAT_DIALOG_DATA) public data: { titulo: string; notificacion: any },
     private dialogRef: MatDialogRef<NotificacionesComponent>
-  ) { }
+  ) {}
 
   ngOnInit() {
     console.log('Notificación: ', this.data);
-    
-   }
-
+  }
 
   close() {
     this.dialogRef.close();

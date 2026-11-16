@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent, NavController } from '@ionic/angular/standalone';
@@ -11,6 +11,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './modificacion-email.page.html',
   styleUrls: ['./modificacion-email.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, FormsModule],
 })
 export class ModificacionEmailPage implements OnInit {

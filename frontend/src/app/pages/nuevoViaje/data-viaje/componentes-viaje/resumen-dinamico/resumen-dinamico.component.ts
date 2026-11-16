@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +27,7 @@ import { ControlLocalidad } from 'src/app/models/control-localidad/control-local
     SelectorGeneralComponent,
   ],
   templateUrl: './resumen-dinamico.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./resumen-dinamico.component.scss'],
 })
 export class ResumenDinamicoComponent implements OnInit, OnDestroy {
@@ -134,7 +135,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
 
   // Devuelve la fecha formateada legible para el usuario
   getFormattedDate(): string {
-   const fecha = this.currentViajeData?.fecha_salida;
+    const fecha = this.currentViajeData?.fecha_salida;
     if (fecha) {
       const date = new Date(fecha);
       if (!isNaN(date.getTime())) {
@@ -144,7 +145,7 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
           year: 'numeric',
         });
       }
-      return fecha; 
+      return fecha;
     }
     return '';
   }

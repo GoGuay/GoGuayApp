@@ -178,7 +178,7 @@
                       <div class="col-md-3 side-info p-3 d-flex flex-column justify-content-between">
                         <div
                           class="conductor-box text-center"
-                          (click)="openPerfilPublico(viaje.usuario?.id)"
+                          (click)="openPerfilPublico($safeNavigationMigration(viaje.usuario?.id))"
                         >
                           <div class="avatar-wrapper mb-2">
                             <img

@@ -395,4 +395,5 @@ var now = (ev) => {
 export {
   createGesture
 };
+//# debugId=8224ca9b-557d-562b-8b17-15e32e18c405
 //# sourceMappingURL=chunk-QU22HLHJ.js.map

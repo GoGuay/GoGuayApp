@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./cookies.page.scss'],
   standalone: true,
   imports: [IonContent, FormsModule, RouterModule, MatButtonModule, NavbarComponent, MatDivider, ToastModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class CookiesPage implements OnInit {

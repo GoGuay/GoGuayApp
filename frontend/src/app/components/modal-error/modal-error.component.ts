@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -13,6 +13,7 @@ import { NavController } from 'node_modules/@ionic/angular';
   imports: [MatButtonModule, MatIcon, MatDivider],
   templateUrl: './modal-error.component.html',
   styleUrls: ['./modal-error.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     trigger('dialogAnimation', [
       transition(':enter', [

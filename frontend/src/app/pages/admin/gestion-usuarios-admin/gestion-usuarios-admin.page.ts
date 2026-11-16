@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -44,6 +44,7 @@ export interface UsuarioAdminDetalle {
   templateUrl: './gestion-usuarios-admin.page.html',
   styleUrls: ['./gestion-usuarios-admin.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, IonicModule, NavbarAdmin],
 })
 export class GestionUsuariosAdminPage implements OnInit {

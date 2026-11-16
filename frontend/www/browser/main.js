@@ -6,19 +6,19 @@ import {
   NoopAnimationDriver,
   WebAnimationsDriver,
   WebAnimationsStyleNormalizer
-} from "./chunk-A2ZTIJEI.js";
+} from "./chunk-IYLDIIKZ.js";
 import {
   CookieService
-} from "./chunk-OZLV26YT.js";
+} from "./chunk-EGBQMQEH.js";
 import {
   providePrimeNG
-} from "./chunk-HCR355QR.js";
+} from "./chunk-3QY534IW.js";
 import {
   FuncionesComunes
-} from "./chunk-TMB2KEQX.js";
+} from "./chunk-Z2B2BIHD.js";
 import {
   NotificacionesService
-} from "./chunk-TGPQDEZS.js";
+} from "./chunk-L23MUE74.js";
 import {
   IonApp,
   IonContent,
@@ -32,30 +32,30 @@ import {
   IonTitle,
   IonToolbar,
   provideIonicAngular
-} from "./chunk-BLKEDZE4.js";
-import "./chunk-N7S2XU3X.js";
-import "./chunk-CIEE2FXQ.js";
+} from "./chunk-FFMYI37T.js";
+import "./chunk-X7SDTFSG.js";
+import "./chunk-OLH4VKOB.js";
 import {
   LanguageService
-} from "./chunk-G5UZDB7B.js";
+} from "./chunk-NX7SG6WM.js";
 import {
   MessageService
-} from "./chunk-WDE6N5F6.js";
+} from "./chunk-Q5CK7R7A.js";
 import {
   UserServicesService
-} from "./chunk-34RASOLQ.js";
-import "./chunk-ULIFZXTE.js";
-import "./chunk-WBBLYEAR.js";
-import "./chunk-LLKVXR72.js";
-import "./chunk-Z2EGICVD.js";
+} from "./chunk-43M6K65B.js";
+import "./chunk-TFWCQLOE.js";
+import "./chunk-REKVANIZ.js";
+import "./chunk-6VCOWNW4.js";
+import "./chunk-ZPEWRVEX.js";
 import {
   MenuController
-} from "./chunk-XTRPVKSN.js";
+} from "./chunk-V5JFS32A.js";
 import {
   TranslateLoader,
   TranslateModule,
   TranslatePipe
-} from "./chunk-PWPN4F54.js";
+} from "./chunk-ULJI5CAD.js";
 import {
   BrowserModule,
   CommonModule,
@@ -72,14 +72,17 @@ import {
   RouterLink,
   RouterModule,
   bootstrapApplication,
+  disableThrowOnSyntheticProps,
   provideHttpClient,
   provideRouter,
   withInterceptors,
-  withPreloading
-} from "./chunk-DD4MNYDA.js";
+  withPreloading,
+  withXhr
+} from "./chunk-XCBA4FSK.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionScheduler,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DOCUMENT,
@@ -138,41 +141,41 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵviewQuery
-} from "./chunk-YUKRBYLH.js";
-import "./chunk-NEFVXLXQ.js";
+} from "./chunk-4LZZ5H7X.js";
+import "./chunk-PYRDO7X4.js";
 import "./chunk-UGUZQALC.js";
-import "./chunk-4JA4ETJA.js";
-import "./chunk-RI33YQSB.js";
-import "./chunk-7NBG2LBA.js";
-import "./chunk-MOKADOCG.js";
+import "./chunk-T5TS2YIV.js";
+import "./chunk-WC2RXGX6.js";
+import "./chunk-PUO4TC4B.js";
+import "./chunk-4XZH5Q4W.js";
 import "./chunk-4UX5YYJM.js";
-import "./chunk-7WJRAT5Y.js";
-import "./chunk-XSENUJ4A.js";
-import "./chunk-K6BOSGGR.js";
-import "./chunk-HM6RSKJQ.js";
+import "./chunk-2ZVRKVGD.js";
+import "./chunk-DSEDVKEI.js";
+import "./chunk-Y3XSLTJY.js";
+import "./chunk-BUQIIG6A.js";
 import "./chunk-QU22HLHJ.js";
 import "./chunk-HMGJJ2JN.js";
-import "./chunk-GV4SC633.js";
+import "./chunk-ZEMLCENC.js";
 import "./chunk-XEOOW4LE.js";
-import "./chunk-TNIKZTJG.js";
-import "./chunk-QD6KASZP.js";
-import "./chunk-ZO2Q2TV5.js";
+import "./chunk-GUHVPX3Y.js";
+import "./chunk-OUKGZKTF.js";
+import "./chunk-QZNKOL6V.js";
 import "./chunk-NZ2QYBMG.js";
-import "./chunk-5MFCCRYD.js";
-import "./chunk-LYPF3I3J.js";
-import "./chunk-PHWUJLET.js";
-import "./chunk-ZBCCTIRL.js";
-import "./chunk-KLZ5YPL6.js";
+import "./chunk-7O2RIIXI.js";
+import "./chunk-7VLNHB4X.js";
+import "./chunk-WTD4IAKK.js";
+import "./chunk-LDX7VN5G.js";
+import "./chunk-XNSI3F57.js";
 import "./chunk-SWNU2J3M.js";
 import "./chunk-FUL4CNB6.js";
 import "./chunk-AIOHWISL.js";
-import "./chunk-FPPEK4XH.js";
-import "./chunk-MEOWV5C6.js";
+import "./chunk-77FB7LC2.js";
+import "./chunk-SE3K5JBJ.js";
 import "./chunk-DI3VEDFV.js";
 import {
   __spreadProps,
   __spreadValues
-} from "./chunk-5SZB5ECT.js";
+} from "./chunk-MP5LG4CB.js";
 
 // src/app/guards/token-valid.guard.ts
 var TokenValidGuard = class _TokenValidGuard {
@@ -246,7 +249,7 @@ var AuthGuard = (route, state) => {
 var routes = [
   {
     path: "home",
-    loadComponent: () => import("./home.page-SWSCHB5W.js").then((m) => m.HomePage)
+    loadComponent: () => import("./home.page-KR34SSCB.js").then((m) => m.HomePage)
   },
   {
     path: "",
@@ -255,190 +258,190 @@ var routes = [
   },
   {
     path: "registro",
-    loadComponent: () => import("./registro.component-A6EB77JB.js").then((m) => m.RegistroComponent),
+    loadComponent: () => import("./registro.component-DHEL6JMK.js").then((m) => m.RegistroComponent),
     canActivate: [googleCancelGuard]
   },
   {
     path: "sobre-nosotros",
-    loadComponent: () => import("./sobre-nosotros.page-55RYYDKL.js").then((m) => m.SobreNosotrosPage)
+    loadComponent: () => import("./sobre-nosotros.page-ET7FPKYJ.js").then((m) => m.SobreNosotrosPage)
   },
   {
     path: "cookies",
-    loadComponent: () => import("./cookies.page-RQA27FJM.js").then((m) => m.CookiesPage)
+    loadComponent: () => import("./cookies.page-4IQYIL5H.js").then((m) => m.CookiesPage)
   },
   {
     path: "busqueda-viajes",
-    loadComponent: () => import("./busqueda-viajes.page-72PILEAS.js").then((m) => m.BusquedaViajesPage)
+    loadComponent: () => import("./busqueda-viajes.page-R77HE6BA.js").then((m) => m.BusquedaViajesPage)
   },
   {
     path: "login",
-    loadComponent: () => import("./login.page-YNY6H3X4.js").then((m) => m.LoginPage)
+    loadComponent: () => import("./login.page-QV5RK273.js").then((m) => m.LoginPage)
   },
   {
     path: "panel-usuario",
-    loadComponent: () => import("./panel-usuario.page-53BPP5JZ.js").then((m) => m.PanelUsuarioPage),
+    loadComponent: () => import("./panel-usuario.page-DX672Z6B.js").then((m) => m.PanelUsuarioPage),
     canActivate: [AuthGuard]
   },
   {
     path: "nuevo-viaje",
-    loadComponent: () => import("./nuevo-viaje.page-BXHJ3EKO.js").then((m) => m.NuevoViajePage),
+    loadComponent: () => import("./nuevo-viaje.page-BEFG4JEX.js").then((m) => m.NuevoViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "data-viaje",
-    loadComponent: () => import("./data-viaje.page-QJYIRGWT.js").then((m) => m.DataViajePage),
+    loadComponent: () => import("./data-viaje.page-LADIVS6T.js").then((m) => m.DataViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "resumen-viaje",
-    loadComponent: () => import("./resumen-viaje.component-2ESTRPSF.js").then((m) => m.ResumenViajeComponent),
+    loadComponent: () => import("./resumen-viaje.component-7JIJMWHE.js").then((m) => m.ResumenViajeComponent),
     canActivate: [AuthGuard]
   },
   {
     path: "centro-ayuda",
-    loadComponent: () => import("./centro-ayuda.page-BONGGW3W.js").then((m) => m.CentroAyudaPage)
+    loadComponent: () => import("./centro-ayuda.page-HJP7GROA.js").then((m) => m.CentroAyudaPage)
   },
   {
     path: "faqs",
-    loadComponent: () => import("./faqs.page-45PHYYHD.js").then((m) => m.FaqsPage)
+    loadComponent: () => import("./faqs.page-HP3JQO4V.js").then((m) => m.FaqsPage)
   },
   {
     path: "mi-perfil",
-    loadComponent: () => import("./mi-perfil.page-23DONBAU.js").then((m) => m.MiPerfilPage),
+    loadComponent: () => import("./mi-perfil.page-U7ZG53ZS.js").then((m) => m.MiPerfilPage),
     canActivate: [AuthGuard]
   },
   {
     path: "datos-contacto",
-    loadComponent: () => import("./datos-contacto.page-EWXGDBBU.js").then((m) => m.DatosContactoPage)
+    loadComponent: () => import("./datos-contacto.page-RRINAIWM.js").then((m) => m.DatosContactoPage)
   },
   {
     path: "mis-incidencias",
-    loadComponent: () => import("./incidencias-usuario.page-AHWHWEFA.js").then((m) => m.IncidenciasUsuarioPage),
+    loadComponent: () => import("./incidencias-usuario.page-3RVOTGR7.js").then((m) => m.IncidenciasUsuarioPage),
     canActivate: [AuthGuard]
   },
   {
     path: "terminos",
-    loadComponent: () => import("./terminos.page-7FTD5SWQ.js").then((m) => m.TerminosPage)
+    loadComponent: () => import("./terminos.page-LVB4OXAN.js").then((m) => m.TerminosPage)
   },
   {
     path: "saldo-transferencias",
-    loadComponent: () => import("./saldo-transferencias.page-2WQBHUZN.js").then((m) => m.SaldoTransferenciasPage),
+    loadComponent: () => import("./saldo-transferencias.page-I6OYNJCA.js").then((m) => m.SaldoTransferenciasPage),
     canActivate: [AuthGuard]
   },
   {
     path: "decalogo",
-    loadComponent: () => import("./decalogo.page-EUV2ZYFR.js").then((m) => m.DecalogoPage)
+    loadComponent: () => import("./decalogo.page-R7CI5SVR.js").then((m) => m.DecalogoPage)
   },
   {
     path: "perfil-publico",
-    loadComponent: () => import("./perfil-publico.page-XPLY3N7T.js").then((m) => m.PerfilPublicoPage)
+    loadComponent: () => import("./perfil-publico.page-HFUT5WIV.js").then((m) => m.PerfilPublicoPage)
   },
   {
     path: "verificaciones-perfil",
-    loadComponent: () => import("./verificaciones-perfil.page-SWNC5T46.js").then((m) => m.VerificacionesPerfilPage),
+    loadComponent: () => import("./verificaciones-perfil.page-BXB7DSVB.js").then((m) => m.VerificacionesPerfilPage),
     canActivate: [AuthGuard]
   },
   {
     path: "encuesta-satisfaccion",
-    loadComponent: () => import("./encuesta-satisfaccion.page-HJAHNDHF.js").then((m) => m.EncuestaSatisfaccionPage)
+    loadComponent: () => import("./encuesta-satisfaccion.page-E34QKQGA.js").then((m) => m.EncuestaSatisfaccionPage)
   },
   {
     path: "centro-contacto",
-    loadComponent: () => import("./centro-contacto.page-URWY5J3Z.js").then((m) => m.CentroContactoPage)
+    loadComponent: () => import("./centro-contacto.page-3YEF37VB.js").then((m) => m.CentroContactoPage)
   },
   {
     path: "ajustes-aplicacion",
-    loadComponent: () => import("./ajustes-aplicacion.page-KNNNCJW3.js").then((m) => m.AjustesAplicacionPage)
+    loadComponent: () => import("./ajustes-aplicacion.page-7AB6CH6Z.js").then((m) => m.AjustesAplicacionPage)
   },
   {
     path: "forgot-password",
-    loadComponent: () => import("./forgot-password.page-SVG236LY.js").then((m) => m.ForgotPasswordPage)
+    loadComponent: () => import("./forgot-password.page-YGKMWAK6.js").then((m) => m.ForgotPasswordPage)
   },
   {
     path: "nueva-contrasena/:token",
-    loadComponent: () => import("./nueva-contrasena.page-W5HL3I7X.js").then((m) => m.NuevaContrasenaPage),
+    loadComponent: () => import("./nueva-contrasena.page-76RMHG6A.js").then((m) => m.NuevaContrasenaPage),
     canActivate: [TokenValidGuard]
   },
   {
     path: "token-expirado",
-    loadComponent: () => import("./token-expirado.page-OKXT4WN6.js").then((m) => m.TokenExpiradoPage)
+    loadComponent: () => import("./token-expirado.page-5UTRMO4U.js").then((m) => m.TokenExpiradoPage)
   },
   {
     path: "token-ya-usado",
-    loadComponent: () => import("./token-ya-usado.page-KYATZP22.js").then((m) => m.TokenYaUsadoPage)
+    loadComponent: () => import("./token-ya-usado.page-NVBNLMTX.js").then((m) => m.TokenYaUsadoPage)
   },
   {
     path: "notificaciones",
-    loadComponent: () => import("./centro-notificaciones.page-AAJFOJHY.js").then((m) => m.CentroNotificacionesPage),
+    loadComponent: () => import("./centro-notificaciones.page-WRIWDVOC.js").then((m) => m.CentroNotificacionesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "registro/resumen-registro",
-    loadComponent: () => import("./resumen-registro.component-HX32QPB5.js").then((m) => m.ResumenRegistroComponent)
+    loadComponent: () => import("./resumen-registro.component-X5HQAGBV.js").then((m) => m.ResumenRegistroComponent)
   },
   {
     path: "mis-viajes",
-    loadComponent: () => import("./mis-viajes.page-G5BR6IHU.js").then((m) => m.MisViajesPage),
+    loadComponent: () => import("./mis-viajes.page-2OZENBAQ.js").then((m) => m.MisViajesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "detalles-viaje/:id",
-    loadComponent: () => import("./detalles-viaje.page-CAPZTTCM.js").then((m) => m.DetallesViajePage),
+    loadComponent: () => import("./detalles-viaje.page-IWKZ7CSV.js").then((m) => m.DetallesViajePage),
     canActivate: [AuthGuard]
   },
   {
     path: "messaging-center",
-    loadComponent: () => import("./centro-mensajes.component-AIVZDXMN.js").then((m) => m.CentroMensajesPage),
+    loadComponent: () => import("./centro-mensajes.component-7FFJD7LU.js").then((m) => m.CentroMensajesPage),
     canActivate: [AuthGuard]
   },
   {
     path: "chat/:id",
-    loadComponent: () => import("./chat.component-2PISVF5D.js").then((m) => m.ChatPage),
+    loadComponent: () => import("./chat.component-OCAOCD2Q.js").then((m) => m.ChatPage),
     canActivate: [AuthGuard]
   },
   {
     path: "condiciones-generales",
-    loadComponent: () => import("./condiciones-generales.page-LLYYXUO7.js").then((m) => m.CondicionesUsoComponent)
+    loadComponent: () => import("./condiciones-generales.page-QNLOXE5X.js").then((m) => m.CondicionesUsoComponent)
   },
   {
     path: "contrato-registro",
-    loadComponent: () => import("./contrato-registro.component-MMHO2OPZ.js").then((m) => m.ContratoRegistroComponent)
+    loadComponent: () => import("./contrato-registro.component-WVSUWLZ7.js").then((m) => m.ContratoRegistroComponent)
   },
   {
     path: "admin-app",
-    loadComponent: () => import("./admin-app.page-6ARRC2Q7.js").then((m) => m.AdminApp)
+    loadComponent: () => import("./admin-app.page-FXJDDDXW.js").then((m) => m.AdminApp)
   },
   {
     path: "login-admin",
-    loadComponent: () => import("./login-admin.page-GXLLLKHX.js").then((m) => m.AdminLoginPage)
+    loadComponent: () => import("./login-admin.page-XHD5SBHF.js").then((m) => m.AdminLoginPage)
   },
   {
     path: "events-admin",
-    loadComponent: () => import("./eventos-admin.page-C4SE75QS.js").then((m) => m.EventosAdmin),
+    loadComponent: () => import("./eventos-admin.page-WT3JDNZ3.js").then((m) => m.EventosAdmin),
     canActivate: [AuthGuard]
   },
   {
     path: "incidencias-admin",
-    loadComponent: () => import("./incidencias-admin.page-L3AI4OCC.js").then((m) => m.IncidenciasAdminPage),
+    loadComponent: () => import("./incidencias-admin.page-NIMG6PWI.js").then((m) => m.IncidenciasAdminPage),
     canActivate: [AuthGuard]
   },
   {
     path: "gestion-usuarios-admin",
-    loadComponent: () => import("./gestion-usuarios-admin.page-K5PTKGYA.js").then((m) => m.GestionUsuariosAdminPage),
+    loadComponent: () => import("./gestion-usuarios-admin.page-ZKHLBBHM.js").then((m) => m.GestionUsuariosAdminPage),
     canActivate: [AuthGuard]
   },
   {
     path: "pago-reserva/:id",
-    loadComponent: () => import("./pago-reserva.page-CBZWCO6I.js").then((m) => m.PagoReservaPage),
+    loadComponent: () => import("./pago-reserva.page-QAR3ZBT4.js").then((m) => m.PagoReservaPage),
     canActivate: [AuthGuard]
   },
   {
     path: "gestion-encuestas",
-    loadComponent: () => import("./gestion-encuestas.page-4YXKOORZ.js").then((m) => m.GestionEncuestasPage)
+    loadComponent: () => import("./gestion-encuestas.page-EX6CCLCI.js").then((m) => m.GestionEncuestasPage)
   },
   {
     path: "modificacion-email/:token",
-    loadComponent: () => import("./modificacion-email.page-2U2GKDQZ.js").then((m) => m.ModificacionEmailPage)
+    loadComponent: () => import("./modificacion-email.page-JB5IZJXA.js").then((m) => m.ModificacionEmailPage)
   }
 ];
 
@@ -469,21 +472,13 @@ var TranslateHttpLoader = class _TranslateHttpLoader {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TranslateHttpLoader, [{
     type: Injectable
-  }], () => [{
-    type: HttpClient
-  }, {
-    type: void 0,
-    decorators: [{
-      type: Inject,
-      args: [String]
-    }]
-  }, {
-    type: void 0,
-    decorators: [{
-      type: Inject,
-      args: [String]
-    }]
-  }], null);
+  }], () => [{ type: HttpClient }, { type: void 0, decorators: [{
+    type: Inject,
+    args: [String]
+  }] }, { type: void 0, decorators: [{
+    type: Inject,
+    args: [String]
+  }] }], null);
 })();
 
 // src/app/components/notification-toast/notification-toast.component.ts
@@ -716,12 +711,12 @@ var NotificationToastComponent = class _NotificationToastComponent {
       \u0275\u0275advance(2);
       \u0275\u0275conditional(ctx.toasts.length > 0 ? 4 : -1);
     }
-  }, dependencies: [CommonModule, NgClass], styles: ['@charset "UTF-8";\n\n\n[_nghost-%COMP%] {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container[_ngcontent-%COMP%] {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title[_ngcontent-%COMP%] {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg[_ngcontent-%COMP%] {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success[_ngcontent-%COMP%] {\n  border-left-color: #4caf50;\n}\n.toast-error[_ngcontent-%COMP%] {\n  border-left-color: #f44336;\n}\n.toast-warning[_ngcontent-%COMP%] {\n  border-left-color: #ff9800;\n}\n.toast-info[_ngcontent-%COMP%] {\n  border-left-color: #2196f3;\n}\n.icono-cerrar[_ngcontent-%COMP%] {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones[_ngcontent-%COMP%]:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger[_ngcontent-%COMP%] {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger[_ngcontent-%COMP%]:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n.nota[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_fadeIn 0.2s ease forwards;\n}\n@keyframes _ngcontent-%COMP%_slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  [_nghost-%COMP%] {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */'] });
+  }, dependencies: [CommonModule, NgClass], styles: ['@charset "UTF-8";\n\n\n[_nghost-%COMP%] {\n  position: fixed;\n  top: 1rem;\n  right: 1rem;\n  z-index: 1100;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 400px;\n}\n.toasts-container[_ngcontent-%COMP%] {\n  max-height: 80vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  width: 100%;\n}\n.title[_ngcontent-%COMP%] {\n  color: #222222;\n  font-weight: 700;\n  font-size: 0.95rem;\n}\n.bg[_ngcontent-%COMP%] {\n  background-color: #ffffff;\n  border-radius: 14px;\n  border-left: 6px solid transparent;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  padding: 1rem 1.25rem 1.25rem 1.25rem !important;\n  position: relative;\n}\n.toast-card[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;\n}\n.toast-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);\n}\n.toast-success[_ngcontent-%COMP%] {\n  border-left-color: #4caf50;\n}\n.toast-error[_ngcontent-%COMP%] {\n  border-left-color: #f44336;\n}\n.toast-warning[_ngcontent-%COMP%] {\n  border-left-color: #ff9800;\n}\n.toast-info[_ngcontent-%COMP%] {\n  border-left-color: #2196f3;\n}\n.icono-cerrar[_ngcontent-%COMP%] {\n  height: 16px;\n  width: 16px;\n  display: block;\n}\n.btn_notificaciones[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 12px;\n  right: 14px;\n  background: transparent;\n  border: none;\n  border-radius: 50%;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 4px;\n  opacity: 0.5;\n  transition: opacity 0.2s;\n  z-index: 10;\n}\n.btn_notificaciones[_ngcontent-%COMP%]:hover {\n  opacity: 1;\n  background-color: #f5f5f5;\n}\n.btn-danger[_ngcontent-%COMP%] {\n  background-color: #ffebee;\n  color: #c62828;\n  border: 1px solid #ffcdd2;\n  border-radius: 20px;\n  padding: 0.4rem 0.8rem;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);\n  transition: all 0.2s ease;\n}\n.btn-danger[_ngcontent-%COMP%]:hover {\n  background-color: #f44336;\n  color: #ffffff;\n}\n.toast-slide-out[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_collapseAndFade 0.35s ease forwards !important;\n}\n.mensaje[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n.nota[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  margin-right: 0.5rem;\n  color: #777777 !important;\n  font-weight: 500;\n}\n.animate-fade-in[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_fadeIn 0.2s ease forwards;\n}\n@keyframes _ngcontent-%COMP%_slideInRight {\n  from {\n    opacity: 0;\n    transform: translateX(100%) scale(0.9);\n  }\n  to {\n    opacity: 1;\n    transform: translateX(0) scale(1);\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_collapseAndFade {\n  0% {\n    opacity: 1;\n    max-height: 150px;\n    transform: scale(1);\n    margin-bottom: 0.5rem;\n  }\n  100% {\n    opacity: 0;\n    max-height: 0;\n    transform: scale(0.85);\n    margin-bottom: 0;\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n}\n@media (max-width: 576px) {\n  [_nghost-%COMP%] {\n    width: calc(100% - 2rem);\n    right: 1rem;\n    left: 1rem;\n    top: 1rem;\n  }\n  .toasts-container[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n/*# sourceMappingURL=notification-toast.component.css.map */'], changeDetection: 1 });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NotificationToastComponent, [{
     type: Component,
-    args: [{ selector: "app-notification-toast", standalone: true, imports: [CommonModule], template: `@if (toasts.length > 0) {
+    args: [{ selector: "app-notification-toast", standalone: true, imports: [CommonModule], changeDetection: ChangeDetectionStrategy.Eager, template: `@if (toasts.length > 0) {
   <div class="d-flex justify-content-end mb-2 animate-fade-in">
     <button
       class="btn btn-danger btn-sm d-flex align-items-center gap-1"
@@ -782,7 +777,7 @@ var NotificationToastComponent = class _NotificationToastComponent {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NotificationToastComponent, { className: "NotificationToastComponent", filePath: "src/app/components/notification-toast/notification-toast.component.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NotificationToastComponent, { className: "NotificationToastComponent", filePath: "src/app/components/notification-toast/notification-toast.component.ts", lineNumber: 18 });
 })();
 
 // node_modules/ngx-cookieconsent/fesm2022/ngx-cookieconsent.mjs
@@ -806,13 +801,10 @@ var WindowService = _WindowService;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(WindowService, [{
     type: Injectable
-  }], () => [{
-    type: Document,
-    decorators: [{
-      type: Inject,
-      args: [DOCUMENT]
-    }]
-  }], null);
+  }], () => [{ type: Document, decorators: [{
+    type: Inject,
+    args: [DOCUMENT]
+  }] }], null);
 })();
 var _NgcCookieConsentConfig = class _NgcCookieConsentConfig {
   constructor() {
@@ -870,29 +862,19 @@ var _NgcCookieConsentService = class _NgcCookieConsentService {
       this.config = config;
       this.config.onPopupOpen = () => this.popupOpenSource.next();
       this.config.onPopupClose = () => this.popupCloseSource.next();
-      this.config.onInitialise = (status) => this.initializingSource.next({
-        status
-      });
+      this.config.onInitialise = (status) => this.initializingSource.next({ status });
       this.config.onStatusChange = (status, chosenBefore) => {
-        this.statusChangeSource.next({
-          status,
-          chosenBefore
-        });
+        this.statusChangeSource.next({ status, chosenBefore });
       };
       this.config.onRevokeChoice = () => this.revokeChoiceSource.next();
       this.config.onNoCookieLaw = (countryCode, country) => {
-        this.noCookieLawSource.next({
-          countryCode,
-          country
-        });
+        this.noCookieLawSource.next({ countryCode, country });
       };
       this.cookieconsent.initialise(this.config, (popup) => {
         this.popupInstance = popup;
         this.initializedSource.next();
       }, (error, popup) => {
-        this.initializationErrorSource.next({
-          error
-        });
+        this.initializationErrorSource.next({ error });
       });
     }
   }
@@ -969,17 +951,12 @@ var NgcCookieConsentService = _NgcCookieConsentService;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NgcCookieConsentService, [{
     type: Injectable
-  }], () => [{
-    type: WindowService
-  }, {
-    type: NgcCookieConsentConfig
-  }], null);
+  }], () => [{ type: WindowService }, { type: NgcCookieConsentConfig }], null);
 })();
 function provideNgcCookieConsent(config) {
-  return [[WindowService, {
-    provide: NgcCookieConsentConfig,
-    useValue: config
-  }, NgcCookieConsentService]];
+  return [
+    [WindowService, { provide: NgcCookieConsentConfig, useValue: config }, NgcCookieConsentService]
+  ];
 }
 var _NgcCookieConsentModule = class _NgcCookieConsentModule {
   static forRoot(config) {
@@ -1004,7 +981,9 @@ var NgcCookieConsentModule = _NgcCookieConsentModule;
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NgcCookieConsentModule, [{
     type: NgModule,
     args: [{
-      imports: [CommonModule]
+      imports: [
+        CommonModule
+      ]
     }]
   }], null, null);
 })();
@@ -1211,7 +1190,7 @@ var AppComponent = class _AppComponent {
     RouterLink,
     IonMenuToggle,
     TranslatePipe
-  ], encapsulation: 2 });
+  ], encapsulation: 2, changeDetection: 1 });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
@@ -1231,19 +1210,19 @@ var AppComponent = class _AppComponent {
       TranslateModule,
       RouterModule,
       IonMenuToggle
-    ], providers: [MenuController], template: '<ion-app>\n  <!-- MENU DE LA APLICACI\xD3N PARA DISPOSITIVOS MOVILES  -->\n  <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">\n    <ion-header class="ion_menu">\n      <ion-toolbar color="primary">\n        <ion-title>Men\xFA</ion-title>\n      </ion-toolbar>\n    </ion-header>\n\n    <ion-content color="secondary">\n      <ion-list>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.INICIO" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.QUIENES" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"\n            | translate\n            }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.DECALOGO" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.BUSCAR_VIAJE"\n            | translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.PUBLICAR_VIAJE" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n      </ion-list>\n    </ion-content>\n\n    <ion-footer>\n      <div style="text-align: center; width: 100%; padding: 10px; background-color: var(--ion-color-primary)">\n        <img class="imgLogoMenu" src="../assets/logo/PRIDECAR.png" alt="Logo" />\n        <div class="hora">\n          <span>{{ hours }}</span><span class="blink">:</span><span>{{ minutes }}</span>\n        </div>\n      </div>\n    </ion-footer>\n  </ion-menu>\n\n  <!-- CONTENIDO PRINCIPAL DE LA APLICACI\xD3N -->\n  <div class="ion-page" id="main-content">\n    <ion-router-outlet [animated]="false"></ion-router-outlet>\n  </div>\n\n  <app-notification-toast [usuario]="userData"></app-notification-toast>\n</ion-app>' }]
+    ], changeDetection: ChangeDetectionStrategy.Eager, providers: [MenuController], template: '<ion-app>\n  <!-- MENU DE LA APLICACI\xD3N PARA DISPOSITIVOS MOVILES  -->\n  <ion-menu side="start" menuId="mobileMenu" contentId="main-content" type="push" class="menuMobile">\n    <ion-header class="ion_menu">\n      <ion-toolbar color="primary">\n        <ion-title>Men\xFA</ion-title>\n      </ion-toolbar>\n    </ion-header>\n\n    <ion-content color="secondary">\n      <ion-list>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.INICIO" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/sobre-nosotros" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.QUIENES" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/faqs" routerDirection="forward" color="secondary" detail="false">{{ "NAVBAR.FAQS"\n            | translate\n            }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/decalogo" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.DECALOGO" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/busqueda-viajes" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.BUSCAR_VIAJE"\n            | translate }}</ion-item>\n        </ion-menu-toggle>\n        <ion-menu-toggle auto-hide="false">\n          <ion-item routerLink="/nuevo-viaje" routerDirection="forward" color="secondary" detail="false">{{\n            "NAVBAR.PUBLICAR_VIAJE" |\n            translate }}</ion-item>\n        </ion-menu-toggle>\n      </ion-list>\n    </ion-content>\n\n    <ion-footer>\n      <div style="text-align: center; width: 100%; padding: 10px; background-color: var(--ion-color-primary)">\n        <img class="imgLogoMenu" src="../assets/logo/PRIDECAR.png" alt="Logo" />\n        <div class="hora">\n          <span>{{ hours }}</span><span class="blink">:</span><span>{{ minutes }}</span>\n        </div>\n      </div>\n    </ion-footer>\n  </ion-menu>\n\n  <!-- CONTENIDO PRINCIPAL DE LA APLICACI\xD3N -->\n  <div class="ion-page" id="main-content">\n    <ion-router-outlet [animated]="false"></ion-router-outlet>\n  </div>\n\n  <app-notification-toast [usuario]="userData"></app-notification-toast>\n</ion-app>' }]
   }], () => [{ type: NgcCookieConsentService }, { type: CookieService }, { type: LanguageService }, { type: NotificacionesService }, { type: MenuController }, { type: Router }], { menu: [{
     type: ViewChild,
     args: [IonMenu]
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 55 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 56 });
 })();
 
 // node_modules/@angular/platform-browser/fesm2022/animations-async.mjs
 /**
- * @license Angular v21.2.26
+ * @license Angular v22.2.6
  * (c) 2010-2026 Google LLC. https://angular.dev/
  * License: MIT
  */
@@ -1273,7 +1252,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
     (_a = this._engine) == null ? void 0 : _a.flush();
   }
   loadImpl() {
-    const loadFn = () => this.moduleImpl ?? import("./browser-QBBRFSXS.js").then((m) => m);
+    const loadFn = () => this.moduleImpl ?? import("./browser-VYQABTZX.js").then((m) => m);
     let moduleImplPromise;
     if (this.loadingSchedulerFn) {
       moduleImplPromise = this.loadingSchedulerFn(loadFn);
@@ -1298,9 +1277,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
     if (renderer.\u0275type === 0) {
       return renderer;
     }
-    if (typeof renderer.throwOnSyntheticProps === "boolean") {
-      renderer.throwOnSyntheticProps = false;
-    }
+    disableThrowOnSyntheticProps(renderer);
     const dynamicRenderer = new DynamicDelegationRenderer(renderer);
     if (((_a = rendererType == null ? void 0 : rendererType.data) == null ? void 0 : _a["animation"]) && !this._rendererFactoryPromise) {
       this._rendererFactoryPromise = this.loadImpl();
@@ -1526,7 +1503,7 @@ function limpiarSesionSegura(rememberMe) {
 
 // node_modules/@angular/platform-browser/fesm2022/animations.mjs
 /**
- * @license Angular v21.2.26
+ * @license Angular v22.2.6
  * (c) 2010-2026 Google LLC. https://angular.dev/
  * License: MIT
  */
@@ -7239,7 +7216,7 @@ bootstrapApplication(AppComponent, {
       rippleEffect: true
     }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
     MessageService,
     providePrimeNG({
@@ -7257,4 +7234,5 @@ bootstrapApplication(AppComponent, {
     }))
   ]
 });
+//# debugId=6178d34c-2bc5-536e-8205-8bae696218e3
 //# sourceMappingURL=main.js.map

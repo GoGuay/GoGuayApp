@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -8,6 +8,7 @@ import { IonicModule, NavController } from '@ionic/angular';
   templateUrl: './navbar-admin.page.html',
   styleUrls: ['./navbar-admin.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, ReactiveFormsModule, IonicModule, MatDialogModule],
 })
 export class NavbarAdmin implements OnInit {

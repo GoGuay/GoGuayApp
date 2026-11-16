@@ -1,49 +1,49 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, viewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { Subscription } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 // Ionic Standalone
-import { IonicModule, NavController } from "@ionic/angular";
+import { IonicModule, NavController } from '@ionic/angular';
 
 // Material
-import { MatButtonModule } from "@angular/material/button";
-import { MatDivider } from "@angular/material/divider";
-import { MatAccordion, MatExpansionModule } from "@angular/material/expansion";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIcon } from "@angular/material/icon";
+import { MatButtonModule } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 
 // Core de GoGuay
-import { Viaje } from "../../../models/travel/viaje.model";
-import { Usuario } from "../../../models/user/usuario.model";
-import { TravelService } from "../../../core/travel-services/travel.service";
-import { UserServicesService } from "../../../core/user-services/user-services.service";
-import { FuncionesComunes } from "../../../core/funciones-comunes/funciones-comunes.service";
-import { MessagingService } from "../../../core/menssaging-service/messaging.service";
-import { MessageService } from "primeng/api";
-import { ToastModule } from "primeng/toast";
+import { Viaje } from '../../../models/travel/viaje.model';
+import { Usuario } from '../../../models/user/usuario.model';
+import { TravelService } from '../../../core/travel-services/travel.service';
+import { UserServicesService } from '../../../core/user-services/user-services.service';
+import { FuncionesComunes } from '../../../core/funciones-comunes/funciones-comunes.service';
+import { MessagingService } from '../../../core/menssaging-service/messaging.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
-  selector: "app-detalles-viaje",
-  templateUrl: "./detalles-viaje.page.html",
-  styleUrls: ["./detalles-viaje.page.scss"],
+  selector: 'app-detalles-viaje',
+  templateUrl: './detalles-viaje.page.html',
+  styleUrls: ['./detalles-viaje.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule, 
+    IonicModule,
     MatDivider,
     MatIcon,
     MatButtonModule,
     MatAccordion,
     MatExpansionModule,
     MatFormFieldModule,
-    ToastModule
+    ToastModule,
   ],
 })
 export class DetallesViajePage implements OnInit, OnDestroy {
-
   viaje!: Viaje;
   yaUnido: boolean = false;
   preferencias: string[] = [];
@@ -51,7 +51,7 @@ export class DetallesViajePage implements OnInit, OnDestroy {
   conductor: boolean = false;
   userData: Usuario | undefined = {} as Usuario;
   pasajeroYaAvisoLlegada: boolean = false;
-  
+
   private viajesSubscription: Subscription = new Subscription();
   accordion = viewChild.required(MatAccordion);
 
@@ -63,7 +63,7 @@ export class DetallesViajePage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cdRef: ChangeDetectorRef,
     private messagingService: MessagingService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     // El constructor queda limpio de inyecciones modales para permitir el enrutamiento full-screen
   }
@@ -78,26 +78,26 @@ export class DetallesViajePage implements OnInit, OnDestroy {
     if (viajeTemporal) {
       this.viaje = {
         ...viajeTemporal,
-        acompanantes: viajeTemporal.acompanantes || []
+        acompanantes: viajeTemporal.acompanantes || [],
       };
       this.inicializarLogica();
     } else {
       // 2. Si el usuario refresca la página, leemos el ID desde los queryParams de la URL
-      this.route.queryParams.subscribe(params => {
+      this.route.queryParams.subscribe((params) => {
         const viajeId = params['id'];
         if (viajeId) {
           this.travelService.getViaje(viajeId).subscribe({
             next: (v) => {
               this.viaje = {
                 ...v,
-                acompanantes: v.acompanantes || []
+                acompanantes: v.acompanantes || [],
               };
               this.inicializarLogica();
             },
             error: (err) => {
               console.error('Error al recuperar el viaje por ID:', err);
               this.navCtrl.navigateRoot('/busqueda-viajes');
-            }
+            },
           });
         } else {
           this.navCtrl.navigateRoot('/busqueda-viajes');
@@ -131,22 +131,20 @@ export class DetallesViajePage implements OnInit, OnDestroy {
   obtenerUsuarioActual() {
     if (!this.viaje || !this.viaje.usuario_id) return;
 
-    this.usersService
-      .obtenerUsuarioPorID_busqueda_viajes(this.viaje.usuario_id)
-      .subscribe({
-        next: (usuario) => {
-          this.viaje = { ...this.viaje, usuario: usuario };
-          this.userID = usuario.id;
+    this.usersService.obtenerUsuarioPorID_busqueda_viajes(this.viaje.usuario_id).subscribe({
+      next: (usuario) => {
+        this.viaje = { ...this.viaje, usuario: usuario };
+        this.userID = usuario.id;
 
-          if (this.userData && this.userData.usuario) {
-            this.verificarSiEstaUnido();
-          }
+        if (this.userData && this.userData.usuario) {
+          this.verificarSiEstaUnido();
+        }
 
-          this.cdRef.markForCheck();
-          this.cdRef.detectChanges();
-        },
-        error: (error) => console.error('Error al obtener el conductor:', error),
-      });
+        this.cdRef.markForCheck();
+        this.cdRef.detectChanges();
+      },
+      error: (error) => console.error('Error al obtener el conductor:', error),
+    });
   }
 
   /**
@@ -184,7 +182,7 @@ export class DetallesViajePage implements OnInit, OnDestroy {
         this.yaUnido = this.viaje.acompanantes?.some((a: any) => a.id === usuarioId) || false;
         this.cdRef.markForCheck();
       },
-      error: (err) => console.error('Error al verificar unión del pasajero:', err)
+      error: (err) => console.error('Error al verificar unión del pasajero:', err),
     });
   }
 
@@ -209,14 +207,11 @@ export class DetallesViajePage implements OnInit, OnDestroy {
         };
 
         this.messagingService.enviarSolicitudViaje(payload).subscribe(() => {
-          this.funcionesComunes.openConfirmModal(
-            'Solicitud enviada',
-            'El conductor debe aceptar tu solicitud para unirte.',
-          );
+          this.funcionesComunes.openConfirmModal('Solicitud enviada', 'El conductor debe aceptar tu solicitud para unirte.');
           this.navCtrl.navigateForward(['/chat', convId]);
         });
       },
-      error: (err) => console.error('Error al iniciar el flujo de solicitud:', err)
+      error: (err) => console.error('Error al iniciar el flujo de solicitud:', err),
     });
   }
 
@@ -241,9 +236,7 @@ export class DetallesViajePage implements OnInit, OnDestroy {
 
   checkSiYaAvisoLlegada() {
     if (this.yaUnido && this.userData?.usuario && this.viaje) {
-      const yo = this.viaje.acompanantes?.find(
-        (a: any) => a.id === this.userData?.usuario.id,
-      );
+      const yo = this.viaje.acompanantes?.find((a: any) => a.id === this.userData?.usuario.id);
       this.pasajeroYaAvisoLlegada = yo?.ha_llegado || false;
     }
   }
@@ -257,22 +250,20 @@ export class DetallesViajePage implements OnInit, OnDestroy {
     const viajeId = this.viaje.id;
     const usuarioId = this.userData.usuario.id;
 
-    this.travelService
-      .notificarLlegadaPuntoPartida(viajeId, usuarioId)
-      .subscribe({
-        next: () => {
-          this.pasajeroYaAvisoLlegada = true;
-          this.cdRef.detectChanges();
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, usuarioId).subscribe({
+      next: () => {
+        this.pasajeroYaAvisoLlegada = true;
+        this.cdRef.detectChanges();
 
-          this.funcionesComunes.openConfirmModal(
-            '¡Aviso enviado!',
-            'El conductor ha sido notificado de que ya estás en el punto de encuentro.',
-          );
+        this.funcionesComunes.openConfirmModal(
+          '¡Aviso enviado!',
+          'El conductor ha sido notificado de que ya estás en el punto de encuentro.'
+        );
 
-          this.verificarSiEstaUnido();
-        },
-        error: (err) => console.error('Error al notificar llegada:', err),
-      });
+        this.verificarSiEstaUnido();
+      },
+      error: (err) => console.error('Error al notificar llegada:', err),
+    });
   }
 
   /**
@@ -282,25 +273,23 @@ export class DetallesViajePage implements OnInit, OnDestroy {
     if (!this.viaje) return;
     const viajeId = this.viaje.id;
 
-    this.travelService
-      .notificarLlegadaPuntoPartida(viajeId, acompId)
-      .subscribe({
-        next: () => {
-          const acompanante = this.viaje.acompanantes?.find((a: any) => a.id === acompId);
-          if (acompanante) {
-            acompanante.ha_llegado = true;
-          }
+    this.travelService.notificarLlegadaPuntoPartida(viajeId, acompId).subscribe({
+      next: () => {
+        const acompanante = this.viaje.acompanantes?.find((a: any) => a.id === acompId);
+        if (acompanante) {
+          acompanante.ha_llegado = true;
+        }
 
-          this.cdRef.detectChanges();
+        this.cdRef.detectChanges();
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Llegada confirmada',
-            detail: `Has marcado que el acompañante ha llegado correctamente.`,
-            life: 2000,
-          });
-        },
-        error: (err) => console.error('Error al confirmar llegada desde conductor:', err),
-      });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Llegada confirmada',
+          detail: `Has marcado que el acompañante ha llegado correctamente.`,
+          life: 2000,
+        });
+      },
+      error: (err) => console.error('Error al confirmar llegada desde conductor:', err),
+    });
   }
 }

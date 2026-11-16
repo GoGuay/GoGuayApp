@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TravelService } from '../../../../../core/travel-services/travel.service';
@@ -16,6 +16,7 @@ import { SelectorGeneralComponent } from 'src/app/components/selector-general/se
   standalone: true,
   imports: [FormsModule, TranslateModule, MatButtonModule, SpinnerComponent, SelectorGeneralComponent],
   templateUrl: './segundo-paso.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./segundo-paso.component.scss'],
 })
 export class SegundoPasoComponent implements OnInit {

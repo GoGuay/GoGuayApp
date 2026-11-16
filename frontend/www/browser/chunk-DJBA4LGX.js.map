@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "sources": [
+    "src/app/pages/jumbotron/jumbotron.component.ts",
+    "src/app/pages/jumbotron/jumbotron.component.html"
+  ],
+  "sourcesContent": [
+    "import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';\nimport { TranslateModule } from '@ngx-translate/core';\n\n@Component({\n  selector: 'app-jumbotron',\n  standalone: true,\n  imports: [TranslateModule],\n  templateUrl: './jumbotron.component.html',\n  changeDetection: ChangeDetectionStrategy.Eager,\n  styleUrls: ['./jumbotron.component.scss'],\n})\nexport class JumbotronComponent implements OnInit {\n  @Input() title: string = 'Default Title';\n  @Input() imageSrc: string = '../../../assets/folder/jumbo.jpg';\n  @Input() helpText: string = 'Help Text';\n\n  constructor() {}\n\n  ngOnInit() {}\n}\n",
+    "<div class=\"jumbotron\">\n  <div class=\"title\">\n    <h1>\n      <img\n        class=\"img\"\n        src=\"../../../assets/sistema/bandera.gif\"\n        alt=\"\"\n      />\n      {{ title }}\n      <img\n        class=\"img\"\n        src=\"../../../assets/sistema/bandera.gif\"\n        alt=\"\"\n      />\n    </h1>\n  </div>\n\n  <img\n    [src]=\"imageSrc\"\n    class=\"jumbotron-img\"\n    [alt]=\"helpText | translate\"\n  />\n</div>\n"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;AAWM,IAAO,qBAAP,MAAO,oBAAkB;EACpB,QAAgB;EAChB,WAAmB;EACnB,WAAmB;EAE5B,cAAA;EAAe;EAEf,WAAQ;EAAI;;qCAPD,qBAAkB;EAAA;yEAAlB,qBAAkB,WAAA,CAAA,CAAA,eAAA,CAAA,GAAA,QAAA,EAAA,OAAA,SAAA,UAAA,YAAA,UAAA,WAAA,GAAA,OAAA,GAAA,MAAA,GAAA,QAAA,CAAA,CAAA,GAAA,WAAA,GAAA,CAAA,GAAA,OAAA,GAAA,CAAA,OAAA,uCAAA,OAAA,IAAA,GAAA,KAAA,GAAA,CAAA,GAAA,iBAAA,GAAA,OAAA,KAAA,CAAA,GAAA,UAAA,SAAA,4BAAA,IAAA,KAAA;AAAA,QAAA,KAAA,GAAA;ACX/B,MAAA,4BAAA,GAAA,OAAA,CAAA,EAAuB,GAAA,OAAA,CAAA,EACF,GAAA,IAAA;AAEf,MAAA,uBAAA,GAAA,OAAA,CAAA;AAKA,MAAA,iBAAA,CAAA;AACA,MAAA,uBAAA,GAAA,OAAA,CAAA;AAKF,MAAA,0BAAA,EAAK;AAGP,MAAA,uBAAA,GAAA,OAAA,CAAA;;AAKF,MAAA,0BAAA;;;AAdM,MAAA,oBAAA,CAAA;AAAA,MAAA,6BAAA,KAAA,IAAA,OAAA,GAAA;AAUF,MAAA,oBAAA,CAAA;AAAA,MAAA,wBAAA,OAAA,IAAA,QAAA,EAAgB,OAAA,sBAAA,GAAA,GAAA,IAAA,QAAA,CAAA;;oBDZR,iBAAe,aAAA,GAAA,QAAA,CAAA,ynCAAA,GAAA,iBAAA,EAAA,CAAA;;;sEAKd,oBAAkB,CAAA;UAR9B;uBACW,iBAAe,YACb,MAAI,SACP,CAAC,eAAe,GAAC,iBAET,wBAAwB,OAAK,UAAA,6aAAA,QAAA,CAAA,+jCAAA,EAAA,CAAA;;UAI7C;;UACA;;UACA;;;;6EAHU,oBAAkB,EAAA,WAAA,sBAAA,UAAA,kDAAA,YAAA,GAAA,CAAA;AAAA,GAAA;",
+  "names": [],
+  "debugId": "50393cea-6e56-5d28-996d-8a4e141c3080"
+}

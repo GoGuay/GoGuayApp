@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { IonicModule, NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [IonicModule, MatButtonModule, TranslateModule],
   templateUrl: './buscador_viaje_home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./buscador_viaje_home.component.scss'],
 })
 export class BuscadorViajeHomeComponent implements OnInit {

@@ -1,19 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormsModule,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-} from '@angular/forms';
-import {
-  IonContent,
-  IonCol,
-  IonRow,
-  NavController,
-} from '@ionic/angular/standalone';
+import { FormBuilder, FormsModule, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { IonContent, IonCol, IonRow, NavController } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ActivatedRoute } from '@angular/router';
@@ -29,9 +17,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
  * @param group
  * @returns
  */
-function passwordsCoincidentes(
-  group: AbstractControl
-): ValidationErrors | null {
+function passwordsCoincidentes(group: AbstractControl): ValidationErrors | null {
   const pass1 = group.get('nuevaPassword1')?.value;
   const pass2 = group.get('nuevaPassword2')?.value;
   return pass1 && pass2 && pass1 !== pass2 ? { noCoinciden: true } : null;
@@ -42,15 +28,8 @@ function passwordsCoincidentes(
   templateUrl: './nueva-contrasena.page.html',
   styleUrls: ['./nueva-contrasena.page.scss'],
   standalone: true,
-  imports: [
-    IonRow,
-    IonCol,
-    IonContent,
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    ReactiveFormsModule,
-  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [IonRow, IonCol, IonContent, CommonModule, FormsModule, TranslateModule, ReactiveFormsModule],
 })
 export class NuevaContrasenaPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -74,14 +53,7 @@ export class NuevaContrasenaPage implements OnInit {
   ) {
     this.formulario = this.fb.group(
       {
-        nuevaPassword1: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(6),
-            Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$'),
-          ],
-        ],
+        nuevaPassword1: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[\\d\\W]).{6,}$')]],
         nuevaPassword2: [{ value: '', disabled: true }, Validators.required],
       },
       {
@@ -98,17 +70,15 @@ export class NuevaContrasenaPage implements OnInit {
 
     this.comprobacion_token(this.token);
 
-    this.formulario
-      .get('nuevaPassword1')
-      ?.statusChanges.subscribe((status: string) => {
-        const pass2 = this.formulario.get('nuevaPassword2');
-        if (status === 'VALID') {
-          pass2?.enable();
-        } else {
-          pass2?.disable();
-          pass2?.reset();
-        }
-      });
+    this.formulario.get('nuevaPassword1')?.statusChanges.subscribe((status: string) => {
+      const pass2 = this.formulario.get('nuevaPassword2');
+      if (status === 'VALID') {
+        pass2?.enable();
+      } else {
+        pass2?.disable();
+        pass2?.reset();
+      }
+    });
   }
 
   botonMostrarPassword_1() {
@@ -124,20 +94,18 @@ export class NuevaContrasenaPage implements OnInit {
 
     const nuevaPassword = this.formulario.get('nuevaPassword1')?.value;
 
-    this.userService
-      .cambiar_pw_solicitado(this.token, nuevaPassword)
-      .subscribe({
-        next: (respuesta: any) => {
-          this.formulario.reset();
-          this.mensajeOkCambiada = true;
-        },
-        error: (err) => {
-          if (err.error.error === 'Token ya utilizado') {
-            this.navCtrl.navigateRoot(['/token-ya-usado']);
-          }
-          console.log(err);
-        },
-      });
+    this.userService.cambiar_pw_solicitado(this.token, nuevaPassword).subscribe({
+      next: (respuesta: any) => {
+        this.formulario.reset();
+        this.mensajeOkCambiada = true;
+      },
+      error: (err) => {
+        if (err.error.error === 'Token ya utilizado') {
+          this.navCtrl.navigateRoot(['/token-ya-usado']);
+        }
+        console.log(err);
+      },
+    });
   }
 
   comprobacion_token(token: string) {
@@ -175,11 +143,9 @@ export class NuevaContrasenaPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isNuevaPassword1Valida = false;
-      this.translate
-        .get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL')
-        .subscribe((translation) => {
-          this.errorMensaje = translation;
-        });
+      this.translate.get('AJUSTESAPP.PASSWORD.NUEVA_DIF_ACTUAL').subscribe((translation) => {
+        this.errorMensaje = translation;
+      });
     }
     this.nuevaPassword2 = '';
     this.isConfirmacionPasswordValida = false;
@@ -195,11 +161,9 @@ export class NuevaContrasenaPage implements OnInit {
       this.errorMensaje = '';
     } else {
       this.isConfirmacionPasswordValida = false;
-      this.translate
-        .get('AJUSTESAPP.PASSWORD.NO_COINCIDEN')
-        .subscribe((translation) => {
-          this.errorMensaje = translation;
-        });
+      this.translate.get('AJUSTESAPP.PASSWORD.NO_COINCIDEN').subscribe((translation) => {
+        this.errorMensaje = translation;
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavController, IonicModule } from '@ionic/angular';
@@ -15,6 +15,7 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   templateUrl: './login-admin.page.html',
   styleUrls: ['./login-admin.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, ReactiveFormsModule, IonicModule, SpinnerComponent, MatDialogModule],
 })
 export class AdminLoginPage implements OnInit {
