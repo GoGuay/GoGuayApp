@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/decalogo/decalogo.page.scss"],
+  "sourcesContent": ["ion-accordion {\r\n  border-radius: 35px;\r\n  border: 1px solid black;\r\n  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);\r\n  color: black;\r\n  background-color: #f4f5f8;\r\n}\r\n"],
+  "mappings": ";AAAA;AACE,iBAAA;AACA,UAAA,IAAA,MAAA;AACA,cAAA,EAAA,IAAA,IAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;AACA,SAAA;AACA,oBAAA;;",
+  "names": []
+}

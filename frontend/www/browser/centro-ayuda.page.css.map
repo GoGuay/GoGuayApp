@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/centro-ayuda/centro-ayuda.page.scss"],
+  "sourcesContent": ["ion-button {\n  color: #000000 !important;\n}\n\nion-accordion {\n  border-radius: 35px;\n  border: 1px solid black;\n  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);\n  color: black;\n}\n\n\n"],
+  "mappings": ";AAAA;AACE,SAAA;;AAGF;AACE,iBAAA;AACA,UAAA,IAAA,MAAA;AACA,cAAA,EAAA,IAAA,IAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;AACA,SAAA;;",
+  "names": []
+}

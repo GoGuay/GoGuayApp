@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 
 :host {
-  --mdc-filled-text-field-container-color: white;
+  --mat-form-field-filled-container-color: white;
   --mat-sys-surface-variant: white;
   --mat-sys-primary: #000000;
   --ion-color-success: #e0a667;

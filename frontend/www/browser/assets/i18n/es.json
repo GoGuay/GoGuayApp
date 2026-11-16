@@ -1,0 +1,712 @@
+{
+  "************************PARTES COMUNES Y REUTILIZABLES*****************************": "",
+  "SELECTOR_GENERO": {
+    "LABEL": "Tu género",
+    "INFO": "Es la vivencia interna e individual de una persona, que se expresa a través de la identidad, la vestimenta o el comportamiento. No está relacionado con el sexo asignado al nacer y no se limita solo a hombre o mujer.",
+    "SELECCIONA": "Selecciona tu género",
+    "AYUDA": "Se muestran las opciones para elegir tu género",
+    "H_CIS": "Hombre cis",
+    "M_CIS": "Mujer cis",
+    "TRANS": "Transexual",
+    "NO_BINARIO": "No binario",
+    "INTER": "Intergénero",
+    "NO_FLUIDO": "No fluido",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+  "SELECTOR_ORIENTACION": {
+    "LABEL": "¿Orientación sexual?",
+    "INFO": "Es la atracción emocional, romántica y/o sexual que se siente hacia otras personas.",
+    "AYUDA": "Se muestran las opciones para elegir tu orientación",
+    "SELECCIONA": "Selecciona tu orientación",
+    "GAY": "Gay",
+    "LESBIANA": "Lesbiana",
+    "BISEXUAL": "Bisexual",
+    "PANSEXUAL": "Pansexual",
+    "ASEXUAL": "Asexual",
+    "DEMISEXUAL": "Demisexual",
+    "QUEER": "Queer",
+    "HETEROSEXUAL": "Heterosexual",
+    "OTRO": "Otro",
+    "NO_RESPONDE": "Prefiero no responder"
+  },
+  "SELECTOR_COLOR": {
+    "BLANCO": "Blanco",
+    "NEGRO": "Negro",
+    "ROJO": "Rojo",
+    "AMARILLO": "Amarillo",
+    "VERDE": "Verde",
+    "GRIS": "Gris",
+    "DORADO": "Dorado",
+    "MARRON": "Marrón",
+    "MORADO": "Morado",
+    "BEIGE": "Beige",
+    "PERLA": "Perla",
+    "OTRO": "Otro"
+  },
+  "PLACEHOLDER": {
+    "ESCRIBE_TU_MAIL": "Escribe tu email aquí",
+    "ESCRIBE_PASSWORD": "Escribe tu constraseña aquí",
+    "SOBRETI": "¡Aquí puedes contarnos lo que quieras sobre ti!",
+    "DONDE_COMIENZA": "¿Dónde comienza el viaje?",
+    "HASTA_DONDE": "¿Hasta donde es el viaje?",
+    "NUM_PLAZAS": "Número de plazas",
+    "BUSCA_LOCALIDAD": "Busca una localidad",
+    "EMAIL_EJEMPLO": "email@ejemplo.com"
+  },
+  "MODAL_HELP": {
+    "VER_MAS_DETALLES": "Ver más detalles",
+    "ARIA_VER_MAS_DETALLES": "Ver más detalles",
+    "CERRAR": "Cerrar",
+    "ARIA_CERRAR": "Cerrar ventana",
+    "CREAR_VIAJE_VUELTA": "Crear viaje de vuelta",
+    "ARIA_CREAR_VIAJE_VUELTA": "Crear un viaje de vuelta",
+    "ACEPTAR": "Aceptar",
+    "ARIA_ACEPTAR": "Aceptar",
+    "ARIA_ACEPTAR_CONDICIONES": "Aceptar las condiciones",
+    "NO_ACEPTAR": "No aceptar"
+  },
+  "BOTONES": {
+    "HOME": {
+      "PUBLICA_TU_VIAJE_AQUI": "Publica tu viaje aquí",
+      "BUSCA_TU_VIAJE_AQUI": "Busca tu viaje aquí",
+      "CENTRO_DE_AYUDA": "Consulta aquí"
+    },
+    "LOGIN": {
+      "INICIAR_SESION": "Iniciar sesión"
+    },
+    "MIPERFIL": {
+      "ANADIR_FOTO_PERFIL_MATTOOLTIP": "Añadir o cambiar la foto de perfil",
+      "ANADIR_FOTO_PERFIL_ARIALABEL": "Añadir o cambiar la foto de perfil",
+
+      "ELIMINAR_FOTO_PERFIL_MATTOOLTIP": "Eliminar la foto de perfil",
+      "ELIMINAR_FOTO_PERFIL_ARIALABEL": "Eliminar la foto de perfil",
+      "ASI_ME_VEN_LOS_DEMAS": "Así me ven los demás",
+
+      "GUARDAR": "Guardar"
+    },
+    "TABLAVEHICULOS": {
+      "ANADIR_VEHICULO": "Añadir vehículo",
+      "EDITAR_ARIALABEL": "Editar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "ELIMINAR_ARIALABEL": "Eliminar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_TRAS_EDITAR_ARIALABEL": "Guardar vehículo {{marca}} {{modelo}} de color {{color}}",
+      "GUARDAR_VEHICULO": "Guardar vehículo",
+      "CANCELAR": "Cancelar"
+    },
+    "DATOSCONTACTO": {
+      "GUARDAR": "Guardar"
+    }
+  },
+  "LOGIN": {
+    "TITULO": "Introduce tu correo y contraseña",
+    "EMAIL_LABEL": "Email",
+    "ERROR_EMAIL_OGLIGATORIO": "El email es obligatorio",
+    "ERROR_EMAIL_NOVALIDO": "Por favor, introduce un email correcto",
+    "PASSWORD_LABEL": "Contraseña",
+    "ERROR_PASSWORD_OGLIGATORIO": "La contraseña es obligatoria",
+    "RECUERDAME_CHECK": "Recuérdame",
+    "PASSWORD_OLVIDADO": "¿No recuerdas tu contraseña actual?",
+    "REGISTRARSE_TEXTO": "¿Aún no estás registrado?",
+    "REGISTRARSE_BOTON": "Regístrate aquí"
+  },
+  "MIPERFIL": {
+    "TITULO": "Mi perfil",
+    "DESCRIPCION": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+    "BTN_GUARDAR_HELP": "Guarda cualquier modificación realizada en tu perfil",
+    "INFO_PERSONAL": {
+      "TITULO": "Información personal",
+      "ALT_IMG_PERFIL": "Aquí se muestra tu imagen de perfil",
+
+      "LABEL_NOMBRE": "Nombre",
+      "NOMBRE_OBLIGATORIO": "El nombre es un dato obligatorio",
+      "LABEL_APELLIDOS": "Apellidos",
+      "APELLIDOS_OBLIGATORIO": "El apellido es un dato obligatorio",
+      "PRONOMBRE": {
+        "LABEL": "Pronombre",
+        "INFO": "Palabra que usamos para referirnos a una persona sin decir su nombre. Cada persona puede elegir los pronombres con los que se siente cómoda, como él, ella o elle.",
+        "AYUDA": "Se muestran las opciones para elegir tu pronombre",
+        "ESCOGE_OPCION": "Escoge tu pronombre",
+        "OPC_EL": "Él / He / Him",
+        "OPC_ELLA": "Ella / She / Her",
+        "OPC_ELLE": "Elle / They / Them",
+        "OPC_OTROS": "Otros",
+        "OPC_NOUSO": "No uso ninguno",
+        "OPC_NORESPONDO": "Prefiero no responder"
+      },
+      "LABEL_FECHANACIMIENTO": "Fecha de nacimiento",
+      "LABEL_EDAD": "Edad",
+      "LABEL_SOBRETI": "Sobre ti",
+      "AYUDA_SOBRETI": "Área para que puedas escribir un texto libre",
+      "CARACTERES": "Caracteres usados",
+      "SPINNER_TRADUCIENDO": "Traduciendo..."
+    },
+    "PREF_VIAJE": {
+      "LABEL": "Mis preferencias de viaje",
+      "SUBTITULO": "Cuando viajo prefiero...",
+      "OPC_HABLAR": "Hablar",
+      "OPC_MUSICA": "Escuchar música",
+      "OPC_DORMIR": "Dormir",
+      "OPC_SILENCIO": "Ir en silencio",
+      "LABEL_OTRAS": "Otras preferencias de viaje",
+      "MASCOTAS": "Admito mascotas / Puedo ir con mi mascota",
+      "FUMAR": "Se puede fumar"
+    },
+    "PREF_IA": {
+      "LABEL": "Tus intereses para la IA",
+      "SUBTITULO": "Selecciona tus planes y destinos favoritos para recibir mejores sugerencias de viaje:",
+      "PLAYA": "Playa y escapadas costeras",
+      "OCIO_NOCTURNO": "Ocio nocturno y festivales / Orgullo",
+      "CULTURA": "Cultura, museos y arte urbano",
+      "RURAL": "Naturaleza y escapadas rurales"
+    }
+  },
+
+  "DATOS_CONTACTO": {
+    "TITULO": "Datos de contacto",
+    "DESCRIPCION_SECCION": "Desde este apartado puedes modificar tu correo electrónico y tu teléfono de contacto (Recuerda que son datos importantes a la hora de realizar un viaje).",
+    "DESCRIPCION_SECCION_2": "Recuerda que si quieres ser un perfil verificado debes hacerlo en la sección Verificaciones.",
+    "MODIF_CORREO_TFNO": "Modificación de correo y teléfono",
+    "MI_CORREO": "Mi correo electrónico",
+    "CORREO_OBLIGATORIO_ERROR": "El correo es obligatorio",
+    "CORREO_INVALIDO_ERROR": "El formato del correo no es correcto",
+    "CORREO_REPETIDO_ERROR": "El email indicado ya consta registrado",
+
+    "MI_TFNO": "Mi teléfono",
+    "TELEFONO_OBLIGATORIO_ERROR": "El teléfono es obligatorio",
+    "TELEFONO_INVALIDO_ERROR": "Formato incorrecto: debe tener 9 dígitos numéricos",
+    "TELEFONO_REPETIDO_ERROR": "El número indicado ya consta registrado",
+    "COM_COMERCIALES": "Comunicaciones comerciales",
+    "CHECK_POR_EMAIL": "Acepto recibir comunicaciones comerciales por email",
+    "CHECK_TERCEROS": "Acepto que mis datos puedan ser usados con fines comerciales a terceros",
+    "TITULO_DATOSGUARDADOS": "Datos guardados",
+    "MENSAJE_DATOSGUARDADOS": "Se han guardado correctamente los datos",
+    "ERROR_TITULO": "No se ha guardado el dato",
+    "ERROR_MENSAJE_YAEXISTEDATO": "El dato que has introducido ya está registrado"
+  },
+  "TABLA_VEHICULOS": {
+    "TITULO": "Mis vehículos",
+    "SIN_VEHICULOS": "No tienes vehículos añadidos",
+    "ADVERTENCIA_MODIFICACION": "Recuerda que si cambias la marca, debes modificar también el modelo",
+    "ANADIR_OTRO": "¿Quieres añadir otro vehículo?",
+
+    "GUARDAR_CAMBIOS": "Guardar cambios",
+    "ELIMINAR": {
+      "MODAL_TITULO": "¡ATENCIÓN!: Vas a eliminar un vehículo",
+      "MODAL_PREGUNTA": "¿Estás seguro de que deseas eliminar el {{marca}} {{modelo}} de color {{color}}?",
+      "CONFIRMACION_TITULO": "Vehículo eliminado",
+      "CONFIRMACION_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha eliminado correctamente.",
+      "ERROR_AL_ELIMINAR": "No se pudo eliminar el vehículo {{marca}} {{modelo}} de color {{color}}"
+    },
+    "ANADIR_NUEVO": {
+      "MODAL_ANADIDO": "Vehículo guardado",
+      "MODAL_MENSAJE": "El vehículo {{marca}} {{modelo}} de color {{color}} se ha guardado correctamente.",
+      "MODAL_ANADIDO_ERROR": "No se pudo guardar el vehículo {{marca}} {{modelo}} de color {{color}}"
+    },
+
+    "SELECTOR": {
+      "MARCA": "Marca",
+      "AYUDA_MARCA": "Selector de marca del vehículo",
+      "MODELO": "Modelo",
+      "AYUDA_MODELO": "Selector de modelo del vehículo",
+      "COLOR": "Color",
+      "COLOR_VEHICULO": "Color del vehículo: {{color}}",
+      "AYUDA_COLOR": "Selector del color del vehículo"
+    },
+    "INFO": "*Si no encuentras tu vehículo, ponte en contacto con nosotros:",
+    "ENVIAR_CORREO": "Enviar correo electrónico de contacto"
+  },
+
+  "_NuevoViaje": "/nuevo-viaje",
+  "NUEVOVIAJE": {
+    "NUEVO_VIAJE": {
+      "ORIGEN": "Origen: ",
+      "BOTÓN_MI_UBICACION": "Mi ubicación",
+      "ARIALABEL_BOTON_MI_UBICACION": "Obtener mi ubicación actual automáticamente",
+      "DESTINO": "Destino: ",
+      "PLAZAS_DISPONIBLES": "Plazas disponibles: ",
+      "ARIALABEL_AVISO_INICIOSESION": "Aviso de inicio de sesión",
+      "ARIALABEL_AYUDA_INICIO_REGISTRO": "Ayuda para iniciar sesión o registrarse",
+      "BOTÓN_PUBLICA_TU_VIAJE": "Publica tu viaje",
+      "BOTON_PUBLICAR_TOOLTIP": "Puedes acceder al menú para publicar un nuevo viaje sin necesidad de rellenar los campos anteriores."
+    },
+    "RESUMEN_DINAMICO": {
+      "RESUMEN_VIAJE": "RESUMEN DEL VIAJE",
+      "COCHE_SELECCIONADO": "Coche seleccionado: ",
+      "BOTON_MODIFICAR_VIAJE": "Modificar viaje"
+    },
+    "PRIMER_PASO": {
+      "ELIGE_FECHA": "Elige la fecha del viaje",
+      "FECHA_SELECCIONADA": "Fecha seleccionada: ",
+      "HORA_SALIDA": "Hora de salida: ",
+      "SELECCIONA_HORA": "Selecciona la hora",
+      "HORA_SELECCIONADA": "Hora seleccionada: ",
+      "ERROR_HORA_MINIMA": "La hora de salida debe ser, como mínimo, una hora más a la actual.",
+      "NUMERO_PLAZAS_LIBRES": "NÚMERO DE PLAZAS LIBRES",
+      "SELECCIONA_NUMERO_PASAJEROS": "Selecciona el número de pasajeros que pueden viajar contigo:",
+      "COCHE_PARA_VIAJAR": "COCHE PARA VIAJAR",
+      "MODO_RESERVA": {
+        "TITULO": "MODO DE RESERVA",
+        "ACEPTACION_MANUAL_TITULO": "Aceptación manual",
+        "ACEPTACION_MANUAL_DESCRIPCION": "Tu decides quien viaja contigo aceptando cada reserva. ",
+        "ACEPTACION_AUTO_TITULO": "Aceptación automática",
+        "ACEPTACION_AUTO_DESCRIPCION": "La reserva se acepta automaticamente sin tu intervención"
+      },
+      "RECORDATORIO_TODOS_DATOS": "Recuerda que debes introducir todos los datos para poder continuar.",
+      "MENSAJE_ERROR": {
+        "TITULO": "Faltan datos",
+        "MENSAJE": "Por favor, completa todos los campos para poder continuar."
+      }
+    },
+
+    "NO_REGISTRADO_LOGIN": "Debes registrarte o iniciar sesión para publicar un viaje",
+    "CARNET_NO_REGISTRADO": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
+    "AYUDA_TOOLTIP": "Ayuda para publicar un viaje",
+
+    "TITULO_MODAL_AYUDA": "Ayuda",
+    "MENSAJE_AYUDA_CARNET": "Necesitas registrar tu carnet de conducir en los ajustes de tu perfil para poder publicar un viaje.",
+    "MENSAJE_AYUDA_LOGIN_REG": "<p>Necesitas <a href=\"/login\">iniciar sesión</a> o <a href=\"/registro\">registrarte</a> previamente antes de poder publicar un viaje.</p>"
+  },
+
+  "********************************** PAGINA BUSQUEDA VIAJES *************************************": "/busqueda-viajes",
+  "BUSCADOR": {
+    "TITULO": "Introduce origen, destino y fecha.",
+    "BUSCAR_VIAJE_DESDE": "Desde...",
+    "BUSCAR_VIAJE_HASTA": "Hasta...",
+
+    "BUSCAR_VIAJE_IDA": "¿Cuando vas?",
+    "HOY": "Hoy",
+    "MAÑANA": "Mañana",
+    "BUSCAR_VIAJE_VUELTA": "Fecha de vuelta (opcional)",
+    "SELECCIONAR_FECHA": "Seleccionar fecha",
+    "BOTONES_ACCES": "Acciones del buscador de viajes",
+    "BOTON_BUSCAR": "Buscar",
+    "BOTON_BUSCAR_ACCES": "Ver viajes disponibles con los criterios seleccionados",
+    "BOTON_LIMPIAR": "Limpiar búsqueda",
+    "BOTON_LIMPIAR_ACCES": "Borrar todos los criterios para empezar una nueva búsqueda",
+    "INSTRUCCIONES_BUSQUEDA": "Escriba al menos tres caracteres y use las flechas arriba y abajo para moverse entre los resultados y Enter para seleccionar."
+  },
+  "TITLE": "GoGuay",
+  "Panel de usuario": "Pagina de Panel de usuario",
+  "PANELUSUARIO": {
+    "PANELUSUARIO": "Panel de usuario",
+    "INFOPERSONAL": "INFORMACIÓN PERSONAL",
+    "ANADIR_EDITAR_FOTO": "Añadir/Editar foto",
+    "MIPERFIL": "Mi perfil",
+    "MIPERFIL_TOOL_TITULO": "Contenido Mi Perfil",
+    "MIPERFIL_TOOL_MODAL": "En esta sección podrás consultar y modificar tu información personal, así como añadir tus vehículos y preferencias en el viaje",
+    "DATOSCONTACTO": "Datos de contacto",
+    "DATOSCONT_TOOL_TITULO": "Contenido Datos Contacto",
+    "DATOSCONT_TOOL_MODAL": "Podrás modificar tu teléfono y correo electrónico, así como las preferencias para comunicarnos contigo.",
+    "VERIFPERFIL": "Verificar Perfil / Password",
+    "VERIFPERFIL_TOOL_TITULO": "Contenido sobre la verificación de perfil y cambio de contraseña",
+    "VERIFPERFIL_TOOL_MODAL": "Puedes convertirte en un usuario verificado, subir foto de tu carnet de conducir para publicar viajes y cambiar tu contraseña de acceso.",
+    "SALDO_TRANSF": "Saldo y transferencias",
+    "SALDO_TOOL_TITULO": "Contenido sobre el Saldo y las transferencias",
+    "SALDO_TOOL_MODAL": "Puedes consultar tu saldo disponible, métodos de recarga, últimos movimientos y transferir saldo disponible a tu cuenta bancaria"
+  },
+  "NavBar Home": "Opciones del navbar que aparece en el Home",
+  "NAVBAR": {
+    "INICIO": "Inicio",
+    "QUIENES": "Quienes somos",
+    "FAQS": "FAQs",
+    "DECALOGO": "Decálogo",
+    "BUSCAR_VIAJE": "Buscar viaje",
+    "PUBLICAR_VIAJE": "Publicar viaje",
+    "NOTIFICACIONES": "Notificaciones",
+    "IDIOMA_ES": "Seleccionar idioma español",
+    "IDIOMA_EN": "Seleccionar idioma inglés",
+    "MENUUSUARIO": {
+      "LOGIN": "Login",
+      "REGISTRO": "Registrarse",
+      "MI_PERFIL": "Mi perfil",
+      "MIS_VIAJES": "Mis viajes",
+      "DATOS_CONTACTO": "Datos de contacto",
+      "VERIFICACION": "Verificación del perfil",
+      "SALDO": "Saldo/Transferencias",
+      "AJUSTES": "Ajustes",
+      "SALIR": "Salir"
+    }
+  },
+  "_Home": "Por secciones",
+  "HOME": {
+    "JUMBO": {
+      "SLOGAN": "Seas como seas, viajamos contigo"
+    },
+    "SECCION_PUBLICAR": {
+      "TITULO": "¿Quieres compartir tu próximo viaje?",
+      "SUBTITULO": "Selecciona la ciudad que quieras y encuentra el evento perfecto",
+      "AYUDA": "Publica tu próximo viaje aquí.",
+      "DESCRIPCION": "Publica y viaja en compañía"
+    },
+    "SECCION_BUSCAR": {
+      "TITULO": "¿Quieres buscar un viaje?",
+      "AYUDA": "Busca un viaje aquí.",
+      "DESCRIPCION": "Encuentra rutas con gente afín"
+    },
+    "SECCION_DUDAS": {
+      "TITULO": "¿TIENES DUDAS?"
+    },
+    "EVENTOS": {
+      "TITULO": "¿Quieres ir a algún evento?",
+      "SUBTITULO": "Selecciona la ciudad, encuentra el evento y crea o busca un viaje hacia ese lugar!",
+      "INFO_SELECTOR": "Elige una ciudad de la lista",
+      "SELECTOR": "Elige una ciudad",
+      "PROXIMOS_EN": "Próximos eventos en ",
+      "FINICIO": "Fecha de inicio",
+      "FFIN": "Fecha de fin",
+      "IMAGEN": "Imagen del evento",
+      "ENLACE": "+Info",
+      "BOTONES": {
+        "CREAR_VIAJE": "Crear viaje",
+        "PARA": "para",
+        "BUSCAR_VIAJE": "Buscar viaje"
+      },
+      "NO_HAY_EVENTOS": "No hay eventos disponibles actualmente para {{ ciudad }}",
+      "PREPARANDO_EVENTOS": "Estamos preparando nuevos eventos. ¡Vuelve pronto!",
+      "AVISO": "Aviso: La información de los eventos ha sido extraída de sus respectivas fuentes: GoGuay no se responsabiliza de cualquier modificación realizada por la organización del evento."
+    }
+  },
+
+  "__Registro": "Componentes que conforman el Registro del usuario ----- FINALIZADO NOVIEMBRE 2025",
+  "REGISTRO": {
+    "OBLIGATORIO": "Obligatorio",
+    "FORM1": {
+      "BIENVENIDE": "BIENVENIDE",
+      "SUBTITULO": "Aquí puedes empezar a registrarte",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "CORREO": {
+        "LABEL": "Correo electrónico",
+        "AYUDA": "Campo para introducir tu correo electrónico. Debe incluir el símbolo '@' y un dominio válido.",
+        "OBLIGATORIO": "El correo es obligatorio.",
+        "FORMATO": "El formato del correo no es correcto.",
+        "YAEXISTE": "Este correo ya está registrado."
+      },
+      "SILOPREFIERES": "O si lo prefieres"
+    },
+    "FORM2": {
+      "TITULO": "¿NOS CONOCEMOS UN POCO MÁS?",
+      "AVISO_CAMPOSOBLIGATORIOS": "Los campos marcados con asterisco son de carácter obligatorio",
+      "NOMBRE_OBLIGATORIO": "El nombre es obligatorio",
+      "APELLIDOS_OBLIGATORIO": "El apellido es obligatorio",
+      "FNACIMIENTO": {
+        "LABEL": "Fecha de nacimiento",
+        "AYUDA": "Campo para introducir tu fecha de nacimiento",
+        "INCORRECTA": "La fecha introducida no es correcta.",
+        "OBLIGATORIA": "La fecha de nacimiento es obligatoria.",
+        "MENOR_EDAD": "Debes tener más de 18 años para usar este servicio.",
+        "SUPERIORACTUAL": "No puedes elegir una fecha superior a la actual."
+      },
+      "LABEL_NOMBRE": "Nombre",
+      "LABEL_APELLIDOS": "Apellidos",
+      "TELEFONO": {
+        "LABEL": "Teléfono",
+        "OBLIGATORIO": "El número de teléfono es obligatorio",
+        "FORMATO": "Formato incorrecto: debe contener 9 dígitos numéricos.",
+        "YAEXISTE": "Este teléfono ya nos consta registrado."
+      },
+      "GÉNERO": {
+        "LABEL": "Género"
+      },
+      "ORIENTACION": {
+        "LABEL": "Orientación"
+      }
+    },
+    "FORM3": {
+      "TITULO": "ALGO IMPORTANTE: TU CONTRASEÑA",
+      "REQUISITOS": {
+        "TITULO": "Requisitos para una contraseña segura:",
+        "MIN_CARACTERES": "Tener un mínimo de 6 caracteres.",
+        "NUMERO_MAYÚSCULA_SIMBOLO": "Tener, al menos, un número o una mayúscula o un símbolo."
+      },
+      "CONTRASEÑA": {
+        "LABEL": "Contraseña:",
+        "FORMATO": "El formato de la contraseña no es correcto."
+      }
+    },
+    "BOTONES": {
+      "ATRAS_PASO": "Atrás (Paso {{paso}}"
+    },
+    "RESUMEN_REGISTRO": {
+      "TUS_DATOS": "Estos son los datos que nos has facilitado.",
+      "INFO": "No te preocupes si alguno es incorrecto: puedes modificarlo pulsando el icono del lápiz",
+      "TABLA": {
+        "CORREO": "Email",
+        "FNACIMIENTO": "Fecha de nacimiento",
+        "NOMBRE": "Nombre",
+        "APELLIDOS": "Apellidos",
+        "TELEFONO": "Teléfono",
+        "GENERO": "Género",
+        "ORIENTACION": "Orientación"
+      },
+      "ACEPTAR_CONDICIONES_TEXTO": "Al registrarte, reconoces haber leído, entendido y aceptado las Condiciones del Servicio.",
+      "DEBES_BAJAR": "Debes abrir y leer las condiciones hasta el final para poder continuar.",
+      "BOTONES": {
+        "ACEPTAR": "Aceptar y registrar",
+        "RECHAZAR": "Rechazar y salir"
+      },
+      "SELECCIONA": "Selecciona una opción"
+    },
+    "BOTONES2": {
+      "SIGUIENTE": "Siguiente",
+      "FINALIZAR_REGISTRO": "Finalizar registro",
+      "FINALIZAR_CREAR": "Finalizar y crear cuenta",
+      "RECHAZAR": "Rechazar y salir"
+    }
+  },
+
+  "__VerificacionesPerfil": "Modal y pagina verificar-perfil ok ok ok ok ok ok ok ok ok ok",
+  "VERIFICACION": {
+    "TITULO": "Verificación de tu perfil",
+    "SUBT_VERIF_BASICA": "Verificar tus datos te convierte en un usuarie más fiable ante los demás",
+    "SPINNER_CARGANDO": "Cargando verificaciones...",
+    "TABLA": {
+      "TITULO": "Datos verificados",
+      "REGION_ESTADO_ARIALABEL": "Estado de las verificaciones",
+      "TABLA_ARIALABEL": "Esta tabla muestra si el teléfono y el correo están verificados o no",
+      "LABEL_CORREO": "Correo electrónico",
+      "CORREO_VERIFICADO_ARIALABEL": "Correo electrónico verificado",
+      "CORREO_NO_VERIFICADO_ARIALABEL": "Correo electrónico no verificado",
+      "LABEL_TELÉFONO": "Teléfono",
+      "TELEFONO_VERIFICADO_ARIALABEL": "Teléfono verificado",
+      "TELEFONO_NO_VERIFICADO_ARIALABEL": "Teléfono no verificado"
+    },
+
+    "RECORDATORIO": "Recuerda que si tu correo o teléfono no son correctos puedes cambiarlos en <a href=\"/datos-contacto\">Datos de contacto",
+    "INFO_PERFIL_SI_VERIFICADO": "¡Gracias! ¡Tu perfil está verificado!",
+    "VERIFICA_CORREO": "Verifica tu correo:",
+    "INFO_VERIF_CORREO": "Enviaremos un link a tu correo, solo tienes que clickar en el enlace que aparecerá.",
+    "SPINNER_ENVIANDO_MAIL": "Enviando un email...",
+    "TITULO_CORREO_YAVERIFICADO": "Correo ya verificado",
+    "MENSAJE_CORREO_YAVERIFICADO": "Este correo ya ha sido verificado anteriormente",
+    "TITULO_CORREO_ENVIADO": "Correo enviado",
+    "MENSAJE_CORREO_ENVIADO": "Por favor, verifica tu correo y sigue las instrucciones",
+
+    "VERIFICA_TELEFONO": "Verifica tu teléfono:",
+    "SPINNER_ENVIANDO_SMS": "Enviando un sms...",
+    "TITULO_SMS_ENVIADO": "Mensaje enviado",
+    "MENSAJE_SMS_ENVIADO": "Revisa tu teléfono para confirmar el código",
+    "INFO_VERIF_TELEFONO": "Enviaremos un código de 6 dígitos. Debes introducirlos en en las casillas inferiores.",
+    "BOTON_VERIFICAR_TELEFONO": "Confirmar código",
+    "TITULO_SMS_ERROR": "Error al enviar mensaje",
+    "MENSAJE_SMS_ERROR": "Ha habido un error. Inténtalo más tarde",
+    "TITULO_TELEFONO_VERIFICADO": "Teléfono verificado",
+    "MENSAJE_TELEFONO_VERIFICADO": "Tu número de teléfono ha sido verificado",
+    "ERROR_CODIGO_INCORRECTO": " Este código no es correcto. Vuelve a introducirlo o solicita uno nuevo pasados 10 minutos"
+  },
+  "_AjustesAplicacion": "/ajustes-aplicacion ok ok ok ok ok ok ok ok ok",
+  "AJUSTESAPP": {
+    "TITULO": "Ajustes",
+    "SUBTITULO_1": "Aquí puedes configurar aspectos propios de la página y tu perfil",
+    "OPCION_IDIOMA": {
+      "TITULO": "Selección de idioma",
+      "SUBTITULO": "Modifica la página para poder verla en español o inglés",
+      "OPTION_DEFAULT": "Selecciona un idioma",
+      "ESPAÑOL": "Español",
+      "INGLES": "English",
+      "ALERT_TITULO": "Cambio de idioma",
+      "ALERT_MENSAJE": "Se ha modificado el idioma correctamente."
+    },
+    "OPCION_BANNER": {
+      "TITULO": "Mostrar banner",
+      "SUBTITULO": "Oculta o muestra el banner que aparece en algunas pantallas de la aplicación.",
+      "ALERT_TITULO": "Ajustes del banner",
+      "ALERT_MENSAJE": "Se han modificado los ajustes del banner correctamente."
+    },
+    "CAMBIOS_GUARDADOS": {
+      "TITULO": "Datos guardados",
+      "SUBTITULO": "Se han guardado correctamente los datos"
+    },
+    "OPCION_NOTIFICACION": {
+      "TITULO": "Notificaciones",
+      "SUBTITULO": "Este ajuste te permite configurar las notificaciones."
+    },
+    "PASSWORD": {
+      "TITULO": "Cambio de contraseña:",
+      "CONTRAS_ACTUAL": "Contraseña actual:",
+      "CONTRAS_ACTUAL_INCO": "Contraseña actual incorrecta",
+      "NUEVA_DIF_ACTUAL": "La nueva contraseña debe ser diferente a la actual",
+      "NO_COINCIDEN": "Las contraseñas no coinciden",
+      "CAMBIADA_OK": "La contraseña se ha cambiado correctamente",
+      "NO_CAMBIADA": "No se ha podido cambiar la contraseña",
+      "NUEVA_CONTRAS": "Nueva contraseña:",
+      "CONF_NUEVA_CONTRAS": "Confirmar la nueva contraseña:",
+      "FORGOT_PASSWORD": "¿No recuerdas tu contraseña actual?",
+      "PASSWORD_CONFIRM": "Contraseña actual verificada correctamente.",
+      "PASSWORD_INCORRECTA": "La contraseña actual es incorrecta."
+    },
+    "ELIMINARCTA": {
+      "TITULO": "Eliminar la cuenta:",
+      "MODAL_TITULO": "Vas a eliminar tu usuario",
+      "MODAL_MENSAJE": "¿Estás seguro que deseas eliminar usuario?",
+      "MODAL_DESCRIPCION": "<strong>¡ATENCIÓN!</strong> <br>Todos tus datos personales, vehículos y valoraciones serán eliminados",
+      "INFO_ELIMINAR_CTA": "Esta acción eliminará tu cuenta de manera permanente, sin posiblidad de recuperarla en el futuro.",
+      "INFO_ELIMINAR_CTA2": "Si tienes saldo, recuerda realizar primero la transferencia a tu cuenta bancaria para no perder ese dinero."
+    },
+    "DERECHOS_TXT": "Todos los derechos reservados ©. | Aplicación creada por: Tomás P.H. & Daniel G.D.",
+    "MODO_OSCURO": {
+      "TITLE": "Modo oscuro",
+      "SUBTITLE": "Selecciona si quieres utilizar el modo oscuro o por defecto"
+    },
+    "PREFERENCIAS": {
+      "TITLE": "Selecciona tus preferencias",
+      "SUBTITLE": "Recuerda que también puedes modificar estas preferencias desde el menú de 'Mi perfil'",
+      "MASCOTAS": "Se admiten mascotas",
+      "MUSICA": "Me gusta viajar escuchando música",
+      "HABLAR": "Me gusta viajar hablando con los acompañantes",
+      "SILENCIO": "Me gusta ir en silencio",
+      "FUMAR": "Se permite fumar"
+    },
+    "METODOS_PAGO": {
+      "TITULO": "Métodos de pago"
+    },
+    "METODOS_COBRO": {
+      "TITULO": "Preferencias de cobro"
+    }
+  },
+  "Forgot_Password": "Pagina para enviar email de regeneración de contraseña",
+  "FORGOT_PW": {
+    "TITULO": "¿CONTRASEÑA OLVIDADA",
+    "SUBTITULO1": "Todes podemos tener un despiste. Aquí te ayudamos.",
+    "SUBTITULO2": "Confirma tu correo electrónico, te enviaremos un enlace para crear una nueva contraseña",
+    "TOAST_TITULO": "Correo enviado",
+    "TOAST_CUERPO": "Hemos enviado un correo para regenerar la contraseña. No olvides revisar tu carpeta de spam"
+  },
+  "TOKEN_EXPIRADO": "Pagina que se muestra cuando el token del correo ha caducado",
+  "TOKEN_EXP": {
+    "TITULO": "El enlace ha caducado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual, ha caducado.",
+    "SUBTITULO2": "Debes solicita otro enlace a través de la página de Ajustes en el menú de usuario."
+  },
+  "TOKEN_YA_USADO_": "Página que se muestra cuando el token del correo ya ha sido usado",
+  "TOKEN_YA_USADO": {
+    "TITULO": "El enlace ya ha sido usado",
+    "SUBTITULO": "El enlace que te hemos enviado para cambiar tu contraseña actual ya se ha usado.",
+    "SUBTITULO2": "Puedes volver a cambiar tu contraseña actual a través de la página Ajustes en el menú de usuario."
+  },
+  "SaldoYTransferencias": "Modal y pagina de Saldo y transferencias",
+  "SALDO": {
+    "SALDOTRANSF": "Saldo y transferencias",
+    "TITULO": "Saldo y transferencias",
+    "SUBTITULO1": "En este apartado puedes consutar tu saldo disponible, ver los últimos movimientos, establecer tus métodos de recarga y efectuar recargas",
+    "SUBTITULO2": "Si tienes saldo puedes transferirlo a tu cuenta bancaria.",
+    "TU_SALDO": "Tu saldo",
+    "SALDO_TITULO": "Saldo actual:",
+    "MOV_TITULO": "Últimos movimientos:",
+    "MOV_FECHA": "Fecha",
+    "MOV_CONCEPTO": "Concepto",
+    "MOV_ABONO_GASTO": "Abono/Gasto",
+    "MOV_SALDO_FINAL": "Saldo final",
+    "CONCEPTO_VIAJE": "Viaje",
+    "CONCEPTO_RECARGA": "Recarga",
+    "CONCEPTO_PASAJERO": "Pasajero",
+    "METODOS_TITULO": "Tus métodos de recarga:",
+    "MIS_TARJETAS": "Mis tarjetas vinculadas",
+    "TARJETA": "Tarjeta",
+    "ANADIRTARJETA_BOTON": "Añadir tarjeta de crédito",
+    "ALIAS_TARJETA": "Alias de la tarjeta",
+    "NUM_TARJETA": "Número de la tarjeta",
+    "PAGO_PAYPAL": "Pago por Paypal",
+    "PAYPAL_BOTON": "Vamos a Paypal!",
+    "TRANSF_TITULO": "Transferencias a tu cuenta bancaria:",
+    "TRANSF_IMPORTE": "Importe transferido",
+    "TRANS_CONCEPTO": "Transferencia a cuenta",
+    "SALDO": "Saldo"
+  },
+  "_Footer": "Links del footer",
+  "FOOTER": {
+    "TERMS": "Términos y condiciones",
+    "COOKIES": "Cookies"
+  },
+  "_Búsqueda de viaje": "/busqueda-viajes",
+  "BUSQUEDA": {
+    "ORDENAR_POR": "Ordenar por...",
+    "HORA_SALIDA": "Hora de salida",
+    "PRECIO": "Precio",
+    "NUEVO": "Más reciente",
+    "PRECIO_ASC": "Precio (Ascendente)",
+    "PRECIO_DESC": "Precio (Descendente)",
+    "RESULTADOS": "Resultados encontrados"
+  },
+
+  "_CentroDeAyuda": " Centro de ayuda",
+  "CENTRODEAYUDA": {
+    "TITULO": "Centro de ayuda",
+    "SUBTITULO": "¿Tienes dudas sobre tus viajes? Estamos aquí para ayudarte"
+  },
+  "_JUMBOTRON": "",
+  "JUMBOTRON": {
+    "SLOGAN": "Tu camino, tu comunidad",
+    "QUIENES_SOMOS_SLOGAN": "Tu camino, tu comunidad",
+    "BUSCAR_VIAJE_SLOGAN": "Encuentra tu viaje ideal",
+    "MIS_VIAJES_SLOGAN": "Cada viaje es una nueva historia"
+  },
+  "ANTIGUO DEBAJO": "",
+  "NUEVO_VIAJE2": {
+    "TITLE_BTN_BACK": "GoGuay",
+    "ALT_LOGO": "Logotipo de GoGuay",
+    "SEARCH_TRAVEL": "Buscar viaje",
+    "FROM": "¿Dónde comienza el viaje?",
+    "TO": "¿Hasta dónde es el viaje?",
+    "TRAVELERS": "Número de plazas",
+    "NO_REGISTER_ALERT": "Aún no estás registrado para poder publicar un viaje",
+    "NO_CARNET_ALERT": "Aún no tienes registrado tu carnet de conducir para poder publicar un viaje",
+    "PUBLISH_TRIP": "Publicar viaje",
+    "PUBLISH_TRIP_TITLE": "Botón para publicar viaje",
+    "HELP_CENTER_TITLE": "Centro de ayuda",
+    "HELP_CENTER_BTN": "Consulta nuestro Centro de Ayuda"
+  },
+  "__CENTRO DE MENSAJES": "Centro de mensajes",
+  "CENTRO_MENSAJES": {
+    "TITULO": "Centro de mensajes",
+    "VACIO_TITULO": "Tu buzón está vacío",
+    "VACIO_DESC": "Aquí aparecerán tus chats cuando contactes con otros conductores o pasajeros.",
+    "BUSCAR_BOTON": "Buscar un viaje",
+    "SEGURIDAD_BOLD": "Por tu seguridad:",
+    "SEGURIDAD_TXT": "Mantén las conversaciones sobre el viaje dentro de la app. No garantizamos la protección de tus datos o reservas si utilizas aplicaciones externas.",
+    "CHAT_OPCIONES": {
+      "HEADER": "Opciones de chat",
+      "LEIDO": "Marcar como leído",
+      "NO_LEIDO": "Marcar como no leído",
+      "ELIMINAR": "Eliminar conversación",
+      "CANCELAR": "Cancelar"
+    }
+  },
+  "__Eventos_Administracion": "Sección Eventos de Administración",
+  "EVENTOS_ADMIN": "",
+  "MENSAJES": {
+    "NOTIFICATION": "Notificación",
+    "SUCCESS_TO_ADD": "Evento añadido correctamente.",
+    "KO_TO_ADD": "Error al añadir el evento.",
+    "SUCCESS_TO_EDIT": "Evento editado correctamente.",
+    "KO_TO_EDIT": "Error al editar el evento.",
+    "SUCCESS_TO_DELETE": "Evento eliminado correctamente.",
+    "KO_TO_DELETE": "Error al eliminar el evento."
+  },
+  "__Notificaciones app": "Sección Notificaciones de la aplicación",
+
+  "NOTIFICACIONES": {
+    "TITULO": "Centro de notificaciones",
+    "LIMPIAR_TODO": "Limpiar todo",
+    "SIN_NOTIFICACIONES": "No tienes notificaciones.",
+    "CARGANDO": "Cargando notificaciones...",
+    "TIPO": {
+      "SISTEMA": "Sistema",
+      "MENSAJE": "Mensaje",
+      "SOLICITUD": "Solicitud",
+      "VIAJE": "Viaje"
+    },
+    "ESTADO": {
+      "NO_LEIDA": "No leída",
+      "LEIDA": "Leída"
+    },
+    "ACCIONES": {
+      "MARCAR_LEIDA": "Marcar como leída",
+      "MARCAR_NO_LEIDA": "Marcar como no leída",
+      "MARCAR_TODAS_LEIDAS": "Marcar todo como leído",
+      "RESPONDER": "Responder",
+      "ELIMINAR": "Eliminar",
+      "LEER_MAS": "Leer más",
+      "LEER_MENOS": "Leer menos"
+    }
+  }
+}

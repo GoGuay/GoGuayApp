@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/core/lenguajes/languaje.service.ts"],
+  "sourcesContent": ["import { Injectable } from '@angular/core';\nimport { TranslateService } from '@ngx-translate/core';\nimport { BehaviorSubject } from 'rxjs';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class LanguageService {\n  private languageSubject = new BehaviorSubject<string>('es');\n  language$ = this.languageSubject.asObservable();\n\n  constructor(private translate: TranslateService) {\n    // Cargar el idioma guardado\n    const savedLanguage = localStorage.getItem('language') || 'es';\n    this.setLanguage(savedLanguage);\n  }\n\n  setLanguage(lang: string) {\n    this.translate.use(lang);\n    localStorage.setItem('language', lang);\n    this.languageSubject.next(lang);\n  }\n\n  getLanguage(): string {\n    return this.languageSubject.getValue();\n  }\n}\n"],
+  "mappings": ";;;;;;;;;;;;AAOM,IAAO,kBAAP,MAAO,iBAAe;EAIN;EAHZ,kBAAkB,IAAI,gBAAwB,IAAI;EAC1D,YAAY,KAAK,gBAAgB,aAAY;EAE7C,YAAoB,WAA2B;AAA3B,SAAA,YAAA;AAElB,UAAM,gBAAgB,aAAa,QAAQ,UAAU,KAAK;AAC1D,SAAK,YAAY,aAAa;EAChC;EAEA,YAAY,MAAY;AACtB,SAAK,UAAU,IAAI,IAAI;AACvB,iBAAa,QAAQ,YAAY,IAAI;AACrC,SAAK,gBAAgB,KAAK,IAAI;EAChC;EAEA,cAAW;AACT,WAAO,KAAK,gBAAgB,SAAQ;EACtC;;qCAlBW,kBAAe,mBAAA,gBAAA,CAAA;EAAA;4EAAf,kBAAe,SAAf,iBAAe,WAAA,YAFd,OAAM,CAAA;;;sEAEP,iBAAe,CAAA;UAH3B;WAAW;MACV,YAAY;KACb;;;",
+  "names": []
+}

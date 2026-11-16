@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/paginas-panel-usuario/datos-contacto/modificacion-email/modificacion-email.page.scss"],
+  "sourcesContent": [".verify-message {\r\n  text-align: center;\r\n  padding: 2rem;\r\n}\r\n\r\n.logo {\r\n  width: 150px;\r\n  display: block;\r\n  margin: 0 auto 20px;\r\n}"],
+  "mappings": ";AAAA,CAAA;AACE,cAAA;AACA,WAAA;;AAGF,CAAA;AACE,SAAA;AACA,WAAA;AACA,UAAA,EAAA,KAAA;;",
+  "names": []
+}

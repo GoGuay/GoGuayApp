@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/admin/shared-admin/navbar-admin/navbar-admin.page.scss"],
+  "sourcesContent": ["ion-button {\n    --border-radius: 35px !important;\n    text-align: center !important;\n}"],
+  "mappings": ";AAAA;AACI,mBAAA;AACA,cAAA;;",
+  "names": []
+}

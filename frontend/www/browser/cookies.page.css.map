@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/cookies/cookies.page.scss"],
+  "sourcesContent": [".logo {\n  width: 60px;\n  border-radius: 30px;\n  padding: 1%;\n}\n\n\n.cookie-panel {\n  width: 100%;\n  padding: 20px;\n  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);\n}\n\n.cookie-category {\n  margin-bottom: 20px;\n}\n\n.actions {\n  display: flex;\n  justify-content: space-between;\n}\n\n\n\nion-button {\n  color: black !important;\n}\n\n"],
+  "mappings": ";AAAA,CAAA;AACE,SAAA;AACA,iBAAA;AACA,WAAA;;AAIF,CAAA;AACE,SAAA;AACA,WAAA;AACA,cAAA,EAAA,KAAA,IAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;;AAGF,CAAA;AACE,iBAAA;;AAGF,CAAA;AACE,WAAA;AACA,mBAAA;;AAKF;AACE,SAAA;;",
+  "names": []
+}

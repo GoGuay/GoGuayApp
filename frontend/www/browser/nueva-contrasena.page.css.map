@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/nueva-contrasena/nueva-contrasena.page.scss"],
+  "sourcesContent": ["button.btn i.fi {\r\n  font-size: 1.2rem;\r\n  /* Ajusta el tamaño del icono */\r\n  color: #333;\r\n  /* Ajusta el color para que se vea */\r\n}\r\n\r\n.position-relative .btn:hover,\r\n.position-relative .btn:focus,\r\n.position-relative .btn:active {\r\n  background-color: transparent !important;\r\n  border-color: transparent !important;\r\n  box-shadow: none !important;\r\n}"],
+  "mappings": ";;;AAAA,MAAA,CAAA,IAAA,CAAA,CAAA;AACE,aAAA;AAEA,SAAA;;AAIF,CAAA,kBAAA,CAPA,GAOA;AAAA,CAAA,kBAAA,CAPA,GAOA;AAAA,CAAA,kBAAA,CAPA,GAOA;AAGE,oBAAA;AACA,gBAAA;AACA,cAAA;;",
+  "names": []
+}

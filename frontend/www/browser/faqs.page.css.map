@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/faqs/faqs.page.scss"],
+  "sourcesContent": ["ion-button {\n  color: #000000 !important;\n}\n\nion-accordion {\n  border-radius: 35px;\n  border: 1px solid black;\n  box-shadow: 0 4px 6px rgba(0 0 0 / 28%);\n  color: black;\n}\n\n.titulo-faq {\n  font-weight: 800;\n  color: #333;\n}\n\n.custom-accordion {\n  border-radius: 32px !important;\n  overflow: hidden;\n  background: white;\n  \n  border-left: 5px solid #baffc9; \n\n  &[value=\"reservaRayo\"] { border-left-color: #ffffba; }\n  &[value=\"espacioSeguro\"] { border-left-color: #ffb3ba; } \n  &[value=\"reservaManual\"] { border-left-color: #bae1ff; }\n  &[value=\"identidad\"] { border-left-color: #e0baff; }\n\n  ion-item {\n    --background: #b7e0b4;\n    --color: #444;\n    font-weight: 600;\n  }\n}\n\n.text-muted {\n  line-height: 1.5;\n  font-size: 0.95rem;\n  background: #fdfdfd;\n}\n\nstrong {\n  color: #222;\n}"],
+  "mappings": ";AAAA;AACE,SAAA;;AAGF;AACE,iBAAA;AACA,UAAA,IAAA,MAAA;AACA,cAAA,EAAA,IAAA,IAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;AACA,SAAA;;AAGF,CAAA;AACE,eAAA;AACA,SAAA;;AAGF,CAAA;AACE,iBAAA;AACA,YAAA;AACA,cAAA;AAEA,eAAA,IAAA,MAAA;;AAEA,CAPF,gBAOE,CAAA;AAAyB,qBAAA;;AACzB,CARF,gBAQE,CAAA;AAA2B,qBAAA;;AAC3B,CATF,gBASE,CAAA;AAA2B,qBAAA;;AAC3B,CAVF,gBAUE,CAAA;AAAuB,qBAAA;;AAEvB,CAZF,iBAYE;AACE,gBAAA;AACA,WAAA;AACA,eAAA;;AAIJ,CAAA;AACE,eAAA;AACA,aAAA;AACA,cAAA;;AAGF;AACE,SAAA;;",
+  "names": []
+}

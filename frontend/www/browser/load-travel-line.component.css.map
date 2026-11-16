@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/load-travel-line/load-travel-line.component.scss"],
+  "sourcesContent": [".moving-container {\n  display: flex;\n  align-items: center;\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n  height: 40px;\n}\n\n.moving-wrapper {\n  display: flex;\n  align-items: center;\n  animation: moving 6s linear infinite;\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n  mix-blend-mode: multiply;\n}\n\n@keyframes moving {\n  0% {\n    transform: translateX(-100%);\n  }\n  100% {\n    transform: translateX(100%);\n  }\n}\n\n.carMove {\n  height: 40px;\n  width: 40px;\n  border-radius: 50%;\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,eAAA;AACA,YAAA;AACA,SAAA;AACA,YAAA;AACA,UAAA;;AAGF,CAAA;AACE,WAAA;AACA,eAAA;AACA,aAAA,OAAA,GAAA,OAAA;AACA,eAAA;AACA,YAAA;AACA,SAAA;AACA,kBAAA;;AAGF,WAPE;AAQA;AACE,eAAA,WAAA;;AAEF;AACE,eAAA,WAAA;;;AAIJ,CAAA;AACE,UAAA;AACA,SAAA;AACA,iBAAA;;",
+  "names": []
+}

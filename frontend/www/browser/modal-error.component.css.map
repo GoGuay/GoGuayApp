@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/modal-error/modal-error.component.scss"],
+  "sourcesContent": [".modal-header {\n  font-size: 1.5rem;\n  font-weight: bold;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.icon-red {\n  color: red;\n  font-size: 2rem;\n  width: 30px;\n  height: 30px;\n}\n\n.close-button {\n  background: transparent;\n  border: none;\n  cursor: pointer;\n  color: gray;\n  font-size: 1.5rem;\n  transition: color 0.3s ease;\n\n  &:hover {\n    color: black;\n  }\n}\n\n.modal-body {\n  font-size: 1rem;\n  margin: 1rem 0;\n}\n\n.modal-footer {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 1rem;\n}\n\n.container {\n  overflow: hidden;\n  padding: 1rem;\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,aAAA;AACA,eAAA;AACA,WAAA;AACA,eAAA;AACA,mBAAA;;AAGF,CAAA;AACE,SAAA;AACA,aAAA;AACA,SAAA;AACA,UAAA;;AAGF,CAAA;AACE,cAAA;AACA,UAAA;AACA,UAAA;AACA,SAAA;AACA,aAAA;AACA,cAAA,MAAA,KAAA;;AAEA,CARF,YAQE;AACE,SAAA;;AAIJ,CAAA;AACE,aAAA;AACA,UAAA,KAAA;;AAGF,CAAA;AACE,WAAA;AACA,mBAAA;AACA,cAAA;;AAGF,CAAA;AACE,YAAA;AACA,WAAA;;",
+  "names": []
+}

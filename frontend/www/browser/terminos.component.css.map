@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/terminos/terminos.component.scss"],
+  "sourcesContent": [".dialog-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.dialog-header h2 {\n  margin: 0; \n}\n\n.dialog-header button {\n  background: transparent;\n  border: none;\n  cursor: pointer;\n}\n\n.style_h2{\n  padding: 5%; \n}\n\n@media (max-width: 576px) {\n  .style_h2{\n    padding: 3%; \n  }\n}\n\n.fontSize {\n  font-size: 11px;\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,mBAAA;AACA,eAAA;;AAGF,CANA,cAMA;AACE,UAAA;;AAGF,CAVA,cAUA;AACE,cAAA;AACA,UAAA;AACA,UAAA;;AAGF,CAAA;AACE,WAAA;;AAGF,QAAA,WAAA;AACE,GALF;AAMI,aAAA;;;AAIJ,CAAA;AACE,aAAA;;",
+  "names": []
+}

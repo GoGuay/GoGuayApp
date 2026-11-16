@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/cookies/cookies.component.scss"],
+  "sourcesContent": [".dialog-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 0.5rem;\n}\n\n.dialog-header h2 {\n  margin: 0;\n  font-size: 1.5rem;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  flex-grow: 1;\n}\n\n.dialog-header button {\n  background: transparent;\n  border: none;\n  cursor: pointer;\n  margin-left: 0.5rem;\n}\n\n.cookie-banner {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: center;\n  gap: 10px;\n  flex-wrap: wrap;\n}\n\n.cookie-banner button {\n  font-size: 0.9rem;\n  padding: 8px 16px;\n}\n\n@media (max-width: 576px) {\n  .dialog-header h2 {\n    font-size: 1.2rem;\n  }\n\n  .cookie-banner {\n    flex-direction: column;\n    align-items: stretch;\n    gap: 12px;\n  }\n\n  .cookie-banner button {\n    font-size: 1rem;\n    padding: 12px 20px;\n  }\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,mBAAA;AACA,eAAA;AACA,WAAA;;AAGF,CAPA,cAOA;AACE,UAAA;AACA,aAAA;AACA,eAAA;AACA,YAAA;AACA,iBAAA;AACA,aAAA;;AAGF,CAhBA,cAgBA;AACE,cAAA;AACA,UAAA;AACA,UAAA;AACA,eAAA;;AAGF,CAAA;AACE,WAAA;AACA,kBAAA;AACA,mBAAA;AACA,eAAA;AACA,OAAA;AACA,aAAA;;AAGF,CATA,cASA;AACE,aAAA;AACA,WAAA,IAAA;;AAGF,QAAA,WAAA;AACE,GAtCF,cAsCE;AACE,eAAA;;AAGF,GAnBF;AAoBI,oBAAA;AACA,iBAAA;AACA,SAAA;;AAGF,GAzBF,cAyBE;AACE,eAAA;AACA,aAAA,KAAA;;;",
+  "names": []
+}
