@@ -42,7 +42,7 @@ registerLocaleData(localeEs);
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
   ],
   templateUrl: './primer-paso.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.Default,
   styleUrls: ['./primer-paso.component.scss'],
 })
 export class PrimerPasoComponent implements OnInit {

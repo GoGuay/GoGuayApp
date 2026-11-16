@@ -27,7 +27,7 @@ import { ControlLocalidad } from 'src/app/models/control-localidad/control-local
     SelectorGeneralComponent,
   ],
   templateUrl: './resumen-dinamico.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.Default,
   styleUrls: ['./resumen-dinamico.component.scss'],
 })
 export class ResumenDinamicoComponent implements OnInit, OnDestroy {
@@ -66,6 +66,8 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
     { valor: '4', descripcion: '4' },
   ];
 
+  hoy: string = this.obtenerFechaHoyLocal();
+
   private mapaVehiculos = new Map<string, any>();
   opcionesVehiculos: { valor: string; descripcion: string }[] = [];
 
@@ -97,6 +99,14 @@ export class ResumenDinamicoComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private obtenerFechaHoyLocal(): string {
+    const ahora = new Date();
+    const anio = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
   }
 
   checkScreenSize() {

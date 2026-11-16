@@ -47,7 +47,7 @@
     "font-awesome": "^4.7.0",
     "ionicons": "^7.0.0",
     "leaflet-routing-machine": "^3.2.12",
-    "ngx-cookie-service": "^19.0.0",
+    "ngx-cookie-service": "^22.2.0",
     "ngx-cookieconsent": "^8.0.0",
     "ngx-flag-icon-css": "^1.0.1",
     "ngx-spinner": "^17.0.0",

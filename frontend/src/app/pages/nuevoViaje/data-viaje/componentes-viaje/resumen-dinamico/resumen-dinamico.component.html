@@ -23,7 +23,7 @@
         id="resumen_viaje"
       >
         <div class="d-flex justify-content-center">
-          <i class="fi fi-rr-marker me-1 colours"></i>
+          <i class="fi fi-rr-marker me-1"></i>
           <ion-label>{{ 'NUEVOVIAJE.RESUMEN_DINAMICO.RESUMEN_VIAJE' | translate }}</ion-label>
         </div>
         <div
@@ -36,7 +36,7 @@
               <div class="col-md-6 col-12">
                 <ul>
                   <!-- Origen -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rr-spain-map me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.NUEVO_VIAJE.ORIGEN' | translate }}</strong>
@@ -56,7 +56,9 @@
                               [soloLectura]="false"
                               [mostrarFlechaSelector]="false"
                               (seleccionCambiada)="
-                                buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event); esSeleccionOrigenValida = true
+                                buscadorLocalidadesService.seleccionarLocalidad(origenCtrl, $event);
+                                esSeleccionOrigenValida = true;
+                                guardarOrigen()
                               "
                               (alAbrir)="origenCtrl.estaActivo = true"
                               (textoCambiado)="
@@ -78,16 +80,6 @@
                           </button>
                         }
                         @if (editandoOrigen) {
-                          @if (hayCambioOrigen() && esSeleccionOrigenValida) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarOrigen()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
                           <button
                             type="button"
                             class="btn text-dark"
@@ -101,7 +93,7 @@
                     </div>
                   </li>
                   <!-- Destino -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rr-spain-map me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.NUEVO_VIAJE.DESTINO' | translate }}</strong>
@@ -121,7 +113,9 @@
                               [soloLectura]="false"
                               [mostrarFlechaSelector]="false"
                               (seleccionCambiada)="
-                                buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, $event); esSeleccionDestinoValida = true
+                                buscadorLocalidadesService.seleccionarLocalidad(destinoCtrl, $event);
+                                esSeleccionDestinoValida = true;
+                                guardarDestino()
                               "
                               (alAbrir)="destinoCtrl.estaActivo = true"
                               (textoCambiado)="
@@ -143,16 +137,6 @@
                           </button>
                         }
                         @if (editandoDestino) {
-                          @if (hayCambioDestino() && esSeleccionDestinoValida) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarDestino()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
                           <button
                             type="button"
                             class="btn text-dark"
@@ -166,7 +150,7 @@
                     </div>
                   </li>
                   <!-- Coche Seleccionado -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rr-car me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">
@@ -188,7 +172,7 @@
                               [valor]="getCocheIdActual()"
                               [soloLectura]="true"
                               [mostrarFlechaSelector]="true"
-                              (seleccionCambiada)="onCocheCambiado($event)"
+                              (seleccionCambiada)="onCocheCambiado($event); guardarCoche()"
                             ></app-selector-general>
                           </div>
                         }
@@ -205,16 +189,6 @@
                           </button>
                         }
                         @if (editandoCoche) {
-                          @if (hayCambioCoche()) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarCoche()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
                           <button
                             type="button"
                             class="btn text-dark"
@@ -233,7 +207,7 @@
               <div class="col-md-6 col-12">
                 <ul>
                   <!-- Plazas Disponibles -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rs-users-alt me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.NUEVO_VIAJE.PLAZAS_DISPONIBLES' | translate }}</strong>
@@ -253,7 +227,7 @@
                               [valor]="currentViajeData.plazas"
                               [soloLectura]="true"
                               [mostrarFlechaSelector]="true"
-                              (seleccionCambiada)="onPlazasCambiadas($event)"
+                              (seleccionCambiada)="onPlazasCambiadas($event); guardarPlazas()"
                             ></app-selector-general>
                           </div>
                         }
@@ -270,16 +244,6 @@
                           </button>
                         }
                         @if (editandoPlazas) {
-                          @if (hayCambioPlazas()) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarPlazas()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
                           <button
                             type="button"
                             class="btn text-dark"
@@ -293,7 +257,7 @@
                     </div>
                   </li>
                   <!-- Fecha de Salida -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rr-calendar me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.PRIMER_PASO.FECHA_SELECCIONADA' | translate }}</strong>
@@ -303,11 +267,12 @@
                             {{ getFormattedDate() }}
                           </span>
                         }
-                        @if (editandoHora) {
+                        @if (editandoFecha) {
                           <input
-                            type="time"
-                            [(ngModel)]="currentViajeData.hora_salida"
-                            (ngModelChange)="onFieldChange()"
+                            [min]="hoy"
+                            type="date"
+                            [(ngModel)]="currentViajeData.fecha_salida"
+                            (ngModelChange)="onFieldChange(); guardarFecha()"
                             class="form-control selecthour mt-0 w-100"
                           />
                         }
@@ -324,16 +289,6 @@
                           </button>
                         }
                         @if (editandoFecha) {
-                          @if (hayCambioFecha()) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarFecha()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
                           <button
                             type="button"
                             class="btn text-dark"
@@ -347,7 +302,7 @@
                     </div>
                   </li>
                   <!-- Hora de Salida -->
-                  <li class="colours d-flex flex-column mb-3">
+                  <li class="colours d-flex align-items-center justify-content-center flex-column mb-3">
                     <div class="d-flex align-items-center w-100 position-relative">
                       <i class="fi fi-rr-calendar-clock me-1 flex-shrink-0"></i>
                       <strong class="me-2 text-nowrap flex-shrink-0">{{ 'NUEVOVIAJE.PRIMER_PASO.HORA_SELECCIONADA' | translate }}</strong>
@@ -361,7 +316,7 @@
                           <input
                             type="time"
                             [(ngModel)]="currentViajeData.hora_salida"
-                            (ngModelChange)="onFieldChange()"
+                            (ngModelChange)="onFieldChange(); guardarHora()"
                             class="form-control selecthour mt-0 w-100"
                           />
                         }
@@ -378,16 +333,7 @@
                           </button>
                         }
                         @if (editandoHora) {
-                          @if (hayCambioHora()) {
-                            <button
-                              type="button"
-                              class="btn text-dark"
-                              (click)="guardarHora()"
-                              title="Guardar cambios"
-                            >
-                              <i class="fi fi-rs-disk"></i>
-                            </button>
-                          }
+
                           <button
                             type="button"
                             class="btn text-dark"
