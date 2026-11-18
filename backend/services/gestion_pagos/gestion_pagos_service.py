@@ -42,7 +42,7 @@ def get_access_token():
 
 def reembolsar_pago_al_pasajero(pasajero_viaje, importe:float, motivo: str ="Cancelación de viaje"):
     """Función para devolver a un usuario los importes por la cancelación de un viaje por parte de un conductor"""
-    paypal_id=pasajero_viaje.paypal_payer_id
+    paypal_id=pasajero_viaje.paypal_auth_id
     if not paypal_id:
         return {"exito": False, "error": "No existe identificador de transacción para esta reserva."}
     

@@ -258,6 +258,7 @@ def solicitar_unirse():
     emisor_id = data.get('emisor_id') 
     receptor_id = data.get('receptor_id') 
     conv_id = data.get('conversacion_id')
+    paypal_auth_id = data.get('paypal_auth_id')
 
     existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
     if existente:
@@ -273,9 +274,11 @@ def solicitar_unirse():
         nueva_solicitud = PasajeroViaje(
             usuario_id=emisor_id,
             viaje_id=viaje_id,
-            estado='pendiente' 
+            estado='pendiente',
+            paypal_auth_id=paypal_auth_id
         )
         db.session.add(nueva_solicitud)
+        db.session.commit()
 
     viaje = Viaje.query.get(viaje_id)
     if not viaje:

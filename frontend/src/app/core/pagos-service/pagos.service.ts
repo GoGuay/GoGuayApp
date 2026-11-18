@@ -26,7 +26,7 @@ export class PagosService {
   crearOrdenPaypal(viajeId: number, pasajeroId: number): Observable<any> {
     return this.http
       .post<any>(
-        `${this.apiUrl}/create-order`,
+        `${this.apiUrl}/pagos/create-order`,
         {
           viaje_id: viajeId,
           pasajero_id: pasajeroId,
@@ -43,7 +43,7 @@ export class PagosService {
   autorizarOrdenPaypal(orderId: string, guardarMetodo: boolean = true): Observable<any> {
     return this.http
       .post<any>(
-        `${this.apiUrl}/capture-order/${orderId}`,
+        `${this.apiUrl}/pagos/capture-order/${orderId}`,
         { guardar_metodo: guardarMetodo },
         { headers: this.getAuthHeaders() }
       )
@@ -56,7 +56,7 @@ export class PagosService {
   capturarPagoRetenido(viajeId: number, pasajeroId: number): Observable<any> {
     return this.http
       .post<any>(
-        `${this.apiUrl}/capturar-retenido`,
+        `${this.apiUrl}/pagos/capturar-retenido`,
         {
           viaje_id: viajeId,
           pasajero_id: pasajeroId,
@@ -72,7 +72,7 @@ export class PagosService {
   solicitarTransferenciaBancaria(usuarioId: number, importe: number, iban: string): Observable<any> {
     return this.http
       .post<any>(
-        `${this.apiUrl}/transferencia-bancaria`,
+        `${this.apiUrl}/pagos/transferencia-bancaria`,
         {
           usuario_id: usuarioId,
           importe,

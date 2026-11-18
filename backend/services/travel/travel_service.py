@@ -674,18 +674,31 @@ def unirse_viaje():
     orden_paypal_db = Ordenes_Paypal.query.filter_by(paypal_order_id=paypal_order_id).first()
     # importe_a_cobrar = f"{orden_paypal_db.importe_total:.2f}" if orden_paypal_db else f"{viaje.precio_viaje:.2f}"
 
-    auth_id = None
 
     response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize", headers=headers)
     res_data = response.json()
     if response.status_code not in [200, 201]:
         db.session.rollback()
         return jsonify({"error": "Error al congelar el pago en PayPal", "detalle": res_data}), response.status_code
+    print("📦 RESPUESTA COMPLETA PAYPAL AUTHORIZE:", json.dumps(res_data, indent=2))
     
+    auth_id = None
     try:
-        auth_id = res_data['purchase_units'][0]['payments']['authorizations'][0]['id']
-    except (KeyError, IndexError):
-        return jsonify({"error": "No se pudo obtener la autorización de PayPal", "detalle": res_data}), 500
+        payments = res_data.get('purchase_units', [{}])[0].get('payments', {})
+        if 'authorizations' in payments and payments['authorizations']:
+            auth_id = payments['authorizations'][0].get('id')
+        elif 'captures' in payments and payments['captures']:
+            auth_id = payments['captures'][0].get('id')
+    except Exception as e:
+        print("❌ Error extrayendo ID de PayPal:", e)
+
+    print("🔑 AUTH_ID EXTRAÍDO:", auth_id)
+
+    if not auth_id:
+        return jsonify({
+            "error": "PayPal no devolvió ningún ID de autorización ni captura",
+            "detalle": res_data
+        }), 500
        
 
     estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
@@ -746,7 +759,11 @@ def confirmar_pasajero_manual():
     viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "El viaje no existe"}), 404
+    usuario = Usuario.query.get(pasajero_id)
+    if not usuario:
+        return jsonify({"error": "El usuario no existe"}), 404
 
+    
     solicitud = PasajeroViaje.query.filter_by(
         usuario_id=pasajero_id, 
         viaje_id=viaje_id, 
@@ -755,13 +772,21 @@ def confirmar_pasajero_manual():
 
     if not solicitud:
         return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404    
-    
+
     if solicitud.paypal_auth_id:
         token = get_access_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
         
         # Obtenemos el importe de la orden guardada o del viaje
         orden_paypal = Ordenes_Paypal.query.filter_by(viaje_id=viaje_id, pasajero_id=pasajero_id).first()
+        auth_id = (
+            solicitud.paypal_auth_id 
+            or getattr(orden_paypal, 'authorization_id', None)
+        )
+        if not auth_id:
+            return jsonify({
+                "error": "Esta solicitud no tiene un authorization_id de PayPal válido asociado. Crea una nueva reserva de prueba."
+            }), 400
         importe_a_cobrar = f"{orden_paypal.importe_total:.2f}" if orden_paypal else f"{viaje.precio_viaje:.2f}"
 
         payload = {
@@ -774,7 +799,7 @@ def confirmar_pasajero_manual():
 
         # Petición de captura a la API de PayPal usando la autorización guardada
         response = requests.post(
-            f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/capture", 
+            f"{PAYPAL_API}/v2/payments/authorizations/{auth_id}/capture", 
             json=payload, 
             headers=headers
         )
@@ -783,10 +808,13 @@ def confirmar_pasajero_manual():
         if response.status_code not in [200, 201]:
             print("❌ Error al capturar el pago al confirmar:", capture_data)
             return jsonify({"error": "Error al procesar el cobro final en PayPal", "detalle": capture_data}), response.status_code
+        
+        solicitud.paypal_auth_id = capture_data.get("id", auth_id)
 
     try:
         solicitud.estado = 'aceptado'
         solicitud.fecha_confirmacion_reserva = datetime.now(timezone.utc)
+        
         
         viaje.plazas -= 1
         

@@ -28,6 +28,7 @@ export class PagoReservaPage implements OnInit {
   userData: any;
   yaUnido: boolean = false;
   guardarMetodo: boolean = false;
+  paypalTransactionId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,7 +38,7 @@ export class PagoReservaPage implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private messagingService: MessagingService,
     private pagosService: PagosService
-  ) { }
+  ) {}
 
   ngOnInit() {
     const viajeId = Number(this.route.snapshot.paramMap.get('id'));
@@ -79,18 +80,18 @@ export class PagoReservaPage implements OnInit {
         },
         createOrder: async () => {
           const pasajeroId = this.userData?.usuario?.id;
-          const order = await lastValueFrom(
-            this.pagosService.crearOrdenPaypal(this.viaje.id, pasajeroId)
-          );
+          const order = await lastValueFrom(this.pagosService.crearOrdenPaypal(this.viaje.id, pasajeroId));
           return order.order_id;
         },
         onApprove: async (data: any) => {
-          const captureData = await lastValueFrom(
-            this.pagosService.autorizarOrdenPaypal(data.orderID, this.guardarMetodo)
-          );
+          const captureData = await lastValueFrom(this.pagosService.autorizarOrdenPaypal(data.orderID, this.guardarMetodo));
+          const payments = captureData?.purchase_units?.[0]?.payments;
+          this.paypalTransactionId =
+            payments?.authorizations?.[0]?.id || payments?.captures?.[0]?.id || captureData?.authorization_id || null;
 
           const payerId = captureData?.payer?.payer_id;
           const payerEmail = captureData?.payer?.email_address;
+          console.log('captureData: ', captureData);
 
           if (payerId && this.userData?.usuario) {
             this.userData.usuario.paypal_payer_id = payerId;
@@ -180,6 +181,7 @@ export class PagoReservaPage implements OnInit {
           emisor_id: emisorId,
           receptor_id: receptorId,
           conversacion_id: convId,
+          paypal_auth_id: this.paypalTransactionId
         };
 
         this.messagingService.enviarSolicitudViaje(payload).subscribe({
