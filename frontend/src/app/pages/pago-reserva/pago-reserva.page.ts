@@ -8,6 +8,8 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { MessagingService } from '../../core/menssaging-service/messaging.service';
 import { FormsModule } from '@angular/forms';
+import { PagosService } from 'src/app/core/pagos-service/pagos.service';
+import { lastValueFrom } from 'rxjs';
 
 declare var paypal: any;
 
@@ -33,8 +35,9 @@ export class PagoReservaPage implements OnInit {
     private navCtrl: NavController,
     private cdRef: ChangeDetectorRef,
     private funcionesComunes: FuncionesComunes,
-    private messagingService: MessagingService
-  ) {}
+    private messagingService: MessagingService,
+    private pagosService: PagosService
+  ) { }
 
   ngOnInit() {
     const viajeId = Number(this.route.snapshot.paramMap.get('id'));
@@ -74,26 +77,33 @@ export class PagoReservaPage implements OnInit {
           shape: 'rect',
           label: 'pay',
         },
-        createOrder: (data: any, actions: any) => {
-          return fetch('http://localhost:5000/api/user/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ viaje_id: this.viaje.id }),
-          })
-            .then((res) => res.json())
-            .then((order) => order.order_id);
+        createOrder: async () => {
+          const pasajeroId = this.userData?.usuario?.id;
+          const order = await lastValueFrom(
+            this.pagosService.crearOrdenPaypal(this.viaje.id, pasajeroId)
+          );
+          return order.order_id;
         },
-        onApprove: (data: any, actions: any) => {
-          return fetch(`http://localhost:5000/api/user/capture-order/${data.orderID}`, {
-            method: 'POST',
-          })
-            .then((res) => res.json())
-            .then(() => {
-              this.pagoConfirmado = true;
-              this.cdRef.detectChanges();
+        onApprove: async (data: any) => {
+          const captureData = await lastValueFrom(
+            this.pagosService.autorizarOrdenPaypal(data.orderID, this.guardarMetodo)
+          );
 
-              this.procesarReservaPostPago();
-            });
+          const payerId = captureData?.payer?.payer_id;
+          const payerEmail = captureData?.payer?.email_address;
+
+          if (payerId && this.userData?.usuario) {
+            this.userData.usuario.paypal_payer_id = payerId;
+            this.userData.usuario.paypal_vinculado = true;
+            if (payerEmail) {
+              this.userData.usuario.paypal_email = payerEmail;
+            }
+            localStorage.setItem('userData', JSON.stringify(this.userData));
+          }
+
+          this.pagoConfirmado = true;
+          this.cdRef.detectChanges();
+          this.procesarReservaPostPago();
         },
       })
       .render('#paypal-button-container');

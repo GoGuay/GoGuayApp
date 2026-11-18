@@ -1,0 +1,183 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+#  SERVICIO DEDICADO PARA LOS PAGOS DE LA APLICACIÓN  #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+from datetime import datetime, timezone, timedelta
+import random
+import re
+from io import BytesIO
+import os
+
+
+from flask import Blueprint, jsonify, render_template,  request
+from itsdangerous import SignatureExpired, BadSignature
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from sqlalchemy.orm import joinedload 
+import requests
+from PIL import Image
+from cloudinary import uploader
+from flask_mail import Message
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from twilio.rest import Client
+
+# Importaciones de Modelos y Enums
+from extensions import db
+from models.tokensusados import TokenUsado
+from models import (Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum, EstadoViajeEnum)
+
+
+pagos_blueprint = Blueprint('pagos', __name__)
+
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_API = os.getenv('PAYPAL_API')
+
+
+# Obtener el access_token de paypal
+def get_access_token():
+    try:
+        response=requests.post(
+            f"{PAYPAL_API}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+            data={'grant_type': 'client_credentials'},
+            headers={'Accept': 'application/json', 'Accept-Language': 'en_US'}
+        )
+        if response.status_code != 200:
+            print("Error al obtener el token de Paypal:", response.json())
+            return None
+        
+        data=response.json()
+        return data.get('access_token')
+    
+    except Exception as e:
+        print ("Excepción al conectar con Paypal para el token:", str(e))
+        return None
+
+
+# Recibe los datos del viaje con el precio de este. 
+@pagos_blueprint.route("/create-order", methods=['POST'])
+def create_order():
+    """
+    1. Obtenemos los datos en el json desde el front y sacamos el viaje_id. Si no lo hay, se devuelve error y sale.
+    2. Accede a la bd (tabla Viaje) y mediante el id se obtiene el viaje en concreto, el usuario que lo ha creado y todos los datos del viaje.
+    3. Si no se encuentra el viaje, devuelve un error y sale. 
+    4. Obtenemos el email de paypal que tenga el conductor del viaje y lo guardamos en email_conductor, si no lo tuviese el dinero pasa temporalmente al email de la empresa. 
+    5. Se guarda en precio_formateado el precio del viaje con dos decimales. 
+    6. Se obtiene el token del acceso  paypal, se guarda en token
+    7. headers --> configuración necesaria para la petición a paypal. 
+    8. payload - Petición que vamos a hacer a paypal. 
+    """
+    data = request.get_json()
+    viaje_id = data.get('viaje_id')
+
+    if not viaje_id:
+        return jsonify({"error": "Falta el id del viaje"}), 400
+    
+    viaje = db.session.query(Viaje).options(
+        joinedload(Viaje.usuario)
+    ).filter(Viaje.id == viaje_id).first()
+    
+    if not viaje:
+        return jsonify({"error": "Viaje no encontrado"}), 404
+        
+    email_empresa = "goguay_empresa@business.example.com"
+    
+    precio_formateado = f"{viaje.precio_viaje:.2f}"
+    
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
+    payload = {
+        "intent": "AUTHORIZE",
+        "purchase_units": [{
+            "reference_id": str(viaje_id),
+            "amount": {
+                "currency_code": "EUR", 
+                "value": precio_formateado
+            },
+            
+            "description": f"Reserva de plaza en GoGuay - Destino {viaje.destino}"
+        }],
+        "application_context": { 
+            "shipping_preference": "NO_SHIPPING", 
+            "user_action": "PAY_NOW",
+            "return_url": "http://localhost:4200/payment-success",
+            "cancel_url": "http://localhost:4200/payment-cancel"
+        }
+    }
+
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders", json=payload, headers=headers)
+    order = response.json()
+
+    if response.status_code not in [200, 201]:
+        print("DETALLE DE ERROR EN PAYPAL API:", order)
+        return jsonify({"error": "Error al comunicarse con la pasarela", "detalle": order}), response.status_code
+
+    try:
+        approve_link = next(
+            link["href"] for link in order["links"] if link["rel"] == "approve"
+        )
+        return jsonify({
+            "order_id": order["id"],
+            "approve_url": approve_link
+        }), 200
+    except KeyError:
+        return jsonify({"error": "No se pudo generar el enlace de aprobación", "detalle": order}), 500
+
+#
+# Captura el pago de la orden creada en PayPal
+# 
+@pagos_blueprint.route("/capture-order/<order_id>", methods=['POST'])
+def capture_order(order_id: str):
+    datos_front = request.get_json(silent=True) or {}
+    guardar_metodo = datos_front.get('guardar_metodo', True)
+
+    token = get_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{order_id}/authorize", headers=headers)
+    
+    capture_data = response.json()
+    
+    if response.status_code not in [200, 201]:
+        print(f"❌ Error al capturar la orden {order_id}:", capture_data)
+        return jsonify(capture_data), response.status_code
+    
+    try:
+        authorization_id = capture_data['purchase_units'][0]['payments']['authorizations'][0]['id']
+        payer_info = capture_data.get('payer', {})
+        payer_id = payer_info.get('payer_id')
+        payer_email = payer_info.get('email_address')
+        orden_paypal = Ordenes_Paypal.query.filter_by(paypal_order_id=order_id).first()
+        
+        if orden_paypal:
+            pasajero_viaje = PasajeroViaje.query.filter_by(
+                viaje_id=orden_paypal.viaje_id, 
+                usuario_id=orden_paypal.pasajero_id
+            ).first()
+            
+            if pasajero_viaje:
+                pasajero_viaje.paypal_auth_id = authorization_id
+                db.session.commit()
+                print(f"✅ Authorization ID {authorization_id} guardado en PasajeroViaje.")
+
+            if payer_id and guardar_metodo:
+                usuario = Usuario.query.get(orden_paypal.pasajero_id)
+                if usuario:
+                    usuario.paypal_payer_id = payer_id
+                    usuario.paypal_vinculado = True
+                    usuario.paypal_fecha_vinculacion = datetime.now(timezone.utc)
+                    if payer_email and hasattr(usuario, 'paypal_email'):
+                        usuario.paypal_email = payer_email
+                    print(f"✅ PayPal Payer ID {payer_id} guardado en Usuario {usuario.id}.")
+
+            db.session.commit()
+
+    except (KeyError, IndexError) as e:
+        print("❌ Error extrayendo el authorization_id:", e)
+        return jsonify({"error": "No se pudo extraer el ID de autorización", "detalle": capture_data}), 500
+
+    return jsonify(capture_data), 200
+    

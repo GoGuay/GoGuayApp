@@ -28,6 +28,7 @@ from services.monedero.monedero_service import monedero_blueprint
 from services.notifications.notifications_utils import notifications_blueprint
 from services.incidencias_service.incidenicas_service import incidencias_bp
 from services.encuesta_satisfaccion.encuesta_satisfaccion import encuesta_bp
+from services.pagos_service.pagos_service import pagos_blueprint
 from services.user import user_service
 
 import firebase_admin
@@ -114,6 +115,7 @@ def create_app():
     # --> encuesta_bp: Servicio relacionado con las encuestas de satisfacción
     # --> incidencias_bp: Servicio relacionado con las incidencias
     # --> monedero_blueprint: Servicio relacionado con el monedero electrónico
+    # --> pagos_blueprint: Servicio relacionado con los pagos y la integración con PayPal
     #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     app.register_blueprint(user_blueprint, url_prefix="/api/user")
@@ -126,6 +128,7 @@ def create_app():
     app.register_blueprint(encuesta_bp, url_prefix="/api/encuesta")
     app.register_blueprint(monedero_blueprint, url_prefix="/api/monedero")
     app.register_blueprint(incidencias_bp, url_prefix="/api/incidencias")
+    app.register_blueprint(pagos_blueprint, url_prefix="/api/pagos")
 
  
     user_service.mail = mail

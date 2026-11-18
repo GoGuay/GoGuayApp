@@ -6,7 +6,7 @@ from models import Usuario, Vehiculo, Puntuacion, Viaje, Notificacion, TokenUsad
 from views.HomeView import HomeView  # Cambia esta línea para la nueva ubicación
  
 def setup_admin(app):
-    admin = Admin(app, name='PRIDERIDE BD', template_mode='bootstrap4')
+    admin = Admin(app, name='GoGuay BD', template_mode='bootstrap4')
 
     # Agregar una vista personalizada de inicio
     admin.add_view(HomeView(name='Inicio', endpoint='home'))

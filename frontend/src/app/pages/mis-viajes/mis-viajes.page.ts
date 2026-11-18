@@ -90,7 +90,7 @@ export class MisViajesPage implements OnInit {
     private route: ActivatedRoute,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -159,36 +159,57 @@ export class MisViajesPage implements OnInit {
    * @param userId Recibe el ID del usuario
    */
   cargarTodosLosViajes(userId: number) {
-    this.cargandoViajes = true;
+    const tieneDatosPrevios =
+      this.misViajesAcompanante.length > 0 ||
+      this.misViajesCreados.length > 0 ||
+      this.misSolicitudesPendientes.length > 0;
 
-    forkJoin({
-      pasajero: this.travelService.getViajesComoAcompanante(userId).pipe(catchError(() => of([]))),
-      conductor: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
-      solicitudesPendientes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
-    }).subscribe({
-      next: ({ pasajero, conductor, solicitudesPendientes }) => {
-        this.misViajesAcompanante = pasajero;
-        this.misViajesCreados = conductor?.viajes || [];
-        this.misSolicitudesPendientes = solicitudesPendientes;
+    this.cargandoViajes = !tieneDatosPrevios;
 
-        this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+    let peticionesCompletadas = 0;
+    const totalPeticiones = 3;
 
-        const hayEnCursoReal = this.HayAlgunViajeEnCursoReal();
-        if (hayEnCursoReal) {
-          this.filtrosEstados['en_curso'] = true;
-          this.filtrosEstados['proximos_viajes'] = true;
-          this.filtrosEstados['finalizados_anulados'] = false;
-        } else {
-          this.filtrosEstados['en_curso'] = false;
-          this.filtrosEstados['proximos_viajes'] = true;
-          this.filtrosEstados['finalizados_anulados'] = false;
-        }
+    const actualizarVistaProgresiva = () => {
+      peticionesCompletadas++;
+      const hayEnCursoReal = this.HayAlgunViajeEnCursoReal();
+      this.filtrosEstados['en_curso'] = hayEnCursoReal;
+      this.filtrosEstados['proximos_viajes'] = true;
+      this.filtrosEstados['finalizados_anulados'] = false;
 
-        this.aplicarFiltrosCombinados();
+      this.aplicarFiltrosCombinados();
+
+      if (this.misViajes.length > 0 || peticionesCompletadas >= totalPeticiones) {
         this.cargandoViajes = false;
-      },
-      error: () => (this.cargandoViajes = false),
-    });
+      }
+      this.cdr.detectChanges();
+    };
+
+    // Petición 1: Viajes como acompañante
+    this.travelService
+      .getViajesComoAcompanante(userId)
+      .pipe(catchError(() => of([])))
+      .subscribe((pasajero) => {
+        this.misViajesAcompanante = pasajero || [];
+        actualizarVistaProgresiva();
+      });
+
+    // Petición 2: Viajes como conductor
+    this.travelService
+      .getViajesUsuario(userId)
+      .pipe(catchError(() => of({ viajes: [] })))
+      .subscribe((conductor) => {
+        this.misViajesCreados = conductor?.viajes || [];
+        this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+        actualizarVistaProgresiva();
+      });
+
+    this.travelService
+      .getMisSolicitudesPendientes(userId)
+      .pipe(catchError(() => of([])))
+      .subscribe((solicitudes) => {
+        this.misSolicitudesPendientes = solicitudes || [];
+        actualizarVistaProgresiva();
+      });
   }
 
   /**

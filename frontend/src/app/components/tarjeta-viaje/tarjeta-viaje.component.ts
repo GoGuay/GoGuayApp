@@ -16,13 +16,22 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PopoverController } from '@ionic/angular/standalone';
 import { catchError, forkJoin, of } from 'rxjs';
 import { PuntuacionesComponent } from '../puntuaciones/puntuaciones.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'tarjeta-viaje',
   templateUrl: './tarjeta-viaje.component.html',
   styleUrls: ['./tarjeta-viaje.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, MatIcon, ToastModule, TranslateModule],
+  imports: [
+    IonicModule, 
+    CommonModule, 
+    FormsModule, 
+    MatIcon, 
+    ToastModule, 
+    TranslateModule, 
+    MatTooltipModule
+  ],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })

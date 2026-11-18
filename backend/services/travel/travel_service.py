@@ -12,7 +12,7 @@ from services.cancelaciones import calcular_y_registrar_cancelacion, calcular_pe
 from services.gestion_pagos import reembolsar_pago_al_pasajero
 from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
 from extensions import db
-from sqlalchemy.orm import joinedload 
+from sqlalchemy.orm import joinedload, selectinload
 from firebase_admin import messaging
 from services.notifications.notifications_utils import enviar_notificacion_push
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -245,10 +245,6 @@ def editar_viaje(viaje_id):
         return jsonify({"error": "Error en la actualización", "detalle": str(e)}), 500
     
 
-
-@travel_blueprint.route('/<int:viaje_id>/')
-    
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LA LISTA DE VIAJES DE UN USUARIO
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -259,7 +255,16 @@ def obtener_viajes_usuario():
     if not usuario_id:
         return jsonify({"error": "Falta el campo 'usuario_id' en la solicitud"}), 400
 
-    viajes = Viaje.query.filter_by(usuario_id=usuario_id).all()
+    viajes = (
+        Viaje.query
+        .options(
+            joinedload(Viaje.usuario),
+            selectinload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+        )
+        .filter_by(usuario_id=usuario_id)
+        .order_by(Viaje.fecha_salida.desc())
+        .all()
+    )
 
     return jsonify({
         "viajes": [viaje.serialize() for viaje in viajes] if viajes else []
