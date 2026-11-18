@@ -13,11 +13,6 @@
   color: black;
 }
 
-.diseno {
-  background-color: #E0A667 !important;
-  height: 130px;
-}
-
 i{
   color: #000;
 }
@@ -44,21 +39,3 @@ i{
 }
 
 
-
-/* Centrado del grid y límites de ancho para pantallas grandes */
-
-.btn-incidencia-search {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  border-radius: 35px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(248, 225, 150, 0.2);
-  }
-
-  .text-warning-pastel {
-    color: #F8E196 !important;
-    font-size: 1.1rem;
-  }
-}

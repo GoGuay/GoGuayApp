@@ -1211,3 +1211,37 @@ ion-modal.modal-admin-goguay {
     }
   }
 }
+
+
+/* ==========================================================================
+   ESTILOS GLOBALES PARA BOTÓN DE INCIDENCIA FIJO EN LA ESQUINA INFERIOR IZQUIERDA
+   ========================================================================== */
+.incidencia-fixed-bottom-left {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  left: 16px;
+  z-index: 999;
+}
+
+/* Estilo del botón con fondo sólido para que sea legible sobre las tarjetas */
+.btn-incidencia-flotante {
+  border: 1.5px solid #f0d7b4;
+  color: #F8E196;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+
+  i {
+    color: #856404;
+  }
+
+  &:hover {
+    background-color: #f0d7b4;
+    color: #2c2c2c;
+    transform: translateY(-2px);
+
+    i {
+      color: #2c2c2c;
+    }
+  }
+}
