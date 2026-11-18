@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
-import { IonicModule, NavController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   peopleOutline,
@@ -13,6 +15,12 @@ import {
   clipboardOutline,
   timeOutline,
   arrowForwardOutline,
+  star,
+  carOutline,
+  personOutline,
+  closeOutline,
+  banOutline,
+  checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { UserServicesService } from '../../core/user-services/user-services.service';
 import { NavbarAdmin } from './shared-admin/navbar-admin/navbar-admin.page';
@@ -30,12 +38,13 @@ Chart.register(...registerables);
   templateUrl: './admin-app.page.html',
   styleUrls: ['./admin-app.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, NavbarAdmin],
+  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
 })
 export class AdminApp implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') private barCanvas!: ElementRef;
 
   listaUsuarios: any[] = [];
+  listaUsuariosAlerta: any[] = [];
   listaUsuariosFiltrados: any[] = [];
   avatarDefault: string = '../../../assets/User-Profile-PNG-Image.png';
 
@@ -46,7 +55,6 @@ export class AdminApp implements OnInit, AfterViewInit {
   userData: Usuario = {} as Usuario;
   userLoggedIn: boolean = false;
 
-  // Métricas / Notificaciones dinámicas
   mensajes: any[] = [
     { id: 101, asunto: 'Duda sobre verificación QR', remitente: 'Alex G.', fecha: '12/10', leido: false },
     { id: 102, asunto: 'Incidencia con monedero PayPal', remitente: 'Carla R.', fecha: '11/10', leido: true },
@@ -56,18 +64,27 @@ export class AdminApp implements OnInit, AfterViewInit {
   usuariosRestringidosCount: number = 0;
   incidenciasPendientesCount: number = 0;
   nuevosUsuariosHoyCount: number = 0;
+  incidenciasPorUsuario: { [userId: number]: number } = {};
 
   barChart: any;
   listaEncuestas: any[] = [];
   promedioSatisfaccion: number = 0;
   totalEncuestas: number = 0;
 
+  // Modales de Detalle y Sanción
+  modalDetalleAbierto: boolean = false;
+  modalSancionAbierto: boolean = false;
+  usuarioSeleccionado: any = null;
+  motivoSancion: string = '';
+  diasSuspension: number = 7;
+
   constructor(
     public navCtrl: NavController,
     private userService: UserServicesService,
     private funcionesComunes: FuncionesComunes,
     private encuestaService: EncuestaService,
-    private incidenciasService: IncidenciasService
+    private incidenciasService: IncidenciasService,
+    private toastCtrl: ToastController
   ) {
     addIcons({
       peopleOutline,
@@ -81,6 +98,12 @@ export class AdminApp implements OnInit, AfterViewInit {
       clipboardOutline,
       timeOutline,
       arrowForwardOutline,
+      star,
+      carOutline,
+      personOutline,
+      closeOutline,
+      banOutline,
+      checkmarkCircleOutline,
     });
   }
 
@@ -100,7 +123,7 @@ export class AdminApp implements OnInit, AfterViewInit {
     this.cargarNotificacionesIncidencias();
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() { }
 
   loadUserData(): void {
     const data = localStorage.getItem('userData');
@@ -122,8 +145,14 @@ export class AdminApp implements OnInit, AfterViewInit {
   obtenerUsuariosApp() {
     this.userService.obtenerUsuarios().subscribe({
       next: (respuesta) => {
-        this.listaUsuarios = respuesta || [];
-        this.listaUsuariosFiltrados = [...this.listaUsuarios];
+        this.listaUsuarios = (respuesta || []).map((u: any) => ({
+          ...u,
+          puntos_conductor: u.puntos_conductor ?? 0,
+          puntos_pasajero: u.puntos_pasajero ?? 0,
+          maxPuntos: Math.max(u.puntos_conductor ?? 0, u.puntos_pasajero ?? 0),
+        }));
+
+        this.actualizarUsuariosConAlertas();
         this.calcularUsuariosRestringidos();
         this.calcularNuevosUsuariosHoy();
       },
@@ -131,20 +160,54 @@ export class AdminApp implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Consulta el backend para saber cuántas incidencias requieren atención (INICIADA o EN_REVISION)
-   */
   cargarNotificacionesIncidencias() {
     this.incidenciasService.obtenerTodasIncidenciasAdmin().subscribe({
       next: (incidencias: any[]) => {
-        this.incidenciasPendientesCount = (incidencias || []).filter((i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION').length;
+        const pendientes = (incidencias || []).filter(
+          (i) => i.estado === 'INICIADA' || i.estado === 'EN_REVISION'
+        );
+        this.incidenciasPendientesCount = pendientes.length;
+
+        // Agrupamos incidencias activas por usuario denunciado o implicado
+        const mapa: { [id: number]: number } = {};
+        pendientes.forEach((inc) => {
+          const idImplicado = inc.denunciado_id || inc.usuario_reportado_id || inc.usuario_id;
+          if (idImplicado) {
+            mapa[idImplicado] = (mapa[idImplicado] || 0) + 1;
+          }
+        });
+        this.incidenciasPorUsuario = mapa;
+        this.actualizarUsuariosConAlertas();
       },
       error: (err) => console.error('Error cargando incidencias para el resumen:', err),
     });
   }
 
+  /**
+   * Filtra solo los usuarios con incidencias activas, advertencia ICH (>= 6 pts) o suspendidos
+   */
+  actualizarUsuariosConAlertas() {
+    this.listaUsuariosAlerta = this.listaUsuarios
+      .map((u) => ({
+        ...u,
+        incidenciasActivas: u.incidencias_count ?? this.incidenciasPorUsuario[u.id] ?? 0,
+      }))
+      .filter(
+        (u) =>
+          u.maxPuntos >= 6 ||
+          u.ya_ha_sido_suspendido ||
+          u.restringido ||
+          u.incidenciasActivas > 0
+      )
+      .sort((a, b) => b.maxPuntos - a.maxPuntos || b.incidenciasActivas - a.incidenciasActivas);
+
+    this.listaUsuariosFiltrados = [...this.listaUsuariosAlerta];
+  }
+
   calcularUsuariosRestringidos() {
-    this.usuariosRestringidosCount = this.listaUsuarios.filter((u) => u.ya_ha_sido_suspendido || u.restringido).length;
+    this.usuariosRestringidosCount = this.listaUsuarios.filter(
+      (u) => u.ya_ha_sido_suspendido || u.restringido
+    ).length;
   }
 
   calcularNuevosUsuariosHoy() {
@@ -155,27 +218,79 @@ export class AdminApp implements OnInit, AfterViewInit {
     }).length;
   }
 
-  toggleRestriccion(user: any) {
-    user.ya_ha_sido_suspendido = !user.ya_ha_sido_suspendido;
-    this.calcularUsuariosRestringidos();
+  getInfoNivel(puntos: number): { texto: string; clase: string; colorBarra: string } {
+    if (puntos >= 20) {
+      return { texto: 'Límite (20/20)', clase: 'status-danger', colorBarra: '#d32f2f' };
+    }
+    if (puntos >= 14) {
+      return { texto: 'Crítico · N1', clase: 'status-danger', colorBarra: '#ef5350' };
+    }
+    if (puntos >= 6) {
+      return { texto: 'Advertencia', clase: 'status-warning', colorBarra: '#ffa726' };
+    }
+    return { texto: 'Óptimo', clase: 'status-success', colorBarra: '#66bb6a' };
   }
 
   filtrarUsuarios(event: any) {
     const query = (event.target.value || '').toLowerCase().trim();
     if (!query) {
-      this.listaUsuariosFiltrados = [...this.listaUsuarios];
+      this.listaUsuariosFiltrados = [...this.listaUsuariosAlerta];
       return;
     }
 
-    this.listaUsuariosFiltrados = this.listaUsuarios.filter((user) => {
+    this.listaUsuariosFiltrados = this.listaUsuariosAlerta.filter((user) => {
       const nombre = (user.nombre || '').toLowerCase();
+      const apellidos = (user.apellidos || '').toLowerCase();
       const email = (user.email || '').toLowerCase();
-      return nombre.includes(query) || email.includes(query);
+      return nombre.includes(query) || apellidos.includes(query) || email.includes(query);
     });
   }
 
   verDetalles(user: any) {
-    console.log('Abriendo detalles del usuario:', user);
+    this.usuarioSeleccionado = user;
+    this.modalDetalleAbierto = true;
+  }
+
+  cerrarDetalleUsuario() {
+    this.modalDetalleAbierto = false;
+    this.usuarioSeleccionado = null;
+  }
+
+  abrirModalSancion(user: any) {
+    this.usuarioSeleccionado = user;
+    this.motivoSancion = user.motivo_bloqueo || '';
+    this.diasSuspension = 7;
+    this.modalSancionAbierto = true;
+  }
+
+  cerrarModalSancion() {
+    this.modalSancionAbierto = false;
+  }
+
+  async confirmarSancion() {
+    if (!this.usuarioSeleccionado) return;
+
+    const suspender = !this.usuarioSeleccionado.ya_ha_sido_suspendido;
+    const fechaHasta = new Date();
+    fechaHasta.setDate(fechaHasta.getDate() + Number(this.diasSuspension));
+
+    this.usuarioSeleccionado.ya_ha_sido_suspendido = suspender;
+    this.usuarioSeleccionado.motivo_bloqueo = suspender ? this.motivoSancion : null;
+    this.usuarioSeleccionado.bloqueado_hasta = suspender ? fechaHasta.toISOString() : null;
+
+    this.calcularUsuariosRestringidos();
+    this.actualizarUsuariosConAlertas();
+    this.modalSancionAbierto = false;
+
+    const toast = await this.toastCtrl.create({
+      message: suspender
+        ? `Usuario ${this.usuarioSeleccionado.nombre} sancionado.`
+        : `Restricción levantada para ${this.usuarioSeleccionado.nombre}.`,
+      duration: 2500,
+      color: suspender ? 'warning' : 'success',
+      position: 'bottom',
+    });
+    await toast.present();
   }
 
   abrirMensaje(msg: any) {

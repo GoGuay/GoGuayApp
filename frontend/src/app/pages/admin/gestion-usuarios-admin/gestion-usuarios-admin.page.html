@@ -1,304 +1,404 @@
 <app-navbar-admin></app-navbar-admin>
 
-<ion-content
-  [fullscreen]="true"
-  class="ion-padding admin-content"
->
+<ion-content [fullscreen]="true" class="ion-padding admin-content">
   <div class="admin-container">
     <!-- CABECERA -->
-    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div class="admin-header-card p-3 shadow-sm rounded-4 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
       <div class="d-flex align-items-center gap-3">
-        <ion-button
-          fill="clear"
-          color="dark"
-          (click)="volverDashboard()"
-          class="btn-back"
-        >
-          <ion-icon
-            name="arrow-back-outline"
-            slot="icon-only"
-          ></ion-icon>
-        </ion-button>
+        <button class="btn-back-circle" (click)="volverAdmin()" title="Volver al panel">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
         <div>
-          <h2 class="fw-bold m-0 title-page">Gestión de Usuarios</h2>
-          <p class="text-muted small m-0">Supervisión de perfiles, reputación, sanciones y soporte de GoGuay</p>
+          <span class="badge-role">Control de Comunidad e ICH</span>
+          <h2 class="m-0 fw-bold title-user">Gestión y Sanciones de Usuarios</h2>
         </div>
       </div>
-
-      <span class="badge-total">{{ usuariosFiltrados.length }} Usuarios</span>
+      <span class="badge bg-light text-dark rounded-pill px-3 py-2 fw-bold shadow-sm">
+        Total: {{ usuarios.length }} cuentas
+      </span>
     </div>
 
-    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
-    <div class="bg-white p-3 rounded-4 shadow-sm mb-4">
-      <ion-row class="align-items-center g-2">
-        <ion-col
-          size="12"
-          size-md="7"
+    <!-- TARJETAS DE ALERTA POR UMBRAL DE PUNTOS (MÁX. 20) -->
+    <ion-row class="mb-4 g-3">
+      <ion-col size="12" size-md="3">
+        <div
+          class="metric-card card-purple p-3 rounded-4 shadow-sm cursor-pointer"
+          [class.filtro-activo]="filtroNivel === 'TODOS'"
+          (click)="cambiarFiltroNivel('TODOS')"
         >
-          <ion-item
-            lines="none"
-            class="custom-search-item"
-          >
-            <ion-icon
-              name="search-outline"
-              slot="start"
-              class="text-muted"
-            ></ion-icon>
-            <ion-input
-              [(ngModel)]="busquedaQuery"
-              (ionInput)="aplicarFiltros()"
-              placeholder="Buscar por nombre, email o ID..."
-              clearInput="true"
-            ></ion-input>
-          </ion-item>
-        </ion-col>
-
-        <ion-col
-          size="12"
-          size-md="5"
-        >
-          <div class="d-flex align-items-center gap-2">
-            <ion-icon
-              name="filter-outline"
-              class="text-muted fs-5"
-            ></ion-icon>
-            <ion-select
-              [(ngModel)]="filtroEstado"
-              (ionChange)="aplicarFiltros()"
-              interface="popover"
-              class="custom-select w-100"
-            >
-              <ion-select-option value="todos">Todos los Usuarios</ion-select-option>
-              <ion-select-option value="activos">Solo Activos</ion-select-option>
-              <ion-select-option value="bloqueados">Solo Bloqueados</ion-select-option>
-              <ion-select-option value="conflictivos">Con Malas Opiniones / Incidencias</ion-select-option>
-            </ion-select>
-          </div>
-        </ion-col>
-      </ion-row>
-    </div>
-
-    <!-- LISTADO Y VISTA DETALLADA -->
-    <ion-row>
-      <!-- LISTA DE USUARIOS -->
-      <ion-col
-        size="12"
-        [sizeMd]="usuarioSeleccionado ? 6 : 12"
-      >
-        <div class="bg-white p-3 rounded-4 shadow-sm">
-          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-            <strong class="text-secondary small text-uppercase fw-bold">Directorio de Usuarios</strong>
-          </div>
-
-          <div class="usuarios-scroll-container">
-            @for (u of usuariosFiltrados; track u) {
-            <div
-              class="user-card p-3 mb-3 rounded-4 cursor-pointer transition-all d-flex align-items-center justify-content-between"
-              [class.active]="usuarioSeleccionado?.id === u.id"
-              (click)="verFichaUsuario(u)"
-            >
-              <div class="d-flex align-items-center gap-3">
-                <div class="avatar-container">
-                  <img
-                    [src]="u.fotoPerfil || avatarDefault"
-                    alt="Avatar"
-                  />
-                  <span [class]="u.ya_ha_sido_suspendido ? 'status-dot dot-blocked' : 'status-dot dot-active'"></span>
-                </div>
-                <div>
-                  <div class="d-flex align-items-center gap-2">
-                    <h4 class="fw-bold fs-6 m-0 text-dark">{{ u.nombre }} {{ u.apellidos }}</h4>
-                    @if (u.malasOpinionesCount > 0) {
-                    <span
-                      class="badge-alert"
-                      title="Tiene malas opiniones"
-                    >
-                      <ion-icon name="warning-outline"></ion-icon>
-                    </span>
-                    }
-                  </div>
-                  <p class="text-muted small m-0">{{ u.email }}</p>
-                  <div class="d-flex align-items-center gap-2 mt-1 xsmall text-muted">
-                    <span>
-                      <ion-icon
-                        name="star-outline"
-                        class="text-warning me-1"
-                      ></ion-icon>
-                      {{ u.promedioValoraciones }} ({{ u.totalOpiniones }})
-                    </span>
-                    <span>•</span>
-                    <span [class.text-danger]="u.incidenciasAbiertasCount > 0">{{ u.incidenciasAbiertasCount }} Incidencias</span>
-                  </div>
-                </div>
-              </div>
-              <!-- ACCIONES RÁPIDAS -->
-              <div class="d-flex align-items-center gap-1">
-                <button
-                  class="btn-action-icon btn-chat"
-                  (click)="iniciarChatSoporte(u); $event.stopPropagation()"
-                  title="Chat de soporte"
-                >
-                  <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-                </button>
-                <button
-                  class="btn-action-icon"
-                  [class.btn-lock]="!u.ya_ha_sido_suspendido"
-                  [class.btn-unlock]="u.ya_ha_sido_suspendido"
-                  (click)="toggleBloqueoUsuario(u, $event)"
-                  [title]="u.ya_ha_sido_suspendido ? 'Desbloquear' : 'Bloquear'"
-                >
-                  <ion-icon [name]="u.ya_ha_sido_suspendido ? 'lock-open-outline' : 'lock-closed-outline'"></ion-icon>
-                </button>
-              </div>
-            </div>
-            }
-
-            <!-- Sin resultados -->
-            @if (usuariosFiltrados.length === 0) {
-            <div class="text-center py-5 text-muted">
-              <ion-icon
-                name="shield-alert-outline"
-                class="display-5 mb-2 text-warning"
-              ></ion-icon>
-              <p class="m-0">No se encontraron usuarios coincidentes.</p>
-            </div>
-            }
-          </div>
+          <span class="metric-number">{{ usuarios.length }}</span>
+          <p class="m-0 fw-bold">Todos los usuarios</p>
+          <small class="text-muted">Vista general ordenada por riesgo</small>
         </div>
       </ion-col>
 
-      <!-- FICHA DETALLADA DEL USUARIO -->
-      @if (usuarioSeleccionado) {
-      <ion-col
-        size="12"
-        sizeMd="6"
-      >
-        <div class="bg-white p-4 rounded-4 shadow-sm border-highlight">
-          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-            <span class="badge-id">ID-{{ usuarioSeleccionado.id }}</span>
-            <ion-button
-              fill="clear"
-              color="medium"
-              size="small"
-              (click)="cerrarFicha()"
-            >
-              <ion-icon
-                name="close-circle-outline"
-                slot="icon-only"
-              ></ion-icon>
-            </ion-button>
+      <ion-col size="12" size-md="3">
+        <div
+          class="metric-card card-beige p-3 rounded-4 shadow-sm cursor-pointer"
+          [class.filtro-activo]="filtroNivel === 'ALERTA'"
+          (click)="cambiarFiltroNivel('ALERTA')"
+        >
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="metric-number">{{ countAdvertencia }}</span>
+            <span class="badge-notif badge-advertencia">6–13 pts</span>
           </div>
-          <!-- Perfil Central -->
-          <div class="text-center mb-4">
-            <div class="detail-avatar-container mx-auto mb-2">
-              <img
-                [src]="usuarioSeleccionado.fotoPerfil || avatarDefault"
-                alt="Avatar grande"
-              />
-            </div>
-            <h3 class="fw-bold m-0 text-dark">{{ usuarioSeleccionado.nombre }} {{ usuarioSeleccionado.apellidos }}</h3>
-            <span
-              class="badge-status mt-1"
-              [class.status-danger]="usuarioSeleccionado.ya_ha_sido_suspendido"
-              [class.status-success]="!usuarioSeleccionado.ya_ha_sido_suspendido"
-            >
-              {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Cuenta Restringida / Bloqueada' : 'Cuenta Activa' }}
-            </span>
-          </div>
-          <!-- Datos de Contacto -->
-          <div class="user-info-box p-3 rounded-3 mb-3 bg-light">
-            <div class="row g-2 small">
-              <div class="col-6">
-                <span class="text-muted d-block">
-                  <ion-icon
-                    name="mail-outline"
-                    class="me-1"
-                  ></ion-icon>
-                  Email:
-                </span>
-                <strong class="text-dark">{{ usuarioSeleccionado.email }}</strong>
-              </div>
-              <div class="col-6">
-                <span class="text-muted d-block">
-                  <ion-icon
-                    name="call-outline"
-                    class="me-1"
-                  ></ion-icon>
-                  Teléfono:
-                </span>
-                <strong class="text-dark">{{ usuarioSeleccionado.telefono }}</strong>
-              </div>
-            </div>
-          </div>
-          <!-- MÉTRICAS DE REPUTACIÓN -->
-          <div class="row g-2 mb-4">
-            <div class="col-4">
-              <div class="metric-box text-center p-2 rounded-3 bg-light">
-                <span class="fw-bold fs-5 text-dark">{{ usuarioSeleccionado.promedioValoraciones }} ⭐</span>
-                <small class="text-muted d-block xsmall">Nota Media</small>
-              </div>
-            </div>
-            <div class="col-4">
-              <div
-                class="metric-box text-center p-2 rounded-3"
-                [class.bg-danger-subtle]="usuarioSeleccionado.malasOpinionesCount > 0"
-                [class.bg-light]="usuarioSeleccionado.malasOpinionesCount === 0"
-              >
-                <span
-                  class="fw-bold fs-5"
-                  [class.text-danger]="usuarioSeleccionado.malasOpinionesCount > 0"
-                  [class.text-dark]="usuarioSeleccionado.malasOpinionesCount === 0"
-                >
-                  {{ usuarioSeleccionado.malasOpinionesCount }}
-                </span>
-                <small class="text-muted d-block xsmall">Malas Opiniones</small>
-              </div>
-            </div>
-            <div class="col-4">
-              <div
-                class="metric-box text-center p-2 rounded-3"
-                [class.bg-warning-subtle]="usuarioSeleccionado.incidenciasAbiertasCount > 0"
-                [class.bg-light]="usuarioSeleccionado.incidenciasAbiertasCount === 0"
-              >
-                <span
-                  class="fw-bold fs-5"
-                  [class.text-warning]="usuarioSeleccionado.incidenciasAbiertasCount > 0"
-                  [class.text-dark]="usuarioSeleccionado.incidenciasAbiertasCount === 0"
-                >
-                  {{ usuarioSeleccionado.incidenciasAbiertasCount }}
-                </span>
-                <small class="text-muted d-block xsmall">Incidencias</small>
-              </div>
-            </div>
-          </div>
-          <!-- BOTONES DE ACCIÓN DIRECTA -->
-          <div class="d-flex flex-column gap-2 mt-3">
-            <button
-              class="btn-action-main btn-chat-main w-100"
-              (click)="iniciarChatSoporte(usuarioSeleccionado)"
-            >
-              <ion-icon
-                name="chatbubble-ellipses-outline"
-                class="me-2"
-              ></ion-icon>
-              Iniciar Chat de Soporte
-            </button>
-            <button
-              class="btn-action-main w-100"
-              [class.btn-block-main]="!usuarioSeleccionado.ya_ha_sido_suspendido"
-              [class.btn-unblock-main]="usuarioSeleccionado.ya_ha_sido_suspendido"
-              (click)="toggleBloqueoUsuario(usuarioSeleccionado)"
-            >
-              <ion-icon
-                [name]="usuarioSeleccionado.ya_ha_sido_suspendido ? 'lock-open-outline' : 'lock-closed-outline'"
-                class="me-2"
-              ></ion-icon>
-              {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Desbloquear Usuario' : 'Bloquear / Suspender Usuario' }}
-            </button>
-          </div>
+          <p class="m-0 fw-bold">Bajo Advertencia</p>
+          <small class="text-muted">Vigilar cancelaciones recientes</small>
         </div>
       </ion-col>
-      }
+
+      <ion-col size="12" size-md="3">
+        <div
+          class="metric-card card-orange p-3 rounded-4 shadow-sm cursor-pointer"
+          [class.filtro-activo]="filtroNivel === 'CRITICO'"
+          (click)="cambiarFiltroNivel('CRITICO')"
+        >
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="metric-number">{{ countCritico }}</span>
+            <span class="badge-notif badge-critico">14–19 pts</span>
+          </div>
+          <p class="m-0 fw-bold">Nivel Crítico (N1)</p>
+          <small class="text-muted">A punto de alcanzar el límite</small>
+        </div>
+      </ion-col>
+
+      <ion-col size="12" size-md="3">
+        <div
+          class="metric-card card-rose p-3 rounded-4 shadow-sm cursor-pointer"
+          [class.filtro-activo]="filtroNivel === 'SUSPENDIDO'"
+          (click)="cambiarFiltroNivel('SUSPENDIDO')"
+        >
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="metric-number">{{ countSuspendido }}</span>
+            <span class="badge-notif badge-danger-dark">20/20 o Bloqueado</span>
+          </div>
+          <p class="m-0 fw-bold">Suspendidos / Límite</p>
+          <small class="text-muted">Requieren sanción o revisión</small>
+        </div>
+      </ion-col>
     </ion-row>
+
+    <!-- BUSCADOR Y LISTADO DE TARJETAS DE USUARIO -->
+    <div class="bg-white rounded-4 shadow-sm p-3 mb-4">
+      <ion-searchbar
+        placeholder="Buscar por nombre, apellidos o correo electrónico..."
+        (ionInput)="onBuscar($event)"
+        class="custom-searchbar mb-3"
+      ></ion-searchbar>
+
+      @if (cargando) {
+        <div class="text-center py-5">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p class="text-muted small mt-2">Analizando puntuaciones e historial ICH...</p>
+        </div>
+      } @else {
+        <div class="d-flex flex-column gap-3">
+          @for (user of usuariosFiltrados; track user.id) {
+            @let infoCond = getInfoNivel(user.puntos_conductor);
+            @let infoPas = getInfoNivel(user.puntos_pasajero);
+
+            <div
+              class="user-admin-card p-3 rounded-4 border"
+              [class.card-alerta-borde]="user.maxPuntos >= 14 || user.ya_ha_sido_suspendido"
+            >
+              <div class="row align-items-center g-3">
+                <!-- 1. IDENTIDAD Y VALORACIÓN MEDIA -->
+                <div class="col-12 col-lg-4 d-flex align-items-center gap-3">
+                  <img
+                    [src]="user.fotoPerfil || avatarDefault"
+                    alt="Avatar"
+                    class="avatar-lg shadow-sm"
+                  />
+                  <div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <h5 class="m-0 fw-bold">{{ user.nombre }} {{ user.apellidos }}</h5>
+                      @if (user.ya_ha_sido_suspendido) {
+                        <span class="badge-notif badge-danger-dark">Suspendido</span>
+                      }
+                    </div>
+                    <p class="text-muted small m-0">{{ user.email }}</p>
+
+                    <div class="d-flex align-items-center gap-3 mt-1 small">
+                      <span class="fw-bold text-warning">
+                        <ion-icon name="star"></ion-icon>
+                        {{ user.puntuaciones || 'Sin valorar' }}
+                      </span>
+                      <span class="text-muted">({{ user.opiniones?.length || 0 }} opiniones)</span>
+                      @if (user.emailVerificado) {
+                        <span class="text-success fw-semibold">
+                          <ion-icon name="checkmark-circle-outline"></ion-icon> Verificado
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. NOTIFICACIONES ICH (BARRAS SOBRE 20 PUNTOS) -->
+                <div class="col-12 col-lg-5">
+                  <!-- Conductor -->
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center small mb-1">
+                      <span class="fw-semibold">
+                        <ion-icon name="car-outline" class="me-1"></ion-icon>
+                        Rol Conductor: <strong>{{ user.puntos_conductor }} / 20 pts</strong>
+                      </span>
+                      <span class="badge-notif" [ngClass]="infoCond.clase">{{ infoCond.texto }}</span>
+                    </div>
+                    <div class="ich-progress-bg">
+                      <div
+                        class="ich-progress-fill"
+                        [style.width.%]="(user.puntos_conductor / 20) * 100"
+                        [style.background-color]="infoCond.colorBarra"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Pasajero -->
+                  <div>
+                    <div class="d-flex justify-content-between align-items-center small mb-1">
+                      <span class="fw-semibold">
+                        <ion-icon name="person-outline" class="me-1"></ion-icon>
+                        Rol Pasajero: <strong>{{ user.puntos_pasajero }} / 20 pts</strong>
+                      </span>
+                      <span class="badge-notif" [ngClass]="infoPas.clase">{{ infoPas.texto }}</span>
+                    </div>
+                    <div class="ich-progress-bg">
+                      <div
+                        class="ich-progress-fill"
+                        [style.width.%]="(user.puntos_pasajero / 20) * 100"
+                        [style.background-color]="infoPas.colorBarra"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. ACCIONES DEL ADMINISTRADOR -->
+                <div class="col-12 col-lg-3 d-flex justify-content-lg-end gap-2">
+                  <button class="btn-action-admin btn-ver" (click)="abrirDetalleUsuario(user)">
+                    <ion-icon name="eye-outline"></ion-icon>
+                    <span>Ficha completa</span>
+                  </button>
+                  <button
+                    class="btn-action-admin"
+                    [ngClass]="user.ya_ha_sido_suspendido ? 'btn-desbloquear' : 'btn-sancionar'"
+                    (click)="abrirModalSancion(user)"
+                  >
+                    <ion-icon [name]="user.ya_ha_sido_suspendido ? 'lock-open-outline' : 'ban-outline'"></ion-icon>
+                    <span>{{ user.ya_ha_sido_suspendido ? 'Levantar' : 'Sancionar' }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (usuariosFiltrados.length === 0) {
+            <div class="text-center py-5 text-muted">
+              No hay usuarios que coincidan con el filtro seleccionado.
+            </div>
+          }
+        </div>
+      }
+    </div>
   </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: FICHA COMPLETA DEL USUARIO, OPINIONES Y NOTAS    -->
+  <!-- ========================================================= -->
+  <ion-modal [isOpen]="modalDetalleAbierto" (didDismiss)="cerrarDetalleUsuario()" cssClass="modal-admin-goguay">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Ficha de {{ usuarioSeleccionado?.nombre }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarDetalleUsuario()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding" *ngIf="usuarioSeleccionado">
+        <!-- Datos Personales y Contacto -->
+        <div class="p-3 rounded-4 bg-light mb-3">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <img [src]="usuarioSeleccionado.fotoPerfil || avatarDefault" class="avatar-lg" />
+            <div>
+              <h4 class="m-0 fw-bold">{{ usuarioSeleccionado.nombre }} {{ usuarioSeleccionado.apellidos }}</h4>
+              <p class="m-0 text-muted small">{{ usuarioSeleccionado.email }} · Tel: {{ usuarioSeleccionado.telefono || 'No indicado' }}</p>
+              <small class="text-muted">Pronombre: {{ usuarioSeleccionado.pronombre || '-' }} · Género: {{ usuarioSeleccionado.genero }}</small>
+            </div>
+          </div>
+          <p class="small fst-italic m-0 mt-2" *ngIf="usuarioSeleccionado.biografia">
+            "{{ usuarioSeleccionado.biografia }}"
+          </p>
+        </div>
+
+        <!-- Estado de Sanción Actual -->
+        <div class="p-3 rounded-4 border border-danger bg-danger-subtle mb-3" *ngIf="usuarioSeleccionado.ya_ha_sido_suspendido">
+          <h6 class="fw-bold text-danger m-0">Cuenta actualmente sancionada / suspendida</h6>
+          <p class="small m-0 mt-1"><strong>Motivo:</strong> {{ usuarioSeleccionado.motivo_bloqueo || 'Superación umbral ICH' }}</p>
+          <small *ngIf="usuarioSeleccionado.bloqueado_hasta">Hasta: {{ usuarioSeleccionado.bloqueado_hasta | date:'dd/MM/yyyy HH:mm' }}</small>
+        </div>
+
+        <!-- Resumen de Notas ICH (Últimos 6 meses) -->
+        <h6 class="fw-bold mt-3 mb-2">Historial de Penalizaciones ICH (Últimos 6 meses)</h6>
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <div class="p-2 rounded-3 bg-light text-center">
+              <small class="text-muted d-block">Conductor</small>
+              <strong class="fs-5">{{ usuarioSeleccionado.puntos_conductor }} / 20 pts</strong>
+              <span class="d-block small">{{ usuarioSeleccionado.nivel_conductor || getInfoNivel(usuarioSeleccionado.puntos_conductor).texto }}</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-2 rounded-3 bg-light text-center">
+              <small class="text-muted d-block">Pasajero</small>
+              <strong class="fs-5">{{ usuarioSeleccionado.puntos_pasajero }} / 20 pts</strong>
+              <span class="d-block small">{{ usuarioSeleccionado.nivel_pasajero || getInfoNivel(usuarioSeleccionado.puntos_pasajero).texto }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desglose de cancelaciones -->
+        <div *ngIf="usuarioSeleccionado.historial_cancelaciones?.length > 0; else sinCancelaciones" class="mb-3">
+          <div *ngFor="let canc of usuarioSeleccionado.historial_cancelaciones" class="border-bottom py-2 small d-flex justify-content-between">
+            <div>
+              <span class="badge bg-secondary me-1">{{ canc.rol }}</span>
+              <span>{{ canc.motivo }}</span>
+              <div class="text-muted">{{ canc.fecha | date:'dd/MM/yyyy' }}</div>
+            </div>
+            <strong class="text-danger">+{{ canc.puntos }} pts</strong>
+          </div>
+        </div>
+        <ng-template #sinCancelaciones>
+          <p class="text-muted small">Sin cancelaciones penalizadas en los últimos 6 meses.</p>
+        </ng-template>
+
+        <!-- Valoraciones / Opiniones recibidas -->
+        <h6 class="fw-bold mt-3 mb-2">
+          Valoraciones recibidas (Media: {{ usuarioSeleccionado.puntuaciones || 0 }} ★)
+        </h6>
+        <div *ngIf="usuarioSeleccionado.opiniones?.length > 0; else sinOpiniones">
+          <div *ngFor="let op of usuarioSeleccionado.opiniones" class="p-2 rounded-3 bg-light mb-2 small">
+            <div class="d-flex justify-content-between fw-bold">
+              <span>{{ op.evaluador?.nombre || 'Usuario' }}</span>
+              <span class="text-warning">{{ op.puntuacion }} ★</span>
+            </div>
+            <p class="m-0 mt-1">{{ op.comentario }}</p>
+          </div>
+        </div>
+        <ng-template #sinOpiniones>
+          <p class="text-muted small">Este usuario aún no ha recibido valoraciones.</p>
+        </ng-template>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: APLICAR O LEVANTAR SANCIÓN                       -->
+  <!-- ========================================================= -->
+  <ion-modal
+    [isOpen]="modalSancionAbierto"
+    (didDismiss)="cerrarModalSancion()"
+    cssClass="modal-admin-sancion"
+  >
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar style="--background: #ffffff; --color: #1e1e1e;">
+          <ion-title class="fw-bold">
+            {{ usuarioSeleccionado?.ya_ha_sido_suspendido ? 'Gestionar Desbloqueo' : 'Aplicar Sanción' }}
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalSancion()" color="dark">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding" style="--background: #ffffff; --color: #1e1e1e;" *ngIf="usuarioSeleccionado">
+        <div
+          class="p-3 rounded-4 mb-4 d-flex align-items-center gap-3"
+          [ngStyle]="{ 'background-color': usuarioSeleccionado.ya_ha_sido_suspendido ? '#e8f5e9' : '#fde8ec' }"
+        >
+          <div
+            style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;"
+            [ngStyle]="{
+              'background-color': usuarioSeleccionado.ya_ha_sido_suspendido ? '#c8e6c9' : '#ffcdd2',
+              'color': usuarioSeleccionado.ya_ha_sido_suspendido ? '#2e7d32' : '#c62828'
+            }"
+          >
+            <ion-icon [name]="usuarioSeleccionado.ya_ha_sido_suspendido ? 'lock-open-outline' : 'ban-outline'"></ion-icon>
+          </div>
+          <div>
+            <h6 class="m-0 fw-bold" style="color: #1e1e1e;">
+              {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Levantar suspensión de cuenta' : 'Suspender acceso temporal o indefinido' }}
+            </h6>
+            <p class="m-0 small text-muted">
+              <strong>{{ usuarioSeleccionado.nombre }} {{ usuarioSeleccionado.apellidos }}</strong>
+              (ICH Máx: {{ usuarioSeleccionado.maxPuntos }}/20 pts)
+            </p>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div *ngIf="!usuarioSeleccionado.ya_ha_sido_suspendido">
+          <div class="mb-3">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #333; margin-bottom: 6px;">
+              Duración de la suspensión (días)
+            </label>
+            <div style="background: #f4f5f7; border: 1px solid #e0e0e0; border-radius: 14px; padding: 2px 14px;">
+              <ion-select
+                [(ngModel)]="diasSuspension"
+                interface="popover"
+                placeholder="Selecciona duración"
+                style="--color: #1e1e1e; color: #1e1e1e; min-height: 42px; width: 100%;"
+              >
+                <ion-select-option [value]="3">3 días (Advertencia severa)</ion-select-option>
+                <ion-select-option [value]="7">7 días (Suspensión temporal)</ion-select-option>
+                <ion-select-option [value]="30">30 días (Nivel crítico)</ion-select-option>
+                <ion-select-option [value]="3650">Indefinida (Bloqueo permanente)</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #333; margin-bottom: 6px;">
+              Motivo de la sanción
+            </label>
+            <ion-textarea
+              rows="3"
+              placeholder="Ej: Acumulación de 20 puntos ICH por cancelaciones reiteradas..."
+              [(ngModel)]="motivoSancion"
+              style="--background: #f4f5f7; --color: #1e1e1e; --placeholder-color: #6c757d; --padding-start: 14px; --padding-end: 14px; --padding-top: 10px; border: 1px solid #e0e0e0; border-radius: 14px;"
+            ></ion-textarea>
+          </div>
+        </div>
+
+        <!-- Vista cuando ya está suspendido -->
+        <div *ngIf="usuarioSeleccionado.ya_ha_sido_suspendido" class="p-3 rounded-4 bg-light mb-4 small" style="color: #1e1e1e;">
+          <p class="m-0 mb-1"><strong>Motivo del bloqueo actual:</strong></p>
+          <p class="m-0 text-muted">{{ usuarioSeleccionado.motivo_bloqueo || 'Superación del umbral de puntos ICH.' }}</p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button
+            type="button"
+            class="btn btn-light border w-50 fw-bold py-2 rounded-pill"
+            (click)="cerrarModalSancion()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn w-50 fw-bold py-2 rounded-pill"
+            [ngClass]="usuarioSeleccionado.ya_ha_sido_suspendido ? 'btn-success' : 'btn-danger'"
+            (click)="confirmarSancion()"
+          >
+            {{ usuarioSeleccionado.ya_ha_sido_suspendido ? 'Desbloquear' : 'Confirmar sanción' }}
+          </button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

@@ -1,5 +1,24 @@
-ion-content.admin-content {
-  --background: #E9EDD5 !important;
+/* ========================================================= */
+/* 0. FORZAR ESQUEMA CLARO EN TODO EL COMPONENTE             */
+/* ========================================================= */
+:host {
+  color-scheme: light;
+}
+
+ion-modal.modal-admin-sancion {
+  --border-radius: 24px;
+  --background: #ffffff;
+  --color: #1e1e1e;
+}
+
+ion-popover.select-popover {
+  --background: #ffffff;
+  --color: #1e1e1e;
+}
+
+.admin-content {
+  --background: #f3f5e8;
+  --color: #1e1e1e;
 }
 
 .admin-container {
@@ -7,202 +26,260 @@ ion-content.admin-content {
   margin: 0 auto;
 }
 
-.title-page {
-  font-size: 1.35rem;
-  color: #2c2c2c;
+/* ========================================================= */
+/* 1. CABECERA                                               */
+/* ========================================================= */
+.admin-header-card {
+  background: #ffffff;
+  color: #1e1e1e;
 }
 
-.btn-back {
-  --border-radius: 50%;
-  width: 42px;
-  height: 42px;
+.title-user {
+  color: #1e1e1e;
 }
 
-.badge-total {
-  background: #F0D7B4;
-  color: #2c2c2c;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 6px 16px;
-  border-radius: 20px;
-}
-
-/* BUSCADOR Y SELECCIÓN */
-.custom-search-item {
-  --background: #f8f9fa;
-  --border-radius: 35px;
-  --inner-padding-end: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 35px;
-}
-
-.custom-select {
-  background: #f8f9fa;
-  border: 1px solid #e2e8f0;
-  border-radius: 35px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #2c2c2c;
-}
-
-/* LISTA Y SCROLL */
-.usuarios-scroll-container {
-  max-height: 520px;
-  overflow-y: auto;
-  padding-right: 4px;
-  padding-top: 4px;
-}
-
-.user-card {
-  background: #f8f9fa;
-  border: 1.5px solid #e2e8f0;
-  transition: all 0.25s ease;
+.btn-back-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #ece8f8;
+  color: #5e35b1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
 
   &:hover {
-    border-color: #b3b5e6;
-    background: #ffffff;
-    transform: translateY(-2px);
-    cursor: pointer;
-  }
-
-  &.active {
-    border-color: #7c4dff !important;
-    background: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(124, 77, 255, 0.15) !important;
+    background: #dfd8f5;
   }
 }
 
-.avatar-container {
-  position: relative;
-  width: 44px;
-  height: 44px;
+.badge-role {
+  background: #ece8f8;
+  color: #5e35b1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+/* ========================================================= */
+/* 2. TARJETAS MÉTRICAS SUPERIORES (FILTROS POR UMBRAL ICH)  */
+/* ========================================================= */
+.metric-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 2px solid transparent;
+  color: #1e1e1e;
+  cursor: pointer;
+
+  &.filtro-activo {
+    border-color: #7c4dff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(124, 77, 255, 0.15) !important;
+  }
+}
+
+.card-purple {
+  background: #ede7f6;
+}
+.card-beige {
+  background: #fdf3e6;
+}
+.card-orange {
+  background: #fff0e6;
+}
+.card-rose {
+  background: #fde8ec;
+}
+
+.metric-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #2c2c2c;
+}
+
+/* ========================================================= */
+/* 3. BADGES DE NIVEL ICH                                    */
+/* ========================================================= */
+.badge-notif {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-optimo {
+  background: #dcedc8;
+  color: #33691e;
+}
+.badge-advertencia {
+  background: #ffe0b2;
+  color: #e65100;
+}
+.badge-critico {
+  background: #ffcdd2;
+  color: #c62828;
+}
+.badge-danger-dark {
+  background: #b71c1c;
+  color: #ffffff;
+}
+
+/* ========================================================= */
+/* 4. BARRA DE BÚSQUEDA Y SELECTORES (FIX MODO OSCURO)       */
+/* ========================================================= */
+ion-searchbar.custom-searchbar,
+ion-searchbar {
+  --background: #f4f5f7 !important;
+  --color: #1e1e1e !important;
+  --placeholder-color: #6c757d !important;
+  --icon-color: #5e35b1 !important;
+  --clear-button-color: #6c757d !important;
+  --border-radius: 12px !important;
+  --box-shadow: none !important;
+  padding: 0 !important;
+}
+
+ion-select {
+  --color: #1e1e1e !important;
+  --placeholder-color: #495057 !important;
+  color: #1e1e1e !important;
+}
+
+/* ========================================================= */
+/* 5. AVATARES Y FOTOS DE PERFIL (FIX TAMAÑO GIGANTE SVG)    */
+/* ========================================================= */
+ion-avatar,
+.avatar-user,
+.avatar-lg {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ece8f8;
+  flex-shrink: 0;
 
   img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .status-dot {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #ffffff;
-
-    &.dot-active { background: #2e7d32; }
-    &.dot-blocked { background: #c62828; }
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block;
   }
 }
 
-.badge-alert {
-  color: #d32f2f;
-  font-size: 1.1rem;
+/* ========================================================= */
+/* 6. TARJETA INDIVIDUAL DE USUARIO Y BARRAS DE PROGRESO     */
+/* ========================================================= */
+.user-admin-card {
+  background: #ffffff;
+  color: #1e1e1e;
+  border-color: #ececec !important;
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+
+  &.card-alerta-borde {
+    border-left: 5px solid #e53935 !important;
+  }
 }
 
-/* BOTONES DE ACCIÓN RÁPIDA */
-.btn-action-icon {
+.ich-progress-bg {
+  width: 100%;
+  height: 8px;
+  background: #eeeeee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ich-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* ========================================================= */
+/* 7. LISTADOS Y BOTONES DE ACCIÓN (FIX MODO OSCURO)         */
+/* ========================================================= */
+ion-list {
+  background: transparent !important;
+}
+
+ion-item {
+  --background: #ffffff !important;
+  --color: #1e1e1e !important;
+  --border-color: #f0f0f0 !important;
+  cursor: pointer;
+}
+
+ion-button {
+  --background: transparent;
+  --color: #333333;
+}
+
+.btn-icon-action {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: 10px;
   border: none;
-  display: flex;
+  background: #f4f5f7;
+  color: #333333;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: background 0.2s ease;
 
-  &.btn-chat {
-    background: #e8eaf6;
-    color: #3f51b5;
-    &:hover { background: #3f51b5; color: #ffffff; }
-  }
-
-  &.btn-lock {
-    background: #ffebee;
-    color: #c62828;
-    &:hover { background: #c62828; color: #ffffff; }
-  }
-
-  &.btn-unlock {
-    background: #e8f5e9;
-    color: #2e7d32;
-    &:hover { background: #2e7d32; color: #ffffff; }
+  &:hover {
+    background: #e9ecef;
   }
 }
 
-/* FICHA DETALLADA */
-.detail-avatar-container {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid #b3b5e6;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.badge-id {
-  font-family: monospace;
-  font-weight: 700;
-  font-size: 0.75rem;
-  background: #e2e8f0;
-  color: #2c2c2c;
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-
-.badge-status {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 4px 12px;
+.btn-action-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
   border-radius: 20px;
-  display: inline-block;
-
-  &.status-success { background: #e8f5e9; color: #2e7d32; }
-  &.status-danger { background: #ffebee; color: #c62828; }
-}
-
-/* BOTONES PRINCIPALES DE LA FICHA */
-.btn-action-main {
-  padding: 12px;
-  border-radius: 35px;
-  border: none;
+  padding: 8px 14px;
+  font-size: 0.82rem;
   font-weight: 700;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.25s ease;
+  cursor: pointer;
+  transition: filter 0.15s ease;
 
-  &.btn-chat-main {
-    background: #b3b5e6;
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(179, 181, 230, 0.4);
-    &:hover { background: #9d9fe0; transform: translateY(-2px); }
+  &:hover {
+    filter: brightness(0.96);
   }
 
-  &.btn-block-main {
-    background: #ffebee;
+  &.btn-ver {
+    background: #ece8f8;
+    color: #5e35b1;
+  }
+
+  &.btn-sancionar {
+    background: #fde8ec;
     color: #c62828;
-    &:hover { background: #c62828; color: #ffffff; }
   }
 
-  &.btn-unblock-main {
+  &.btn-desbloquear {
     background: #e8f5e9;
     color: #2e7d32;
-    &:hover { background: #2e7d32; color: #ffffff; }
   }
-}
-
-.xsmall {
-  font-size: 0.72rem;
 }

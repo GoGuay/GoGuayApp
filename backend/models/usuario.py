@@ -241,6 +241,28 @@ class Usuario(db.Model):
             "metodo_cobro_preferido": self.metodo_cobro_preferido,
             "cobro_iban": self.cobro_iban,
             "cobro_titular": self.cobro_titular,
+            
+            # --- MÉTRICAS DE CRITICIDAD (ICH - Máximo 20 puntos) ---
+            "puntos_conductor": self.puntos_conductor_ultimos_6_meses,
+            "puntos_pasajero": self.puntos_pasajero_ultimos_6_meses,
+            "nivel_conductor": self.acumulado_notas_conductor,
+            "nivel_pasajero": self.acumulado_notas_pasajero,
+            "historial_cancelaciones": [
+                {
+                    "id": c.id,
+                    "rol": c.rol_involucrado,
+                    "puntos": c.puntos_penalizacion_aplicados,
+                    "motivo": getattr(c, 'motivo', 'Sin especificar'),
+                    "fecha": c.fecha_cancelacion.isoformat() if c.fecha_cancelacion else None
+                }
+                for c in self.cancelaciones_provocadas.order_by(Cancelacion.fecha_cancelacion.desc()).limit(10).all()
+            ],
+
+            # --- ESTADO DE SANCIÓN / BLOQUEO ---
+            "ya_ha_sido_suspendido": self.ya_ha_sido_suspendido,
+            "bloqueado_desde": self.bloqueado_desde.isoformat() if self.bloqueado_desde else None,
+            "bloqueado_hasta": self.bloqueado_hasta.isoformat() if self.bloqueado_hasta else None,
+            "motivo_bloqueo": self.motivo_bloqueo,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

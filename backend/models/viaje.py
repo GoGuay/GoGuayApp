@@ -39,12 +39,15 @@ class Viaje(db.Model):
     def acompanantes(self):
         return [p for p in self.pasajeros if p.estado == 'aceptado']
     
-    def serialize(self, current_user_id=None):
+    def serialize(self, current_user_id=None, incluir_ruta=True, incluir_historial=True, puntuados_ids=None):
         ya_puntuado = False
         if current_user_id:
-            from models import Puntuacion 
-            existe = Puntuacion.query.filter_by(viaje_id=self.id, evaluador_id=current_user_id).first()
-            ya_puntuado = existe is not None
+            if puntuados_ids is not None:
+                ya_puntuado = self.id in puntuados_ids
+            else:
+                from models import Puntuacion
+                existe = Puntuacion.query.filter_by(viaje_id=self.id, evaluador_id=current_user_id).first()
+                ya_puntuado = existe is not None
 
         usuario_creador_data = None
         if self.usuario:
@@ -56,7 +59,29 @@ class Viaje(db.Model):
                 "puntuacion_promedio": getattr(self.usuario, 'estrellas_por_opiniones', 0)
             }
 
-        return {
+        acompanantes_list = []
+        solicitudes_list = []
+        estado_propio = None
+
+        for p in self.pasajeros:
+            if current_user_id and p.usuario_id == current_user_id:
+                estado_propio = p.estado
+            if p.usuario:
+                if p.estado == 'aceptado':
+                    acompanantes_list.append({
+                        "id": p.usuario.id,
+                        "nombre": p.usuario.nombre,
+                        "fotoPerfil": getattr(p.usuario, 'fotoPerfil', None)
+                    })
+                elif p.estado == 'pendiente':
+                    solicitudes_list.append({
+                        "id": p.usuario.id,
+                        "pasajero_viaje_id": p.id,
+                        "nombre": p.usuario.nombre,
+                        "estado": p.estado
+                    })
+
+        data = {
             "id": self.id,
             "origen": self.origen,
             "destino": self.destino,
@@ -66,33 +91,22 @@ class Viaje(db.Model):
             "hora_llegada": self.hora_llegada,
             "fecha_salida": self.fecha_salida.isoformat() if self.fecha_salida else None,
             "duracion_viaje": self.duracion_viaje,
-            "ruta_seleccionada": self.ruta_seleccionada,
             "estado_viaje": self.estado_viaje,
             "usuario_id": self.usuario_id,
             "vehiculo": self.vehiculo,
             "reserva_automatica": self.reserva_automatica,
             "usuario_creador": usuario_creador_data,
-            "acompanantes": [
-                {
-                    "id": p.usuario.id, 
-                    "nombre": p.usuario.nombre, 
-                    "fotoPerfil": getattr(p.usuario, 'fotoPerfil', None)
-                }
-                for p in self.pasajeros 
-                if p.usuario and p.estado == 'aceptado'
-            ],
-            "solicitudes_pendientes": [
-                {
-                    "id": p.usuario.id,
-                    "pasajero_viaje_id": p.id, 
-                    "nombre": p.usuario.nombre,
-                    "estado": p.estado
-                }
-                for p in self.pasajeros 
-                if p.usuario and p.estado == 'pendiente'
-            ],
-            "estado_solicitud_propia": self.get_estado_para_usuario(current_user_id),
-            "historial_cambios": [h.serialize() for h in self.historial_cambios] if self.historial_cambios else [],
+            "acompanantes": acompanantes_list,
+            "solicitudes_pendientes": solicitudes_list,
+            "estado_solicitud_propia": estado_propio,
             "ya_puntuado": ya_puntuado,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
+
+        if incluir_ruta:
+            data["ruta_seleccionada"] = self.ruta_seleccionada
+
+        if incluir_historial:
+            data["historial_cambios"] = [h.serialize() for h in self.historial_cambios] if self.historial_cambios else []
+
+        return data

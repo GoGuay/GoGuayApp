@@ -1,81 +1,80 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  arrowBackOutline,
   peopleOutline,
-  searchOutline,
-  filterOutline,
-  starOutline,
-  starHalfOutline,
   warningOutline,
-  chatbubbleEllipsesOutline,
+  alertCircleOutline,
+  shieldCheckmarkOutline,
   lockClosedOutline,
   lockOpenOutline,
-  arrowBackOutline,
-  closeCircleOutline,
-  shieldOutline,
+  eyeOutline,
+  star,
+  carOutline,
+  personOutline,
+  closeOutline,
   checkmarkCircleOutline,
-  mailOutline,
-  callOutline,
+  banOutline,
 } from 'ionicons/icons';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
-import { UserServicesService } from '../../../core/user-services/user-services.service';
-
-export interface UsuarioAdminDetalle {
-  id: number;
-  nombre: string;
-  apellidos?: string;
-  email: string;
-  telefono?: string;
-  fotoPerfil?: string;
-  ya_ha_sido_suspendido: boolean;
-  rolPerfil: string;
-  promedioValoraciones: number;
-  totalOpiniones: number;
-  malasOpinionesCount: number;
-  incidenciasAbiertasCount: number;
-  fechaRegistro: string;
-}
+import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 
 @Component({
   selector: 'app-gestion-usuarios-admin',
+  standalone: true,
   templateUrl: './gestion-usuarios-admin.page.html',
   styleUrls: ['./gestion-usuarios-admin.page.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, IonicModule, NavbarAdmin],
+  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
 })
 export class GestionUsuariosAdminPage implements OnInit {
-  listaUsuarios: UsuarioAdminDetalle[] = [];
-  usuariosFiltrados: UsuarioAdminDetalle[] = [];
-  usuarioSeleccionado: UsuarioAdminDetalle | null = null;
-
-  busquedaQuery: string = '';
-  filtroEstado: string = 'todos';
+  usuarios: any[] = [];
+  usuariosFiltrados: any[] = [];
+  cargando: boolean = true;
   avatarDefault: string = '../../../assets/User-Profile-PNG-Image.png';
 
+  // Filtros
+  textoBusqueda: string = '';
+  filtroNivel: 'TODOS' | 'ALERTA' | 'CRITICO' | 'SUSPENDIDO' = 'TODOS';
+
+  // Contadores de cabecera
+  countAdvertencia: number = 0; // 6 a 13 pts
+  countCritico: number = 0;     // 14 a 19 pts
+  countSuspendido: number = 0;  // >= 20 pts o bloqueado manual
+
+  // Modal Detalle Completo
+  modalDetalleAbierto: boolean = false;
+  usuarioSeleccionado: any = null;
+
+  // Modal Aplicar Sanción
+  modalSancionAbierto: boolean = false;
+  motivoSancion: string = '';
+  diasSuspension: number = 7;
+
   constructor(
-    public navCtrl: NavController,
-    private userService: UserServicesService
+    private userService: UserServicesService,
+    private navCtrl: NavController,
+    private toastCtrl: ToastController,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
+      arrowBackOutline,
       peopleOutline,
-      searchOutline,
-      filterOutline,
-      starOutline,
-      starHalfOutline,
       warningOutline,
-      chatbubbleEllipsesOutline,
+      alertCircleOutline,
+      shieldCheckmarkOutline,
       lockClosedOutline,
       lockOpenOutline,
-      arrowBackOutline,
-      closeCircleOutline,
-      shieldOutline,
+      eyeOutline,
+      star,
+      carOutline,
+      personOutline,
+      closeOutline,
       checkmarkCircleOutline,
-      mailOutline,
-      callOutline,
+      banOutline,
     });
   }
 
@@ -84,74 +83,130 @@ export class GestionUsuariosAdminPage implements OnInit {
   }
 
   cargarUsuarios() {
+    this.cargando = true;
     this.userService.obtenerUsuarios().subscribe({
-      next: (data: any[]) => {
-        // Mapeo e integración de métricas de reputación/incidencias
-        this.listaUsuarios = (data || []).map((u, idx) => ({
-          id: u.id || idx + 1,
-          nombre: u.nombre || 'Usuario',
-          apellidos: u.apellidos || '',
-          email: u.email || '',
-          telefono: u.telefono || u.telefonoContacto || 'No facilitado',
-          fotoPerfil: u.fotoPerfil || null,
-          ya_ha_sido_suspendido: !!u.ya_ha_sido_suspendido || !!u.restringido,
-          rolPerfil: u.rolPerfil || 'usuario',
-          promedioValoraciones: u.promedioValoraciones ?? 4.2 - (idx % 2),
-          totalOpiniones: u.totalOpiniones ?? 5 + idx * 2,
-          malasOpinionesCount: u.malasOpinionesCount ?? (idx % 3 === 0 ? 2 : 0),
-          incidenciasAbiertasCount: u.incidenciasAbiertasCount ?? (idx % 4 === 0 ? 1 : 0),
-          fechaRegistro: u.fechaRegistro || '15/05/2026',
+      next: (res: any[]) => {
+        this.usuarios = (res || []).map((u) => ({
+          ...u,
+          puntos_conductor: u.puntos_conductor ?? 0,
+          puntos_pasajero: u.puntos_pasajero ?? 0,
+          maxPuntos: Math.max(u.puntos_conductor ?? 0, u.puntos_pasajero ?? 0),
         }));
 
+        this.usuarios.sort((a, b) => b.maxPuntos - a.maxPuntos);
+
+        this.calcularMetricasAlertas();
         this.aplicarFiltros();
+        this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar la lista de usuarios:', err);
+        console.error('Error cargando usuarios:', err);
+        this.cargando = false;
       },
     });
+  }
+
+  calcularMetricasAlertas() {
+    this.countAdvertencia = this.usuarios.filter((u) => u.maxPuntos >= 6 && u.maxPuntos < 14).length;
+    this.countCritico = this.usuarios.filter((u) => u.maxPuntos >= 14 && u.maxPuntos < 20).length;
+    this.countSuspendido = this.usuarios.filter((u) => u.maxPuntos >= 20 || u.ya_ha_sido_suspendido).length;
+  }
+
+  cambiarFiltroNivel(nivel: 'TODOS' | 'ALERTA' | 'CRITICO' | 'SUSPENDIDO') {
+    this.filtroNivel = nivel;
+    this.aplicarFiltros();
+  }
+
+  onBuscar(event: any) {
+    this.textoBusqueda = (event.target.value || '').toLowerCase().trim();
+    this.aplicarFiltros();
   }
 
   aplicarFiltros() {
-    const q = this.busquedaQuery.toLowerCase().trim();
+    this.usuariosFiltrados = this.usuarios.filter((u) => {
+      const coincideTexto =
+        !this.textoBusqueda ||
+        (u.nombre || '').toLowerCase().includes(this.textoBusqueda) ||
+        (u.apellidos || '').toLowerCase().includes(this.textoBusqueda) ||
+        (u.email || '').toLowerCase().includes(this.textoBusqueda);
 
-    this.usuariosFiltrados = this.listaUsuarios.filter((u) => {
-      const coincideNombre = (u.nombre + ' ' + (u.apellidos || '')).toLowerCase().includes(q);
-      const coincideEmail = u.email.toLowerCase().includes(q);
-      const coincideBusqueda = !q || coincideNombre || coincideEmail || u.id.toString().includes(q);
+      if (!coincideTexto) return false;
 
-      let coincideEstado = true;
-      if (this.filtroEstado === 'activos') coincideEstado = !u.ya_ha_sido_suspendido;
-      if (this.filtroEstado === 'bloqueados') coincideEstado = u.ya_ha_sido_suspendido;
-      if (this.filtroEstado === 'conflictivos') {
-        coincideEstado = u.malasOpinionesCount > 0 || u.incidenciasAbiertasCount > 0;
+      switch (this.filtroNivel) {
+        case 'ALERTA':
+          return u.maxPuntos >= 6 && u.maxPuntos < 14;
+        case 'CRITICO':
+          return u.maxPuntos >= 14 && u.maxPuntos < 20;
+        case 'SUSPENDIDO':
+          return u.maxPuntos >= 20 || u.ya_ha_sido_suspendido;
+        default:
+          return true;
       }
-
-      return coincideBusqueda && coincideEstado;
     });
   }
 
-  verFichaUsuario(usuario: UsuarioAdminDetalle) {
-    this.usuarioSeleccionado = usuario;
+  getInfoNivel(puntos: number): { texto: string; clase: string; colorBarra: string } {
+    if (puntos >= 20) {
+      return { texto: 'Límite alcanzado (20/20)', clase: 'badge-danger-dark', colorBarra: '#d32f2f' };
+    }
+    if (puntos >= 14) {
+      return { texto: 'Crítico · Nivel 1', clase: 'badge-critico', colorBarra: '#ef5350' };
+    }
+    if (puntos >= 6) {
+      return { texto: 'Bajo Advertencia', clase: 'badge-advertencia', colorBarra: '#ffa726' };
+    }
+    return { texto: 'Óptimo', clase: 'badge-optimo', colorBarra: '#66bb6a' };
   }
 
-  cerrarFicha() {
+  abrirDetalleUsuario(user: any) {
+    this.usuarioSeleccionado = user;
+    this.modalDetalleAbierto = true;
+  }
+
+  cerrarDetalleUsuario() {
+    this.modalDetalleAbierto = false;
     this.usuarioSeleccionado = null;
   }
 
-  toggleBloqueoUsuario(usuario: UsuarioAdminDetalle, event?: Event) {
-    if (event) event.stopPropagation();
-
-    usuario.ya_ha_sido_suspendido = !usuario.ya_ha_sido_suspendido;
-    // Aquí puedes enlazar la llamada al servicio backend:
-    // this.userService.cambiarEstadoBloqueo(usuario.id, usuario.ya_ha_sido_suspendido).subscribe(...)
+  abrirModalSancion(user: any) {
+    this.usuarioSeleccionado = user;
+    this.motivoSancion = user.motivo_bloqueo || '';
+    this.diasSuspension = 7;
+    this.modalSancionAbierto = true;
   }
 
-  iniciarChatSoporte(usuario: UsuarioAdminDetalle) {
-    // Redirige directamente al centro de chat con el ID del usuario
-    this.navCtrl.navigateForward([`/chat/${usuario.id}`]);
+  cerrarModalSancion() {
+    this.modalSancionAbierto = false;
   }
 
-  volverDashboard() {
+  async confirmarSancion() {
+    if (!this.usuarioSeleccionado) return;
+
+    const suspender = !this.usuarioSeleccionado.ya_ha_sido_suspendido;
+    const fechaHasta = new Date();
+    fechaHasta.setDate(fechaHasta.getDate() + Number(this.diasSuspension));
+
+    this.usuarioSeleccionado.ya_ha_sido_suspendido = suspender;
+    this.usuarioSeleccionado.motivo_bloqueo = suspender ? this.motivoSancion : null;
+    this.usuarioSeleccionado.bloqueado_hasta = suspender ? fechaHasta.toISOString() : null;
+
+    this.calcularMetricasAlertas();
+    this.aplicarFiltros();
+    this.modalSancionAbierto = false;
+
+    const toast = await this.toastCtrl.create({
+      message: suspender
+        ? `Usuario ${this.usuarioSeleccionado.nombre} sancionado correctamente.`
+        : `Restricción levantada para ${this.usuarioSeleccionado.nombre}.`,
+      duration: 2500,
+      color: suspender ? 'warning' : 'success',
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
+  volverAdmin() {
     this.navCtrl.navigateBack(['/admin-app']);
   }
 }

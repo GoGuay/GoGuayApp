@@ -994,7 +994,7 @@ ion-modal.modal-qr-verificacion {
     background: linear-gradient(135deg, #ffb3ba, #ff8080) !important;
     color: #ffffff !important;
     box-shadow: 0 4px 10px rgba(255, 128, 128, 0.3) !important;
-    
+
     &:hover {
       opacity: 0.9;
     }
@@ -1048,7 +1048,9 @@ ion-alert {
     height: auto !important;
     text-transform: none !important;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12) !important;
-    transition: transform 0.15s ease, background-color 0.2s ease !important;
+    transition:
+      transform 0.15s ease,
+      background-color 0.2s ease !important;
 
     &:hover {
       background-color: #9ea0db !important;
@@ -1086,5 +1088,126 @@ ion-alert {
     color: #222222 !important;
     padding: 10px 14px !important;
     border: 1px solid #e0e0e0 !important;
+  }
+}
+
+ion-popover.select-popover,
+ion-popover {
+  --background: #ffffff !important;
+  --color: #1e1e1e !important;
+  --width: 320px !important;
+  --max-width: 90vw !important;
+  color-scheme: light !important;
+
+  ion-content,
+  ion-list {
+    --background: #ffffff !important;
+    background: #ffffff !important;
+  }
+
+  ion-item {
+    --background: #ffffff !important;
+    --background-hover: #f3f0fa !important;
+    --background-activated: #ece8f8 !important;
+    --color: #1e1e1e !important;
+    --border-color: #f0f0f0 !important;
+  }
+
+  ion-label {
+    color: #1e1e1e !important;
+    white-space: normal !important;
+  }
+}
+
+
+/* ==========================================================================
+   ESTILOS GLOBALES PARA MODALES DEL PANEL DE ADMINISTRACIÓN
+   ========================================================================== */
+ion-modal.modal-admin-goguay {
+  --background: #ffffff !important;
+  --color: #1e1e1e !important;
+  --border-radius: 24px !important;
+  --box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16) !important;
+  color-scheme: light !important;
+
+  ion-header {
+    background: #ffffff !important;
+  }
+
+  ion-toolbar {
+    --background: #ffffff !important;
+    --color: #1e1e1e !important;
+    --border-color: #f0f0f0 !important;
+    padding: 4px 8px;
+
+    ion-title {
+      color: #1e1e1e !important;
+      font-weight: 700;
+    }
+
+    ion-button {
+      --color: #1e1e1e !important;
+    }
+  }
+
+  ion-content {
+    --background: #ffffff !important;
+    --color: #1e1e1e !important;
+  }
+
+  /* Tarjetas resumen internas dentro del modal */
+  .modal-admin-banner {
+    border-radius: 18px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &.banner-danger  { background: #fde8ec; color: #1e1e1e; }
+    &.banner-success { background: #e8f5e9; color: #1e1e1e; }
+    &.banner-neutral { background: #f4f5f7; color: #1e1e1e; }
+  }
+
+  .modal-admin-icon-circle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+
+    &.icon-danger  { background: #ffcdd2; color: #c62828; }
+    &.icon-success { background: #c8e6c9; color: #2e7d32; }
+    &.icon-purple  { background: #ece8f8; color: #5e35b1; }
+  }
+
+  /* Formularios dentro de modales admin (sin solapamientos y en modo claro) */
+  .modal-admin-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 6px;
+  }
+
+  .modal-admin-input,
+  .form-select,
+  .form-control {
+    background-color: #f4f5f7 !important;
+    color: #1e1e1e !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 14px !important;
+
+    &::placeholder {
+      color: #6c757d !important;
+    }
+
+    &:focus {
+      border-color: #7c4dff !important;
+      box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.15) !important;
+    }
   }
 }

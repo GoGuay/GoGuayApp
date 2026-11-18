@@ -1,5 +1,15 @@
+:host {
+  color-scheme: light;
+  --ion-background-color: #E9EDD5;
+  --ion-text-color: #2c2c2c;
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+  --ion-border-color: #eeeeee;
+}
+
 ion-content.admin-content {
   --background: #E9EDD5 !important;
+  --color: #2c2c2c !important;
 }
 
 .admin-container {
@@ -145,8 +155,12 @@ ion-content.admin-content {
 /* BÚSQUEDA Y LISTA DE USUARIOS */
 .custom-searchbar {
   --border-radius: 35px !important;
-  --background: #f8f9fa;
-  --box-shadow: none;
+  --background: #f8f9fa !important;
+  --color: #2c2c2c !important;
+  --placeholder-color: #6c757d !important;
+  --icon-color: #7c4dff !important;
+  --clear-button-color: #6c757d !important;
+  --box-shadow: none !important;
   padding: 0;
 }
 
@@ -155,13 +169,56 @@ ion-content.admin-content {
   overflow-y: auto;
 }
 
-.user-item {
+ion-list {
+  background: transparent !important;
+  --ion-item-background: #ffffff !important;
+}
+
+.user-item,
+.mensaje-item,
+ion-item {
+  --background: #ffffff !important;
+  --background-hover: #f8f9fa !important;
+  --color: #2c2c2c !important;
+  --border-color: #eeeeee !important;
   --padding-start: 8px;
   --padding-end: 8px;
 
+  ion-label {
+    color: #2c2c2c !important;
+
+    h3 {
+      color: #2c2c2c !important;
+    }
+
+    p {
+      color: #6c757d !important;
+    }
+  }
+
   .avatar-user {
-    width: 42px;
-    height: 42px;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    overflow: hidden !important;
+
+    img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+  }
+}
+
+/* Evita que el icono del ojo con color="dark" se vuelva blanco en modo oscuro */
+ion-button[color="dark"] {
+  --ion-color-base: #2c2c2c !important;
+  --ion-color-contrast: #ffffff !important;
+  --color: #2c2c2c !important;
+
+  ion-icon {
+    color: #2c2c2c !important;
   }
 }
 
@@ -180,6 +237,11 @@ ion-content.admin-content {
   &.status-danger {
     background: #ffebee;
     color: #c62828;
+  }
+
+  &.status-warning {
+    background: #ffe0b2;
+    color: #e65100;
   }
 
   &.status-new {
@@ -218,7 +280,7 @@ ion-content.admin-content {
     border-color: rgba(0, 0, 0, 0.05);
   }
 
-  small{
+  small {
     cursor: pointer;
   }
 }

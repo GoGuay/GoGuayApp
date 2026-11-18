@@ -1046,7 +1046,7 @@ def obtener_viajes_recomendados(user_id):
             "preferencias_convivencia": convivencia,
             "intereses_ocio": intereses_ocio,
             "reputacion_estrellas": usuario.estrellas_por_opiniones,
-            "estado_perfil": usuario.estado_perfil,
+            #"estado_perfil": usuario.estado_perfil,
             "historial_viajes": historial_viajes
         }
 
