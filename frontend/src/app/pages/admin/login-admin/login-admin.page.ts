@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { NavController, IonicModule } from '@ionic/angular';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { addIcons } from 'ionicons';
-import { shieldOutline, mailOutline, lockClosedOutline, arrowBackOutline } from 'ionicons/icons';
+import { shieldOutline, mailOutline, lockClosedOutline, arrowBackOutline} from 'ionicons/icons';
 
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';

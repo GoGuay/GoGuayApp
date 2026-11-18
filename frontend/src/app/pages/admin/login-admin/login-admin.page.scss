@@ -1,3 +1,17 @@
+:host {
+  color-scheme: light;
+  --ion-background-color: #E9EDD5;
+  --ion-text-color: #2c2c2c;
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+  --ion-border-color: #eeeeee;
+}
+
+ion-content.admin-content {
+  --background: #E9EDD5 !important;
+  --color: #2c2c2c !important;
+}
+
 ion-content.admin-bg {
   --background: #E9EDD5 !important;
 }
@@ -176,7 +190,7 @@ ion-content.admin-bg {
 }
 
 .btn-volver {
-  --color: #5a6268;
+  --color: #000000; 
   font-weight: 600;
   --border-radius: 35px;
 }

@@ -1,13 +1,63 @@
 :host {
-  display: flex;
+display: flex;
   flex-direction: column;
   height: 100%;
   border-top-left-radius: 28px;
   border-top-right-radius: 28px;
   overflow: hidden;
   background-color: #e9edd5;
+  color-scheme: light;
+  --ion-item-background: #ffffff;
+  --ion-text-color: #1e1e1e;
 }
 
+/* Barra inferior (ion-footer) en blanco */
+ion-footer.diseno {
+  display: block;
+  position: relative;
+  background: #f0d7b4 !important;
+  --background: #f0d7b4 !important;
+  --ion-toolbar-background: #f0d7b4 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 10;
+}
+
+/* Contenedor redondeado del input (píldora gris claro) */
+ion-item.custom-input-container {
+  --background: #ffffff !important;
+  --background-activated: #ffffff !important;
+  --background-focused: #ffffff !important;
+  --background-hover: #ffffff !important;
+  --ion-item-background: #ffffff !important;
+  --color: #1e1e1e !important;
+  --border-radius: 50px !important;
+  --padding-start: 16px;
+  --padding-end: 12px;
+  --min-height: 44px;
+  background: #ffffff !important;
+  border-radius: 50px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  &::part(native) {
+    background: #ffffff !important;
+    color: #1e1e1e !important;
+    border-radius: 50px !important;
+  }
+}
+
+/* Texto y placeholder dentro de ion-input */
+ion-item.custom-input-container ion-input {
+  --background: transparent !important;
+  --color: #1e1e1e !important;
+  --placeholder-color: #6c757d !important;
+  --placeholder-opacity: 1 !important;
+  color: #1e1e1e !important;
+
+  input {
+    color: #1e1e1e !important;
+    -webkit-text-fill-color: #1e1e1e !important;
+  }
+}
 ::ng-deep {
   .form-control:focus,
   input:focus,
