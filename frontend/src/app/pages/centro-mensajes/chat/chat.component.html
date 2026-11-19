@@ -112,6 +112,7 @@
                         <ion-button
                           size="small"
                           color="success"
+                          [disabled]="cargandoSolicitud[m.id]"
                           (click)="gestionarSolicitud(m, 'aceptar')"
                         >
                           Aceptar
@@ -119,6 +120,7 @@
                         <ion-button
                           size="small"
                           color="danger"
+                          [disabled]="cargandoSolicitud[m.id]"
                           (click)="gestionarSolicitud(m, 'rechazar')"
                         >
                           Rechazar

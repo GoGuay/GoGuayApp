@@ -3,45 +3,90 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 import os
-
-from flask import Blueprint, jsonify, request
+import re
+import json
 import requests
 from datetime import datetime, timezone, timedelta
-from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor, EstadoSolicitudEnum
-from services.cancelaciones import calcular_y_registrar_cancelacion, calcular_peso_cancelacion
-from services.gestion_pagos import reembolsar_pago_al_pasajero
-from models import Viaje, PasajeroViaje, Notificacion, Vehiculo, Puntuacion, TokenPush, HistorialCambiosViaje, Cancelacion, Usuario, Ordenes_Paypal
-from extensions import db
-from sqlalchemy.orm import joinedload, selectinload
-from firebase_admin import messaging
-from services.notifications.notifications_utils import enviar_notificacion_push
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
-import json
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.orm import joinedload, selectinload
+
+from extensions import db
+from models import (
+    Viaje,
+    PasajeroViaje,
+    Notificacion,
+    Vehiculo,
+    Puntuacion,
+    TokenPush,
+    HistorialCambiosViaje,
+    Cancelacion,
+    Usuario,
+    Ordenes_Paypal,
+)
+from models.enums import (
+    MotivosCancelacionPasajero,
+    MotivosCancelacionConductor,
+    EstadoSolicitudEnum,
+)
+from services.cancelaciones import (
+    calcular_y_registrar_cancelacion,
+    calcular_peso_cancelacion,
+)
+from services.gestion_pagos import reembolsar_pago_al_pasajero
+from services.notifications.notifications_utils import enviar_notificacion_push
+
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
 PAYPAL_API = os.getenv('PAYPAL_API')
 
 travel_blueprint = Blueprint('travel', __name__)
 
+
+def get_access_token():
+    """Obtiene el token OAuth2 de PayPal."""
+    try:
+        response = requests.post(
+            f"{PAYPAL_API}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
+            data={'grant_type': 'client_credentials'},
+            headers={'Accept': 'application/json', 'Accept-Language': 'en_US'},
+        )
+        if response.status_code != 200:
+            print("❌ Error al obtener el token de PayPal:", response.json())
+            return None
+        return response.json().get('access_token')
+    except Exception as e:
+        print("❌ Excepción al conectar con PayPal para el token:", str(e))
+        return None
+
+
 # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA CREAR UN VIAJE NUEVO
-# # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/crear_viaje', methods=['POST'])
 def crear_viaje():
-
     try:
         data = request.get_json()
     except Exception as e:
         return jsonify({"error": "El request no contiene JSON válido", "detalle": str(e)}), 400
 
-    campos_obligatorios = ['origen', 'destino', 'plazas', 'hora_salida', 'fecha_salida', 'ruta_seleccionada', 'usuario_id', 'coche']
+    campos_obligatorios = [
+        'origen',
+        'destino',
+        'plazas',
+        'hora_salida',
+        'fecha_salida',
+        'ruta_seleccionada',
+        'usuario_id',
+        'coche',
+    ]
     for campo in campos_obligatorios:
         if campo not in data:
             return jsonify({"error": f"Falta el campo obligatorio: {campo}"}), 400
 
     fecha_salida_str = data['fecha_salida']
-    
     formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d']
     fecha_salida = None
     for formato in formatos_fecha:
@@ -64,23 +109,18 @@ def crear_viaje():
     usuario_id = data.get('usuario_id')
     if usuario_id is None:
         return jsonify({"error": "Falta el campo 'usuario_id'"}), 400
-    
-    coche = data.get('coche')  # Aquí asumimos que 'coche' es un objeto completo
+
+    coche = data.get('coche')
     if not coche:
         return jsonify({"error": "Falta el campo 'coche'"}), 400
 
-    vehiculo_id = coche.get('id')
+    vehiculo_id = coche.get('id') if isinstance(coche, dict) else coche
     if not vehiculo_id:
         return jsonify({"error": "El campo 'id' del coche es obligatorio"}), 400
 
-    # Verificar si el vehículo pertenece al usuario actual
     vehiculo = Vehiculo.query.filter_by(id=vehiculo_id, usuario_id=usuario_id).first()
-
     if not vehiculo:
         return jsonify({"error": "El vehículo no pertenece al usuario actual"}), 400
-
-    if not vehiculo:
-        return jsonify({"Error": "el vehículo no pertenece al usuario actual"}), 400
 
     nuevo_viaje = Viaje(
         origen=data['origen'],
@@ -93,8 +133,8 @@ def crear_viaje():
         fecha_salida=fecha_salida,
         ruta_seleccionada=ruta_seleccionada,
         usuario_id=usuario_id,
-        vehiculo = vehiculo_id,
-        reserva_automatica=data.get('reserva_automatica', False)
+        vehiculo=vehiculo_id,
+        reserva_automatica=data.get('reserva_automatica', False),
     )
 
     db.session.add(nuevo_viaje)
@@ -102,7 +142,7 @@ def crear_viaje():
 
     return jsonify({
         "mensaje": "Viaje creado correctamente",
-        "viaje": nuevo_viaje.serialize()
+        "viaje": nuevo_viaje.serialize(),
     }), 201
 
 
@@ -117,13 +157,12 @@ def editar_viaje(viaje_id):
 
     try:
         data = request.get_json()
-        print('Información viaje a editar: ', data['fecha_salida'])
+        print('Información viaje a editar: ', data.get('fecha_salida'))
     except Exception as e:
         return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
 
     cambios_detectados = {}
 
-    
     if 'fecha_salida' in data and data['fecha_salida']:
         fecha_salida_str = data['fecha_salida']
         if 'T' in fecha_salida_str:
@@ -137,18 +176,21 @@ def editar_viaje(viaje_id):
             except ValueError:
                 continue
         if fecha_salida and viaje.fecha_salida != fecha_salida:
-            cambios_detectados['fecha'] = (viaje.fecha_salida.strftime('%d-%m-%Y'), fecha_salida.strftime('%d-%m-%Y'))
+            cambios_detectados['fecha'] = (
+                viaje.fecha_salida.strftime('%d-%m-%Y'),
+                fecha_salida.strftime('%d-%m-%Y'),
+            )
             viaje.fecha_salida = fecha_salida
 
     if 'coche' in data:
         coche = data.get('coche')
         vehiculo_id = coche.get('id') if isinstance(coche, dict) else coche
         usuario_id = data.get('usuario_id', viaje.usuario_id)
-        
+
         vehiculo = Vehiculo.query.filter_by(id=vehiculo_id, usuario_id=usuario_id).first()
         if not vehiculo:
             return jsonify({"error": "El nuevo vehículo no pertenece al usuario"}), 400
-        
+
         if viaje.vehiculo != vehiculo_id:
             cambios_detectados['vehiculo'] = (str(viaje.vehiculo), str(vehiculo_id))
             viaje.vehiculo = vehiculo_id
@@ -160,7 +202,7 @@ def editar_viaje(viaje_id):
         ('hora_salida', str),
         ('hora_llegada', str),
         ('precio_viaje', float),
-        ('reserva_automatica', bool)
+        ('reserva_automatica', bool),
     ]
 
     for campo, tipo in campos_simples:
@@ -191,59 +233,65 @@ def editar_viaje(viaje_id):
                 viaje_id=viaje.id,
                 campo_modificado=campo,
                 valor_anterior=val_anterior,
-                valor_nuevo=val_nuevo
+                valor_nuevo=val_nuevo,
             )
             db.session.add(historial)
 
-     
         traducciones = {
-            'origen': 'el punto de salida', 'destino': 'el destino final',
-            'plazas': 'las plazas disponibles', 'hora_salida': 'la hora de salida',
-            'hora_llegada': 'la hora estimada de llegada', 'precio_viaje': 'la aportación por plaza',
-            'reserva_automatica': 'el modo de reserva', 'fecha': 'la fecha del viaje',
-            'vehiculo': 'el vehículo asignado', 'duracion_viaje': 'la duración del trayecto'
+            'origen': 'el punto de salida',
+            'destino': 'el destino final',
+            'plazas': 'las plazas disponibles',
+            'hora_salida': 'la hora de salida',
+            'hora_llegada': 'la hora estimada de llegada',
+            'precio_viaje': 'la aportación por plaza',
+            'reserva_automatica': 'el modo de reserva',
+            'fecha': 'la fecha del viaje',
+            'vehiculo': 'el vehículo asignado',
+            'duracion_viaje': 'la duración del trayecto',
         }
 
         detalles_cambios = [traducciones.get(k, k) for k in cambios_detectados.keys()]
-        
         if len(detalles_cambios) > 1:
             texto_cambios = ", ".join(detalles_cambios[:-1]) + f" y {detalles_cambios[-1]}"
         else:
             texto_cambios = detalles_cambios[0]
 
-        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado == 'accepted' or p.estado == 'aceptado']
-        
+        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado in ['accepted', 'aceptado']]
+
         if pasajeros_a_notificar:
-            mensaje_aviso = f"Atención: El conductor ha modificado {texto_cambios} en tu viaje de {viaje.origen} a {viaje.destino}. Revisa los nuevos detalles."
+            mensaje_aviso = (
+                f"Atención: El conductor ha modificado {texto_cambios} en tu viaje "
+                f"de {viaje.origen} a {viaje.destino}. Revisa los nuevos detalles."
+            )
             titulo_notif = "Modificación importante en tu viaje"
 
             for pasajero in pasajeros_a_notificar:
                 nueva_notif = Notificacion(
                     usuario_id=pasajero.usuario_id,
                     viaje_id=viaje.id,
-                    mensaje=mensaje_aviso
+                    mensaje=mensaje_aviso,
                 )
                 db.session.add(nueva_notif)
-                
+
                 enviar_notificacion_push(
                     usuario_id=pasajero.usuario_id,
                     titulo=titulo_notif,
                     cuerpo=mensaje_aviso,
-                    data={"viaje_id": str(viaje.id), "tipo": "viaje_editado"}
+                    data={"viaje_id": str(viaje.id), "tipo": "viaje_editado"},
                 )
-            
+
         db.session.commit()
 
         return jsonify({
             "mensaje": "Viaje actualizado, historial registrado y acompañantes notificados",
             "cambios": list(cambios_detectados.keys()),
-            "viaje": viaje.serialize()
+            "viaje": viaje.serialize(),
         }), 200
 
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error en la actualización", "detalle": str(e)}), 500
-    
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   SERVICIO PARA OBTENER LA LISTA DE VIAJES DE UN USUARIO
@@ -256,10 +304,9 @@ def obtener_viajes_usuario():
         return jsonify({"error": "Falta el campo 'usuario_id' en la solicitud"}), 400
 
     viajes = (
-        Viaje.query
-        .options(
+        Viaje.query.options(
             joinedload(Viaje.usuario),
-            selectinload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+            selectinload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario),
         )
         .filter_by(usuario_id=usuario_id)
         .order_by(Viaje.fecha_salida.desc())
@@ -289,29 +336,15 @@ def obtener_viajes():
 @travel_blueprint.route('/viajes_como_acompanante/<int:usuario_id>', methods=['GET'])
 def obtener_viajes_pasajero(usuario_id):
     try:
-        print(f"\n--------------------------------------------------")
-        print(f"🔍 Petición recibida para usuario_id: {usuario_id} (Tipo: {type(usuario_id)})")
-
-        # Comprobar cuántos registros existen directos en la tabla intermedia
-        registros_directos = PasajeroViaje.query.filter_by(usuario_id=usuario_id).all()
-        print(f"📊 Registros directos en 'pasajeros_viaje' para usuario {usuario_id}: {len(registros_directos)}")
-        for r in registros_directos:
-            print(f"   -> ID PasajeroViaje: {r.id} | Viaje ID: {r.viaje_id} | Estado: '{r.estado}'")
-
-        # Consulta completa con JOIN
         viajes = (
-            Viaje.query
-            .join(PasajeroViaje, Viaje.id == PasajeroViaje.viaje_id)
+            Viaje.query.join(PasajeroViaje, Viaje.id == PasajeroViaje.viaje_id)
             .filter(PasajeroViaje.usuario_id == usuario_id)
             .options(
                 joinedload(Viaje.usuario),
-                joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+                joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario),
             )
             .all()
         )
-
-        print(f"✅ Viajes devueltos tras el JOIN: {len(viajes)}")
-        print(f"--------------------------------------------------\n")
 
         return jsonify([v.serialize(current_user_id=usuario_id) for v in viajes]), 200
 
@@ -325,10 +358,15 @@ def obtener_viajes_pasajero(usuario_id):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/obtener_viaje/<int:viaje_id>', methods=['GET'])
 def obtener_viaje_por_id(viaje_id):
-    viaje = db.session.query(Viaje).options(
-        joinedload(Viaje.usuario),
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
-    ).filter(Viaje.id == viaje_id).first()
+    viaje = (
+        db.session.query(Viaje)
+        .options(
+            joinedload(Viaje.usuario),
+            joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario),
+        )
+        .filter(Viaje.id == viaje_id)
+        .first()
+    )
 
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
@@ -336,119 +374,173 @@ def obtener_viaje_por_id(viaje_id):
     return jsonify(viaje.serialize()), 200
 
 
-
 def procesar_reembolso_al_pasajero(viaje):
+    """Devuelve o anula las autorizaciones de PayPal de TODOS los pasajeros aceptados."""
     resultados_devoluciones = []
 
     for reserva in viaje.acompanantes:
+        if not getattr(reserva, 'paypal_auth_id', None):
+            continue
+
         resultado = reembolsar_pago_al_pasajero(
             pasajero_viaje=reserva,
             importe=viaje.precio_viaje,
-            motivo=f"Viaje {viaje.origen} - {viaje.destino} cancelado por el conductor"
+            motivo=f"Viaje {viaje.origen} - {viaje.destino} cancelado por el conductor",
         )
         if not resultado["exito"]:
-            raise Exception(f"Fallo al reembolsar al usuario {reserva.usuario_id}: {resultado['error']}")
-        
-        reserva.estado = EstadoSolicitudEnum.CANCELADA.value
+            raise Exception(
+                f"Fallo al reembolsar al usuario {reserva.usuario_id}: {resultado['error']}"
+            )
+
         resultados_devoluciones.append({
             "usuario_id": reserva.usuario_id,
             "tipo_operacion": resultado["tipo"],
             "referencia_devolucion": resultado["referencia"],
-            "importe_devuelto": viaje.precio_viaje
+            "importe_devuelto": viaje.precio_viaje,
         })
-        return resultados_devoluciones
+
+    return resultados_devoluciones
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#   SERVICIO PARA CANCELAR  UN VIAJE POR PARTE DEL CONDUCTOR
-#    El viaje ha sido creado por un conductor y es cancelado por el mismo conductor cuando tiene reservas ya confirmadas
+#   SERVICIO PARA CANCELAR UN VIAJE POR PARTE DEL CONDUCTOR
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/cancelar_viaje/<int:viaje_id>', methods=['DELETE'])
 @jwt_required()
 def cancelar_viaje(viaje_id):
-    usuario_actual_id=get_jwt_identity()
+    usuario_actual_id = get_jwt_identity()
 
-    viaje= db.session.query(Viaje).options(
-        joinedload(Viaje.pasajeros)
-    ).filter(Viaje.id == viaje_id).first()
+    viaje = (
+        db.session.query(Viaje)
+        .options(joinedload(Viaje.pasajeros))
+        .filter(Viaje.id == viaje_id)
+        .first()
+    )
 
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
-    print ('usuarioId :', usuario_actual_id)
-    print ('usuarioCreadorViaje: ', viaje.usuario_id)
-    if int(viaje.usuario_id) != int(usuario_actual_id): 
-        return jsonify({"error": "No tienes permiso para eliminar este viaje"}), 404
-    
-    ahora = datetime.now()
 
-    if viaje.fecha_salida <= ahora or viaje.estado_viaje in ['En curso', 'Finalizado', 'Cancelado']:
-        return jsonify({"error": "No se puede cancelar un viaje que ya ha comenzado, finalizado, o ya se encuentra cancelado."}), 400
-    
-    reservas_confirmadas = [p for p in viaje.pasajeros if p.estado in ['aceptado', 'aceptada', 'accepted', EstadoSolicitudEnum.ACEPTADA.value]]
-    if not reservas_confirmadas:
-        return jsonify({"error": "El viaje no cuenta con reservas confirmadas activas para poder cancelarlo con penalización."}), 400
-    
+    if int(viaje.usuario_id) != int(usuario_actual_id):
+        return jsonify({"error": "No tienes permiso para eliminar este viaje"}), 403
+
+    ahora = datetime.now(timezone.utc)
+    fecha_salida_utc = (
+        viaje.fecha_salida.replace(tzinfo=timezone.utc)
+        if viaje.fecha_salida.tzinfo is None
+        else viaje.fecha_salida
+    )
+
+    if fecha_salida_utc <= ahora or viaje.estado_viaje in ['En curso', 'Finalizado', 'Cancelado']:
+        return jsonify({
+            "error": "No se puede cancelar un viaje que ya ha comenzado, finalizado, o ya se encuentra cancelado."
+        }), 400
+
+    reservas_confirmadas = [
+        p
+        for p in viaje.pasajeros
+        if p.estado in ['aceptado', 'aceptada', 'accepted', EstadoSolicitudEnum.ACEPTADA.value]
+    ]
+
     data = request.get_json() if request.is_json else {}
     motivo = data.get('motivo_cancelacion', 'No especificado')
     usuario_conductor = Usuario.query.get(usuario_actual_id)
 
-    tipo_aceptacion = getattr(viaje, 'tipo_aceptacion', 'AUTOMATICA')
-    try:    
-        peso_falta = calcular_peso_cancelacion(
-            viaje=viaje,
-            fecha_cancelacion=ahora,
-            rol='CONDUCTOR',
-            tipo_aceptacion=tipo_aceptacion
-        )
+    try:
+        puntos_aplicados = 0
+        devoluciones = []
 
-        puntos_aplicados = calcular_y_registrar_cancelacion(
-            usuario=usuario_conductor,
-            viaje=viaje,
-            rol='CONDUCTOR',
-            peso_falta=peso_falta,
-            motivo=motivo
-        )
-        devoluciones = procesar_reembolso_al_pasajero(viaje)
+        if reservas_confirmadas:
+            tipo_aceptacion = 'AUTOMATICA' if viaje.reserva_automatica else 'MANUAL'
+            peso_falta = calcular_peso_cancelacion(
+                viaje=viaje,
+                fecha_cancelacion=ahora,
+                rol='CONDUCTOR',
+                tipo_aceptacion=tipo_aceptacion,
+            )
 
-        ids_pasajeros_afectados = []
+            puntos_aplicados = calcular_y_registrar_cancelacion(
+                usuario=usuario_conductor,
+                viaje=viaje,
+                rol='CONDUCTOR',
+                peso_falta=peso_falta,
+                motivo=motivo,
+                auto_commit=False,
+            )
+
+            devoluciones = procesar_reembolso_al_pasajero(viaje)
+
+        # 2. Actualizar estados de pasajeros (aceptados -> cancelada, pendientes -> rechazada + void PayPal)
         for pasajero in viaje.pasajeros:
-            if pasajero.estado == EstadoSolicitudEnum.ACEPTADA.value:
-                ids_pasajeros_afectados.append(pasajero.usuario_id)
-                mensaje_cancelacion = f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. Motivo: {motivo}"
+            if pasajero.estado in ['aceptado', 'aceptada', 'accepted', EstadoSolicitudEnum.ACEPTADA.value]:
+                mensaje_cancelacion = (
+                    f"El viaje de {viaje.origen} a {viaje.destino} ha sido cancelado por el conductor. "
+                    f"Motivo: {motivo}"
+                )
 
-                notif_db = Notificacion(usuario_id=pasajero.usuario_id, mensaje=mensaje_cancelacion, viaje_id=viaje_id)
+                notif_db = Notificacion(
+                    usuario_id=pasajero.usuario_id,
+                    mensaje=mensaje_cancelacion,
+                    viaje_id=viaje_id,
+                )
                 db.session.add(notif_db)
 
                 enviar_notificacion_push(
                     usuario_id=pasajero.usuario_id,
                     titulo="Viaje cancelado por el conductor",
                     cuerpo=mensaje_cancelacion,
-                    data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"}
+                    data={"viaje_id": str(viaje_id), "tipo": "viaje_cancelado"},
                 )
 
                 pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
-            elif pasajero.estado == EstadoSolicitudEnum.PENDIENTE.value:
+
+            elif pasajero.estado in ['pendiente', EstadoSolicitudEnum.PENDIENTE.value]:
+                if getattr(pasajero, 'paypal_auth_id', None):
+                    res_void = reembolsar_pago_al_pasajero(
+                        pasajero_viaje=pasajero,
+                        importe=viaje.precio_viaje,
+                        motivo=f"Viaje {viaje.origen} - {viaje.destino} cancelado por el conductor",
+                    )
+                    if not res_void.get("exito"):
+                        raise Exception(
+                            f"No se pudo liberar la autorización del solicitante {pasajero.usuario_id}: {res_void.get('error')}"
+                        )
+                    devoluciones.append({
+                        "usuario_id": pasajero.usuario_id,
+                        "tipo_operacion": res_void["tipo"],
+                        "referencia_devolucion": res_void["referencia"],
+                        "importe_devuelto": viaje.precio_viaje,
+                    })
+
                 pasajero.estado = EstadoSolicitudEnum.RECHAZADA.value
 
         viaje.estado_viaje = 'Cancelado'
         nombre_completo = f"{usuario_conductor.nombre} {usuario_conductor.apellidos}"
-        mensaje_salida = f"El conductor {nombre_completo} ha cancelado el viaje a {viaje.destino}. Motivo: {motivo}"
-        
-        notificacion = Notificacion(usuario_id=usuario_conductor.id, viaje_id=viaje_id, mensaje=mensaje_salida)
+        mensaje_salida = (
+            f"El conductor {nombre_completo} ha cancelado el viaje a {viaje.destino}. Motivo: {motivo}"
+        )
+
+        notificacion = Notificacion(
+            usuario_id=usuario_conductor.id,
+            viaje_id=viaje_id,
+            mensaje=mensaje_salida,
+        )
         db.session.add(notificacion)
 
-    
         db.session.commit()
 
         return jsonify({
-            "mensaje": "Viaje cancelado correctamente, penalización aplicada y pasajeros notificados.",
-            "puntos_penalizacion_aplicados": puntos_aplicados, 
-            "devoluciones": devoluciones
+            "mensaje": (
+                "Viaje cancelado correctamente, penalización aplicada y pasajeros notificados."
+                if reservas_confirmadas
+                else "Viaje eliminado/cancelado sin penalización al no tener pasajeros confirmados."
+            ),
+            "puntos_penalizacion_aplicados": puntos_aplicados,
+            "devoluciones": devoluciones,
         }), 200
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al procesar la cancelación", "detalle": str(e)}), 500
-
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -470,38 +562,95 @@ def eliminar_pasajero(viaje_id, usuario_id):
     usuario = pasajero_rel.usuario
     nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
     creador_id = viaje.usuario_id
+    estaba_aceptado = pasajero_rel.estado in [
+        'aceptado',
+        'aceptada',
+        'accepted',
+        EstadoSolicitudEnum.ACEPTADA.value,
+    ]
 
-    # Si estaba aceptado, devolvemos la plaza al coche
-    if pasajero_rel.estado in ['aceptado', 'accepted']:
-        viaje.plazas += 1
-
-    nueva_cancelacion = Cancelacion(
-        viaje_id=viaje_id,
-        cancelado_por_id=usuario_id,
-        pasajeros_afectados=[usuario_id],
-        motivo_cancelacion_cond=MotivosCancelacionConductor.NO_SE_CANCELA.value,
-        motivo_cancelacion_pasaj=motivo
-    )
-    db.session.add(nueva_cancelacion)
-
-    pasajero_rel.estado = 'cancelado'
-
-    if creador_id != usuario_id:
-        mensaje_salida = f"El pasajero {nombre_completo} se ha dado de baja en tu viaje a {viaje.destino}. Motivo: {motivo}"
-        
-        notificacion = Notificacion(usuario_id=creador_id, viaje_id=viaje_id, mensaje=mensaje_salida)
-        db.session.add(notificacion)
-
-        enviar_notificacion_push(
-            usuario_id=creador_id,
-            titulo="Baja de pasajero en tu viaje",
-            cuerpo=mensaje_salida,
-            data={"viaje_id": str(viaje_id), "tipo": "baja_pasajero"}
-        )
+    puntos_aplicados = 0
+    resultado_reembolso = None
 
     try:
+        auth_o_capture_id = getattr(pasajero_rel, 'paypal_auth_id', None)
+        if not auth_o_capture_id:
+            orden_pp = Ordenes_Paypal.query.filter_by(viaje_id=viaje_id, pasajero_id=usuario_id).first()
+            auth_o_capture_id = getattr(orden_pp, 'capture_id', None) or getattr(orden_pp, 'authorization_id', None)
+            if auth_o_capture_id:
+                pasajero_rel.paypal_auth_id = auth_o_capture_id
+
+        if auth_o_capture_id:
+            resultado_reembolso = reembolsar_pago_al_pasajero(
+                pasajero_viaje=pasajero_rel,
+                importe=viaje.precio_viaje,
+                motivo=f"Cancelación reserva viaje #{viaje_id}: {motivo}",
+            )
+            if not resultado_reembolso.get("exito"):
+                raise Exception(
+                    f"No se pudo devolver/liberar el pago en PayPal: {resultado_reembolso.get('error')}"
+                )
+
+        if estaba_aceptado:
+            viaje.plazas += 1
+
+            tipo_aceptacion = 'AUTOMATICA' if viaje.reserva_automatica else 'MANUAL'
+            peso = calcular_peso_cancelacion(
+                viaje=viaje,
+                fecha_cancelacion=datetime.now(timezone.utc),
+                rol='PASAJERO',
+                reserva=pasajero_rel,
+                tipo_aceptacion=tipo_aceptacion,
+            )
+            puntos_aplicados = calcular_y_registrar_cancelacion(
+                usuario=usuario,
+                viaje=viaje,
+                rol='PASAJERO',
+                peso_falta=peso,
+                motivo=motivo,
+                auto_commit=False,
+            )
+        else:
+            nueva_cancelacion = Cancelacion(
+                viaje_id=viaje_id,
+                cancelado_por_id=usuario_id,
+                rol_involucrado='PASAJERO',
+                puntos_penalizacion_aplicados=0,
+                pasajeros_afectados=[usuario_id],
+                motivo_cancelacion_cond=MotivosCancelacionConductor.NO_SE_CANCELA.value,
+                motivo_cancelacion_pasaj=motivo,
+            )
+            db.session.add(nueva_cancelacion)
+
+        pasajero_rel.estado = 'cancelado'
+
+        if creador_id != usuario_id:
+            mensaje_salida = (
+                f"El pasajero {nombre_completo} se ha dado de baja en tu viaje a {viaje.destino}. "
+                f"Motivo: {motivo}"
+            )
+
+            notificacion = Notificacion(
+                usuario_id=creador_id,
+                viaje_id=viaje_id,
+                mensaje=mensaje_salida,
+            )
+            db.session.add(notificacion)
+
+            enviar_notificacion_push(
+                usuario_id=creador_id,
+                titulo="Baja de pasajero en tu viaje",
+                cuerpo=mensaje_salida,
+                data={"viaje_id": str(viaje_id), "tipo": "baja_pasajero"},
+            )
+
         db.session.commit()
-        return jsonify({"mensaje": "Participación cancelada y conductor notificado con el motivo"}), 200
+        return jsonify({
+            "mensaje": "Participación cancelada y conductor notificado con el motivo",
+            "puntos_penalizacion_aplicados": puntos_aplicados,
+            "reembolso": resultado_reembolso,
+        }), 200
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al procesar la baja", "detalle": str(e)}), 500
@@ -517,13 +666,12 @@ def buscar_viajes_filtrados():
     fecha_salida = request.args.get('fecha_salida')
     plazas = request.args.get('plazas')
 
-    # Validar al menos un parámetro
     if not any([origen, destino, fecha_salida, plazas]):
         return jsonify({"error": "Debes proporcionar al menos un parámetro de búsqueda."}), 400
 
     query = db.session.query(Viaje).options(
         joinedload(Viaje.usuario),
-        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario)
+        joinedload(Viaje.pasajeros).joinedload(PasajeroViaje.usuario),
     )
 
     if origen:
@@ -551,6 +699,7 @@ def buscar_viajes_filtrados():
 
     return jsonify([viaje.serialize() for viaje in viajes]), 200
 
+
 @travel_blueprint.route('/puntuacion', methods=['POST'])
 def post_puntuacion():
     body = request.get_json()
@@ -564,20 +713,20 @@ def post_puntuacion():
 
     puntuacion_existente = Puntuacion.query.filter_by(
         viaje_id=viaje_id,
-        evaluador_id=evaluador_id
+        evaluador_id=evaluador_id,
     ).first()
 
     if puntuacion_existente:
         return jsonify({
             "error": "Ya has valorado este viaje anteriormente. No se permiten valoraciones duplicadas."
-        }), 409  
+        }), 409
 
     nueva_puntuacion = Puntuacion(
         puntuacion=body['puntuacion'],
         comentario=body.get('comentario'),
         usuario_id=usuario_id,
         evaluador_id=evaluador_id,
-        viaje_id=viaje_id
+        viaje_id=viaje_id,
     )
 
     try:
@@ -595,7 +744,7 @@ def post_puntuacion():
 @travel_blueprint.route('/usuarios/registrar-token', methods=['POST'])
 def registrar_token():
     data = request.get_json()
-    
+
     usuario_id = data.get('usuarioId')
     token_valor = data.get('token')
 
@@ -603,7 +752,7 @@ def registrar_token():
         return jsonify({"error": "Faltan datos (usuarioId o token)"}), 400
 
     token_existente = TokenPush.query.filter_by(token=token_valor).first()
-    
+
     if not token_existente:
         nuevo_token = TokenPush(usuario_id=usuario_id, token=token_valor)
         db.session.add(nuevo_token)
@@ -613,26 +762,26 @@ def registrar_token():
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": "Error al guardar el token", "detalle": str(e)}), 500
-    
+
     return jsonify({"mensaje": "El token ya estaba registrado"}), 200
 
 
 @travel_blueprint.route('/bloquear_plaza', methods=['POST'])
 def bloquear_plaza():
-    data=request.get_json()
+    data = request.get_json()
     usuario_id = data.get('usuario_id')
     viaje_id = data.get('viaje_id')
 
     viaje = Viaje.query.get(viaje_id)
     if not viaje or viaje.plazas <= 0:
         return jsonify({"error": "No hay plazas disponibles"}), 400
-    
-    viaje.plazas -=1
+
+    viaje.plazas -= 1
 
     nuevo_pasajero = PasajeroViaje(
         usuario_id=usuario_id,
         viaje_id=viaje_id,
-        estado='pendiente_pago'
+        estado='pendiente_pago',
     )
     db.session.add(nuevo_pasajero)
     db.session.commit()
@@ -656,7 +805,7 @@ def unirse_viaje():
 
     if not usuario_id or not viaje_id or not paypal_order_id:
         return jsonify({"error": "Faltan datos obligatorios (usuario_id, viaje_id y/o paypal_order_id)"}), 400
-    
+
     viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "El viaje no existe"}), 404
@@ -671,17 +820,15 @@ def unirse_viaje():
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-    orden_paypal_db = Ordenes_Paypal.query.filter_by(paypal_order_id=paypal_order_id).first()
-    # importe_a_cobrar = f"{orden_paypal_db.importe_total:.2f}" if orden_paypal_db else f"{viaje.precio_viaje:.2f}"
-
-
-    response = requests.post(f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize", headers=headers)
+    response = requests.post(
+        f"{PAYPAL_API}/v2/checkout/orders/{paypal_order_id}/authorize",
+        headers=headers,
+    )
     res_data = response.json()
     if response.status_code not in [200, 201]:
         db.session.rollback()
         return jsonify({"error": "Error al congelar el pago en PayPal", "detalle": res_data}), response.status_code
-    print("📦 RESPUESTA COMPLETA PAYPAL AUTHORIZE:", json.dumps(res_data, indent=2))
-    
+
     auth_id = None
     try:
         payments = res_data.get('purchase_units', [{}])[0].get('payments', {})
@@ -692,38 +839,34 @@ def unirse_viaje():
     except Exception as e:
         print("❌ Error extrayendo ID de PayPal:", e)
 
-    print("🔑 AUTH_ID EXTRAÍDO:", auth_id)
-
     if not auth_id:
         return jsonify({
             "error": "PayPal no devolvió ningún ID de autorización ni captura",
-            "detalle": res_data
+            "detalle": res_data,
         }), 500
-       
 
     estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
 
     nuevo_pasajero = PasajeroViaje(
-        usuario_id=usuario_id, 
-        viaje_id=viaje_id, 
+        usuario_id=usuario_id,
+        viaje_id=viaje_id,
         estado=estado_inicial,
-        paypal_auth_id=auth_id
+        paypal_auth_id=auth_id,
     )
     db.session.add(nuevo_pasajero)
     db.session.commit()
 
     pasajero = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
-    usuario = pasajero.usuario 
-    nombre_completo = f"{usuario.nombre} {usuario.apellidos}"
-    
+    usuario = pasajero.usuario
+
     if not usuario:
         return jsonify({"error": "El usuario no existe"}), 404
-    
+
     creador_id = viaje.usuario_id
     if creador_id != usuario_id:
         usuario_solicitante = nuevo_pasajero.usuario
         nombre = f"{usuario_solicitante.nombre} {usuario_solicitante.apellidos}"
-        
+
         if viaje.reserva_automatica:
             msg = f"{nombre} se ha unido automáticamente a tu viaje."
             titulo = "¡Nuevo pasajero!"
@@ -735,7 +878,12 @@ def unirse_viaje():
         db.session.add(notif)
         db.session.commit()
 
-        enviar_notificacion_push(usuario_id=creador_id, titulo=titulo, cuerpo=msg, data={"viaje_id": str(viaje_id)})
+        enviar_notificacion_push(
+            usuario_id=creador_id,
+            titulo=titulo,
+            cuerpo=msg,
+            data={"viaje_id": str(viaje_id)},
+        )
 
     return jsonify({"mensaje": "Solicitud procesada", "viaje": viaje.serialize()}), 200
 
@@ -763,92 +911,88 @@ def confirmar_pasajero_manual():
     if not usuario:
         return jsonify({"error": "El usuario no existe"}), 404
 
-    
     solicitud = PasajeroViaje.query.filter_by(
-        usuario_id=pasajero_id, 
-        viaje_id=viaje_id, 
-        estado='pendiente'
+        usuario_id=pasajero_id,
+        viaje_id=viaje_id,
+        estado='pendiente',
     ).first()
 
     if not solicitud:
-        return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404    
+        return jsonify({"error": "No existe una solicitud pendiente para este usuario"}), 404
 
     if solicitud.paypal_auth_id:
         token = get_access_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        
-        # Obtenemos el importe de la orden guardada o del viaje
-        orden_paypal = Ordenes_Paypal.query.filter_by(viaje_id=viaje_id, pasajero_id=pasajero_id).first()
-        auth_id = (
-            solicitud.paypal_auth_id 
-            or getattr(orden_paypal, 'authorization_id', None)
-        )
+
+        orden_paypal = Ordenes_Paypal.query.filter_by(
+            viaje_id=viaje_id, pasajero_id=pasajero_id
+        ).first()
+        auth_id = solicitud.paypal_auth_id or getattr(orden_paypal, 'authorization_id', None)
         if not auth_id:
             return jsonify({
-                "error": "Esta solicitud no tiene un authorization_id de PayPal válido asociado. Crea una nueva reserva de prueba."
+                "error": "Esta solicitud no tiene un authorization_id de PayPal válido asociado."
             }), 400
+
         importe_a_cobrar = f"{orden_paypal.importe_total:.2f}" if orden_paypal else f"{viaje.precio_viaje:.2f}"
 
         payload = {
             "amount": {
                 "currency_code": "EUR",
-                "value": importe_a_cobrar
+                "value": importe_a_cobrar,
             },
-            "is_final_capture": True
+            "is_final_capture": True,
         }
 
-        # Petición de captura a la API de PayPal usando la autorización guardada
         response = requests.post(
-            f"{PAYPAL_API}/v2/payments/authorizations/{auth_id}/capture", 
-            json=payload, 
-            headers=headers
+            f"{PAYPAL_API}/v2/payments/authorizations/{auth_id}/capture",
+            json=payload,
+            headers=headers,
         )
         capture_data = response.json()
 
         if response.status_code not in [200, 201]:
             print("❌ Error al capturar el pago al confirmar:", capture_data)
-            return jsonify({"error": "Error al procesar el cobro final en PayPal", "detalle": capture_data}), response.status_code
-        
+            return jsonify({
+                "error": "Error al procesar el cobro final en PayPal",
+                "detalle": capture_data,
+            }), response.status_code
+
         solicitud.paypal_auth_id = capture_data.get("id", auth_id)
 
     try:
         solicitud.estado = 'aceptado'
         solicitud.fecha_confirmacion_reserva = datetime.now(timezone.utc)
-        
-        
         viaje.plazas -= 1
-        
+
         mensaje_texto = f"¡Buenas noticias! El conductor ha aceptado tu solicitud para el viaje a {viaje.destino}."
         notificacion_db = Notificacion(
             usuario_id=pasajero_id,
             viaje_id=viaje_id,
-            mensaje=mensaje_texto
+            mensaje=mensaje_texto,
         )
         db.session.add(notificacion_db)
-        
         db.session.commit()
 
         enviar_notificacion_push(
             usuario_id=pasajero_id,
             titulo="Solicitud de viaje aceptada",
             cuerpo=mensaje_texto,
-            data={"viaje_id": str(viaje_id), "tipo": "solicitud_aceptada"}
+            data={"viaje_id": str(viaje_id), "tipo": "solicitud_aceptada"},
         )
 
         return jsonify({
             "mensaje": "Pasajero confirmado correctamente",
-            "viaje": viaje.serialize()
+            "viaje": viaje.serialize(),
         }), 200
 
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al procesar la confirmación", "detalle": str(e)}), 500
-    
 
-#
-#
-# SERVICIO PARA QUE UN PASAJERO CANCELE UNA SOLICITUD DE PLAZA EN UN VIAJE CREADO POR UN CONDUCTOR
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA QUE UN PASAJERO CANCELE UNA SOLICITUD MANUAL
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/cancelar_solicitud_manual', methods=['POST', 'OPTIONS'])
 def cancelar_solicitud():
     if request.method == 'OPTIONS':
@@ -864,7 +1008,7 @@ def cancelar_solicitud():
     solicitud = PasajeroViaje.query.filter_by(
         viaje_id=viaje_id,
         usuario_id=usuario_id,
-        estado='pendiente'
+        estado='pendiente',
     ).first()
 
     if not solicitud:
@@ -874,16 +1018,18 @@ def cancelar_solicitud():
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
+    resultado_void = None
     if solicitud.paypal_auth_id:
-        try:
-            token = get_access_token()
-            headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-            requests.post(
-                f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/void",
-                headers=headers
-            )
-        except Exception as e:
-            print(f"⚠️ Aviso al liberar autorización de PayPal: {str(e)}")
+        resultado_void = reembolsar_pago_al_pasajero(
+            pasajero_viaje=solicitud,
+            importe=viaje.precio_viaje,
+            motivo=f"Solicitud retirada por el pasajero en viaje #{viaje_id}",
+        )
+        if not resultado_void.get("exito"):
+            return jsonify({
+                "error": "No se pudo liberar el dinero retenido en PayPal",
+                "detalle": resultado_void.get("error"),
+            }), 400
 
     pasajero = Usuario.query.get(usuario_id)
     nombre_completo = f"{pasajero.nombre} {pasajero.apellidos}" if pasajero else "Un pasajero"
@@ -901,7 +1047,7 @@ def cancelar_solicitud():
             nueva_notif = Notificacion(
                 usuario_id=creador_id,
                 viaje_id=viaje_id,
-                mensaje=mensaje_cancelacion
+                mensaje=mensaje_cancelacion,
             )
             db.session.add(nueva_notif)
 
@@ -909,71 +1055,83 @@ def cancelar_solicitud():
                 usuario_id=creador_id,
                 titulo="Solicitud de plaza cancelada",
                 cuerpo=mensaje_cancelacion,
-                data={"viaje_id": str(viaje_id), "tipo": "solicitud_cancelada"}
+                data={"viaje_id": str(viaje_id), "tipo": "solicitud_cancelada"},
             )
 
         db.session.commit()
-        return jsonify({"mensaje": "Solicitud cancelada y conductor notificado"}), 200
+        return jsonify({
+            "mensaje": "Solicitud cancelada y conductor notificado",
+            "reembolso": resultado_void,
+        }), 200
 
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al cancelar la solicitud", "detalle": str(e)}), 500
 
-#
-# SERVICIO PARA OBTENER LAS SOLICITUDES PENDIENTES DE UN USUARIO
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA OBTENER LAS SOLICITUDES PENDIENTES DE UN USUARIO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/mis_solicitudes/<int:usuario_id>', methods=['GET'])
 def obtener_mis_solicitudes(usuario_id):
-    solicitudes = PasajeroViaje.query.join(Viaje).filter(
-        Viaje.usuario_id == usuario_id,
-        (PasajeroViaje.estado == 'pendiente') | (PasajeroViaje.estado == 'rechazado') | (PasajeroViaje.estado == None)
-    ).options(joinedload(PasajeroViaje.viaje)).all()
+    solicitudes = (
+        PasajeroViaje.query.join(Viaje)
+        .filter(
+            Viaje.usuario_id == usuario_id,
+            (PasajeroViaje.estado == 'pendiente')
+            | (PasajeroViaje.estado == 'rechazado')
+            | (PasajeroViaje.estado == None),
+        )
+        .options(joinedload(PasajeroViaje.viaje))
+        .all()
+    )
 
     return jsonify([s.viaje.serialize(current_user_id=usuario_id) for s in solicitudes]), 200
 
-#
-# SERVICIO PARA QUE UN CONDUCTOR RECHACE UNA SOLICITUD DE PLAZA DE UN PASAJERO
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA QUE UN CONDUCTOR RECHACE UNA SOLICITUD MANUAL
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/rechazar_pasajero_manual', methods=['POST'])
 def rechazar_pasajero_manual():
     try:
         data = request.get_json()
     except Exception as e:
         return jsonify({"error": "JSON no válido", "detalle": str(e)}), 400
-    
+
     viaje_id = data.get('viaje_id')
     pasajero_id = data.get('pasajero_id')
 
     solicitud = PasajeroViaje.query.filter_by(
-        viaje_id=viaje_id, 
-        usuario_id=pasajero_id, 
-        estado='pendiente'
+        viaje_id=viaje_id,
+        usuario_id=pasajero_id,
+        estado='pendiente',
     ).first()
 
     if not solicitud:
         return jsonify({"error": "Solicitud no encontrada"}), 404
-    
+
     if solicitud.paypal_auth_id:
         token = get_access_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        
+
         response = requests.post(
-            f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/void", 
-            headers=headers
+            f"{PAYPAL_API}/v2/payments/authorizations/{solicitud.paypal_auth_id}/void",
+            headers=headers,
         )
-        
-        # PayPal suele devolver 204 (No Content) en los voids exitosos, pero aceptamos 200/201 por seguridad
+
         if response.status_code not in [200, 201, 204]:
             try:
                 void_data = response.json()
             except Exception:
                 void_data = {"error_text": response.text}
-                
+
             print("❌ Error al liberar fondos en PayPal al rechazar:", void_data)
             return jsonify({
-                "error": "No se pudo liberar el dinero retenido en PayPal", 
-                "detalle": void_data
+                "error": "No se pudo liberar el dinero retenido en PayPal",
+                "detalle": void_data,
             }), response.status_code
+
     try:
         solicitud.estado = 'rechazado'
         db.session.commit()
@@ -983,7 +1141,7 @@ def rechazar_pasajero_manual():
             usuario_id=pasajero_id,
             titulo="Solicitud rechazada",
             cuerpo=f"Lo sentimos, el conductor ha rechazado tu solicitud para el viaje a {viaje.destino}.",
-            data={"viaje_id": str(viaje_id), "tipo": "solicitud_rechazada"}
+            data={"viaje_id": str(viaje_id), "tipo": "solicitud_rechazada"},
         )
 
         return jsonify({"mensaje": "Solicitud rechazada correctamente"}), 200
@@ -992,9 +1150,9 @@ def rechazar_pasajero_manual():
         return jsonify({"error": "Error al procesar el rechazo en la base de datos", "detalle": str(e)}), 500
 
 
-#
-# SERVICIO PARA NOTIFICAR QUE UN PASAJERO HA LLEGADO AL PUNTO DE ENCUENTRO
-#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   SERVICIO PARA NOTIFICAR LLEGADA AL PUNTO DE ENCUENTRO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/notificar_llegada_pasajero', methods=['POST'])
 def notificar_llegada():
     data = request.get_json()
@@ -1002,26 +1160,26 @@ def notificar_llegada():
     usuario_id = data.get('usuario_id')
 
     solicitud = PasajeroViaje.query.filter_by(viaje_id=viaje_id, usuario_id=usuario_id).first()
-    
+
     if solicitud:
-        solicitud.ha_llegado = True 
+        solicitud.ha_llegado = True
         db.session.commit()
 
         viaje = Viaje.query.get(viaje_id)
         enviar_notificacion_push(
             usuario_id=viaje.usuario_id,
             titulo="¡Pasajero en el punto!",
-            cuerpo=f"Tu pasajero ya está en el punto de partida.",
-            data={"viaje_id": str(viaje_id)}
+            cuerpo="Tu pasajero ya está en el punto de partida.",
+            data={"viaje_id": str(viaje_id)},
         )
         return jsonify({"mensaje": "Llegada notificada"}), 200
-    
+
     return jsonify({"error": "No se encontró la reserva"}), 404
 
-#
-# SERVICIO PARA OBTENER RECOMENDACIONES DE VIAJES BASADAS EN PREFERENCIAS DEL USUARIO
-# UTILIZANDO IA
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   RECOMENDACIONES DE VIAJES CON IA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/recomendados/<int:user_id>', methods=['GET'])
 def obtener_viajes_recomendados(user_id):
     try:
@@ -1037,34 +1195,33 @@ def obtener_viajes_recomendados(user_id):
                 preferencias_usuario = json.loads(preferencias_usuario)
             except json.JSONDecodeError:
                 preferencias_usuario = {}
-        elif isinstance(preferencias_usuario, dict):
-            preferencias_usuario = preferencias_usuario
-        else:
+        elif not isinstance(preferencias_usuario, dict):
             preferencias_usuario = {}
 
-        convivencia = preferencias_usuario.get("convivencia_viaje", {
-            "acepta_mascotas": preferencias_usuario.get("acepta_mascotas", True),
-            "fuma": preferencias_usuario.get("fuma", False),
-            "conversacion": preferencias_usuario.get("conversacion", "moderada")
-        })
-        
-        intereses_ocio = preferencias_usuario.get("intereses_ocio", preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]))
+        convivencia = preferencias_usuario.get(
+            "convivencia_viaje",
+            {
+                "acepta_mascotas": preferencias_usuario.get("acepta_mascotas", True),
+                "fuma": preferencias_usuario.get("fuma", False),
+                "conversacion": preferencias_usuario.get("conversacion", "moderada"),
+            },
+        )
 
-        # Recopila el historial de viajes previos del usuario
+        intereses_ocio = preferencias_usuario.get(
+            "intereses_ocio",
+            preferencias_usuario.get("intereses", ["cultura", "ocio lgtbi"]),
+        )
+
         viajes_como_conductor = [
             {"origen": v.origen, "destino": v.destino, "fecha": v.fecha_salida.isoformat()}
             for v in usuario.viajes_publicados
         ]
-        
+
         viajes_como_pasajero = [
             {"origen": r.viaje.origen, "destino": r.viaje.destino, "fecha": r.viaje.fecha_salida.isoformat()}
-            for r in usuario.reservas_realizadas if r.viaje
+            for r in usuario.reservas_realizadas
+            if r.viaje
         ]
-
-        historial_viajes = {
-            "publicados_como_conductor": viajes_como_conductor,
-            "reservas_como_pasajero": viajes_como_pasajero
-        }
 
         perfil_analitico = {
             "nombre": usuario.nombre,
@@ -1074,11 +1231,12 @@ def obtener_viajes_recomendados(user_id):
             "preferencias_convivencia": convivencia,
             "intereses_ocio": intereses_ocio,
             "reputacion_estrellas": usuario.estrellas_por_opiniones,
-            #"estado_perfil": usuario.estado_perfil,
-            "historial_viajes": historial_viajes
+            "historial_viajes": {
+                "publicados_como_conductor": viajes_como_conductor,
+                "reservas_como_pasajero": viajes_como_pasajero,
+            },
         }
 
-        # Instrucción si el usuario solicita recarga
         instruccion_recarga = ""
         if forzar_recarga:
             instruccion_recarga = (
@@ -1105,19 +1263,19 @@ def obtener_viajes_recomendados(user_id):
 
         groq_api_key = os.getenv("GROQ_API_KEY")
         endpoint = "https://api.groq.com/openai/v1/chat/completions"
-        
+
         payload = {
             "model": "openai/gpt-oss-20b",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.8 if forzar_recarga else 0.6, 
-            "max_tokens": 1000
+            "temperature": 0.8 if forzar_recarga else 0.6,
+            "max_tokens": 1000,
         }
-        
+
         headers = {
             "Authorization": f"Bearer {groq_api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
-        
+
         response = requests.post(endpoint, json=payload, headers=headers)
         data = response.json()
 
@@ -1126,27 +1284,20 @@ def obtener_viajes_recomendados(user_id):
         if response.status_code == 200:
             try:
                 texto_generado = data['choices'][0]['message']['content'].strip()
-                print(f"🤖 Texto bruto recibido de la IA (recarga={forzar_recarga}):\n{texto_generado}\n-------------------")
-
-                lineas = texto_generado.split('\n')
-                
-                for linea in lineas:
+                for linea in texto_generado.split('\n'):
                     partes = [p.strip() for p in linea.split('|')]
                     if len(partes) >= 4:
-                        destino_id = partes[0]
-                        nombre_destino = partes[1]
                         try:
                             afinidad = int(partes[2])
                         except ValueError:
                             afinidad = 85
-                        motivo = partes[3]
-                        
+
                         recomendaciones.append({
-                            "destino_id": destino_id,
-                            "nombre_destino": nombre_destino,
+                            "destino_id": partes[0],
+                            "nombre_destino": partes[1],
                             "puntuacion_afinidad": afinidad,
-                            "motivo": motivo,
-                            "fuente": "ia"
+                            "motivo": partes[3],
+                            "fuente": "ia",
                         })
             except Exception as parse_error:
                 print(f"⚠️ Aviso: Falló el procesamiento por líneas ({str(parse_error)}).")
@@ -1154,31 +1305,30 @@ def obtener_viajes_recomendados(user_id):
 
         recomendaciones = recomendaciones[:3]
 
-        # Respuesta dinámica
         if not recomendaciones:
             nombre_usuario = usuario.nombre or "viajero"
             intereses_lower = [i.lower() for i in intereses_ocio]
-            
+
             if forzar_recarga:
                 destinos_fallback = [
                     {
                         "id": "torremolinos-la-nogalera",
                         "destino": "Torremolinos (Málaga)",
                         "afinidad": 94,
-                        "motivo": f"{nombre_usuario}, Torremolinos ofrece sol, playa y la icónica zona de La Nogalera con un ambiente muy acogedor."
+                        "motivo": f"{nombre_usuario}, Torremolinos ofrece sol, playa y la icónica zona de La Nogalera con un ambiente muy acogedor.",
                     },
                     {
                         "id": "maspalomas-dunas",
                         "destino": "Maspalomas (Gran Canaria)",
                         "afinidad": 96,
-                        "motivo": f"{nombre_usuario}, descubre el entorno único de Maspalomas, referente internacional en turismo inclusivo."
+                        "motivo": f"{nombre_usuario}, descubre el entorno único de Maspalomas, referente internacional en turismo inclusivo.",
                     },
                     {
                         "id": "ibiza-playa-cavall",
                         "destino": "Ibiza",
                         "afinidad": 92,
-                        "motivo": f"{nombre_usuario}, una escapada a Ibiza te permitirá conectar con la naturaleza, sus calas y su vibrante vida nocturna."
-                    }
+                        "motivo": f"{nombre_usuario}, una escapada a Ibiza te permitirá conectar con la naturaleza, sus calas y su vibrante vida nocturna.",
+                    },
                 ]
             else:
                 destinos_fallback = [
@@ -1186,20 +1336,20 @@ def obtener_viajes_recomendados(user_id):
                         "id": "sitges-playa",
                         "destino": "Sitges (Barcelona)",
                         "afinidad": 96 if "playa" in intereses_lower else 85,
-                        "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero."
+                        "motivo": f"{nombre_usuario}, te sugerimos organizar una ruta a Sitges para disfrutar de su emblemático ambiente costero.",
                     },
                     {
                         "id": "madrid-chueca",
                         "destino": "Madrid",
                         "afinidad": 94 if "ambiente festivo" in intereses_lower else 88,
-                        "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y cultura."
+                        "motivo": f"{nombre_usuario}, Madrid y el barrio de Chueca son un punto de encuentro ideal para compartir coche y cultura.",
                     },
                     {
                         "id": "valencia-carmen",
                         "destino": "Valencia",
                         "afinidad": 95 if "cultura" in intereses_lower else 82,
-                        "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas."
-                    }
+                        "motivo": f"{nombre_usuario}, descubre el encanto del barrio del Carmen en Valencia, perfecto para escapadas urbanas.",
+                    },
                 ]
 
             recomendaciones = [
@@ -1208,8 +1358,9 @@ def obtener_viajes_recomendados(user_id):
                     "nombre_destino": d["destino"],
                     "puntuacion_afinidad": d["afinidad"],
                     "motivo": d["motivo"],
-                    "fuente": "fallback"
-                } for d in destinos_fallback
+                    "fuente": "fallback",
+                }
+                for d in destinos_fallback
             ]
             recomendaciones = sorted(recomendaciones, key=lambda x: x["puntuacion_afinidad"], reverse=True)
 
@@ -1218,47 +1369,34 @@ def obtener_viajes_recomendados(user_id):
     except Exception as e:
         print(f"Error crítico en recomendación: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
-    
-    #Obtener el access_token de paypal
-def get_access_token():
-    """
-    1. Hace una petición a paypal, a traves de la ruta que se concatena, y le pasa el cliente de api y la clave secreta. 
-    2. Se le pasan otros permisos aparte del id y la clave secreta
-    3. Devuelve un json el access_token
-    """
-    res = requests.post(
-        f"{PAYPAL_API}/v1/oauth2/token",
-        auth=(PAYPAL_CLIENT_ID, PAYPAL_SECRET),
-        data={'grant_type': 'client_credentials'}
-    )
-    return res.json()['access_token']
 
-#
-# SERVICIO PARA CREAR UN VIAJE UTILIZANDO INTELIGENCIA ARTIFICIAL
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   CREAR UN VIAJE UTILIZANDO INTELIGENCIA ARTIFICIAL
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/crear-viaje-ia', methods=['POST'])
-@jwt_required() 
+@jwt_required()
 def crear_viaje_ia():
     current_user_id = get_jwt_identity()
     data = request.get_json()
-    
+
     origen = data.get('origen')
     destino = data.get('destino')
     fecha_salida = data.get('fecha_salida')
     hora_salida = data.get('hora_salida', '08:00')
-    distancia_km = data.get('distancia_km', 50.0) 
-    
+    distancia_km = data.get('distancia_km', 50.0)
+
     if not origen or not destino or not fecha_salida:
         return jsonify({"error": "Faltan datos requeridos por MariCar"}), 400
-        
+
     consumo_medio = 6.5
     precio_combustible = 1.55
     plazas_totales = 3
-    
+
     coste_viaje_combustible = (distancia_km / 100) * consumo_medio * precio_combustible
     coste_por_plaza = coste_viaje_combustible / plazas_totales
     precio_calculado = round(coste_por_plaza * 1.15, 2)
-    precio_final = max(5.0, precio_calculado) # Mínimo de 5€
+    precio_final = max(5.0, precio_calculado)
 
     try:
         formatos_fecha = ['%d-%m-%Y', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S.%fZ']
@@ -1289,21 +1427,22 @@ def crear_viaje_ia():
         usuario_id=current_user_id,
         vehiculo=vehiculo_id,
         estado_viaje="Próximo",
-        ruta_seleccionada={"routes": [{"legs": [{"distance": {"value": distancia_km * 1000}}]}]}
+        ruta_seleccionada={"routes": [{"legs": [{"distance": {"value": distancia_km * 1000}}]}]},
     )
-    
+
     db.session.add(nuevo_viaje)
     db.session.commit()
-    
+
     return jsonify({
         "mensaje": "¡Viaje creado con éxito por MariCar!",
         "viaje_id": nuevo_viaje.id,
-        "viaje": nuevo_viaje.serialize(current_user_id=current_user_id)
+        "viaje": nuevo_viaje.serialize(current_user_id=current_user_id),
     }), 201
 
-#
-#   FUNCIONALIDAD DE CHAT CON MARI-CAR PARA CREAR UN VIAJE
-#
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#   CHAT CON MARI-CAR PARA CREAR UN VIAJE
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @travel_blueprint.route('/chat-maricar', methods=['POST'])
 @jwt_required()
 def chat_maricar():
@@ -1363,25 +1502,25 @@ def chat_maricar():
         "model": "openai/gpt-oss-20b",
         "messages": messages_for_groq,
         "temperature": 0.6,
-        "response_format": {"type": "json_object"}
+        "response_format": {"type": "json_object"},
     }
 
     headers = {
         "Authorization": f"Bearer {groq_api_key}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     try:
         response = requests.post(endpoint, json=payload, headers=headers)
         res_data = response.json()
-        
+
         if response.status_code == 200 and 'choices' in res_data:
             contenido_ia = json.loads(res_data['choices'][0]['message']['content'])
-            
+
             if contenido_ia.get('datos_completos') and contenido_ia.get('viaje_data'):
                 fecha_raw = contenido_ia['viaje_data'].get('fecha_salida')
                 hora_raw = contenido_ia['viaje_data'].get('hora_salida')
-                
+
                 if fecha_raw:
                     contenido_ia['viaje_data']['fecha_salida'] = normalizar_fecha(fecha_raw)
                 if hora_raw:
@@ -1392,50 +1531,40 @@ def chat_maricar():
             raise Exception(res_data.get('error', {}).get('message', 'Error en Groq'))
 
     except Exception as e:
-        print("\n--------------------------------------------------")
         print("ERROR EN GROQ / CHAT-MARICAR:", str(e))
-        if 'response' in locals() and hasattr(response, 'text'):
-            print("📄 Respuesta de la API de Groq:", response.text)
-        print("--------------------------------------------------\n")
-        
         return jsonify({
             "mensaje_respuesta": "Lo siento, me he despistado un segundo. ¿Podrías indicarme de nuevo los datos del viaje?",
             "datos_completos": False,
-            "viaje_data": None
+            "viaje_data": None,
         }), 200
 
 
 def normalizar_fecha(fecha_str):
-    """
-    Convierte cualquier formato de fecha (DD-MM-YYYY, DD/MM/YYYY) a YYYY-MM-DD para la BD.
-    """
-    import re
+    """Convierte cualquier formato de fecha (DD-MM-YYYY, DD/MM/YYYY) a YYYY-MM-DD para la BD."""
     if not fecha_str:
         return fecha_str
-    
+
     match_es = re.match(r"^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$", fecha_str.strip())
     if match_es:
         dia, mes, anio = match_es.groups()
         return f"{anio}-{mes.zfill(2)}-{dia.zfill(2)}"
-    
+
     return fecha_str
 
+
 def normalizar_hora(hora_str):
-    """
-    Convierte cualquier formato de hora (19.30, 9:30, 19:30) a HH:MM para la BD.
-    """
-    import re
+    """Convierte cualquier formato de hora (19.30, 9:30, 19:30) a HH:MM para la BD."""
     if not hora_str:
         return hora_str
-    
+
     hora_limpia = hora_str.strip().replace('.', ':')
-    
     match_hora = re.match(r"^(\d{1,2}):(\d{2})$", hora_limpia)
     if match_hora:
         horas, minutos = match_hora.groups()
         return f"{horas.zfill(2)}:{minutos}"
-    
+
     return hora_limpia
+
 
 @travel_blueprint.route('/viaje_en_curso/<int:usuario_id>', methods=['GET'])
 def obtener_viaje_en_curso(usuario_id):
@@ -1445,9 +1574,12 @@ def obtener_viaje_en_curso(usuario_id):
             return jsonify({'viaje': viaje_conductor.serialize()}), 200
 
         pasajero_rel = (
-            PasajeroViaje.query
-            .join(Viaje)
-            .filter(PasajeroViaje.usuario_id == usuario_id, PasajeroViaje.estado == 'aceptado', Viaje.estado_viaje == 'En curso')
+            PasajeroViaje.query.join(Viaje)
+            .filter(
+                PasajeroViaje.usuario_id == usuario_id,
+                PasajeroViaje.estado == 'aceptado',
+                Viaje.estado_viaje == 'En curso',
+            )
             .first()
         )
         if pasajero_rel:

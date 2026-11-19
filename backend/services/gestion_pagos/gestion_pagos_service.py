@@ -40,29 +40,47 @@ def get_access_token():
         return None
 
 
-def reembolsar_pago_al_pasajero(pasajero_viaje, importe:float, motivo: str ="Cancelación de viaje"):
-    """Función para devolver a un usuario los importes por la cancelación de un viaje por parte de un conductor"""
-    paypal_id=pasajero_viaje.paypal_auth_id
+def reembolsar_pago_al_pasajero(pasajero_viaje, importe: float, motivo: str = "Cancelación de viaje"):
+    """Libera una autorización (void) o reembolsa un pago capturado (refund) en PayPal."""
+    paypal_id = getattr(pasajero_viaje, "paypal_auth_id", None)
     if not paypal_id:
         return {"exito": False, "error": "No existe identificador de transacción para esta reserva."}
-    
+
     token = get_access_token()
-    base_url = current_app.config.get("PAYPAL_API_BASE", "https://api-m.sandbox.paypal.com")
+    if not token:
+        return {"exito": False, "error": "No se pudo obtener el token de autenticación de PayPal."}
+
+    base_url = PAYPAL_API or current_app.config.get("PAYPAL_API_BASE", "https://api-m.sandbox.paypal.com")
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {token}"
     }
 
-    #Dinero en Authorize
-    void_url = f"{base_url}/v2/payments/authorizations/{paypal_id}/void"
+    auth_id = paypal_id
+    capture_id = paypal_id
+
+    resp_order = requests.get(f"{base_url}/v2/checkout/orders/{paypal_id}", headers=headers)
+    if resp_order.status_code == 200:
+        order_data = resp_order.json()
+        payments = order_data.get("purchase_units", [{}])[0].get("payments", {})
+        authorizations = payments.get("authorizations", [])
+        captures = payments.get("captures", [])
+
+        if authorizations:
+            auth_id = authorizations[0].get("id")
+        if captures:
+            capture_id = captures[0].get("id")
+
+    void_url = f"{base_url}/v2/payments/authorizations/{auth_id}/void"
     resp_void = requests.post(void_url, headers=headers)
     if resp_void.status_code in (200, 204):
-        return {"exito": True, "tipo": "void", "referencia": paypal_id}
-    #Dinero en Capture
-    refund_url = f"{base_url}/v2/payments/captures/{paypal_id}/refund"
+        print(f"✅ Autorización PayPal {auth_id} anulada (VOID) correctamente.")
+        return {"exito": True, "tipo": "void", "referencia": auth_id, "importe": f"{float(importe):.2f}"}
+
+    refund_url = f"{base_url}/v2/payments/captures/{capture_id}/refund"
     payload = {
         "amount": {
-            "value": f"{importe:.2f}",
+            "value": f"{float(importe):.2f}",
             "currency_code": "EUR"
         },
         "note_to_payer": motivo[:255]
@@ -70,11 +88,14 @@ def reembolsar_pago_al_pasajero(pasajero_viaje, importe:float, motivo: str ="Can
     resp_refund = requests.post(refund_url, json=payload, headers=headers)
     if resp_refund.status_code in (200, 201):
         data = resp_refund.json()
-        return {"exito": True, "tipo": "refund", "referencia": data.get("id")}
+        print(f"✅ Reembolso PayPal {data.get('id')} completado (REFUND).")
+        return {"exito": True, "tipo": "refund", "referencia": data.get("id"), "importe": f"{float(importe):.2f}"}
+
+    error_detalle = resp_refund.json() if resp_refund.content else resp_void.text
+    print(f"❌ Error PayPal al cancelar/reembolsar (auth={auth_id}, cap={capture_id}): {error_detalle}")
     return {
         "exito": False,
-        "error": resp_refund.json() if resp_refund.content else "Error al procesar el reembolso en PayPal"
+        "error": error_detalle or "Error al procesar el reembolso en PayPal"
     }
-
 
 

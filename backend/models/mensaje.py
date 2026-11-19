@@ -44,12 +44,14 @@ class Mensaje(db.Model):
     conversacion_id = db.Column(db.Integer, db.ForeignKey('conversaciones.id'), nullable=False)
     emisor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     receptor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id'), nullable=True)  # <-- Nuevo campo opcional
     texto = db.Column(db.Text, nullable=False)
     leido = db.Column(db.Boolean, default=False)
     fecha = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     emisor = db.relationship('Usuario', foreign_keys=[emisor_id])
     receptor = db.relationship('Usuario', foreign_keys=[receptor_id])
+    viaje = db.relationship('Viaje', foreign_keys=[viaje_id])
 
     def serialize(self):
         return {
@@ -57,6 +59,7 @@ class Mensaje(db.Model):
             "conversacion_id": self.conversacion_id,
             "emisor_id": self.emisor_id,
             "receptor_id": self.receptor_id,
+            "viaje_id": self.viaje_id,
             "texto": self.texto,
             "leido": self.leido,
             "fecha": self.fecha.isoformat()

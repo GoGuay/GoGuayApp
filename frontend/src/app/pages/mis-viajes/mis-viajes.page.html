@@ -145,7 +145,7 @@
       aria-label="Resultados de viajes"
     >
       <!--Contenedor del viaje con los detalles-->
-      <tarjeta-viaje [viajesFiltrados]="misViajes"></tarjeta-viaje>
+      <tarjeta-viaje [viajesFiltrados]="misViajes" (viajeActualizado)="recargarDesdeHijo()"></tarjeta-viaje>
     </div>
     }
 

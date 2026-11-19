@@ -71,6 +71,7 @@ export class ChatPage implements OnInit, OnDestroy {
 
   // Caché en memoria para no repetir consultas de viajes ya obtenidos
   private viajesCache = new Map<number, any>();
+  private viajeIdPorMensaje = new Map<number, number>();
   private stopPolling$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
@@ -165,11 +166,17 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   extraerViajeId(m: any): number {
-    if (m.viaje_id) {
+    if (m?.viaje_id) {
       return Number(m.viaje_id);
     }
-    if (m.texto && m.texto.includes(':')) {
-      return Number(m.texto.split(':')[1]);
+    if (m?.id && this.viajeIdPorMensaje.has(m.id)) {
+      return this.viajeIdPorMensaje.get(m.id)!;
+    }
+    if (m?.texto && m.texto.includes(':')) {
+      const posibleId = Number(m.texto.split(':')[1]);
+      if (!isNaN(posibleId) && posibleId > 0) {
+        return posibleId;
+      }
     }
     return 0;
   }
@@ -180,7 +187,7 @@ export class ChatPage implements OnInit, OnDestroy {
    * 2. Reutiliza caché en memoria.
    * 3. Si faltan viaje_id en mensajes antiguos, pide getViajesUsuario una sola vez para todos.
    */
-  private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false) {
+private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false) {
     this.telefonoRecibido = null;
     this.compartiendoMiTelefono = false;
 
@@ -190,6 +197,10 @@ export class ChatPage implements OnInit, OnDestroy {
 
     mensajes.forEach((m: any, index: number) => {
       if (!m.id) return;
+
+      if (!m.viaje_id && this.viajeIdPorMensaje.has(m.id)) {
+        m.viaje_id = this.viajeIdPorMensaje.get(m.id);
+      }
 
       if (m.texto.includes('TELEFONO USUARIO:')) {
         if (m.emisor_id === this.usuarioLogueadoId) {
@@ -210,7 +221,9 @@ export class ChatPage implements OnInit, OnDestroy {
         );
 
         if (respuestaConductor) {
-          this.solicitudesGestionadas[m.id] = respuestaConductor.texto.includes('He aceptado tu solicitud') ? 'aceptada' : 'rechazada';
+          this.solicitudesGestionadas[m.id] = respuestaConductor.texto.includes('He aceptado tu solicitud')
+            ? 'aceptada'
+            : 'rechazada';
           return;
         }
 
@@ -219,6 +232,7 @@ export class ChatPage implements OnInit, OnDestroy {
           mensajesSolicitudSinResolver.push({ mensaje: m, index });
 
           if (viajeId > 0) {
+            this.viajeIdPorMensaje.set(m.id, viajeId);
             if (!this.viajesCache.has(viajeId)) {
               idsViajesAConsultar.add(viajeId);
             }
@@ -284,9 +298,11 @@ export class ChatPage implements OnInit, OnDestroy {
         const viajeId = this.extraerViajeId(m);
         let viaje = viajeId > 0 ? this.viajesCache.get(viajeId) : null;
 
-        // Buscar coincidencia estricta por origen y destino (sin fallback ciego a [0])
+        // Buscar coincidencia estricta por origen y destino
         if (!viaje && todosLosViajesCacheados.length > 0) {
-          const coincidentes = todosLosViajesCacheados.filter((v: any) => m.texto.includes(v.origen) && m.texto.includes(v.destino));
+          const coincidentes = todosLosViajesCacheados.filter(
+            (v: any) => m.texto.includes(v.origen) && m.texto.includes(v.destino)
+          );
 
           viaje =
             coincidentes.find((v: any) => v.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId)) ||
@@ -296,6 +312,7 @@ export class ChatPage implements OnInit, OnDestroy {
 
           if (viaje) {
             m.viaje_id = viaje.id;
+            this.viajeIdPorMensaje.set(mensajeId, viaje.id);
           }
         }
 
@@ -304,10 +321,12 @@ export class ChatPage implements OnInit, OnDestroy {
           return;
         }
 
-        const estaAceptado = viaje.acompanantes?.some((p: any) => p.id === pasajeroId) || viaje.estado_solicitud_propia === 'aceptado';
+        const estaAceptado =
+          viaje.acompanantes?.some((p: any) => p.id === pasajeroId) || viaje.estado_solicitud_propia === 'aceptado';
 
         const estaPendiente =
-          viaje.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId) || viaje.estado_solicitud_propia === 'pendiente';
+          viaje.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId) ||
+          viaje.estado_solicitud_propia === 'pendiente';
 
         if (estaAceptado) {
           this.solicitudesGestionadas[mensajeId] = 'aceptada';
@@ -447,28 +466,67 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   gestionarSolicitud(mensaje: any, accion: 'aceptar' | 'rechazar') {
-    const viajeId = this.extraerViajeId(mensaje);
-    const pasajeroId = mensaje.emisor_id;
     const mensajeId = mensaje.id;
+    if (this.cargandoSolicitud[mensajeId]) return;
 
-    if (!viajeId) {
-      console.error('No se encontró el ID del viaje para gestionar la solicitud:', mensaje);
+    this.cargandoSolicitud[mensajeId] = true;
+    this.cdr.detectChanges();
+
+    const pasajeroId = mensaje.emisor_id;
+    const viajeIdExistente = this.extraerViajeId(mensaje);
+
+    if (viajeIdExistente > 0) {
+      this.ejecutarAccionSolicitud(viajeIdExistente, pasajeroId, mensajeId, accion);
       return;
     }
 
-    this.cargandoSolicitud[mensajeId] = true;
+    // Fallback en caliente si el mensaje antiguo aún no tenía resuelto el viaje_id
+    this.travelService.getViajesUsuario(this.usuarioLogueadoId).pipe(
+      map((res: any) => res?.viajes || []),
+      catchError(() => of([]))
+    ).subscribe((viajes: any[]) => {
+      const coincidentes = viajes.filter(
+        (v: any) => mensaje.texto?.includes(v.origen) && mensaje.texto?.includes(v.destino)
+      );
 
+      const viajeEncontrado =
+        coincidentes.find((v: any) => v.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId)) ||
+        coincidentes[0] ||
+        null;
+
+      if (!viajeEncontrado?.id) {
+        console.error('No se encontró ningún viaje coincidente para esta solicitud:', mensaje);
+        this.cargandoSolicitud[mensajeId] = false;
+        this.cdr.detectChanges();
+        return;
+      }
+
+      mensaje.viaje_id = viajeEncontrado.id;
+      this.viajeIdPorMensaje.set(mensajeId, viajeEncontrado.id);
+      this.ejecutarAccionSolicitud(viajeEncontrado.id, pasajeroId, mensajeId, accion);
+    });
+  }
+
+  private ejecutarAccionSolicitud(
+    viajeId: number,
+    pasajeroId: number,
+    mensajeId: number,
+    accion: 'aceptar' | 'rechazar'
+  ) {
     if (accion === 'aceptar') {
       this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
         next: () => {
           this.solicitudesGestionadas[mensajeId] = 'aceptada';
           this.viajesCache.delete(viajeId);
           this.cargandoSolicitud[mensajeId] = false;
+          this.travelService.notificarCambioViajes();
           this.enviarMensajeSistema('He aceptado tu solicitud. ¡Nos vemos en el viaje!', viajeId);
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al aceptar pasajero:', err);
           this.cargandoSolicitud[mensajeId] = false;
+          this.cdr.detectChanges();
         },
       });
     } else {
@@ -477,11 +535,14 @@ export class ChatPage implements OnInit, OnDestroy {
           this.solicitudesGestionadas[mensajeId] = 'rechazada';
           this.viajesCache.delete(viajeId);
           this.cargandoSolicitud[mensajeId] = false;
+          this.travelService.notificarCambioViajes();
           this.enviarMensajeSistema('Lo siento, no puedo aceptarte en este viaje en este momento.', viajeId);
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al rechazar pasajero:', err);
           this.cargandoSolicitud[mensajeId] = false;
+          this.cdr.detectChanges();
         },
       });
     }

@@ -5,7 +5,7 @@ import { AlertController, IonicModule, NavController } from '@ionic/angular';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { Viaje } from '../../models/travel/viaje.model';
 import { Usuario } from '../../models/user/usuario.model';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
@@ -24,12 +24,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrls: ['./tarjeta-viaje.component.scss'],
   standalone: true,
   imports: [
-    IonicModule, 
-    CommonModule, 
-    FormsModule, 
-    MatIcon, 
-    ToastModule, 
-    TranslateModule, 
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    MatIcon,
+    ToastModule,
+    TranslateModule,
     MatTooltipModule
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -52,6 +52,7 @@ export class TarjetaViajeComponent implements OnInit {
 
   //Para poder pasar los datos del componente padre//
   @Input() viajesFiltrados!: Viaje[];
+  @Output() viajeActualizado = new EventEmitter<void>();
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -66,7 +67,7 @@ export class TarjetaViajeComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -100,6 +101,12 @@ export class TarjetaViajeComponent implements OnInit {
     });
   }
 
+  private notificarRefresco() {
+    this.viajeActualizado.emit();
+    this.travelService.notificarCambioViajes();
+    this.cdr.detectChanges();
+  }
+
   /**
    * Función para que el conductor acepte una solicitud manual.
    * @param viajeId
@@ -116,6 +123,7 @@ export class TarjetaViajeComponent implements OnInit {
           detail: 'El pasajero ya tiene su plaza confirmada.',
           life: 3000,
         });
+        this.notificarRefresco();
         this.cargarTodosLosViajes(this.userData.usuario.id);
       },
       error: (err) => {
@@ -139,6 +147,7 @@ export class TarjetaViajeComponent implements OnInit {
           handler: () => {
             this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
               next: () => {
+                this.notificarRefresco();
                 this.cargarTodosLosViajes(this.userData.usuario.id);
               },
             });
@@ -257,7 +266,7 @@ export class TarjetaViajeComponent implements OnInit {
         this.misViajes = [];
         break;
     }
-    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => {} });
+    this.onFiltroChange({ detail: { value: this.filtroSeleccionado } }, { dismiss: () => { } });
   }
 
   /**
@@ -570,6 +579,7 @@ export class TarjetaViajeComponent implements OnInit {
 
         const userId = this.userData?.usuario?.id || parseInt(this.usuarioParams.id, 10);
         if (userId) {
+          this.notificarRefresco();
           this.cargarTodosLosViajes(userId);
         }
       }
@@ -783,7 +793,7 @@ export class TarjetaViajeComponent implements OnInit {
           detail: 'El trayecto ha sido anulado y penalizado en tu historial de fiabilidad.',
           life: 3500,
         });
-        this.obtenerViajesCreados();
+        this.notificarRefresco();
       },
       error: (err) => {
         this.cargandoViajes = false;
@@ -799,19 +809,37 @@ export class TarjetaViajeComponent implements OnInit {
    */
   private ejecutarCancelacionPasajero(viajeId: number, motivo: string) {
     this.cargando = true;
-    this.travelService.salirDeViajeConMotivo(viajeId, this.userData.usuario.id, motivo).subscribe({
-      next: () => {
+    const userId = this.userData?.id || this.userData?.usuario?.id;
+
+    this.travelService.salirDeViajeConMotivo(viajeId, userId, motivo).subscribe({
+      next: (res: any) => {
         this.cargando = false;
+
+        let detalleMensaje = 'Has liberado tu plaza con éxito.';
+        if (res?.reembolso?.exito) {
+          detalleMensaje += ` Se ha tramitado la devolución de ${res.reembolso.importe ?? ''}€ en PayPal.`;
+        }
+
         this.messageService.add({
-          severity: 'info',
-          summary: 'Baja del viaje',
-          detail: 'Has liberado tu plaza con éxito.',
-          life: 3000,
+          severity: 'success',
+          summary: 'Reserva cancelada',
+          detail: detalleMensaje,
+          life: 4000,
         });
-        this.obtenerViajesComoAcompanante();
-        this.obtenerViajesCreados();
+        this.notificarRefresco();
+        this.cargarTodosLosViajes(userId);
       },
-      error: () => (this.cargando = false),
+      error: (err) => {
+        this.cargando = false;
+        const detalleError = err?.error?.detalle || err?.error?.error || 'No se pudo procesar la cancelación ni el reembolso.';
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al cancelar',
+          detail: detalleError,
+          life: 4500,
+        });
+        console.error('Error al cancelar reserva:', err);
+      },
     });
   }
 
@@ -840,5 +868,5 @@ export class TarjetaViajeComponent implements OnInit {
     });
   }
 
-  abrirPerfil() {}
+  abrirPerfil() { }
 }

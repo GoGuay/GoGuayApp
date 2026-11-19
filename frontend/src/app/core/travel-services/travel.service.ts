@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
 import { API_URL_BASE } from '../../models/constantes/constantes.model';
 import { Viaje } from '../../models/travel/viaje.model';
@@ -17,10 +17,17 @@ export class TravelService {
   //Indicamos que viajeData$ se va a convertir en un objeto accesible desde otros componentes.
   viajeData$ = this.viajeDataSubject.asObservable();
 
+  private viajesActualizadosSource = new Subject<void>();
+  viajesActualizados$ = this.viajesActualizadosSource.asObservable();
+
   constructor(
     private http: HttpClient,
     private notificacionesService: NotificacionesService
   ) { }
+
+  notificarCambioViajes() {
+    this.viajesActualizadosSource.next();
+  }
 
   /**
    * Función para guardar temporalmente los datos del viaje.
@@ -135,10 +142,10 @@ export class TravelService {
   }
 
 
-  bloquearPlaza(viajeId:number, usuarioId:any): Observable<any>{
+  bloquearPlaza(viajeId: number, usuarioId: any): Observable<any> {
     const params = {
-      viaje_id:viajeId,
-      usuario_id:usuarioId
+      viaje_id: viajeId,
+      usuario_id: usuarioId
     }
     return this.http.post(`${this.apiUrl}/travel/bloquear_plaza`, params).pipe(
       catchError((error) => {

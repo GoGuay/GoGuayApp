@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, catchError, of } from 'rxjs';
+import { forkJoin, Observable, catchError, of, Subscription } from 'rxjs';
 
 // Ionic & Angular Material
 import { PopoverController } from '@ionic/angular/standalone';
@@ -82,6 +82,9 @@ export class MisViajesPage implements OnInit {
   cargandoViajes: boolean = true;
   mostrarJumbotron = true;
 
+  private subs = new Subscription();
+  private userIdActual: number | null = null;
+
   constructor(
     public funcionesComunes: FuncionesComunes,
     private navCtrl: NavController,
@@ -93,36 +96,63 @@ export class MisViajesPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      this.usuarioParams = params;
-      let finalUserId: number | null = null;
+    this.subs.add(
+      this.route.queryParams.subscribe((params) => {
+        this.usuarioParams = params;
+        let finalUserId: number | null = null;
 
-      const cache = localStorage.getItem('userData');
-      if (cache) {
-        this.userData = JSON.parse(cache);
-        this.userLoggedIn = true;
+        const cache = localStorage.getItem('userData');
+        if (cache) {
+          this.userData = JSON.parse(cache);
+          this.userLoggedIn = true;
 
-        const cachedId = this.userData.id || (this.userData.usuario ? this.userData.usuario.id : null);
-        if (cachedId) {
-          finalUserId = Number(cachedId);
+          const cachedId = this.userData.id || (this.userData.usuario ? this.userData.usuario.id : null);
+          if (cachedId) {
+            finalUserId = Number(cachedId);
+          }
         }
-      }
 
-      if (this.usuarioParams && this.usuarioParams.id) {
-        const urlId = parseInt(this.usuarioParams.id, 10);
-        if (!isNaN(urlId)) {
-          finalUserId = urlId;
+        if (this.usuarioParams && this.usuarioParams.id) {
+          const urlId = parseInt(this.usuarioParams.id, 10);
+          if (!isNaN(urlId)) {
+            finalUserId = urlId;
+          }
         }
-      }
 
-      if (finalUserId && !isNaN(finalUserId)) {
-        this.cargarTodosLosViajes(finalUserId);
-        this.recuperarUsuarioServidor(finalUserId, !!cache);
-      } else {
-        console.warn('No se detectó un ID de usuario válido en la inicialización.');
-        this.cargandoViajes = false;
-      }
-    });
+        if (finalUserId && !isNaN(finalUserId)) {
+          this.userIdActual = finalUserId;
+          this.cargarTodosLosViajes(finalUserId);
+          this.recuperarUsuarioServidor(finalUserId, !!cache);
+        } else {
+          console.warn('No se detectó un ID de usuario válido en la inicialización.');
+          this.cargandoViajes = false;
+        }
+      })
+    );
+
+    this.subs.add(
+      this.travelService.viajesActualizados$.subscribe(() => {
+        if (this.userIdActual) {
+          this.cargarTodosLosViajes(this.userIdActual);
+        }
+      })
+    );
+  }
+
+  ionViewWillEnter() {
+    if (this.userIdActual) {
+      this.cargarTodosLosViajes(this.userIdActual);
+    }
+  }
+
+  recargarDesdeHijo() {
+    if (this.userIdActual) {
+      this.cargarTodosLosViajes(this.userIdActual);
+    }
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 
   /**
@@ -159,57 +189,25 @@ export class MisViajesPage implements OnInit {
    * @param userId Recibe el ID del usuario
    */
   cargarTodosLosViajes(userId: number) {
-    const tieneDatosPrevios =
-      this.misViajesAcompanante.length > 0 ||
-      this.misViajesCreados.length > 0 ||
-      this.misSolicitudesPendientes.length > 0;
+    this.cargandoViajes = true;
+    this.cdr.detectChanges();
 
-    this.cargandoViajes = !tieneDatosPrevios;
+    forkJoin({
+      pasajero: this.travelService.getViajesComoAcompanante(userId).pipe(catchError(() => of([]))),
+      conductor: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
+      solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
+    }).subscribe(({ pasajero, conductor, solicitudes }) => {
+      this.misViajesAcompanante = pasajero || [];
+      this.misViajesCreados = conductor?.viajes || [];
+      this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+      this.misSolicitudesPendientes = solicitudes || [];
 
-    let peticionesCompletadas = 0;
-    const totalPeticiones = 3;
-
-    const actualizarVistaProgresiva = () => {
-      peticionesCompletadas++;
-      const hayEnCursoReal = this.HayAlgunViajeEnCursoReal();
-      this.filtrosEstados['en_curso'] = hayEnCursoReal;
-      this.filtrosEstados['proximos_viajes'] = true;
-      this.filtrosEstados['finalizados_anulados'] = false;
-
+      this.filtrosEstados['en_curso'] = this.HayAlgunViajeEnCursoReal();
       this.aplicarFiltrosCombinados();
 
-      if (this.misViajes.length > 0 || peticionesCompletadas >= totalPeticiones) {
-        this.cargandoViajes = false;
-      }
+      this.cargandoViajes = false;
       this.cdr.detectChanges();
-    };
-
-    // Petición 1: Viajes como acompañante
-    this.travelService
-      .getViajesComoAcompanante(userId)
-      .pipe(catchError(() => of([])))
-      .subscribe((pasajero) => {
-        this.misViajesAcompanante = pasajero || [];
-        actualizarVistaProgresiva();
-      });
-
-    // Petición 2: Viajes como conductor
-    this.travelService
-      .getViajesUsuario(userId)
-      .pipe(catchError(() => of({ viajes: [] })))
-      .subscribe((conductor) => {
-        this.misViajesCreados = conductor?.viajes || [];
-        this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
-        actualizarVistaProgresiva();
-      });
-
-    this.travelService
-      .getMisSolicitudesPendientes(userId)
-      .pipe(catchError(() => of([])))
-      .subscribe((solicitudes) => {
-        this.misSolicitudesPendientes = solicitudes || [];
-        actualizarVistaProgresiva();
-      });
+    });
   }
 
   /**
