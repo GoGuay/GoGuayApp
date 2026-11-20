@@ -1,7 +1,9 @@
 ﻿backend/.env
 backend/prideride_firebase.json
 __pycache__/
-backend/models/__pycache__
+**/__pycache__/
+*.pyc
+*.pyo
 
 
 # Specifies intentionally untracked files to ignore when using Git
@@ -31,9 +33,19 @@ log.txt
 
 # Compiled output
 /dist
+dist/
+build/
 /tmp
 /out-tsc
 /bazel-out
+
+# Python / Entornos virtuales / PyInstaller / QA
+.venv/
+venv/
+env/
+*.spec
+*.exe
+backend/QA/
 
 # Node
 /node_modules
