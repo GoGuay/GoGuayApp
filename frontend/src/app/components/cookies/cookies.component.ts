@@ -5,7 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-cookies',

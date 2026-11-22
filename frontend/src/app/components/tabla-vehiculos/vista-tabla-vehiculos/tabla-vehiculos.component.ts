@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
@@ -12,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FuncionesUsuario } from '../../../core/funciones-usuario/funciones-usuario.service';
 import { MessageService } from 'primeng/api';
 import { SelectorGeneralComponent } from '../../selector-general/selector-general.component';
+import { IonList, IonItem, IonRadio, IonLabel, IonRow, IonRadioGroup } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-tabla-vehiculos',
@@ -19,7 +19,7 @@ import { SelectorGeneralComponent } from '../../selector-general/selector-genera
   styleUrls: ['./tabla-vehiculos.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
+  imports: [IonRow, IonRadioGroup, IonLabel, IonRadio, IonItem, IonList, FormsModule, TranslateModule, MatIcon, MatFormFieldModule, SelectorGeneralComponent],
 })
 export class TablaVehiculosComponent implements OnInit {
   @Input() vehiculos: any[] = [];

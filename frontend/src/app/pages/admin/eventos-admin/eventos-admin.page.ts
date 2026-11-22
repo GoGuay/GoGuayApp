@@ -2,13 +2,14 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { IonicModule } from '@ionic/angular';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
 import { Evento } from 'src/app/models/eventos/eventos';
 import { EventosServices } from 'src/app/core/eventos-services/eventos-services.service';
 import { ToastModule } from 'primeng/toast';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { IonContent, IonCol, IonThumbnail, IonRow, IonCard, IonCardHeader, IonCardSubtitle, IonItem, IonLabel, IonList, IonButton } from "@ionic/angular/standalone";
+
 
 @Component({
   selector: 'app-eventos-admin',
@@ -16,7 +17,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./eventos-admin.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, MatDialogModule, NavbarAdmin, ToastModule],
+  imports: [IonButton, IonThumbnail, IonList, IonLabel, IonItem, IonCardSubtitle, IonCardHeader, IonCard, IonRow, IonCol, IonContent, CommonModule, FormsModule, ReactiveFormsModule,  MatDialogModule, NavbarAdmin, ToastModule],
 })
 export class EventosAdmin implements OnInit {
   eventForm: FormGroup;

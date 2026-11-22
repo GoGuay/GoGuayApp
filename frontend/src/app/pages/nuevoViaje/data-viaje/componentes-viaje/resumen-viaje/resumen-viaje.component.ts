@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonContent } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,8 +22,7 @@ import { ModalErrorComponent } from '../../../../../components/modal-error/modal
 @Component({
   selector: 'app-resumen-viaje',
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonContent,
     MatIcon,
     MatCardModule,
     MatDatepickerModule,

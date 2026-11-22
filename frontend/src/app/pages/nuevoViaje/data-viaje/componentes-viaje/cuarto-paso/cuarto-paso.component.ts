@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';

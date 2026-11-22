@@ -9,7 +9,7 @@ import { VentanaDudasComponent } from '../components/ventana-dudas/ventana-dudas
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { FuncionesComunes } from '../core/funciones-comunes/funciones-comunes.service';
-import { IonicModule, ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, IonHeader, IonRow, IonGrid, IonCol, IonFab, IonFabButton, IonIcon, IonFooter, IonContent } from '@ionic/angular/standalone';
 import { BuscadorViajeHomeComponent } from '../components/buscador_viaje_home/buscador_viaje_home.component';
 
 import { NotificacionesService } from '../core/notificaciones/notificaciones.service';
@@ -31,10 +31,9 @@ import { OnboardingModalComponent } from '../components/onboarding/onboarding-mo
   templateUrl: 'home.page.html',
   standalone: true,
   styleUrls: ['home.page.scss'],
-  imports: [
+  imports: [IonContent, IonFooter, IonIcon, IonFabButton, IonFab, IonCol, IonGrid, IonRow, IonHeader,
     FooterComponent,
     JumbotronComponent,
-    IonicModule,
     NuevoViajeGeneralComponent,
     MatDividerModule,
     TrayectosPopularesComponent,

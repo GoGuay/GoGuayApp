@@ -6,12 +6,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
-import { IonicModule } from '@ionic/angular';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { IonContent, IonCol, IonRow, IonGrid } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-sobre-nosotros',
@@ -19,8 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./sobre-nosotros.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
-    IonicModule,
+  imports: [IonGrid, IonRow, IonCol, IonContent,
     FormsModule,
     RouterModule,
     MatDividerModule,

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonContent, IonSpinner } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { Usuario } from '../../models/user/usuario.model';
@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './centro-contacto.page.html',
   styleUrls: ['./centro-contacto.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, ReactiveFormsModule, NavbarComponent, MatDividerModule, MatButtonModule, ToastModule],
+  imports: [IonSpinner, IonContent,  FormsModule, ReactiveFormsModule, NavbarComponent, MatDividerModule, MatButtonModule, ToastModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })

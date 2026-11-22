@@ -6,7 +6,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
-import { IonContent, IonicModule, ModalController, NavController } from '@ionic/angular';
+import { IonContent,  ModalController, NavController, IonHeader, IonFab, IonFabButton, IonButton, IonBadge, IonFooter, IonIcon } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { MessagingService } from '../../../core/menssaging-service/messaging.service';
 import { Usuario } from '../../../models/user/usuario.model';
@@ -26,7 +26,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonIcon, IonFooter, IonBadge, IonButton, IonFabButton, IonFab, IonHeader,
     CommonModule,
     FormsModule,
     MatButtonModule,
@@ -35,9 +35,7 @@ import { MessageService } from 'primeng/api';
     ReactiveFormsModule,
     MatSliderModule,
     NavbarComponent,
-    IonicModule,
-    SpinnerComponent,
-  ],
+    SpinnerComponent, IonContent],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [],
 })

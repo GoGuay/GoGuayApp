@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } fro
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonItem } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -15,7 +15,7 @@ const EMAIL_REGEX =
 @Component({
   selector: 'app-resumen-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, MatIconModule, TranslateModule, ContratoRegistroComponent],
+  imports: [IonItem, CommonModule, FormsModule, ReactiveFormsModule,  MatIconModule, TranslateModule, ContratoRegistroComponent],
   templateUrl: './resumen-registro.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './resumen-registro.component.scss',

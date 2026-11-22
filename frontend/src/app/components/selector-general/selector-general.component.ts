@@ -15,14 +15,14 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { IonContent , IonPopover} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-selector-general',
   templateUrl: './selector-general.component.html',
   styleUrls: ['./selector-general.component.scss'],
-  imports: [TranslateModule, MatTooltipModule, IonicModule],
+  imports: [TranslateModule, MatTooltipModule, IonContent, IonPopover],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {

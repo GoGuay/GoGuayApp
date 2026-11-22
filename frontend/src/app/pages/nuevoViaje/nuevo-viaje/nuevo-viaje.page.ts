@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, HostListener, OnInit, ChangeDetectionStra
 
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, ModalController, NavController } from '@ionic/angular';
+import {  ModalController, NavController, IonContent, IonRow, IonRippleEffect } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -27,10 +27,9 @@ import { MessageService } from 'primeng/api';
   standalone: true,
   providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
+  imports: [IonRippleEffect, IonRow, IonContent,
     FormsModule,
     MatIconModule,
-    IonicModule,
     MatButtonModule,
     RouterModule,
     TranslateModule,

@@ -10,7 +10,7 @@ import { ViajeSeleccionadoComponent } from '../viaje-seleccionado/viaje-seleccio
 import { catchError, Observable, of, tap } from 'rxjs';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { LoadTravelLineComponent } from '../load-travel-line/load-travel-line.component';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonGrid, IonRow, IonCol, IonIcon, IonButton, IonPopover, IonContent, IonList, IonRadioGroup, IonLabel, IonItem, IonRadio } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
@@ -19,7 +19,7 @@ import { CancelarSolicitudModalComponent } from '../cancelar-solicitud/cancelar-
 @Component({
   selector: 'app-resultados-busqueda',
   standalone: true,
-  imports: [IonicModule, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
+  imports: [IonRadio, IonItem, IonLabel, IonRadioGroup, IonList, IonContent, IonPopover, IonButton, IonIcon, IonCol, IonRow, IonGrid, TranslateModule, CommonModule, SpinnerComponent, LoadTravelLineComponent],
   templateUrl: './resultados-busqueda.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./resultados-busqueda.component.scss'],

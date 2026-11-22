@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonCol, IonLabel, IonRow, IonGrid } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -19,8 +19,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-buscador',
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonGrid, IonRow, IonLabel, IonCol,
     MatIconModule,
     MatButtonModule,
     MatDatepickerModule,

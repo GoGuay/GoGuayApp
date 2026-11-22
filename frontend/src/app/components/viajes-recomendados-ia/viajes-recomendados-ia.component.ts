@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
-import { IonicModule, NavController } from '@ionic/angular';
+import {NavController } from '@ionic/angular/standalone';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SpinnerComponent } from '../spinner/spinner.component';
@@ -12,7 +12,7 @@ import { NavigationExtras } from '@angular/router';
   styleUrls: ['./viajes-recomendados-ia.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, TranslateModule, SpinnerComponent],
+  imports: [ TranslateModule, SpinnerComponent],
 })
 export class ViajesRecomendadosIaComponent implements OnInit {
   recomendaciones: any[] = [];

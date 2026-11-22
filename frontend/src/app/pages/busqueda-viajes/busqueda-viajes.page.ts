@@ -8,7 +8,7 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { FuncionesComunes } from 'src/app/core/funciones-comunes/funciones-comunes.service';
-import { IonicModule, ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, IonContent } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { Viaje } from 'src/app/models/travel/viaje.model';
 import { AbrirIncidenciaModalComponent } from 'src/app/components/abrir-incidencia-modal/abrir-incidencia-modal.component';
@@ -20,8 +20,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./busqueda-viajes.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
-    IonicModule,
+  imports: [IonContent,
     FormsModule,
     BuscadorComponent,
     MatIconModule,

@@ -5,7 +5,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 
 import { trigger, style, transition, animate } from '@angular/animations';
-import { NavController } from 'node_modules/@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-modal-error',

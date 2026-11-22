@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { MatDivider } from '@angular/material/divider';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { lastValueFrom } from 'rxjs';
@@ -12,13 +11,14 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { ActivatedRoute } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { IonContent, IonRow, IonCol } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-verificaciones-perfil',
   templateUrl: './verificaciones-perfil.page.html',
   styleUrls: ['./verificaciones-perfil.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
+  imports: [IonCol, IonRow, IonContent, FormsModule, NavbarComponent, MatDivider, TranslateModule, SpinnerComponent, ToastModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })

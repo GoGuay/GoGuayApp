@@ -6,7 +6,7 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonContent, IonRow, IonCol } from '@ionic/angular/standalone';
 import { MatIcon } from '@angular/material/icon';
 import { HelpModalComponent } from 'src/app/components/help-modal/help-modal.component';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
@@ -18,7 +18,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './panel-usuario.page.html',
   styleUrls: ['./panel-usuario.page.scss'],
   standalone: true,
-  imports: [FormsModule, NavbarComponent, TranslateModule, IonicModule, MatIcon, MatTooltipModule],
+  imports: [IonCol, IonRow, IonContent, FormsModule, NavbarComponent, TranslateModule, MatIcon, MatTooltipModule],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,

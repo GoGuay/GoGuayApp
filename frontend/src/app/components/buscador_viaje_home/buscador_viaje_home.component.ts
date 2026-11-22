@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-buscador-viaje-home',
   standalone: true,
-  imports: [IonicModule, MatButtonModule, TranslateModule],
+  imports: [IonCol, IonRow, IonGrid, MatButtonModule, TranslateModule],
   templateUrl: './buscador_viaje_home.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./buscador_viaje_home.component.scss'],

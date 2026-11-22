@@ -2,7 +2,7 @@ import { Component, OnInit, model, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrate
 
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { JumbotronComponent } from '../../jumbotron/jumbotron.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,7 +25,6 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./data-viaje.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,
     FormsModule,
     RouterModule,
     MatButtonModule,

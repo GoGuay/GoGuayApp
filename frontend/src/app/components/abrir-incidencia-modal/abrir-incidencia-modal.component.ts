@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { ModalController, IonHeader, IonToolbar, IonIcon, IonButton, IonContent } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { warningOutline, closeOutline, cloudUploadOutline } from 'ionicons/icons';
@@ -20,7 +20,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
   styleUrls: ['./abrir-incidencia-modal.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [ReactiveFormsModule, IonicModule, TranslateModule, SpinnerComponent],
+  imports: [IonContent, IonButton, IonIcon, IonToolbar, IonHeader, ReactiveFormsModule, TranslateModule, SpinnerComponent],
 })
 export class AbrirIncidenciaModalComponent implements OnInit {
   @Input() categoria: CategoriaIncidencia = 'APP';

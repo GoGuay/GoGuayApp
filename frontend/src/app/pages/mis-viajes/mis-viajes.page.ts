@@ -4,12 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, catchError, of, Subscription } from 'rxjs';
 
-// Ionic & Angular Material
-import { PopoverController } from '@ionic/angular/standalone';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
-import { AlertController, IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonHeader, IonContent, IonSegmentButton, IonLabel, IonToggle } from '@ionic/angular/standalone';
 
 // PrimeNG & Traducciones
 import { MessageService } from 'primeng/api';
@@ -34,8 +29,7 @@ import { TravelService } from '../../core/travel-services/travel.service';
   templateUrl: './mis-viajes.page.html',
   styleUrls: ['./mis-viajes.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonToggle, IonLabel, IonSegmentButton, IonContent, IonHeader,
     FormsModule,
     NavbarComponent,
     JumbotronComponent,

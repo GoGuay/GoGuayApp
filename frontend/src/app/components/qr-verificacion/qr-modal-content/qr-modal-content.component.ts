@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, Input, Inject, ChangeDetectionStrategy } from '@angular/core';
 
-import { IonicModule, ModalController } from '@ionic/angular';
+import {  ModalController, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent } from '@ionic/angular/standalone';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -13,7 +13,7 @@ import { TravelService } from 'src/app/core/travel-services/travel.service';
   templateUrl: './qr-modal-content.component.html',
   styleUrls: ['./qr-modal-content.component.scss'],
   standalone: true,
-  imports: [IonicModule, ZXingScannerModule, ToastModule],
+  imports: [IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader,  ZXingScannerModule, ToastModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })

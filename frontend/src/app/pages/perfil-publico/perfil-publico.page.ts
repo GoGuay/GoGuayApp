@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonContent } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,7 @@ import { UserServicesService } from '../../core/user-services/user-services.serv
   templateUrl: './perfil-publico.page.html',
   styleUrls: ['./perfil-publico.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, NavbarComponent, MatTooltipModule, SpinnerComponent],
+  imports: [IonContent,  FormsModule, NavbarComponent, MatTooltipModule, SpinnerComponent],
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,

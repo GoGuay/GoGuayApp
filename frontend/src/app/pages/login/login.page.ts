@@ -7,7 +7,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { ModalErrorComponent } from 'src/app/components/modal-error/modal-error.component';
 import { MatDialog } from '@angular/material/dialog';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { environment } from 'src/environments/environment';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';

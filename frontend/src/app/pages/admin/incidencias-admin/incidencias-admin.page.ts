@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonContent, IonButton, IonIcon, IonRow, IonCol, IonItem, IonSelectOption, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   warningOutline,
@@ -44,7 +44,7 @@ export interface IncidenciaAdmin {
   styleUrls: ['./incidencias-admin.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
+  imports: [IonSpinner, IonItem, IonCol, IonSelectOption, IonRow, IonIcon, IonButton, IonContent, CommonModule, FormsModule,  NavbarAdmin],
 })
 export class IncidenciasAdminPage implements OnInit {
   filtroEstado: string = 'todas';

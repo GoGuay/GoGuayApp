@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import { IonicModule, ModalController } from '@ionic/angular';
+import {ModalController, IonHeader, IonToolbar, IonButtons, IonButton, IonContent } from '@ionic/angular/standalone';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-onboarding-modal',
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonContent, IonButton, IonButtons, IonToolbar, IonHeader, ],
   templateUrl: './onboarding-modal.component.html',
   styleUrls: ['./onboarding-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,

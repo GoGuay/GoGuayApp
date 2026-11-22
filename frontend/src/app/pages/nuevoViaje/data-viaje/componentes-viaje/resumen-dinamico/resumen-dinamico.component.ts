@@ -3,7 +3,7 @@ import { Component, OnInit, HostListener, OnDestroy, ChangeDetectionStrategy } f
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule, Platform } from '@ionic/angular';
+import { Platform, IonLabel } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { TravelService } from 'src/app/core/travel-services/travel.service';
@@ -16,9 +16,8 @@ import { ControlLocalidad } from 'src/app/models/control-localidad/control-local
 @Component({
   selector: 'app-resumen-dinamico',
   standalone: true,
-  imports: [
+  imports: [IonLabel,
     MatIconModule,
-    IonicModule,
     MatButtonModule,
     CommonModule,
     ReactiveFormsModule,

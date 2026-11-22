@@ -1,7 +1,7 @@
 import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonicModule, ModalController } from '@ionic/angular';
+import { IonContent, ModalController, IonHeader, IonToolbar, IonTitle, IonIcon, IonButtons, IonButton, IonSpinner, IonFooter, IonItem } from '@ionic/angular/standalone';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { Router } from '@angular/router';
 import { send, closeOutline, sparkles, carSportOutline, checkmarkCircleOutline } from 'ionicons/icons';
@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./chat-maricar.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [IonItem, IonFooter, IonSpinner, IonButton, IonButtons, IonIcon, IonTitle, IonToolbar, IonHeader, CommonModule, FormsModule, IonContent],
 })
 export class MaricarChatComponent {
   @ViewChild(IonContent, { static: false }) ionContent!: IonContent;

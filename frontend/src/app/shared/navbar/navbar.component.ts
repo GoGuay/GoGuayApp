@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular/standalone';
 import { IonMenuButton, IonHeader } from '@ionic/angular/standalone';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -124,8 +124,8 @@ export class NavbarComponent implements OnInit {
     if (this.pollingSub) clearInterval(this.pollingSub);
     this.pollingSub = setInterval(() => {
       if (this.isLoggedIn && this.userData?.usuario?.id) {
-        this.obtenerNotificaciones(this.userData.usuario.id);
-        this.obtenerNotificacionesMensajes(this.userData.usuario.id);
+        this.obtenerNotificaciones(this.userData?.usuario.id);
+        this.obtenerNotificacionesMensajes(this.userData?.usuario.id);
       }
     }, 10000);
   }

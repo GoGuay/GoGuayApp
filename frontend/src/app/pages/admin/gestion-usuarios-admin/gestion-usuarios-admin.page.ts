@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController, ToastController } from '@ionic/angular';
+import { NavController, ToastController, IonContent, IonIcon, IonRow, IonCol, IonSearchbar, IonSpinner, IonModal, IonHeader, IonToolbar, IonButtons, IonTitle, IonButton, IonSelectOption } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -28,7 +28,7 @@ import { UserServicesService } from 'src/app/core/user-services/user-services.se
   templateUrl: './gestion-usuarios-admin.page.html',
   styleUrls: ['./gestion-usuarios-admin.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
+  imports: [IonButton, IonTitle, IonButtons, IonToolbar, IonHeader, IonModal, IonSpinner, IonSearchbar, IonCol, IonRow, IonIcon, IonContent, CommonModule, FormsModule,  NavbarAdmin, IonSelectOption],
 })
 export class GestionUsuariosAdminPage implements OnInit {
   usuarios: any[] = [];

@@ -1,14 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { IonicModule, NavController } from '@ionic/angular';
+import {NavController, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nuevo-viaje-general',
   standalone: true,
-  imports: [IonicModule, MatButtonModule, TranslateModule],
+  imports: [IonCol, IonRow, IonGrid,  MatButtonModule, TranslateModule],
   templateUrl: './nuevo-viaje-general.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./nuevo-viaje-general.component.scss'],

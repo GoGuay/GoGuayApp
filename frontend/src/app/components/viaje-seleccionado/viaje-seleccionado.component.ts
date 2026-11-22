@@ -14,7 +14,7 @@ import { Viaje } from '../../models/travel/viaje.model';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Usuario } from '../../models/user/usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { MessagingService } from '../../core/menssaging-service/messaging.service';
 import { MessageService } from 'primeng/api';
 

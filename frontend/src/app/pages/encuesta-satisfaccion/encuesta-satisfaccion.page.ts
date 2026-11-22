@@ -1,7 +1,7 @@
 import { Component, forwardRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import {NavController, IonContent } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -18,7 +18,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   templateUrl: './encuesta-satisfaccion.page.html',
   styleUrls: ['./encuesta-satisfaccion.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, MatButtonModule, MatRadioModule, MatCheckboxModule, ReactiveFormsModule, MatSliderModule],
+  imports: [IonContent, FormsModule, MatButtonModule, MatRadioModule, MatCheckboxModule, ReactiveFormsModule, MatSliderModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {

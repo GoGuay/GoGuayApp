@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { IonicModule, ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, IonFooter, IonToolbar, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TerminosComponent } from '../../components/terminos/terminos.component';
@@ -13,7 +13,7 @@ import { OnboardingModalComponent } from 'src/app/components/onboarding/onboardi
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, MatIconModule, TranslateModule],
+  imports: [IonCol, IonRow, IonGrid, IonToolbar, IonFooter,  MatIconModule, TranslateModule],
 })
 export class FooterComponent implements OnInit {
   dialog = inject(MatDialog);

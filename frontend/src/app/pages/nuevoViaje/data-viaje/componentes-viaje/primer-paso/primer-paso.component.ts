@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { IonicModule, Platform } from '@ionic/angular';
+import {Platform, IonGrid, IonRow, IonCol, IonItem, IonDatetimeButton, IonModal, IonContent, IonDatetime, IonList, IonRadioGroup, IonRadio, IonLabel } from '@ionic/angular/standalone';
 import { FormControl, FormsModule } from '@angular/forms';
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
@@ -24,8 +24,7 @@ registerLocaleData(localeEs);
 @Component({
   selector: 'app-primer-paso',
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonLabel, IonRadio, IonRadioGroup, IonList, IonDatetime, IonContent, IonModal, IonDatetimeButton, IonItem, IonCol, IonRow, IonGrid,
     MatCardModule,
     MatDatepickerModule,
     FormsModule,

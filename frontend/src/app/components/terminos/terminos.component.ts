@@ -3,13 +3,12 @@ import { MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { IonicModule, IonModal } from '@ionic/angular';
 import { AnimationController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-terminos',
   standalone: true,
-  imports: [MatDialogContent, MatDividerModule, MatButtonModule, MatIcon, IonicModule],
+  imports: [MatDialogContent, MatDividerModule, MatButtonModule, MatIcon],
   templateUrl: './terminos.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./terminos.component.scss'],

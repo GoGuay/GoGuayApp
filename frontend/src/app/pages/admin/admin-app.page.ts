@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController, ToastController } from '@ionic/angular';
+import {NavController, ToastController, IonContent, IonIcon, IonRow, IonCol, IonSearchbar, IonItem, IonList, IonLabel, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   peopleOutline,
@@ -38,7 +38,7 @@ Chart.register(...registerables);
   templateUrl: './admin-app.page.html',
   styleUrls: ['./admin-app.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarAdmin],
+  imports: [IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, IonModal, IonLabel, IonList, IonItem, IonSearchbar, IonCol, IonRow, IonIcon, IonContent, CommonModule, FormsModule,  NavbarAdmin],
 })
 export class AdminApp implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') private barCanvas!: ElementRef;

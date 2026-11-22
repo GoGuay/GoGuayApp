@@ -5,12 +5,12 @@ import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject, forkJoin, from, takeUntil } from 'rxjs';
 import { TravelService } from '../../../../../core/travel-services/travel.service';
+import { IonRow, IonGrid, IonCol, IonBadge, IonRadio } from "@ionic/angular/standalone";
 
 interface RutaExtendida {
   route: google.maps.DirectionsRoute;
@@ -21,8 +21,7 @@ interface RutaExtendida {
 @Component({
   selector: 'app-tercer-paso',
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonRadio, IonBadge, IonCol, IonGrid, IonRow,
     FormsModule,
     RouterModule,
     MatCardModule,

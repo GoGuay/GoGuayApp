@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-navbar-admin',
@@ -9,7 +9,7 @@ import { IonicModule, NavController } from '@ionic/angular';
   styleUrls: ['./navbar-admin.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, ReactiveFormsModule, IonicModule, MatDialogModule],
+  imports: [IonTitle, IonButton, IonButtons, IonToolbar, IonHeader, FormsModule, ReactiveFormsModule, MatDialogModule],
 })
 export class NavbarAdmin implements OnInit {
   constructor(public navCtrl: NavController) {}

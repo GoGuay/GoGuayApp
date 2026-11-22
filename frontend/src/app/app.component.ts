@@ -20,10 +20,10 @@ import {
   IonFooter,
   IonRouterOutlet,
   IonMenuToggle,
+  MenuController
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavigationStart, RouterModule } from '@angular/router';
-import { MenuController } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 
 export function HttpLoaderFactory(http: HttpClient) {

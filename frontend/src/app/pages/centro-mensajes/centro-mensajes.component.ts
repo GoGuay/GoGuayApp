@@ -1,15 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NavController } from '@ionic/angular/standalone';
+import { NavController, IonHeader, IonContent, IonIcon, IonList, IonCard, IonItem, IonAvatar, IonLabel, IonBadge, IonButton } from '@ionic/angular/standalone';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonicModule } from '@ionic/angular';
 import { MessagingService } from '../../core/menssaging-service/messaging.service';
-import { PopoverController, AlertController } from '@ionic/angular';
+import { PopoverController, AlertController } from '@ionic/angular/standalone';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -18,7 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   templateUrl: './centro-mensajes.component.html',
   styleUrls: ['./centro-mensajes.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonButton, IonBadge, IonLabel, IonAvatar, IonItem, IonCard, IonList, IonIcon, IonContent, IonHeader,
     FormsModule,
     MatButtonModule,
     MatRadioModule,
@@ -26,7 +25,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     ReactiveFormsModule,
     MatSliderModule,
     NavbarComponent,
-    IonicModule,
     SpinnerComponent,
     TranslateModule,
   ],

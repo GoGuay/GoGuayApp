@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { AlertController, IonicModule, NavController } from '@ionic/angular';
+import { AlertController, NavController, IonRow, IonCol, IonAvatar } from '@ionic/angular/standalone';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -23,8 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './tarjeta-viaje.component.html',
   styleUrls: ['./tarjeta-viaje.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonAvatar, IonCol, IonRow,
     CommonModule,
     FormsModule,
     MatIcon,

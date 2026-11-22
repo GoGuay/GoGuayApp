@@ -2,13 +2,13 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IonicModule } from '@ionic/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { IonContent, IonAccordionGroup, IonItem, IonLabel, IonIcon, IonAccordion } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-centro-ayuda',
@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./centro-ayuda.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, MatIconModule, IonicModule, MatButtonModule, RouterModule, MatDivider, NavbarComponent, TranslateModule],
+  imports: [IonAccordion, IonIcon, IonLabel, IonItem, IonAccordionGroup, IonContent, FormsModule, MatIconModule,  MatButtonModule, RouterModule, MatDivider, NavbarComponent, TranslateModule],
 })
 export class CentroAyudaPage implements OnInit {
   userLoggedIn: boolean = false;

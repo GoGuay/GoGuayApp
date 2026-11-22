@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonContent, IonicModule, NavController } from '@ionic/angular';
+import { IonContent,  NavController, IonSegmentButton, IonLabel, IonIcon, IonItem, IonRadio } from '@ionic/angular/standalone';
 import { LanguageService } from '../../core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -30,7 +30,7 @@ import { loadScript } from '@paypal/paypal-js';
   standalone: true,
   providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, NavbarComponent, IonicModule, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent],
+  imports: [IonRadio, IonItem, IonIcon, IonLabel, IonSegmentButton, FormsModule, NavbarComponent, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent, IonContent],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;

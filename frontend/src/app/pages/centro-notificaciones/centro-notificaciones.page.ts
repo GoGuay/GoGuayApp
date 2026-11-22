@@ -5,7 +5,6 @@ import { NotificacionesService } from 'src/app/core/notificaciones/notificacione
 import { UserServicesService } from 'src/app/core/user-services/user-services.service';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { MatIcon } from '@angular/material/icon';
@@ -16,6 +15,7 @@ import { Subject } from 'rxjs/internal/Subject';
 import { timer } from 'rxjs/internal/observable/timer';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { IonContent, IonFab, IonFabButton } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-centro-notificaciones',
@@ -23,7 +23,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
   styleUrls: ['./centro-notificaciones.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, NavbarComponent, IonicModule, SpinnerComponent, MatIcon, TranslateModule],
+  imports: [IonFabButton, IonFab, IonContent, CommonModule, FormsModule, NavbarComponent,  SpinnerComponent, MatIcon, TranslateModule],
 })
 export class CentroNotificacionesPage implements OnInit {
   usuario: any;

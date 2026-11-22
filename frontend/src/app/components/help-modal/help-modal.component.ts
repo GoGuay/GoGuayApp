@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

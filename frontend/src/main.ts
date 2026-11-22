@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
   const originalWarn = console.warn;
   console.warn = (...args: any[]) => {
     if (typeof args[0] === 'string' && args[0].includes('NG0912')) {
-      return; // Ignora los avisos de colisión de ID de componentes de Ionic
+      return;
     }
     originalWarn.apply(console, args);
   };

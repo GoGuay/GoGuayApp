@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
 // Ionic Standalone
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent } from '@ionic/angular/standalone';
 
 // Material
 import { MatButtonModule } from '@angular/material/button';
@@ -30,10 +30,9 @@ import { ToastModule } from 'primeng/toast';
   styleUrls: ['./detalles-viaje.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
+  imports: [IonContent, IonTitle, IonBackButton, IonButtons, IonToolbar, IonHeader,
     CommonModule,
     FormsModule,
-    IonicModule,
     MatDivider,
     MatIcon,
     MatButtonModule,

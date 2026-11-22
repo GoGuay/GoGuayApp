@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrateg
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IonicModule, NavController } from '@ionic/angular';
+import {  NavController, IonContent, IonRow, IonCol } from '@ionic/angular/standalone';
 import { MatDivider } from '@angular/material/divider';
 import { Usuario } from '../../../models/user/usuario.model';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
@@ -28,8 +28,7 @@ import { SelectorGeneralComponent } from '../../../components/selector-general/s
   templateUrl: './mi-perfil.page.html',
   styleUrls: ['./mi-perfil.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonCol, IonRow, IonContent,
     CommonModule,
     FormsModule,
     TranslateModule,

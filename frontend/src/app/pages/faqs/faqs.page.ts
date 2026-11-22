@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
@@ -9,6 +8,7 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { VentanaDudasComponent } from '../../components/ventana-dudas/ventana-dudas.component';
+import { IonContent, IonAccordionGroup, IonAccordion, IonItem, IonLabel } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-faqs',
@@ -16,10 +16,9 @@ import { VentanaDudasComponent } from '../../components/ventana-dudas/ventana-du
   styleUrls: ['./faqs.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
+  imports: [IonLabel, IonItem, IonAccordion, IonAccordionGroup, IonContent,
     FormsModule,
     MatIconModule,
-    IonicModule,
     MatButtonModule,
     RouterModule,
     JumbotronComponent,

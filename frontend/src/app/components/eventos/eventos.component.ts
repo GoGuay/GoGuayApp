@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonGrid, IonRow, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonCol } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { Evento } from '../../models/eventos/eventos';
@@ -19,8 +19,7 @@ import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
 @Component({
   selector: 'app-trayectos-populares',
   standalone: true,
-  imports: [
-    IonicModule,
+  imports: [IonCol, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonRow, IonGrid,
     TranslateModule,
     CommonModule,
     MatTableModule,

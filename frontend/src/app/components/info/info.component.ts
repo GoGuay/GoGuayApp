@@ -1,12 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { IonGrid } from '@ionic/angular/standalone';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { IonGrid, IonCol, IonRow } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-info',
   standalone: true,
-  imports: [IonicModule, TranslateModule],
+  imports: [IonRow, IonCol, IonGrid, TranslateModule],
   templateUrl: './info.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./info.component.scss'],

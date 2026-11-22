@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AlertController, IonicModule, NavController } from '@ionic/angular';
+import { AlertController, NavController, IonHeader, IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   warningOutline,
@@ -44,7 +44,7 @@ export interface IncidenciaItem {
   styleUrls: ['./incidencias-usuario.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, FormsModule, IonicModule, NavbarComponent],
+  imports: [IonSpinner, IonIcon, IonContent, IonHeader, CommonModule, FormsModule,  NavbarComponent],
 })
 export class IncidenciasUsuarioPage implements OnInit {
   incidencias: IncidenciaItem[] = [];

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NavController, IonicModule } from '@ionic/angular';
+import { NavController, IonContent, IonIcon, IonList, IonItem, IonButton } from '@ionic/angular/standalone';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { addIcons } from 'ionicons';
 import { shieldOutline, mailOutline, lockClosedOutline, arrowBackOutline} from 'ionicons/icons';
@@ -16,7 +16,7 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   styleUrls: ['./login-admin.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, ReactiveFormsModule, IonicModule, SpinnerComponent, MatDialogModule],
+  imports: [IonButton, IonItem, IonList, IonIcon, IonContent, FormsModule, ReactiveFormsModule, SpinnerComponent, MatDialogModule],
 })
 export class AdminLoginPage implements OnInit {
   adminForm: FormGroup;

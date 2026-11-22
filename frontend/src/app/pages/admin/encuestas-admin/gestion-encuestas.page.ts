@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { IonicModule, NavController } from '@ionic/angular';
+import { NavController, IonContent, IonButton, IonChip, IonIcon, IonSearchbar, IonCard, IonCardContent } from '@ionic/angular/standalone';
 import { EncuestaService } from '../../../core/encuesta_satisfaccion-service/encuesta_satisfaccion.service';
 import { NavbarAdmin } from '../shared-admin/navbar-admin/navbar-admin.page';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -9,7 +9,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   templateUrl: './gestion-encuestas.page.html',
   styleUrls: ['./gestion-encuestas.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, NavbarAdmin, IonicModule, DatePipe],
+  imports: [CommonModule, NavbarAdmin, DatePipe, IonContent, IonButton, IonChip, IonIcon, IonSearchbar, IonCard, IonCardContent],
 })
 export class GestionEncuestasPage implements OnInit {
   todasLasEncuestas: any[] = [];

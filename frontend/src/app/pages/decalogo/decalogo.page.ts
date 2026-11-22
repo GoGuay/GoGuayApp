@@ -2,9 +2,9 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
-import { IonicModule } from '@ionic/angular';
 import { Usuario } from 'src/app/models/user/usuario.model';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
+import { IonContent, IonAccordionGroup, IonAccordion, IonItem, IonLabel } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-decalogo',
@@ -12,7 +12,7 @@ import { JumbotronComponent } from '../jumbotron/jumbotron.component';
   styleUrls: ['./decalogo.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, FormsModule, NavbarComponent, JumbotronComponent],
+  imports: [IonLabel, IonItem, IonAccordion, IonAccordionGroup, IonContent, FormsModule, NavbarComponent, JumbotronComponent],
 })
 export class DecalogoPage implements OnInit {
   userLoggedIn: boolean = false;

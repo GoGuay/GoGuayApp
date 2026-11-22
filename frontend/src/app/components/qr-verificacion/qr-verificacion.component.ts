@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController } from '@ionic/angular';
+import {ModalController } from '@ionic/angular/standalone';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { Viaje } from '../../models/travel/viaje.model';
 import { Subscription, interval } from 'rxjs';
@@ -12,7 +12,7 @@ import { QrModalContentComponent } from './qr-modal-content/qr-modal-content.com
   styleUrls: ['./qr-verificacion.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonicModule, CommonModule],
+  imports: [CommonModule],
 })
 export class QrVerificacionComponent implements OnInit, OnDestroy {
   viajeEnCurso: Viaje | null = null;
