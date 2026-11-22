@@ -1,4 +1,4 @@
-@import "../../../animations.scss";
+@use "../../../animations" as *;
 
 .custom-bottom-sheet {
   padding: 8px;
@@ -73,7 +73,7 @@
   background-color: #f4f5fa !important;
   border-left: 4px solid #B3B5E6 !important;
   border-radius: 35px;
-  
+
   .font-large {
     font-size: 1.4rem;
   }
@@ -83,7 +83,7 @@
   color: #6c71c4 !important;
   text-decoration: none;
   display: inline-block;
-  
+
   &:hover {
     text-decoration: underline;
     color: #3f51b5 !important;
@@ -124,7 +124,7 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .stars-interactive {
     width: 38px;
     height: 38px;
