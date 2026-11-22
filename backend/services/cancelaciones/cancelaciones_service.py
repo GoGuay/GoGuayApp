@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime, timezone, timedelta
-from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor
+from models.enums import MotivosCancelacionPasajero, MotivosCancelacionConductor, EstadoSolicitudEnum
 from models import Viaje, PasajeroViaje, Notificacion, Cancelacion, Usuario
 from extensions import db
 from sqlalchemy.orm import joinedload
@@ -74,7 +74,7 @@ def calcular_y_registrar_cancelacion(usuario, viaje, rol, peso_falta, motivo, au
     else:
         operaciones_previas = sum(
             1 for r in usuario.reservas_realizadas
-            if r.estado in ['aceptado', 'accepted']
+            if r.estado in [EstadoSolicitudEnum.ACEPTADA.value]
         )
 
     puntos_a_sumar = peso_falta

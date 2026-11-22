@@ -25,7 +25,7 @@ export interface Viaje {
   notificaciones?: any;
   preferencias?: any[];
   reserva_automatica?: boolean;
-  estado_solicitud_propia?: 'pendiente' | 'aceptado' | 'rechazado' | null;
+  estado_solicitud_propia?: 'Pendiente' | 'Aceptado' | 'Rechazado' | null;
   solicitudes_pendientes?: any[] | undefined;
   ya_puntuado?: boolean;
   enCursoReal?: boolean;

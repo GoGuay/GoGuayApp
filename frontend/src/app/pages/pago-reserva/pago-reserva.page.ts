@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonContent, IonItem, IonLabel, NavController, IonHeader, IonToolbar, IonButtons, IonTitle, IonBackButton } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonLabel, NavController, IonHeader, IonToolbar, IonButtons, IonTitle, IonBackButton, IonCheckbox } from '@ionic/angular/standalone';
 import { TravelService } from '../../core/travel-services/travel.service';
 import { Viaje } from '../../models/travel/viaje.model';
 import { CommonModule } from '@angular/common';
@@ -19,7 +19,7 @@ declare var paypal: any;
   styleUrls: ['./pago-reserva.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonHeader, CommonModule,  SpinnerComponent, FormsModule, IonContent, IonItem, IonLabel, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
+  imports: [IonHeader, CommonModule, SpinnerComponent, FormsModule, IonContent, IonItem, IonLabel, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonCheckbox],
 })
 export class PagoReservaPage implements OnInit {
   viaje!: Viaje;

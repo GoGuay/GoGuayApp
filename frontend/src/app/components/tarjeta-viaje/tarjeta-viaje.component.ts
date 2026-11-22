@@ -199,7 +199,7 @@ export class TarjetaViajeComponent implements OnInit {
             v.usuario_id = v.usuario.id;
           }
           if (!v.estado_solicitud_propia) {
-            v.estado_solicitud_propia = 'aceptado';
+            v.estado_solicitud_propia = 'Aceptada';
           }
         });
 

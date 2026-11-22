@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
 from models import Usuario, Notificacion, PasajeroViaje, Viaje
+from models.enums import  EstadoSolicitudEnum
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
@@ -263,7 +264,7 @@ def solicitar_unirse():
     existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
     if existente:
         if existente.estado == 'pendiente_pago':
-            existente.estado = 'pendiente'
+            existente.estado = EstadoSolicitudEnum.PENDIENTE.value
         else:
             return jsonify({"error": "Ya has solicitado unirse a este viaje anteriormente"}), 400
     else:
@@ -274,7 +275,7 @@ def solicitar_unirse():
         nueva_solicitud = PasajeroViaje(
             usuario_id=emisor_id,
             viaje_id=viaje_id,
-            estado='pendiente',
+            estado=EstadoSolicitudEnum.PENDIENTE.value,
             paypal_auth_id=paypal_auth_id
         )
         db.session.add(nueva_solicitud)

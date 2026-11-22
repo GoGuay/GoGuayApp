@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, time
+from models.enums import EstadoSolicitudEnum
 import pytz
 
 # Tarea programada para enviar recordatorios a los pasajeros sobre sus viajes próximos a iniciar.
@@ -76,7 +77,7 @@ def tarea_recordatorio_viajes(app):
         for viaje in viajes_proximos:
             p_aceptados = PasajeroViaje.query.filter_by(
                 viaje_id=viaje.id, 
-                estado='aceptado', 
+                estado=EstadoSolicitudEnum.ACEPTADA.value, 
                 recordatorio_inicio_enviado=False
             ).all()
 

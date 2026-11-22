@@ -44,14 +44,14 @@
           <h4>Mi solicitud de plaza</h4>
           }
           <span class="badge-solicitud" [ngClass]="
-                    viaje.estado_solicitud_propia === 'aceptado'
+                    viaje.estado_solicitud_propia === 'Aceptado'
                       ? 'badge-aceptada'
-                      : viaje.estado_solicitud_propia === 'rechazado'
+                      : viaje.estado_solicitud_propia === 'Rechazado'
                         ? 'badge-rechazada'
                         : 'badge-pendiente'
                   ">
             <i class="fi fi-rr-clock me-1"></i>
-            {{ viaje.estado_solicitud_propia || 'pendiente' | uppercase }}
+            {{ viaje.estado_solicitud_propia || 'Pendiente' | uppercase }}
           </span>
         </div>
         }
@@ -119,7 +119,7 @@
         <!-- BOTÓN PUNTUAR (Solo si eres acompañante aceptado y el viaje finalizó) -->
         @if (
         viaje.usuario_id !== userData?.usuario?.id &&
-        (filtroViajes === 'pasajero' || viaje.estado_solicitud_propia === 'aceptado') &&
+        (filtroViajes === 'pasajero' || viaje.estado_solicitud_propia === 'Aceptado') &&
         (viaje.estado_viaje?.toLowerCase() === 'finalizado' ||
         funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida)) &&
         !viaje.ya_puntuado
@@ -175,7 +175,7 @@
         @if (viaje.usuario_id !== userData?.usuario?.id && viaje.estado_viaje !== 'Finalizado' && viaje.estado_viaje !==
         'Cancelado') {
         <!-- Caso 1: Ya está aceptado en el viaje -> Cancelar reserva -->
-        @if (viaje.estado_solicitud_propia === 'aceptado' || filtroViajes === 'pasajero') {
+        @if (viaje.estado_solicitud_propia === 'Aceptado' || filtroViajes === 'pasajero') {
         <button class="btn-gestion btn-eliminar" (click)="salirDeViaje(viaje.id)" matTooltip="Cancelar reserva"
           data-name="Cancelar reserva" aria-label="Cancelar reserva">
           <mat-icon>event_busy</mat-icon>
@@ -184,7 +184,7 @@
         }
         <!-- Caso 2: Aún tiene la solicitud pendiente -> Cancelar solicitud -->
         @if (
-        viaje.estado_solicitud_propia !== 'aceptado' && viaje.estado_solicitud_propia !== 'rechazado' && filtroViajes
+        viaje.estado_solicitud_propia !== 'Aceptado' && viaje.estado_solicitud_propia !== 'Rechazado' && filtroViajes
         !== 'pasajero'
         ) {
         <button class="btn-gestion btn-eliminar" (click)="cancelarSolicitud(viaje)" matTooltip="Cancelar solicitud"

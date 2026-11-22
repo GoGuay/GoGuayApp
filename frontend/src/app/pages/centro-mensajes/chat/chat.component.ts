@@ -62,7 +62,7 @@ export class ChatPage implements OnInit, OnDestroy {
   detallesConversacion: any;
 
   cargandoSolicitud: { [key: number]: boolean } = {};
-  solicitudesGestionadas: { [key: number]: 'aceptada' | 'rechazada' | 'cancelada' } = {};
+  solicitudesGestionadas: { [key: number]: 'Aceptada' | 'Rechazada' | 'Cancelada' } = {};
 
   mostrarEmojiPicker: boolean = false;
   listaEmojis = LISTA_EMOJIS;
@@ -220,8 +220,8 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
 
         if (respuestaConductor) {
           this.solicitudesGestionadas[m.id] = respuestaConductor.texto.includes('He aceptado tu solicitud')
-            ? 'aceptada'
-            : 'rechazada';
+            ? 'Aceptada'
+            : 'Rechazada';
           return;
         }
 
@@ -315,23 +315,23 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
         }
 
         if (!viaje) {
-          this.solicitudesGestionadas[mensajeId] = 'rechazada';
+          this.solicitudesGestionadas[mensajeId] = 'Rechazada';
           return;
         }
 
         const estaAceptado =
-          viaje.acompanantes?.some((p: any) => p.id === pasajeroId) || viaje.estado_solicitud_propia === 'aceptado';
+          viaje.acompanantes?.some((p: any) => p.id === pasajeroId) || viaje.estado_solicitud_propia === 'Aceptada';
 
         const estaPendiente =
           viaje.solicitudes_pendientes?.some((p: any) => p.id === pasajeroId) ||
-          viaje.estado_solicitud_propia === 'pendiente';
+          viaje.estado_solicitud_propia === 'Pendiente';
 
         if (estaAceptado) {
-          this.solicitudesGestionadas[mensajeId] = 'aceptada';
+          this.solicitudesGestionadas[mensajeId] = 'Aceptada';
         } else if (estaPendiente) {
           delete this.solicitudesGestionadas[mensajeId];
         } else {
-          this.solicitudesGestionadas[mensajeId] = 'rechazada';
+          this.solicitudesGestionadas[mensajeId] = 'Rechazada';
         }
       });
 
@@ -514,7 +514,7 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
     if (accion === 'aceptar') {
       this.travelService.confirmarPasajeroManual(viajeId, pasajeroId).subscribe({
         next: () => {
-          this.solicitudesGestionadas[mensajeId] = 'aceptada';
+          this.solicitudesGestionadas[mensajeId] = 'Aceptada';
           this.viajesCache.delete(viajeId);
           this.cargandoSolicitud[mensajeId] = false;
           this.travelService.notificarCambioViajes();
@@ -530,7 +530,7 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
     } else {
       this.travelService.rechazarPasajeroManual(viajeId, pasajeroId).subscribe({
         next: () => {
-          this.solicitudesGestionadas[mensajeId] = 'rechazada';
+          this.solicitudesGestionadas[mensajeId] = 'Rechazada';
           this.viajesCache.delete(viajeId);
           this.cargandoSolicitud[mensajeId] = false;
           this.travelService.notificarCambioViajes();

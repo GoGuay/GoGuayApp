@@ -26,15 +26,15 @@ from models import (
     Ordenes_Paypal,
 )
 from models.enums import (
-    MotivosCancelacionPasajero,
     MotivosCancelacionConductor,
     EstadoSolicitudEnum,
+    EstadoViajeEnum
 )
 from services.cancelaciones import (
     calcular_y_registrar_cancelacion,
     calcular_peso_cancelacion,
 )
-from services.gestion_pagos import reembolsar_pago_al_pasajero
+from services.pagos_service.pagos_service import reembolsar_pago_al_pasajero
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
@@ -256,7 +256,7 @@ def editar_viaje(viaje_id):
         else:
             texto_cambios = detalles_cambios[0]
 
-        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado in ['accepted', 'aceptado']]
+        pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado in [EstadoSolicitudEnum.ACEPTADA.value]]
 
         if pasajeros_a_notificar:
             mensaje_aviso = (
@@ -493,7 +493,7 @@ def cancelar_viaje(viaje_id):
 
                 pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
 
-            elif pasajero.estado in ['pendiente', EstadoSolicitudEnum.PENDIENTE.value]:
+            elif pasajero.estado in [EstadoSolicitudEnum.PENDIENTE.value]:
                 if getattr(pasajero, 'paypal_auth_id', None):
                     res_void = reembolsar_pago_al_pasajero(
                         pasajero_viaje=pasajero,
@@ -845,7 +845,7 @@ def unirse_viaje():
             "detalle": res_data,
         }), 500
 
-    estado_inicial = 'aceptado' if viaje.reserva_automatica else 'pendiente'
+    estado_inicial = EstadoSolicitudEnum.ACEPTADA.value if viaje.reserva_automatica else EstadoSolicitudEnum.PENDIENTE.value
 
     nuevo_pasajero = PasajeroViaje(
         usuario_id=usuario_id,
@@ -914,7 +914,7 @@ def confirmar_pasajero_manual():
     solicitud = PasajeroViaje.query.filter_by(
         usuario_id=pasajero_id,
         viaje_id=viaje_id,
-        estado='pendiente',
+        estado=EstadoSolicitudEnum.PENDIENTE.value
     ).first()
 
     if not solicitud:
@@ -960,7 +960,7 @@ def confirmar_pasajero_manual():
         solicitud.paypal_auth_id = capture_data.get("id", auth_id)
 
     try:
-        solicitud.estado = 'aceptado'
+        solicitud.estado = EstadoSolicitudEnum.ACEPTADA.value
         solicitud.fecha_confirmacion_reserva = datetime.now(timezone.utc)
         viaje.plazas -= 1
 
@@ -1008,7 +1008,7 @@ def cancelar_solicitud():
     solicitud = PasajeroViaje.query.filter_by(
         viaje_id=viaje_id,
         usuario_id=usuario_id,
-        estado='pendiente',
+        estado=EstadoSolicitudEnum.PENDIENTE.value,
     ).first()
 
     if not solicitud:
@@ -1078,8 +1078,8 @@ def obtener_mis_solicitudes(usuario_id):
         PasajeroViaje.query.join(Viaje)
         .filter(
             Viaje.usuario_id == usuario_id,
-            (PasajeroViaje.estado == 'pendiente')
-            | (PasajeroViaje.estado == 'rechazado')
+            (PasajeroViaje.estado == EstadoSolicitudEnum.PENDIENTE.value)
+            | (PasajeroViaje.estado == EstadoSolicitudEnum.RECHAZADA.value)
             | (PasajeroViaje.estado == None),
         )
         .options(joinedload(PasajeroViaje.viaje))
@@ -1105,7 +1105,7 @@ def rechazar_pasajero_manual():
     solicitud = PasajeroViaje.query.filter_by(
         viaje_id=viaje_id,
         usuario_id=pasajero_id,
-        estado='pendiente',
+        estado=EstadoSolicitudEnum.PENDIENTE.value
     ).first()
 
     if not solicitud:
@@ -1133,7 +1133,7 @@ def rechazar_pasajero_manual():
             }), response.status_code
 
     try:
-        solicitud.estado = 'rechazado'
+        solicitud.estado = EstadoSolicitudEnum.RECHAZADA.value
         db.session.commit()
 
         viaje = Viaje.query.get(viaje_id)
@@ -1577,8 +1577,8 @@ def obtener_viaje_en_curso(usuario_id):
             PasajeroViaje.query.join(Viaje)
             .filter(
                 PasajeroViaje.usuario_id == usuario_id,
-                PasajeroViaje.estado == 'aceptado',
-                Viaje.estado_viaje == 'En curso',
+                PasajeroViaje.estado == EstadoSolicitudEnum.ACEPTADA.value,
+                Viaje.estado_viaje == EstadoViajeEnum.EN_CURSO.value,
             )
             .first()
         )

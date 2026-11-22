@@ -138,20 +138,20 @@
                     <div class="mt-2">
                       <div
                         class="info-gestion-box"
-                        [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'aceptado' : 'rechazado'"
+                        [ngClass]="solicitudesGestionadas[m.id] === 'Aceptada' ? 'aceptado' : 'Rechazada'"
                       >
                         <i
-                          [ngClass]="solicitudesGestionadas[m.id] === 'aceptada' ? 'fi fi-rr-comment-alt-check' : 'fi fi-rr-cross-circle'"
+                          [ngClass]="solicitudesGestionadas[m.id] === 'Aceptada' ? 'fi fi-rr-comment-alt-check' : 'fi fi-rr-cross-circle'"
                         ></i>
                         <small>
                           @switch (solicitudesGestionadas[m.id]) {
-                            @case ('aceptada') {
+                            @case ('Aceptada') {
                               {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido aceptada.' : 'Has aceptado a este pasajero.' }}
                             }
-                            @case ('rechazada') {
+                            @case ('Rechazada') {
                               {{ m.emisor_id === usuarioLogueadoId ? 'Tu solicitud ha sido rechazada.' : 'Has rechazado esta solicitud.' }}
                             }
-                            @case ('cancelada') {
+                            @case ('Cancelada') {
                               {{
                                 m.emisor_id === usuarioLogueadoId ? 'Has cancelado esta solicitud.' : 'Esta solicitud ya no está activa.'
                               }}

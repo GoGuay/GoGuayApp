@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from extensions import db
 import json
 from enum import Enum
-from models.enums import EstadoViajeEnum
+from models.enums import EstadoViajeEnum, EstadoSolicitudEnum
 
 
 class Viaje(db.Model):
@@ -37,7 +37,8 @@ class Viaje(db.Model):
         return relacion.estado if relacion else None
     @property
     def acompanantes(self):
-        return [p for p in self.pasajeros if p.estado == 'aceptado']
+        estados_validos = ['aceptado', 'Aceptada', 'aceptada', 'accepted', 'ACEPTADA']
+        return [p for p in self.pasajeros if p.estado in estados_validos]
     
     def serialize(self, current_user_id=None, incluir_ruta=True, incluir_historial=True, puntuados_ids=None):
         ya_puntuado = False
@@ -67,13 +68,13 @@ class Viaje(db.Model):
             if current_user_id and p.usuario_id == current_user_id:
                 estado_propio = p.estado
             if p.usuario:
-                if p.estado == 'aceptado':
+                if p.estado == EstadoSolicitudEnum.ACEPTADA.value:
                     acompanantes_list.append({
                         "id": p.usuario.id,
                         "nombre": p.usuario.nombre,
                         "fotoPerfil": getattr(p.usuario, 'fotoPerfil', None)
                     })
-                elif p.estado == 'pendiente':
+                elif p.estado == EstadoSolicitudEnum.PENDIENTE.value:
                     solicitudes_list.append({
                         "id": p.usuario.id,
                         "pasajero_viaje_id": p.id,
