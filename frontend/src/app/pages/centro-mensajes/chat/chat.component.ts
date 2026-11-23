@@ -6,7 +6,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
-import { IonContent,  ModalController, NavController, IonHeader, IonFab, IonFabButton, IonButton, IonBadge, IonFooter, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, ModalController, NavController, IonHeader, IonFab, IonFabButton, IonButton, IonBadge, IonFooter, IonIcon, IonTextarea } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { MessagingService } from '../../../core/menssaging-service/messaging.service';
 import { Usuario } from '../../../models/user/usuario.model';
@@ -35,7 +35,7 @@ import { MessageService } from 'primeng/api';
     ReactiveFormsModule,
     MatSliderModule,
     NavbarComponent,
-    SpinnerComponent, IonContent],
+    SpinnerComponent, IonContent, IonTextarea],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [],
 })
@@ -90,6 +90,11 @@ export class ChatPage implements OnInit, OnDestroy {
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     this.usuarioLogueadoId = this.userData?.usuario?.id;
     this.conversacionId = Number(this.route.snapshot.paramMap.get('id'));
+    setTimeout(() => {
+      if (this.cargandoChat && this.conversacionId) {
+        this.iniciarPollingMensajes();
+      }
+    }, 50);
   }
 
   /**
@@ -99,6 +104,12 @@ export class ChatPage implements OnInit, OnDestroy {
     this.cargandoChat = true;
     this.viajesCache.clear();
     this.iniciarPollingMensajes();
+  }
+
+  ionViewDidEnter() {
+    if (!this.cargandoChat && this.mensajes.length > 0) {
+      this.scrollToBottom(0);
+    }
   }
 
   /**
@@ -138,8 +149,9 @@ export class ChatPage implements OnInit, OnDestroy {
         const hayCambios = esPrimeraCarga || data.length !== this.mensajes.length || ultimoIdAnterior !== ultimoIdNuevo;
 
         if (hayCambios) {
+          const hayNuevosMensajes = esPrimeraCarga || data.length > this.mensajes.length || ultimoIdAnterior !== ultimoIdNuevo;
           this.mensajes = data;
-          this.sincronizarEstadoCompleto(data, esPrimeraCarga || ultimoIdAnterior !== ultimoIdNuevo);
+          this.sincronizarEstadoCompleto(data, hayNuevosMensajes);
           this.marcarComoLeidos();
         }
       });
@@ -185,7 +197,7 @@ export class ChatPage implements OnInit, OnDestroy {
    * 2. Reutiliza caché en memoria.
    * 3. Si faltan viaje_id en mensajes antiguos, pide getViajesUsuario una sola vez para todos.
    */
-private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false) {
+  private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false) {
     this.telefonoRecibido = null;
     this.compartiendoMiTelefono = false;
 
@@ -342,8 +354,9 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
   private finalizarCargaChat(hacerScroll: boolean) {
     this.cargandoChat = false;
     this.cdr.detectChanges();
+
     if (hacerScroll) {
-      this.scrollToBottom();
+      this.scrollToBottom(450);
     }
   }
 
@@ -392,13 +405,35 @@ private sincronizarEstadoCompleto(mensajes: any[], hacerScroll: boolean = false)
     this.messagingService.marcarComoLeido(this.conversacionId, this.usuarioLogueadoId).subscribe();
   }
 
-  scrollToBottom() {
-    setTimeout(() => {
+  scrollToBottom(duracion: number = 450) {
+    const moverAbajoAnimado = async () => {
       if (this.content) {
-        this.content.scrollToBottom(300);
+        try {
+          await this.content.scrollToBottom(duracion);
+        } catch {
+          try {
+            const scrollEl = await this.content.getScrollElement();
+            scrollEl.scrollTo({ top: scrollEl.scrollHeight, behavior: 'smooth' });
+          } catch { }
+        }
       }
-    }, 100);
+
+      ['.chat-container', '.chat-limiter'].forEach((selector) => {
+        const el = document.querySelector(selector) as HTMLElement | null;
+        if (el && el.scrollHeight > el.clientHeight) {
+          el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+        }
+      });
+
+      const ultimoAncla = document.getElementById('fin-chat');
+      if (ultimoAncla) {
+        ultimoAncla.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    };
+
+    setTimeout(moverAbajoAnimado, 120);
   }
+
 
   decidirCompartirTelefono(acepta: boolean) {
     if (acepta) {
