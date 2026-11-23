@@ -77,6 +77,7 @@ export class PagoReservaPage implements OnInit {
           color: 'blue',
           shape: 'rect',
           label: 'pay',
+          tagline: false,
         },
         createOrder: async () => {
           const pasajeroId = this.userData?.usuario?.id;

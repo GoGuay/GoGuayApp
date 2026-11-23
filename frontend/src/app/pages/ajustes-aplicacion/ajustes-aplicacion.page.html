@@ -184,6 +184,33 @@
                   [(ngModel)]="metodoCobroPredeterminado"
                   (ionChange)="onMetodoCobroChange()"
                 >
+                  <!-- COBRO EN MONEDERO DE LA APP -->
+                  <div class="payment-option-card mt-2">
+                    <ion-item
+                      lines="none"
+                      class="rounded-pill-item"
+                    >
+                      <ion-icon
+                        name="wallet-outline"
+                        slot="start"
+                        class="wallet-icon"
+                      ></ion-icon>
+                      <ion-label>Monedero de la aplicación (GoGuay)</ion-label>
+                      <ion-radio
+                        slot="end"
+                        value="monedero"
+                      ></ion-radio>
+                    </ion-item>
+                    @if (metodoCobroPredeterminado === 'monedero') {
+                    <div class="p-3 animate__animated animate__fadeIn">
+                      <div class="alert alert-light border mb-0 small text-muted">
+                        <i class="fi fi-rr-info me-2 text-primary"></i>
+                        El importe de tus viajes se abonará automáticamente en tu <strong>saldo disponible de GoGuay</strong>. Podrás retirarlo a tu cuenta bancaria o PayPal en cualquier momento desde la sección <strong>Saldo y Transferencias</strong>.
+                      </div>
+                    </div>
+                    }
+                  </div>
+
                   <!-- CUENTA PAYPAL -->
                   <div class="payment-option-card">
                     <ion-item

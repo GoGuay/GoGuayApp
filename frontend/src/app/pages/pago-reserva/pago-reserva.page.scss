@@ -35,14 +35,17 @@ $bg-light: #f4f5f8;
 }
 
 .metodos-pago {
+  background: transparent !important;
+
   .checkbox-container-custom {
-    background-color: #f8f9fa; 
+    background-color: #ffffff !important; 
     border-radius: 35px;
     margin: 0 10px 20px 10px;
     padding: 5px 20px; 
     border: 1px solid #eee;
     display: block !important;
     visibility: visible !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
     ion-item {
       --background: transparent;
@@ -57,12 +60,18 @@ $bg-light: #f4f5f8;
       ion-label {
         font-size: 0.85rem;
         opacity: 1;
-        color: #666 !important;
+        color: #555555 !important;
       }
 
       ion-checkbox {
         --size: 20px;
         --border-radius: 10px;
+        --checkbox-background: #ffffff;
+        --checkbox-background-checked: #B3B5E6;
+        --border-color: #9ca3af;
+        --border-color-checked: #B3B5E6;
+        --checkmark-color: #ffffff;
+        --border-width: 2px;
         margin-right: 5px;
       }
     }
@@ -77,10 +86,16 @@ $bg-light: #f4f5f8;
     width: 100%;
     margin-top: 15px;
     z-index: 1;
+    background: transparent !important;
+    color-scheme: light;
     
-    div {
-        width: 100% !important;
-        max-width: 100% !important;
+    ::ng-deep div,
+    ::ng-deep iframe {
+      width: 100% !important;
+      max-width: 100% !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      color-scheme: light !important;
     }
   }
 }

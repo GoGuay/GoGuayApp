@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/
 
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { IonContent,  NavController, IonSegmentButton, IonLabel, IonIcon, IonItem, IonRadio } from '@ionic/angular/standalone';
+import { IonContent, NavController, IonSegment, IonSegmentButton, IonLabel, IonIcon, IonItem, IonRadio, IonRadioGroup, IonToggle } from '@ionic/angular/standalone';
 import { LanguageService } from '../../core/lenguajes/languaje.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -15,9 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { addIcons } from 'ionicons';
-import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle } from 'ionicons/icons';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { log } from 'console';
+import { logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle, walletOutline } from 'ionicons/icons';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { MonederoService } from 'src/app/core/monedero-service/monedero.service';
 import { PAYPAL_CLIENT_ID, PAYPAL_REDIRECT_URI } from 'src/app/models/constantes/constantes.model';
@@ -30,7 +28,24 @@ import { loadScript } from '@paypal/paypal-js';
   standalone: true,
   providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonRadio, IonItem, IonIcon, IonLabel, IonSegmentButton, FormsModule, NavbarComponent, ToastModule, MatDividerModule, TranslateModule, FormsModule, SpinnerComponent, IonContent],
+  imports: [
+    IonRadio,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonSegment,
+    IonSegmentButton,
+    FormsModule,
+    NavbarComponent,
+    ToastModule,
+    MatDividerModule,
+    TranslateModule,
+    FormsModule,
+    SpinnerComponent,
+    IonContent,
+    IonRadioGroup,
+    IonToggle
+  ],
 })
 export class AjustesAplicacionPage implements OnInit {
   userLoggedIn: boolean = false;
@@ -109,7 +124,7 @@ export class AjustesAplicacionPage implements OnInit {
     private funcionesComunes: FuncionesComunes,
     private monederoService: MonederoService
   ) {
-    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle });
+    addIcons({ logoPaypal, cardOutline, businessOutline, sparkles, carSportOutline, checkmarkCircle, walletOutline });
   }
 
   ngOnInit() {
@@ -143,11 +158,11 @@ export class AjustesAplicacionPage implements OnInit {
 
     this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (this.userData?.usuario) {
-      this.cobroEmailPaypal = this.userData.usuario.cobro_paypal_email;
-      this.titular_cuenta_bancaria = this.userData.usuario.cobro_titular;
-      this.numero_cuenta_bancaria = this.userData.usuario.cobro_iban;
+      this.cobroEmailPaypal = (this.userData.usuario.paypal_email || this.userData.usuario.cobro_paypal_email) ?? undefined;
+      this.titular_cuenta_bancaria = this.userData.usuario.cobro_titular ?? undefined;
+      this.numero_cuenta_bancaria = this.userData.usuario.cobro_iban ?? undefined;
       this.metodoCobroPredeterminado = this.userData.usuario.metodo_cobro_preferido || 'transferencia';
-      this.paypalVinculado = !!this.cobroEmailPaypal;
+      this.paypalVinculado = Boolean(this.userData.usuario.paypal_vinculado || this.cobroEmailPaypal);
     }
     this.obtenerUsuario();
   }
@@ -189,9 +204,11 @@ export class AjustesAplicacionPage implements OnInit {
   obtenerUsuario() {
     this.userService.obtenerUsuarioPorID(this.userData.usuario.id).subscribe((respuesta) => {
       this.usuarioBD = respuesta;
-      console.log(this.usuarioBD);
-      this.emailPaypal = this.usuarioBD.paypal_email;
+      this.emailPaypal = this.usuarioBD.paypal_email || this.usuarioBD.cobro_paypal_email || '';
       this.metodoPagoPredeterminado = respuesta.metodo_pago_preferido || 'paypal';
+      if (respuesta.metodo_cobro_preferido) {
+        this.metodoCobroPredeterminado = respuesta.metodo_cobro_preferido;
+      }
       if (!this.paypalVinculado) {
         this.intentarRenderizarPaypal();
       }
@@ -474,23 +491,64 @@ export class AjustesAplicacionPage implements OnInit {
    * Recoge los datos del formulario y los envía al backend para actualizar el perfil del usuario.
    */
   guardarConfiguracionCobro() {
+    if (this.metodoCobroPredeterminado === 'paypal' && !this.paypalVinculado && !this.cobroEmailPaypal) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'PayPal no vinculado',
+        detail: 'Vincula primero tu cuenta de PayPal o elige otro método de cobro.',
+      });
+      return;
+    }
+
+    if (this.metodoCobroPredeterminado === 'transferencia' && (!this.titular_cuenta_bancaria?.trim() || !this.numero_cuenta_bancaria?.trim())) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Datos bancarios incompletos',
+        detail: 'Introduce el titular y el IBAN para recibir transferencias.',
+      });
+      return;
+    }
+
     const datosCobro = {
       metodo_cobro_preferido: this.metodoCobroPredeterminado,
-      cobro_paypal_email: this.cobroEmailPaypal,
-      cobro_iban: this.numero_cuenta_bancaria,
-      cobro_titular: this.titular_cuenta_bancaria,
+      paypal_email: this.cobroEmailPaypal || this.emailPaypal || undefined,
+      cobro_iban: this.numero_cuenta_bancaria?.trim() || undefined,
+      cobro_titular: this.titular_cuenta_bancaria?.trim() || undefined,
     };
 
     this.userService.actualizarUsuario(this.userData.usuario.id, datosCobro).subscribe({
       next: () => {
+        if (this.userData?.usuario) {
+          this.userData.usuario.metodo_cobro_preferido = this.metodoCobroPredeterminado;
+          this.userData.usuario.paypal_email = datosCobro.paypal_email;
+          this.userData.usuario.cobro_iban = datosCobro.cobro_iban;
+          this.userData.usuario.cobro_titular = datosCobro.cobro_titular;
+          localStorage.setItem('userData', JSON.stringify(this.userData));
+        }
+
+        const etiquetaMetodo =
+          this.metodoCobroPredeterminado === 'monedero'
+            ? 'el Monedero de GoGuay'
+            : this.metodoCobroPredeterminado === 'paypal'
+              ? 'tu cuenta PayPal'
+              : 'tu cuenta bancaria (IBAN)';
+
         this.messageService.add({
           severity: 'success',
-          summary: 'Éxito',
-          detail: 'Datos de cobro actualizados correctamente',
+          summary: 'Preferencias actualizadas',
+          detail: `Recibirás tus cobros en ${etiquetaMetodo}.`,
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron guardar las preferencias de cobro.',
         });
       },
     });
   }
+
 
   /**
    * Función para abrir el centro de ayuda al hacer click en la opción del menú. Redirige a la página de centro de ayuda.
