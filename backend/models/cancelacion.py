@@ -20,7 +20,7 @@ class Cancelacion(db.Model):
     fecha_cancelacion = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # --- RELACIONES ---
-    viaje = db.relationship('Viaje', backref=db.backref('datos_cancelacion', uselist=False))
+    viaje = db.relationship('Viaje', backref=db.backref('cancelaciones', lazy=True, cascade="all, delete-orphan"))
     
     # Relación con back_populates conectada a 'cancelaciones_provocadas' en Usuario
     autor = db.relationship(
@@ -28,5 +28,18 @@ class Cancelacion(db.Model):
         foreign_keys=[cancelado_por_id],
         back_populates='cancelaciones_provocadas'
     )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "viaje_id": self.viaje_id,
+            "cancelado_por_id": self.cancelado_por_id,
+            "pasajeros_afectados": self.pasajeros_afectados,
+            "puntos_penalizacion_aplicados": self.puntos_penalizacion_aplicados,
+            "rol_involucrado": self.rol_involucrado,
+            "motivo_cancelacion_cond": self.motivo_cancelacion_cond,
+            "motivo_cancelacion_pasaj": self.motivo_cancelacion_pasaj,
+            "fecha_cancelacion": self.fecha_cancelacion.isoformat() if self.fecha_cancelacion else None
+        }
 
   

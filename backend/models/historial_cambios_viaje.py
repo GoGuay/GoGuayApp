@@ -9,6 +9,7 @@ class HistorialCambiosViaje(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     viaje_id = db.Column(db.Integer, db.ForeignKey('viajes.id'), nullable=False)
+    modificado_por_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True) 
     campo_modificado = db.Column(db.String(50), nullable=False) 
     valor_anterior = db.Column(db.Text, nullable=True)
     valor_nuevo = db.Column(db.Text, nullable=True)
@@ -18,6 +19,7 @@ class HistorialCambiosViaje(db.Model):
         return {
             "id": self.id,
             "viaje_id": self.viaje_id,
+            "modificado_por_id":self.modificado_por_id,
             "campo_modificado": self.campo_modificado,
             "valor_anterior": self.valor_anterior,
             "valor_nuevo": self.valor_nuevo,

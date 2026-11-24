@@ -40,7 +40,7 @@ class Viaje(db.Model):
         estados_validos = ['aceptado', 'Aceptada', 'aceptada', 'accepted', 'ACEPTADA']
         return [p for p in self.pasajeros if p.estado in estados_validos]
     
-    def serialize(self, current_user_id=None, incluir_ruta=True, incluir_historial=True, puntuados_ids=None):
+    def serialize(self, current_user_id=None, incluir_ruta=True, incluir_historial=True, incluir_cancelaciones=True, puntuados_ids=None):
         ya_puntuado = False
         if current_user_id:
             if puntuados_ids is not None:
@@ -109,5 +109,8 @@ class Viaje(db.Model):
 
         if incluir_historial:
             data["historial_cambios"] = [h.serialize() for h in self.historial_cambios] if self.historial_cambios else []
+    
+        if incluir_cancelaciones:
+            data["cancelaciones"] = [c.serialize() for c in self.cancelaciones] if hasattr(self, 'cancelaciones') and self.cancelaciones else []
 
         return data

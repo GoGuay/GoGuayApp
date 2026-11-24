@@ -1,4 +1,5 @@
 from extensions import db
+from models.enums import EstadoPagoEnum
 
 class Ordenes_Paypal(db.Model):
     __tablename__ = 'ordenes_paypal'
@@ -13,6 +14,7 @@ class Ordenes_Paypal(db.Model):
     gastos_gestion = db.Column(db.Float, nullable=False)
     importe_total =  db.Column(db.Float, nullable=False)
 
+    estado_pago = db.Column(db.String(50), nullable=False, default=EstadoPagoEnum.PENDIENTE_PAGO.value)  
     # Relaciones para acceder fácil a los datos desde Python
     viaje = db.relationship('Viaje')
     pasajero = db.relationship('Usuario', foreign_keys=[pasajero_id])

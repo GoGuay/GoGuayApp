@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Conversacion, Mensaje
 from models import Usuario, Notificacion, PasajeroViaje, Viaje
-from models.enums import  EstadoSolicitudEnum
+from models.enums import  EstadoSolicitudEnum, EstadoPagoEnum
 from services.notifications.notifications_utils import enviar_notificacion_push
 
 chat_blueprint = Blueprint('chat', __name__)
@@ -261,29 +261,19 @@ def solicitar_unirse():
     conv_id = data.get('conversacion_id')
     paypal_auth_id = data.get('paypal_auth_id')
 
-    existente = PasajeroViaje.query.filter_by(usuario_id=emisor_id, viaje_id=viaje_id).first()
-    if existente:
-        if existente.estado == 'pendiente_pago':
-            existente.estado = EstadoSolicitudEnum.PENDIENTE.value
-        else:
-            return jsonify({"error": "Ya has solicitado unirse a este viaje anteriormente"}), 400
-    else:
-        if viaje.plazas <= 0:
-            return jsonify({"error": "No hay plazas disponibles"}), 400
-        
-        viaje.plazas -= 1
-        nueva_solicitud = PasajeroViaje(
-            usuario_id=emisor_id,
-            viaje_id=viaje_id,
-            estado=EstadoSolicitudEnum.PENDIENTE.value,
-            paypal_auth_id=paypal_auth_id
-        )
-        db.session.add(nueva_solicitud)
-        db.session.commit()
-
     viaje = Viaje.query.get(viaje_id)
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
+
+    
+    nueva_solicitud = PasajeroViaje(
+        usuario_id=emisor_id,
+        viaje_id=viaje_id,
+        estado=EstadoSolicitudEnum.PENDIENTE.value,
+        paypal_auth_id=paypal_auth_id
+    )
+    db.session.add(nueva_solicitud)
+    db.session.commit()
 
     texto_solicitud = f"Solicitud para unirse al viaje de {viaje.origen} a {viaje.destino}."
     nuevo_msj = Mensaje(
@@ -294,7 +284,7 @@ def solicitar_unirse():
         leido=False
     )
     db.session.add(nuevo_msj)
-    
+
     cuerpo_notificacion = f"Un pasajero quiere unirse a tu viaje de {viaje.origen} a {viaje.destino}."
 
     nueva_notif = Notificacion(
@@ -319,5 +309,5 @@ def solicitar_unirse():
             "conversacion_id": str(conv_id)
         }
     )
-    
+
     return jsonify(nuevo_msj.serialize()), 200

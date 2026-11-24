@@ -24,8 +24,8 @@ from twilio.rest import Client
 
 # Importaciones de Modelos y Enums
 from extensions import db
-from models.tokensusados import TokenUsado
-from models import (Usuario, RolUsuarioEnum, Viaje, Ordenes_Paypal, PasajeroViaje, Monedero, MovimientoMonedero, MovimientosMonederoEnum, EstadoViajeEnum)
+from models import (Usuario, Viaje, Ordenes_Paypal, PasajeroViaje  )
+from models.enums import EstadoPagoEnum
 
 
 pagos_blueprint = Blueprint('pagos', __name__)
@@ -72,6 +72,7 @@ def create_order():
     """
     data = request.get_json()
     viaje_id = data.get('viaje_id')
+    pasajero_id = data.get('pasajero_id')
 
     if not viaje_id:
         return jsonify({"error": "Falta el id del viaje"}), 400
@@ -84,6 +85,7 @@ def create_order():
         return jsonify({"error": "Viaje no encontrado"}), 404
         
     email_empresa = "goguay_empresa@business.example.com"
+   
     
     precio_formateado = f"{viaje.precio_viaje:.2f}"
     
@@ -117,9 +119,26 @@ def create_order():
         return jsonify({"error": "Error al comunicarse con la pasarela", "detalle": order}), response.status_code
 
     try:
+        order_id = order["id"]
         approve_link = next(
             link["href"] for link in order["links"] if link["rel"] == "approve"
         )
+        gastos_gestion_val = 0.0  
+        importe_fijado_val = float(viaje.precio_viaje)
+        importe_total_val = importe_fijado_val + gastos_gestion_val
+
+        nueva_orden = Ordenes_Paypal(
+            viaje_id=viaje_id,
+            pasajero_id=pasajero_id,
+            conductor_id=viaje.usuario_id,     
+            paypal_order_id=order_id,
+            importe_fijado=importe_fijado_val,
+            gastos_gestion=gastos_gestion_val,
+            importe_total=importe_total_val,
+            estado_pago=EstadoPagoEnum.PENDIENTE_PAGO.value
+        )
+        db.session.add(nueva_orden)
+        db.session.commit()
         return jsonify({
             "order_id": order["id"],
             "approve_url": approve_link
@@ -153,6 +172,7 @@ def capture_order(order_id: str):
         orden_paypal = Ordenes_Paypal.query.filter_by(paypal_order_id=order_id).first()
         
         if orden_paypal:
+            orden_paypal.estado_pago = EstadoPagoEnum.RETENIDO.value
             pasajero_viaje = PasajeroViaje.query.filter_by(
                 viaje_id=orden_paypal.viaje_id, 
                 usuario_id=orden_paypal.pasajero_id
@@ -201,28 +221,37 @@ def reembolsar_pago_al_pasajero(pasajero_viaje, importe: float, motivo: str = "C
     auth_id = paypal_id
     capture_id = paypal_id
 
+    orden_paypal = Ordenes_Paypal.query.filter_by(
+        viaje_id=pasajero_viaje.viaje_id,
+        pasajero_id=pasajero_viaje.usuario_id
+    ).first()
+
     resp_order = requests.get(f"{base_url}/v2/checkout/orders/{paypal_id}", headers=headers)
-    print(f"🔍 Respuesta orden PayPal status: {resp_order.status_code}") # <-- Añade esto
+    print(f"🔍 Respuesta orden PayPal status: {resp_order.status_code}") 
+
     if resp_order.status_code == 200:
         order_data = resp_order.json()
         payments = order_data.get("purchase_units", [{}])[0].get("payments", {})
         authorizations = payments.get("authorizations", [])
         captures = payments.get("captures", [])
-
-        print(f"🔍 Autorizaciones encontradas: {authorizations}") # <-- Añade esto
+        print(f"🔍 Autorizaciones encontradas: {authorizations}") 
         print(f"🔍 Capturas encontradas: {captures}")
 
         if authorizations:
             auth_id = authorizations[0].get("id")
         if captures:
             capture_id = captures[0].get("id")
-    print(f"🚀 Intentando hacer VOID con ID: {auth_id}")
 
+    print(f"🚀 Intentando hacer VOID con ID: {auth_id}")
     void_url = f"{base_url}/v2/payments/authorizations/{auth_id}/void"
     resp_void = requests.post(void_url, headers=headers)
     print(f"🔍 Respuesta VOID status: {resp_void.status_code} - Body: {resp_void.text}") # <-- Añade esto
+    
     if resp_void.status_code in (200, 204):
         print(f"✅ Autorización PayPal {auth_id} anulada (VOID) correctamente.")
+        if orden_paypal:
+            orden_paypal.estado_pago = EstadoPagoEnum.DEVOLUCION_COMPLETA.value
+            db.session.commit()
         return {"exito": True, "tipo": "void", "referencia": auth_id, "importe": f"{float(importe):.2f}"}
 
     refund_url = f"{base_url}/v2/payments/captures/{capture_id}/refund"
@@ -234,13 +263,18 @@ def reembolsar_pago_al_pasajero(pasajero_viaje, importe: float, motivo: str = "C
         "note_to_payer": motivo[:255]
     }
     resp_refund = requests.post(refund_url, json=payload, headers=headers)
+
     if resp_refund.status_code in (200, 201):
         data = resp_refund.json()
         print(f"✅ Reembolso PayPal {data.get('id')} completado (REFUND).")
+        if orden_paypal:
+            orden_paypal.estado_pago = EstadoPagoEnum.DEVOLUCION_COMPLETA.value
+            db.session.commit()
         return {"exito": True, "tipo": "refund", "referencia": data.get("id"), "importe": f"{float(importe):.2f}"}
 
     error_detalle = resp_refund.json() if resp_refund.content else resp_void.text
     print(f"❌ Error PayPal al cancelar/reembolsar (auth={auth_id}, cap={capture_id}): {error_detalle}")
+
     return {
         "exito": False,
         "error": error_detalle or "Error al procesar el reembolso en PayPal"

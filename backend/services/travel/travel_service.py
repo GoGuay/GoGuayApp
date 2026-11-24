@@ -225,7 +225,6 @@ def editar_viaje(viaje_id):
             db.session.commit()
             return jsonify({"mensaje": "No se detectaron cambios", "viaje": viaje.serialize()}), 200
 
-        db.session.commit()
 
         for campo, valores in cambios_detectados.items():
             val_anterior, val_nuevo = valores
@@ -251,10 +250,7 @@ def editar_viaje(viaje_id):
         }
 
         detalles_cambios = [traducciones.get(k, k) for k in cambios_detectados.keys()]
-        if len(detalles_cambios) > 1:
-            texto_cambios = ", ".join(detalles_cambios[:-1]) + f" y {detalles_cambios[-1]}"
-        else:
-            texto_cambios = detalles_cambios[0]
+        texto_cambios = ", ".join(detalles_cambios[:-1]) + f" y {detalles_cambios[-1]}" if len(detalles_cambios) > 1 else detalles_cambios[0]
 
         pasajeros_a_notificar = [p for p in viaje.pasajeros if p.estado in [EstadoSolicitudEnum.ACEPTADA.value]]
 
@@ -379,14 +375,22 @@ def procesar_reembolso_al_pasajero(viaje):
     resultados_devoluciones = []
 
     for reserva in viaje.acompanantes:
-        if not getattr(reserva, 'paypal_auth_id', None):
+        print('Reserva encontrada:', reserva)
+        auth_id = getattr(reserva, 'paypal_auth_id', None)
+        print('-> paypal_auth_id de este pasajero:', auth_id)
+        
+        if not auth_id:
+            print("⚠️ Este pasajero NO tiene paypal_auth_id registrado, por eso se omite el reembolso.")
             continue
+        # if not getattr(reserva, 'paypal_auth_id', None):
+        #     continue
 
         resultado = reembolsar_pago_al_pasajero(
             pasajero_viaje=reserva,
             importe=viaje.precio_viaje,
             motivo=f"Viaje {viaje.origen} - {viaje.destino} cancelado por el conductor",
         )
+        print("-> Resultado obtenido de PayPal:", resultado)
         if not resultado["exito"]:
             raise Exception(
                 f"Fallo al reembolsar al usuario {reserva.usuario_id}: {resultado['error']}"
@@ -448,6 +452,7 @@ def cancelar_viaje(viaje_id):
     try:
         puntos_aplicados = 0
         devoluciones = []
+        pasajeros_afectados_registro = []
 
         if reservas_confirmadas:
             tipo_aceptacion = 'AUTOMATICA' if viaje.reserva_automatica else 'MANUAL'
@@ -492,6 +497,11 @@ def cancelar_viaje(viaje_id):
                 )
 
                 pasajero.estado = EstadoSolicitudEnum.CANCELADA.value
+                pasajeros_afectados_registro.append({
+                    "usuario_id": pasajero.usuario_id,
+                    "estado_previo": "ACEPTADA",
+                    "accion": "CANCELADA_Y_REEMBOLSADA"
+                })
 
             elif pasajero.estado in [EstadoSolicitudEnum.PENDIENTE.value]:
                 if getattr(pasajero, 'paypal_auth_id', None):
@@ -512,8 +522,27 @@ def cancelar_viaje(viaje_id):
                     })
 
                 pasajero.estado = EstadoSolicitudEnum.RECHAZADA.value
+                pasajeros_afectados_registro.append({
+                    "usuario_id": pasajero.usuario_id,
+                    "estado_previo": "PENDIENTE",
+                    "accion": "RECHAZADA_Y_VOID"
+                })
 
-        viaje.estado_viaje = 'Cancelado'
+        registro_cancelacion = Cancelacion(
+            viaje_id=viaje.id,
+            cancelado_por_id=int(usuario_actual_id),
+            pasajeros_afectados={
+                "pasajeros": pasajeros_afectados_registro,
+                "detalle_devoluciones": devoluciones
+            },
+            puntos_penalizacion_aplicados=puntos_aplicados,
+            rol_involucrado='CONDUCTOR',
+            motivo_cancelacion_cond=motivo,
+            fecha_cancelacion=ahora
+        )
+        db.session.add(registro_cancelacion)
+
+        viaje.estado_viaje = EstadoViajeEnum.CANCELADO.value if hasattr(EstadoViajeEnum, 'CANCELADO') else 'Cancelado'
         nombre_completo = f"{usuario_conductor.nombre} {usuario_conductor.apellidos}"
         mensaje_salida = (
             f"El conductor {nombre_completo} ha cancelado el viaje a {viaje.destino}. Motivo: {motivo}"
@@ -775,18 +804,22 @@ def bloquear_plaza():
     viaje = Viaje.query.get(viaje_id)
     if not viaje or viaje.plazas <= 0:
         return jsonify({"error": "No hay plazas disponibles"}), 400
+    
+    pasajero_existente = PasajeroViaje.query.filter_by(usuario_id=usuario_id, viaje_id=viaje_id).first()
+    if pasajero_existente:
+        return jsonify({"error": "El usuario ya está registrado en este viaje"}), 400
 
     viaje.plazas -= 1
 
-    nuevo_pasajero = PasajeroViaje(
-        usuario_id=usuario_id,
-        viaje_id=viaje_id,
-        estado='pendiente_pago',
-    )
-    db.session.add(nuevo_pasajero)
-    db.session.commit()
+    # nuevo_pasajero = PasajeroViaje(
+    #     usuario_id=usuario_id,
+    #     viaje_id=viaje_id,
+    #     estado=EstadoSolicitudEnum.PENDIENTE.value,
+    # )
+    # db.session.add(nuevo_pasajero)
+    # db.session.commit()
 
-    return jsonify({"mensaje": "Plaza bloqueada temporalmente", "pasajero_id": nuevo_pasajero.id}), 200
+    return jsonify({"mensaje": "Plaza bloqueada temporalmente"}), 200
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -1008,7 +1041,7 @@ def cancelar_solicitud():
     solicitud = PasajeroViaje.query.filter_by(
         viaje_id=viaje_id,
         usuario_id=usuario_id,
-        estado=EstadoSolicitudEnum.PENDIENTE.value,
+        estado=EstadoSolicitudEnum.ACEPTADA.value,
     ).first()
 
     if not solicitud:
@@ -1018,17 +1051,17 @@ def cancelar_solicitud():
     if not viaje:
         return jsonify({"error": "Viaje no encontrado"}), 404
 
-    resultado_void = None
+    resultado_reembolso = None
     if solicitud.paypal_auth_id:
-        resultado_void = reembolsar_pago_al_pasajero(
+        resultado_reembolso = reembolsar_pago_al_pasajero(
             pasajero_viaje=solicitud,
             importe=viaje.precio_viaje,
             motivo=f"Solicitud retirada por el pasajero en viaje #{viaje_id}",
         )
-        if not resultado_void.get("exito"):
+        if not resultado_reembolso.get("exito"):
             return jsonify({
                 "error": "No se pudo liberar el dinero retenido en PayPal",
-                "detalle": resultado_void.get("error"),
+                "detalle": resultado_reembolso.get("error"),
             }), 400
 
     pasajero = Usuario.query.get(usuario_id)
@@ -1061,7 +1094,7 @@ def cancelar_solicitud():
         db.session.commit()
         return jsonify({
             "mensaje": "Solicitud cancelada y conductor notificado",
-            "reembolso": resultado_void,
+            "reembolso": resultado_reembolso,
         }), 200
 
     except Exception as e:

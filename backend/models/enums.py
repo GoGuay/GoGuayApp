@@ -118,5 +118,13 @@ class TipoCancelacionIncidenciaEnum (str, Enum):
     POR_USUARIO = "POR_USUARIO"
     POR_SISTEMA_NO_PROCEDE = "POR_SISTEMA_NO_PROCEDE"
 
+class EstadoPagoEnum(str, Enum):
+    PENDIENTE_PAGO = "Pendiente_pago"       # Creado pero aún no ha pagado en la ventana de PayPal
+    RETENIDO = "Retenido"               # PayPal ha retenido los fondos
+    PAGADO = "Pagado"     
+    DEVOLUCION_COMPLETA = "Devolución completa"
+    DEVOLUCION_PARCIAL = "Devolución parcial"            # El importe se ha liberado hacia la cuenta del conductor
+  
+
 
 
