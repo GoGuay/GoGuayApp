@@ -867,5 +867,14 @@ export class TarjetaViajeComponent implements OnInit {
     });
   }
 
-  abrirPerfil() { }
+  abrirPerfil(usuarioId?: number) {
+    const idLogueado = this.userData?.usuario?.id || this.userData?.id;
+    if (!usuarioId || usuarioId === idLogueado) {
+      return;
+    }
+
+    this.navCtrl.navigateRoot(['/perfil-publico'], {
+      queryParams: { id: usuarioId },
+    });
+  }
 }

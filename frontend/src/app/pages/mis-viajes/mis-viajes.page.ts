@@ -1,28 +1,22 @@
 import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, catchError, of, Subscription } from 'rxjs';
-
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin, Observable, catchError, of, Subscription, Subject, timer } from 'rxjs';
+import { debounceTime, exhaustMap, finalize, shareReplay, tap, takeUntil } from 'rxjs/operators';
 import { NavController, IonHeader, IonContent, IonSegment, IonSegmentButton, IonLabel, IonToggle } from '@ionic/angular/standalone';
-
-// PrimeNG & Traducciones
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-
-// Componentes y Modelos Propios
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { JumbotronComponent } from '../jumbotron/jumbotron.component';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { TarjetaViajeComponent } from 'src/app/components/tarjeta-viaje/tarjeta-viaje.component';
 import { Viaje } from '../../models/travel/viaje.model';
 import { Usuario } from '../../models/user/usuario.model';
-
-// Servicios Core
 import { FuncionesComunes } from '../../core/funciones-comunes/funciones-comunes.service';
 import { UserServicesService } from '../../core/user-services/user-services.service';
 import { TravelService } from '../../core/travel-services/travel.service';
+
 
 @Component({
   selector: 'app-mis-viajes',
@@ -84,6 +78,11 @@ export class MisViajesPage implements OnInit {
 
   private subs = new Subscription();
   private userIdActual: number | null = null;
+  private primeraCargaIniciada = false;
+  private peticionViajesEnCurso$: Observable<any> | null = null;
+  private recargaSolicitada$ = new Subject<void>();
+  private detenerPolling$ = new Subject<void>();
+  private ultimaFirmaDatos: string = '';
 
   constructor(
     public funcionesComunes: FuncionesComunes,
@@ -96,6 +95,18 @@ export class MisViajesPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.subs.add(
+      this.recargaSolicitada$
+        .pipe(
+          debounceTime(300),
+          exhaustMap(() => {
+            if (!this.userIdActual) return of(null);
+            return this.ejecutarCargaViajes$(this.userIdActual);
+          })
+        )
+        .subscribe()
+    );
+
     this.subs.add(
       this.route.queryParams.subscribe((params) => {
         this.usuarioParams = params;
@@ -120,9 +131,14 @@ export class MisViajesPage implements OnInit {
         }
 
         if (finalUserId && !isNaN(finalUserId)) {
+          const cambioDeUsuario = this.userIdActual !== finalUserId;
           this.userIdActual = finalUserId;
-          this.cargarTodosLosViajes(finalUserId);
-          this.recuperarUsuarioServidor(finalUserId, !!cache);
+
+          if (!this.primeraCargaIniciada || cambioDeUsuario) {
+            this.primeraCargaIniciada = true;
+            this.cargarTodosLosViajes(finalUserId);
+            this.recuperarUsuarioServidor(finalUserId, !!cache);
+          }
         } else {
           console.warn('No se detectó un ID de usuario válido en la inicialización.');
           this.cargandoViajes = false;
@@ -133,7 +149,7 @@ export class MisViajesPage implements OnInit {
     this.subs.add(
       this.travelService.viajesActualizados$.subscribe(() => {
         if (this.userIdActual) {
-          this.cargarTodosLosViajes(this.userIdActual);
+          this.recargaSolicitada$.next();
         }
       })
     );
@@ -141,31 +157,55 @@ export class MisViajesPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.userIdActual) {
-      this.cargarTodosLosViajes(this.userIdActual);
+      if (this.primeraCargaIniciada && !this.peticionViajesEnCurso$) {
+        this.recargaSolicitada$.next();
+      }
+      this.iniciarPollingSilencioso();
     }
+  }
+
+  ionViewWillLeave() {
+    this.detenerPolling$.next();
   }
 
   recargarDesdeHijo() {
     if (this.userIdActual) {
-      this.cargarTodosLosViajes(this.userIdActual);
+      this.recargaSolicitada$.next();
     }
   }
 
   ngOnDestroy() {
+    this.detenerPolling$.next();
+    this.detenerPolling$.complete();
     this.subs.unsubscribe();
   }
 
   /**
-   * Función para recuperar los datos del usuario desde el servidor,
-   * actualizando la información en la aplicación y en localStorage.
-   *
-   * Si ya teníamos datos en caché, solo actualizamos la información
-   * del usuario sin recargar los viajes, para evitar llamadas innecesarias al servidor.
-   * Si no teníamos datos en caché, después de recuperar la información del usuario,
-   * forzamos la carga de los viajes para asegurarnos de que tenemos la información más actualizada.
-   *
-   * @param userId Recibe el ID del usuario para recuperar su información desde el servidor.
-   * @param tieneCache Indica si ya teníamos datos del usuario en caché, para decidir si recargamos los viajes o no.
+   * Comprueba cambios cada 8 segundos en segundo plano sin mostrar el spinner
+   * y actualiza la vista solo si hay cambios reales en viajes o solicitudes.
+   */
+  private iniciarPollingSilencioso() {
+    this.detenerPolling$.next();
+
+    timer(8000, 8000)
+      .pipe(
+        takeUntil(this.detenerPolling$),
+        exhaustMap(() => {
+          if (!this.userIdActual || document.hidden) {
+            return of(null);
+          }
+          return this.ejecutarCargaViajes$(this.userIdActual, true);
+        })
+      )
+      .subscribe();
+  }
+
+  /**
+   * Función que recupera los datos del usuario desde el servidor y actualiza la información local.
+   * Si el usuario ya tiene datos en caché, no recarga los viajes automáticamente.
+   * 
+   * @param userId Recibe el ID del usuario para recuperar sus datos desde el servidor.
+   * @param tieneCache recibe un booleano que indica si el usuario ya tiene datos en caché.
    */
   private recuperarUsuarioServidor(userId: number, tieneCache: boolean) {
     this.userService.obtenerUsuarioPorID(userId).subscribe({
@@ -185,34 +225,74 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para cargar todos los viajes del usuario (creados y como acompañante)
-   * @param userId Recibe el ID del usuario
+   * Función que ejecuta la carga de viajes del usuario, evitando múltiples peticiones simultáneas.
+   * Si ya hay una petición en curso, devuelve el observable existente.
+   * 
+   * @param userId Recibe el ID del usuario para cargar sus viajes.
+   * @returns Devuelve un observable que emite los viajes del usuario.
    */
-  cargarTodosLosViajes(userId: number) {
-    this.cargandoViajes = true;
-    this.cdr.detectChanges();
+  private ejecutarCargaViajes$(userId: number, silencioso: boolean = false): Observable<any> {
+    if (this.peticionViajesEnCurso$) {
+      return this.peticionViajesEnCurso$;
+    }
 
-    forkJoin({
+    if (!silencioso) {
+      this.cargandoViajes = true;
+      this.cdr.detectChanges();
+    }
+
+    this.peticionViajesEnCurso$ = forkJoin({
       pasajero: this.travelService.getViajesComoAcompanante(userId).pipe(catchError(() => of([]))),
       conductor: this.travelService.getViajesUsuario(userId).pipe(catchError(() => of({ viajes: [] }))),
       solicitudes: this.travelService.getMisSolicitudesPendientes(userId).pipe(catchError(() => of([]))),
-    }).subscribe(({ pasajero, conductor, solicitudes }) => {
-      this.misViajesAcompanante = pasajero || [];
-      this.misViajesCreados = conductor?.viajes || [];
-      this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
-      this.misSolicitudesPendientes = solicitudes || [];
+    }).pipe(
+      tap(({ pasajero, conductor, solicitudes }) => {
+        const nuevosAcompanante = pasajero || [];
+        const nuevosCreados = conductor?.viajes || [];
+        const nuevasSolicitudes = solicitudes || [];
 
-      this.filtrosEstados['en_curso'] = this.HayAlgunViajeEnCursoReal();
-      this.aplicarFiltrosCombinados();
+        const nuevaFirma = JSON.stringify({
+          a: nuevosAcompanante.map((v: any) => `${v.id}-${v.estado_viaje}-${v.estado_solicitud_propia}-${v.acompanantes?.length || 0}`),
+          c: nuevosCreados.map((v: any) => `${v.id}-${v.estado_viaje}-${v.solicitudes_pendientes?.length || 0}-${v.acompanantes?.length || 0}`),
+          s: nuevasSolicitudes.map((v: any) => `${v.id}-${v.estado_solicitud_propia}`),
+        });
 
-      this.cargandoViajes = false;
-      this.cdr.detectChanges();
-    });
+        if (!silencioso || nuevaFirma !== this.ultimaFirmaDatos) {
+          this.ultimaFirmaDatos = nuevaFirma;
+          this.misViajesAcompanante = nuevosAcompanante;
+          this.misViajesCreados = nuevosCreados;
+          this.misViajesCreados.forEach((v) => (v.usuario = this.userData));
+          this.misSolicitudesPendientes = nuevasSolicitudes;
+
+          this.filtrosEstados['en_curso'] = this.HayAlgunViajeEnCursoReal();
+          this.aplicarFiltrosCombinados();
+        }
+      }),
+      finalize(() => {
+        this.peticionViajesEnCurso$ = null;
+        if (!silencioso) {
+          this.cargandoViajes = false;
+          this.cdr.detectChanges();
+        }
+      }),
+      shareReplay(1)
+    );
+
+    return this.peticionViajesEnCurso$;
+  }
+  /**
+   * Función que inicia la carga de todos los viajes del usuario.
+   * 
+   * @param userId 
+   */
+  cargarTodosLosViajes(userId: number) {
+    this.ejecutarCargaViajes$(userId).subscribe();
   }
 
   /**
-   * Función para obtener los datos de un usuario
-   * @param id_usuario Recibe el ID del usuario que está logado
+   * Función que obtiene los datos del usuario desde el servicio y actualiza las preferencias de viaje.
+   * 
+   * @param id_usuario 
    */
   obtenerUsuarioPorID(id_usuario: number) {
     this.userService.obtenerUsuarioPorID(id_usuario).subscribe((resultadoUsuario) => {
@@ -222,18 +302,18 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para obtener los datos de un usuario a través del servicio,
-   * devuelve un Observable con la información del usuario
-   *
-   * @param id_usuario --> Recibe el ID del usuario que está logado
-   * @returns --> Devuelve un Observable con la información del usuario
+   * Función que obtiene los datos del usuario desde el servicio y devuelve un observable.
+   * 
+   * @param id_usuario 
+   * @returns 
    */
   obtenerUsuario(id_usuario: number): Observable<Usuario> {
     return this.userService.obtenerUsuarioPorID(id_usuario);
   }
 
   /**
-   * Función para obtener la lista de viajes que ha creado el usuario
+   * Función que obtiene los viajes creados por el usuario y actualiza la lista de viajes.
+   * Además, asigna el usuario a cada viaje y aplica los filtros combinados.
    */
   obtenerViajesCreados() {
     this.travelService.getViajesUsuario(this.userData.usuario.id).subscribe((result) => {
@@ -246,7 +326,8 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para obtener los viajes a los que el usuario se ha apuntado como pasajero
+   * Función que obtiene los viajes en los que el usuario es acompañante y actualiza la lista de viajes.
+   * Además, aplica los filtros combinados.
    */
   obtenerViajesComoAcompanante() {
     this.cargandoViajes = true;
@@ -258,9 +339,10 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Comprueba si hay un viaje en curso en el día actual, entre la hora de salida y llegada del viaje.
-   * @param viaje
-   * @returns
+   * Función que determina si un viaje está en curso según la fecha y hora actual.
+   * 
+   * @param viaje 
+   * @returns 
    */
   esViajeEnCurso(viaje: Viaje): boolean {
     if (!viaje.fecha_salida || !viaje.hora_salida || !viaje.hora_llegada) {
@@ -286,7 +368,8 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Comprueba si en el universo total de viajes hay uno ocurriendo hoy y ahora
+   * Función que determina si hay algún viaje en curso.
+   * @returns 
    */
   HayAlgunViajeEnCursoReal(): boolean {
     const pool = [...(this.misViajesAcompanante || []), ...(this.misViajesCreados || [])];
@@ -294,21 +377,25 @@ export class MisViajesPage implements OnInit {
   }
 
   /**
-   * Función para validar si se puede puntuar un viaje o no.
-   *
-   * @param viaje
+   * Función que determina si el usuario puede puntuar un viaje.
+   * 
+   * @param viaje 
+   * @returns 
    */
   puedePuntuar(viaje: Viaje): boolean {
     const esFinalizado = this.funcionesComunes.esViajeFinalizado(viaje.fecha_salida, viaje.hora_salida);
     const esPasajero = this.misViajesAcompanante.some((v) => v.id === viaje.id);
     const esCreador = viaje.usuario_id === this.userData.id;
 
-    // Solo se puede puntuar si el viaje ha finalizado, si es pasajero (no creador) y si no es el creador
     return esFinalizado && esPasajero && !esCreador;
   }
 
   /**
-   * Función para manejar el cambio de los toggles de estado (En curso, Próximos, Finalizados)
+   * Función que maneja el cambio de estado de los filtros de viaje y aplica los filtros combinados.
+   * 
+   * @param event 
+   * @param valorFiltro 
+   * @returns 
    */
   onFiltroChange(event: any, valorFiltro: string) {
     const checked = event.detail.checked;
@@ -316,8 +403,6 @@ export class MisViajesPage implements OnInit {
 
     if (valorFiltro === 'en_curso') {
       if (!hayEnCurso && checked) {
-        // Si NO hay viaje en curso y el usuario intenta activarlo:
-        // Revertimos el estado en el siguiente ciclo para forzar a Ionic a refrescar el UI
         setTimeout(() => {
           this.filtrosEstados = { ...this.filtrosEstados, en_curso: false };
           this.cdr.detectChanges();
@@ -326,7 +411,6 @@ export class MisViajesPage implements OnInit {
       }
 
       if (hayEnCurso && !checked) {
-        // Si SÍ hay un viaje en curso, no dejamos que lo desactive
         setTimeout(() => {
           this.filtrosEstados = { ...this.filtrosEstados, en_curso: true };
           this.cdr.detectChanges();
@@ -344,7 +428,6 @@ export class MisViajesPage implements OnInit {
         this.filtrosEstados['proximos_viajes'] = true;
         this.filtrosEstados['finalizados_anulados'] = false;
       } else {
-        // Garantizamos que al menos uno de los dos principales esté activo
         this.filtrosEstados['proximos_viajes'] = false;
         this.filtrosEstados['finalizados_anulados'] = true;
       }
@@ -446,23 +529,14 @@ export class MisViajesPage implements OnInit {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Función para mostrar/ocultar la ayuda
-   */
   toggleAyuda() {
     this.mostrarAyuda = !this.mostrarAyuda;
   }
 
-  /**
-   * Funciones de navegación
-   */
   goToBuscarViaje() {
     this.navCtrl.navigateRoot('/busqueda-viajes');
   }
 
-  /**
-   * Función para navegar a la página de nuevo viaje
-   */
   goToNuevoViaje() {
     this.navCtrl.navigateRoot('/nuevo-viaje');
   }

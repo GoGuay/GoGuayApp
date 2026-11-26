@@ -80,27 +80,37 @@
           <div>
             <ion-row class="align-items-center justify-content-center">
               <ion-col size="auto" class="text-center">
-                <div class="conductor-container position-relative d-inline-block" matTooltip="Ver perfil">
+                @let conductorId = viaje.usuario?.id || viaje.usuario?.id || viaje.usuario_id;
+                @let fotoConductor = viaje.usuario?.usuario?.fotoPerfil || viaje.usuario?.fotoPerfil ||
+                viaje.usuario_creador?.fotoPerfil;
+                @let nombreConductor = viaje.usuario?.usuario?.nombre || viaje.usuario?.nombre || 'Conductor';
+                @let esConductorLogueado = conductorId === userData?.usuario?.id;
+
+                <div class="conductor-container position-relative d-inline-block"
+                  [style.cursor]="esConductorLogueado ? 'default' : 'pointer'"
+                  [matTooltip]="esConductorLogueado ? 'Tú (Conductor)' : 'Ver perfil'"
+                  (click)="abrirPerfil(conductorId)">
                   <ion-avatar class="avatar-conductor">
-                    <img [alt]="fotoPerfil || 'Conductor'"
-                      [src]="fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+                    <img [alt]="nombreConductor"
+                      [src]="fotoConductor || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
                   </ion-avatar>
                   <span class="badge-conductor-icon" title="Conductor">
                     <i class="fi fi-rr-steering-wheel"></i>
                   </span>
                 </div>
               </ion-col>
+
               @if (viaje.acompanantes && viaje.acompanantes.length > 0) {
               <ion-col size="auto" class="px-1 text-muted">
                 <i class="fi fi-rr-arrow-right small"></i>
               </ion-col>
-              }
-              @if (viaje.acompanantes && viaje.acompanantes.length > 0) {
               <ion-col size="auto" class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                @for (ac of viaje.acompanantes; track ac) {
-                <ion-avatar class="avatar-acompanante" (click)="abrirPerfil()" matTooltip="Ver perfil">
-                  <img [alt]="ac.nombre || 'Pasajero'"
-                    [src]="ac.fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+                @for (pasajero of viaje.acompanantes; track pasajero) {
+                @let esPasajeroLogueado = pasajero.id === userData?.usuario?.id;
+                <ion-avatar class="avatar-acompanante" [style.cursor]="esPasajeroLogueado ? 'default' : 'pointer'"
+                  [matTooltip]="esPasajeroLogueado ? 'Tú' : 'Ver perfil'" (click)="abrirPerfil(pasajero.id)">
+                  <img [alt]="pasajero.nombre || 'Pasajero'"
+                    [src]="pasajero.fotoPerfil || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
                 </ion-avatar>
                 }
               </ion-col>
@@ -155,8 +165,8 @@
         <!-- ========================================================= -->
         @if (viaje.usuario_id === userData?.usuario?.id && viaje.estado_viaje !== 'Finalizado' && viaje.estado_viaje !==
         'Cancelado') {
-        <button class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar viaje" data-name="Editar"
-          aria-label="Editar viaje">
+        <button class="btn-gestion btn-editar" (click)="editarViaje(viaje.id)" matTooltip="Editar viaje"
+          data-name="Editar" aria-label="Editar viaje">
           <mat-icon>edit</mat-icon>
           <span class="btn-text">Editar</span>
         </button>
